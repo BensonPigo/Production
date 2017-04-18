@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("qty", header: "Qty", iseditable: true, decimal_places: 2, integer_places: 10)
                 ;
 
-            this.grid1.Columns[1].DefaultCellStyle.BackColor = Color.Pink; 
+            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
         }
 
         private void btnSave_Click(object sender, EventArgs e)

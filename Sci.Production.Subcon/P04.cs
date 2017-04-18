@@ -306,9 +306,9 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             #endregion
 
             #region 可編輯欄位變色
-            detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[3].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["ArtworkPoID"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 

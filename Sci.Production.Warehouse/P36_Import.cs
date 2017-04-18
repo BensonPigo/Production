@@ -230,8 +230,8 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
                 .Text("tolocation", header: "Location", iseditingreadonly: false, settings: ts2, width: Widths.AnsiChars(20))    //9
                ;
 
-            this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["tolocation"].DefaultCellStyle.BackColor = Color.Pink;
             //this.grid1.Columns[].DefaultCellStyle.BackColor = Color.Pink;
         }
 

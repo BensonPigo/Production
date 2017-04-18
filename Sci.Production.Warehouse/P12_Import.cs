@@ -132,7 +132,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10 ,settings: ns)  //5
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); //6
 
-            this.grid1.Columns[5].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
+            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
         }
 
         private void button3_Click(object sender, EventArgs e)

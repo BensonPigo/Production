@@ -171,7 +171,7 @@ namespace Sci.Production.Warehouse
             .Text("fromlocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
             ;     //
             #endregion 欄位設定
-            this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 

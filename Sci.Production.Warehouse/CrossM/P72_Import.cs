@@ -71,7 +71,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("balanceqty", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //7
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //8
                 ;
-            this.gridDetail.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region -- 撈資料 --

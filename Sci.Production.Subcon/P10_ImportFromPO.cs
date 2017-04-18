@@ -159,7 +159,7 @@ namespace Sci.Production.Subcon
                 .Numeric("apqty", header: "Qty",settings:ns)//14
                 .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14);
 
-            this.grid1.Columns[14].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+            this.grid1.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
 
         }
 

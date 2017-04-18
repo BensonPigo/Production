@@ -177,7 +177,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'B'
                 .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //9
                ;
 
-            this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Close

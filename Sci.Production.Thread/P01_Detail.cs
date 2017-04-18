@@ -167,14 +167,14 @@ namespace Sci.Production.Thread
                 .Text("Refno", header: "Refno", width: Widths.Auto(true), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 
-            grid1.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
 
             for(int i = 0;i < tbArticle.Rows.Count;i++)
             {
                 Helper.Controls.Grid.Generator(grid1)
                     .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.Auto(true), settings: threadcolor_col);
 
-                grid1.Columns[i + 5].DefaultCellStyle.BackColor = Color.Pink;
+                grid1.Columns[i + "article"].DefaultCellStyle.BackColor = Color.Pink;
             }
             #endregion
 

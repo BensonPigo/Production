@@ -53,11 +53,11 @@ namespace Sci.Production.Shipping
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
-            grid1.Columns[4].DefaultCellStyle.BackColor = Color.FromArgb(255,255,191);
-            grid1.Columns[5].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[6].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[8].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["Price"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["UnitID"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
         }
 
         //Find Now

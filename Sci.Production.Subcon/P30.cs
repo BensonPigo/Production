@@ -431,12 +431,12 @@ namespace Sci.Production.Subcon
             ;     
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;  
-            detailgrid.Columns[14].DefaultCellStyle.BackColor = Color.Pink; 
-            detailgrid.Columns[18].DefaultCellStyle.BackColor = Color.Pink; 
+            detailgrid.Columns["orderid"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["refno"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["threadColorid"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["delivery"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink; 
             
             #endregion
         }

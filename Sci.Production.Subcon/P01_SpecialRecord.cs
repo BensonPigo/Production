@@ -63,10 +63,10 @@ namespace Sci.Production.Subcon
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
                 .Numeric("Amount", header: "Amount", iseditingreadonly: true);
 
-            this.grid1.Columns[4].Visible = flag;
-            this.grid1.Columns[4].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
-            this.grid1.Columns[5].Visible = flag;
-            this.grid1.Columns[6].Visible = flag;
+            this.grid1.Columns["UnitPrice"].Visible = flag;
+            this.grid1.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.grid1.Columns["Price"].Visible = flag;
+            this.grid1.Columns["Amount"].Visible = flag;
 
         }
 

@@ -99,11 +99,11 @@ namespace Sci.Production.Shipping
                 .Numeric("PcsKg", header: "KG/Pcs", decimal_places: 3)
                 .CheckBox("NoDeclare", header: "No need to declare", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
 
-            grid1.Columns[4].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns[7].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns[8].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns[10].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid1.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid1.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid1.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid1.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid1.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
 
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(grid2)
@@ -120,11 +120,11 @@ namespace Sci.Production.Shipping
                 .Numeric("PcsKg", header: "KG/Pcs", decimal_places: 3)
                 .CheckBox("NoDeclare", header: "No need to declare", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
 
-            grid2.Columns[5].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns[8].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns[9].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns[10].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns[11].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid2.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid2.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid2.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid2.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
+            grid2.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
 
             this.grid3.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(grid3)

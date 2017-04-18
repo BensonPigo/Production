@@ -186,7 +186,7 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //4
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //5
                 ;
-            this.grid2.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid2.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
         }

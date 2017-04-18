@@ -216,7 +216,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //11
                ;
 
-            this.grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Close

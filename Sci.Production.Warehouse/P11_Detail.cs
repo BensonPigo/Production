@@ -189,7 +189,7 @@ from dbo.po_supp_detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8)    //2
             ;     //
 
-            this.grid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }

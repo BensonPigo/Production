@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
             cbb_fabrictype.ValueMember = "Key";
             cbb_fabrictype.DisplayMember = "Value";
 
-            grid1.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["actualweight"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void button1_Click(object sender, EventArgs e)

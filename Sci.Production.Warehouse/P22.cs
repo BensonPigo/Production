@@ -235,8 +235,8 @@ namespace Sci.Production.Warehouse
             .Text("toLocation", header: "To Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(18))    //8
             ;     //
             #endregion 欄位設定
-            this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["toLocation"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm

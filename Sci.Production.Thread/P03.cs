@@ -175,12 +175,12 @@ namespace Sci.Production.Thread
             .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10));
             #endregion
 
-            this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[13].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ThreadColorid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["pcsused"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["TotalWeight"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ThreadLocationid"].DefaultCellStyle.BackColor = Color.Pink;
 
             return base.OnGridSetup();
         }

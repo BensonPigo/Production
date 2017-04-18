@@ -371,8 +371,8 @@ where a.id= @ID", pars, out dd);
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //12
             ;     //
             #endregion 欄位設定
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";

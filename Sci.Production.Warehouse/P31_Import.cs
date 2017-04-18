@@ -166,8 +166,8 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns)  //11
                ;
 
-            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[11].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";

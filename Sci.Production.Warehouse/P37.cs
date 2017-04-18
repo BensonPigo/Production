@@ -365,7 +365,7 @@ namespace Sci.Production.Warehouse
             ;     //
             #endregion 欄位設定
 
-            detailgrid.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             
         }
 

@@ -253,7 +253,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
             .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //7
             .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false)    //8
             ;
-            this.grid1.Columns[8].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 

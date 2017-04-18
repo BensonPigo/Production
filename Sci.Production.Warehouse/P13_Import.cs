@@ -151,7 +151,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
 
-            this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void button3_Click(object sender, EventArgs e)

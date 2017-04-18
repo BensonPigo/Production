@@ -273,8 +273,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             ;     //
             #endregion 欄位設定
 
-            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm

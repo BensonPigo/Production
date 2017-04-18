@@ -238,7 +238,7 @@ namespace Sci.Production.Warehouse
             ;     //
 
             #endregion 欄位設定
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 

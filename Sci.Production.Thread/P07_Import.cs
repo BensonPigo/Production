@@ -46,7 +46,7 @@ namespace Sci.Production.Thread
                 .Numeric("UsedConebook", header: "Used cone\nin Stock", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly:
                 true)
                 .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true);
-              this.grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 

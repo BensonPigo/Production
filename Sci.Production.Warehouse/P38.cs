@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
                   .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
-            grid1.Columns[5].HeaderCell.Style.BackColor = Color.Orange;
+            grid1.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
             
             #endregion
         }

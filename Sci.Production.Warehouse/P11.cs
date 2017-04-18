@@ -201,9 +201,9 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
 
             #region 可編輯欄位變色
 
-            detailgrid.Columns[1].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
-            detailgrid.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["output"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion 可編輯欄位變色
         }

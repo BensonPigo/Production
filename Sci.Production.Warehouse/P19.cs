@@ -202,7 +202,7 @@ namespace Sci.Production.Warehouse
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
-            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm

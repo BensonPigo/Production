@@ -153,12 +153,12 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
 
             //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
             //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
-            this.grid1.Columns[12].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.grid1.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
 
-            this.grid1.Columns[11].Visible = flag;
-            this.grid1.Columns[12].Visible = flag;
-            this.grid1.Columns[13].Visible = flag;
-            this.grid1.Columns[14].Visible = flag;
+            this.grid1.Columns["Cost"].Visible = flag;
+            this.grid1.Columns["UnitPrice"].Visible = flag;
+            this.grid1.Columns["Price"].Visible = flag;
+            this.grid1.Columns["Amount"].Visible = flag;
 
         }
 

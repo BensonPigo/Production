@@ -199,11 +199,11 @@ namespace Sci.Production.Thread
             .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true);
             #endregion
 
-            this.detailgrid.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[2].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[4].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns[9].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ThreadColorid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ThreadLocationid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
 
             return base.OnGridSetup();
         }

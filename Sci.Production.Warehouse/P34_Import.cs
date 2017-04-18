@@ -223,8 +223,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))      //11
                ;
 
-            this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
         //Close
         private void button3_Click(object sender, EventArgs e)

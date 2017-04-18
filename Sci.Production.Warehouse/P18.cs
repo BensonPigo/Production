@@ -551,7 +551,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
-            detailgrid.Columns[6].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm

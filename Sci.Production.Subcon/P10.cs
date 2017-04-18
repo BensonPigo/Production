@@ -334,7 +334,7 @@ namespace Sci.Production.Subcon
                    
             #endregion
             #region 可編輯欄位變色
-            detailgrid.Columns[11].DefaultCellStyle.BackColor = Color.Pink; //qty
+            detailgrid.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink; //qty
             #endregion
         }
 

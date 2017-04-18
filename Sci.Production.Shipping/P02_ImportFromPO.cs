@@ -56,11 +56,11 @@ namespace Sci.Production.Shipping
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
 
-            grid1.Columns[0].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[5].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[8].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[10].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns[12].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            grid1.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
         }
 
         //Find Now

@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
             ;     //
 
-            this.grid.Columns[5].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             return true;
         }

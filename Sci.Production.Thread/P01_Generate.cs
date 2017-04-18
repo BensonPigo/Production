@@ -88,8 +88,8 @@ namespace Sci.Production.Thread
             .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
             .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
-            grid1.Columns[0].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            grid1.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
         private void button3_Click(object sender, EventArgs e)
         {

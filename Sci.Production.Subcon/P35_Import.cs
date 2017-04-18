@@ -160,9 +160,9 @@ namespace Sci.Production.Subcon
 
                 .Numeric("unpaid", header: "UnPaid", iseditingreadonly: true)//9
                 .Numeric("qty", header: "Qty", settings: ns);//10
-                
 
-            this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+
+            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
 
         }
 
