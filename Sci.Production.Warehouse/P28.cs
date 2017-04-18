@@ -66,7 +66,7 @@ iseditingreadonly: true)
                 {
                     if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
-                        thisRow["total_qty"] = 0.00;
+                        //thisRow["total_qty"] = 0.00;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
                         {
                             dr["selected"] = false;
