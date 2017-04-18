@@ -23,6 +23,9 @@ Delete Production.dbo.Style_ProductionKits
 from Production.dbo.Style_ProductionKits as a left join Trade_To_Pms.dbo.Style_ProductionKits as b
 on a.Ukey = b.Ukey
 where b.Ukey is null
+and ((AddDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')) 
+or (EditDate between (select DateStart from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits') and (select DateEnd from Trade_To_Pms.dbo.DateInfo where Name = 'ProductionKits')))
+
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
