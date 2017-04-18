@@ -32,6 +32,10 @@
     [SendToQA]            DATE           NULL,
     [QAReceived]          DATE           NULL,
     [StyleCUkey1_Old]     VARCHAR (11)   CONSTRAINT [DF_Style_ProductionKits_StyleCUkey1_Old] DEFAULT ('') NULL,
+    [AddName] VARCHAR(10) NULL DEFAULT (''), 
+    [AddDate] DATETIME NULL, 
+    [EditName] VARCHAR(10) NULL DEFAULT (''), 
+    [EditDate] DATETIME NULL, 
     CONSTRAINT [PK_Style_ProductionKits] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
