@@ -31,6 +31,3 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SizeCode', 
 
 
 GO
-CREATE NONCLUSTERED INDEX [idx_sizeCode]
-    ON [dbo].[Order_SizeCode]([Id] ASC, [SizeCode] ASC, [Ukey] ASC);
-

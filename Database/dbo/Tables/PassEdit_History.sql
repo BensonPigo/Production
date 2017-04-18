@@ -12,6 +12,3 @@
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_PassEdit_History]
-    ON [dbo].[PassEdit_History]([PKey] ASC);
-

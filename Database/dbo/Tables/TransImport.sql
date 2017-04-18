@@ -8,6 +8,3 @@
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_TransImport]
-    ON [dbo].[TransImport]([GroupID] ASC);
-
