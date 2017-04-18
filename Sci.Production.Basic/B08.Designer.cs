@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.labelCDCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelCPUUnit = new Sci.Win.UI.Label();
+            this.labelCombinationPieces = new Sci.Win.UI.Label();
             this.displayCDCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.displayCPUUnit = new Sci.Win.UI.DisplayBox();
@@ -58,10 +58,10 @@
             this.detailcont.Controls.Add(this.displayCPUUnit);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCDCode);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelCombinationPieces);
+            this.detailcont.Controls.Add(this.labelCPUUnit);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelCDCode);
             this.detailcont.Size = new System.Drawing.Size(687, 357);
             // 
             // detailbtm
@@ -76,41 +76,41 @@
             // 
             this.tabs.Size = new System.Drawing.Size(695, 424);
             // 
-            // label3
+            // labelCDCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(70, 39);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "CD Code";
+            this.labelCDCode.Lines = 0;
+            this.labelCDCode.Location = new System.Drawing.Point(70, 39);
+            this.labelCDCode.Name = "labelCDCode";
+            this.labelCDCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCDCode.TabIndex = 0;
+            this.labelCDCode.Text = "CD Code";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(70, 91);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(70, 91);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // label5
+            // labelCPUUnit
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(71, 143);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "CPU/Unit";
+            this.labelCPUUnit.Lines = 0;
+            this.labelCPUUnit.Location = new System.Drawing.Point(71, 143);
+            this.labelCPUUnit.Name = "labelCPUUnit";
+            this.labelCPUUnit.Size = new System.Drawing.Size(75, 23);
+            this.labelCPUUnit.TabIndex = 2;
+            this.labelCPUUnit.Text = "CPU/Unit";
             // 
-            // label6
+            // labelCombinationPieces
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(70, 195);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(128, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Combination Pieces";
+            this.labelCombinationPieces.Lines = 0;
+            this.labelCombinationPieces.Location = new System.Drawing.Point(70, 195);
+            this.labelCombinationPieces.Name = "labelCombinationPieces";
+            this.labelCombinationPieces.Size = new System.Drawing.Size(128, 23);
+            this.labelCombinationPieces.TabIndex = 3;
+            this.labelCombinationPieces.Text = "Combination Pieces";
             // 
             // displayCDCode
             // 
@@ -209,9 +209,9 @@
         private Win.UI.DisplayBox displayCPUUnit;
         private Win.UI.DisplayBox displayDescription;
         private Win.UI.DisplayBox displayCDCode;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelCombinationPieces;
+        private Win.UI.Label labelCPUUnit;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelCDCode;
     }
 }

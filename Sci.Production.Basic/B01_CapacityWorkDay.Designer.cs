@@ -34,15 +34,15 @@
             this.panel7 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.panel6 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelCapacityYear = new Sci.Win.UI.Label();
             this.comboCapacityYear = new Sci.Win.UI.ComboBox();
             this.comboArtwork = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelCapacityArtwork = new Sci.Win.UI.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.grid2 = new Sci.Win.UI.Grid();
             this.panel8 = new Sci.Win.UI.Panel();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelWorkdayYear = new Sci.Win.UI.Label();
             this.comboWorkdayYear = new Sci.Win.UI.ComboBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -124,24 +124,24 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.label1);
+            this.panel6.Controls.Add(this.labelCapacityYear);
             this.panel6.Controls.Add(this.comboCapacityYear);
             this.panel6.Controls.Add(this.comboArtwork);
-            this.panel6.Controls.Add(this.label2);
+            this.panel6.Controls.Add(this.labelCapacityArtwork);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(514, 33);
             this.panel6.TabIndex = 5;
             // 
-            // label1
+            // labelCapacityYear
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Year";
+            this.labelCapacityYear.Lines = 0;
+            this.labelCapacityYear.Location = new System.Drawing.Point(5, 5);
+            this.labelCapacityYear.Name = "labelCapacityYear";
+            this.labelCapacityYear.Size = new System.Drawing.Size(39, 23);
+            this.labelCapacityYear.TabIndex = 0;
+            this.labelCapacityYear.Text = "Year";
             // 
             // comboCapacityYear
             // 
@@ -167,14 +167,14 @@
             this.comboArtwork.TabIndex = 3;
             this.comboArtwork.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
-            // label2
+            // labelCapacityArtwork
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(191, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Artwork";
+            this.labelCapacityArtwork.Lines = 0;
+            this.labelCapacityArtwork.Location = new System.Drawing.Point(191, 5);
+            this.labelCapacityArtwork.Name = "labelCapacityArtwork";
+            this.labelCapacityArtwork.Size = new System.Drawing.Size(57, 23);
+            this.labelCapacityArtwork.TabIndex = 2;
+            this.labelCapacityArtwork.Text = "Artwork";
             // 
             // tabPage2
             // 
@@ -222,7 +222,7 @@
             // 
             // panel8
             // 
-            this.panel8.Controls.Add(this.label3);
+            this.panel8.Controls.Add(this.labelWorkdayYear);
             this.panel8.Controls.Add(this.comboWorkdayYear);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel8.Location = new System.Drawing.Point(3, 3);
@@ -230,14 +230,14 @@
             this.panel8.Size = new System.Drawing.Size(514, 33);
             this.panel8.TabIndex = 5;
             // 
-            // label3
+            // labelWorkdayYear
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(5, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Year";
+            this.labelWorkdayYear.Lines = 0;
+            this.labelWorkdayYear.Location = new System.Drawing.Point(5, 5);
+            this.labelWorkdayYear.Name = "labelWorkdayYear";
+            this.labelWorkdayYear.Size = new System.Drawing.Size(39, 23);
+            this.labelWorkdayYear.TabIndex = 2;
+            this.labelWorkdayYear.Text = "Year";
             // 
             // comboWorkdayYear
             // 
@@ -339,13 +339,13 @@
         private System.Windows.Forms.TabPage tabPage1;
         private Win.UI.Grid grid1;
         private Win.UI.ComboBox comboArtwork;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelCapacityArtwork;
         private Win.UI.ComboBox comboCapacityYear;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelCapacityYear;
         private System.Windows.Forms.TabPage tabPage2;
         private Win.UI.Grid grid2;
         private Win.UI.ComboBox comboWorkdayYear;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelWorkdayYear;
         private Win.UI.Button btnClose;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;

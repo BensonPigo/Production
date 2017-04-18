@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelName = new Sci.Win.UI.Label();
+            this.labelAddress = new Sci.Win.UI.Label();
+            this.labelTel = new Sci.Win.UI.Label();
+            this.labelTINNo = new Sci.Win.UI.Label();
+            this.labelManager = new Sci.Win.UI.Label();
+            this.labelFtyGroup = new Sci.Win.UI.Label();
+            this.labelRegionCode = new Sci.Win.UI.Label();
+            this.labelForPAPACCNo = new Sci.Win.UI.Label();
+            this.labelVAT = new Sci.Win.UI.Label();
+            this.labelWHolding = new Sci.Win.UI.Label();
+            this.labelCreditbank = new Sci.Win.UI.Label();
             this.txtCode = new Sci.Win.UI.TextBox();
             this.txtName = new Sci.Win.UI.TextBox();
             this.txtTel = new Sci.Win.UI.TextBox();
@@ -50,11 +50,11 @@
             this.txtVAT = new Sci.Win.UI.TextBox();
             this.txtWHolding = new Sci.Win.UI.TextBox();
             this.txtCreditbank = new Sci.Win.UI.TextBox();
-            this.label15 = new Sci.Win.UI.Label();
+            this.labelKeyWord = new Sci.Win.UI.Label();
             this.txtKeyWord = new Sci.Win.UI.TextBox();
             this.btnCapacityWorkday = new Sci.Win.UI.Button();
             this.checkUseSBTS = new Sci.Win.UI.CheckBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtUserManager = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -72,11 +72,11 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayM);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Controls.Add(this.checkUseSBTS);
             this.detailcont.Controls.Add(this.btnCapacityWorkday);
             this.detailcont.Controls.Add(this.txtKeyWord);
-            this.detailcont.Controls.Add(this.label15);
+            this.detailcont.Controls.Add(this.labelKeyWord);
             this.detailcont.Controls.Add(this.txtCreditbank);
             this.detailcont.Controls.Add(this.txtWHolding);
             this.detailcont.Controls.Add(this.txtVAT);
@@ -87,18 +87,18 @@
             this.detailcont.Controls.Add(this.txtTel);
             this.detailcont.Controls.Add(this.txtName);
             this.detailcont.Controls.Add(this.txtCode);
-            this.detailcont.Controls.Add(this.label14);
-            this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelCreditbank);
+            this.detailcont.Controls.Add(this.labelWHolding);
+            this.detailcont.Controls.Add(this.labelVAT);
+            this.detailcont.Controls.Add(this.labelForPAPACCNo);
+            this.detailcont.Controls.Add(this.labelRegionCode);
+            this.detailcont.Controls.Add(this.labelFtyGroup);
+            this.detailcont.Controls.Add(this.labelManager);
+            this.detailcont.Controls.Add(this.labelTINNo);
+            this.detailcont.Controls.Add(this.labelTel);
+            this.detailcont.Controls.Add(this.labelAddress);
+            this.detailcont.Controls.Add(this.labelName);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Controls.Add(this.txtUserManager);
             this.detailcont.Size = new System.Drawing.Size(830, 357);
             // 
@@ -129,113 +129,113 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(35, 14);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(85, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(35, 14);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(85, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelName
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(35, 41);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(85, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Name";
+            this.labelName.Lines = 0;
+            this.labelName.Location = new System.Drawing.Point(35, 41);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(85, 23);
+            this.labelName.TabIndex = 1;
+            this.labelName.Text = "Name";
             // 
-            // label5
+            // labelAddress
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(35, 68);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(85, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Address";
+            this.labelAddress.Lines = 0;
+            this.labelAddress.Location = new System.Drawing.Point(35, 68);
+            this.labelAddress.Name = "labelAddress";
+            this.labelAddress.Size = new System.Drawing.Size(85, 23);
+            this.labelAddress.TabIndex = 2;
+            this.labelAddress.Text = "Address";
             // 
-            // label6
+            // labelTel
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(35, 142);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(85, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Tel";
+            this.labelTel.Lines = 0;
+            this.labelTel.Location = new System.Drawing.Point(35, 142);
+            this.labelTel.Name = "labelTel";
+            this.labelTel.Size = new System.Drawing.Size(85, 23);
+            this.labelTel.TabIndex = 3;
+            this.labelTel.Text = "Tel";
             // 
-            // label7
+            // labelTINNo
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(35, 169);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(85, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "TIN No.";
+            this.labelTINNo.Lines = 0;
+            this.labelTINNo.Location = new System.Drawing.Point(35, 169);
+            this.labelTINNo.Name = "labelTINNo";
+            this.labelTINNo.Size = new System.Drawing.Size(85, 23);
+            this.labelTINNo.TabIndex = 4;
+            this.labelTINNo.Text = "TIN No.";
             // 
-            // label8
+            // labelManager
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(35, 196);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(85, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Manager";
+            this.labelManager.Lines = 0;
+            this.labelManager.Location = new System.Drawing.Point(35, 196);
+            this.labelManager.Name = "labelManager";
+            this.labelManager.Size = new System.Drawing.Size(85, 23);
+            this.labelManager.TabIndex = 5;
+            this.labelManager.Text = "Manager";
             // 
-            // label9
+            // labelFtyGroup
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(35, 223);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(85, 23);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Fty Group";
+            this.labelFtyGroup.Lines = 0;
+            this.labelFtyGroup.Location = new System.Drawing.Point(35, 223);
+            this.labelFtyGroup.Name = "labelFtyGroup";
+            this.labelFtyGroup.Size = new System.Drawing.Size(85, 23);
+            this.labelFtyGroup.TabIndex = 6;
+            this.labelFtyGroup.Text = "Fty Group";
             // 
-            // label10
+            // labelRegionCode
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(35, 250);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(85, 23);
-            this.label10.TabIndex = 7;
-            this.label10.Text = "Region Code";
+            this.labelRegionCode.Lines = 0;
+            this.labelRegionCode.Location = new System.Drawing.Point(35, 250);
+            this.labelRegionCode.Name = "labelRegionCode";
+            this.labelRegionCode.Size = new System.Drawing.Size(85, 23);
+            this.labelRegionCode.TabIndex = 7;
+            this.labelRegionCode.Text = "Region Code";
             // 
-            // label11
+            // labelForPAPACCNo
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(35, 277);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(115, 23);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "For PAP ACC No.";
+            this.labelForPAPACCNo.Lines = 0;
+            this.labelForPAPACCNo.Location = new System.Drawing.Point(35, 277);
+            this.labelForPAPACCNo.Name = "labelForPAPACCNo";
+            this.labelForPAPACCNo.Size = new System.Drawing.Size(115, 23);
+            this.labelForPAPACCNo.TabIndex = 8;
+            this.labelForPAPACCNo.Text = "For PAP ACC No.";
             // 
-            // label12
+            // labelVAT
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(70, 304);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(33, 23);
-            this.label12.TabIndex = 9;
-            this.label12.Text = "VAT";
+            this.labelVAT.Lines = 0;
+            this.labelVAT.Location = new System.Drawing.Point(70, 304);
+            this.labelVAT.Name = "labelVAT";
+            this.labelVAT.Size = new System.Drawing.Size(33, 23);
+            this.labelVAT.TabIndex = 9;
+            this.labelVAT.Text = "VAT";
             // 
-            // label13
+            // labelWHolding
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(221, 304);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(70, 23);
-            this.label13.TabIndex = 10;
-            this.label13.Text = "W/Holding";
+            this.labelWHolding.Lines = 0;
+            this.labelWHolding.Location = new System.Drawing.Point(221, 304);
+            this.labelWHolding.Name = "labelWHolding";
+            this.labelWHolding.Size = new System.Drawing.Size(70, 23);
+            this.labelWHolding.TabIndex = 10;
+            this.labelWHolding.Text = "W/Holding";
             // 
-            // label14
+            // labelCreditbank
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(408, 304);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 23);
-            this.label14.TabIndex = 11;
-            this.label14.Text = "Credit bank";
+            this.labelCreditbank.Lines = 0;
+            this.labelCreditbank.Location = new System.Drawing.Point(408, 304);
+            this.labelCreditbank.Name = "labelCreditbank";
+            this.labelCreditbank.Size = new System.Drawing.Size(75, 23);
+            this.labelCreditbank.TabIndex = 11;
+            this.labelCreditbank.Text = "Credit bank";
             // 
             // txtCode
             // 
@@ -345,14 +345,14 @@
             this.txtCreditbank.TabIndex = 12;
             this.txtCreditbank.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             // 
-            // label15
+            // labelKeyWord
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(227, 14);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(70, 23);
-            this.label15.TabIndex = 22;
-            this.label15.Text = "Key Word";
+            this.labelKeyWord.Lines = 0;
+            this.labelKeyWord.Location = new System.Drawing.Point(227, 14);
+            this.labelKeyWord.Name = "labelKeyWord";
+            this.labelKeyWord.Size = new System.Drawing.Size(70, 23);
+            this.labelKeyWord.TabIndex = 22;
+            this.labelKeyWord.Text = "Key Word";
             // 
             // txtKeyWord
             // 
@@ -388,14 +388,14 @@
             this.checkUseSBTS.Text = "Use SBTS";
             this.checkUseSBTS.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(376, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(19, 23);
-            this.label1.TabIndex = 27;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(376, 14);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(19, 23);
+            this.labelM.TabIndex = 27;
+            this.labelM.Text = "M";
             // 
             // displayM
             // 
@@ -443,7 +443,7 @@
 
         #endregion
 
-        private Win.UI.Label label15;
+        private Win.UI.Label labelKeyWord;
         private Win.UI.TextBox txtCreditbank;
         private Win.UI.TextBox txtWHolding;
         private Win.UI.TextBox txtVAT;
@@ -454,23 +454,23 @@
         private Win.UI.TextBox txtTel;
         private Win.UI.TextBox txtName;
         private Win.UI.TextBox txtCode;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelCreditbank;
+        private Win.UI.Label labelWHolding;
+        private Win.UI.Label labelVAT;
+        private Win.UI.Label labelForPAPACCNo;
+        private Win.UI.Label labelRegionCode;
+        private Win.UI.Label labelFtyGroup;
+        private Win.UI.Label labelManager;
+        private Win.UI.Label labelTINNo;
+        private Win.UI.Label labelTel;
+        private Win.UI.Label labelAddress;
+        private Win.UI.Label labelName;
+        private Win.UI.Label labelCode;
         private Win.UI.TextBox txtKeyWord;
         private Class.txtuser txtUserManager;
         private Win.UI.CheckBox checkUseSBTS;
         private Win.UI.Button btnCapacityWorkday;
         private Win.UI.DisplayBox displayM;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelM;
     }
 }

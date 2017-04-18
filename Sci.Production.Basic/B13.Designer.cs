@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
+            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.labelArtwork = new Sci.Win.UI.Label();
+            this.labelProduction = new Sci.Win.UI.Label();
             this.displayArtwork = new Sci.Win.UI.DisplayBox();
             this.displayProduction = new Sci.Win.UI.DisplayBox();
             this.comboMaterialType = new Sci.Win.UI.ComboBox();
@@ -38,7 +38,7 @@
             this.checkExtend = new Sci.Win.UI.CheckBox();
             this.checkZipper = new Sci.Win.UI.CheckBox();
             this.checkIsICRItem = new Sci.Win.UI.CheckBox();
-            this.label6 = new Sci.Win.UI.Label();
+            this.labelIssueType = new Sci.Win.UI.Label();
             this.txtDropdownlistIssueType = new Sci.Production.Class.txtdropdownlist();
             this.checkIsTrimCardOther = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -57,7 +57,7 @@
             // 
             this.detailcont.Controls.Add(this.checkIsTrimCardOther);
             this.detailcont.Controls.Add(this.txtDropdownlistIssueType);
-            this.detailcont.Controls.Add(this.label6);
+            this.detailcont.Controls.Add(this.labelIssueType);
             this.detailcont.Controls.Add(this.checkIsICRItem);
             this.detailcont.Controls.Add(this.checkZipper);
             this.detailcont.Controls.Add(this.checkExtend);
@@ -65,9 +65,9 @@
             this.detailcont.Controls.Add(this.comboMaterialType);
             this.detailcont.Controls.Add(this.displayProduction);
             this.detailcont.Controls.Add(this.displayArtwork);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelProduction);
+            this.detailcont.Controls.Add(this.labelArtwork);
+            this.detailcont.Controls.Add(this.labelMaterialType);
             this.detailcont.Size = new System.Drawing.Size(828, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -97,32 +97,32 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(425, 13);
             // 
-            // label3
+            // labelMaterialType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(70, 30);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Material Type";
+            this.labelMaterialType.Lines = 0;
+            this.labelMaterialType.Location = new System.Drawing.Point(70, 30);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(90, 23);
+            this.labelMaterialType.TabIndex = 0;
+            this.labelMaterialType.Text = "Material Type";
             // 
-            // label4
+            // labelArtwork
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(70, 70);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Artwork";
+            this.labelArtwork.Lines = 0;
+            this.labelArtwork.Location = new System.Drawing.Point(70, 70);
+            this.labelArtwork.Name = "labelArtwork";
+            this.labelArtwork.Size = new System.Drawing.Size(90, 23);
+            this.labelArtwork.TabIndex = 1;
+            this.labelArtwork.Text = "Artwork";
             // 
-            // label5
+            // labelProduction
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(70, 110);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Production";
+            this.labelProduction.Lines = 0;
+            this.labelProduction.Location = new System.Drawing.Point(70, 110);
+            this.labelProduction.Name = "labelProduction";
+            this.labelProduction.Size = new System.Drawing.Size(90, 23);
+            this.labelProduction.TabIndex = 2;
+            this.labelProduction.Text = "Production";
             // 
             // displayArtwork
             // 
@@ -205,14 +205,14 @@
             this.checkIsICRItem.Text = "is ICR Item";
             this.checkIsICRItem.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // labelIssueType
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(70, 150);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(90, 23);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Issue Type";
+            this.labelIssueType.Lines = 0;
+            this.labelIssueType.Location = new System.Drawing.Point(70, 150);
+            this.labelIssueType.Name = "labelIssueType";
+            this.labelIssueType.Size = new System.Drawing.Size(90, 23);
+            this.labelIssueType.TabIndex = 11;
+            this.labelIssueType.Text = "Issue Type";
             // 
             // txtDropdownlistIssueType
             // 
@@ -272,14 +272,14 @@
         private Win.UI.ComboBox comboMaterialType;
         private Win.UI.DisplayBox displayProduction;
         private Win.UI.DisplayBox displayArtwork;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelProduction;
+        private Win.UI.Label labelArtwork;
+        private Win.UI.Label labelMaterialType;
         private Win.UI.CheckBox checkIsICRItem;
         private Win.UI.CheckBox checkZipper;
         private Win.UI.CheckBox checkExtend;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.Label label6;
+        private Win.UI.Label labelIssueType;
         private Class.txtdropdownlist txtDropdownlistIssueType;
         private Win.UI.CheckBox checkIsTrimCardOther;
     }

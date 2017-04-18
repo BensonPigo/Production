@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.labelProdType = new Sci.Win.UI.Label();
+            this.labelFabricType = new Sci.Win.UI.Label();
+            this.labelTop = new Sci.Win.UI.Label();
+            this.labelBottom = new Sci.Win.UI.Label();
+            this.labelInner = new Sci.Win.UI.Label();
+            this.labelOuter = new Sci.Win.UI.Label();
             this.txtProdTypeTop = new Sci.Win.UI.TextBox();
             this.txtFabricTypeTop = new Sci.Win.UI.TextBox();
             this.txtProdTypeBottom = new Sci.Win.UI.TextBox();
@@ -65,59 +65,59 @@
             this.undo.Location = new System.Drawing.Point(328, 5);
             this.undo.Size = new System.Drawing.Size(80, 34);
             // 
-            // label1
+            // labelProdType
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(129, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Prod. Type";
+            this.labelProdType.Lines = 0;
+            this.labelProdType.Location = new System.Drawing.Point(129, 21);
+            this.labelProdType.Name = "labelProdType";
+            this.labelProdType.Size = new System.Drawing.Size(80, 23);
+            this.labelProdType.TabIndex = 94;
+            this.labelProdType.Text = "Prod. Type";
             // 
-            // label2
+            // labelFabricType
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(283, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Fabric Type";
+            this.labelFabricType.Lines = 0;
+            this.labelFabricType.Location = new System.Drawing.Point(283, 21);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(80, 23);
+            this.labelFabricType.TabIndex = 95;
+            this.labelFabricType.Text = "Fabric Type";
             // 
-            // label3
+            // labelTop
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(25, 58);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Top";
+            this.labelTop.Lines = 0;
+            this.labelTop.Location = new System.Drawing.Point(25, 58);
+            this.labelTop.Name = "labelTop";
+            this.labelTop.Size = new System.Drawing.Size(60, 23);
+            this.labelTop.TabIndex = 96;
+            this.labelTop.Text = "Top";
             // 
-            // label4
+            // labelBottom
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(25, 96);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Bottom";
+            this.labelBottom.Lines = 0;
+            this.labelBottom.Location = new System.Drawing.Point(25, 96);
+            this.labelBottom.Name = "labelBottom";
+            this.labelBottom.Size = new System.Drawing.Size(60, 23);
+            this.labelBottom.TabIndex = 97;
+            this.labelBottom.Text = "Bottom";
             // 
-            // label5
+            // labelInner
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(25, 134);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(60, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Inner";
+            this.labelInner.Lines = 0;
+            this.labelInner.Location = new System.Drawing.Point(25, 134);
+            this.labelInner.Name = "labelInner";
+            this.labelInner.Size = new System.Drawing.Size(60, 23);
+            this.labelInner.TabIndex = 98;
+            this.labelInner.Text = "Inner";
             // 
-            // label6
+            // labelOuter
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(25, 172);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(60, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Outer";
+            this.labelOuter.Lines = 0;
+            this.labelOuter.Location = new System.Drawing.Point(25, 172);
+            this.labelOuter.Name = "labelOuter";
+            this.labelOuter.Size = new System.Drawing.Size(60, 23);
+            this.labelOuter.TabIndex = 99;
+            this.labelOuter.Text = "Outer";
             // 
             // txtProdTypeTop
             // 
@@ -226,22 +226,22 @@
             this.Controls.Add(this.txtProdTypeBottom);
             this.Controls.Add(this.txtFabricTypeTop);
             this.Controls.Add(this.txtProdTypeTop);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelOuter);
+            this.Controls.Add(this.labelInner);
+            this.Controls.Add(this.labelBottom);
+            this.Controls.Add(this.labelTop);
+            this.Controls.Add(this.labelFabricType);
+            this.Controls.Add(this.labelProdType);
             this.Name = "B08_ProductionFabricType";
             this.Text = "Prod./Fabric Type";
             this.WorkAlias = "CDCode_Content";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.labelProdType, 0);
+            this.Controls.SetChildIndex(this.labelFabricType, 0);
+            this.Controls.SetChildIndex(this.labelTop, 0);
+            this.Controls.SetChildIndex(this.labelBottom, 0);
+            this.Controls.SetChildIndex(this.labelInner, 0);
+            this.Controls.SetChildIndex(this.labelOuter, 0);
             this.Controls.SetChildIndex(this.txtProdTypeTop, 0);
             this.Controls.SetChildIndex(this.txtFabricTypeTop, 0);
             this.Controls.SetChildIndex(this.txtProdTypeBottom, 0);
@@ -259,12 +259,12 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
+        private Win.UI.Label labelProdType;
+        private Win.UI.Label labelFabricType;
+        private Win.UI.Label labelTop;
+        private Win.UI.Label labelBottom;
+        private Win.UI.Label labelInner;
+        private Win.UI.Label labelOuter;
         private Win.UI.TextBox txtProdTypeTop;
         private Win.UI.TextBox txtFabricTypeTop;
         private Win.UI.TextBox txtProdTypeBottom;

@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
+            this.labelA = new Sci.Win.UI.Label();
+            this.labelB = new Sci.Win.UI.Label();
+            this.labelC = new Sci.Win.UI.Label();
+            this.labelD = new Sci.Win.UI.Label();
             this.editA = new Sci.Win.UI.EditBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.editB = new Sci.Win.UI.EditBox();
@@ -64,41 +64,41 @@
             this.undo.Size = new System.Drawing.Size(80, 34);
             this.undo.TabIndex = 2;
             // 
-            // label1
+            // labelA
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(3, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(24, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "(A)";
+            this.labelA.Lines = 0;
+            this.labelA.Location = new System.Drawing.Point(3, 7);
+            this.labelA.Name = "labelA";
+            this.labelA.Size = new System.Drawing.Size(24, 23);
+            this.labelA.TabIndex = 94;
+            this.labelA.Text = "(A)";
             // 
-            // label2
+            // labelB
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(547, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(24, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "(B)";
+            this.labelB.Lines = 0;
+            this.labelB.Location = new System.Drawing.Point(547, 7);
+            this.labelB.Name = "labelB";
+            this.labelB.Size = new System.Drawing.Size(24, 23);
+            this.labelB.TabIndex = 95;
+            this.labelB.Text = "(B)";
             // 
-            // label3
+            // labelC
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(3, 183);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(24, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "(C)";
+            this.labelC.Lines = 0;
+            this.labelC.Location = new System.Drawing.Point(3, 183);
+            this.labelC.Name = "labelC";
+            this.labelC.Size = new System.Drawing.Size(24, 23);
+            this.labelC.TabIndex = 96;
+            this.labelC.Text = "(C)";
             // 
-            // label4
+            // labelD
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(547, 183);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(24, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "(D)";
+            this.labelD.Lines = 0;
+            this.labelD.Location = new System.Drawing.Point(547, 183);
+            this.labelD.Name = "labelD";
+            this.labelD.Size = new System.Drawing.Size(24, 23);
+            this.labelD.TabIndex = 97;
+            this.labelD.Text = "(D)";
             // 
             // editA
             // 
@@ -161,19 +161,19 @@
             this.Controls.Add(this.editB);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.editA);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelD);
+            this.Controls.Add(this.labelC);
+            this.Controls.Add(this.labelB);
+            this.Controls.Add(this.labelA);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.Name = "B11_ShippingMark";
             this.WorkAlias = "CustCD";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.labelA, 0);
+            this.Controls.SetChildIndex(this.labelB, 0);
+            this.Controls.SetChildIndex(this.labelC, 0);
+            this.Controls.SetChildIndex(this.labelD, 0);
             this.Controls.SetChildIndex(this.editA, 0);
             this.Controls.SetChildIndex(this.pictureBox1, 0);
             this.Controls.SetChildIndex(this.editB, 0);
@@ -189,10 +189,10 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelA;
+        private Win.UI.Label labelB;
+        private Win.UI.Label labelC;
+        private Win.UI.Label labelD;
         private Win.UI.EditBox editA;
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.EditBox editB;

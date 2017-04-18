@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelArtworkType = new Sci.Win.UI.Label();
+            this.labelClassify = new Sci.Win.UI.Label();
+            this.labelUnit = new Sci.Win.UI.Label();
+            this.labelProductionunit = new Sci.Win.UI.Label();
+            this.labelInHouseOSP = new Sci.Win.UI.Label();
+            this.labelSubprocessBCSLeadTime = new Sci.Win.UI.Label();
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess = new Sci.Win.UI.Label();
+            this.labelMachineID = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelAbbr = new Sci.Win.UI.Label();
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayAbbr = new Sci.Win.UI.DisplayBox();
             this.displayArtworkType = new Sci.Win.UI.DisplayBox();
@@ -89,17 +89,17 @@
             this.detailcont.Controls.Add(this.displayArtworkType);
             this.detailcont.Controls.Add(this.displayAbbr);
             this.detailcont.Controls.Add(this.displayCode);
-            this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelAbbr);
+            this.detailcont.Controls.Add(this.labelRemark);
+            this.detailcont.Controls.Add(this.labelMachineID);
+            this.detailcont.Controls.Add(this.labelStdLTDayb41stCutDateBaseOnSubProcess);
+            this.detailcont.Controls.Add(this.labelSubprocessBCSLeadTime);
+            this.detailcont.Controls.Add(this.labelInHouseOSP);
+            this.detailcont.Controls.Add(this.labelProductionunit);
+            this.detailcont.Controls.Add(this.labelUnit);
+            this.detailcont.Controls.Add(this.labelClassify);
+            this.detailcont.Controls.Add(this.labelArtworkType);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(832, 403);
             this.detailcont.TabIndex = 0;
             // 
@@ -135,102 +135,102 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 27);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(27, 10);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(110, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelArtworkType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 40);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(110, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Artwork Type";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(27, 40);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(110, 23);
+            this.labelArtworkType.TabIndex = 1;
+            this.labelArtworkType.Text = "Artwork Type";
             // 
-            // label5
+            // labelClassify
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 70);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(110, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Classify";
+            this.labelClassify.Lines = 0;
+            this.labelClassify.Location = new System.Drawing.Point(27, 70);
+            this.labelClassify.Name = "labelClassify";
+            this.labelClassify.Size = new System.Drawing.Size(110, 23);
+            this.labelClassify.TabIndex = 2;
+            this.labelClassify.Text = "Classify";
             // 
-            // label6
+            // labelUnit
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 100);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(27, 100);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(110, 23);
+            this.labelUnit.TabIndex = 3;
+            this.labelUnit.Text = "Unit";
             // 
-            // label7
+            // labelProductionunit
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 130);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(110, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Production unit";
+            this.labelProductionunit.Lines = 0;
+            this.labelProductionunit.Location = new System.Drawing.Point(27, 130);
+            this.labelProductionunit.Name = "labelProductionunit";
+            this.labelProductionunit.Size = new System.Drawing.Size(110, 23);
+            this.labelProductionunit.TabIndex = 4;
+            this.labelProductionunit.Text = "Production unit";
             // 
-            // label8
+            // labelInHouseOSP
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(27, 160);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(110, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "InHouse/OSP";
+            this.labelInHouseOSP.Lines = 0;
+            this.labelInHouseOSP.Location = new System.Drawing.Point(27, 160);
+            this.labelInHouseOSP.Name = "labelInHouseOSP";
+            this.labelInHouseOSP.Size = new System.Drawing.Size(110, 23);
+            this.labelInHouseOSP.TabIndex = 5;
+            this.labelInHouseOSP.Text = "InHouse/OSP";
             // 
-            // label9
+            // labelSubprocessBCSLeadTime
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(27, 190);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(110, 46);
-            this.label9.TabIndex = 6;
+            this.labelSubprocessBCSLeadTime.Lines = 0;
+            this.labelSubprocessBCSLeadTime.Location = new System.Drawing.Point(27, 190);
+            this.labelSubprocessBCSLeadTime.Name = "labelSubprocessBCSLeadTime";
+            this.labelSubprocessBCSLeadTime.Size = new System.Drawing.Size(110, 46);
+            this.labelSubprocessBCSLeadTime.TabIndex = 6;
             // 
-            // label10
+            // labelStdLTDayb41stCutDateBaseOnSubProcess
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(27, 243);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(110, 69);
-            this.label10.TabIndex = 7;
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Lines = 0;
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Location = new System.Drawing.Point(27, 243);
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Name = "labelStdLTDayb41stCutDateBaseOnSubProcess";
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Size = new System.Drawing.Size(110, 69);
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.TabIndex = 7;
             // 
-            // label11
+            // labelMachineID
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(27, 319);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(110, 23);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "Machine ID";
+            this.labelMachineID.Lines = 0;
+            this.labelMachineID.Location = new System.Drawing.Point(27, 319);
+            this.labelMachineID.Name = "labelMachineID";
+            this.labelMachineID.Size = new System.Drawing.Size(110, 23);
+            this.labelMachineID.TabIndex = 8;
+            this.labelMachineID.Text = "Machine ID";
             // 
-            // label12
+            // labelRemark
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(27, 373);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(110, 23);
-            this.label12.TabIndex = 9;
-            this.label12.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(27, 373);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(110, 23);
+            this.labelRemark.TabIndex = 9;
+            this.labelRemark.Text = "Remark";
             // 
-            // label13
+            // labelAbbr
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(238, 10);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(40, 23);
-            this.label13.TabIndex = 10;
-            this.label13.Text = "Abbr";
+            this.labelAbbr.Lines = 0;
+            this.labelAbbr.Location = new System.Drawing.Point(238, 10);
+            this.labelAbbr.Name = "labelAbbr";
+            this.labelAbbr.Size = new System.Drawing.Size(40, 23);
+            this.labelAbbr.TabIndex = 10;
+            this.labelAbbr.Text = "Abbr";
             // 
             // displayCode
             // 
@@ -488,17 +488,17 @@
 
         #endregion
 
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelMachineID;
+        private Win.UI.Label labelStdLTDayb41stCutDateBaseOnSubProcess;
+        private Win.UI.Label labelSubprocessBCSLeadTime;
+        private Win.UI.Label labelInHouseOSP;
+        private Win.UI.Label labelProductionunit;
+        private Win.UI.Label labelUnit;
+        private Win.UI.Label labelClassify;
+        private Win.UI.Label labelArtworkType;
+        private Win.UI.Label labelCode;
+        private Win.UI.Label labelAbbr;
+        private Win.UI.Label labelRemark;
         private Win.UI.DisplayBox displayProductionUnit;
         private Class.txtdropdownlist txtDropdownlistClassify;
         private Win.UI.DisplayBox displayRemark;

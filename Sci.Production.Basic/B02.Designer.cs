@@ -28,48 +28,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelCPUTMS = new Sci.Win.UI.Label();
             this.num1CPUTMS = new Sci.Win.UI.NumericBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelSampleRate = new Sci.Win.UI.Label();
             this.numSample = new Sci.Win.UI.NumericBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelAccountKeyword = new Sci.Win.UI.Label();
             this.displayAccountKeyword = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
+            this.labelLocalCurrency = new Sci.Win.UI.Label();
             this.displayLocalCurrency = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
+            this.labelUSDRate = new Sci.Win.UI.Label();
             this.numUSDRate = new Sci.Win.UI.NumericBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
+            this.labelPOApproved = new Sci.Win.UI.Label();
+            this.labelAutoApprovedWhileDateBefore = new Sci.Win.UI.Label();
             this.numericUpDownAutoApprovedWhileDateBefore = new Sci.Win.UI.NumericUpDown();
             this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
+            this.labelRegionCode = new Sci.Win.UI.Label();
             this.displayRegionCode = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.labelCuttingLeadTime = new Sci.Win.UI.Label();
             this.numCuttingLeadTime = new Sci.Win.UI.NumericBox();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelMtlInspectionLeadTime = new Sci.Win.UI.Label();
             this.numMtlInspectionLeadTime = new Sci.Win.UI.NumericBox();
-            this.label12 = new Sci.Win.UI.Label();
+            this.labelReadyDayByProd = new Sci.Win.UI.Label();
             this.numReadyDayByProd = new Sci.Win.UI.NumericBox();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelDailyOutputLockDate = new Sci.Win.UI.Label();
             this.dateDailyOutputLockDate = new Sci.Win.UI.DateBox();
-            this.label14 = new Sci.Win.UI.Label();
+            this.labelPulloutLockDate = new Sci.Win.UI.Label();
             this.datePulloutLockDate = new Sci.Win.UI.DateBox();
-            this.label15 = new Sci.Win.UI.Label();
+            this.labelSMTPIP = new Sci.Win.UI.Label();
             this.txtSMTPIP = new Sci.Win.UI.TextBox();
-            this.label16 = new Sci.Win.UI.Label();
+            this.labelSendFrom = new Sci.Win.UI.Label();
             this.txtSendFrom = new Sci.Win.UI.TextBox();
-            this.label17 = new Sci.Win.UI.Label();
+            this.labelEmailID = new Sci.Win.UI.Label();
             this.txtEmailID = new Sci.Win.UI.TextBox();
-            this.label18 = new Sci.Win.UI.Label();
+            this.labelEmailPassword = new Sci.Win.UI.Label();
             this.txtEmailPassword = new Sci.Win.UI.TextBox();
-            this.label19 = new Sci.Win.UI.Label();
+            this.labelFTPIP = new Sci.Win.UI.Label();
             this.txtFTPIP = new Sci.Win.UI.TextBox();
-            this.label20 = new Sci.Win.UI.Label();
+            this.labelFTPID = new Sci.Win.UI.Label();
             this.txtFTPID = new Sci.Win.UI.TextBox();
-            this.label21 = new Sci.Win.UI.Label();
+            this.labelFTPPassword = new Sci.Win.UI.Label();
             this.txtFTPPassword = new Sci.Win.UI.TextBox();
-            this.label22 = new Sci.Win.UI.Label();
-            this.label23 = new Sci.Win.UI.Label();
+            this.labelSketchFilesPath = new Sci.Win.UI.Label();
+            this.labelClipFilesPath = new Sci.Win.UI.Label();
             this.txtSketchFilesPath = new Sci.Win.UI.TextBox();
             this.txtCilpFilesPath = new Sci.Win.UI.TextBox();
             this.btnMailTo = new Sci.Win.UI.Button();
@@ -92,14 +92,14 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // labelCPUTMS
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(17, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "1CPU / TMS";
+            this.labelCPUTMS.Lines = 0;
+            this.labelCPUTMS.Location = new System.Drawing.Point(17, 15);
+            this.labelCPUTMS.Name = "labelCPUTMS";
+            this.labelCPUTMS.Size = new System.Drawing.Size(85, 23);
+            this.labelCPUTMS.TabIndex = 1;
+            this.labelCPUTMS.Text = "1CPU / TMS";
             // 
             // num1CPUTMS
             // 
@@ -123,14 +123,14 @@
             0,
             0});
             // 
-            // label2
+            // labelSampleRate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(203, 15);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Sample Rate";
+            this.labelSampleRate.Lines = 0;
+            this.labelSampleRate.Location = new System.Drawing.Point(203, 15);
+            this.labelSampleRate.Name = "labelSampleRate";
+            this.labelSampleRate.Size = new System.Drawing.Size(85, 23);
+            this.labelSampleRate.TabIndex = 3;
+            this.labelSampleRate.Text = "Sample Rate";
             // 
             // numSample
             // 
@@ -154,14 +154,14 @@
             0,
             0});
             // 
-            // label3
+            // labelAccountKeyword
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(378, 15);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(114, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Account Keyword";
+            this.labelAccountKeyword.Lines = 0;
+            this.labelAccountKeyword.Location = new System.Drawing.Point(378, 15);
+            this.labelAccountKeyword.Name = "labelAccountKeyword";
+            this.labelAccountKeyword.Size = new System.Drawing.Size(114, 23);
+            this.labelAccountKeyword.TabIndex = 5;
+            this.labelAccountKeyword.Text = "Account Keyword";
             // 
             // displayAccountKeyword
             // 
@@ -173,14 +173,14 @@
             this.displayAccountKeyword.Size = new System.Drawing.Size(34, 23);
             this.displayAccountKeyword.TabIndex = 2;
             // 
-            // label4
+            // labelLocalCurrency
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(17, 54);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(97, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Local Currency";
+            this.labelLocalCurrency.Lines = 0;
+            this.labelLocalCurrency.Location = new System.Drawing.Point(17, 54);
+            this.labelLocalCurrency.Name = "labelLocalCurrency";
+            this.labelLocalCurrency.Size = new System.Drawing.Size(97, 23);
+            this.labelLocalCurrency.TabIndex = 7;
+            this.labelLocalCurrency.Text = "Local Currency";
             // 
             // displayLocalCurrency
             // 
@@ -192,14 +192,14 @@
             this.displayLocalCurrency.Size = new System.Drawing.Size(64, 23);
             this.displayLocalCurrency.TabIndex = 4;
             // 
-            // label5
+            // labelUSDRate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(17, 83);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(97, 23);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "USD Rate";
+            this.labelUSDRate.Lines = 0;
+            this.labelUSDRate.Location = new System.Drawing.Point(17, 83);
+            this.labelUSDRate.Name = "labelUSDRate";
+            this.labelUSDRate.Size = new System.Drawing.Size(97, 23);
+            this.labelUSDRate.TabIndex = 9;
+            this.labelUSDRate.Text = "USD Rate";
             // 
             // numUSDRate
             // 
@@ -224,23 +224,23 @@
             0,
             0});
             // 
-            // label6
+            // labelPOApproved
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(279, 54);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(91, 23);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "P/O Approved";
+            this.labelPOApproved.Lines = 0;
+            this.labelPOApproved.Location = new System.Drawing.Point(279, 54);
+            this.labelPOApproved.Name = "labelPOApproved";
+            this.labelPOApproved.Size = new System.Drawing.Size(91, 23);
+            this.labelPOApproved.TabIndex = 11;
+            this.labelPOApproved.Text = "P/O Approved";
             // 
-            // label7
+            // labelAutoApprovedWhileDateBefore
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(279, 83);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(204, 23);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Auto Approved while date before";
+            this.labelAutoApprovedWhileDateBefore.Lines = 0;
+            this.labelAutoApprovedWhileDateBefore.Location = new System.Drawing.Point(279, 83);
+            this.labelAutoApprovedWhileDateBefore.Name = "labelAutoApprovedWhileDateBefore";
+            this.labelAutoApprovedWhileDateBefore.Size = new System.Drawing.Size(204, 23);
+            this.labelAutoApprovedWhileDateBefore.TabIndex = 13;
+            this.labelAutoApprovedWhileDateBefore.Text = "Auto Approved while date before";
             // 
             // numericUpDownAutoApprovedWhileDateBefore
             // 
@@ -276,14 +276,14 @@
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // label9
+            // labelRegionCode
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(579, 15);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(86, 23);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Region Code";
+            this.labelRegionCode.Lines = 0;
+            this.labelRegionCode.Location = new System.Drawing.Point(579, 15);
+            this.labelRegionCode.Name = "labelRegionCode";
+            this.labelRegionCode.Size = new System.Drawing.Size(86, 23);
+            this.labelRegionCode.TabIndex = 16;
+            this.labelRegionCode.Text = "Region Code";
             // 
             // displayRegionCode
             // 
@@ -295,14 +295,14 @@
             this.displayRegionCode.Size = new System.Drawing.Size(45, 23);
             this.displayRegionCode.TabIndex = 3;
             // 
-            // label10
+            // labelCuttingLeadTime
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(17, 122);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(119, 23);
-            this.label10.TabIndex = 18;
-            this.label10.Text = "Cutting Lead Time";
+            this.labelCuttingLeadTime.Lines = 0;
+            this.labelCuttingLeadTime.Location = new System.Drawing.Point(17, 122);
+            this.labelCuttingLeadTime.Name = "labelCuttingLeadTime";
+            this.labelCuttingLeadTime.Size = new System.Drawing.Size(119, 23);
+            this.labelCuttingLeadTime.TabIndex = 18;
+            this.labelCuttingLeadTime.Text = "Cutting Lead Time";
             // 
             // numCuttingLeadTime
             // 
@@ -324,14 +324,14 @@
             0,
             0});
             // 
-            // label11
+            // labelMtlInspectionLeadTime
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(247, 122);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(162, 23);
-            this.label11.TabIndex = 20;
-            this.label11.Text = "Mtl. Inspection Lead Time";
+            this.labelMtlInspectionLeadTime.Lines = 0;
+            this.labelMtlInspectionLeadTime.Location = new System.Drawing.Point(247, 122);
+            this.labelMtlInspectionLeadTime.Name = "labelMtlInspectionLeadTime";
+            this.labelMtlInspectionLeadTime.Size = new System.Drawing.Size(162, 23);
+            this.labelMtlInspectionLeadTime.TabIndex = 20;
+            this.labelMtlInspectionLeadTime.Text = "Mtl. Inspection Lead Time";
             // 
             // numMtlInspectionLeadTime
             // 
@@ -353,14 +353,14 @@
             0,
             0});
             // 
-            // label12
+            // labelReadyDayByProd
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(514, 122);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(125, 23);
-            this.label12.TabIndex = 22;
-            this.label12.Text = "Ready day by Prod.";
+            this.labelReadyDayByProd.Lines = 0;
+            this.labelReadyDayByProd.Location = new System.Drawing.Point(514, 122);
+            this.labelReadyDayByProd.Name = "labelReadyDayByProd";
+            this.labelReadyDayByProd.Size = new System.Drawing.Size(125, 23);
+            this.labelReadyDayByProd.TabIndex = 22;
+            this.labelReadyDayByProd.Text = "Ready day by Prod.";
             // 
             // numReadyDayByProd
             // 
@@ -382,14 +382,14 @@
             0,
             0});
             // 
-            // label13
+            // labelDailyOutputLockDate
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(17, 161);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(145, 23);
-            this.label13.TabIndex = 24;
-            this.label13.Text = "Daily Output Lock Date";
+            this.labelDailyOutputLockDate.Lines = 0;
+            this.labelDailyOutputLockDate.Location = new System.Drawing.Point(17, 161);
+            this.labelDailyOutputLockDate.Name = "labelDailyOutputLockDate";
+            this.labelDailyOutputLockDate.Size = new System.Drawing.Size(145, 23);
+            this.labelDailyOutputLockDate.TabIndex = 24;
+            this.labelDailyOutputLockDate.Text = "Daily Output Lock Date";
             // 
             // dateDailyOutputLockDate
             // 
@@ -401,14 +401,14 @@
             this.dateDailyOutputLockDate.Size = new System.Drawing.Size(110, 23);
             this.dateDailyOutputLockDate.TabIndex = 12;
             // 
-            // label14
+            // labelPulloutLockDate
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(342, 160);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(112, 23);
-            this.label14.TabIndex = 26;
-            this.label14.Text = "Pullout Lock Date";
+            this.labelPulloutLockDate.Lines = 0;
+            this.labelPulloutLockDate.Location = new System.Drawing.Point(342, 160);
+            this.labelPulloutLockDate.Name = "labelPulloutLockDate";
+            this.labelPulloutLockDate.Size = new System.Drawing.Size(112, 23);
+            this.labelPulloutLockDate.TabIndex = 26;
+            this.labelPulloutLockDate.Text = "Pullout Lock Date";
             // 
             // datePulloutLockDate
             // 
@@ -420,14 +420,14 @@
             this.datePulloutLockDate.Size = new System.Drawing.Size(110, 23);
             this.datePulloutLockDate.TabIndex = 13;
             // 
-            // label15
+            // labelSMTPIP
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(17, 201);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(75, 23);
-            this.label15.TabIndex = 28;
-            this.label15.Text = "SMTP IP";
+            this.labelSMTPIP.Lines = 0;
+            this.labelSMTPIP.Location = new System.Drawing.Point(17, 201);
+            this.labelSMTPIP.Name = "labelSMTPIP";
+            this.labelSMTPIP.Size = new System.Drawing.Size(75, 23);
+            this.labelSMTPIP.TabIndex = 28;
+            this.labelSMTPIP.Text = "SMTP IP";
             // 
             // txtSMTPIP
             // 
@@ -439,14 +439,14 @@
             this.txtSMTPIP.Size = new System.Drawing.Size(471, 23);
             this.txtSMTPIP.TabIndex = 14;
             // 
-            // label16
+            // labelSendFrom
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(17, 230);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(75, 23);
-            this.label16.TabIndex = 30;
-            this.label16.Text = "Send From";
+            this.labelSendFrom.Lines = 0;
+            this.labelSendFrom.Location = new System.Drawing.Point(17, 230);
+            this.labelSendFrom.Name = "labelSendFrom";
+            this.labelSendFrom.Size = new System.Drawing.Size(75, 23);
+            this.labelSendFrom.TabIndex = 30;
+            this.labelSendFrom.Text = "Send From";
             // 
             // txtSendFrom
             // 
@@ -458,14 +458,14 @@
             this.txtSendFrom.Size = new System.Drawing.Size(246, 23);
             this.txtSendFrom.TabIndex = 15;
             // 
-            // label17
+            // labelEmailID
             // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(17, 259);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(75, 23);
-            this.label17.TabIndex = 32;
-            this.label17.Text = "Email ID";
+            this.labelEmailID.Lines = 0;
+            this.labelEmailID.Location = new System.Drawing.Point(17, 259);
+            this.labelEmailID.Name = "labelEmailID";
+            this.labelEmailID.Size = new System.Drawing.Size(75, 23);
+            this.labelEmailID.TabIndex = 32;
+            this.labelEmailID.Text = "Email ID";
             // 
             // txtEmailID
             // 
@@ -477,14 +477,14 @@
             this.txtEmailID.Size = new System.Drawing.Size(246, 23);
             this.txtEmailID.TabIndex = 16;
             // 
-            // label18
+            // labelEmailPassword
             // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(369, 259);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(67, 23);
-            this.label18.TabIndex = 34;
-            this.label18.Text = "Password";
+            this.labelEmailPassword.Lines = 0;
+            this.labelEmailPassword.Location = new System.Drawing.Point(369, 259);
+            this.labelEmailPassword.Name = "labelEmailPassword";
+            this.labelEmailPassword.Size = new System.Drawing.Size(67, 23);
+            this.labelEmailPassword.TabIndex = 34;
+            this.labelEmailPassword.Text = "Password";
             // 
             // txtEmailPassword
             // 
@@ -496,14 +496,14 @@
             this.txtEmailPassword.Size = new System.Drawing.Size(100, 23);
             this.txtEmailPassword.TabIndex = 17;
             // 
-            // label19
+            // labelFTPIP
             // 
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(17, 288);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(75, 23);
-            this.label19.TabIndex = 36;
-            this.label19.Text = "FTP IP";
+            this.labelFTPIP.Lines = 0;
+            this.labelFTPIP.Location = new System.Drawing.Point(17, 288);
+            this.labelFTPIP.Name = "labelFTPIP";
+            this.labelFTPIP.Size = new System.Drawing.Size(75, 23);
+            this.labelFTPIP.TabIndex = 36;
+            this.labelFTPIP.Text = "FTP IP";
             // 
             // txtFTPIP
             // 
@@ -515,14 +515,14 @@
             this.txtFTPIP.Size = new System.Drawing.Size(274, 23);
             this.txtFTPIP.TabIndex = 18;
             // 
-            // label20
+            // labelFTPID
             // 
-            this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(17, 317);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(75, 23);
-            this.label20.TabIndex = 38;
-            this.label20.Text = "FTP ID";
+            this.labelFTPID.Lines = 0;
+            this.labelFTPID.Location = new System.Drawing.Point(17, 317);
+            this.labelFTPID.Name = "labelFTPID";
+            this.labelFTPID.Size = new System.Drawing.Size(75, 23);
+            this.labelFTPID.TabIndex = 38;
+            this.labelFTPID.Text = "FTP ID";
             // 
             // txtFTPID
             // 
@@ -534,14 +534,14 @@
             this.txtFTPID.Size = new System.Drawing.Size(100, 23);
             this.txtFTPID.TabIndex = 19;
             // 
-            // label21
+            // labelFTPPassword
             // 
-            this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(369, 317);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(67, 23);
-            this.label21.TabIndex = 40;
-            this.label21.Text = "Password";
+            this.labelFTPPassword.Lines = 0;
+            this.labelFTPPassword.Location = new System.Drawing.Point(369, 317);
+            this.labelFTPPassword.Name = "labelFTPPassword";
+            this.labelFTPPassword.Size = new System.Drawing.Size(67, 23);
+            this.labelFTPPassword.TabIndex = 40;
+            this.labelFTPPassword.Text = "Password";
             // 
             // txtFTPPassword
             // 
@@ -553,23 +553,23 @@
             this.txtFTPPassword.Size = new System.Drawing.Size(100, 23);
             this.txtFTPPassword.TabIndex = 20;
             // 
-            // label22
+            // labelSketchFilesPath
             // 
-            this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(17, 356);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(112, 23);
-            this.label22.TabIndex = 42;
-            this.label22.Text = "Sketch Files Path ";
+            this.labelSketchFilesPath.Lines = 0;
+            this.labelSketchFilesPath.Location = new System.Drawing.Point(17, 356);
+            this.labelSketchFilesPath.Name = "labelSketchFilesPath";
+            this.labelSketchFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelSketchFilesPath.TabIndex = 42;
+            this.labelSketchFilesPath.Text = "Sketch Files Path ";
             // 
-            // label23
+            // labelClipFilesPath
             // 
-            this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(17, 385);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(112, 23);
-            this.label23.TabIndex = 43;
-            this.label23.Text = "Clip Files Path";
+            this.labelClipFilesPath.Lines = 0;
+            this.labelClipFilesPath.Location = new System.Drawing.Point(17, 385);
+            this.labelClipFilesPath.Name = "labelClipFilesPath";
+            this.labelClipFilesPath.Size = new System.Drawing.Size(112, 23);
+            this.labelClipFilesPath.TabIndex = 43;
+            this.labelClipFilesPath.Text = "Clip Files Path";
             // 
             // txtSketchFilesPath
             // 
@@ -707,53 +707,53 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelCPUTMS);
             this.panel1.Controls.Add(this.btnCilpFilesPath);
             this.panel1.Controls.Add(this.num1CPUTMS);
             this.panel1.Controls.Add(this.btnSketchFilesPath);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.labelSampleRate);
             this.panel1.Controls.Add(this.btnMailTo);
             this.panel1.Controls.Add(this.numSample);
             this.panel1.Controls.Add(this.txtCilpFilesPath);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.labelAccountKeyword);
             this.panel1.Controls.Add(this.txtSketchFilesPath);
             this.panel1.Controls.Add(this.displayAccountKeyword);
-            this.panel1.Controls.Add(this.label23);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label22);
+            this.panel1.Controls.Add(this.labelClipFilesPath);
+            this.panel1.Controls.Add(this.labelLocalCurrency);
+            this.panel1.Controls.Add(this.labelSketchFilesPath);
             this.panel1.Controls.Add(this.displayLocalCurrency);
             this.panel1.Controls.Add(this.txtFTPPassword);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label21);
+            this.panel1.Controls.Add(this.labelUSDRate);
+            this.panel1.Controls.Add(this.labelFTPPassword);
             this.panel1.Controls.Add(this.numUSDRate);
             this.panel1.Controls.Add(this.txtFTPID);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label20);
+            this.panel1.Controls.Add(this.labelPOApproved);
+            this.panel1.Controls.Add(this.labelFTPID);
             this.panel1.Controls.Add(this.txtUserPOApproved);
             this.panel1.Controls.Add(this.txtFTPIP);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.label19);
+            this.panel1.Controls.Add(this.labelAutoApprovedWhileDateBefore);
+            this.panel1.Controls.Add(this.labelFTPIP);
             this.panel1.Controls.Add(this.numericUpDownAutoApprovedWhileDateBefore);
             this.panel1.Controls.Add(this.txtEmailPassword);
             this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.label18);
-            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.labelEmailPassword);
+            this.panel1.Controls.Add(this.labelRegionCode);
             this.panel1.Controls.Add(this.txtEmailID);
             this.panel1.Controls.Add(this.displayRegionCode);
-            this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.labelEmailID);
+            this.panel1.Controls.Add(this.labelCuttingLeadTime);
             this.panel1.Controls.Add(this.txtSendFrom);
             this.panel1.Controls.Add(this.numCuttingLeadTime);
-            this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.label11);
+            this.panel1.Controls.Add(this.labelSendFrom);
+            this.panel1.Controls.Add(this.labelMtlInspectionLeadTime);
             this.panel1.Controls.Add(this.txtSMTPIP);
             this.panel1.Controls.Add(this.numMtlInspectionLeadTime);
-            this.panel1.Controls.Add(this.label15);
-            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.labelSMTPIP);
+            this.panel1.Controls.Add(this.labelReadyDayByProd);
             this.panel1.Controls.Add(this.datePulloutLockDate);
             this.panel1.Controls.Add(this.numReadyDayByProd);
-            this.panel1.Controls.Add(this.label14);
-            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.labelPulloutLockDate);
+            this.panel1.Controls.Add(this.labelDailyOutputLockDate);
             this.panel1.Controls.Add(this.dateDailyOutputLockDate);
             this.panel1.Controls.Add(this.shapeContainer2);
             this.panel1.Location = new System.Drawing.Point(10, 38);
@@ -812,49 +812,49 @@
 
         #endregion
 
-        private Win.UI.Label label1;
+        private Win.UI.Label labelCPUTMS;
         private Win.UI.NumericBox num1CPUTMS;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelSampleRate;
         private Win.UI.NumericBox numSample;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelAccountKeyword;
         private Win.UI.DisplayBox displayAccountKeyword;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelLocalCurrency;
         private Win.UI.DisplayBox displayLocalCurrency;
-        private Win.UI.Label label5;
+        private Win.UI.Label labelUSDRate;
         private Win.UI.NumericBox numUSDRate;
-        private Win.UI.Label label6;
+        private Win.UI.Label labelPOApproved;
         private Class.txtuser txtUserPOApproved;
-        private Win.UI.Label label7;
+        private Win.UI.Label labelAutoApprovedWhileDateBefore;
         private Win.UI.NumericUpDown numericUpDownAutoApprovedWhileDateBefore;
         private Win.UI.Label label8;
-        private Win.UI.Label label9;
+        private Win.UI.Label labelRegionCode;
         private Win.UI.DisplayBox displayRegionCode;
-        private Win.UI.Label label10;
+        private Win.UI.Label labelCuttingLeadTime;
         private Win.UI.NumericBox numCuttingLeadTime;
-        private Win.UI.Label label11;
+        private Win.UI.Label labelMtlInspectionLeadTime;
         private Win.UI.NumericBox numMtlInspectionLeadTime;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelReadyDayByProd;
         private Win.UI.NumericBox numReadyDayByProd;
-        private Win.UI.Label label13;
+        private Win.UI.Label labelDailyOutputLockDate;
         private Win.UI.DateBox dateDailyOutputLockDate;
-        private Win.UI.Label label14;
+        private Win.UI.Label labelPulloutLockDate;
         private Win.UI.DateBox datePulloutLockDate;
-        private Win.UI.Label label15;
+        private Win.UI.Label labelSMTPIP;
         private Win.UI.TextBox txtSMTPIP;
-        private Win.UI.Label label16;
+        private Win.UI.Label labelSendFrom;
         private Win.UI.TextBox txtSendFrom;
-        private Win.UI.Label label17;
+        private Win.UI.Label labelEmailID;
         private Win.UI.TextBox txtEmailID;
-        private Win.UI.Label label18;
+        private Win.UI.Label labelEmailPassword;
         private Win.UI.TextBox txtEmailPassword;
-        private Win.UI.Label label19;
+        private Win.UI.Label labelFTPIP;
         private Win.UI.TextBox txtFTPIP;
-        private Win.UI.Label label20;
+        private Win.UI.Label labelFTPID;
         private Win.UI.TextBox txtFTPID;
-        private Win.UI.Label label21;
+        private Win.UI.Label labelFTPPassword;
         private Win.UI.TextBox txtFTPPassword;
-        private Win.UI.Label label22;
-        private Win.UI.Label label23;
+        private Win.UI.Label labelSketchFilesPath;
+        private Win.UI.Label labelClipFilesPath;
         private Win.UI.TextBox txtSketchFilesPath;
         private Win.UI.TextBox txtCilpFilesPath;
         private Win.UI.Button btnMailTo;

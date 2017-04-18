@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
             this.txtDate = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.btnAccept = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
-            // label3
+            // labelDescription
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(29, 72);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(29, 72);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 12;
+            this.labelDescription.Text = "Description";
             // 
             // txtDate
             // 
@@ -56,14 +56,14 @@
             this.txtDate.Size = new System.Drawing.Size(100, 23);
             this.txtDate.TabIndex = 0;
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(29, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(29, 28);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(75, 23);
+            this.labelDate.TabIndex = 8;
+            this.labelDate.Text = "Date";
             // 
             // txtDescription
             // 
@@ -106,9 +106,9 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
             this.Controls.Add(this.txtDescription);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.txtDate);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelDate);
             this.DefaultControl = "textBox2";
             this.Name = "B05_SetHoliday";
             this.Text = "Holiday Setup";
@@ -119,9 +119,9 @@
 
         #endregion
 
-        private Win.UI.Label label3;
+        private Win.UI.Label labelDescription;
         private Win.UI.TextBox txtDate;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelDate;
         private Win.UI.TextBox txtDescription;
         private Win.UI.Button btnAccept;
         private Win.UI.Button btnCancel;

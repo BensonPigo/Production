@@ -28,28 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelAbbrvChinese = new Sci.Win.UI.Label();
+            this.labelNationality = new Sci.Win.UI.Label();
+            this.labelCompanyChinese = new Sci.Win.UI.Label();
+            this.labelCompanyEnglish = new Sci.Win.UI.Label();
+            this.labelAddressChinese = new Sci.Win.UI.Label();
+            this.labelAddressEnglish = new Sci.Win.UI.Label();
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayAbbrvChinese = new Sci.Win.UI.DisplayBox();
             this.displayCompanyChinese = new Sci.Win.UI.DisplayBox();
             this.displayCompanyEnglish = new Sci.Win.UI.DisplayBox();
             this.displayAddressChinese = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.labelAbbrvEnglish = new Sci.Win.UI.Label();
             this.displayAbbrvEnglish = new Sci.Win.UI.DisplayBox();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelZipCode = new Sci.Win.UI.Label();
             this.displayZipCode = new Sci.Win.UI.DisplayBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelTel = new Sci.Win.UI.Label();
+            this.labelFax = new Sci.Win.UI.Label();
             this.displayTel = new Sci.Win.UI.DisplayBox();
             this.displayFax = new Sci.Win.UI.DisplayBox();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
+            this.labelLockDate = new Sci.Win.UI.Label();
+            this.labelDelay = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.checkThirdCountry = new Sci.Win.UI.CheckBox();
             this.editAddressEnglish = new Sci.Win.UI.EditBox();
@@ -80,28 +80,28 @@
             this.detailcont.Controls.Add(this.editAddressEnglish);
             this.detailcont.Controls.Add(this.checkThirdCountry);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.label15);
-            this.detailcont.Controls.Add(this.label14);
+            this.detailcont.Controls.Add(this.labelDelay);
+            this.detailcont.Controls.Add(this.labelLockDate);
             this.detailcont.Controls.Add(this.displayFax);
             this.detailcont.Controls.Add(this.displayTel);
-            this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.label12);
+            this.detailcont.Controls.Add(this.labelFax);
+            this.detailcont.Controls.Add(this.labelTel);
             this.detailcont.Controls.Add(this.displayZipCode);
-            this.detailcont.Controls.Add(this.label11);
+            this.detailcont.Controls.Add(this.labelZipCode);
             this.detailcont.Controls.Add(this.displayAbbrvEnglish);
-            this.detailcont.Controls.Add(this.label10);
+            this.detailcont.Controls.Add(this.labelAbbrvEnglish);
             this.detailcont.Controls.Add(this.displayAddressChinese);
             this.detailcont.Controls.Add(this.displayCompanyEnglish);
             this.detailcont.Controls.Add(this.displayCompanyChinese);
             this.detailcont.Controls.Add(this.displayAbbrvChinese);
             this.detailcont.Controls.Add(this.displayCode);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelAddressEnglish);
+            this.detailcont.Controls.Add(this.labelAddressChinese);
+            this.detailcont.Controls.Add(this.labelCompanyEnglish);
+            this.detailcont.Controls.Add(this.labelCompanyChinese);
+            this.detailcont.Controls.Add(this.labelNationality);
+            this.detailcont.Controls.Add(this.labelAbbrvChinese);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(830, 440);
             // 
             // detailbtm
@@ -130,68 +130,68 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 14);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(122, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(27, 14);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(122, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelAbbrvChinese
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 47);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(122, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Abbrv (Chinese)";
+            this.labelAbbrvChinese.Lines = 0;
+            this.labelAbbrvChinese.Location = new System.Drawing.Point(27, 47);
+            this.labelAbbrvChinese.Name = "labelAbbrvChinese";
+            this.labelAbbrvChinese.Size = new System.Drawing.Size(122, 23);
+            this.labelAbbrvChinese.TabIndex = 1;
+            this.labelAbbrvChinese.Text = "Abbrv (Chinese)";
             // 
-            // label5
+            // labelNationality
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 79);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(122, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Nationality";
+            this.labelNationality.Lines = 0;
+            this.labelNationality.Location = new System.Drawing.Point(27, 79);
+            this.labelNationality.Name = "labelNationality";
+            this.labelNationality.Size = new System.Drawing.Size(122, 23);
+            this.labelNationality.TabIndex = 2;
+            this.labelNationality.Text = "Nationality";
             // 
-            // label6
+            // labelCompanyChinese
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 111);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(122, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Company(Chinese)";
+            this.labelCompanyChinese.Lines = 0;
+            this.labelCompanyChinese.Location = new System.Drawing.Point(27, 111);
+            this.labelCompanyChinese.Name = "labelCompanyChinese";
+            this.labelCompanyChinese.Size = new System.Drawing.Size(122, 23);
+            this.labelCompanyChinese.TabIndex = 3;
+            this.labelCompanyChinese.Text = "Company(Chinese)";
             // 
-            // label7
+            // labelCompanyEnglish
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 144);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(122, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Company(English)";
+            this.labelCompanyEnglish.Lines = 0;
+            this.labelCompanyEnglish.Location = new System.Drawing.Point(27, 144);
+            this.labelCompanyEnglish.Name = "labelCompanyEnglish";
+            this.labelCompanyEnglish.Size = new System.Drawing.Size(122, 23);
+            this.labelCompanyEnglish.TabIndex = 4;
+            this.labelCompanyEnglish.Text = "Company(English)";
             // 
-            // label8
+            // labelAddressChinese
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(27, 176);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(122, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Address(Chinese)";
+            this.labelAddressChinese.Lines = 0;
+            this.labelAddressChinese.Location = new System.Drawing.Point(27, 176);
+            this.labelAddressChinese.Name = "labelAddressChinese";
+            this.labelAddressChinese.Size = new System.Drawing.Size(122, 23);
+            this.labelAddressChinese.TabIndex = 5;
+            this.labelAddressChinese.Text = "Address(Chinese)";
             // 
-            // label9
+            // labelAddressEnglish
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(27, 208);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(122, 23);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Address(English)";
+            this.labelAddressEnglish.Lines = 0;
+            this.labelAddressEnglish.Location = new System.Drawing.Point(27, 208);
+            this.labelAddressEnglish.Name = "labelAddressEnglish";
+            this.labelAddressEnglish.Size = new System.Drawing.Size(122, 23);
+            this.labelAddressEnglish.TabIndex = 6;
+            this.labelAddressEnglish.Text = "Address(English)";
             // 
             // displayCode
             // 
@@ -243,14 +243,14 @@
             this.displayAddressChinese.Size = new System.Drawing.Size(369, 23);
             this.displayAddressChinese.TabIndex = 11;
             // 
-            // label10
+            // labelAbbrvEnglish
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(382, 47);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(64, 23);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "(English)";
+            this.labelAbbrvEnglish.Lines = 0;
+            this.labelAbbrvEnglish.Location = new System.Drawing.Point(382, 47);
+            this.labelAbbrvEnglish.Name = "labelAbbrvEnglish";
+            this.labelAbbrvEnglish.Size = new System.Drawing.Size(64, 23);
+            this.labelAbbrvEnglish.TabIndex = 14;
+            this.labelAbbrvEnglish.Text = "(English)";
             // 
             // displayAbbrvEnglish
             // 
@@ -262,14 +262,14 @@
             this.displayAbbrvEnglish.Size = new System.Drawing.Size(100, 23);
             this.displayAbbrvEnglish.TabIndex = 15;
             // 
-            // label11
+            // labelZipCode
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(382, 79);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(64, 23);
-            this.label11.TabIndex = 16;
-            this.label11.Text = "Zip Code";
+            this.labelZipCode.Lines = 0;
+            this.labelZipCode.Location = new System.Drawing.Point(382, 79);
+            this.labelZipCode.Name = "labelZipCode";
+            this.labelZipCode.Size = new System.Drawing.Size(64, 23);
+            this.labelZipCode.TabIndex = 16;
+            this.labelZipCode.Text = "Zip Code";
             // 
             // displayZipCode
             // 
@@ -281,23 +281,23 @@
             this.displayZipCode.Size = new System.Drawing.Size(73, 23);
             this.displayZipCode.TabIndex = 17;
             // 
-            // label12
+            // labelTel
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(27, 271);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(122, 23);
-            this.label12.TabIndex = 18;
-            this.label12.Text = "Tel";
+            this.labelTel.Lines = 0;
+            this.labelTel.Location = new System.Drawing.Point(27, 271);
+            this.labelTel.Name = "labelTel";
+            this.labelTel.Size = new System.Drawing.Size(122, 23);
+            this.labelTel.TabIndex = 18;
+            this.labelTel.Text = "Tel";
             // 
-            // label13
+            // labelFax
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(27, 304);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(122, 23);
-            this.label13.TabIndex = 19;
-            this.label13.Text = "Fax";
+            this.labelFax.Lines = 0;
+            this.labelFax.Location = new System.Drawing.Point(27, 304);
+            this.labelFax.Name = "labelFax";
+            this.labelFax.Size = new System.Drawing.Size(122, 23);
+            this.labelFax.TabIndex = 19;
+            this.labelFax.Text = "Fax";
             // 
             // displayTel
             // 
@@ -319,23 +319,23 @@
             this.displayFax.Size = new System.Drawing.Size(250, 23);
             this.displayFax.TabIndex = 21;
             // 
-            // label14
+            // labelLockDate
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(27, 336);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(122, 23);
-            this.label14.TabIndex = 22;
-            this.label14.Text = "Lock Date";
+            this.labelLockDate.Lines = 0;
+            this.labelLockDate.Location = new System.Drawing.Point(27, 336);
+            this.labelLockDate.Name = "labelLockDate";
+            this.labelLockDate.Size = new System.Drawing.Size(122, 23);
+            this.labelLockDate.TabIndex = 22;
+            this.labelLockDate.Text = "Lock Date";
             // 
-            // label15
+            // labelDelay
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(404, 336);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(64, 23);
-            this.label15.TabIndex = 25;
-            this.label15.Text = "Delay";
+            this.labelDelay.Lines = 0;
+            this.labelDelay.Location = new System.Drawing.Point(404, 336);
+            this.labelDelay.Name = "labelDelay";
+            this.labelDelay.Size = new System.Drawing.Size(64, 23);
+            this.labelDelay.TabIndex = 25;
+            this.labelDelay.Text = "Delay";
             // 
             // checkJunk
             // 
@@ -449,28 +449,28 @@
 
         private Win.UI.CheckBox checkThirdCountry;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
+        private Win.UI.Label labelDelay;
+        private Win.UI.Label labelLockDate;
         private Win.UI.DisplayBox displayFax;
         private Win.UI.DisplayBox displayTel;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelFax;
+        private Win.UI.Label labelTel;
         private Win.UI.DisplayBox displayZipCode;
-        private Win.UI.Label label11;
+        private Win.UI.Label labelZipCode;
         private Win.UI.DisplayBox displayAbbrvEnglish;
-        private Win.UI.Label label10;
+        private Win.UI.Label labelAbbrvEnglish;
         private Win.UI.DisplayBox displayAddressChinese;
         private Win.UI.DisplayBox displayCompanyEnglish;
         private Win.UI.DisplayBox displayCompanyChinese;
         private Win.UI.DisplayBox displayAbbrvChinese;
         private Win.UI.DisplayBox displayCode;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelAddressEnglish;
+        private Win.UI.Label labelAddressChinese;
+        private Win.UI.Label labelCompanyEnglish;
+        private Win.UI.Label labelCompanyChinese;
+        private Win.UI.Label labelNationality;
+        private Win.UI.Label labelAbbrvChinese;
+        private Win.UI.Label labelCode;
         private Win.UI.EditBox editDelay;
         private Win.UI.EditBox editLockDate;
         private Win.UI.EditBox editAddressEnglish;

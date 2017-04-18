@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelAbbreviation = new Sci.Win.UI.Label();
+            this.labelNationality = new Sci.Win.UI.Label();
+            this.labelCompany = new Sci.Win.UI.Label();
+            this.labelTel = new Sci.Win.UI.Label();
+            this.labelFax = new Sci.Win.UI.Label();
+            this.labelAddress = new Sci.Win.UI.Label();
+            this.labelCurrency = new Sci.Win.UI.Label();
+            this.labelPaymentTerm = new Sci.Win.UI.Label();
+            this.labelWHoldingRate = new Sci.Win.UI.Label();
             this.txtCode = new Sci.Win.UI.TextBox();
             this.txtAbbreviation = new Sci.Win.UI.TextBox();
             this.txtCompany = new Sci.Win.UI.TextBox();
@@ -82,16 +82,16 @@
             this.detailcont.Controls.Add(this.txtCompany);
             this.detailcont.Controls.Add(this.txtAbbreviation);
             this.detailcont.Controls.Add(this.txtCode);
-            this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelWHoldingRate);
+            this.detailcont.Controls.Add(this.labelPaymentTerm);
+            this.detailcont.Controls.Add(this.labelCurrency);
+            this.detailcont.Controls.Add(this.labelAddress);
+            this.detailcont.Controls.Add(this.labelFax);
+            this.detailcont.Controls.Add(this.labelTel);
+            this.detailcont.Controls.Add(this.labelCompany);
+            this.detailcont.Controls.Add(this.labelNationality);
+            this.detailcont.Controls.Add(this.labelAbbreviation);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(824, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -121,95 +121,95 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(28, 15);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(28, 15);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(125, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelAbbreviation
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(28, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(125, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Abbreviation";
+            this.labelAbbreviation.Lines = 0;
+            this.labelAbbreviation.Location = new System.Drawing.Point(28, 42);
+            this.labelAbbreviation.Name = "labelAbbreviation";
+            this.labelAbbreviation.Size = new System.Drawing.Size(125, 23);
+            this.labelAbbreviation.TabIndex = 1;
+            this.labelAbbreviation.Text = "Abbreviation";
             // 
-            // label5
+            // labelNationality
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(28, 69);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(125, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Nationality";
+            this.labelNationality.Lines = 0;
+            this.labelNationality.Location = new System.Drawing.Point(28, 69);
+            this.labelNationality.Name = "labelNationality";
+            this.labelNationality.Size = new System.Drawing.Size(125, 23);
+            this.labelNationality.TabIndex = 2;
+            this.labelNationality.Text = "Nationality";
             // 
-            // label6
+            // labelCompany
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(28, 96);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(125, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Company";
+            this.labelCompany.Lines = 0;
+            this.labelCompany.Location = new System.Drawing.Point(28, 96);
+            this.labelCompany.Name = "labelCompany";
+            this.labelCompany.Size = new System.Drawing.Size(125, 23);
+            this.labelCompany.TabIndex = 3;
+            this.labelCompany.Text = "Company";
             // 
-            // label7
+            // labelTel
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(28, 123);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(125, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Tel";
+            this.labelTel.Lines = 0;
+            this.labelTel.Location = new System.Drawing.Point(28, 123);
+            this.labelTel.Name = "labelTel";
+            this.labelTel.Size = new System.Drawing.Size(125, 23);
+            this.labelTel.TabIndex = 4;
+            this.labelTel.Text = "Tel";
             // 
-            // label8
+            // labelFax
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(28, 150);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Fax";
+            this.labelFax.Lines = 0;
+            this.labelFax.Location = new System.Drawing.Point(28, 150);
+            this.labelFax.Name = "labelFax";
+            this.labelFax.Size = new System.Drawing.Size(125, 23);
+            this.labelFax.TabIndex = 5;
+            this.labelFax.Text = "Fax";
             // 
-            // label9
+            // labelAddress
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(28, 177);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(125, 23);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Address";
+            this.labelAddress.Lines = 0;
+            this.labelAddress.Location = new System.Drawing.Point(28, 177);
+            this.labelAddress.Name = "labelAddress";
+            this.labelAddress.Size = new System.Drawing.Size(125, 23);
+            this.labelAddress.TabIndex = 6;
+            this.labelAddress.Text = "Address";
             // 
-            // label10
+            // labelCurrency
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(28, 263);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(125, 23);
-            this.label10.TabIndex = 7;
-            this.label10.Text = "Currency";
+            this.labelCurrency.Lines = 0;
+            this.labelCurrency.Location = new System.Drawing.Point(28, 263);
+            this.labelCurrency.Name = "labelCurrency";
+            this.labelCurrency.Size = new System.Drawing.Size(125, 23);
+            this.labelCurrency.TabIndex = 7;
+            this.labelCurrency.Text = "Currency";
             // 
-            // label11
+            // labelPaymentTerm
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(28, 290);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(125, 23);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "Payment Term";
+            this.labelPaymentTerm.Lines = 0;
+            this.labelPaymentTerm.Location = new System.Drawing.Point(28, 290);
+            this.labelPaymentTerm.Name = "labelPaymentTerm";
+            this.labelPaymentTerm.Size = new System.Drawing.Size(125, 23);
+            this.labelPaymentTerm.TabIndex = 8;
+            this.labelPaymentTerm.Text = "Payment Term";
             // 
-            // label12
+            // labelWHoldingRate
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(28, 317);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(125, 23);
-            this.label12.TabIndex = 9;
-            this.label12.Text = "W/Holding Rate(%)";
+            this.labelWHoldingRate.Lines = 0;
+            this.labelWHoldingRate.Location = new System.Drawing.Point(28, 317);
+            this.labelWHoldingRate.Name = "labelWHoldingRate";
+            this.labelWHoldingRate.Size = new System.Drawing.Size(125, 23);
+            this.labelWHoldingRate.TabIndex = 9;
+            this.labelWHoldingRate.Text = "W/Holding Rate(%)";
             // 
             // txtCode
             // 
@@ -413,7 +413,7 @@
 
         #endregion
 
-        private Win.UI.Label label3;
+        private Win.UI.Label labelCode;
         private Class.txtpayterm_fty txtpayterm_ftyPaymentTerm;
         private Class.txtcurrency txtCurrency;
         private Class.txtcountry txtCountryNationality;
@@ -423,15 +423,15 @@
         private Win.UI.TextBox txtCompany;
         private Win.UI.TextBox txtAbbreviation;
         private Win.UI.TextBox txtCode;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelWHoldingRate;
+        private Win.UI.Label labelPaymentTerm;
+        private Win.UI.Label labelCurrency;
+        private Win.UI.Label labelAddress;
+        private Win.UI.Label labelFax;
+        private Win.UI.Label labelTel;
+        private Win.UI.Label labelCompany;
+        private Win.UI.Label labelNationality;
+        private Win.UI.Label labelAbbreviation;
         private Win.UI.Button btnBankDetail;
         private Win.UI.Button btnAccountingChartNo;
         private Win.UI.CheckBox checkIsFactory;

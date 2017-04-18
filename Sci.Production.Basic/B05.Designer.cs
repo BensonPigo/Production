@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label8 = new Sci.Win.UI.Label();
+            this.labelYearMonth = new Sci.Win.UI.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -77,14 +77,14 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label8
+            // labelYearMonth
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(8, 6);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(90, 23);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Year / Month:";
+            this.labelYearMonth.Lines = 0;
+            this.labelYearMonth.Location = new System.Drawing.Point(8, 6);
+            this.labelYearMonth.Name = "labelYearMonth";
+            this.labelYearMonth.Size = new System.Drawing.Size(90, 23);
+            this.labelYearMonth.TabIndex = 7;
+            this.labelYearMonth.Text = "Year / Month:";
             // 
             // label6
             // 
@@ -507,7 +507,7 @@
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(867, 425);
-            this.Controls.Add(this.label8);
+            this.Controls.Add(this.labelYearMonth);
             this.Controls.Add(this.comboYearMonth);
             this.Controls.Add(this.btnRefersh);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -518,7 +518,7 @@
             this.Controls.SetChildIndex(this.tableLayoutPanel1, 0);
             this.Controls.SetChildIndex(this.btnRefersh, 0);
             this.Controls.SetChildIndex(this.comboYearMonth, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.labelYearMonth, 0);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -527,7 +527,7 @@
 
         #endregion
 
-        private Win.UI.Label label8;
+        private Win.UI.Label labelYearMonth;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;

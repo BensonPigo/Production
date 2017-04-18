@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelManager = new Sci.Win.UI.Label();
             this.txtM = new Sci.Win.UI.TextBox();
             this.txtUserManager = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -48,8 +48,8 @@
             // 
             this.detailcont.Controls.Add(this.txtUserManager);
             this.detailcont.Controls.Add(this.txtM);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelManager);
+            this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Size = new System.Drawing.Size(835, 357);
             // 
             // detailbtm
@@ -77,23 +77,23 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(53, 31);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(53, 31);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(61, 23);
+            this.labelM.TabIndex = 0;
+            this.labelM.Text = "M";
             // 
-            // label2
+            // labelManager
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(53, 69);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Manager";
+            this.labelManager.Lines = 0;
+            this.labelManager.Location = new System.Drawing.Point(53, 69);
+            this.labelManager.Name = "labelManager";
+            this.labelManager.Size = new System.Drawing.Size(61, 23);
+            this.labelManager.TabIndex = 1;
+            this.labelManager.Text = "Manager";
             // 
             // txtM
             // 
@@ -144,7 +144,7 @@
 
         private Class.txtuser txtUserManager;
         private Win.UI.TextBox txtM;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelManager;
+        private Win.UI.Label labelM;
     }
 }

@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelAccountNo = new Sci.Win.UI.Label();
+            this.labelSWIFTCode = new Sci.Win.UI.Label();
+            this.labelAccountName = new Sci.Win.UI.Label();
+            this.labelBankName = new Sci.Win.UI.Label();
+            this.labelCountry = new Sci.Win.UI.Label();
+            this.labelCity = new Sci.Win.UI.Label();
+            this.labelIntermediaryBank = new Sci.Win.UI.Label();
+            this.labelIntermediaryBankSWIFTCode = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelCreateby = new Sci.Win.UI.Label();
+            this.labelEditby = new Sci.Win.UI.Label();
             this.txtAccountNo = new Sci.Win.UI.TextBox();
             this.checkDefault = new Sci.Win.UI.CheckBox();
             this.txtSWIFTCode = new Sci.Win.UI.TextBox();
@@ -75,104 +75,104 @@
             // 
             this.right.TabIndex = 1;
             // 
-            // label1
+            // labelAccountNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 23);
-            this.label1.TabIndex = 95;
-            this.label1.Text = "Account No.";
+            this.labelAccountNo.Lines = 0;
+            this.labelAccountNo.Location = new System.Drawing.Point(13, 13);
+            this.labelAccountNo.Name = "labelAccountNo";
+            this.labelAccountNo.Size = new System.Drawing.Size(120, 23);
+            this.labelAccountNo.TabIndex = 95;
+            this.labelAccountNo.Text = "Account No.";
             // 
-            // label2
+            // labelSWIFTCode
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 96;
-            this.label2.Text = "SWIFT Code";
+            this.labelSWIFTCode.Lines = 0;
+            this.labelSWIFTCode.Location = new System.Drawing.Point(13, 40);
+            this.labelSWIFTCode.Name = "labelSWIFTCode";
+            this.labelSWIFTCode.Size = new System.Drawing.Size(120, 23);
+            this.labelSWIFTCode.TabIndex = 96;
+            this.labelSWIFTCode.Text = "SWIFT Code";
             // 
-            // label3
+            // labelAccountName
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 23);
-            this.label3.TabIndex = 97;
-            this.label3.Text = "Account Name";
+            this.labelAccountName.Lines = 0;
+            this.labelAccountName.Location = new System.Drawing.Point(13, 67);
+            this.labelAccountName.Name = "labelAccountName";
+            this.labelAccountName.Size = new System.Drawing.Size(120, 23);
+            this.labelAccountName.TabIndex = 97;
+            this.labelAccountName.Text = "Account Name";
             // 
-            // label4
+            // labelBankName
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 94);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(120, 23);
-            this.label4.TabIndex = 98;
-            this.label4.Text = "Bank Name";
+            this.labelBankName.Lines = 0;
+            this.labelBankName.Location = new System.Drawing.Point(13, 94);
+            this.labelBankName.Name = "labelBankName";
+            this.labelBankName.Size = new System.Drawing.Size(120, 23);
+            this.labelBankName.TabIndex = 98;
+            this.labelBankName.Text = "Bank Name";
             // 
-            // label5
+            // labelCountry
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 121);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(120, 23);
-            this.label5.TabIndex = 99;
-            this.label5.Text = "Country";
+            this.labelCountry.Lines = 0;
+            this.labelCountry.Location = new System.Drawing.Point(13, 121);
+            this.labelCountry.Name = "labelCountry";
+            this.labelCountry.Size = new System.Drawing.Size(120, 23);
+            this.labelCountry.TabIndex = 99;
+            this.labelCountry.Text = "Country";
             // 
-            // label6
+            // labelCity
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 148);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(120, 23);
-            this.label6.TabIndex = 100;
-            this.label6.Text = "City";
+            this.labelCity.Lines = 0;
+            this.labelCity.Location = new System.Drawing.Point(13, 148);
+            this.labelCity.Name = "labelCity";
+            this.labelCity.Size = new System.Drawing.Size(120, 23);
+            this.labelCity.TabIndex = 100;
+            this.labelCity.Text = "City";
             // 
-            // label7
+            // labelIntermediaryBank
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 175);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 23);
-            this.label7.TabIndex = 101;
-            this.label7.Text = "Intermediary Bank";
+            this.labelIntermediaryBank.Lines = 0;
+            this.labelIntermediaryBank.Location = new System.Drawing.Point(13, 175);
+            this.labelIntermediaryBank.Name = "labelIntermediaryBank";
+            this.labelIntermediaryBank.Size = new System.Drawing.Size(120, 23);
+            this.labelIntermediaryBank.TabIndex = 101;
+            this.labelIntermediaryBank.Text = "Intermediary Bank";
             // 
-            // label8
+            // labelIntermediaryBankSWIFTCode
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(13, 202);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(200, 23);
-            this.label8.TabIndex = 102;
-            this.label8.Text = "Intermediary Bank-SWIFT Code";
+            this.labelIntermediaryBankSWIFTCode.Lines = 0;
+            this.labelIntermediaryBankSWIFTCode.Location = new System.Drawing.Point(13, 202);
+            this.labelIntermediaryBankSWIFTCode.Name = "labelIntermediaryBankSWIFTCode";
+            this.labelIntermediaryBankSWIFTCode.Size = new System.Drawing.Size(200, 23);
+            this.labelIntermediaryBankSWIFTCode.TabIndex = 102;
+            this.labelIntermediaryBankSWIFTCode.Text = "Intermediary Bank-SWIFT Code";
             // 
-            // label9
+            // labelRemark
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 229);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(120, 23);
-            this.label9.TabIndex = 103;
-            this.label9.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(13, 229);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(120, 23);
+            this.labelRemark.TabIndex = 103;
+            this.labelRemark.Text = "Remark";
             // 
-            // label10
+            // labelCreateby
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(13, 293);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(120, 23);
-            this.label10.TabIndex = 104;
-            this.label10.Text = "Create by";
+            this.labelCreateby.Lines = 0;
+            this.labelCreateby.Location = new System.Drawing.Point(13, 293);
+            this.labelCreateby.Name = "labelCreateby";
+            this.labelCreateby.Size = new System.Drawing.Size(120, 23);
+            this.labelCreateby.TabIndex = 104;
+            this.labelCreateby.Text = "Create by";
             // 
-            // label11
+            // labelEditby
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(13, 320);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(120, 23);
-            this.label11.TabIndex = 105;
-            this.label11.Text = "Edit by";
+            this.labelEditby.Lines = 0;
+            this.labelEditby.Location = new System.Drawing.Point(13, 320);
+            this.labelEditby.Name = "labelEditby";
+            this.labelEditby.Size = new System.Drawing.Size(120, 23);
+            this.labelEditby.TabIndex = 105;
+            this.labelEditby.Text = "Edit by";
             // 
             // txtAccountNo
             // 
@@ -315,32 +315,32 @@
             this.Controls.Add(this.txtSWIFTCode);
             this.Controls.Add(this.checkDefault);
             this.Controls.Add(this.txtAccountNo);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelEditby);
+            this.Controls.Add(this.labelCreateby);
+            this.Controls.Add(this.labelRemark);
+            this.Controls.Add(this.labelIntermediaryBankSWIFTCode);
+            this.Controls.Add(this.labelIntermediaryBank);
+            this.Controls.Add(this.labelCity);
+            this.Controls.Add(this.labelCountry);
+            this.Controls.Add(this.labelBankName);
+            this.Controls.Add(this.labelAccountName);
+            this.Controls.Add(this.labelSWIFTCode);
+            this.Controls.Add(this.labelAccountNo);
             this.Name = "B04_BankData_Input";
             this.Text = "Data maintain";
             this.WorkAlias = "LocalSupp_Bank";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
+            this.Controls.SetChildIndex(this.labelAccountNo, 0);
+            this.Controls.SetChildIndex(this.labelSWIFTCode, 0);
+            this.Controls.SetChildIndex(this.labelAccountName, 0);
+            this.Controls.SetChildIndex(this.labelBankName, 0);
+            this.Controls.SetChildIndex(this.labelCountry, 0);
+            this.Controls.SetChildIndex(this.labelCity, 0);
+            this.Controls.SetChildIndex(this.labelIntermediaryBank, 0);
+            this.Controls.SetChildIndex(this.labelIntermediaryBankSWIFTCode, 0);
+            this.Controls.SetChildIndex(this.labelRemark, 0);
+            this.Controls.SetChildIndex(this.labelCreateby, 0);
+            this.Controls.SetChildIndex(this.labelEditby, 0);
             this.Controls.SetChildIndex(this.txtAccountNo, 0);
             this.Controls.SetChildIndex(this.checkDefault, 0);
             this.Controls.SetChildIndex(this.txtSWIFTCode, 0);
@@ -362,17 +362,17 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.Label label10;
-        private Win.UI.Label label11;
+        private Win.UI.Label labelAccountNo;
+        private Win.UI.Label labelSWIFTCode;
+        private Win.UI.Label labelAccountName;
+        private Win.UI.Label labelBankName;
+        private Win.UI.Label labelCountry;
+        private Win.UI.Label labelCity;
+        private Win.UI.Label labelIntermediaryBank;
+        private Win.UI.Label labelIntermediaryBankSWIFTCode;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelCreateby;
+        private Win.UI.Label labelEditby;
         private Win.UI.TextBox txtAccountNo;
         private Win.UI.CheckBox checkDefault;
         private Win.UI.TextBox txtSWIFTCode;

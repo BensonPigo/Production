@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelAbbreviation = new Sci.Win.UI.Label();
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayAbbreviation = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -77,23 +77,23 @@
             this.save.Size = new System.Drawing.Size(80, 34);
             this.save.TabIndex = 3;
             // 
-            // label1
+            // labelCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(13, 13);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(47, 23);
+            this.labelCode.TabIndex = 98;
+            this.labelCode.Text = "Code";
             // 
-            // label2
+            // labelAbbreviation
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(204, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 23);
-            this.label2.TabIndex = 99;
-            this.label2.Text = "Abbreviation";
+            this.labelAbbreviation.Lines = 0;
+            this.labelAbbreviation.Location = new System.Drawing.Point(204, 13);
+            this.labelAbbreviation.Name = "labelAbbreviation";
+            this.labelAbbreviation.Size = new System.Drawing.Size(83, 23);
+            this.labelAbbreviation.TabIndex = 99;
+            this.labelAbbreviation.Text = "Abbreviation";
             // 
             // displayCode
             // 
@@ -118,8 +118,8 @@
             this.ClientSize = new System.Drawing.Size(433, 497);
             this.Controls.Add(this.displayAbbreviation);
             this.Controls.Add(this.displayCode);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelAbbreviation);
+            this.Controls.Add(this.labelCode);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "B04_AccountNo";
@@ -127,8 +127,8 @@
             this.WorkAlias = "LocalSupp_AccountNo";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.labelCode, 0);
+            this.Controls.SetChildIndex(this.labelAbbreviation, 0);
             this.Controls.SetChildIndex(this.displayCode, 0);
             this.Controls.SetChildIndex(this.displayAbbreviation, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -141,8 +141,8 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelCode;
+        private Win.UI.Label labelAbbreviation;
         private Win.UI.DisplayBox displayCode;
         private Win.UI.DisplayBox displayAbbreviation;
     }

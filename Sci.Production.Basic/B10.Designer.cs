@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelBuyer = new Sci.Win.UI.Label();
+            this.labelTeam = new Sci.Win.UI.Label();
+            this.labelCountry = new Sci.Win.UI.Label();
+            this.labelName = new Sci.Win.UI.Label();
+            this.labelEngName = new Sci.Win.UI.Label();
+            this.labelTel = new Sci.Win.UI.Label();
+            this.labelEmail = new Sci.Win.UI.Label();
+            this.labelContact = new Sci.Win.UI.Label();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelCommossion = new Sci.Win.UI.Label();
+            this.labelEngAddress = new Sci.Win.UI.Label();
             this.displayBuyer = new Sci.Win.UI.DisplayBox();
             this.displayTeam = new Sci.Win.UI.DisplayBox();
             this.displayName = new Sci.Win.UI.DisplayBox();
@@ -49,16 +49,16 @@
             this.displayContact1 = new Sci.Win.UI.DisplayBox();
             this.displayCommossion = new Sci.Win.UI.DisplayBox();
             this.editEngAddress = new Sci.Win.UI.EditBox();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
+            this.labelSpecialfield1 = new Sci.Win.UI.Label();
+            this.labelSpecialfield2 = new Sci.Win.UI.Label();
+            this.labelSpecialfield3 = new Sci.Win.UI.Label();
             this.displaySpecialField1 = new Sci.Win.UI.DisplayBox();
             this.displaySpecialField2 = new Sci.Win.UI.DisplayBox();
             this.displaySpecialField3 = new Sci.Win.UI.DisplayBox();
             this.displayContact2 = new Sci.Win.UI.DisplayBox();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
+            this.labelCurrency = new Sci.Win.UI.Label();
+            this.labelZipCode = new Sci.Win.UI.Label();
+            this.labelFax = new Sci.Win.UI.Label();
             this.displayCurrency = new Sci.Win.UI.DisplayBox();
             this.displayBox15 = new Sci.Win.UI.DisplayBox();
             this.displayFax = new Sci.Win.UI.DisplayBox();
@@ -82,16 +82,16 @@
             this.detailcont.Controls.Add(this.displayFax);
             this.detailcont.Controls.Add(this.displayBox15);
             this.detailcont.Controls.Add(this.displayCurrency);
-            this.detailcont.Controls.Add(this.label19);
-            this.detailcont.Controls.Add(this.label18);
-            this.detailcont.Controls.Add(this.label17);
+            this.detailcont.Controls.Add(this.labelFax);
+            this.detailcont.Controls.Add(this.labelZipCode);
+            this.detailcont.Controls.Add(this.labelCurrency);
             this.detailcont.Controls.Add(this.displayContact2);
             this.detailcont.Controls.Add(this.displaySpecialField3);
             this.detailcont.Controls.Add(this.displaySpecialField2);
             this.detailcont.Controls.Add(this.displaySpecialField1);
-            this.detailcont.Controls.Add(this.label16);
-            this.detailcont.Controls.Add(this.label15);
-            this.detailcont.Controls.Add(this.label14);
+            this.detailcont.Controls.Add(this.labelSpecialfield3);
+            this.detailcont.Controls.Add(this.labelSpecialfield2);
+            this.detailcont.Controls.Add(this.labelSpecialfield1);
             this.detailcont.Controls.Add(this.editEngAddress);
             this.detailcont.Controls.Add(this.displayCommossion);
             this.detailcont.Controls.Add(this.displayContact1);
@@ -102,18 +102,18 @@
             this.detailcont.Controls.Add(this.txtCountry);
             this.detailcont.Controls.Add(this.displayTeam);
             this.detailcont.Controls.Add(this.displayBuyer);
-            this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.label12);
+            this.detailcont.Controls.Add(this.labelEngAddress);
+            this.detailcont.Controls.Add(this.labelCommossion);
             this.detailcont.Controls.Add(this.displayBrand);
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelContact);
+            this.detailcont.Controls.Add(this.labelEmail);
+            this.detailcont.Controls.Add(this.labelTel);
+            this.detailcont.Controls.Add(this.labelEngName);
+            this.detailcont.Controls.Add(this.labelName);
+            this.detailcont.Controls.Add(this.labelCountry);
+            this.detailcont.Controls.Add(this.labelTeam);
+            this.detailcont.Controls.Add(this.labelBuyer);
+            this.detailcont.Controls.Add(this.labelBrand);
             this.detailcont.Size = new System.Drawing.Size(827, 483);
             // 
             // detailbtm
@@ -142,86 +142,86 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(24, 14);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(24, 14);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(95, 23);
+            this.labelBrand.TabIndex = 0;
+            this.labelBrand.Text = "Brand";
             // 
-            // label4
+            // labelBuyer
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(24, 44);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Buyer";
+            this.labelBuyer.Lines = 0;
+            this.labelBuyer.Location = new System.Drawing.Point(24, 44);
+            this.labelBuyer.Name = "labelBuyer";
+            this.labelBuyer.Size = new System.Drawing.Size(95, 23);
+            this.labelBuyer.TabIndex = 1;
+            this.labelBuyer.Text = "Buyer";
             // 
-            // label5
+            // labelTeam
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(24, 74);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Team";
+            this.labelTeam.Lines = 0;
+            this.labelTeam.Location = new System.Drawing.Point(24, 74);
+            this.labelTeam.Name = "labelTeam";
+            this.labelTeam.Size = new System.Drawing.Size(95, 23);
+            this.labelTeam.TabIndex = 2;
+            this.labelTeam.Text = "Team";
             // 
-            // label6
+            // labelCountry
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(24, 104);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Country";
+            this.labelCountry.Lines = 0;
+            this.labelCountry.Location = new System.Drawing.Point(24, 104);
+            this.labelCountry.Name = "labelCountry";
+            this.labelCountry.Size = new System.Drawing.Size(95, 23);
+            this.labelCountry.TabIndex = 3;
+            this.labelCountry.Text = "Country";
             // 
-            // label7
+            // labelName
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(24, 134);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Name";
+            this.labelName.Lines = 0;
+            this.labelName.Location = new System.Drawing.Point(24, 134);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(95, 23);
+            this.labelName.TabIndex = 4;
+            this.labelName.Text = "Name";
             // 
-            // label8
+            // labelEngName
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(24, 164);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(95, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Eng. Name";
+            this.labelEngName.Lines = 0;
+            this.labelEngName.Location = new System.Drawing.Point(24, 164);
+            this.labelEngName.Name = "labelEngName";
+            this.labelEngName.Size = new System.Drawing.Size(95, 23);
+            this.labelEngName.TabIndex = 5;
+            this.labelEngName.Text = "Eng. Name";
             // 
-            // label9
+            // labelTel
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(24, 194);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(95, 23);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Tel";
+            this.labelTel.Lines = 0;
+            this.labelTel.Location = new System.Drawing.Point(24, 194);
+            this.labelTel.Name = "labelTel";
+            this.labelTel.Size = new System.Drawing.Size(95, 23);
+            this.labelTel.TabIndex = 6;
+            this.labelTel.Text = "Tel";
             // 
-            // label10
+            // labelEmail
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(24, 224);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(95, 23);
-            this.label10.TabIndex = 7;
-            this.label10.Text = "E-mail";
+            this.labelEmail.Lines = 0;
+            this.labelEmail.Location = new System.Drawing.Point(24, 224);
+            this.labelEmail.Name = "labelEmail";
+            this.labelEmail.Size = new System.Drawing.Size(95, 23);
+            this.labelEmail.TabIndex = 7;
+            this.labelEmail.Text = "E-mail";
             // 
-            // label11
+            // labelContact
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(24, 254);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(95, 23);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "Contact";
+            this.labelContact.Lines = 0;
+            this.labelContact.Location = new System.Drawing.Point(24, 254);
+            this.labelContact.Name = "labelContact";
+            this.labelContact.Size = new System.Drawing.Size(95, 23);
+            this.labelContact.TabIndex = 8;
+            this.labelContact.Text = "Contact";
             // 
             // displayBrand
             // 
@@ -233,23 +233,23 @@
             this.displayBrand.Size = new System.Drawing.Size(66, 23);
             this.displayBrand.TabIndex = 9;
             // 
-            // label12
+            // labelCommossion
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(24, 284);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(95, 23);
-            this.label12.TabIndex = 10;
-            this.label12.Text = "Commossion";
+            this.labelCommossion.Lines = 0;
+            this.labelCommossion.Location = new System.Drawing.Point(24, 284);
+            this.labelCommossion.Name = "labelCommossion";
+            this.labelCommossion.Size = new System.Drawing.Size(95, 23);
+            this.labelCommossion.TabIndex = 10;
+            this.labelCommossion.Text = "Commossion";
             // 
-            // label13
+            // labelEngAddress
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(24, 314);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(95, 23);
-            this.label13.TabIndex = 11;
-            this.label13.Text = "Eng. Address";
+            this.labelEngAddress.Lines = 0;
+            this.labelEngAddress.Location = new System.Drawing.Point(24, 314);
+            this.labelEngAddress.Name = "labelEngAddress";
+            this.labelEngAddress.Size = new System.Drawing.Size(95, 23);
+            this.labelEngAddress.TabIndex = 11;
+            this.labelEngAddress.Text = "Eng. Address";
             // 
             // displayBuyer
             // 
@@ -342,32 +342,32 @@
             this.editEngAddress.Size = new System.Drawing.Size(386, 70);
             this.editEngAddress.TabIndex = 21;
             // 
-            // label14
+            // labelSpecialfield1
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(24, 389);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(95, 23);
-            this.label14.TabIndex = 22;
-            this.label14.Text = "Special field 1";
+            this.labelSpecialfield1.Lines = 0;
+            this.labelSpecialfield1.Location = new System.Drawing.Point(24, 389);
+            this.labelSpecialfield1.Name = "labelSpecialfield1";
+            this.labelSpecialfield1.Size = new System.Drawing.Size(95, 23);
+            this.labelSpecialfield1.TabIndex = 22;
+            this.labelSpecialfield1.Text = "Special field 1";
             // 
-            // label15
+            // labelSpecialfield2
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(24, 419);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(95, 23);
-            this.label15.TabIndex = 23;
-            this.label15.Text = "Special field 2";
+            this.labelSpecialfield2.Lines = 0;
+            this.labelSpecialfield2.Location = new System.Drawing.Point(24, 419);
+            this.labelSpecialfield2.Name = "labelSpecialfield2";
+            this.labelSpecialfield2.Size = new System.Drawing.Size(95, 23);
+            this.labelSpecialfield2.TabIndex = 23;
+            this.labelSpecialfield2.Text = "Special field 2";
             // 
-            // label16
+            // labelSpecialfield3
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(24, 449);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(95, 23);
-            this.label16.TabIndex = 24;
-            this.label16.Text = "Special field 3";
+            this.labelSpecialfield3.Lines = 0;
+            this.labelSpecialfield3.Location = new System.Drawing.Point(24, 449);
+            this.labelSpecialfield3.Name = "labelSpecialfield3";
+            this.labelSpecialfield3.Size = new System.Drawing.Size(95, 23);
+            this.labelSpecialfield3.TabIndex = 24;
+            this.labelSpecialfield3.Text = "Special field 3";
             // 
             // displaySpecialField1
             // 
@@ -409,32 +409,32 @@
             this.displayContact2.Size = new System.Drawing.Size(138, 23);
             this.displayContact2.TabIndex = 28;
             // 
-            // label17
+            // labelCurrency
             // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(404, 44);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(61, 23);
-            this.label17.TabIndex = 29;
-            this.label17.Text = "Currency";
+            this.labelCurrency.Lines = 0;
+            this.labelCurrency.Location = new System.Drawing.Point(404, 44);
+            this.labelCurrency.Name = "labelCurrency";
+            this.labelCurrency.Size = new System.Drawing.Size(61, 23);
+            this.labelCurrency.TabIndex = 29;
+            this.labelCurrency.Text = "Currency";
             // 
-            // label18
+            // labelZipCode
             // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(404, 74);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(61, 23);
-            this.label18.TabIndex = 30;
-            this.label18.Text = "Zip Code";
+            this.labelZipCode.Lines = 0;
+            this.labelZipCode.Location = new System.Drawing.Point(404, 74);
+            this.labelZipCode.Name = "labelZipCode";
+            this.labelZipCode.Size = new System.Drawing.Size(61, 23);
+            this.labelZipCode.TabIndex = 30;
+            this.labelZipCode.Text = "Zip Code";
             // 
-            // label19
+            // labelFax
             // 
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(404, 194);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(61, 23);
-            this.label19.TabIndex = 31;
-            this.label19.Text = "Fax";
+            this.labelFax.Lines = 0;
+            this.labelFax.Location = new System.Drawing.Point(404, 194);
+            this.labelFax.Name = "labelFax";
+            this.labelFax.Size = new System.Drawing.Size(61, 23);
+            this.labelFax.TabIndex = 31;
+            this.labelFax.Text = "Fax";
             // 
             // displayCurrency
             // 
@@ -519,16 +519,16 @@
         private Win.UI.DisplayBox displayFax;
         private Win.UI.DisplayBox displayBox15;
         private Win.UI.DisplayBox displayCurrency;
-        private Win.UI.Label label19;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
+        private Win.UI.Label labelFax;
+        private Win.UI.Label labelZipCode;
+        private Win.UI.Label labelCurrency;
         private Win.UI.DisplayBox displayContact2;
         private Win.UI.DisplayBox displaySpecialField3;
         private Win.UI.DisplayBox displaySpecialField2;
         private Win.UI.DisplayBox displaySpecialField1;
-        private Win.UI.Label label16;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
+        private Win.UI.Label labelSpecialfield3;
+        private Win.UI.Label labelSpecialfield2;
+        private Win.UI.Label labelSpecialfield1;
         private Win.UI.EditBox editEngAddress;
         private Win.UI.DisplayBox displayCommossion;
         private Win.UI.DisplayBox displayContact1;
@@ -539,17 +539,17 @@
         private Class.txtcountry txtCountry;
         private Win.UI.DisplayBox displayTeam;
         private Win.UI.DisplayBox displayBuyer;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelEngAddress;
+        private Win.UI.Label labelCommossion;
         private Win.UI.DisplayBox displayBrand;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelContact;
+        private Win.UI.Label labelEmail;
+        private Win.UI.Label labelTel;
+        private Win.UI.Label labelEngName;
+        private Win.UI.Label labelName;
+        private Win.UI.Label labelCountry;
+        private Win.UI.Label labelTeam;
+        private Win.UI.Label labelBuyer;
+        private Win.UI.Label labelBrand;
     }
 }

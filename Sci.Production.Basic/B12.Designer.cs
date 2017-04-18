@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.labelUnit = new Sci.Win.UI.Label();
+            this.labelPricerate = new Sci.Win.UI.Label();
+            this.labelRound = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.label7 = new Sci.Win.UI.Label();
+            this.labelExtendUnit = new Sci.Win.UI.Label();
             this.displayUnit = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.displayExtendUnit = new Sci.Win.UI.DisplayBox();
@@ -60,20 +60,20 @@
             this.masterpanel.Controls.Add(this.displayExtendUnit);
             this.masterpanel.Controls.Add(this.displayDescription);
             this.masterpanel.Controls.Add(this.displayUnit);
-            this.masterpanel.Controls.Add(this.label7);
+            this.masterpanel.Controls.Add(this.labelExtendUnit);
             this.masterpanel.Controls.Add(this.checkJunk);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.labelDescription);
+            this.masterpanel.Controls.Add(this.labelRound);
+            this.masterpanel.Controls.Add(this.labelPricerate);
+            this.masterpanel.Controls.Add(this.labelUnit);
             this.masterpanel.Size = new System.Drawing.Size(916, 134);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelUnit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPricerate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRound, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDescription, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelExtendUnit, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayUnit, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDescription, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayExtendUnit, 0);
@@ -143,41 +143,41 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(425, 13);
             // 
-            // label3
+            // labelUnit
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(24, 14);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(24, 14);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(75, 23);
+            this.labelUnit.TabIndex = 1;
+            this.labelUnit.Text = "Unit";
             // 
-            // label4
+            // labelPricerate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(24, 44);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Price rate";
+            this.labelPricerate.Lines = 0;
+            this.labelPricerate.Location = new System.Drawing.Point(24, 44);
+            this.labelPricerate.Name = "labelPricerate";
+            this.labelPricerate.Size = new System.Drawing.Size(75, 23);
+            this.labelPricerate.TabIndex = 2;
+            this.labelPricerate.Text = "Price rate";
             // 
-            // label5
+            // labelRound
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(24, 74);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Round";
+            this.labelRound.Lines = 0;
+            this.labelRound.Location = new System.Drawing.Point(24, 74);
+            this.labelRound.Name = "labelRound";
+            this.labelRound.Size = new System.Drawing.Size(75, 23);
+            this.labelRound.TabIndex = 3;
+            this.labelRound.Text = "Round";
             // 
-            // label6
+            // labelDescription
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(24, 104);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(24, 104);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 4;
+            this.labelDescription.Text = "Description";
             // 
             // checkJunk
             // 
@@ -191,14 +191,14 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // label7
+            // labelExtendUnit
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(413, 44);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Extend Unit";
+            this.labelExtendUnit.Lines = 0;
+            this.labelExtendUnit.Location = new System.Drawing.Point(413, 44);
+            this.labelExtendUnit.Name = "labelExtendUnit";
+            this.labelExtendUnit.Size = new System.Drawing.Size(80, 23);
+            this.labelExtendUnit.TabIndex = 6;
+            this.labelExtendUnit.Text = "Extend Unit";
             // 
             // displayUnit
             // 
@@ -317,12 +317,12 @@
         private Win.UI.DisplayBox displayExtendUnit;
         private Win.UI.DisplayBox displayDescription;
         private Win.UI.DisplayBox displayUnit;
-        private Win.UI.Label label7;
+        private Win.UI.Label labelExtendUnit;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelRound;
+        private Win.UI.Label labelPricerate;
+        private Win.UI.Label labelUnit;
         private Win.UI.NumericBox numRound;
         private Win.UI.NumericBox numPriceRate;
     }

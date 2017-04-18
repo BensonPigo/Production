@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelMailTo = new Sci.Win.UI.Label();
+            this.labelCC = new Sci.Win.UI.Label();
+            this.labelSubject = new Sci.Win.UI.Label();
+            this.labelContents = new Sci.Win.UI.Label();
             this.txtCode = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.editMailTo = new Sci.Win.UI.EditBox();
@@ -67,59 +67,59 @@
             // 
             this.right.TabIndex = 1;
             // 
-            // label1
+            // labelCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 95;
-            this.label1.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(13, 13);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.TabIndex = 95;
+            this.labelCode.Text = "Code";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 96;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(13, 41);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 96;
+            this.labelDescription.Text = "Description";
             // 
-            // label3
+            // labelMailTo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 69);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 97;
-            this.label3.Text = "Mail to";
+            this.labelMailTo.Lines = 0;
+            this.labelMailTo.Location = new System.Drawing.Point(13, 69);
+            this.labelMailTo.Name = "labelMailTo";
+            this.labelMailTo.Size = new System.Drawing.Size(75, 23);
+            this.labelMailTo.TabIndex = 97;
+            this.labelMailTo.Text = "Mail to";
             // 
-            // label4
+            // labelCC
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 124);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 98;
-            this.label4.Text = "C.C.";
+            this.labelCC.Lines = 0;
+            this.labelCC.Location = new System.Drawing.Point(13, 124);
+            this.labelCC.Name = "labelCC";
+            this.labelCC.Size = new System.Drawing.Size(75, 23);
+            this.labelCC.TabIndex = 98;
+            this.labelCC.Text = "C.C.";
             // 
-            // label5
+            // labelSubject
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 179);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 99;
-            this.label5.Text = "Subject";
+            this.labelSubject.Lines = 0;
+            this.labelSubject.Location = new System.Drawing.Point(13, 179);
+            this.labelSubject.Name = "labelSubject";
+            this.labelSubject.Size = new System.Drawing.Size(75, 23);
+            this.labelSubject.TabIndex = 99;
+            this.labelSubject.Text = "Subject";
             // 
-            // label6
+            // labelContents
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 207);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 100;
-            this.label6.Text = "Contents";
+            this.labelContents.Lines = 0;
+            this.labelContents.Location = new System.Drawing.Point(13, 207);
+            this.labelContents.Name = "labelContents";
+            this.labelContents.Size = new System.Drawing.Size(75, 23);
+            this.labelContents.TabIndex = 100;
+            this.labelContents.Text = "Contents";
             // 
             // txtCode
             // 
@@ -194,21 +194,21 @@
             this.Controls.Add(this.editMailTo);
             this.Controls.Add(this.txtDescription);
             this.Controls.Add(this.txtCode);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelContents);
+            this.Controls.Add(this.labelSubject);
+            this.Controls.Add(this.labelCC);
+            this.Controls.Add(this.labelMailTo);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.labelCode);
             this.Name = "B02_MailTo_Detail";
             this.Text = "Mail to detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.labelCode, 0);
+            this.Controls.SetChildIndex(this.labelDescription, 0);
+            this.Controls.SetChildIndex(this.labelMailTo, 0);
+            this.Controls.SetChildIndex(this.labelCC, 0);
+            this.Controls.SetChildIndex(this.labelSubject, 0);
+            this.Controls.SetChildIndex(this.labelContents, 0);
             this.Controls.SetChildIndex(this.txtCode, 0);
             this.Controls.SetChildIndex(this.txtDescription, 0);
             this.Controls.SetChildIndex(this.editMailTo, 0);
@@ -224,12 +224,12 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
+        private Win.UI.Label labelCode;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelMailTo;
+        private Win.UI.Label labelCC;
+        private Win.UI.Label labelSubject;
+        private Win.UI.Label labelContents;
         private Win.UI.TextBox txtCode;
         private Win.UI.TextBox txtDescription;
         private Win.UI.EditBox editMailTo;

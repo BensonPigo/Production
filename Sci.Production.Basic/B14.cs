@@ -15,8 +15,8 @@ namespace Sci.Production.Basic
             : base(menuitem)
         {
             InitializeComponent();
-            this.label9.Text = "Subprocess BCS\r\nLead Time";
-            this.label10.Text = "Std. L/T(Day) b4\r\n1st Cut date base\r\non SubProcess";
+            this.labelSubprocessBCSLeadTime.Text = "Subprocess BCS\r\nLead Time";
+            this.labelStdLTDayb41stCutDateBaseOnSubProcess.Text = "Std. L/T(Day) b4\r\n1st Cut date base\r\non SubProcess";
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("I", "InHouse");

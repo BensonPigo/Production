@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelTerm = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.txtTerm = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
@@ -50,8 +50,8 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txtTerm);
             this.detailcont.Controls.Add(this.txtID);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelTerm);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
@@ -80,23 +80,23 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(60, 27);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(58, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(60, 27);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(58, 23);
+            this.labelID.TabIndex = 0;
+            this.labelID.Text = "ID";
             // 
-            // label4
+            // labelTerm
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(60, 75);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Term";
+            this.labelTerm.Lines = 0;
+            this.labelTerm.Location = new System.Drawing.Point(60, 75);
+            this.labelTerm.Name = "labelTerm";
+            this.labelTerm.Size = new System.Drawing.Size(58, 23);
+            this.labelTerm.TabIndex = 1;
+            this.labelTerm.Text = "Term";
             // 
             // txtID
             // 
@@ -161,8 +161,8 @@
 
         private Win.UI.TextBox txtTerm;
         private Win.UI.TextBox txtID;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelTerm;
+        private Win.UI.Label labelID;
         private Win.UI.CheckBox checkJunk;
     }
 }
