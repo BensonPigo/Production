@@ -153,14 +153,8 @@ select 	distinct o.POID
 		, o.MDivisionID 
 into #tmpPOID
 from Orders o WITH (NOLOCK) 
-where (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')
-and o.MDivisionID = @mdivision
-and o.Finished!=1
-and o.WhseClose is null
-and o.Qty>0
-and o.IsForecast=0
-and o.LocalOrder = 0 
-and o.Junk=0
+where o.WhseClose is null
+
 
 select * 
 into #tmpWHQty
@@ -267,7 +261,9 @@ from (
 	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.POID --and mdp.MDivisionID = t.MDivisionID
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
-	where t.POID >= '{0}'
+    inner join FtyInventory ft on mdp.Ukey=MDivisionPoDetailUkey
+	where 1=1 and ft.StockType='O'
+    and t.POID >= '{0}'
 
 	union all
 	select 	isnull(li.HSCode,'') as HSCode
@@ -311,13 +307,10 @@ select 	o.ID
 		,o.POID 
 into #tmpWHNotClose 
 from Orders o  WITH (NOLOCK) 
-where (o.Category = 'B' or o.Category = 'S') 
-and o.MDivisionID = @mdivision 
-and o.Junk<>1
-and o.Finished!=1
+where o.Category <>''
+and o.Finished=0
 and o.WhseClose is null
-and o.Qty>0
-and o.IsForecast=0
+and o.Qty<>0
 and o.LocalOrder = 0 
 
 
@@ -477,14 +470,12 @@ select 	ID,StyleID
 		,Category
 into #tmpNoPullOutComp
 from Orders WITH (NOLOCK) 
-where PulloutComplete = 0 and (Category = 'B' or Category = 'S') 
-and MDivisionID = @mdivision 
-and LocalOrder = 0
-and Junk<>1 
+where Category <>''
 and WhseClose is null
-and Finished!=1
-and Qty>0
-and IsForecast=0
+and Finished=0
+and Qty<>0
+and LocalOrder = 0
+
 
 select 	a.*
 		,a.SewQty - a.PullQty as Qty 
