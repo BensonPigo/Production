@@ -59,7 +59,7 @@ select  0 as selected
         , dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
         , '' location
         , psd.StockUnit
-        , pds.FabricType
+        , psd.FabricType
 from TransferOut a WITH (NOLOCK) 
 inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
 inner join PO_Supp_Detail psd WITH (NOLOCK) on b.POID = psd.id and b.Seq1 = psd.Seq1 and b.Seq2 = psd.Seq2
@@ -180,16 +180,17 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             #endregion
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewTextBoxColumn txt_roll;
+            Ict.Win.UI.DataGridViewTextBoxColumn txt_dyelot;
             Ict.Win.UI.DataGridViewTextBoxColumn txt_location;
 
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
-                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
+            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out txt_roll)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)    //4
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false).Get(out txt_dyelot)    //4
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .ComboBox("stocktype", header: "Stock Type", iseditable: true, settings : sk).Get(out cbb_stocktype)//7
@@ -203,6 +204,7 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             cbb_stocktype.DefaultCellStyle.BackColor = Color.Pink;
             txt_location.DefaultCellStyle.BackColor = Color.Pink;
             txt_roll.DefaultCellStyle.BackColor = Color.Pink;
+            txt_dyelot.DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
