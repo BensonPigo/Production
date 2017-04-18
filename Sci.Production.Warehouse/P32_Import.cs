@@ -195,7 +195,7 @@ from cte1
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
     and cte2.ToStocktype = cte1.FromStocktype;
 
-select  selected = 0 
+select  distinct selected = 0 
         , id = '' 
         , FromFtyinventoryUkey = c.ukey 
         , FromPoId = bd.ToPoid 
@@ -213,9 +213,9 @@ select  selected = 0
         , topoid = bd.FromPoId 
         , toseq1 = bd.FromSeq1 
         , toseq2 = bd.FromSeq2 
-        , toRoll = c.roll 
-        , toDyelot = c.dyelot 
-            , ToFactoryID = #tmp.FromFactoryID
+        , toRoll = iif (toSP.Roll is not null, toSP.Roll, c.roll)
+        , toDyelot = iif (toSP.Roll is not null, toSP.Dyelot, c.dyelot)
+        , ToFactoryID = #tmp.FromFactoryID
         , toseq = concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) 
         , location = stuff((select ',' + mtllocationid 
                             from (select mtllocationid 
@@ -232,6 +232,15 @@ inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.
 inner join Orders orders on c.POID = orders.ID
 inner join Factory factory on orders.FtyGroup = factory.ID
 left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
+outer apply(
+	select	Top 1 Roll
+			, Dyelot
+	From FtyInventory
+	where	POID = #tmp.FromPOID
+			and Seq1 = #tmp.FromSeq1
+			and Seq2 = #tmp.FromSeq2
+			and Roll = c.Roll
+) toSP
 where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
     and not(c.StockType in ('I', 'O'))
 drop table #tmp
