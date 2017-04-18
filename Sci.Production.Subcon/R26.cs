@@ -167,10 +167,10 @@ select  Title1
         ,Unit
         ,Unit_Price
         ,Amount
-        ,[AccuAmount] = sum(Amount) Over (PARTITION BY Issue_Date,Delivery 
-                                           Order by Issue_Date, Delivery, to#, Title1, PO, Code 
+        ,[AccuAmount] = sum(Amount) Over (PARTITION BY to#, Title1, Issue_Date 
+                                           Order by to#, Title1, Issue_Date, Delivery, PO, Code
                                            rows between unbounded preceding and Current Row)
-        ,[Total_Quantity] = sum(Quantity) over (PARTITION BY Issue_Date, Delivery, TO#)
+        ,[Total_Quantity] = sum(Quantity) over (PARTITION BY to#, Title1, Issue_Date, Delivery, TO#, PO)
         ,Remark
         --,[Total1]=SUM(Amount)OVER (PARTITION BY to#,po,Issue_Date,Delivery) * VatRate
         ,[Total1] = sum(Amount * VatRate / 100) Over (PARTITION BY Issue_Date, Delivery 
@@ -183,7 +183,7 @@ select  Title1
         ,[Grand_Total] = sum(Amount) OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
                          + SUM(Amount * VatRate / 100)OVER (PARTITION BY to#,po,Issue_Date,Delivery) 
 from #temp
-order by Issue_Date, Delivery, to#, Title1, PO, Code
+order by to#, Title1, Issue_Date, Delivery, PO, Code
 drop table #temp";
             #endregion
 
@@ -337,29 +337,29 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     List<R26_PrintData> data = dt.AsEnumerable()
                         .Select(row1 => new R26_PrintData()
                         {
-                            PO = row1["PO"].ToString(),
-                            Code = row1["Code"].ToString(),
-                            Color_Shade = row1["Color_Shade"].ToString(),
-                            Description = row1["Description"].ToString(),
-                            Quantity = row1["Quantity"].ToString(),
-                            Unit = row1["Unit"].ToString(),
-                            Unit_Price = row1["Unit_Price"].ToString(),
-                            Amount = row1["Amount"].ToString(),
-                            AccuAmount = row1["AccuAmount"].ToString(),
-                            Total_Quantity = row1["Total_Quantity"].ToString(),
-                            Remark = row1["Remark"].ToString(),
-                            Title1 = row1["Title1"].ToString(),
-                            Issue_Date = row1["Issue_Date"].ToString(),
-                            To = row1["To#"].ToString(),
-                            Delivery_Date = row1["Delivery"].ToString(),
-                            Title2 = row1["Title2"].ToString(),
-                            Title3 = row1["Title3"].ToString(),
-                            Tel = row1["Tel"].ToString(),
-                            Fax = row1["Fax"].ToString(),
-                            Total1 = row1["Total1"].ToString(),
-                            Total2 = row1["Total2"].ToString(),
-                            CurrencyId = row1["currencyid"].ToString(),
-                            vat = row1["VatRate"].ToString(),
+                            PO = row1["PO"].ToString().Trim(),
+                            Code = row1["Code"].ToString().Trim(),
+                            Color_Shade = row1["Color_Shade"].ToString().Trim(),
+                            Description = row1["Description"].ToString().Trim(),
+                            Quantity = row1["Quantity"].ToString().Trim(),
+                            Unit = row1["Unit"].ToString().Trim(),
+                            Unit_Price = row1["Unit_Price"].ToString().Trim(),
+                            Amount = row1["Amount"].ToString().Trim(),
+                            AccuAmount = row1["AccuAmount"].ToString().Trim(),
+                            Total_Quantity = row1["Total_Quantity"].ToString().Trim(),
+                            Remark = row1["Remark"].ToString().Trim(),
+                            Title1 = row1["Title1"].ToString().Trim(),
+                            Issue_Date = row1["Issue_Date"].ToString().Trim(),
+                            To = row1["To#"].ToString().Trim(),
+                            Delivery_Date = row1["Delivery"].ToString().Trim(),
+                            Title2 = row1["Title2"].ToString().Trim(),
+                            Title3 = row1["Title3"].ToString().Trim(),
+                            Tel = row1["Tel"].ToString().Trim(),
+                            Fax = row1["Fax"].ToString().Trim(),
+                            Total1 = row1["Total1"].ToString().Trim(),
+                            Total2 = row1["Total2"].ToString().Trim(),
+                            CurrencyId = row1["currencyid"].ToString().Trim(),
+                            vat = row1["VatRate"].ToString().Trim(),
                             Grand_Total = string.Format("{0}", Convert.ToDecimal(row1["AccuAmount"].ToString()) + Convert.ToDecimal(row1["Total1"].ToString()))//row1["Grand_Total"].ToString()
                         }).ToList();
 

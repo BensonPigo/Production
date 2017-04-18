@@ -32,8 +32,8 @@ namespace Sci.Production.Subcon
         public string CurrencyId { get; set; }
         public string vat { get; set; }
         public string Grand_Total{ get; set; }
-        public string Group1 { get { return this.To+this.Title1 +this.Issue_Date+this.Delivery_Date; } }
-        public string Group2 { get { return this.PO + this.Code + this.To; } }
+        public string Group1 { get { return this.To + this.Title1 + this.Issue_Date + this.Delivery_Date; } }
+        public string Group2 { get { return this.To + this.Title1 + this.Issue_Date + this.Delivery_Date + this.PO; } }
       
        
     }
