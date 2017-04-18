@@ -1385,29 +1385,29 @@ from(
     select COUNT(*) RD_Count 
     from dbo.Receiving_Detail RD WITH (NOLOCK) 
     inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
-    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and RD.id !='{4}' and R.Status = 'Confirmed'
+    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and RD.id !='{5}' and R.Status = 'Confirmed'
 ) RD
 OUTER APPLY
 (
     select COUNT(*) ST_Count 
     from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
     inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
-    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and S.Status = 'Confirmed'
+    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and S.Status = 'Confirmed'
 ) ST
 OUTER APPLY
 (
     select COUNT('POID') BB_Count 
     from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
     inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
-    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and B.Status = 'Confirmed'
+    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and B.Status = 'Confirmed'
 ) BB
 Outer Apply
 (
     select count(*) TID_Count 
     From dbo.TransferIn TI
     inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
-    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Status = 'Confirmed'
-) TID", row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dr, null))
+    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and Status = 'Confirmed'
+) TID", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]), out dr, null))
                     {
                         if (Convert.ToInt32(dr[0]) > 0)
                         {
