@@ -507,9 +507,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem(spTb, "ID", "15", dr["OrderID"].ToString(), columndecimals: "50");
-                    sele.Width = 300;
-                    sele.Height = 300;
+                    sele = new SelectItem(spTb, "ID", "15@300,300", dr["OrderID"].ToString(), columndecimals: "50");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
