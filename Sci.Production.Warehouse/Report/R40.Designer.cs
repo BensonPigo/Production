@@ -203,7 +203,7 @@
             // txtSupp
             // 
             this.txtSupp.DisplayBox1Binding = "";
-            this.txtSupp.IsIncludeJunk = false;
+            this.txtSupp.IsIncludeJunk = true;
             this.txtSupp.Location = new System.Drawing.Point(106, 105);
             this.txtSupp.Name = "txtSupp";
             this.txtSupp.Size = new System.Drawing.Size(170, 23);
