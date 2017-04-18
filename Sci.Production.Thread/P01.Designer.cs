@@ -58,7 +58,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(914, 55);
+            this.masterpanel.Size = new System.Drawing.Size(892, 55);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -71,7 +71,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 55);
-            this.detailpanel.Size = new System.Drawing.Size(914, 294);
+            this.detailpanel.Size = new System.Drawing.Size(892, 294);
             // 
             // gridicon
             // 
@@ -83,19 +83,11 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(914, 294);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 294);
             // 
-            // detail
+            // browse
             // 
-            this.detail.Size = new System.Drawing.Size(914, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(914, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(914, 38);
+            this.browse.Size = new System.Drawing.Size(914, 387);
             // 
             // tabs
             // 
@@ -190,6 +182,7 @@
             this.GridAlias = "ThreadColorComb";
             this.GridUniqueKey = "ID";
             this.IsGridIconVisible = false;
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
