@@ -305,6 +305,8 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            this.detailgrid.AutoResizeColumns();
         }
 
         DataGridViewColumn Col_ActualQty, Col_Location;
