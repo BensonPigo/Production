@@ -173,7 +173,7 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
         {
             listControlBindingSource1.EndEdit();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
-            if (dtGridBS1.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtGridBS1)|| dtGridBS1.Rows.Count == 0) return;
             DataRow[] dr2 = dtGridBS1.Select("UnitPrice = 0 and Selected = 1");
 
 

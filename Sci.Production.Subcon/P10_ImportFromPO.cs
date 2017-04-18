@@ -177,7 +177,7 @@ namespace Sci.Production.Subcon
             
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             
-            if (dtImport.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dtImport)|| dtImport.Rows.Count == 0) return;
             
             DataRow[] dr2 = dtImport.Select("apqty = 0 and Selected = 1");
             if (dr2.Length > 0)
