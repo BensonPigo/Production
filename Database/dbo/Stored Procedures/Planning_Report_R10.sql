@@ -3,13 +3,13 @@
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
 	,@BrandID varchar(20)
-	,@M varchar(20) = ''
-	,@Fty varchar(20) = ''
 	,@ArtWorkType varchar(20) --= 'CPU'
 	,@isSCIDelivery bit = 1
 	,@Year int = 2017
 	,@Month int = 1
 	,@SourceStr varchar(50) = 'Order,Forecast,Fty Local Order'
+	,@M varchar(20) = ''
+	,@Fty varchar(20) = ''
 AS
 BEGIN
 
@@ -33,7 +33,7 @@ BEGIN
 
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
-	,Factory.CPU
+	, Factory.CPU
 	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS.TMS 
 	,Capacity
 	,Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity1
@@ -48,21 +48,22 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select iif(@CalArtWorkType = 'CPU', Round(convert(numeric(10,0),Factory_Tms.TMS) * 3600 / @mStandardTMS ,0), convert(numeric(10,0),Factory_Tms.TMS)) as Capacity) cc
+	outer apply (select iif(@CalArtWorkType = 'CPU', Round(Factory_Tms.TMS * 3600 / @mStandardTMS ,0), Factory_Tms.TMS) as Capacity) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
-	And Artworktype.ID = @ArtWorkType And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
+	And Artworktype.ID = @ArtWorkType
+	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
 
-	select orders.id,FactoryID,orders.CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
-	into #Orders From orders inner join Factory on Orders.FactoryID = Factory.ID
+	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
+	into #Orders From orders 
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
 	Where ((@isSCIDelivery = 0 and Orders.BuyerDelivery between @date_s and @date_e)
 	or (@isSCIDelivery = 1 and Orders.SciDelivery between @date_s and @date_e))
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
-	AND @HasOrders = 1 
-	And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
+	AND @HasOrders = 1
+	And orders.MDivisionID = @M And orders.FactoryID = @Fty
 	
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
@@ -84,19 +85,19 @@ BEGIN
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
-	where 1=1 And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
-
+	
 	print 'Sew2'
-	select * into #sew2 from Sewingoutput_Detail where ID in (select ID from #tmpOrder1)
+	select ID,OrderId,SUM(QAQty) as QAQty into #sew2 from SewingOutput_Detail where OrderId in (select ID from #tmpOrder1) GROUP BY ID,OrderId
 	print 'Sew1'
-	select * into #sew1 from Sewingoutput where ID in (select ID from #tmpOrder1)
-
+	select ID,OutputDate into #sew1 from SewingOutput where ID in (select ID from #sew2) GROUP BY ID,OutputDate
+	
 	--By Sewing
-	Select #tmpOrder1.*, Sewingoutput_Detail.QAQty, Sewingoutput_Detail.InlineQty, Sewingoutput.OutputDate	
+	Select #tmpOrder1.*, Sewingoutput_Detail.QAQty, /*Sewingoutput_Detail.InlineQty,*/ Sewingoutput.OutputDate	
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
 	,(cCPU * SewingOutput_Detail.QAQty * #tmpOrder1.CPURate) as SewCapacity --(CPU or OrderTMSCPU 來當乘數的值的決定, 是依下拉選擇Report來決定; 若是選擇All 可利用CPU , 若是選擇 非All外,就利用 OrderTMSCPU 來計算 ) 
-	into #tmpOrder2 from #tmpOrder1
+	into #tmpOrder2 
+	from #tmpOrder1
 	left join #sew2 Sewingoutput_Detail on #tmpOrder1.ID = Sewingoutput_Detail.OrderID
 	left join #sew1 Sewingoutput on Sewingoutput.ID = Sewingoutput_Detail.ID
 	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
@@ -104,14 +105,14 @@ BEGIN
 	
 
 	--Fty Local Order
-	select orders.ID,orders.CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from orders
-	inner join Factory on Orders.FactoryID = Factory.ID
-	Where orders.BuyerDelivery Between @date_s and @date_e
-	And (@BrandID = '' or orders.BrandID = @BrandID)
-	And orders.Junk = 0 and orders.Qty > 0  
+	select ID,CPU,Qty,FactoryID,StyleUkey,BuyerDelivery into #FactoryOrder from Orders
+	Where Orders.BuyerDelivery Between @date_s and @date_e
+	And (@BrandID = '' or Orders.BrandID = @BrandID)
+	And Orders.Junk = 0 and Orders.Qty > 0  
 	AND @HasFtyLocalOrder = 1
-	AND LocalOrder = 1
-	And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
+	AND Orders.LocalOrder = 1
+	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
+
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
@@ -139,10 +140,10 @@ BEGIN
 
 	
 	--By Sewing
-	select * into #sew4 from SewingOutput_Detail where ID in (select ID from #tmpFactoryOrder1)
-	select * into #sew3 from SewingOutput where ID in (select ID from #tmpFactoryOrder1)
+	select ID,OrderId,SUM(QAQty) as QAQty into #sew4 from SewingOutput_Detail where OrderId in (select ID from #tmpFactoryOrder1) GROUP BY ID,OrderId
+	select ID,OutputDate into #sew3 from SewingOutput where ID in (select ID from #sew4) GROUP BY ID,OutputDate
 
-	Select #tmpFactoryOrder1.*, Sewingoutput_Detail.QAQty, Sewingoutput_Detail.InlineQty, Sewingoutput.OutputDate
+	Select #tmpFactoryOrder1.*, Sewingoutput_Detail.QAQty, /*Sewingoutput_Detail.InlineQty,*/ Sewingoutput.OutputDate
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
 	,(cCPU * SewingOutput_Detail.QAQty * CpuRate) as SewCapacity
@@ -180,7 +181,8 @@ BEGIN
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And Orders.Qty > 0
 	AND @HasForecast = 1
-	AND Orders.IsForecast = 1 And (Factory.MDivisionID = @M or @M = '') And (Factory.ID = @Fty or @Fty = '')
+	AND Orders.IsForecast = 1
+	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
 	--
 	declare @tmpFinal table (
 		CountryID varchar(2)
@@ -256,9 +258,9 @@ BEGIN
 		select CountryID, MDivisionID, FactoryID, OrderYYMM as Month, sum(ForecastCapacity) as Capacity from #tmpForecast1 group by CountryID,MDivisionID,FactoryID,OrderYYMM
 		
 		--For Output, 及Output後面的Max日期
-		select CountryID, MDivisionID, FactoryID, max(format(SewingYYMM_Ori,'MM/dd')) as SewingYYMM, SewingYYMM as Month, sum(Capacity) as Capacity from (
+		select CountryID, MDivisionID, FactoryID, max(format(SewingYYMM_Ori,'yyyy/MM/dd')) as SewingYYMM, SewingYYMM as Month, sum(Capacity) as Capacity from (
 			Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpOrder2
-			union Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpFactoryOrder2
+			union ALL Select CountryID, MDivisionID, FactoryID, SewingYYMM_Ori, SewingYYMM, SewCapacity as Capacity from #tmpFactoryOrder2
 		) c
 		where SewingYYMM_Ori is not null
 		group by CountryID,MDivisionID,FactoryID,SewingYYMM
@@ -316,6 +318,5 @@ drop table #sew2
 drop table #FactoryOrder
 drop table #sew3
 drop table #sew4
-		
 
 END
