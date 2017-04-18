@@ -87,12 +87,12 @@ namespace Sci.Production.Tools
                     filterOptions.Add(dr["MenuName"].ToString().TrimEnd().ToUpper(), dr["MenuName"].ToString());
                 }
                 filterOptions.Add("", "");
-                this.comboBox1.DataSource = new BindingSource(filterOptions, null);
-                this.comboBox1.ValueMember = "Key";
-                this.comboBox1.DisplayMember = "Value";
-                this.comboBox1.SelectedValue = "";
+                this.comboMenuFilter.DataSource = new BindingSource(filterOptions, null);
+                this.comboMenuFilter.ValueMember = "Key";
+                this.comboMenuFilter.DisplayMember = "Value";
+                this.comboMenuFilter.SelectedValue = "";
             }
-            this.comboBox1.ReadOnly = false;
+            this.comboMenuFilter.ReadOnly = false;
         }
 
         protected override bool OnGridSetup()
@@ -213,7 +213,7 @@ namespace Sci.Production.Tools
             if (MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Position > can't empty !");
-                this.textBox1.Focus();
+                this.txtPosition.Focus();
                 return false;
             }
 
@@ -235,7 +235,7 @@ namespace Sci.Production.Tools
             newRow["Remark"] = strChangeMemo;
 
             dtDetail.DefaultView.RowFilter = "";
-            this.comboBox1.ReadOnly = false;
+            this.comboMenuFilter.ReadOnly = false;
             return base.ClickSaveBefore();
         }
 
@@ -275,14 +275,14 @@ namespace Sci.Production.Tools
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.comboBox1.SelectedValue = "";
-            this.comboBox1.ReadOnly = false;
+            this.comboMenuFilter.SelectedValue = "";
+            this.comboMenuFilter.ReadOnly = false;
         }
 
         // 檢查Position是否重複
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Seek(string.Format("SELECT ID FROM Pass0 WHERE ID = '{0}'", this.textBox1.Text)))
+            if (MyUtility.Check.Seek(string.Format("SELECT ID FROM Pass0 WHERE ID = '{0}'", this.txtPosition.Text)))
             {
                 MyUtility.Msg.WarningBox("Position has exist !");
                 e.Cancel = true;
@@ -528,7 +528,7 @@ namespace Sci.Production.Tools
         {
             //if (this.EditMode)
             //{
-            this.LockCheckBox(this.comboBox1.SelectedValue.ToString());                
+            this.LockCheckBox(this.comboMenuFilter.SelectedValue.ToString());                
             //}
         }
     }

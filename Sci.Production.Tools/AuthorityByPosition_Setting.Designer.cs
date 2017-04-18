@@ -28,327 +28,328 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.components = new System.ComponentModel.Container();
+            this.gridPositionAuthority = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.checkBox15 = new Sci.Win.UI.CheckBox();
-            this.checkBox14 = new Sci.Win.UI.CheckBox();
-            this.checkBox13 = new Sci.Win.UI.CheckBox();
-            this.checkBox12 = new Sci.Win.UI.CheckBox();
-            this.checkBox11 = new Sci.Win.UI.CheckBox();
-            this.checkBox10 = new Sci.Win.UI.CheckBox();
-            this.checkBox9 = new Sci.Win.UI.CheckBox();
-            this.checkBox8 = new Sci.Win.UI.CheckBox();
-            this.checkBox7 = new Sci.Win.UI.CheckBox();
-            this.checkBox6 = new Sci.Win.UI.CheckBox();
-            this.checkBox5 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.btnAllControl = new Sci.Win.UI.Button();
+            this.btnReadonly = new Sci.Win.UI.Button();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.checkReturn = new Sci.Win.UI.CheckBox();
+            this.checkReceive = new Sci.Win.UI.CheckBox();
+            this.checkUnClose = new Sci.Win.UI.CheckBox();
+            this.checkClose = new Sci.Win.UI.CheckBox();
+            this.checkUncheck = new Sci.Win.UI.CheckBox();
+            this.checkCheck = new Sci.Win.UI.CheckBox();
+            this.checkRecall = new Sci.Win.UI.CheckBox();
+            this.checkSend = new Sci.Win.UI.CheckBox();
+            this.checkUnConfirm = new Sci.Win.UI.CheckBox();
+            this.checkConfirm = new Sci.Win.UI.CheckBox();
+            this.checkPrint = new Sci.Win.UI.CheckBox();
+            this.checkDelete = new Sci.Win.UI.CheckBox();
+            this.checkEdit = new Sci.Win.UI.CheckBox();
+            this.checkNew = new Sci.Win.UI.CheckBox();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.btnUndo = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.gridPositionAuthority)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // grid1
+            // gridPositionAuthority
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 12);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(361, 279);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridPositionAuthority.AllowUserToAddRows = false;
+            this.gridPositionAuthority.AllowUserToDeleteRows = false;
+            this.gridPositionAuthority.AllowUserToResizeRows = false;
+            this.gridPositionAuthority.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPositionAuthority.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPositionAuthority.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPositionAuthority.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPositionAuthority.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPositionAuthority.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPositionAuthority.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPositionAuthority.Location = new System.Drawing.Point(12, 12);
+            this.gridPositionAuthority.Name = "gridPositionAuthority";
+            this.gridPositionAuthority.RowHeadersVisible = false;
+            this.gridPositionAuthority.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPositionAuthority.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPositionAuthority.RowTemplate.Height = 24;
+            this.gridPositionAuthority.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPositionAuthority.Size = new System.Drawing.Size(361, 279);
+            this.gridPositionAuthority.TabIndex = 0;
+            this.gridPositionAuthority.TabStop = false;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button4);
-            this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.checkBox15);
-            this.groupBox1.Controls.Add(this.checkBox14);
-            this.groupBox1.Controls.Add(this.checkBox13);
-            this.groupBox1.Controls.Add(this.checkBox12);
-            this.groupBox1.Controls.Add(this.checkBox11);
-            this.groupBox1.Controls.Add(this.checkBox10);
-            this.groupBox1.Controls.Add(this.checkBox9);
-            this.groupBox1.Controls.Add(this.checkBox8);
-            this.groupBox1.Controls.Add(this.checkBox7);
-            this.groupBox1.Controls.Add(this.checkBox6);
-            this.groupBox1.Controls.Add(this.checkBox5);
-            this.groupBox1.Controls.Add(this.checkBox4);
-            this.groupBox1.Controls.Add(this.checkBox3);
-            this.groupBox1.Controls.Add(this.checkBox2);
-            this.groupBox1.Controls.Add(this.checkBox1);
+            this.groupBox1.Controls.Add(this.btnAllControl);
+            this.groupBox1.Controls.Add(this.btnReadonly);
+            this.groupBox1.Controls.Add(this.checkJunk);
+            this.groupBox1.Controls.Add(this.checkReturn);
+            this.groupBox1.Controls.Add(this.checkReceive);
+            this.groupBox1.Controls.Add(this.checkUnClose);
+            this.groupBox1.Controls.Add(this.checkClose);
+            this.groupBox1.Controls.Add(this.checkUncheck);
+            this.groupBox1.Controls.Add(this.checkCheck);
+            this.groupBox1.Controls.Add(this.checkRecall);
+            this.groupBox1.Controls.Add(this.checkSend);
+            this.groupBox1.Controls.Add(this.checkUnConfirm);
+            this.groupBox1.Controls.Add(this.checkConfirm);
+            this.groupBox1.Controls.Add(this.checkPrint);
+            this.groupBox1.Controls.Add(this.checkDelete);
+            this.groupBox1.Controls.Add(this.checkEdit);
+            this.groupBox1.Controls.Add(this.checkNew);
             this.groupBox1.Location = new System.Drawing.Point(379, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(201, 288);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
-            // button4
+            // btnAllControl
             // 
-            this.button4.Location = new System.Drawing.Point(103, 252);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(93, 30);
-            this.button4.TabIndex = 26;
-            this.button4.Text = "All Control";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnAllControl.Location = new System.Drawing.Point(103, 252);
+            this.btnAllControl.Name = "btnAllControl";
+            this.btnAllControl.Size = new System.Drawing.Size(93, 30);
+            this.btnAllControl.TabIndex = 26;
+            this.btnAllControl.Text = "All Control";
+            this.btnAllControl.UseVisualStyleBackColor = true;
+            this.btnAllControl.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button3
+            // btnReadonly
             // 
-            this.button3.Location = new System.Drawing.Point(5, 252);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(93, 30);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Readonly";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnReadonly.Location = new System.Drawing.Point(5, 252);
+            this.btnReadonly.Name = "btnReadonly";
+            this.btnReadonly.Size = new System.Drawing.Size(93, 30);
+            this.btnReadonly.TabIndex = 4;
+            this.btnReadonly.Text = "Readonly";
+            this.btnReadonly.UseVisualStyleBackColor = true;
+            this.btnReadonly.Click += new System.EventHandler(this.button3_Click);
             // 
-            // checkBox15
+            // checkJunk
             // 
-            this.checkBox15.AutoSize = true;
-            this.checkBox15.FalseValue = "0";
-            this.checkBox15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox15.Location = new System.Drawing.Point(109, 185);
-            this.checkBox15.Name = "checkBox15";
-            this.checkBox15.Size = new System.Drawing.Size(57, 21);
-            this.checkBox15.TabIndex = 25;
-            this.checkBox15.Text = "Junk";
-            this.checkBox15.TrueValue = "1";
-            this.checkBox15.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.FalseValue = "0";
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(109, 185);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 25;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.TrueValue = "1";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // checkBox14
+            // checkReturn
             // 
-            this.checkBox14.AutoSize = true;
-            this.checkBox14.FalseValue = "0";
-            this.checkBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox14.Location = new System.Drawing.Point(109, 158);
-            this.checkBox14.Name = "checkBox14";
-            this.checkBox14.Size = new System.Drawing.Size(70, 21);
-            this.checkBox14.TabIndex = 24;
-            this.checkBox14.Text = "Return";
-            this.checkBox14.TrueValue = "1";
-            this.checkBox14.UseVisualStyleBackColor = true;
+            this.checkReturn.AutoSize = true;
+            this.checkReturn.FalseValue = "0";
+            this.checkReturn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkReturn.Location = new System.Drawing.Point(109, 158);
+            this.checkReturn.Name = "checkReturn";
+            this.checkReturn.Size = new System.Drawing.Size(70, 21);
+            this.checkReturn.TabIndex = 24;
+            this.checkReturn.Text = "Return";
+            this.checkReturn.TrueValue = "1";
+            this.checkReturn.UseVisualStyleBackColor = true;
             // 
-            // checkBox13
+            // checkReceive
             // 
-            this.checkBox13.AutoSize = true;
-            this.checkBox13.FalseValue = "0";
-            this.checkBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox13.Location = new System.Drawing.Point(109, 131);
-            this.checkBox13.Name = "checkBox13";
-            this.checkBox13.Size = new System.Drawing.Size(78, 21);
-            this.checkBox13.TabIndex = 23;
-            this.checkBox13.Text = "Receive";
-            this.checkBox13.TrueValue = "1";
-            this.checkBox13.UseVisualStyleBackColor = true;
+            this.checkReceive.AutoSize = true;
+            this.checkReceive.FalseValue = "0";
+            this.checkReceive.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkReceive.Location = new System.Drawing.Point(109, 131);
+            this.checkReceive.Name = "checkReceive";
+            this.checkReceive.Size = new System.Drawing.Size(78, 21);
+            this.checkReceive.TabIndex = 23;
+            this.checkReceive.Text = "Receive";
+            this.checkReceive.TrueValue = "1";
+            this.checkReceive.UseVisualStyleBackColor = true;
             // 
-            // checkBox12
+            // checkUnClose
             // 
-            this.checkBox12.AutoSize = true;
-            this.checkBox12.FalseValue = "0";
-            this.checkBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox12.Location = new System.Drawing.Point(109, 103);
-            this.checkBox12.Name = "checkBox12";
-            this.checkBox12.Size = new System.Drawing.Size(80, 21);
-            this.checkBox12.TabIndex = 22;
-            this.checkBox12.Text = "UnClose";
-            this.checkBox12.TrueValue = "1";
-            this.checkBox12.UseVisualStyleBackColor = true;
+            this.checkUnClose.AutoSize = true;
+            this.checkUnClose.FalseValue = "0";
+            this.checkUnClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkUnClose.Location = new System.Drawing.Point(109, 103);
+            this.checkUnClose.Name = "checkUnClose";
+            this.checkUnClose.Size = new System.Drawing.Size(80, 21);
+            this.checkUnClose.TabIndex = 22;
+            this.checkUnClose.Text = "UnClose";
+            this.checkUnClose.TrueValue = "1";
+            this.checkUnClose.UseVisualStyleBackColor = true;
             // 
-            // checkBox11
+            // checkClose
             // 
-            this.checkBox11.AutoSize = true;
-            this.checkBox11.FalseValue = "0";
-            this.checkBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox11.Location = new System.Drawing.Point(109, 76);
-            this.checkBox11.Name = "checkBox11";
-            this.checkBox11.Size = new System.Drawing.Size(62, 21);
-            this.checkBox11.TabIndex = 21;
-            this.checkBox11.Text = "Close";
-            this.checkBox11.TrueValue = "1";
-            this.checkBox11.UseVisualStyleBackColor = true;
+            this.checkClose.AutoSize = true;
+            this.checkClose.FalseValue = "0";
+            this.checkClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkClose.Location = new System.Drawing.Point(109, 76);
+            this.checkClose.Name = "checkClose";
+            this.checkClose.Size = new System.Drawing.Size(62, 21);
+            this.checkClose.TabIndex = 21;
+            this.checkClose.Text = "Close";
+            this.checkClose.TrueValue = "1";
+            this.checkClose.UseVisualStyleBackColor = true;
             // 
-            // checkBox10
+            // checkUncheck
             // 
-            this.checkBox10.AutoSize = true;
-            this.checkBox10.FalseValue = "0";
-            this.checkBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox10.Location = new System.Drawing.Point(109, 49);
-            this.checkBox10.Name = "checkBox10";
-            this.checkBox10.Size = new System.Drawing.Size(84, 21);
-            this.checkBox10.TabIndex = 20;
-            this.checkBox10.Text = "UnCheck";
-            this.checkBox10.TrueValue = "1";
-            this.checkBox10.UseVisualStyleBackColor = true;
+            this.checkUncheck.AutoSize = true;
+            this.checkUncheck.FalseValue = "0";
+            this.checkUncheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkUncheck.Location = new System.Drawing.Point(109, 49);
+            this.checkUncheck.Name = "checkUncheck";
+            this.checkUncheck.Size = new System.Drawing.Size(84, 21);
+            this.checkUncheck.TabIndex = 20;
+            this.checkUncheck.Text = "UnCheck";
+            this.checkUncheck.TrueValue = "1";
+            this.checkUncheck.UseVisualStyleBackColor = true;
             // 
-            // checkBox9
+            // checkCheck
             // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.FalseValue = "0";
-            this.checkBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox9.Location = new System.Drawing.Point(109, 22);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(66, 21);
-            this.checkBox9.TabIndex = 19;
-            this.checkBox9.Text = "Check";
-            this.checkBox9.TrueValue = "1";
-            this.checkBox9.UseVisualStyleBackColor = true;
+            this.checkCheck.AutoSize = true;
+            this.checkCheck.FalseValue = "0";
+            this.checkCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkCheck.Location = new System.Drawing.Point(109, 22);
+            this.checkCheck.Name = "checkCheck";
+            this.checkCheck.Size = new System.Drawing.Size(66, 21);
+            this.checkCheck.TabIndex = 19;
+            this.checkCheck.Text = "Check";
+            this.checkCheck.TrueValue = "1";
+            this.checkCheck.UseVisualStyleBackColor = true;
             // 
-            // checkBox8
+            // checkRecall
             // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.FalseValue = "0";
-            this.checkBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox8.Location = new System.Drawing.Point(11, 212);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(66, 21);
-            this.checkBox8.TabIndex = 18;
-            this.checkBox8.Text = "Recall";
-            this.checkBox8.TrueValue = "1";
-            this.checkBox8.UseVisualStyleBackColor = true;
+            this.checkRecall.AutoSize = true;
+            this.checkRecall.FalseValue = "0";
+            this.checkRecall.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkRecall.Location = new System.Drawing.Point(11, 212);
+            this.checkRecall.Name = "checkRecall";
+            this.checkRecall.Size = new System.Drawing.Size(66, 21);
+            this.checkRecall.TabIndex = 18;
+            this.checkRecall.Text = "Recall";
+            this.checkRecall.TrueValue = "1";
+            this.checkRecall.UseVisualStyleBackColor = true;
             // 
-            // checkBox7
+            // checkSend
             // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.FalseValue = "0";
-            this.checkBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox7.Location = new System.Drawing.Point(11, 185);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(60, 21);
-            this.checkBox7.TabIndex = 17;
-            this.checkBox7.Text = "Send";
-            this.checkBox7.TrueValue = "1";
-            this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkSend.AutoSize = true;
+            this.checkSend.FalseValue = "0";
+            this.checkSend.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSend.Location = new System.Drawing.Point(11, 185);
+            this.checkSend.Name = "checkSend";
+            this.checkSend.Size = new System.Drawing.Size(60, 21);
+            this.checkSend.TabIndex = 17;
+            this.checkSend.Text = "Send";
+            this.checkSend.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkSend.TrueValue = "1";
+            this.checkSend.UseVisualStyleBackColor = true;
             // 
-            // checkBox6
+            // checkUnConfirm
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.FalseValue = "0";
-            this.checkBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox6.Location = new System.Drawing.Point(11, 157);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(93, 21);
-            this.checkBox6.TabIndex = 16;
-            this.checkBox6.Text = "UnConfirm";
-            this.checkBox6.TrueValue = "1";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkUnConfirm.AutoSize = true;
+            this.checkUnConfirm.FalseValue = "0";
+            this.checkUnConfirm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkUnConfirm.Location = new System.Drawing.Point(11, 157);
+            this.checkUnConfirm.Name = "checkUnConfirm";
+            this.checkUnConfirm.Size = new System.Drawing.Size(93, 21);
+            this.checkUnConfirm.TabIndex = 16;
+            this.checkUnConfirm.Text = "UnConfirm";
+            this.checkUnConfirm.TrueValue = "1";
+            this.checkUnConfirm.UseVisualStyleBackColor = true;
             // 
-            // checkBox5
+            // checkConfirm
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.FalseValue = "0";
-            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox5.Location = new System.Drawing.Point(11, 130);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(75, 21);
-            this.checkBox5.TabIndex = 15;
-            this.checkBox5.Text = "Confirm";
-            this.checkBox5.TrueValue = "1";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkConfirm.AutoSize = true;
+            this.checkConfirm.FalseValue = "0";
+            this.checkConfirm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkConfirm.Location = new System.Drawing.Point(11, 130);
+            this.checkConfirm.Name = "checkConfirm";
+            this.checkConfirm.Size = new System.Drawing.Size(75, 21);
+            this.checkConfirm.TabIndex = 15;
+            this.checkConfirm.Text = "Confirm";
+            this.checkConfirm.TrueValue = "1";
+            this.checkConfirm.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // checkPrint
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.FalseValue = "0";
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(11, 103);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(56, 21);
-            this.checkBox4.TabIndex = 11;
-            this.checkBox4.Text = "Print";
-            this.checkBox4.TrueValue = "1";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkPrint.AutoSize = true;
+            this.checkPrint.FalseValue = "0";
+            this.checkPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkPrint.Location = new System.Drawing.Point(11, 103);
+            this.checkPrint.Name = "checkPrint";
+            this.checkPrint.Size = new System.Drawing.Size(56, 21);
+            this.checkPrint.TabIndex = 11;
+            this.checkPrint.Text = "Print";
+            this.checkPrint.TrueValue = "1";
+            this.checkPrint.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // checkDelete
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.FalseValue = "0";
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(11, 76);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(68, 21);
-            this.checkBox3.TabIndex = 12;
-            this.checkBox3.Text = "Delete";
-            this.checkBox3.TrueValue = "1";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkDelete.AutoSize = true;
+            this.checkDelete.FalseValue = "0";
+            this.checkDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkDelete.Location = new System.Drawing.Point(11, 76);
+            this.checkDelete.Name = "checkDelete";
+            this.checkDelete.Size = new System.Drawing.Size(68, 21);
+            this.checkDelete.TabIndex = 12;
+            this.checkDelete.Text = "Delete";
+            this.checkDelete.TrueValue = "1";
+            this.checkDelete.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkEdit
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.FalseValue = "0";
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(11, 49);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(51, 21);
-            this.checkBox2.TabIndex = 10;
-            this.checkBox2.Text = "Edit";
-            this.checkBox2.TrueValue = "1";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkEdit.AutoSize = true;
+            this.checkEdit.FalseValue = "0";
+            this.checkEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkEdit.Location = new System.Drawing.Point(11, 49);
+            this.checkEdit.Name = "checkEdit";
+            this.checkEdit.Size = new System.Drawing.Size(51, 21);
+            this.checkEdit.TabIndex = 10;
+            this.checkEdit.Text = "Edit";
+            this.checkEdit.TrueValue = "1";
+            this.checkEdit.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // checkNew
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.FalseValue = "0";
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(11, 22);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(54, 21);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "New";
-            this.checkBox1.TrueValue = "1";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkNew.AutoSize = true;
+            this.checkNew.FalseValue = "0";
+            this.checkNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkNew.Location = new System.Drawing.Point(11, 22);
+            this.checkNew.Name = "checkNew";
+            this.checkNew.Size = new System.Drawing.Size(54, 21);
+            this.checkNew.TabIndex = 9;
+            this.checkNew.Text = "New";
+            this.checkNew.TrueValue = "1";
+            this.checkNew.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnSave
             // 
-            this.button1.Location = new System.Drawing.Point(586, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSave.Location = new System.Drawing.Point(586, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnUndo
             // 
-            this.button2.Location = new System.Drawing.Point(586, 46);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Undo";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnUndo.Location = new System.Drawing.Point(586, 46);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(80, 30);
+            this.btnUndo.TabIndex = 3;
+            this.btnUndo.Text = "Undo";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.button2_Click);
             // 
-            // AllPositionAuthoritySetting
+            // AuthorityByPosition_Setting
             // 
             this.ClientSize = new System.Drawing.Size(678, 303);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnUndo);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.grid1);
-            this.Name = "AllPositionAuthoritySetting";
+            this.Controls.Add(this.gridPositionAuthority);
+            this.Name = "AuthorityByPosition_Setting";
             this.Text = "Position Authority";
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPositionAuthority)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
@@ -358,27 +359,27 @@
 
         #endregion
 
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridPositionAuthority;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.CheckBox checkBox10;
-        private Win.UI.CheckBox checkBox9;
-        private Win.UI.CheckBox checkBox8;
-        private Win.UI.CheckBox checkBox7;
-        private Win.UI.CheckBox checkBox6;
-        private Win.UI.CheckBox checkBox5;
-        private Win.UI.CheckBox checkBox15;
-        private Win.UI.CheckBox checkBox14;
-        private Win.UI.CheckBox checkBox13;
-        private Win.UI.CheckBox checkBox12;
-        private Win.UI.CheckBox checkBox11;
+        private Win.UI.Button btnSave;
+        private Win.UI.Button btnUndo;
+        private Win.UI.CheckBox checkPrint;
+        private Win.UI.CheckBox checkDelete;
+        private Win.UI.CheckBox checkEdit;
+        private Win.UI.CheckBox checkNew;
+        private Win.UI.CheckBox checkUncheck;
+        private Win.UI.CheckBox checkCheck;
+        private Win.UI.CheckBox checkRecall;
+        private Win.UI.CheckBox checkSend;
+        private Win.UI.CheckBox checkUnConfirm;
+        private Win.UI.CheckBox checkConfirm;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.CheckBox checkReturn;
+        private Win.UI.CheckBox checkReceive;
+        private Win.UI.CheckBox checkUnClose;
+        private Win.UI.CheckBox checkClose;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnAllControl;
+        private Win.UI.Button btnReadonly;
     }
 }

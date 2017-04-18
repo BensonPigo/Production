@@ -23,14 +23,14 @@ namespace Sci.Production.Tools
 
         private void GridSetup()
         {
-            this.grid.AutoGenerateColumns = true;
+            this.gridSQLQuery.AutoGenerateColumns = true;
         }
 
         private void Query_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.DataSource = null;
             
-            sqlcmd = editBox.Text;
+            sqlcmd = editSQL.Text;
             DualResult result;
             DataTable dt;
             result = DBProxy.Current.Select("", sqlcmd, null, out dt);

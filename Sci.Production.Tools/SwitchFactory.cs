@@ -20,10 +20,10 @@ namespace Sci.Production.Tools
             InitializeComponent();
   
             EditMode = true;
-            act.Text = Sci.Env.User.UserID;
-            act.Enabled = false;
-            pwd.Text = Sci.Env.User.UserPassword;
-            pwd.Enabled = false;
+            txtAccount.Text = Sci.Env.User.UserID;
+            txtAccount.Enabled = false;
+            txtPassword.Text = Sci.Env.User.UserPassword;
+            txtPassword.Enabled = false;
 
             this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
         }
@@ -58,10 +58,10 @@ namespace Sci.Production.Tools
                 {
                     factoryOption.Add(factories[i].Trim().ToUpper(), factories[i].Trim().ToUpper());
                 }
-                comboBox1.DataSource = new BindingSource(factoryOption, null);
-                comboBox1.ValueMember = "Key";
-                comboBox1.DisplayMember = "Value";
-                comboBox1.SelectedValue = Sci.Env.User.Factory;
+                comboFactory.DataSource = new BindingSource(factoryOption, null);
+                comboFactory.ValueMember = "Key";
+                comboFactory.DisplayMember = "Value";
+                comboFactory.SelectedValue = Sci.Env.User.Factory;
             }
         }
 
@@ -70,14 +70,14 @@ namespace Sci.Production.Tools
 
             DataTable dtFactory;
             DualResult result;
-            if (MyUtility.Check.Empty((string)this.comboBox1.SelectedValue))
+            if (MyUtility.Check.Empty((string)this.comboFactory.SelectedValue))
             {
                 MyUtility.Msg.WarningBox("Please select one factory");
             }
             else
             {
                 UserInfo user = (UserInfo)Sci.Env.User;
-                string newFactory = (string)this.comboBox1.SelectedValue;
+                string newFactory = (string)this.comboFactory.SelectedValue;
                 bool isFactoryChanged = !newFactory.EqualString(Sci.Env.User.Factory);
                 //if (!(result = DBProxy.Current.Select(null, string.Format("SELECT id FROM MDivision WHERE ID = '{0}'", (string)this.comboBox1.SelectedValue), out dtFactory)))
                 if (!(result = DBProxy.Current.Select(null, string.Format("SELECT MDivisionid FROM Factory WHERE ID = '{0}'",newFactory), out dtFactory)))
@@ -97,7 +97,7 @@ namespace Sci.Production.Tools
                     ShowErr("MDivisionid is not exist!");
                     return;
                 }
-                user.Factory = (string)this.comboBox1.SelectedValue;
+                user.Factory = (string)this.comboFactory.SelectedValue;
                 this.DialogResult = isFactoryChanged 
                         ? System.Windows.Forms.DialogResult.OK
                         : System.Windows.Forms.DialogResult.Cancel ;

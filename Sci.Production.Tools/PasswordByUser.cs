@@ -36,10 +36,10 @@ namespace Sci.Production.Tools
             }
             else
             {
-                 this.editBox1.PopUp += (s, e) => 
+                 this.editFactory.PopUp += (s, e) => 
                 {
                     DBProxy.Current.Select(null, "SELECT DISTINCT FtyGroup FROM Factory WHERE FtyGroup != '' and Junk = 0 ORDER BY FtyGroup", out dtFactory);
-                    Sci.Win.Tools.SelectItem2 seleItem2 = new Sci.Win.Tools.SelectItem2(dtFactory, "FtyGroup", "Factory", "15", (this.editBox1.Text).Replace(" ", ""));
+                    Sci.Win.Tools.SelectItem2 seleItem2 = new Sci.Win.Tools.SelectItem2(dtFactory, "FtyGroup", "Factory", "15", (this.editFactory.Text).Replace(" ", ""));
                     if (seleItem2.ShowDialog(this) == DialogResult.OK)
                     {
                         CurrentMaintain["Factory"] = "";
@@ -51,9 +51,9 @@ namespace Sci.Production.Tools
                     }
                 };
 
-                this.textBox4.PopUp += (s, e) =>
+                this.txtPosition.PopUp += (s, e) =>
                 {
-                    Sci.Win.Tools.SelectItem seleItem = new Sci.Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,25", this.textBox4.Text, "Position,Description");
+                    Sci.Win.Tools.SelectItem seleItem = new Sci.Win.Tools.SelectItem("SELECT ID, Description, PKey From Pass0 ORDER BY ID", "15,25", this.txtPosition.Text, "Position,Description");
                     IList<DataRow> listSelect = null;
                     if (seleItem.ShowDialog(this) == DialogResult.OK)
                     {
@@ -67,9 +67,9 @@ namespace Sci.Production.Tools
             Dictionary<string, string> codePageSource = new Dictionary<string, string>();
             codePageSource.Add("950", "繁體中文");
             codePageSource.Add("0", "English");
-            comboBox1.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboLanguage.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
+            comboLanguage.ValueMember = "Key";
+            comboLanguage.DisplayMember = "Value";
         }
  
         protected override bool OnGridSetup()
@@ -158,22 +158,22 @@ namespace Sci.Production.Tools
         {
             base.OnDetailEntered();
 
-            this.textBox8.ReadOnly = !(this.EditMode && this.IsDetailInserting);
-            this.textBox1.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.textBox2.ReadOnly = !(this.EditMode && (Sci.Env.User.IsAdmin || this.textBox8.Text == Sci.Env.User.UserID));
-            this.textBox2.UseSystemPasswordChar = !this.EditMode;
-            this.textBox3.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.editBox1.ReadOnly = true;  // !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtIDStart.ReadOnly = !(this.EditMode && this.IsDetailInserting);
+            this.txtIDEnd.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtPassword.ReadOnly = !(this.EditMode && (Sci.Env.User.IsAdmin || this.txtIDStart.Text == Sci.Env.User.UserID));
+            this.txtPassword.UseSystemPasswordChar = !this.EditMode;
+            this.txtExtNo.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.editFactory.ReadOnly = true;  // !(this.EditMode && Sci.Env.User.IsAdmin);
 
-            this.txtuser1.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
-            this.txtuser2.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
-            this.txtuser3.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
-            this.textBox7.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.textBox4.ReadOnly = true;
+            this.txtUserManager.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtUserSupervisor.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtUserDeputy.TextBox1.Enabled = (this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtEMailAddr.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.txtPosition.ReadOnly = true;
 
-            this.dateBox1.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.dateBox2.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
-            this.editBox2.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.dateDateHired.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.dateResign.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
+            this.editRemark.ReadOnly = !(this.EditMode && Sci.Env.User.IsAdmin);
 
             sqlCmd = string.Format(@"SELECT A.*, B.MenuNo, B.BarNo 
                                                 FROM Pass2 as A

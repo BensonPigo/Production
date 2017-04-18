@@ -32,9 +32,9 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.editBox = new Sci.Win.UI.EditBox();
-            this.Query = new Sci.Win.UI.Button();
-            this.grid = new Sci.Win.UI.Grid();
+            this.editSQL = new Sci.Win.UI.EditBox();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.gridSQLQuery = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -44,7 +44,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSQLQuery)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -61,7 +61,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.grid);
+            this.splitContainer1.Panel2.Controls.Add(this.gridSQLQuery);
             this.splitContainer1.Size = new System.Drawing.Size(801, 502);
             this.splitContainer1.SplitterDistance = 99;
             this.splitContainer1.TabIndex = 1;
@@ -74,54 +74,54 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.editBox);
+            this.splitContainer2.Panel1.Controls.Add(this.editSQL);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.Query);
+            this.splitContainer2.Panel2.Controls.Add(this.btnQuery);
             this.splitContainer2.Size = new System.Drawing.Size(801, 99);
             this.splitContainer2.SplitterDistance = 723;
             this.splitContainer2.TabIndex = 0;
             // 
-            // editBox
+            // editSQL
             // 
-            this.editBox.BackColor = System.Drawing.Color.White;
-            this.editBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox.IsSupportEditMode = false;
-            this.editBox.Location = new System.Drawing.Point(0, 0);
-            this.editBox.Multiline = true;
-            this.editBox.Name = "editBox";
-            this.editBox.Size = new System.Drawing.Size(723, 99);
-            this.editBox.TabIndex = 11;
+            this.editSQL.BackColor = System.Drawing.Color.White;
+            this.editSQL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.editSQL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editSQL.IsSupportEditMode = false;
+            this.editSQL.Location = new System.Drawing.Point(0, 0);
+            this.editSQL.Multiline = true;
+            this.editSQL.Name = "editSQL";
+            this.editSQL.Size = new System.Drawing.Size(723, 99);
+            this.editSQL.TabIndex = 11;
             // 
-            // Query
+            // btnQuery
             // 
-            this.Query.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Query.Location = new System.Drawing.Point(0, 0);
-            this.Query.Name = "Query";
-            this.Query.Size = new System.Drawing.Size(74, 99);
-            this.Query.TabIndex = 12;
-            this.Query.Text = "Query";
-            this.Query.UseVisualStyleBackColor = true;
-            this.Query.Click += new System.EventHandler(this.Query_Click);
+            this.btnQuery.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnQuery.Location = new System.Drawing.Point(0, 0);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(74, 99);
+            this.btnQuery.TabIndex = 12;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.Query_Click);
             // 
-            // grid
+            // gridSQLQuery
             // 
-            this.grid.AllowUserToAddRows = false;
-            this.grid.AllowUserToDeleteRows = false;
-            this.grid.AllowUserToResizeRows = false;
-            this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid.DataSource = this.listControlBindingSource1;
-            this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(0, 0);
-            this.grid.Name = "grid";
+            this.gridSQLQuery.AllowUserToAddRows = false;
+            this.gridSQLQuery.AllowUserToDeleteRows = false;
+            this.gridSQLQuery.AllowUserToResizeRows = false;
+            this.gridSQLQuery.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSQLQuery.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSQLQuery.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSQLQuery.DataSource = this.listControlBindingSource1;
+            this.gridSQLQuery.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSQLQuery.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSQLQuery.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSQLQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSQLQuery.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSQLQuery.Location = new System.Drawing.Point(0, 0);
+            this.gridSQLQuery.Name = "gridSQLQuery";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -129,14 +129,14 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid.RowTemplate.Height = 24;
-            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid.Size = new System.Drawing.Size(801, 399);
-            this.grid.TabIndex = 1;
-            this.grid.TabStop = false;
+            this.gridSQLQuery.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSQLQuery.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSQLQuery.RowTemplate.Height = 24;
+            this.gridSQLQuery.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSQLQuery.Size = new System.Drawing.Size(801, 399);
+            this.gridSQLQuery.TabIndex = 1;
+            this.gridSQLQuery.TabStop = false;
             // 
             // SQL_Query
             // 
@@ -155,7 +155,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSQLQuery)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -165,9 +165,9 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private Win.UI.Grid grid;
-        private Win.UI.Button Query;
-        private Win.UI.EditBox editBox;
+        private Win.UI.Grid gridSQLQuery;
+        private Win.UI.Button btnQuery;
+        private Win.UI.EditBox editSQL;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
 
     }

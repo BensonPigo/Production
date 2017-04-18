@@ -39,37 +39,37 @@ namespace Sci.Production.Tools
                                                 WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.PKey = {0}", (Int64)_refDr["FKMenu"]);
             if (result = DBProxy.Current.Select(null, sqlCmd, out dtMenuDetail))
             {
-                this.checkBox1.Enabled = (bool) dtMenuDetail.Rows[0]["CanNew"];
-                this.checkBox2.Enabled = (bool) dtMenuDetail.Rows[0]["CanEdit"];
-                this.checkBox3.Enabled = (bool) dtMenuDetail.Rows[0]["CanDelete"];
-                this.checkBox4.Enabled = (bool) dtMenuDetail.Rows[0]["CanPrint"];
-                this.checkBox5.Enabled = (bool) dtMenuDetail.Rows[0]["CanConfirm"];
-                this.checkBox6.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnConfirm"];
-                this.checkBox7.Enabled = (bool) dtMenuDetail.Rows[0]["CanSend"];
-                this.checkBox8.Enabled = (bool) dtMenuDetail.Rows[0]["CanRecall"];
-                this.checkBox9.Enabled = (bool) dtMenuDetail.Rows[0]["CanCheck"];
-                this.checkBox10.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnCheck"];
-                this.checkBox11.Enabled = (bool) dtMenuDetail.Rows[0]["CanClose"];
-                this.checkBox12.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnClose"];
-                this.checkBox13.Enabled = (bool) dtMenuDetail.Rows[0]["CanReceive"];
-                this.checkBox14.Enabled = (bool) dtMenuDetail.Rows[0]["CanReturn"];
-                this.checkBox15.Enabled = (bool) dtMenuDetail.Rows[0]["CanJunk"];
+                this.checkNew.Enabled = (bool) dtMenuDetail.Rows[0]["CanNew"];
+                this.checkEdit.Enabled = (bool) dtMenuDetail.Rows[0]["CanEdit"];
+                this.checkDelete.Enabled = (bool) dtMenuDetail.Rows[0]["CanDelete"];
+                this.checkPrint.Enabled = (bool) dtMenuDetail.Rows[0]["CanPrint"];
+                this.checkConfirm.Enabled = (bool) dtMenuDetail.Rows[0]["CanConfirm"];
+                this.checkUnConfirm.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnConfirm"];
+                this.checkSend.Enabled = (bool) dtMenuDetail.Rows[0]["CanSend"];
+                this.checkRecall.Enabled = (bool) dtMenuDetail.Rows[0]["CanRecall"];
+                this.checkCheck.Enabled = (bool) dtMenuDetail.Rows[0]["CanCheck"];
+                this.checkUncheck.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnCheck"];
+                this.checkClose.Enabled = (bool) dtMenuDetail.Rows[0]["CanClose"];
+                this.checkUnClose.Enabled = (bool) dtMenuDetail.Rows[0]["CanUnClose"];
+                this.checkReceive.Enabled = (bool) dtMenuDetail.Rows[0]["CanReceive"];
+                this.checkReturn.Enabled = (bool) dtMenuDetail.Rows[0]["CanReturn"];
+                this.checkJunk.Enabled = (bool) dtMenuDetail.Rows[0]["CanJunk"];
 
-                this.checkBox1.Checked = this.checkBox1.Enabled && Convert.ToBoolean(_refDr["CanNew"].ToString());
-                this.checkBox2.Checked = this.checkBox2.Enabled && Convert.ToBoolean(_refDr["CanEdit"].ToString());
-                this.checkBox3.Checked = this.checkBox3.Enabled && Convert.ToBoolean(_refDr["CanDelete"].ToString());
-                this.checkBox4.Checked = this.checkBox4.Enabled && Convert.ToBoolean(_refDr["CanPrint"].ToString());
-                this.checkBox5.Checked = this.checkBox5.Enabled && Convert.ToBoolean(_refDr["CanConfirm"].ToString());
-                this.checkBox6.Checked = this.checkBox6.Enabled && Convert.ToBoolean(_refDr["CanUnConfirm"].ToString());
-                this.checkBox7.Checked = this.checkBox7.Enabled && Convert.ToBoolean(_refDr["CanSend"].ToString());
-                this.checkBox8.Checked = this.checkBox8.Enabled && Convert.ToBoolean(_refDr["CanRecall"].ToString());
-                this.checkBox9.Checked = this.checkBox9.Enabled && Convert.ToBoolean(_refDr["CanCheck"].ToString());
-                this.checkBox10.Checked = this.checkBox10.Enabled && Convert.ToBoolean(_refDr["CanUnCheck"].ToString());
-                this.checkBox11.Checked = this.checkBox11.Enabled && Convert.ToBoolean(_refDr["CanClose"].ToString());
-                this.checkBox12.Checked = this.checkBox12.Enabled && Convert.ToBoolean(_refDr["CanUnClose"].ToString());
-                this.checkBox13.Checked = this.checkBox13.Enabled && Convert.ToBoolean(_refDr["CanReceive"].ToString());
-                this.checkBox14.Checked = this.checkBox14.Enabled && Convert.ToBoolean(_refDr["CanReturn"].ToString());
-                this.checkBox15.Checked = this.checkBox15.Enabled && Convert.ToBoolean(_refDr["CanJunk"].ToString());
+                this.checkNew.Checked = this.checkNew.Enabled && Convert.ToBoolean(_refDr["CanNew"].ToString());
+                this.checkEdit.Checked = this.checkEdit.Enabled && Convert.ToBoolean(_refDr["CanEdit"].ToString());
+                this.checkDelete.Checked = this.checkDelete.Enabled && Convert.ToBoolean(_refDr["CanDelete"].ToString());
+                this.checkPrint.Checked = this.checkPrint.Enabled && Convert.ToBoolean(_refDr["CanPrint"].ToString());
+                this.checkConfirm.Checked = this.checkConfirm.Enabled && Convert.ToBoolean(_refDr["CanConfirm"].ToString());
+                this.checkUnConfirm.Checked = this.checkUnConfirm.Enabled && Convert.ToBoolean(_refDr["CanUnConfirm"].ToString());
+                this.checkSend.Checked = this.checkSend.Enabled && Convert.ToBoolean(_refDr["CanSend"].ToString());
+                this.checkRecall.Checked = this.checkRecall.Enabled && Convert.ToBoolean(_refDr["CanRecall"].ToString());
+                this.checkCheck.Checked = this.checkCheck.Enabled && Convert.ToBoolean(_refDr["CanCheck"].ToString());
+                this.checkUncheck.Checked = this.checkUncheck.Enabled && Convert.ToBoolean(_refDr["CanUnCheck"].ToString());
+                this.checkClose.Checked = this.checkClose.Enabled && Convert.ToBoolean(_refDr["CanClose"].ToString());
+                this.checkUnClose.Checked = this.checkUnClose.Enabled && Convert.ToBoolean(_refDr["CanUnClose"].ToString());
+                this.checkReceive.Checked = this.checkReceive.Enabled && Convert.ToBoolean(_refDr["CanReceive"].ToString());
+                this.checkReturn.Checked = this.checkReturn.Enabled && Convert.ToBoolean(_refDr["CanReturn"].ToString());
+                this.checkJunk.Checked = this.checkJunk.Enabled && Convert.ToBoolean(_refDr["CanJunk"].ToString());
 
             }
             else
@@ -101,14 +101,14 @@ namespace Sci.Production.Tools
                 return;
             }
 
-            this.grid1.IsEditingReadOnly = false;
-             Helper.Controls.Grid.Generator(this.grid1)
+            this.gridPositionAuthority.IsEditingReadOnly = false;
+             Helper.Controls.Grid.Generator(this.gridPositionAuthority)
                  .CheckBox("Sele", header:"", width: Widths.AnsiChars(2), trueValue: 1, falseValue: 0)
                  .Text("ID", header: "Position", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
              listControlBindingSource1.DataSource = dtPass0;
-             this.grid1.DataSource = listControlBindingSource1;
+             this.gridPositionAuthority.DataSource = listControlBindingSource1;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -127,21 +127,21 @@ namespace Sci.Production.Tools
                     if (drs.Length > 0)
                     {
                         drs[0]["Used"] = "Y";
-                        drs[0]["CanNew"] = this.checkBox1.Value == "0" ? false : true;
-                        drs[0]["CanEdit"] = this.checkBox2.Value == "0" ? false : true;
-                        drs[0]["CanDelete"] = this.checkBox3.Value == "0" ? false : true;
-                        drs[0]["CanPrint"] = this.checkBox4.Value == "0" ? false : true;
-                        drs[0]["CanConfirm"] = this.checkBox5.Value == "0" ? false : true;
-                        drs[0]["CanUnConfirm"] = this.checkBox6.Value == "0" ? false : true;
-                        drs[0]["CanSend"] = this.checkBox7.Value == "0" ? false : true;
-                        drs[0]["CanRecall"] = this.checkBox8.Value == "0" ? false : true;
-                        drs[0]["CanCheck"] = this.checkBox9.Value == "0" ? false : true;
-                        drs[0]["CanUnCheck"] = this.checkBox10.Value == "0" ? false : true;
-                        drs[0]["CanClose"] = this.checkBox11.Value == "0" ? false : true;
-                        drs[0]["CanUnClose"] = this.checkBox12.Value == "0" ? false : true;
-                        drs[0]["CanReceive"] = this.checkBox13.Value == "0" ? false : true;
-                        drs[0]["CanReturn"] = this.checkBox14.Value == "0" ? false : true;
-                        drs[0]["CanJunk"] = this.checkBox15.Value == "0" ? false : true;
+                        drs[0]["CanNew"] = this.checkNew.Value == "0" ? false : true;
+                        drs[0]["CanEdit"] = this.checkEdit.Value == "0" ? false : true;
+                        drs[0]["CanDelete"] = this.checkDelete.Value == "0" ? false : true;
+                        drs[0]["CanPrint"] = this.checkPrint.Value == "0" ? false : true;
+                        drs[0]["CanConfirm"] = this.checkConfirm.Value == "0" ? false : true;
+                        drs[0]["CanUnConfirm"] = this.checkUnConfirm.Value == "0" ? false : true;
+                        drs[0]["CanSend"] = this.checkSend.Value == "0" ? false : true;
+                        drs[0]["CanRecall"] = this.checkRecall.Value == "0" ? false : true;
+                        drs[0]["CanCheck"] = this.checkCheck.Value == "0" ? false : true;
+                        drs[0]["CanUnCheck"] = this.checkUncheck.Value == "0" ? false : true;
+                        drs[0]["CanClose"] = this.checkClose.Value == "0" ? false : true;
+                        drs[0]["CanUnClose"] = this.checkUnClose.Value == "0" ? false : true;
+                        drs[0]["CanReceive"] = this.checkReceive.Value == "0" ? false : true;
+                        drs[0]["CanReturn"] = this.checkReturn.Value == "0" ? false : true;
+                        drs[0]["CanJunk"] = this.checkJunk.Value == "0" ? false : true;
                     }
                     else
                     {
@@ -151,21 +151,21 @@ namespace Sci.Production.Tools
                         newRow["MenuName"] = dtMenuDetail.Rows[0]["MenuName"].ToString();
                         newRow["BarPrompt"] = dtMenuDetail.Rows[0]["BarPrompt"].ToString();
                         newRow["Used"] = "Y";
-                        newRow["CanNew"] = this.checkBox1.Value == "0" ? false : true;
-                        newRow["CanEdit"] = this.checkBox2.Value == "0" ? false : true;
-                        newRow["CanDelete"] = this.checkBox3.Value == "0" ? false : true;
-                        newRow["CanPrint"] = this.checkBox4.Value == "0" ? false : true;
-                        newRow["CanConfirm"] = this.checkBox5.Value == "0" ? false : true;
-                        newRow["CanUnConfirm"] = this.checkBox6.Value == "0" ? false : true;
-                        newRow["CanSend"] = this.checkBox7.Value == "0" ? false : true;
-                        newRow["CanRecall"] = this.checkBox8.Value == "0" ? false : true;
-                        newRow["CanCheck"] = this.checkBox9.Value == "0" ? false : true;
-                        newRow["CanUnCheck"] = this.checkBox10.Value == "0" ? false : true;
-                        newRow["CanClose"] = this.checkBox11.Value == "0" ? false : true;
-                        newRow["CanUnClose"] = this.checkBox12.Value == "0" ? false : true;
-                        newRow["CanReceive"] = this.checkBox13.Value == "0" ? false : true;
-                        newRow["CanReturn"] = this.checkBox14.Value == "0" ? false : true;
-                        newRow["CanJunk"] = this.checkBox15.Value == "0" ? false : true;
+                        newRow["CanNew"] = this.checkNew.Value == "0" ? false : true;
+                        newRow["CanEdit"] = this.checkEdit.Value == "0" ? false : true;
+                        newRow["CanDelete"] = this.checkDelete.Value == "0" ? false : true;
+                        newRow["CanPrint"] = this.checkPrint.Value == "0" ? false : true;
+                        newRow["CanConfirm"] = this.checkConfirm.Value == "0" ? false : true;
+                        newRow["CanUnConfirm"] = this.checkUnConfirm.Value == "0" ? false : true;
+                        newRow["CanSend"] = this.checkSend.Value == "0" ? false : true;
+                        newRow["CanRecall"] = this.checkRecall.Value == "0" ? false : true;
+                        newRow["CanCheck"] = this.checkCheck.Value == "0" ? false : true;
+                        newRow["CanUnCheck"] = this.checkUncheck.Value == "0" ? false : true;
+                        newRow["CanClose"] = this.checkClose.Value == "0" ? false : true;
+                        newRow["CanUnClose"] = this.checkUnClose.Value == "0" ? false : true;
+                        newRow["CanReceive"] = this.checkReceive.Value == "0" ? false : true;
+                        newRow["CanReturn"] = this.checkReturn.Value == "0" ? false : true;
+                        newRow["CanJunk"] = this.checkJunk.Value == "0" ? false : true;
                         dtPass2.Rows.Add(newRow);
                     }
                 }
@@ -214,40 +214,40 @@ namespace Sci.Production.Tools
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.checkBox1.Checked = false;
-            this.checkBox2.Checked = false;
-            this.checkBox3.Checked = false;
-            this.checkBox4.Checked = false;
-            this.checkBox5.Checked = false;
-            this.checkBox6.Checked = false;
-            this.checkBox7.Checked = false;
-            this.checkBox8.Checked = false;
-            this.checkBox9.Checked = false;
-            this.checkBox10.Checked = false;
-            this.checkBox11.Checked = false;
-            this.checkBox12.Checked = false;
-            this.checkBox13.Checked = false;
-            this.checkBox14.Checked = false;
-            this.checkBox15.Checked = false;
+            this.checkNew.Checked = false;
+            this.checkEdit.Checked = false;
+            this.checkDelete.Checked = false;
+            this.checkPrint.Checked = false;
+            this.checkConfirm.Checked = false;
+            this.checkUnConfirm.Checked = false;
+            this.checkSend.Checked = false;
+            this.checkRecall.Checked = false;
+            this.checkCheck.Checked = false;
+            this.checkUncheck.Checked = false;
+            this.checkClose.Checked = false;
+            this.checkUnClose.Checked = false;
+            this.checkReceive.Checked = false;
+            this.checkReturn.Checked = false;
+            this.checkJunk.Checked = false;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            this.checkBox1.Checked = this.checkBox1.Enabled;
-            this.checkBox2.Checked = this.checkBox2.Enabled;
-            this.checkBox3.Checked = this.checkBox3.Enabled;
-            this.checkBox4.Checked = this.checkBox4.Enabled;
-            this.checkBox5.Checked = this.checkBox5.Enabled;
-            this.checkBox6.Checked = this.checkBox6.Enabled;
-            this.checkBox7.Checked = this.checkBox7.Enabled;
-            this.checkBox8.Checked = this.checkBox8.Enabled;
-            this.checkBox9.Checked = this.checkBox9.Enabled;
-            this.checkBox10.Checked = this.checkBox10.Enabled;
-            this.checkBox11.Checked = this.checkBox11.Enabled;
-            this.checkBox12.Checked = this.checkBox12.Enabled;
-            this.checkBox13.Checked = this.checkBox13.Enabled;
-            this.checkBox14.Checked = this.checkBox14.Enabled;
-            this.checkBox15.Checked = this.checkBox15.Enabled;
+            this.checkNew.Checked = this.checkNew.Enabled;
+            this.checkEdit.Checked = this.checkEdit.Enabled;
+            this.checkDelete.Checked = this.checkDelete.Enabled;
+            this.checkPrint.Checked = this.checkPrint.Enabled;
+            this.checkConfirm.Checked = this.checkConfirm.Enabled;
+            this.checkUnConfirm.Checked = this.checkUnConfirm.Enabled;
+            this.checkSend.Checked = this.checkSend.Enabled;
+            this.checkRecall.Checked = this.checkRecall.Enabled;
+            this.checkCheck.Checked = this.checkCheck.Enabled;
+            this.checkUncheck.Checked = this.checkUncheck.Enabled;
+            this.checkClose.Checked = this.checkClose.Enabled;
+            this.checkUnClose.Checked = this.checkUnClose.Enabled;
+            this.checkReceive.Checked = this.checkReceive.Enabled;
+            this.checkReturn.Checked = this.checkReturn.Enabled;
+            this.checkJunk.Checked = this.checkJunk.Enabled;
         }
     }
 }

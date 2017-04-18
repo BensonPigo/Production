@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.btnModifyHistory = new Sci.Win.UI.Button();
+            this.comboMenuFilter = new Sci.Win.UI.ComboBox();
+            this.labelMenuFilter = new Sci.Win.UI.Label();
+            this.txtDescription = new Sci.Win.UI.TextBox();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.checkAdministrator = new Sci.Win.UI.CheckBox();
+            this.txtPosition = new Sci.Win.UI.TextBox();
+            this.labelPosition = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -52,24 +52,24 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.btnModifyHistory);
+            this.masterpanel.Controls.Add(this.comboMenuFilter);
+            this.masterpanel.Controls.Add(this.labelMenuFilter);
+            this.masterpanel.Controls.Add(this.txtDescription);
+            this.masterpanel.Controls.Add(this.labelDescription);
+            this.masterpanel.Controls.Add(this.checkAdministrator);
+            this.masterpanel.Controls.Add(this.txtPosition);
+            this.masterpanel.Controls.Add(this.labelPosition);
             this.masterpanel.Size = new System.Drawing.Size(918, 90);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPosition, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPosition, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkAdministrator, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelMenuFilter, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboMenuFilter, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnModifyHistory, 0);
             // 
             // detailpanel
             // 
@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(810, 52);
+            this.gridicon.Location = new System.Drawing.Point(836, 52);
             // 
             // refresh
             // 
@@ -116,7 +116,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 513);
+            this.browse.Size = new System.Drawing.Size(918, 513);
             // 
             // tabs
             // 
@@ -135,91 +135,91 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // button1
+            // btnModifyHistory
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(783, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(127, 30);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Modify History";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnModifyHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnModifyHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnModifyHistory.Location = new System.Drawing.Point(783, 12);
+            this.btnModifyHistory.Name = "btnModifyHistory";
+            this.btnModifyHistory.Size = new System.Drawing.Size(127, 30);
+            this.btnModifyHistory.TabIndex = 16;
+            this.btnModifyHistory.Text = "Modify History";
+            this.btnModifyHistory.UseVisualStyleBackColor = true;
+            this.btnModifyHistory.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox1
+            // comboMenuFilter
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(506, 18);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(236, 24);
-            this.comboBox1.TabIndex = 15;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboMenuFilter.BackColor = System.Drawing.Color.White;
+            this.comboMenuFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMenuFilter.FormattingEnabled = true;
+            this.comboMenuFilter.IsSupportUnselect = true;
+            this.comboMenuFilter.Location = new System.Drawing.Point(506, 18);
+            this.comboMenuFilter.Name = "comboMenuFilter";
+            this.comboMenuFilter.Size = new System.Drawing.Size(236, 24);
+            this.comboMenuFilter.TabIndex = 15;
+            this.comboMenuFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label1
+            // labelMenuFilter
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(422, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Menu Filter";
+            this.labelMenuFilter.Lines = 0;
+            this.labelMenuFilter.Location = new System.Drawing.Point(422, 19);
+            this.labelMenuFilter.Name = "labelMenuFilter";
+            this.labelMenuFilter.Size = new System.Drawing.Size(81, 23);
+            this.labelMenuFilter.TabIndex = 14;
+            this.labelMenuFilter.Text = "Menu Filter";
             // 
-            // textBox2
+            // txtDescription
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(96, 50);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(646, 23);
-            this.textBox2.TabIndex = 13;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(96, 50);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(646, 23);
+            this.txtDescription.TabIndex = 13;
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(18, 50);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(18, 50);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 12;
+            this.labelDescription.Text = "Description";
             // 
-            // checkBox1
+            // checkAdministrator
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsAdmin", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(282, 21);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(110, 21);
-            this.checkBox1.TabIndex = 11;
-            this.checkBox1.Text = "Administrator";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkAdministrator.AutoSize = true;
+            this.checkAdministrator.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsAdmin", true));
+            this.checkAdministrator.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkAdministrator.Location = new System.Drawing.Point(282, 21);
+            this.checkAdministrator.Name = "checkAdministrator";
+            this.checkAdministrator.Size = new System.Drawing.Size(110, 21);
+            this.checkAdministrator.TabIndex = 11;
+            this.checkAdministrator.Text = "Administrator";
+            this.checkAdministrator.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtPosition
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(96, 20);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(176, 23);
-            this.textBox1.TabIndex = 10;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtPosition.BackColor = System.Drawing.Color.White;
+            this.txtPosition.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtPosition.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPosition.Location = new System.Drawing.Point(96, 20);
+            this.txtPosition.Name = "txtPosition";
+            this.txtPosition.Size = new System.Drawing.Size(176, 23);
+            this.txtPosition.TabIndex = 10;
+            this.txtPosition.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label3
+            // labelPosition
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(18, 20);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Position";
+            this.labelPosition.Lines = 0;
+            this.labelPosition.Location = new System.Drawing.Point(18, 20);
+            this.labelPosition.Name = "labelPosition";
+            this.labelPosition.Size = new System.Drawing.Size(75, 23);
+            this.labelPosition.TabIndex = 9;
+            this.labelPosition.Text = "Position";
             // 
             // AuthorityByPosition
             // 
@@ -255,13 +255,13 @@
 
         #endregion
 
-        private Win.UI.Button button1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label4;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label3;
+        private Win.UI.Button btnModifyHistory;
+        private Win.UI.ComboBox comboMenuFilter;
+        private Win.UI.Label labelMenuFilter;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.Label labelDescription;
+        private Win.UI.CheckBox checkAdministrator;
+        private Win.UI.TextBox txtPosition;
+        private Win.UI.Label labelPosition;
     }
 }
