@@ -55,7 +55,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Amount.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style>
@@ -86,7 +88,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Order_Qty.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style>
@@ -118,7 +122,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Refno.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -148,7 +154,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Description.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -178,7 +186,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Unit.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style>
@@ -210,7 +220,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!UPrice.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -240,7 +252,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Delivery.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -270,7 +284,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!SP.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -300,7 +316,9 @@
                                                                   <TextRuns>
                                                                     <TextRun>
                                                                       <Value>=Fields!Color_Shade.Value</Value>
-                                                                      <Style />
+                                                                      <Style>
+                                                                        <FontFamily>Calibri</FontFamily>
+                                                                      </Style>
                                                                     </TextRun>
                                                                   </TextRuns>
                                                                   <Style />
@@ -367,7 +385,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>=Fields!Total4.Value</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -399,7 +419,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>=Fields!Total2.Value</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -431,7 +453,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>Total</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -475,7 +499,9 @@
                                                 <TextRuns>
                                                   <TextRun>
                                                     <Value>=First(Fields!Refno.Value)</Value>
-                                                    <Style />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                    </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
@@ -556,7 +582,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>Grand Total</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -586,7 +614,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Total1.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -618,7 +648,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Total3.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -710,7 +742,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!RptTitle.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -720,9 +754,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>0.56286cm</Top>
-          <Left>5.88964cm</Left>
+          <Left>6.07485cm</Left>
           <Height>0.61172cm</Height>
-          <Width>9.36625cm</Width>
+          <Width>9.18104cm</Width>
           <Style>
             <Border>
               <Style>None</Style>
@@ -741,7 +775,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Local Purchase Order</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -773,7 +809,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>PONo:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -803,7 +841,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Supplier:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -833,7 +873,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Date:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -863,7 +905,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>PAGE:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -893,7 +937,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!ID.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -923,7 +969,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!Supplier.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -953,7 +1001,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!issuedate.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -983,7 +1033,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Globals!PageNumber</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1015,7 +1067,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>SP#</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1045,7 +1099,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Delivery</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1075,7 +1131,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Description</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1105,7 +1163,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Unit</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1137,7 +1197,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Order Qty</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1169,7 +1231,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Amount</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1226,7 +1290,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>RefNo</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1256,7 +1322,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Color shade</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1286,7 +1354,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>UPrice</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1316,7 +1386,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Address:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1346,7 +1418,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!Address.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1376,7 +1450,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Tel#:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1406,7 +1482,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!Tel.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1438,7 +1516,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>Date:</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style />
@@ -1468,7 +1548,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=now.ToShortDateString()</Value>
-                  <Style />
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -1513,6 +1595,7 @@
                 <TextRun>
                   <Value>Approved by:</Value>
                   <Style>
+                    <FontFamily>Calibri</FontFamily>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
@@ -1556,6 +1639,7 @@
                 <TextRun>
                   <Value>Prepared by:</Value>
                   <Style>
+                    <FontFamily>Calibri</FontFamily>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
@@ -1588,6 +1672,7 @@
                 <TextRun>
                   <Value>Department manager:</Value>
                   <Style>
+                    <FontFamily>Calibri</FontFamily>
                     <FontWeight>Bold</FontWeight>
                   </Style>
                 </TextRun>
