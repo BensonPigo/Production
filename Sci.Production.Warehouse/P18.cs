@@ -265,6 +265,18 @@ namespace Sci.Production.Warehouse
                 return false;
             }
             #endregion 必輸檢查
+            // 非 Fabric 的物料，移除 Roll & Dyelot
+            foreach (DataRow row in DetailDatas)
+            {
+                if (row["fabrictype"].ToString().ToUpper() != "F")
+                {
+                    row["Roll"] = "";
+                    row["Dyelot"] = "";
+                }
+            }
+            // Check Roll 是否有重複
+            if (!checkRoll())
+                return false;
             #region 取單號
             if (this.IsDetailInserting)
             {
@@ -569,6 +581,10 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             String sqlcmd = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
+
+            // Check Roll 是否有重複
+            if (!checkRoll())
+                return;
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
@@ -1019,16 +1035,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Roll
-,a.Dyelot
-,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
-,p1.StockUnit
-,a.Qty
-,a.StockType
-,a.location
-,a.ukey
-from dbo.TransferIn_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+            this.DetailSelectCommand = string.Format(@"
+select  a.id
+        , a.PoId
+        , a.Seq1
+        , a.Seq2
+        , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
+        , a.Roll
+        , a.Dyelot
+        , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
+        , p1.StockUnit
+        , a.Qty
+        , a.StockType
+        , a.location
+        , a.ukey
+        , FabricType = p1.FabricType
+from dbo.TransferIn_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1099,5 +1122,118 @@ Where a.id = '{0}'", masterID);
                 this.textBox2.Text = item.GetSelectedString();
         }
 
+        private bool checkRoll()
+        {
+            //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
+            List<string> listMsg = new List<string>();
+            foreach (DataRow row in DetailDatas)
+            {
+                DataRow dr;
+                if (row["fabrictype"].ToString().ToUpper() == "F")
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"
+select 
+	RD.RD_Count + ST.ST_Count + BB.BB_Count + TID.TID_Count as total
+from(
+    select COUNT(*) RD_Count 
+    from dbo.Receiving_Detail RD WITH (NOLOCK) 
+    inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
+    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and R.Status = 'Confirmed'
+) RD
+OUTER APPLY
+(
+    select COUNT(*) ST_Count 
+    from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
+    inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
+    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and S.Status = 'Confirmed'
+) ST
+OUTER APPLY
+(
+    select COUNT('POID') BB_Count 
+    from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
+    inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
+    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and B.Status = 'Confirmed'
+) BB
+Outer Apply
+(
+    select count(*) TID_Count 
+    From dbo.TransferIn TI
+    inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
+    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and TI.id !='{4}' and Status = 'Confirmed'
+) TID", row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
+                        {
+                            listMsg.Add(string.Format("<SP#>:{0}, <Seq>:{1}, <Roll>:{2}", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"]));
+                        }
+                    }
+                }
+            }
+
+            if (listMsg.Count > 0)
+            {
+                DialogResult Dr = MyUtility.Msg.QuestionBox(
+                    "The Deylot of\n\r"
+                    + listMsg.JoinToString("\n\r")
+                    + "\n\ralready exists, system will update the Qty for original Deylot<Deylot#>."
+                    , buttons: MessageBoxButtons.OKCancel);
+                switch (Dr.ToString().ToUpper())
+                {
+                    case "OK":
+                        foreach (DataRow row in DetailDatas)
+                        {
+                            if (row["FabricType"].EqualString("F"))
+                            {
+                                DataTable dt;
+                                string strSql = string.Format(@"
+select  Roll
+        , Dyelot
+from FtyInventory
+where   Poid = '{0}'
+        and Seq1 = '{1}'
+        and Seq2 = '{2}'
+        and Roll = '{3}'
+", row["poid"], row["seq1"], row["seq2"], row["roll"]);
+                                DualResult result = DBProxy.Current.Select(null, strSql, out dt);
+                                if (!result)
+                                {
+                                    MyUtility.Msg.WarningBox(result.Description);
+                                }
+
+                                if (dt != null && dt.Rows.Count > 0)
+                                {
+                                    /**
+                                     * 如果在編輯模式下，直接改 Grid
+                                     * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
+                                     **/
+                                    if (this.EditMode == true)
+                                    {
+                                        row["Roll"] = dt.Rows[0]["Roll"];
+                                        row["Dyelot"] = dt.Rows[0]["Dyelot"];
+                                    }
+                                    else
+                                    {
+                                        result = DBProxy.Current.Execute(null, string.Format(@"
+Update TD
+set TD.Roll = '{0}'
+    , TD.Dyelot = '{1}'
+From TransferIn_Detail TD
+where TD.Ukey = '{2}'", dt.Rows[0]["Roll"], dt.Rows[0]["Dyelot"], row["Ukey"]));
+
+                                        if (!result)
+                                        {
+                                            MyUtility.Msg.WarningBox(result.Description);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "CANCEL":
+                        return false;
+                }
+            }
+            return true;
+        }
     }
 }
