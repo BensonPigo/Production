@@ -231,36 +231,9 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
-            foreach (DataRow row in DetailDatas)
-            {
-                DataRow dr;
-                if (row["fabrictype"].ToString().ToUpper() == "F")
-                {
-                    if (MyUtility.Check.Seek(string.Format(@"
-select 
-	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
-from(
-select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.id!='{4}' and R.Status='Confirmed'
-) RD
-OUTER APPLY
-(
-select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and S.Status='Confirmed'
-) ST
-OUTER APPLY
-(
-select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and B.Status='Confirmed'
-) BB"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dr, null))
-                    {
-                        if (Convert.ToInt32(dr[0]) > 0)
-                        {
-                            MyUtility.Msg.WarningBox(string.Format(@"{0},{1},{2} already received, SP#,SEQ,Roll can't duplicate.", row["poid"], row["seq1"].ToString() + row["seq2"].ToString(), row["roll"]));
-                            return false;
-                        }
-                    }
-                }
-            }
+            //Check Roll 是否已經存在
+            if(!checkRoll())
+                return false;
 
             if (!MyUtility.Check.Empty(DetailDatas) && DetailDatas.Count > 0)
             {
@@ -698,35 +671,8 @@ where b.id = '{0}' and b.seq1 ='{1}'and b.seq2 = '{2}'", CurrentDetailData["poid
             #endregion
 
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
-            foreach (DataRow row in DetailDatas)
-            {
-                DataRow dt;
-                if (row["fabrictype"].ToString().ToUpper() == "F")
-                {
-                    if (MyUtility.Check.Seek(string.Format(@"
-select 
-	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
-from(
-select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.id!='{4}' and R.Status='Confirmed'
-) RD
-OUTER APPLY
-(
-select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and S.Status='Confirmed'
-) ST
-OUTER APPLY
-(
-select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and B.Status='Confirmed'
-) BB"
-                        , row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dt, null))
-                    {
-                        if (Convert.ToInt32(dt[0]) > 0)
-                        {
-                            MyUtility.Msg.WarningBox(string.Format(@"{0},{1},{2} already received, SP#,SEQ,Roll can't duplicate.", row["poid"], row["seq1"].ToString() + row["seq2"].ToString(), row["roll"]));
-                            return ;
-                        }
-                    }
-                }
-            }
+            if(!checkRoll())
+                return;
 
             #region 檢查負數庫存
 
@@ -1419,6 +1365,105 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private bool checkRoll()
+        {
+            //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
+            List<string> listMsg = new List<string>();
+            foreach (DataRow row in DetailDatas)
+            {
+                DataRow dr;
+                if (row["fabrictype"].ToString().ToUpper() == "F")
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"
+select 
+	RD.RD_Count+ST.ST_Count+BB.BB_Count as total
+from(
+select COUNT(*) RD_Count from dbo.Receiving_Detail RD WITH (NOLOCK) inner join dbo.Receiving R WITH (NOLOCK) on RD.Id=R.Id  where RD.PoId='{0}' and RD.Seq1='{1}' and RD.Seq2='{2}' and RD.Roll='{3}' and RD.id!='{4}' and R.Status='Confirmed'
+) RD
+OUTER APPLY
+(
+select COUNT(*) ST_Count from dbo.SubTransfer_Detail SD WITH (NOLOCK) inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID=S.Id where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and S.Status='Confirmed'
+) ST
+OUTER APPLY
+(
+select COUNT('POID') BB_Count from dbo.BorrowBack_Detail BD WITH (NOLOCK) inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID=B.Id  where ToPOID='{0}' and ToSeq1='{1}' and ToSeq2='{2}' and ToRoll='{3}' and B.Status='Confirmed'
+) BB", row["poid"], row["seq1"], row["seq2"], row["roll"], CurrentMaintain["id"]), out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
+                        {
+                            //MyUtility.Msg.WarningBox(string.Format(@"{0},{1},{2} already received, SP#,SEQ,Roll can't duplicate.", row["poid"], row["seq1"].ToString() + row["seq2"].ToString(), row["roll"]));
+                            listMsg.Add(string.Format("<SP#>:{0}, <Seq>:{1}, <Roll>:{2}", row["poid"], row["seq1"].ToString() + row["seq2"].ToString(), row["roll"]));
+                        }
+                    }
+                }
+            }
+
+            if (listMsg.Count > 0)
+            {
+                DialogResult Dr = MyUtility.Msg.QuestionBox(
+                    "The Deylot of\n\r"
+                    + listMsg.JoinToString("\n\r")
+                    + "\n\ralready exists, system will update the Qty for original Deylot<Deylot#>."
+                    , buttons: MessageBoxButtons.OKCancel);
+                switch (Dr.ToString().ToUpper())
+                {
+                    case "OK":
+                        foreach (DataRow row in DetailDatas)
+                        {
+                            if (row["FabricType"].EqualString("F"))
+                            {
+                                DataTable dt;
+                                string strSql = string.Format(@"
+select  Roll
+        , Dyelot
+from FtyInventory
+where   Poid = '{0}'
+        and Seq1 = '{1}'
+        and Seq2 = '{2}'
+        and Roll = '{3}'
+", row["poid"], row["seq1"], row["seq2"], row["roll"]);
+                                DualResult result = DBProxy.Current.Select(null, strSql, out dt);
+                                if (!result)
+                                {
+                                    MyUtility.Msg.WarningBox(result.Description);
+                                }
+
+                                if (dt != null && dt.Rows.Count > 0)
+                                {
+                                    /**
+                                     * 如果在編輯模式下，直接改 Grid
+                                     * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
+                                     **/
+                                    if (this.EditMode == true)
+                                    {
+                                        row["Roll"] = dt.Rows[0]["Roll"];
+                                        row["Dyelot"] = dt.Rows[0]["Dyelot"];
+                                    }
+                                    else
+                                    {
+                                        result = DBProxy.Current.Execute(null, string.Format(@"
+Update RD
+set RD.Roll = '{0}'
+    , RD.Dyelot = '{1}'
+From Receiving_Detail RD
+where RD.Ukey = '{2}'", dt.Rows[0]["Roll"], dt.Rows[0]["Dyelot"], row["Ukey"]));
+
+                                        if (!result)
+                                        {
+                                            MyUtility.Msg.WarningBox(result.Description);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "CANCEL":
+                        return false;
+                }
+            }
+            return true;
         }
     }
 }
