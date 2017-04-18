@@ -20,19 +20,11 @@ BEGIN
 			
 
 		---------------新增 Temp MockupOrder ----------------------------
-		select a.*,b.MDivisionID into #tempMO 
-		from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK) left join Production.dbo.factory b on a.FactoryID = b.ID
-		where a.FactoryID in (select id from @Sayfty)
-		--新增欄位FTY_Group
-		ALTER TABLE  #tempMO ADD FTY_Group varchar(8)
-
-		
-		update #tempMO
-		set FTY_Group =IIF(b.FTYGroup is null,a.FactoryID,b.FTYGroup)
-		from #tempMO a 
-		inner join Production.dbo.Factory b on a.FactoryID = b.id
-
-
+		select a.*,b.MDivisionID, b.FTYGroup 
+		into #tempMO
+		from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK) 
+		inner join Production.dbo.factory b on a.FactoryID = b.ID
+				
 	------------------MockupOrder--------------------------------------------------------------
 
 		declare @mockT table (ID varchar(13),isInsert bit)
