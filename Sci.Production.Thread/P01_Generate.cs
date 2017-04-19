@@ -51,7 +51,7 @@ namespace Sci.Production.Thread
             DualResult dResult = DBProxy.Current.Select(null, sql, out gridTable);
             if (dResult)
             {
-                this.grid1.DataSource = gridTable;
+                this.listControlBindingSource1.DataSource = gridTable;
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Sci.Production.Thread
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-            .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Seq", header: "SEQ", width: Widths.Auto(true),iseditingreadonly:true)
             .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
@@ -269,6 +269,7 @@ namespace Sci.Production.Thread
                 {
                     dr["ThreadCombid"] = txtthreadcomb1.Text;
                     dr["Sel"] = false;
+                    dr.EndEdit();
                 }
 
             }
