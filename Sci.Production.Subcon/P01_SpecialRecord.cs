@@ -59,7 +59,7 @@ namespace Sci.Production.Subcon
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Numeric("poqty", header: "PO QTY", iseditingreadonly: true)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "UnitPrice", settings: ns,iseditable:flag)
+                .Numeric("UnitPrice", header: "UnitPrice", decimal_places: 4, settings: ns, iseditable: flag)
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
                 .Numeric("Amount", header: "Amount", iseditingreadonly: true);
 
