@@ -507,7 +507,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem(spTb, "ID", "15@300,300", dr["OrderID"].ToString(), columndecimals: "50");
+                    sele = new SelectItem(spTb, "ID", "15@300,400", dr["OrderID"].ToString(), columndecimals: "50");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -550,7 +550,7 @@ namespace Sci.Production.Cutting
                     DataTable poTb;
                     string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
                     DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
-                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@300,300", dr["SEQ1"].ToString(), false, ",");
+                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
 
@@ -630,7 +630,7 @@ namespace Sci.Production.Cutting
                     DataTable poTb;
                     string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
                     DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
-                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@300,300", dr["SEQ2"].ToString(), false, ",");
+                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
 
@@ -803,7 +803,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
-                    sele = new SelectItem(sizeGroup, "SizeCode", "23@300,300", dr["SizeCode"].ToString(), false, ",");
+                    sele = new SelectItem(sizeGroup, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -873,7 +873,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
-                    sele = new SelectItem(spTb, "ID", "23@300,300", dr["OrderID"].ToString(), false, ",");
+                    sele = new SelectItem(spTb, "ID", "15@300,400", dr["OrderID"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -938,7 +938,7 @@ namespace Sci.Production.Cutting
                     DataTable srdt = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable();
                     DataTable sizeGroup2;
                     MyUtility.Tool.ProcessWithDatatable(srdt, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup2);
-                    sele = new SelectItem(sizeGroup2, "SizeCode", "23@300,300", dr["SizeCode"].ToString(), false, ",");
+                    sele = new SelectItem(sizeGroup2, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();                    
@@ -1000,7 +1000,7 @@ namespace Sci.Production.Cutting
                     DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
-                    sele = new SelectItem(artTb, "article", "23@300,300", dr["Article"].ToString(), false, ",");
+                    sele = new SelectItem(artTb, "article", "15@300,300", dr["Article"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
