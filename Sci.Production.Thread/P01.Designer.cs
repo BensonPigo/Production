@@ -177,7 +177,7 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(922, 449);
-            this.DefaultDetailOrder = "ThreadCombid,machinetypeid";
+            this.DefaultDetailOrder = "ThreadCombid,machinetypeid,ConsPC";
             this.DefaultOrder = "ID,Seasonid";
             this.GridAlias = "ThreadColorComb";
             this.GridUniqueKey = "ID";
