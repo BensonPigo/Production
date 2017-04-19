@@ -483,25 +483,16 @@ where a.ID='{0}'"
                     {
                         MyUtility.Msg.InfoBox("<Skewness 1> cannot over than 100 !");
                         dr["SkewnessTest1"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]);
-
+                        return;
                     }
                     else
                     {
                         dr["SkewnessTest1"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"] != 0)
-                {
-                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]))/((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]))*2*100 ;
-                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
-
-                }
-                else
-                {
-                    dr["SkewnessRate"] = 0;
-                    return;
-                }
+                CalSkeValue(dr);
             };
+
             SkeTest2Cell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
@@ -518,17 +509,7 @@ where a.ID='{0}'"
                         dr["SkewnessTest2"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"] != 0)
-                {
-                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
-                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
-
-                }
-                else
-                {
-                    dr["SkewnessRate"] = 0;
-                    return;
-                }
+                CalSkeValue(dr);
             };
 
             LabTechCell.CellValidating += (s, e) =>
@@ -598,6 +579,7 @@ where a.ID='{0}'"
             selectDr["SEQ1"] = maindr["SEQ1"];
             selectDr["SEQ2"] = maindr["SEQ2"];
         }
+
         //判斷Grid View有無空白
         protected override bool OnSaveBefore()
         {
@@ -664,16 +646,6 @@ where a.ID='{0}'"
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["VerticalTest3"])))
             {
                 MyUtility.Msg.WarningBox("<Vertical 3> can not be 0.");
-                return false;
-            }
-            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["SkewnessTest1"])))
-            {
-                MyUtility.Msg.WarningBox("<Skewness 1> can not be 0.");
-                return false;
-            }
-            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["SkewnessTest2"])))
-            {
-                MyUtility.Msg.WarningBox("<Skewness 2> can not be 0.");
                 return false;
             }
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Result"])))
@@ -1001,6 +973,27 @@ where a.ID='{0}'"
             if (excelSheets != null) Marshal.FinalReleaseComObject(excelSheets);//釋放sheet
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
 
+        }
+        /// <summary>
+        /// Calculation Skewness value
+        /// </summary>
+        /// <param name="dr">current dataRow</param>
+        private void CalSkeValue(DataRow dr)
+        {
+            if (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value)
+            {
+                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
+                {
+                    decimal SkewnessRate = ((Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"])) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
+                    dr["SkewnessRate"] = Math.Round(SkewnessRate, 2);
+
+                }
+                else
+                {
+                    dr["SkewnessRate"] = 0;
+                    return;
+                }
+            }
         }
     }
 }
