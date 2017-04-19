@@ -62,7 +62,7 @@ where b.Id = a.OperationId and a.id='{0}'", CurrentDetailData["id"]);
             Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("ThreadCombID", header: "Thread Combination", width: Widths.Auto(true), iseditingreadonly: true, settings: operation)
            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
-           .Numeric("ConsPC", header: "ThreadColorComb", integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+           .Numeric("ConsPC", header: "Cons/PC (CM)", integer_places: 8, decimal_places: 2, iseditingreadonly: true)
            //.Numeric("Length", header: "Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
            .Button(header: "Color Combination", onclick: new EventHandler<DataGridViewCellEventArgs>(buttoncell));
             #region Button也可這樣寫
