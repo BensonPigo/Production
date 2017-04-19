@@ -4,8 +4,11 @@
     [Machinetypeid] VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_Machinetypeid] DEFAULT ('') NULL,
     [StyleUkey]     VARCHAR (10)   CONSTRAINT [DF_ThreadColorComb_StyleUkey] DEFAULT ('') NULL,
     [Length]        NUMERIC (8, 2) CONSTRAINT [DF_ThreadColorComb_Length] DEFAULT ((0)) NULL,
+    [ConsPC]        NUMERIC (8, 2) NULL ,
     CONSTRAINT [PK_ThreadColorComb_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
