@@ -221,7 +221,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(130, 23);
             this.label7.TabIndex = 38;
-            this.label7.Text = "label7";
+            this.label7.Text = "";
             this.label7.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P03
