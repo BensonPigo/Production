@@ -115,7 +115,7 @@ where a.ID='{0}'"
 
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
+                dr["Name"] = MyUtility.GetValue.Lookup("Name_Extno", dr["Inspector"].ToString(), "View_ShowName", "ID");
                 dr["NewKey"] = i;
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
@@ -577,7 +577,7 @@ where a.ID='{0}'"
               .Numeric("SkewnessRate", header: "Skewness Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
-              .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
+              .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;

@@ -114,7 +114,7 @@ where a.ID='{0}'"
                      
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
+                dr["Name"] = MyUtility.GetValue.Lookup("Name_Extno", dr["Inspector"].ToString(), "View_ShowName", "ID");
                 dr["NewKey"] = i;
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
@@ -508,7 +508,7 @@ where a.ID='{0}'"
             Helper.Controls.Grid.Generator(this.grid)
               .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
               .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
-              .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: orlHorCell)//s
+              .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings:orlVirCell)
               .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)
               .Numeric("HorizontalTest1", header: "Horizontal 1", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: HorTest1Cell)
@@ -523,7 +523,7 @@ where a.ID='{0}'"
               .Numeric("VerticalRate", header: "Vertical Shrinkage Rate", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
-              .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10),iseditingreadonly:true)
+              .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
             return true;

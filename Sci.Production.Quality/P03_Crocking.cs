@@ -105,7 +105,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
-                dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
+                dr["Name"] = MyUtility.GetValue.Lookup("Name_Extno", dr["Inspector"].ToString(), "View_ShowName", "ID");
                 dr["NewKey"] = i;
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
@@ -344,7 +344,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
             .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), iseditingreadonly: true, settings: LabTechCell)
-            .CellUser("Inspector", header: "Name", width: Widths.AnsiChars(10), userNamePropertyName: "Name", iseditingreadonly: true)
+            .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), userNamePropertyName: "Name", iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
