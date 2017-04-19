@@ -5,6 +5,7 @@ CREATE TABLE [dbo].[ThreadIssue_Detail] (
     [NewCone]          NUMERIC (5)  CONSTRAINT [DF_ThreadIssue_Detail_IssueNewCone] DEFAULT ((0)) NULL,
     [UsedCone]         NUMERIC (5)  CONSTRAINT [DF_ThreadIssue_Detail_IssueUsedCone] DEFAULT ((0)) NULL,
     [ThreadLocationID] VARCHAR (10) CONSTRAINT [DF_ThreadIssue_Detail_ThreadLocationID] DEFAULT ('') NOT NULL,
+    [Remark] VARCHAR(60) NULL DEFAULT (''), 
     CONSTRAINT [PK_ThreadIssue_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Refno] ASC, [ThreadColorID] ASC, [ThreadLocationID] ASC)
 );
 
