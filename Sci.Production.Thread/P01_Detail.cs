@@ -174,7 +174,7 @@ namespace Sci.Production.Thread
                 Helper.Controls.Grid.Generator(grid1)
                     .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.Auto(true), settings: threadcolor_col);
 
-                grid1.Columns[i + "article"].DefaultCellStyle.BackColor = Color.Pink;
+                grid1.Columns[tbArticle.Rows[i]["article"].ToString().Trim()].DefaultCellStyle.BackColor = Color.Pink;
             }
             #endregion
 
