@@ -19,14 +19,14 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "F,Fabric,A,Accessory");
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            label14.Text = string.Format("Weight\r\n(kgs/{0})", MyUtility.Convert.GetString(CurrentMaintain["UsageUnit"]));
-            textBox1.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode WITH (NOLOCK) where NLCode = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["NLCode"])));
+            labelWeight.Text = string.Format("Weight\r\n(kgs/{0})", MyUtility.Convert.GetString(CurrentMaintain["UsageUnit"]));
+            txtGoodsDescription.Text = MyUtility.GetValue.Lookup(string.Format("select GoodsDescription from KHGoodsHSCode WITH (NOLOCK) where NLCode = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["NLCode"])));
         }
 
         protected override bool ClickEditBefore()
@@ -39,10 +39,10 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            editBox1.ReadOnly = true;
-            comboBox1.ReadOnly = true;
-            txtunit1.TextBox1.ReadOnly = true;
-            checkBox1.ReadOnly = true;
+            editDescDetail.ReadOnly = true;
+            comboType.ReadOnly = true;
+            txtUnitUsageUnit.TextBox1.ReadOnly = true;
+            checkJunk.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -83,7 +83,7 @@ order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: 
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 IList<DataRow> selectedData = item.GetSelecteds();
-                textBox1.Text = item.GetSelectedString();
+                txtGoodsDescription.Text = item.GetSelectedString();
                 CurrentMaintain["NLCode"] = selectedData[0]["NLCode"];
                 CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
             }
@@ -92,27 +92,27 @@ order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: 
         //Good's Description
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtGoodsDescription.OldValue != txtGoodsDescription.Text)
             {
-                if (MyUtility.Check.Empty(textBox1.Text))
+                if (MyUtility.Check.Empty(txtGoodsDescription.Text))
                 {
-                    textBox1.Text = "";
+                    txtGoodsDescription.Text = "";
                     CurrentMaintain["NLCode"] = "";
                     CurrentMaintain["CustomsUnit"] = "";
                 }
                 else
                 {
                     DataRow NLCodeDate;
-                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", textBox1.Text), out NLCodeDate))
+                    if (MyUtility.Check.Seek(string.Format(@"select GoodsDescription,NLCode from KHGoodsHSCode WITH (NOLOCK) where GoodsDescription = '{0}'", txtGoodsDescription.Text), out NLCodeDate))
                     {
-                        textBox1.Text = textBox1.Text;
+                        txtGoodsDescription.Text = txtGoodsDescription.Text;
                         CurrentMaintain["NLCode"] = NLCodeDate["NLCode"];
                         CurrentMaintain["CustomsUnit"] = MyUtility.GetValue.Lookup(string.Format("select TOP(1) UnitID from KHContract_Detail WITH (NOLOCK) where NLCode = '{0}' and ID in (select ID from (select ID,MAX(StartDate) as MaxDate from KHContract WITH (NOLOCK) where Status = 'Confirmed' group by ID) a)", MyUtility.Convert.GetString(NLCodeDate["NLCode"])));
                     }
                     else
                     {
                         MyUtility.Msg.WarningBox("The Good's Description is not in the Contract!!");
-                        textBox1.Text = "";
+                        txtGoodsDescription.Text = "";
                         CurrentMaintain["NLCode"] = "";
                         CurrentMaintain["CustomsUnit"] = "";
                         e.Cancel = true;

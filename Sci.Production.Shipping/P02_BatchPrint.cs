@@ -24,21 +24,21 @@ namespace Sci.Production.Shipping
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"]));
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", textBox1.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", txtReceiver.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtReceiver.Text = item.GetSelectedString();
         }
 
         protected override bool ValidateInput()
         {
-            receiver = textBox1.Text;
-            incharge= txtuser1.TextBox1.Text;
-            ctnno = textBox2.Text;
-            orderid = textBox3.Text;
-            seq1 = textBox4.Text;
-            seq2 = textBox5.Text;
+            receiver = txtReceiver.Text;
+            incharge= txtUserInCharge.TextBox1.Text;
+            ctnno = txtCNo.Text;
+            orderid = txtSPNo.Text;
+            seq1 = txtSeqStart.Text;
+            seq2 = txtSeqEnd.Text;
             ReportResourceName = "P02_BatchPrint.rdlc";
 
             return base.ValidateInput();

@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.labelNLCode = new Sci.Win.UI.Label();
+            this.labelEnglishDesc = new Sci.Win.UI.Label();
+            this.labelVietnamDesc = new Sci.Win.UI.Label();
+            this.labelVietnamUnit = new Sci.Win.UI.Label();
+            this.txtNLCode = new Sci.Win.UI.TextBox();
+            this.txtEnglishDesc = new Sci.Win.UI.TextBox();
+            this.txtVietnamDesc = new Sci.Win.UI.TextBox();
+            this.txtVietnamUnit = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,14 +50,14 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox4);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtVietnamUnit);
+            this.detailcont.Controls.Add(this.txtVietnamDesc);
+            this.detailcont.Controls.Add(this.txtEnglishDesc);
+            this.detailcont.Controls.Add(this.txtNLCode);
+            this.detailcont.Controls.Add(this.labelVietnamUnit);
+            this.detailcont.Controls.Add(this.labelVietnamDesc);
+            this.detailcont.Controls.Add(this.labelEnglishDesc);
+            this.detailcont.Controls.Add(this.labelNLCode);
             this.detailcont.Size = new System.Drawing.Size(829, 289);
             // 
             // detailbtm
@@ -67,7 +67,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(678, 327);
+            this.browse.Size = new System.Drawing.Size(829, 327);
             // 
             // tabs
             // 
@@ -86,86 +86,86 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelNLCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "NL Code";
+            this.labelNLCode.Lines = 0;
+            this.labelNLCode.Location = new System.Drawing.Point(22, 14);
+            this.labelNLCode.Name = "labelNLCode";
+            this.labelNLCode.Size = new System.Drawing.Size(91, 23);
+            this.labelNLCode.TabIndex = 2;
+            this.labelNLCode.Text = "NL Code";
             // 
-            // label2
+            // labelEnglishDesc
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(22, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "English Desc";
+            this.labelEnglishDesc.Lines = 0;
+            this.labelEnglishDesc.Location = new System.Drawing.Point(22, 50);
+            this.labelEnglishDesc.Name = "labelEnglishDesc";
+            this.labelEnglishDesc.Size = new System.Drawing.Size(91, 23);
+            this.labelEnglishDesc.TabIndex = 3;
+            this.labelEnglishDesc.Text = "English Desc";
             // 
-            // label3
+            // labelVietnamDesc
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(22, 87);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(91, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Vietnam Desc";
+            this.labelVietnamDesc.Lines = 0;
+            this.labelVietnamDesc.Location = new System.Drawing.Point(22, 87);
+            this.labelVietnamDesc.Name = "labelVietnamDesc";
+            this.labelVietnamDesc.Size = new System.Drawing.Size(91, 23);
+            this.labelVietnamDesc.TabIndex = 4;
+            this.labelVietnamDesc.Text = "Vietnam Desc";
             // 
-            // label4
+            // labelVietnamUnit
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(22, 125);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Vietnam Unit";
+            this.labelVietnamUnit.Lines = 0;
+            this.labelVietnamUnit.Location = new System.Drawing.Point(22, 125);
+            this.labelVietnamUnit.Name = "labelVietnamUnit";
+            this.labelVietnamUnit.Size = new System.Drawing.Size(91, 23);
+            this.labelVietnamUnit.TabIndex = 5;
+            this.labelVietnamUnit.Text = "Vietnam Unit";
             // 
-            // textBox1
+            // txtNLCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(117, 14);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(68, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(117, 14);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(68, 23);
+            this.txtNLCode.TabIndex = 0;
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtEnglishDesc
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(117, 50);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(479, 23);
-            this.textBox2.TabIndex = 6;
+            this.txtEnglishDesc.BackColor = System.Drawing.Color.White;
+            this.txtEnglishDesc.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtEnglishDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
+            this.txtEnglishDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEnglishDesc.Location = new System.Drawing.Point(117, 50);
+            this.txtEnglishDesc.Name = "txtEnglishDesc";
+            this.txtEnglishDesc.Size = new System.Drawing.Size(479, 23);
+            this.txtEnglishDesc.TabIndex = 6;
             // 
-            // textBox3
+            // txtVietnamDesc
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescVI", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(117, 87);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(479, 23);
-            this.textBox3.TabIndex = 7;
+            this.txtVietnamDesc.BackColor = System.Drawing.Color.White;
+            this.txtVietnamDesc.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtVietnamDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescVI", true));
+            this.txtVietnamDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtVietnamDesc.Location = new System.Drawing.Point(117, 87);
+            this.txtVietnamDesc.Name = "txtVietnamDesc";
+            this.txtVietnamDesc.Size = new System.Drawing.Size(479, 23);
+            this.txtVietnamDesc.TabIndex = 7;
             // 
-            // textBox4
+            // txtVietnamUnit
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitVI", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(117, 125);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(68, 23);
-            this.textBox4.TabIndex = 1;
+            this.txtVietnamUnit.BackColor = System.Drawing.Color.White;
+            this.txtVietnamUnit.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtVietnamUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitVI", true));
+            this.txtVietnamUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtVietnamUnit.Location = new System.Drawing.Point(117, 125);
+            this.txtVietnamUnit.Name = "txtVietnamUnit";
+            this.txtVietnamUnit.Size = new System.Drawing.Size(68, 23);
+            this.txtVietnamUnit.TabIndex = 1;
             // 
             // B44
             // 
@@ -192,13 +192,13 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.TextBox txtVietnamUnit;
+        private Win.UI.TextBox txtVietnamDesc;
+        private Win.UI.TextBox txtEnglishDesc;
+        private Win.UI.TextBox txtNLCode;
+        private Win.UI.Label labelVietnamUnit;
+        private Win.UI.Label labelVietnamDesc;
+        private Win.UI.Label labelEnglishDesc;
+        private Win.UI.Label labelNLCode;
     }
 }

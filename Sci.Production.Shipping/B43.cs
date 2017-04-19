@@ -47,12 +47,12 @@ namespace Sci.Production.Shipping
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    button2.Enabled = true;
+                    btnAddNewNLCode.Enabled = true;
                     this.lab_status.Text = "Confirmed";
                 }
                 else
                 {
-                    button2.Enabled = false;
+                    btnAddNewNLCode.Enabled = false;
                     this.lab_status.Text = "New";
                 }
             }
@@ -68,10 +68,10 @@ namespace Sci.Production.Shipping
         {
             base.ClickEditAfter();
 
-            dateBox1.ReadOnly = true;
-            dateBox2.ReadOnly = true;
-            textBox1.ReadOnly = true;
-            numericBox1.ReadOnly = true;
+            dateStartDate.ReadOnly = true;
+            dateEndDate.ReadOnly = true;
+            txtContractNo.ReadOnly = true;
+            numGrandTotalQty.ReadOnly = true;
         }
 
         protected override bool ClickEditBefore()
@@ -100,43 +100,43 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("Contract No. can't empty!!");
-                textBox1.Focus();
+                txtContractNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
             {
                 MyUtility.Msg.WarningBox("Start Date can't empty!!");
-                dateBox1.Focus();
+                dateStartDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
             {
                 MyUtility.Msg.WarningBox("End Date can't empty!!");
-                dateBox2.Focus();
+                dateEndDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["TotalQty"]))
             {
                 MyUtility.Msg.WarningBox("Grand Total Q'ty can't empty!!");
-                numericBox1.Focus();
+                numGrandTotalQty.Focus();
                 return false;
             }
             #endregion
 
             #region 檢查日期正確性
             //Start Date：輸入的日期年份一定要跟建檔當天同一年
-            if (Convert.ToDateTime(dateBox1.Value).Year != DateTime.Today.Year)
+            if (Convert.ToDateTime(dateStartDate.Value).Year != DateTime.Today.Year)
             {
                 MyUtility.Msg.WarningBox("Pls double check the start date!!");
-                dateBox1.Focus();
+                dateStartDate.Focus();
                 return false;
             }
 
             //End Date：輸入的日期年份一定要是建檔當天的隔年
-            if (Convert.ToDateTime(dateBox2.Value).Year != DateTime.Today.Year + 1)
+            if (Convert.ToDateTime(dateEndDate.Value).Year != DateTime.Today.Year + 1)
             {
                 MyUtility.Msg.WarningBox("Pls double check the end date!!");
-                dateBox2.Focus();
+                dateEndDate.Focus();
                 return false;
             }
             #endregion

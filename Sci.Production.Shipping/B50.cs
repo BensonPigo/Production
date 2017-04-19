@@ -15,42 +15,42 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
 
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "FABRIC,ACCESSORY,CHEMICAL,MACHINERY,OTHETS");
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "FABRIC,ACCESSORY,CHEMICAL,MACHINERY,OTHETS");
         }
 
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            comboBox1.SelectedIndex = -1;
+            comboCategory.SelectedIndex = -1;
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
+            txtDescriptionofGoods.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
         {
             //檢查必輸欄位
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtDescriptionofGoods.Text))
             {
                 MyUtility.Msg.WarningBox("Description of Goods can't empty!!");
-                textBox1.Focus();
+                txtDescriptionofGoods.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtHSCode.Text))
             {
                 MyUtility.Msg.WarningBox("HS Code can't empty!!");
-                textBox2.Focus();
+                txtHSCode.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(comboBox1.Text))
+            if (MyUtility.Check.Empty(comboCategory.Text))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
-                comboBox1.Focus();
+                comboCategory.Focus();
                 return false;
             }
 

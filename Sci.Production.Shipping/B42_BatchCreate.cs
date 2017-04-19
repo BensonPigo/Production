@@ -27,8 +27,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Bulk,Sample");
-            comboBox1.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk,Sample");
+            comboCategory.SelectedIndex = -1;
             DataTable gridData;
             DBProxy.Current.Select(null, "select 0 as Selected,'' as CurrentCustomSP,'' as Article,'' as SizeCode,'' as Consumption,* from VNConsumption WITH (NOLOCK) where 1 = 0", out gridData);
 
@@ -39,7 +39,7 @@ namespace Sci.Production.Shipping
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                        DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
                         string selected = MyUtility.Convert.GetString(dr["Selected"]) == "1" ? "0" : "1";
                         foreach (DataRow all in ((DataTable)listControlBindingSource1.DataSource).Rows)
                         {
@@ -60,7 +60,7 @@ namespace Sci.Production.Shipping
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                        DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
                         Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
 
             vncontract.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["VNContractID"].ToString())
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", e.FormattedValue.ToString())))
@@ -92,7 +92,7 @@ namespace Sci.Production.Shipping
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                        DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
                         Sci.Production.Shipping.B42_BatchCreate_Consumption callNextForm = new Sci.Production.Shipping.B42_BatchCreate_Consumption(MidDetailData, AllDetailData, MyUtility.Convert.GetString(dr["StyleUKey"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Article"]).Substring(0, MyUtility.Convert.GetString(dr["Article"]).IndexOf(',')), MyUtility.Convert.GetString(dr["VNContractID"]));
                         DialogResult result = callNextForm.ShowDialog(this);
                         callNextForm.Dispose();
@@ -101,8 +101,8 @@ namespace Sci.Production.Shipping
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchCreate.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridBatchCreate)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8))
                 .Text("CurrentCustomSP", header: "Current Custom", width: Widths.AnsiChars(8), settings: currentcustom, iseditingreadonly: true)
@@ -123,10 +123,10 @@ namespace Sci.Production.Shipping
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
-                dateRange1.TextBox1.Focus();
+                dateBuyerDelivery.TextBox1.Focus();
                 return;
             }
             DataTable GroupData, gridData;
@@ -145,26 +145,26 @@ inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq =
 left join Style s WITH (NOLOCK) on o.StyleUkey = s.Ukey
 where 1=1", contractID));
 
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateBuyerDelivery.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateBuyerDelivery.Value2).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(txtstyle1.Text))
+            if (!MyUtility.Check.Empty(txtstyle.Text))
             {
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'",txtstyle1.Text));
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'",txtstyle.Text));
             }
-            if (!MyUtility.Check.Empty(comboBox1.Text))
+            if (!MyUtility.Check.Empty(comboCategory.Text))
             {
-                sqlCmd.Append(string.Format(" and o.Category = '{0}'", comboBox1.Text == "Bulk" ? "B" : "S"));
+                sqlCmd.Append(string.Format(" and o.Category = '{0}'", comboCategory.Text == "Bulk" ? "B" : "S"));
             }
-            if (!MyUtility.Check.Empty(txtbrand1.Text))
+            if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand1.Text));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand.Text));
             }
             sqlCmd.Append(@"
 group by o.StyleUkey,oqd.SizeCode,oqd.Article,o.Category,o.StyleID,o.SeasonID,o.BrandID,isnull(s.CPU,0),isnull(s.CTNQty,0)
@@ -584,7 +584,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         //Auto Custom SP#
         private void button2_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridBatchCreate.ValidateControl();
             DataTable CustomSP;
             DualResult result = DBProxy.Current.Select(null, "select VNContractID,MAX(CustomSP) as CustomSP from VNConsumption WITH (NOLOCK) group by VNContractID", out CustomSP);
             if (!result)
@@ -619,21 +619,21 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         //update Contract
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", textBox1.Text, headercaptions: "Contract No.,Start Date, End Date");
+            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtVNContractID.Text = item.GetSelectedString();
         }
 
         //update Contract
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtVNContractID.OldValue != txtVNContractID.Text)
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox1.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtVNContractID.Text)))
                 {
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
-                    textBox1.Text = "";
+                    txtVNContractID.Text = "";
                     return;
                 }
             }
@@ -642,12 +642,12 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         //update Contract
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridBatchCreate.ValidateControl();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["Selected"]) == "1")
                 {
-                    dr["VNContractID"] = textBox1.Text;
+                    dr["VNContractID"] = txtVNContractID.Text;
                 }
             }
         }
@@ -655,18 +655,18 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         //update Date
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridBatchCreate.ValidateControl();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["Selected"]) == "1")
                 {
-                    if (MyUtility.Check.Empty(dateBox1.Value))
+                    if (MyUtility.Check.Empty(dateCdate.Value))
                     {
                         dr["CDate"] = DBNull.Value;
                     }
                     else
                     {
-                        dr["CDate"] = dateBox1.Value;
+                        dr["CDate"] = dateCdate.Value;
                     }
                 }
             }
@@ -675,7 +675,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         //Create
         private void button3_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridBatchCreate.ValidateControl();
             #region 檢查必輸欄位
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {

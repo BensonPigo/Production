@@ -28,27 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.label14 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.txtunit1 = new Sci.Production.Class.txtunit();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.numWeight = new Sci.Win.UI.NumericBox();
+            this.labelWeight = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.displayCustomsUnit = new Sci.Win.UI.DisplayBox();
+            this.txtUnitUsageUnit = new Sci.Production.Class.txtunit();
+            this.displayMaterialType = new Sci.Win.UI.DisplayBox();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.editDescDetail = new Sci.Win.UI.EditBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.displayRefNo = new Sci.Win.UI.DisplayBox();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelCustomsUnit = new Sci.Win.UI.Label();
+            this.labelGoodsDescription = new Sci.Win.UI.Label();
+            this.labelUsageUnit = new Sci.Win.UI.Label();
+            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelDescDetail = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelRefNo = new Sci.Win.UI.Label();
+            this.txtGoodsDescription = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -63,27 +63,27 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.displayBox6);
-            this.detailcont.Controls.Add(this.numericBox4);
-            this.detailcont.Controls.Add(this.label14);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox5);
-            this.detailcont.Controls.Add(this.txtunit1);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtGoodsDescription);
+            this.detailcont.Controls.Add(this.displayBrand);
+            this.detailcont.Controls.Add(this.numWeight);
+            this.detailcont.Controls.Add(this.labelWeight);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.displayCustomsUnit);
+            this.detailcont.Controls.Add(this.txtUnitUsageUnit);
+            this.detailcont.Controls.Add(this.displayMaterialType);
+            this.detailcont.Controls.Add(this.comboType);
+            this.detailcont.Controls.Add(this.editDescDetail);
+            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.displayRefNo);
+            this.detailcont.Controls.Add(this.labelBrand);
+            this.detailcont.Controls.Add(this.labelCustomsUnit);
+            this.detailcont.Controls.Add(this.labelGoodsDescription);
+            this.detailcont.Controls.Add(this.labelUsageUnit);
+            this.detailcont.Controls.Add(this.labelMaterialType);
+            this.detailcont.Controls.Add(this.labelType);
+            this.detailcont.Controls.Add(this.labelDescDetail);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelRefNo);
             this.detailcont.Size = new System.Drawing.Size(829, 300);
             // 
             // detailbtm
@@ -93,7 +93,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(771, 338);
+            this.browse.Size = new System.Drawing.Size(829, 338);
             // 
             // tabs
             // 
@@ -112,223 +112,223 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // displayBox6
+            // displayBrand
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(500, 13);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(94, 23);
-            this.displayBox6.TabIndex = 66;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(500, 13);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(94, 23);
+            this.displayBrand.TabIndex = 66;
             // 
-            // numericBox4
+            // numWeight
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.White;
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsKg", true));
-            this.numericBox4.DecimalPlaces = 4;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox4.Location = new System.Drawing.Point(550, 218);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numWeight.BackColor = System.Drawing.Color.White;
+            this.numWeight.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsKg", true));
+            this.numWeight.DecimalPlaces = 4;
+            this.numWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWeight.Location = new System.Drawing.Point(550, 218);
+            this.numWeight.Name = "numWeight";
+            this.numWeight.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.Size = new System.Drawing.Size(80, 23);
-            this.numericBox4.TabIndex = 41;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numWeight.Size = new System.Drawing.Size(80, 23);
+            this.numWeight.TabIndex = 41;
+            this.numWeight.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label14
+            // labelWeight
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(454, 218);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(92, 40);
-            this.label14.TabIndex = 61;
-            this.label14.Text = "Weight (kgs/PX)";
+            this.labelWeight.Lines = 0;
+            this.labelWeight.Location = new System.Drawing.Point(454, 218);
+            this.labelWeight.Name = "labelWeight";
+            this.labelWeight.Size = new System.Drawing.Size(92, 40);
+            this.labelWeight.TabIndex = 61;
+            this.labelWeight.Text = "Weight (kgs/PX)";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(325, 13);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 57;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(325, 13);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 57;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // displayBox5
+            // displayCustomsUnit
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomsUnit", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(550, 186);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(80, 23);
-            this.displayBox5.TabIndex = 56;
+            this.displayCustomsUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustomsUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomsUnit", true));
+            this.displayCustomsUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustomsUnit.Location = new System.Drawing.Point(550, 186);
+            this.displayCustomsUnit.Name = "displayCustomsUnit";
+            this.displayCustomsUnit.Size = new System.Drawing.Size(80, 23);
+            this.displayCustomsUnit.TabIndex = 56;
             // 
-            // txtunit1
+            // txtUnitUsageUnit
             // 
-            this.txtunit1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UsageUnit", true));
-            this.txtunit1.DisplayBox1Binding = "";
-            this.txtunit1.Location = new System.Drawing.Point(109, 186);
-            this.txtunit1.Name = "txtunit1";
-            this.txtunit1.Size = new System.Drawing.Size(320, 23);
-            this.txtunit1.TabIndex = 54;
-            this.txtunit1.TextBox1Binding = "";
+            this.txtUnitUsageUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UsageUnit", true));
+            this.txtUnitUsageUnit.DisplayBox1Binding = "";
+            this.txtUnitUsageUnit.Location = new System.Drawing.Point(109, 186);
+            this.txtUnitUsageUnit.Name = "txtUnitUsageUnit";
+            this.txtUnitUsageUnit.Size = new System.Drawing.Size(320, 23);
+            this.txtUnitUsageUnit.TabIndex = 54;
+            this.txtUnitUsageUnit.TextBox1Binding = "";
             // 
-            // displayBox3
+            // displayMaterialType
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlTypeID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(550, 154);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(190, 23);
-            this.displayBox3.TabIndex = 53;
+            this.displayMaterialType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMaterialType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MtlTypeID", true));
+            this.displayMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMaterialType.Location = new System.Drawing.Point(550, 154);
+            this.displayMaterialType.Name = "displayMaterialType";
+            this.displayMaterialType.Size = new System.Drawing.Size(190, 23);
+            this.displayMaterialType.TabIndex = 53;
             // 
-            // comboBox1
+            // comboType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(109, 154);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 52;
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(109, 154);
+            this.comboType.Name = "comboType";
+            this.comboType.Size = new System.Drawing.Size(121, 24);
+            this.comboType.TabIndex = 52;
             // 
-            // editBox1
+            // editDescDetail
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescDetail", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(109, 75);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(654, 70);
-            this.editBox1.TabIndex = 51;
+            this.editDescDetail.BackColor = System.Drawing.Color.White;
+            this.editDescDetail.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescDetail", true));
+            this.editDescDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescDetail.Location = new System.Drawing.Point(109, 75);
+            this.editDescDetail.Multiline = true;
+            this.editDescDetail.Name = "editDescDetail";
+            this.editDescDetail.Size = new System.Drawing.Size(654, 70);
+            this.editDescDetail.TabIndex = 51;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(109, 45);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(654, 23);
-            this.displayBox2.TabIndex = 50;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(109, 45);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(654, 23);
+            this.displayDescription.TabIndex = 50;
             // 
-            // displayBox1
+            // displayRefNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RefNo", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(109, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(190, 23);
-            this.displayBox1.TabIndex = 49;
+            this.displayRefNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RefNo", true));
+            this.displayRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefNo.Location = new System.Drawing.Point(109, 13);
+            this.displayRefNo.Name = "displayRefNo";
+            this.displayRefNo.Size = new System.Drawing.Size(190, 23);
+            this.displayRefNo.TabIndex = 49;
             // 
-            // label10
+            // labelBrand
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(411, 13);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(85, 23);
-            this.label10.TabIndex = 48;
-            this.label10.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(411, 13);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(85, 23);
+            this.labelBrand.TabIndex = 48;
+            this.labelBrand.Text = "Brand";
             // 
-            // label9
+            // labelCustomsUnit
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(454, 186);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(92, 23);
-            this.label9.TabIndex = 47;
-            this.label9.Text = "Customs Unit";
+            this.labelCustomsUnit.Lines = 0;
+            this.labelCustomsUnit.Location = new System.Drawing.Point(454, 186);
+            this.labelCustomsUnit.Name = "labelCustomsUnit";
+            this.labelCustomsUnit.Size = new System.Drawing.Size(92, 23);
+            this.labelCustomsUnit.TabIndex = 47;
+            this.labelCustomsUnit.Text = "Customs Unit";
             // 
-            // label7
+            // labelGoodsDescription
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 218);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(121, 23);
-            this.label7.TabIndex = 45;
-            this.label7.Text = "Good\'s Description";
+            this.labelGoodsDescription.Lines = 0;
+            this.labelGoodsDescription.Location = new System.Drawing.Point(13, 218);
+            this.labelGoodsDescription.Name = "labelGoodsDescription";
+            this.labelGoodsDescription.Size = new System.Drawing.Size(121, 23);
+            this.labelGoodsDescription.TabIndex = 45;
+            this.labelGoodsDescription.Text = "Good\'s Description";
             // 
-            // label6
+            // labelUsageUnit
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 186);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(92, 23);
-            this.label6.TabIndex = 44;
-            this.label6.Text = "Usage Unit";
+            this.labelUsageUnit.Lines = 0;
+            this.labelUsageUnit.Location = new System.Drawing.Point(13, 186);
+            this.labelUsageUnit.Name = "labelUsageUnit";
+            this.labelUsageUnit.Size = new System.Drawing.Size(92, 23);
+            this.labelUsageUnit.TabIndex = 44;
+            this.labelUsageUnit.Text = "Usage Unit";
             // 
-            // label5
+            // labelMaterialType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(454, 154);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(92, 23);
-            this.label5.TabIndex = 42;
-            this.label5.Text = "Material Type";
+            this.labelMaterialType.Lines = 0;
+            this.labelMaterialType.Location = new System.Drawing.Point(454, 154);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(92, 23);
+            this.labelMaterialType.TabIndex = 42;
+            this.labelMaterialType.Text = "Material Type";
             // 
-            // label4
+            // labelType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 154);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 23);
-            this.label4.TabIndex = 40;
-            this.label4.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(13, 154);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(92, 23);
+            this.labelType.TabIndex = 40;
+            this.labelType.Text = "Type";
             // 
-            // label3
+            // labelDescDetail
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 77);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(92, 46);
-            this.label3.TabIndex = 39;
-            this.label3.Text = "Description";
-            this.label3.TextStyle.Alignment = System.Drawing.ContentAlignment.TopLeft;
+            this.labelDescDetail.Lines = 0;
+            this.labelDescDetail.Location = new System.Drawing.Point(13, 77);
+            this.labelDescDetail.Name = "labelDescDetail";
+            this.labelDescDetail.Size = new System.Drawing.Size(92, 46);
+            this.labelDescDetail.TabIndex = 39;
+            this.labelDescDetail.Text = "Description";
+            this.labelDescDetail.TextStyle.Alignment = System.Drawing.ContentAlignment.TopLeft;
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(92, 23);
-            this.label2.TabIndex = 36;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(13, 45);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(92, 23);
+            this.labelDescription.TabIndex = 36;
+            this.labelDescription.Text = "Description";
             // 
-            // label1
+            // labelRefNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 23);
-            this.label1.TabIndex = 35;
-            this.label1.Text = "RefNo";
+            this.labelRefNo.Lines = 0;
+            this.labelRefNo.Location = new System.Drawing.Point(13, 13);
+            this.labelRefNo.Name = "labelRefNo";
+            this.labelRefNo.Size = new System.Drawing.Size(92, 23);
+            this.labelRefNo.TabIndex = 35;
+            this.labelRefNo.Text = "RefNo";
             // 
-            // textBox1
+            // txtGoodsDescription
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(138, 218);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(263, 23);
-            this.textBox1.TabIndex = 67;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtGoodsDescription.BackColor = System.Drawing.Color.White;
+            this.txtGoodsDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtGoodsDescription.Location = new System.Drawing.Point(138, 218);
+            this.txtGoodsDescription.Name = "txtGoodsDescription";
+            this.txtGoodsDescription.Size = new System.Drawing.Size(263, 23);
+            this.txtGoodsDescription.TabIndex = 67;
+            this.txtGoodsDescription.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtGoodsDescription.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // B52
             // 
@@ -357,26 +357,26 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.Label label14;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.DisplayBox displayBox5;
-        private Class.txtunit txtunit1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.NumericBox numWeight;
+        private Win.UI.Label labelWeight;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayCustomsUnit;
+        private Class.txtunit txtUnitUsageUnit;
+        private Win.UI.DisplayBox displayMaterialType;
+        private Win.UI.ComboBox comboType;
+        private Win.UI.EditBox editDescDetail;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayRefNo;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelCustomsUnit;
+        private Win.UI.Label labelGoodsDescription;
+        private Win.UI.Label labelUsageUnit;
+        private Win.UI.Label labelMaterialType;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelDescDetail;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelRefNo;
+        private Win.UI.TextBox txtGoodsDescription;
     }
 }

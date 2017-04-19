@@ -33,33 +33,33 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.label4 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.label2 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button5 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnEmptyNLCodetoExcel = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnCreate = new Sci.Win.UI.Button();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.dateCdate = new Sci.Win.UI.DateBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.button2 = new Sci.Win.UI.Button();
+            this.txtVNContractID = new Sci.Win.UI.TextBox();
+            this.btnAutoCustomSPNo = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridBatchCreate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,150 +81,150 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.txtbrand1);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.txtstyle1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.txtbrand);
+            this.panel3.Controls.Add(this.labelBrand);
+            this.panel3.Controls.Add(this.comboCategory);
+            this.panel3.Controls.Add(this.labelCategory);
+            this.panel3.Controls.Add(this.txtstyle);
+            this.panel3.Controls.Add(this.labelStyle);
+            this.panel3.Controls.Add(this.dateBuyerDelivery);
+            this.panel3.Controls.Add(this.labelBuyerDelivery);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(918, 44);
             this.panel3.TabIndex = 2;
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(827, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(827, 6);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 8;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(738, 10);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(82, 23);
-            this.txtbrand1.TabIndex = 7;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(738, 10);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(82, 23);
+            this.txtbrand.TabIndex = 7;
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(692, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(42, 23);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(692, 10);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(42, 23);
+            this.labelBrand.TabIndex = 6;
+            this.labelBrand.Text = "Brand";
             // 
-            // comboBox1
+            // comboCategory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(601, 9);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(74, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(601, 9);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(74, 24);
+            this.comboCategory.TabIndex = 5;
             // 
-            // label3
+            // labelCategory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(537, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(537, 10);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(60, 23);
+            this.labelCategory.TabIndex = 4;
+            this.labelCategory.Text = "Category";
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(390, 10);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 3;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(390, 10);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 3;
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(349, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(349, 10);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(37, 23);
+            this.labelStyle.TabIndex = 2;
+            this.labelStyle.Text = "Style";
             // 
-            // dateRange1
+            // dateBuyerDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(102, 10);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(228, 23);
-            this.dateRange1.TabIndex = 1;
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(102, 10);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(228, 23);
+            this.dateBuyerDelivery.TabIndex = 1;
             // 
-            // label1
+            // labelBuyerDelivery
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(4, 10);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(94, 23);
+            this.labelBuyerDelivery.TabIndex = 0;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button5);
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.btnEmptyNLCodetoExcel);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnCreate);
             this.panel4.Controls.Add(this.pictureBox2);
-            this.panel4.Controls.Add(this.dateBox1);
+            this.panel4.Controls.Add(this.dateCdate);
             this.panel4.Controls.Add(this.pictureBox1);
-            this.panel4.Controls.Add(this.textBox1);
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.txtVNContractID);
+            this.panel4.Controls.Add(this.btnAutoCustomSPNo);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 387);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(918, 41);
             this.panel4.TabIndex = 3;
             // 
-            // button5
+            // btnEmptyNLCodetoExcel
             // 
-            this.button5.Location = new System.Drawing.Point(721, 7);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(195, 30);
-            this.button5.TabIndex = 7;
-            this.button5.Text = "Empty NL Code (to Excel)";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnEmptyNLCodetoExcel.Location = new System.Drawing.Point(721, 7);
+            this.btnEmptyNLCodetoExcel.Name = "btnEmptyNLCodetoExcel";
+            this.btnEmptyNLCodetoExcel.Size = new System.Drawing.Size(195, 30);
+            this.btnEmptyNLCodetoExcel.TabIndex = 7;
+            this.btnEmptyNLCodetoExcel.Text = "Empty NL Code (to Excel)";
+            this.btnEmptyNLCodetoExcel.UseVisualStyleBackColor = true;
+            this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.button5_Click);
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Location = new System.Drawing.Point(633, 7);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(633, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 6;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btnCreate
             // 
-            this.button3.Location = new System.Drawing.Point(547, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Create";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnCreate.Location = new System.Drawing.Point(547, 7);
+            this.btnCreate.Name = "btnCreate";
+            this.btnCreate.Size = new System.Drawing.Size(80, 30);
+            this.btnCreate.TabIndex = 5;
+            this.btnCreate.Text = "Create";
+            this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.button3_Click);
             // 
             // pictureBox2
             // 
@@ -236,12 +236,12 @@
             this.pictureBox2.TabStop = false;
             this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
-            // dateBox1
+            // dateCdate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(372, 7);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(98, 23);
-            this.dateBox1.TabIndex = 3;
+            this.dateCdate.Location = new System.Drawing.Point(372, 7);
+            this.dateCdate.Name = "dateCdate";
+            this.dateCdate.Size = new System.Drawing.Size(98, 23);
+            this.dateCdate.TabIndex = 3;
             // 
             // pictureBox1
             // 
@@ -253,52 +253,52 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // textBox1
+            // txtVNContractID
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(194, 7);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(140, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtVNContractID.BackColor = System.Drawing.Color.White;
+            this.txtVNContractID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtVNContractID.Location = new System.Drawing.Point(194, 7);
+            this.txtVNContractID.Name = "txtVNContractID";
+            this.txtVNContractID.Size = new System.Drawing.Size(140, 23);
+            this.txtVNContractID.TabIndex = 1;
+            this.txtVNContractID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtVNContractID.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // button2
+            // btnAutoCustomSPNo
             // 
-            this.button2.Location = new System.Drawing.Point(6, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(152, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Auto Custom SP#";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnAutoCustomSPNo.Location = new System.Drawing.Point(6, 5);
+            this.btnAutoCustomSPNo.Name = "btnAutoCustomSPNo";
+            this.btnAutoCustomSPNo.Size = new System.Drawing.Size(152, 30);
+            this.btnAutoCustomSPNo.TabIndex = 0;
+            this.btnAutoCustomSPNo.Text = "Auto Custom SP#";
+            this.btnAutoCustomSPNo.UseVisualStyleBackColor = true;
+            this.btnAutoCustomSPNo.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridBatchCreate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 44);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(918, 343);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridBatchCreate
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridBatchCreate.AllowUserToAddRows = false;
+            this.gridBatchCreate.AllowUserToDeleteRows = false;
+            this.gridBatchCreate.AllowUserToResizeRows = false;
+            this.gridBatchCreate.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBatchCreate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBatchCreate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchCreate.DataSource = this.listControlBindingSource1;
+            this.gridBatchCreate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBatchCreate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBatchCreate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBatchCreate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBatchCreate.Location = new System.Drawing.Point(0, 0);
+            this.gridBatchCreate.Name = "gridBatchCreate";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -306,18 +306,18 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(918, 343);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridBatchCreate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridBatchCreate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBatchCreate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBatchCreate.RowTemplate.Height = 24;
+            this.gridBatchCreate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCreate.Size = new System.Drawing.Size(918, 343);
+            this.gridBatchCreate.TabIndex = 0;
+            this.gridBatchCreate.TabStop = false;
             // 
             // B42_BatchCreate
             // 
-            this.CancelButton = this.button4;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(938, 428);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -333,7 +333,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -346,24 +346,24 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridBatchCreate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Label label4;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label3;
-        private Class.txtstyle txtstyle1;
-        private Win.UI.Label label2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnQuery;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelBrand;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label labelCategory;
+        private Class.txtstyle txtstyle;
+        private Win.UI.Label labelStyle;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.Label labelBuyerDelivery;
         private Win.UI.PictureBox pictureBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Button button2;
-        private Win.UI.Button button5;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
+        private Win.UI.TextBox txtVNContractID;
+        private Win.UI.Button btnAutoCustomSPNo;
+        private Win.UI.Button btnEmptyNLCodetoExcel;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnCreate;
         private Win.UI.PictureBox pictureBox2;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.DateBox dateCdate;
     }
 }

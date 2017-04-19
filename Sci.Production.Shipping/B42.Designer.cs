@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
+            this.btnCalculate = new Sci.Win.UI.Button();
+            this.btnSketch = new Sci.Win.UI.Button();
+            this.editSizeGroup = new Sci.Win.UI.EditBox();
+            this.editColorway = new Sci.Win.UI.EditBox();
+            this.numBalanceQty = new Sci.Win.UI.NumericBox();
+            this.numPulloutQty = new Sci.Win.UI.NumericBox();
+            this.numQty = new Sci.Win.UI.NumericBox();
+            this.txtSize = new Sci.Win.UI.TextBox();
+            this.txtContractNo = new Sci.Win.UI.TextBox();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtCustomSPNo = new Sci.Win.UI.TextBox();
+            this.labelBalanceQty = new Sci.Win.UI.Label();
+            this.labelPulloutQty = new Sci.Win.UI.Label();
+            this.labelSize = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelContractNo = new Sci.Win.UI.Label();
+            this.labelColorway = new Sci.Win.UI.Label();
+            this.labelQty = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelCustomSPNo = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.labelSizeGroup = new Sci.Win.UI.Label();
+            this.labelVer = new Sci.Win.UI.Label();
+            this.displayVer = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,68 +74,68 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.editBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.numericBox3);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.textBox4);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.textBox3);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label12);
+            this.masterpanel.Controls.Add(this.displayVer);
+            this.masterpanel.Controls.Add(this.labelVer);
+            this.masterpanel.Controls.Add(this.labelSizeGroup);
+            this.masterpanel.Controls.Add(this.btnCalculate);
+            this.masterpanel.Controls.Add(this.btnSketch);
+            this.masterpanel.Controls.Add(this.labelCustomSPNo);
+            this.masterpanel.Controls.Add(this.editSizeGroup);
+            this.masterpanel.Controls.Add(this.dateDate);
+            this.masterpanel.Controls.Add(this.editColorway);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.numBalanceQty);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.numPulloutQty);
+            this.masterpanel.Controls.Add(this.labelCategory);
+            this.masterpanel.Controls.Add(this.numQty);
+            this.masterpanel.Controls.Add(this.labelQty);
+            this.masterpanel.Controls.Add(this.txtSize);
+            this.masterpanel.Controls.Add(this.labelColorway);
+            this.masterpanel.Controls.Add(this.txtContractNo);
+            this.masterpanel.Controls.Add(this.labelContractNo);
+            this.masterpanel.Controls.Add(this.comboCategory);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.labelSize);
+            this.masterpanel.Controls.Add(this.txtStyle);
+            this.masterpanel.Controls.Add(this.labelPulloutQty);
+            this.masterpanel.Controls.Add(this.txtCustomSPNo);
+            this.masterpanel.Controls.Add(this.labelBalanceQty);
             this.masterpanel.Size = new System.Drawing.Size(927, 212);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBalanceQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCustomSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPulloutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSize, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelColorway, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSize, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numPulloutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numBalanceQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editColorway, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editSizeGroup, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCustomSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSketch, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCalculate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSizeGroup, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelVer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayVer, 0);
             // 
             // detailpanel
             // 
@@ -182,7 +182,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(806, 468);
+            this.browse.Size = new System.Drawing.Size(927, 468);
             // 
             // tabs
             // 
@@ -206,344 +206,344 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(433, 13);
             // 
-            // button2
+            // btnCalculate
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(699, 53);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 30);
-            this.button2.TabIndex = 55;
-            this.button2.Text = "Calculate";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnCalculate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCalculate.Location = new System.Drawing.Point(699, 53);
+            this.btnCalculate.Name = "btnCalculate";
+            this.btnCalculate.Size = new System.Drawing.Size(88, 30);
+            this.btnCalculate.TabIndex = 55;
+            this.btnCalculate.Text = "Calculate";
+            this.btnCalculate.UseVisualStyleBackColor = true;
+            this.btnCalculate.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnSketch
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(699, 16);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 30);
-            this.button1.TabIndex = 54;
-            this.button1.Text = "Sketch";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSketch.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnSketch.Location = new System.Drawing.Point(699, 16);
+            this.btnSketch.Name = "btnSketch";
+            this.btnSketch.Size = new System.Drawing.Size(88, 30);
+            this.btnSketch.TabIndex = 54;
+            this.btnSketch.Text = "Sketch";
+            this.btnSketch.UseVisualStyleBackColor = true;
+            this.btnSketch.Click += new System.EventHandler(this.button1_Click);
             // 
-            // editBox2
+            // editSizeGroup
             // 
-            this.editBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox2.IsSupportEditMode = false;
-            this.editBox2.Location = new System.Drawing.Point(482, 169);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.editBox2.ReadOnly = true;
-            this.editBox2.Size = new System.Drawing.Size(150, 39);
-            this.editBox2.TabIndex = 53;
-            this.editBox2.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox2_PopUp);
+            this.editSizeGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editSizeGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editSizeGroup.IsSupportEditMode = false;
+            this.editSizeGroup.Location = new System.Drawing.Point(482, 169);
+            this.editSizeGroup.Multiline = true;
+            this.editSizeGroup.Name = "editSizeGroup";
+            this.editSizeGroup.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.editSizeGroup.ReadOnly = true;
+            this.editSizeGroup.Size = new System.Drawing.Size(150, 39);
+            this.editSizeGroup.TabIndex = 53;
+            this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox2_PopUp);
             // 
-            // editBox1
+            // editColorway
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(92, 142);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(204, 66);
-            this.editBox1.TabIndex = 52;
-            this.editBox1.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox1_PopUp);
+            this.editColorway.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editColorway.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editColorway.IsSupportEditMode = false;
+            this.editColorway.Location = new System.Drawing.Point(92, 142);
+            this.editColorway.Multiline = true;
+            this.editColorway.Name = "editColorway";
+            this.editColorway.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.editColorway.ReadOnly = true;
+            this.editColorway.Size = new System.Drawing.Size(204, 66);
+            this.editColorway.TabIndex = 52;
+            this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox1_PopUp);
             // 
-            // numericBox3
+            // numBalanceQty
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(482, 142);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numBalanceQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBalanceQty.IsSupportEditMode = false;
+            this.numBalanceQty.Location = new System.Drawing.Point(482, 142);
+            this.numBalanceQty.Name = "numBalanceQty";
+            this.numBalanceQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(80, 23);
-            this.numericBox3.TabIndex = 51;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutQty", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(482, 115);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(80, 23);
-            this.numericBox2.TabIndex = 50;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numBalanceQty.ReadOnly = true;
+            this.numBalanceQty.Size = new System.Drawing.Size(80, 23);
+            this.numBalanceQty.TabIndex = 51;
+            this.numBalanceQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox1
+            // numPulloutQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(92, 115);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numPulloutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPulloutQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutQty", true));
+            this.numPulloutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPulloutQty.IsSupportEditMode = false;
+            this.numPulloutQty.Location = new System.Drawing.Point(482, 115);
+            this.numPulloutQty.Name = "numPulloutQty";
+            this.numPulloutQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(80, 23);
-            this.numericBox1.TabIndex = 5;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numPulloutQty.ReadOnly = true;
+            this.numPulloutQty.Size = new System.Drawing.Size(80, 23);
+            this.numPulloutQty.TabIndex = 50;
+            this.numPulloutQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // textBox4
+            // numQty
             // 
-            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SizeCode", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox4.IsSupportEditMode = false;
-            this.textBox4.Location = new System.Drawing.Point(482, 88);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(60, 23);
-            this.textBox4.TabIndex = 4;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.numQty.BackColor = System.Drawing.Color.White;
+            this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
+            this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQty.Location = new System.Drawing.Point(92, 115);
+            this.numQty.Name = "numQty";
+            this.numQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numQty.Size = new System.Drawing.Size(80, 23);
+            this.numQty.TabIndex = 5;
+            this.numQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // textBox3
+            // txtSize
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(482, 7);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(150, 23);
-            this.textBox3.TabIndex = 1;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SizeCode", true));
+            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSize.IsSupportEditMode = false;
+            this.txtSize.Location = new System.Drawing.Point(482, 88);
+            this.txtSize.Name = "txtSize";
+            this.txtSize.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSize.ReadOnly = true;
+            this.txtSize.Size = new System.Drawing.Size(60, 23);
+            this.txtSize.TabIndex = 4;
+            this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
             // 
-            // comboBox1
+            // txtContractNo
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Category", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(92, 86);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 3;
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(482, 7);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(150, 23);
+            this.txtContractNo.TabIndex = 1;
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
-            // displayBox2
+            // comboCategory
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(482, 61);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(90, 23);
-            this.displayBox2.TabIndex = 44;
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Category", true));
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(92, 86);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(80, 24);
+            this.comboCategory.TabIndex = 3;
             // 
-            // displayBox1
+            // displayBrand
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(92, 61);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(80, 23);
-            this.displayBox1.TabIndex = 43;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(482, 61);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(90, 23);
+            this.displayBrand.TabIndex = 44;
             // 
-            // textBox2
+            // displaySeason
             // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(92, 34);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(150, 23);
-            this.textBox2.TabIndex = 42;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(92, 61);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(80, 23);
+            this.displaySeason.TabIndex = 43;
             // 
-            // textBox1
+            // txtStyle
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomSP", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(92, 7);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyle.IsSupportEditMode = false;
+            this.txtStyle.Location = new System.Drawing.Point(92, 34);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtStyle.ReadOnly = true;
+            this.txtStyle.Size = new System.Drawing.Size(150, 23);
+            this.txtStyle.TabIndex = 42;
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
-            // label12
+            // txtCustomSPNo
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(395, 142);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(83, 23);
-            this.label12.TabIndex = 40;
-            this.label12.Text = "Balance Q\'ty";
+            this.txtCustomSPNo.BackColor = System.Drawing.Color.White;
+            this.txtCustomSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomSP", true));
+            this.txtCustomSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomSPNo.Location = new System.Drawing.Point(92, 7);
+            this.txtCustomSPNo.Name = "txtCustomSPNo";
+            this.txtCustomSPNo.Size = new System.Drawing.Size(80, 23);
+            this.txtCustomSPNo.TabIndex = 0;
             // 
-            // label11
+            // labelBalanceQty
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(395, 115);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(83, 23);
-            this.label11.TabIndex = 39;
-            this.label11.Text = "Pullout Q\'ty";
+            this.labelBalanceQty.Lines = 0;
+            this.labelBalanceQty.Location = new System.Drawing.Point(395, 142);
+            this.labelBalanceQty.Name = "labelBalanceQty";
+            this.labelBalanceQty.Size = new System.Drawing.Size(83, 23);
+            this.labelBalanceQty.TabIndex = 40;
+            this.labelBalanceQty.Text = "Balance Q\'ty";
             // 
-            // label10
+            // labelPulloutQty
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(395, 88);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(83, 23);
-            this.label10.TabIndex = 38;
-            this.label10.Text = "Size";
+            this.labelPulloutQty.Lines = 0;
+            this.labelPulloutQty.Location = new System.Drawing.Point(395, 115);
+            this.labelPulloutQty.Name = "labelPulloutQty";
+            this.labelPulloutQty.Size = new System.Drawing.Size(83, 23);
+            this.labelPulloutQty.TabIndex = 39;
+            this.labelPulloutQty.Text = "Pullout Q\'ty";
             // 
-            // label9
+            // labelSize
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(395, 61);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(83, 23);
-            this.label9.TabIndex = 37;
-            this.label9.Text = "Brand";
+            this.labelSize.Lines = 0;
+            this.labelSize.Location = new System.Drawing.Point(395, 88);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(83, 23);
+            this.labelSize.TabIndex = 38;
+            this.labelSize.Text = "Size";
             // 
-            // label8
+            // labelBrand
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(395, 34);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(83, 23);
-            this.label8.TabIndex = 36;
-            this.label8.Text = "Date";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(395, 61);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(83, 23);
+            this.labelBrand.TabIndex = 37;
+            this.labelBrand.Text = "Brand";
             // 
-            // label7
+            // labelDate
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(395, 7);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(83, 23);
-            this.label7.TabIndex = 35;
-            this.label7.Text = "Contract no.";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(395, 34);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(83, 23);
+            this.labelDate.TabIndex = 36;
+            this.labelDate.Text = "Date";
             // 
-            // label6
+            // labelContractNo
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(6, 142);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(82, 23);
-            this.label6.TabIndex = 34;
-            this.label6.Text = "Color way";
+            this.labelContractNo.Lines = 0;
+            this.labelContractNo.Location = new System.Drawing.Point(395, 7);
+            this.labelContractNo.Name = "labelContractNo";
+            this.labelContractNo.Size = new System.Drawing.Size(83, 23);
+            this.labelContractNo.TabIndex = 35;
+            this.labelContractNo.Text = "Contract no.";
             // 
-            // label5
+            // labelColorway
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(6, 115);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(82, 23);
-            this.label5.TabIndex = 33;
-            this.label5.Text = "Q\'ty";
+            this.labelColorway.Lines = 0;
+            this.labelColorway.Location = new System.Drawing.Point(6, 142);
+            this.labelColorway.Name = "labelColorway";
+            this.labelColorway.Size = new System.Drawing.Size(82, 23);
+            this.labelColorway.TabIndex = 34;
+            this.labelColorway.Text = "Color way";
             // 
-            // label4
+            // labelQty
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(6, 88);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 23);
-            this.label4.TabIndex = 32;
-            this.label4.Text = "Category";
+            this.labelQty.Lines = 0;
+            this.labelQty.Location = new System.Drawing.Point(6, 115);
+            this.labelQty.Name = "labelQty";
+            this.labelQty.Size = new System.Drawing.Size(82, 23);
+            this.labelQty.TabIndex = 33;
+            this.labelQty.Text = "Q\'ty";
             // 
-            // label3
+            // labelCategory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(6, 61);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 31;
-            this.label3.Text = "Season";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(6, 88);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(82, 23);
+            this.labelCategory.TabIndex = 32;
+            this.labelCategory.Text = "Category";
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(6, 34);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 30;
-            this.label2.Text = "Style";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(6, 61);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(82, 23);
+            this.labelSeason.TabIndex = 31;
+            this.labelSeason.Text = "Season";
             // 
-            // label1
+            // labelStyle
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(6, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 29;
-            this.label1.Text = "Custom SP#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(6, 34);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(82, 23);
+            this.labelStyle.TabIndex = 30;
+            this.labelStyle.Text = "Style";
             // 
-            // dateBox1
+            // labelCustomSPNo
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(482, 34);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 2;
+            this.labelCustomSPNo.Lines = 0;
+            this.labelCustomSPNo.Location = new System.Drawing.Point(6, 7);
+            this.labelCustomSPNo.Name = "labelCustomSPNo";
+            this.labelCustomSPNo.Size = new System.Drawing.Size(82, 23);
+            this.labelCustomSPNo.TabIndex = 29;
+            this.labelCustomSPNo.Text = "Custom SP#";
             // 
-            // label13
+            // dateDate
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(395, 169);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(83, 23);
-            this.label13.TabIndex = 56;
-            this.label13.Text = "Size Group";
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
+            this.dateDate.Location = new System.Drawing.Point(482, 34);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 2;
             // 
-            // label14
+            // labelSizeGroup
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(197, 7);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(30, 23);
-            this.label14.TabIndex = 7;
-            this.label14.Text = "Ver.";
+            this.labelSizeGroup.Lines = 0;
+            this.labelSizeGroup.Location = new System.Drawing.Point(395, 169);
+            this.labelSizeGroup.Name = "labelSizeGroup";
+            this.labelSizeGroup.Size = new System.Drawing.Size(83, 23);
+            this.labelSizeGroup.TabIndex = 56;
+            this.labelSizeGroup.Text = "Size Group";
             // 
-            // displayBox3
+            // labelVer
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(231, 7);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(42, 23);
-            this.displayBox3.TabIndex = 58;
+            this.labelVer.Lines = 0;
+            this.labelVer.Location = new System.Drawing.Point(197, 7);
+            this.labelVer.Name = "labelVer";
+            this.labelVer.Size = new System.Drawing.Size(30, 23);
+            this.labelVer.TabIndex = 7;
+            this.labelVer.Text = "Ver.";
+            // 
+            // displayVer
+            // 
+            this.displayVer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayVer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
+            this.displayVer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayVer.Location = new System.Drawing.Point(231, 7);
+            this.displayVer.Name = "displayVer";
+            this.displayVer.Size = new System.Drawing.Size(42, 23);
+            this.displayVer.TabIndex = 58;
             // 
             // B42
             // 
@@ -586,35 +586,35 @@
 
         #endregion
 
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.Label label1;
-        private Win.UI.EditBox editBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.Label label2;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label4;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label5;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.Label label6;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.Label label7;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label8;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label9;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label10;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label11;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label12;
-        private Win.UI.Label label13;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.Label label14;
+        private Win.UI.Button btnCalculate;
+        private Win.UI.Button btnSketch;
+        private Win.UI.Label labelCustomSPNo;
+        private Win.UI.EditBox editSizeGroup;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.EditBox editColorway;
+        private Win.UI.Label labelStyle;
+        private Win.UI.NumericBox numBalanceQty;
+        private Win.UI.Label labelSeason;
+        private Win.UI.NumericBox numPulloutQty;
+        private Win.UI.Label labelCategory;
+        private Win.UI.NumericBox numQty;
+        private Win.UI.Label labelQty;
+        private Win.UI.TextBox txtSize;
+        private Win.UI.Label labelColorway;
+        private Win.UI.TextBox txtContractNo;
+        private Win.UI.Label labelContractNo;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label labelDate;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.Label labelBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.Label labelSize;
+        private Win.UI.TextBox txtStyle;
+        private Win.UI.Label labelPulloutQty;
+        private Win.UI.TextBox txtCustomSPNo;
+        private Win.UI.Label labelBalanceQty;
+        private Win.UI.Label labelSizeGroup;
+        private Win.UI.DisplayBox displayVer;
+        private Win.UI.Label labelVer;
     }
 }

@@ -35,9 +35,9 @@ where OrderID = '{0}'", orderID);
             listControlBindingSource1.DataSource = selectDataTable;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAirPrePaidList.IsEditingReadOnly = true;
+            this.gridAirPrePaidList.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAirPrePaidList)
                  .Text("Cancel", header: "Cancel", width: Widths.AnsiChars(2))
                  .Date("TaskApvDate", header: "Lock Date", width: Widths.AnsiChars(10))
                  .Text("ID", header: "Air No.", width: Widths.AnsiChars(13))

@@ -77,25 +77,25 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
             {
                 MyUtility.Msg.WarningBox("Start Date can't empty!!");
-                dateBox1.Focus();
+                dateStartDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
             {
                 MyUtility.Msg.WarningBox("End Date can't empty!!");
-                dateBox2.Focus();
+                dateEndDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("CDC No. can't empty!!");
-                textBox1.Focus();
+                txtCDCNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("Factory can't empty!!");
-                textBox2.Focus();
+                txtFactory.Focus();
                 return false;
             }
             
@@ -103,10 +103,10 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
 
             #region 檢查日期正確性
             //End Date：輸入日期一定不能小於Start Date
-            if (dateBox2.Value < dateBox1.Value)
+            if (dateEndDate.Value < dateStartDate.Value)
             {
                 MyUtility.Msg.WarningBox("Pls double check the end date!!");
-                dateBox2.Focus();
+                dateEndDate.Focus();
                 return false;
             }
             #endregion

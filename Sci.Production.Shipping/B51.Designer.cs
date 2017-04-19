@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.labelStartDate = new Sci.Win.UI.Label();
+            this.labelEndDate = new Sci.Win.UI.Label();
+            this.labelCDCNo = new Sci.Win.UI.Label();
+            this.dateStartDate = new Sci.Win.UI.DateBox();
+            this.dateEndDate = new Sci.Win.UI.DateBox();
+            this.txtCDCNo = new Sci.Win.UI.TextBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtFactory = new Sci.Win.UI.TextBox();
+            this.btnImportData = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -53,26 +53,26 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.btnImportData);
+            this.masterpanel.Controls.Add(this.txtFactory);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.txtCDCNo);
+            this.masterpanel.Controls.Add(this.dateEndDate);
+            this.masterpanel.Controls.Add(this.dateStartDate);
+            this.masterpanel.Controls.Add(this.labelCDCNo);
+            this.masterpanel.Controls.Add(this.labelEndDate);
+            this.masterpanel.Controls.Add(this.labelStartDate);
             this.masterpanel.Size = new System.Drawing.Size(907, 96);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStartDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEndDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCDCNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEndDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCDCNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportData, 0);
             // 
             // detailpanel
             // 
@@ -93,15 +93,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(907, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(901, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(901, 40);
             // 
             // detail
             // 
@@ -118,7 +118,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(762, 387);
+            this.browse.Size = new System.Drawing.Size(907, 387);
             // 
             // tabs
             // 
@@ -137,88 +137,88 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelStartDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(14, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Start Date";
+            this.labelStartDate.Lines = 0;
+            this.labelStartDate.Location = new System.Drawing.Point(14, 10);
+            this.labelStartDate.Name = "labelStartDate";
+            this.labelStartDate.Size = new System.Drawing.Size(70, 23);
+            this.labelStartDate.TabIndex = 1;
+            this.labelStartDate.Text = "Start Date";
             // 
-            // label2
+            // labelEndDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(14, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "End Date";
+            this.labelEndDate.Lines = 0;
+            this.labelEndDate.Location = new System.Drawing.Point(14, 37);
+            this.labelEndDate.Name = "labelEndDate";
+            this.labelEndDate.Size = new System.Drawing.Size(70, 23);
+            this.labelEndDate.TabIndex = 2;
+            this.labelEndDate.Text = "End Date";
             // 
-            // label3
+            // labelCDCNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(14, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(70, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "CDC No.";
+            this.labelCDCNo.Lines = 0;
+            this.labelCDCNo.Location = new System.Drawing.Point(14, 64);
+            this.labelCDCNo.Name = "labelCDCNo";
+            this.labelCDCNo.Size = new System.Drawing.Size(70, 23);
+            this.labelCDCNo.TabIndex = 3;
+            this.labelCDCNo.Text = "CDC No.";
             // 
-            // dateBox1
+            // dateStartDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StartDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(87, 10);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(100, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateStartDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StartDate", true));
+            this.dateStartDate.Location = new System.Drawing.Point(87, 10);
+            this.dateStartDate.Name = "dateStartDate";
+            this.dateStartDate.Size = new System.Drawing.Size(100, 23);
+            this.dateStartDate.TabIndex = 4;
             // 
-            // dateBox2
+            // dateEndDate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EndDate", true));
-            this.dateBox2.Location = new System.Drawing.Point(87, 37);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(100, 23);
-            this.dateBox2.TabIndex = 5;
+            this.dateEndDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EndDate", true));
+            this.dateEndDate.Location = new System.Drawing.Point(87, 37);
+            this.dateEndDate.Name = "dateEndDate";
+            this.dateEndDate.Size = new System.Drawing.Size(100, 23);
+            this.dateEndDate.TabIndex = 5;
             // 
-            // textBox1
+            // txtCDCNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(87, 64);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 6;
+            this.txtCDCNo.BackColor = System.Drawing.Color.White;
+            this.txtCDCNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtCDCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCDCNo.Location = new System.Drawing.Point(87, 64);
+            this.txtCDCNo.Name = "txtCDCNo";
+            this.txtCDCNo.Size = new System.Drawing.Size(130, 23);
+            this.txtCDCNo.TabIndex = 6;
             // 
-            // label4
+            // labelFactory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(352, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(352, 10);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(54, 23);
+            this.labelFactory.TabIndex = 7;
+            this.labelFactory.Text = "Factory";
             // 
-            // textBox2
+            // txtFactory
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(410, 10);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(70, 23);
-            this.textBox2.TabIndex = 8;
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(410, 10);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(70, 23);
+            this.txtFactory.TabIndex = 8;
             // 
-            // button1
+            // btnImportData
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(633, 55);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(108, 30);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Import Data";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnImportData.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportData.Location = new System.Drawing.Point(633, 55);
+            this.btnImportData.Name = "btnImportData";
+            this.btnImportData.Size = new System.Drawing.Size(108, 30);
+            this.btnImportData.TabIndex = 9;
+            this.btnImportData.Text = "Import Data";
+            this.btnImportData.UseVisualStyleBackColor = true;
+            this.btnImportData.Click += new System.EventHandler(this.button1_Click);
             // 
             // B51
             // 
@@ -261,14 +261,14 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.TextBox txtFactory;
+        private Win.UI.Label labelFactory;
+        private Win.UI.TextBox txtCDCNo;
+        private Win.UI.DateBox dateEndDate;
+        private Win.UI.DateBox dateStartDate;
+        private Win.UI.Label labelCDCNo;
+        private Win.UI.Label labelEndDate;
+        private Win.UI.Label labelStartDate;
+        private Win.UI.Button btnImportData;
     }
 }

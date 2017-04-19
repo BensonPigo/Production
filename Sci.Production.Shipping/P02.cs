@@ -25,8 +25,8 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Factory,2,Brand");
-            MyUtility.Tool.SetupCombox(comboBox2, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
+            MyUtility.Tool.SetupCombox(comboFrom, 2, 1, "1,Factory,2,Brand");
+            MyUtility.Tool.SetupCombox(comboTO, 2, 1, "1,SCI,2,Factory,3,Sullpier,4,Brand");
         }
 
         protected override void OnFormLoaded()
@@ -328,40 +328,40 @@ where id='{0}' ", CurrentMaintain["ID"]);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            displayBox2.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), "Brand", "ID");
-            displayBox3.Value = "";
+            displayFrom.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), "Brand", "ID");
+            displayTO.Value = "";
             if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "3")
             {
-                displayBox3.Value = MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Supp", "ID");
+                displayTO.Value = MyUtility.GetValue.Lookup("AbbEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Supp", "ID");
             }
             else
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "4")
                 {
-                    displayBox3.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Brand", "ID");
+                    displayTO.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), "Brand", "ID");
                 }
             }
             numericBox4.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(CurrentMaintain["CTNNW"]);
-            displayBox4.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CarrierID"])));
+            displayCarrier.Value = MyUtility.GetValue.Lookup(string.Format("select c.SuppID + '-' + s.AbbEN from Carrier c WITH (NOLOCK) left join Supp s WITH (NOLOCK) on c.SuppID = s.ID where c.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["CarrierID"])));
             if (MyUtility.Check.Empty(CurrentMaintain["StatusUpdateDate"]))
             {
-                displayBox6.Value = null;
+                displayStatupdate.Value = null;
             }
             else
             {
-                displayBox6.Value = Convert.ToDateTime(CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                displayStatupdate.Value = Convert.ToDateTime(CurrentMaintain["StatusUpdateDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SendDate"]))
             {
-                displayBox7.Value = null;
+                displaySendtoSCI.Value = null;
             }
             else
             {
-                displayBox7.Value = Convert.ToDateTime(CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                displaySendtoSCI.Value = Convert.ToDateTime(CurrentMaintain["SendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
 
-            button1.Enabled = !EditMode && (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Sent" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"])));
+            btnMailto.Enabled = !EditMode && (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Sent" || MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved") && (PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"])));
 
             if (CurrentDetailData == null)
             {
@@ -476,17 +476,17 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         protected override void OnDetailGridRowChanged()
         {
             base.OnDetailGridRowChanged();
-            editBox2.Text = "";
+            editDescription.Text = "";
 
             if (CurrentDetailData != null)
             {
                 if (MyUtility.Check.Empty(CurrentDetailData["OrderID"]) || MyUtility.Check.Empty(CurrentDetailData["Seq2"]))
                 {
-                    editBox2.Text = MyUtility.Convert.GetString(CurrentDetailData["Description"]);
+                    editDescription.Text = MyUtility.Convert.GetString(CurrentDetailData["Description"]);
                 }
                 else
                 {
-                    editBox2.Text = MyUtility.Convert.GetString(CurrentDetailData["MtlDesc"]);
+                    editDescription.Text = MyUtility.Convert.GetString(CurrentDetailData["MtlDesc"]);
                 }
 
                 //先將Menu狀態全打開
@@ -521,7 +521,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             CurrentMaintain["NW"] = 0;
             CurrentMaintain["CTNNW"] = 0;
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            textBox5.ReadOnly = true; //因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
+            txtCarrier.ReadOnly = true; //因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
         }
 
         protected override bool ClickEditBefore()
@@ -539,26 +539,26 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             base.ClickEditAfter();
             if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New")
             {
-                textBox2.ReadOnly = MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "1" ? true : false;
-                textBox5.ReadOnly = true;
+                txtTO.ReadOnly = MyUtility.Convert.GetString(CurrentMaintain["ToTag"]) == "1" ? true : false;
+                txtCarrier.ReadOnly = true;
             }
             else
             {
-                textBox1.ReadOnly = true;
-                textBox2.ReadOnly = true;
-                textBox3.ReadOnly = true;
-                textBox4.ReadOnly = true;
-                textBox5.ReadOnly = true;
-                textBox6.ReadOnly = true;
-                comboBox1.ReadOnly = true;
-                comboBox2.ReadOnly = true;
-                txtuser1.TextBox1.ReadOnly = true;
-                txtuser2.TextBox1.ReadOnly = true;
-                dateBox1.ReadOnly = true;
-                dateBox2.ReadOnly = true;
-                dateBox3.ReadOnly = true;
-                editBox1.ReadOnly = true;
-                txtcountry1.TextBox1.ReadOnly = true;
+                txtFrom.ReadOnly = true;
+                txtTO.ReadOnly = true;
+                txtShipMark.ReadOnly = true;
+                txtPort.ReadOnly = true;
+                txtCarrier.ReadOnly = true;
+                txtBLNo.ReadOnly = true;
+                comboFrom.ReadOnly = true;
+                comboTO.ReadOnly = true;
+                txtUserHandle.TextBox1.ReadOnly = true;
+                txtUserManager.TextBox1.ReadOnly = true;
+                dateShipDate.ReadOnly = true;
+                dateETD.ReadOnly = true;
+                dateETA.ReadOnly = true;
+                editRemark.ReadOnly = true;
+                txtCountryDestination.TextBox1.ReadOnly = true;
 
             }
         }
@@ -569,67 +569,67 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["FromSite"]))
             {
                 MyUtility.Msg.WarningBox("From (Site) can't empty");
-                textBox1.Focus();
+                txtFrom.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ToSite"]))
             {
                 MyUtility.Msg.WarningBox("To (Site) can't empty");
-                textBox2.Focus();
+                txtTO.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
                 MyUtility.Msg.WarningBox("Destination can't empty");
-                txtcountry1.TextBox1.Focus();
+                txtCountryDestination.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PortAir"]))
             {
                 MyUtility.Msg.WarningBox("Port can't empty");
-                textBox4.Focus();
+                txtPort.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipDate"]))
             {
                 MyUtility.Msg.WarningBox("Ship. Date can't empty");
-                dateBox1.Focus();
+                dateShipDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ETD"]))
             {
                 MyUtility.Msg.WarningBox("ETD can't empty");
-                dateBox2.Focus();
+                dateETD.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ETA"]))
             {
                 MyUtility.Msg.WarningBox("ETA can't empty");
-                dateBox3.Focus();
+                dateETA.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CarrierID"]))
             {
                 MyUtility.Msg.WarningBox("Carrier can't empty");
-                textBox5.Focus();
+                txtCarrier.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
                 MyUtility.Msg.WarningBox("B/L No. can't empty");
-                textBox6.Focus();
+                txtBLNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
                 MyUtility.Msg.WarningBox("Handle can't empty");
-                txtuser1.TextBox1.Focus();
+                txtUserHandle.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Manager"]))
             {
                 MyUtility.Msg.WarningBox("Manager can't empty");
-                txtuser2.TextBox1.Focus();
+                txtUserManager.TextBox1.Focus();
                 return false;
             }
             #endregion
@@ -664,11 +664,11 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         //From
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            CurrentMaintain["FromTag"] = comboBox1.SelectedValue;
+            CurrentMaintain["FromTag"] = comboFrom.SelectedValue;
             CurrentMaintain["FromSite"] = "";
-            displayBox2.Value = "";
+            displayFrom.Value = "";
             CurrentMaintain["CarrierID"] = "";
-            displayBox4.Value = "";
+            displayCarrier.Value = "";
             CurrentMaintain["ExpressACNo"] = "";
         }
 
@@ -685,12 +685,12 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             if (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1")
             {
                 sqlCmd = "select ID from Factory WITH (NOLOCK) where Junk = 0 and ExpressGroup <> ''";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox1.Text);
+                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", txtFrom.Text);
             }
             else
             {
                 sqlCmd = "select ID,NameEN from Brand WITH (NOLOCK) where Junk = 0";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50", textBox1.Text);
+                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50", txtFrom.Text);
             }
 
             DialogResult returnResult = item.ShowDialog();
@@ -699,24 +699,24 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             if (MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "2")
             {
                 IList<DataRow> brand = item.GetSelecteds();
-                displayBox2.Value = MyUtility.Convert.GetString(brand[0]["NameEN"]);
+                displayFrom.Value = MyUtility.Convert.GetString(brand[0]["NameEN"]);
             }
         }
 
         //From Site
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtFrom.OldValue != txtFrom.Text)
             {
-                if (MyUtility.Check.Empty(textBox1.Text))
+                if (MyUtility.Check.Empty(txtFrom.Text))
                 {
                     CurrentMaintain["FromSite"] = "";
-                    displayBox2.Value = "";
+                    displayFrom.Value = "";
                 }
                 else
                 {
                     //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtFrom.Text);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
@@ -734,18 +734,18 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                             }
                             else
                             {
-                                MyUtility.Msg.WarningBox(string.Format("Factory: {0} does not exist.", textBox1.Text));
+                                MyUtility.Msg.WarningBox(string.Format("Factory: {0} does not exist.", txtFrom.Text));
                             }
                             CurrentMaintain["FromSite"] = "";
-                            displayBox2.Value = "";
+                            displayFrom.Value = "";
                             e.Cancel = true;
                             return;
                         }
                         else
                         {
-                            CurrentMaintain["FromSite"] = textBox1.Text;
-                            CurrentMaintain["ShipMark"] = textBox1.Text;
-                            displayBox2.Value = "";
+                            CurrentMaintain["FromSite"] = txtFrom.Text;
+                            CurrentMaintain["ShipMark"] = txtFrom.Text;
+                            displayFrom.Value = "";
                         }
                     }
                     else
@@ -764,18 +764,18 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                                 }
                                 else
                                 {
-                                    MyUtility.Msg.WarningBox(string.Format("Brand: {0} does not exist.", textBox1.Text));
+                                    MyUtility.Msg.WarningBox(string.Format("Brand: {0} does not exist.", txtFrom.Text));
                                 }
 
                                 CurrentMaintain["FromSite"] = "";
-                                displayBox2.Value = "";
+                                displayFrom.Value = "";
                                 e.Cancel = true;
                                 return;
                             }
                             else
                             {
-                                CurrentMaintain["FromSite"] = textBox1.Text;
-                                displayBox2.Value = MyUtility.Convert.GetString(BrandData.Rows[0]["NameEN"]);
+                                CurrentMaintain["FromSite"] = txtFrom.Text;
+                                displayFrom.Value = MyUtility.Convert.GetString(BrandData.Rows[0]["NameEN"]);
                             }
                         }
                     }
@@ -787,14 +787,14 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         //To
         private void comboBox2_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            CurrentMaintain["ToTag"] = comboBox2.SelectedValue;
-            CurrentMaintain["ToSite"] = MyUtility.Convert.GetString(comboBox2.SelectedValue) == "1" ? "SCI" : "";
-            displayBox3.Value = "";
+            CurrentMaintain["ToTag"] = comboTO.SelectedValue;
+            CurrentMaintain["ToSite"] = MyUtility.Convert.GetString(comboTO.SelectedValue) == "1" ? "SCI" : "";
+            displayTO.Value = "";
             CurrentMaintain["CarrierID"] = "";
-            displayBox4.Value = "";
+            displayCarrier.Value = "";
             CurrentMaintain["ExpressACNo"] = "";
-            textBox2.ReadOnly = MyUtility.Convert.GetString(comboBox2.SelectedValue) == "1" ? true : false;
-            if (MyUtility.Convert.GetString(comboBox2.SelectedValue) == "1")
+            txtTO.ReadOnly = MyUtility.Convert.GetString(comboTO.SelectedValue) == "1" ? true : false;
+            if (MyUtility.Convert.GetString(comboTO.SelectedValue) == "1")
             {
                 GetCarrier();
             }
@@ -813,19 +813,19 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             if (CurrentMaintain["ToTag"].ToString() == "2")
             {
                 sqlCmd = "select ID from SCIFty WITH (NOLOCK) where Junk = 0 AND ExpressGroup <> ''";
-                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox2.Text);
+                item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", txtTO.Text);
             }
             else
             {
                 if (CurrentMaintain["ToTag"].ToString() == "3")
                 {
                     sqlCmd = "select ID,AbbCH,AbbEN from Supp WITH (NOLOCK) where Junk = 0";
-                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", textBox2.Text);
+                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", txtTO.Text);
                 }
                 else
                 {
                     sqlCmd = "select ID,NameEN,CountryID from Brand WITH (NOLOCK) where Junk = 0";
-                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,0", textBox2.Text);
+                    item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,0", txtTO.Text);
                 }
             }
 
@@ -835,11 +835,11 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             IList<DataRow> brand = item.GetSelecteds();
             if (CurrentMaintain["ToTag"].ToString() == "3")
             {
-                displayBox3.Value = brand[0]["AbbEN"].ToString();
+                displayTO.Value = brand[0]["AbbEN"].ToString();
             }
             if (CurrentMaintain["ToTag"].ToString() == "4")
             {
-                displayBox3.Value = brand[0]["NameEN"].ToString();
+                displayTO.Value = brand[0]["NameEN"].ToString();
                 CurrentMaintain["Dest"] = brand[0]["CountryID"].ToString();
             }
         }
@@ -847,18 +847,18 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         //To Site
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox2.OldValue != textBox2.Text)
+            if (txtTO.OldValue != txtTO.Text)
             {
-                if (MyUtility.Check.Empty(textBox2.Text))
+                if (MyUtility.Check.Empty(txtTO.Text))
                 {
                     CurrentMaintain["ToSite"] = "";
                     CurrentMaintain["PortAir"] = "";
-                    displayBox3.Value = "";
+                    displayTO.Value = "";
                 }
                 else
                 {
                     //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox2.Text);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtTO.Text);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
@@ -876,22 +876,22 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                             }
                             else
                             {
-                                MyUtility.Msg.WarningBox(string.Format("Factory: {0} does not exist.", textBox2.Text));
+                                MyUtility.Msg.WarningBox(string.Format("Factory: {0} does not exist.", txtTO.Text));
                             }
                             CurrentMaintain["ToSite"] = "";
                             CurrentMaintain["PortAir"] = "";
-                            displayBox3.Value = "";
+                            displayTO.Value = "";
                             e.Cancel = true;
                             return;
                         }
                         else
                         {
-                            CurrentMaintain["ToSite"] = textBox2.Text;
+                            CurrentMaintain["ToSite"] = txtTO.Text;
                             CurrentMaintain["PortAir"] = MyUtility.Convert.GetString(SCIFtyData.Rows[0]["PortAir"]);
-                            displayBox3.Value = "";
+                            displayTO.Value = "";
                             if (MyUtility.Check.Empty(CurrentMaintain["ShipMark"]))
                             {
-                                CurrentMaintain["ShipMark"] = textBox2.Text;
+                                CurrentMaintain["ShipMark"] = txtTO.Text;
                                 CurrentMaintain["Dest"] = MyUtility.Convert.GetString(SCIFtyData.Rows[0]["CountryID"]);
                             }
                         }
@@ -912,18 +912,18 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                                 }
                                 else
                                 {
-                                    MyUtility.Msg.WarningBox(string.Format("Supplier: {0} does not exist.", textBox2.Text));
+                                    MyUtility.Msg.WarningBox(string.Format("Supplier: {0} does not exist.", txtTO.Text));
                                 }
                                 CurrentMaintain["ToSite"] = "";
                                 CurrentMaintain["PortAir"] = "";
-                                displayBox3.Value = "";
+                                displayTO.Value = "";
                                 e.Cancel = true;
                                 return;
                             }
                             else
                             {
-                                CurrentMaintain["ToSite"] = textBox2.Text;
-                                displayBox3.Value = MyUtility.Convert.GetString(SuppData.Rows[0]["AbbEN"]);
+                                CurrentMaintain["ToSite"] = txtTO.Text;
+                                displayTO.Value = MyUtility.Convert.GetString(SuppData.Rows[0]["AbbEN"]);
                                 CurrentMaintain["PortAir"] = "";
                             }
                         }
@@ -943,18 +943,18 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                                     }
                                     else
                                     {
-                                        MyUtility.Msg.WarningBox(string.Format("Brand: {0} does not exist.", textBox2.Text));
+                                        MyUtility.Msg.WarningBox(string.Format("Brand: {0} does not exist.", txtTO.Text));
                                     }
                                     CurrentMaintain["ToSite"] = "";
                                     CurrentMaintain["PortAir"] = "";
-                                    displayBox3.Value = "";
+                                    displayTO.Value = "";
                                     e.Cancel = true;
                                     return;
                                 }
                                 else
                                 {
-                                    CurrentMaintain["ToSite"] = textBox2.Text;
-                                    displayBox3.Value = MyUtility.Convert.GetString(BrandData.Rows[0]["NameEN"]);
+                                    CurrentMaintain["ToSite"] = txtTO.Text;
+                                    displayTO.Value = MyUtility.Convert.GetString(BrandData.Rows[0]["NameEN"]);
                                     CurrentMaintain["Dest"] = MyUtility.Convert.GetString(BrandData.Rows[0]["CountryID"]);
                                     CurrentMaintain["PortAir"] = "";
                                 }
@@ -1009,13 +1009,13 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
                 {
                     CurrentMaintain["CarrierID"] = CarrierData.Rows[0]["ID"];
                     CurrentMaintain["ExpressACNo"] = CarrierData.Rows[0]["Account"];
-                    displayBox4.Value = MyUtility.Convert.GetString(CarrierData.Rows[0]["SuppID"]) + " " + MyUtility.Convert.GetString(CarrierData.Rows[0]["Abb"]);
+                    displayCarrier.Value = MyUtility.Convert.GetString(CarrierData.Rows[0]["SuppID"]) + " " + MyUtility.Convert.GetString(CarrierData.Rows[0]["Abb"]);
                 }
                 else
                 {
                     CurrentMaintain["CarrierID"] = "";
                     CurrentMaintain["ExpressACNo"] = "";
-                    displayBox4.Value = "";
+                    displayCarrier.Value = "";
                 }
             }
         }
@@ -1023,9 +1023,9 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         //ETD
         private void dateBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(dateBox2.Value) && dateBox2.OldValue != dateBox2.Value)
+            if (EditMode && !MyUtility.Check.Empty(dateETD.Value) && dateETD.OldValue != dateETD.Value)
             {
-                if (!MyUtility.Check.Empty(CurrentMaintain["ETA"]) && dateBox2.Value > MyUtility.Convert.GetDate(CurrentMaintain["ETA"]))
+                if (!MyUtility.Check.Empty(CurrentMaintain["ETA"]) && dateETD.Value > MyUtility.Convert.GetDate(CurrentMaintain["ETA"]))
                 {
                     MyUtility.Msg.WarningBox("ETD can't later than ETA!");
                     CurrentMaintain["ETD"] = DBNull.Value;
@@ -1038,11 +1038,11 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         //ETA
         private void dateBox3_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(dateBox3.Value) && dateBox3.OldValue != dateBox3.Value)
+            if (EditMode && !MyUtility.Check.Empty(dateETA.Value) && dateETA.OldValue != dateETA.Value)
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["ETD"]))
                 {
-                    if (dateBox3.Value < MyUtility.Convert.GetDate(CurrentMaintain["ETD"]))
+                    if (dateETA.Value < MyUtility.Convert.GetDate(CurrentMaintain["ETD"]))
                     {
                         MyUtility.Msg.WarningBox("ETA can't early than ETD!");
                         CurrentMaintain["ETA"] = DBNull.Value;
@@ -1051,7 +1051,7 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
                     }
                     else
                     {
-                        if (dateBox3.Value > Convert.ToDateTime(CurrentMaintain["ETD"]).AddDays(90))
+                        if (dateETA.Value > Convert.ToDateTime(CurrentMaintain["ETD"]).AddDays(90))
                         {
                             MyUtility.Msg.WarningBox("ETA can't later than ETD more than 90 days!");
                             CurrentMaintain["ETA"] = DBNull.Value;
@@ -1084,23 +1084,23 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
             string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,'') as Abb,c.Account
 from Carrier c WITH (NOLOCK) 
 left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", textBox5.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> carrier = item.GetSelecteds();
             CurrentMaintain["CarrierID"] = item.GetSelectedString();
-            displayBox4.Value = MyUtility.Convert.GetString(carrier[0]["SuppID"]) + " " + MyUtility.Convert.GetString(carrier[0]["Abb"]);
+            displayCarrier.Value = MyUtility.Convert.GetString(carrier[0]["SuppID"]) + " " + MyUtility.Convert.GetString(carrier[0]["Abb"]);
             CurrentMaintain["ExpressACNo"] = carrier[0]["Account"];
         }
 
         //B/L No.
         private void textBox6_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox6) && textBox6.OldValue != textBox6.Text)
+            if (EditMode && !MyUtility.Check.Empty(txtBLNo) && txtBLNo.OldValue != txtBLNo.Text)
             {
-                for (int i = 0; i < textBox6.Text.Trim().Length; i++)
+                for (int i = 0; i < txtBLNo.Text.Trim().Length; i++)
                 {
-                    var asc = ASCIIEncoding.ASCII.GetBytes(textBox6.Text.Substring(i, 1));
+                    var asc = ASCIIEncoding.ASCII.GetBytes(txtBLNo.Text.Substring(i, 1));
                     if (!((asc[0] >= 48 && asc[0] <= 57) || (asc[0] >= 65 && asc[0] <= 90)))
                     {
                         MyUtility.Msg.WarningBox("B/L No. format error, only keyin (0-9,A-Z)!");
@@ -1377,8 +1377,8 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 string mailto = MyUtility.Convert.GetString(dr["ToAddress"]);
                 string cc = MyUtility.Convert.GetString(dr["CcAddress"]);
                 string subject = string.Format("<{0}-{1}> TO <{2}{3}> HC#({4}) International Express ({5}){6}",
-                    MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(displayBox2.Value),
-                    MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(displayBox3.Value) : "",
+                    MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(displayFrom.Value),
+                    MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(displayTO.Value) : "",
                     MyUtility.Convert.GetString(CurrentMaintain["ID"]),
                     MyUtility.Check.Empty(CurrentMaintain["ShipDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
                     MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junk" ? " -Cancel" : "");
@@ -1395,8 +1395,8 @@ When first applicant's team leader approval, anyone can not do any modification.
 ---Applicant need to notify factory & supplier's attn. to arrange the shipping time by oneself before export the goods.
 ---Applicant also need to notify factory , supplier & customer's attn. to make sure that they can receive the goods by oneself after shipped out  the goods.
 ", MyUtility.Convert.GetString(CurrentMaintain["Manager"]) + "-" + MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Manager"]))),
- MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(displayBox2.Value),
- MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(displayBox3.Value) : "",
+ MyUtility.Convert.GetString(CurrentMaintain["FromSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "1" ? MyUtility.Convert.GetString(CurrentMaintain["FromSite"]) : MyUtility.Convert.GetString(displayFrom.Value),
+ MyUtility.Convert.GetString(CurrentMaintain["ToSite"]), MyUtility.Convert.GetString(CurrentMaintain["FromTag"]) == "3" ? "-" + MyUtility.Convert.GetString(displayTO.Value) : "",
  MyUtility.Check.Empty(CurrentMaintain["ShipDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                 #endregion
 

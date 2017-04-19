@@ -29,7 +29,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridAddNewNLCode.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["UnitID"]) != MyUtility.Convert.GetString(e.FormattedValue))
                     {
                         if (!MyUtility.Check.Seek(MyUtility.Convert.GetString(e.FormattedValue), "Unit", "ID"))
@@ -44,8 +44,8 @@ namespace Sci.Production.Shipping
                 }
             };
             #endregion
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid1)
+            this.gridAddNewNLCode.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridAddNewNLCode)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10))
                 .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(7))
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15))
@@ -154,7 +154,7 @@ namespace Sci.Production.Shipping
         //Save
         private void button4_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridAddNewNLCode.ValidateControl();
             listControlBindingSource1.EndEdit();
             IList<string> insertCmds = new List<string>();
             StringBuilder dupNLCode = new StringBuilder();

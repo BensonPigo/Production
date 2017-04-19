@@ -24,47 +24,47 @@ namespace Sci.Production.Shipping
             base.OnAttaching(data);
             if (OperationMode == 1 || OperationMode == 4)
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Sample,2,SMS,3,Bulk");
+                MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "1,Sample,2,SMS,3,Bulk");
             }
             if (OperationMode == 2 || OperationMode == 3)
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "2,SMS,3,Bulk");
+                MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "2,SMS,3,Bulk");
             }
             
             if (MyUtility.Convert.GetString(data["Category"]) == "1")
             {
-                label12.Text = "FOC PL#";
+                labelAirPPNo.Text = "FOC PL#";
                 if (OperationMode == 3)
                 {
-                    MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Sample");
-                    textBox4.ReadOnly = true;
-                    textBox4.IsSupportEditMode = false;
+                    MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "1,Sample");
+                    txtAirPPNo.ReadOnly = true;
+                    txtAirPPNo.IsSupportEditMode = false;
                 }
             }
 
             if (OperationMode == 3)
             {
-                textBox1.ReadOnly = true;
-                textBox1.IsSupportEditMode = false;
+                txtSPNo.ReadOnly = true;
+                txtSPNo.IsSupportEditMode = false;
             }
         }
 
         //CTN No.
         private void textBox2_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox2.OldValue != textBox2.Text)
+            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = textBox2.Text.Trim();
+                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
             }
         }
 
         //SP#
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
+            if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
             {
                 //sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
@@ -77,7 +77,7 @@ namespace Sci.Production.Shipping
                     if (!MyUtility.Check.Seek(string.Format(@"select oq.Id
 from Order_QtyShip oq WITH (NOLOCK) 
 inner join ShipMode s WITH (NOLOCK) on UseFunction like '%AirPP%' and oq.ShipmodeID = s.ID
-where oq.Id = '{0}'", textBox1.Text)))
+where oq.Id = '{0}'", txtSPNo.Text)))
                     {
                         string shipMode = MyUtility.GetValue.Lookup(@"select (select ID+',' from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%'
 for xml path('')) as ShipModeID");
@@ -111,13 +111,13 @@ for xml path('')) as ShipModeID");
         //SP#
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
                 DataRow OrderData;
                 if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
+from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
                 {
-                    CurrentData["OrderID"] = textBox1.Text;
+                    CurrentData["OrderID"] = txtSPNo.Text;
                     CurrentData["SeasonID"] = OrderData["SeasonID"];
                     CurrentData["StyleID"] = OrderData["StyleID"];
                     CurrentData["BrandID"] = OrderData["BrandID"];
@@ -129,7 +129,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
                 }
                 else
                 {
-                    CurrentData["OrderID"] = textBox1.Text;
+                    CurrentData["OrderID"] = txtSPNo.Text;
                     CurrentData["SeasonID"] = "";
                     CurrentData["StyleID"] = "";
                     CurrentData["BrandID"] = "";
@@ -141,7 +141,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
         //Air PP No.
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox4.OldValue != textBox4.Text)
+            if (EditMode && txtAirPPNo.OldValue != txtAirPPNo.Text)
             {
                 if (!ChkAirPP())
                 {
@@ -155,14 +155,14 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
         private bool ChkAirPP()
         {
             DataRow AirPPData;
-            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", textBox4.Text), out AirPPData))
+            if (!MyUtility.Check.Seek(string.Format("select OrderID from AirPP WITH (NOLOCK) where ID = '{0}'  and Status <> 'Junked'", txtAirPPNo.Text), out AirPPData))
             {
                 MyUtility.Msg.WarningBox("Air PP No. not found!!");
                 return false;
             }
             else
             {
-                if (AirPPData["OrderID"].ToString() != textBox1.Text)
+                if (AirPPData["OrderID"].ToString() != txtSPNo.Text)
                 {
                     MyUtility.Msg.WarningBox("SP# and Air PP's SP# is inconsistent!!");
                     return false;
@@ -172,7 +172,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
             if (MyUtility.Check.Seek(string.Format(@"select ed.ID 
 from Express_Detail ed WITH (NOLOCK) 
 inner join Express e WITH (NOLOCK) on ed.ID = e.ID and e.Status <> 'Junked'
-where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, MyUtility.Convert.GetString(CurrentData["ID"])), out AirPPData))
+where DutyNo = '{0}' and ed.ID <> '{1}'", txtAirPPNo.Text, MyUtility.Convert.GetString(CurrentData["ID"])), out AirPPData))
             {
                 MyUtility.Msg.WarningBox(string.Format("This Air PP No. already in HC#{0}, so can't be assign!!", MyUtility.Convert.GetString(AirPPData["ID"])));
                 return false;
@@ -186,55 +186,55 @@ where DutyNo = '{0}' and ed.ID <> '{1}'", textBox4.Text, MyUtility.Convert.GetSt
             if (MyUtility.Check.Empty(CurrentData["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("SP# can't empty!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Description"]))
             {
                 MyUtility.Msg.WarningBox("Description can't empty!");
-                editBox1.Focus();
+                editDescription.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
-                textBox2.Focus();
+                txtCTNNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Qty"]))
             {
                 MyUtility.Msg.WarningBox("Q'ty can't empty!");
-                numericBox2.Focus();
+                numQty.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["UnitID"]))
             {
                 MyUtility.Msg.WarningBox("Unit can't empty!");
-                txtunit_fty1.Focus();
+                txtunit_ftyUnit.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
-                numericBox3.Focus();
+                numNW.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Category"]))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!");
-                comboBox1.Focus();
+                comboCategory.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
-                textBox3.Focus();
+                txtReceiver.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["DutyNo"]))
             {
                 MyUtility.Msg.WarningBox("Air PP No. can't empty!");
-                textBox4.Focus();
+                txtAirPPNo.Focus();
                 return false;
             }
             #endregion

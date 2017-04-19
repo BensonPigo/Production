@@ -20,7 +20,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "B,Bulk,S,Sample");
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "B,Bulk,S,Sample");
             //取VNConsumption_Article, VNConsumption_SizeCode結構，存檔時使用
             DBProxy.Current.Select(null, "select * from VNConsumption_Article WITH (NOLOCK) where 1 = 0", out tmpConsumptionArticle);
             DBProxy.Current.Select(null, "select * from VNConsumption_SizeCode WITH (NOLOCK) where 1 = 0", out tmpConsumptionSizecode);
@@ -62,11 +62,11 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", contraceNo, masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numericBox3.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["PulloutQty"]);
+            numBalanceQty.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["PulloutQty"]);
             string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article WITH (NOLOCK) where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            editBox1.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length - 1);
+            editColorway.Text = MyUtility.Check.Empty(colorWay) ? "" : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
-            editBox2.Text = MyUtility.Check.Empty(sizeGroup) ? "" : sizeGroup.Substring(0, sizeGroup.Length - 1);
+            editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? "" : sizeGroup.Substring(0, sizeGroup.Length - 1);
             DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])), out VNConsumption_Detail_Detail);
         }
 
@@ -161,9 +161,9 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
-            textBox3.ReadOnly = true;
-            dateBox1.ReadOnly = true;
+            txtCustomSPNo.ReadOnly = true;
+            txtContractNo.ReadOnly = true;
+            dateDate.ReadOnly = true;
         }
 
         protected override bool ClickDeleteBefore()
@@ -192,63 +192,63 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
             if (MyUtility.Check.Empty(CurrentMaintain["CustomSP"]))
             {
                 MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
-                textBox1.Focus();
+                txtCustomSPNo.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
-                textBox3.Focus();
+                txtContractNo.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
             {
                 MyUtility.Msg.WarningBox("Style can't empty!!");
-                textBox2.Focus();
+                txtStyle.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Category"]))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
-                comboBox1.Focus();
+                comboCategory.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SizeCode"]))
             {
                 MyUtility.Msg.WarningBox("Size can't empty!!");
-                textBox4.Focus();
+                txtSize.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Qty"]))
             {
                 MyUtility.Msg.WarningBox("Q'ty can't empty!!");
-                numericBox1.Focus();
+                numQty.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editBox1.Text))
+            if (MyUtility.Check.Empty(editColorway.Text))
             {
                 MyUtility.Msg.WarningBox("Color way can't empty!!");
-                editBox1.Focus();
+                editColorway.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(editBox2.Text))
+            if (MyUtility.Check.Empty(editSizeGroup.Text))
             {
                 MyUtility.Msg.WarningBox("Size Group can't empty!!");
-                editBox2.Focus();
+                editSizeGroup.Focus();
                 return false;
             }
             #endregion
@@ -293,8 +293,8 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
             //準備資料
             tmpConsumptionArticle.Clear();
             tmpConsumptionSizecode.Clear();
-            string[] colorway = editBox1.Text.Split(',');
-            string[] sizecode = editBox2.Text.Split(',');
+            string[] colorway = editColorway.Text.Split(',');
+            string[] sizecode = editSizeGroup.Text.Split(',');
             foreach (string s in colorway)
             {
                 DataRow dr = tmpConsumptionArticle.NewRow();
@@ -389,29 +389,29 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                textBox3.Text = item.GetSelectedString();
+                txtContractNo.Text = item.GetSelectedString();
             }
         }
 
         //Contract No.
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox3.OldValue != textBox3.Text && !MyUtility.Check.Empty(textBox3.Text))
+            if (EditMode && txtContractNo.OldValue != txtContractNo.Text && !MyUtility.Check.Empty(txtContractNo.Text))
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox3.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
                 {
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
-                    textBox3.Text = "";
+                    txtContractNo.Text = "";
                     e.Cancel = true;
                     return;
                 }
-                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", textBox3.Text)))
+                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", txtContractNo.Text)))
                 {
                     MyUtility.Msg.WarningBox("This Contract can't use.");
-                    textBox3.Text = "";
+                    txtContractNo.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -423,7 +423,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", textBox3.Text, headercaptions: "Contract No.,Start Date, End Date,");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("Select ID, SeasonID, BrandID,Ukey,CPU from Style WITH (NOLOCK) Order By BrandID, ID, SeasonID", "15,10,10,0", txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date,");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 IList<DataRow> selectedData = item.GetSelecteds();
@@ -440,7 +440,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "15,10,10,0", textBox2.Text, headercaptions: "Size");
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "15,10,10,0", txtStyle.Text, headercaptions: "Size");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 CurrentMaintain["SizeCode"] = item.GetSelectedString();
@@ -452,10 +452,10 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox1.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editColorway.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                editBox1.Text = item.GetSelectedString();
+                editColorway.Text = item.GetSelectedString();
             }
         }
 
@@ -464,10 +464,10 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editBox2.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editSizeGroup.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                editBox2.Text = item.GetSelectedString();
+                editSizeGroup.Text = item.GetSelectedString();
             }
         }
 
@@ -481,7 +481,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         //Calculate
         private void button2_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]) || MyUtility.Check.Empty(CurrentMaintain["Category"]) || MyUtility.Check.Empty(CurrentMaintain["SizeCode"]) || MyUtility.Check.Empty(editBox1.Text))
+            if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]) || MyUtility.Check.Empty(CurrentMaintain["Category"]) || MyUtility.Check.Empty(CurrentMaintain["SizeCode"]) || MyUtility.Check.Empty(editColorway.Text))
             {
                 MyUtility.Msg.WarningBox("Style, Category, Size and Color way can't empty!!");
                 return;
@@ -493,7 +493,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
             StringBuilder emptyNLCode = new StringBuilder();
             StringBuilder wrongUnit = new StringBuilder();
             StringBuilder allMessage = new StringBuilder();
-            string[] colorway = editBox1.Text.Split(',');
+            string[] colorway = editColorway.Text.Split(',');
             #region 組撈Detail_Detail Data的SQL
             sqlCmd.Append(string.Format(@"Declare @styleukey bigint,
 		@sizecode varchar(8),

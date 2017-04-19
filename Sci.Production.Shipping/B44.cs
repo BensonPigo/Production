@@ -19,7 +19,7 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtNLCode.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -47,12 +47,12 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
         //NL Code
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text && !MyUtility.Check.Empty(textBox1.Text))
+            if (EditMode && txtNLCode.OldValue != txtNLCode.Text && !MyUtility.Check.Empty(txtNLCode.Text))
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", textBox1.Text)))
+and NLCode = '{0}'", txtNLCode.Text)))
                     {
                         MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         CurrentMaintain["NLCode"] = "";

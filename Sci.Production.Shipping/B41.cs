@@ -31,9 +31,9 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            editBox1.ReadOnly = true;
-            txtsubcon1.TextBox1.ReadOnly = true;
-            checkBox1.ReadOnly = true;
+            editDescription.ReadOnly = true;
+            txtSubconSupplier.TextBox1.ReadOnly = true;
+            checkJunk.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()

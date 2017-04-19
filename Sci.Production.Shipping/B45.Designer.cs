@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.labelNLCode = new Sci.Win.UI.Label();
+            this.labelHSCode = new Sci.Win.UI.Label();
+            this.labelUnit = new Sci.Win.UI.Label();
+            this.labelQty = new Sci.Win.UI.Label();
+            this.txtNLCode = new Sci.Win.UI.TextBox();
+            this.displayHSCode = new Sci.Win.UI.DisplayBox();
+            this.displayUnit = new Sci.Win.UI.DisplayBox();
+            this.numQty = new Sci.Win.UI.NumericBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.radioCalculate = new Sci.Win.UI.RadioButton();
+            this.radioFixedQty = new Sci.Win.UI.RadioButton();
+            this.checkTissuepaper = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -55,16 +55,16 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.checkTissuepaper);
             this.detailcont.Controls.Add(this.radioPanel1);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.numQty);
+            this.detailcont.Controls.Add(this.displayUnit);
+            this.detailcont.Controls.Add(this.displayHSCode);
+            this.detailcont.Controls.Add(this.txtNLCode);
+            this.detailcont.Controls.Add(this.labelQty);
+            this.detailcont.Controls.Add(this.labelUnit);
+            this.detailcont.Controls.Add(this.labelHSCode);
+            this.detailcont.Controls.Add(this.labelNLCode);
             this.detailcont.Size = new System.Drawing.Size(828, 309);
             // 
             // detailbtm
@@ -74,7 +74,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 347);
+            this.browse.Size = new System.Drawing.Size(828, 347);
             // 
             // tabs
             // 
@@ -93,90 +93,90 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelNLCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(43, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "NL Code";
+            this.labelNLCode.Lines = 0;
+            this.labelNLCode.Location = new System.Drawing.Point(43, 18);
+            this.labelNLCode.Name = "labelNLCode";
+            this.labelNLCode.Size = new System.Drawing.Size(61, 23);
+            this.labelNLCode.TabIndex = 2;
+            this.labelNLCode.Text = "NL Code";
             // 
-            // label2
+            // labelHSCode
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(43, 56);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "HS Code";
+            this.labelHSCode.Lines = 0;
+            this.labelHSCode.Location = new System.Drawing.Point(43, 56);
+            this.labelHSCode.Name = "labelHSCode";
+            this.labelHSCode.Size = new System.Drawing.Size(61, 23);
+            this.labelHSCode.TabIndex = 3;
+            this.labelHSCode.Text = "HS Code";
             // 
-            // label3
+            // labelUnit
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(43, 95);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(43, 95);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(61, 23);
+            this.labelUnit.TabIndex = 4;
+            this.labelUnit.Text = "Unit";
             // 
-            // label4
+            // labelQty
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(43, 132);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Q\'ty";
+            this.labelQty.Lines = 0;
+            this.labelQty.Location = new System.Drawing.Point(43, 132);
+            this.labelQty.Name = "labelQty";
+            this.labelQty.Size = new System.Drawing.Size(61, 23);
+            this.labelQty.TabIndex = 5;
+            this.labelQty.Text = "Q\'ty";
             // 
-            // textBox1
+            // txtNLCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(108, 18);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(60, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(108, 18);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(60, 23);
+            this.txtNLCode.TabIndex = 0;
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // displayBox1
+            // displayHSCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(108, 56);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(110, 23);
-            this.displayBox1.TabIndex = 5;
+            this.displayHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
+            this.displayHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayHSCode.Location = new System.Drawing.Point(108, 56);
+            this.displayHSCode.Name = "displayHSCode";
+            this.displayHSCode.Size = new System.Drawing.Size(110, 23);
+            this.displayHSCode.TabIndex = 5;
             // 
-            // displayBox2
+            // displayUnit
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UnitID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(108, 95);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(80, 23);
-            this.displayBox2.TabIndex = 6;
+            this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "UnitID", true));
+            this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayUnit.Location = new System.Drawing.Point(108, 95);
+            this.displayUnit.Name = "displayUnit";
+            this.displayUnit.Size = new System.Drawing.Size(80, 23);
+            this.displayUnit.TabIndex = 6;
             // 
-            // numericBox1
+            // numQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
-            this.numericBox1.DecimalPlaces = 3;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(108, 132);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numQty.BackColor = System.Drawing.Color.White;
+            this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
+            this.numQty.DecimalPlaces = 3;
+            this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQty.Location = new System.Drawing.Point(108, 132);
+            this.numQty.Name = "numQty";
+            this.numQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(80, 23);
-            this.numericBox1.TabIndex = 1;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numQty.Size = new System.Drawing.Size(80, 23);
+            this.numQty.TabIndex = 1;
+            this.numQty.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -184,51 +184,51 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioCalculate);
+            this.radioPanel1.Controls.Add(this.radioFixedQty);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Type", true));
             this.radioPanel1.Location = new System.Drawing.Point(193, 129);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(217, 57);
             this.radioPanel1.TabIndex = 8;
             // 
-            // radioButton2
+            // radioCalculate
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(3, 31);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(198, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Calculate with “Qty per Ctn”";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "2";
+            this.radioCalculate.AutoSize = true;
+            this.radioCalculate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioCalculate.Location = new System.Drawing.Point(3, 31);
+            this.radioCalculate.Name = "radioCalculate";
+            this.radioCalculate.Size = new System.Drawing.Size(198, 21);
+            this.radioCalculate.TabIndex = 1;
+            this.radioCalculate.TabStop = true;
+            this.radioCalculate.Text = "Calculate with “Qty per Ctn”";
+            this.radioCalculate.UseVisualStyleBackColor = true;
+            this.radioCalculate.Value = "2";
             // 
-            // radioButton1
+            // radioFixedQty
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(3, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(88, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Fixed Q\'ty";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "1";
+            this.radioFixedQty.AutoSize = true;
+            this.radioFixedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioFixedQty.Location = new System.Drawing.Point(3, 3);
+            this.radioFixedQty.Name = "radioFixedQty";
+            this.radioFixedQty.Size = new System.Drawing.Size(88, 21);
+            this.radioFixedQty.TabIndex = 0;
+            this.radioFixedQty.TabStop = true;
+            this.radioFixedQty.Text = "Fixed Q\'ty";
+            this.radioFixedQty.UseVisualStyleBackColor = true;
+            this.radioFixedQty.Value = "1";
             // 
-            // checkBox1
+            // checkTissuepaper
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TissuePaper", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(444, 18);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(110, 21);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Tissue paper";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkTissuepaper.AutoSize = true;
+            this.checkTissuepaper.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TissuePaper", true));
+            this.checkTissuepaper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkTissuepaper.Location = new System.Drawing.Point(444, 18);
+            this.checkTissuepaper.Name = "checkTissuepaper";
+            this.checkTissuepaper.Size = new System.Drawing.Size(110, 21);
+            this.checkTissuepaper.TabIndex = 9;
+            this.checkTissuepaper.Text = "Tissue paper";
+            this.checkTissuepaper.UseVisualStyleBackColor = true;
             // 
             // B45
             // 
@@ -257,17 +257,17 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkTissuepaper;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.RadioButton radioCalculate;
+        private Win.UI.RadioButton radioFixedQty;
+        private Win.UI.NumericBox numQty;
+        private Win.UI.DisplayBox displayUnit;
+        private Win.UI.DisplayBox displayHSCode;
+        private Win.UI.TextBox txtNLCode;
+        private Win.UI.Label labelQty;
+        private Win.UI.Label labelUnit;
+        private Win.UI.Label labelHSCode;
+        private Win.UI.Label labelNLCode;
     }
 }

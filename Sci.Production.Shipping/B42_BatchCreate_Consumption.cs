@@ -53,7 +53,7 @@ namespace Sci.Production.Shipping
             {
                 if (e.RowIndex != -1)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(dr["UserCreate"]) == "0")
                     {
                         e.Control.Enabled = false;
@@ -72,7 +72,7 @@ namespace Sci.Production.Shipping
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                        DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
                         Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(string.Format("select distinct NLCode,HSCode,UnitID,Waste from VNContract_Detail WITH (NOLOCK) where ID = '{0}'", contract), "5,8,8,5", MyUtility.Convert.GetString(dr["NLCode"]), headercaptions: "NL Code,HS Code,Unit, Waste", columndecimals: "0,0,0,3");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
@@ -88,7 +88,7 @@ namespace Sci.Production.Shipping
 
             nlcode.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
 
                 if (e.FormattedValue.ToString() != dr["NLCode"].ToString())
                 {
@@ -132,7 +132,7 @@ namespace Sci.Production.Shipping
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridConsumption.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetString(dr["UserCreate"]) == "1")
                     {
                         MyUtility.Msg.InfoBox("This NL Code is not create by the system, so no more detail can be show.");
@@ -161,8 +161,8 @@ namespace Sci.Production.Shipping
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridConsumption.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridConsumption)
                 .Text("NLCode", header: "NL Code", width: Widths.AnsiChars(8), settings: nlcode)
                 .Text("Unit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", decimal_places: 3, width: Widths.AnsiChars(7), settings: qty)
@@ -195,7 +195,7 @@ namespace Sci.Production.Shipping
         //Save
         private void button3_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridConsumption.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             #region 檢查是否有Qty為0的
             foreach (DataRow dr in gridData.Rows)

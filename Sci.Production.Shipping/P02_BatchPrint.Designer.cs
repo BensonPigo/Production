@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.textBox5 = new Sci.Win.UI.TextBox();
+            this.labelReceiver = new Sci.Win.UI.Label();
+            this.labelInCharge = new Sci.Win.UI.Label();
+            this.labelCNo = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelSeq = new Sci.Win.UI.Label();
+            this.txtReceiver = new Sci.Win.UI.TextBox();
+            this.txtUserInCharge = new Sci.Production.Class.txtuser();
+            this.txtCNo = new Sci.Win.UI.TextBox();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.txtSeqStart = new Sci.Win.UI.TextBox();
+            this.txtSeqEnd = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -54,106 +54,106 @@
             // 
             this.close.Location = new System.Drawing.Point(418, 84);
             // 
-            // label1
+            // labelReceiver
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Receiver";
+            this.labelReceiver.Lines = 0;
+            this.labelReceiver.Location = new System.Drawing.Point(13, 13);
+            this.labelReceiver.Name = "labelReceiver";
+            this.labelReceiver.Size = new System.Drawing.Size(65, 23);
+            this.labelReceiver.TabIndex = 94;
+            this.labelReceiver.Text = "Receiver";
             // 
-            // label2
+            // labelInCharge
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "In Charge";
+            this.labelInCharge.Lines = 0;
+            this.labelInCharge.Location = new System.Drawing.Point(13, 48);
+            this.labelInCharge.Name = "labelInCharge";
+            this.labelInCharge.Size = new System.Drawing.Size(65, 23);
+            this.labelInCharge.TabIndex = 95;
+            this.labelInCharge.Text = "In Charge";
             // 
-            // label3
+            // labelCNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 83);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "C/No.";
+            this.labelCNo.Lines = 0;
+            this.labelCNo.Location = new System.Drawing.Point(13, 83);
+            this.labelCNo.Name = "labelCNo";
+            this.labelCNo.Size = new System.Drawing.Size(65, 23);
+            this.labelCNo.TabIndex = 96;
+            this.labelCNo.Text = "C/No.";
             // 
-            // label4
+            // labelSPNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 118);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(65, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(13, 118);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(65, 23);
+            this.labelSPNo.TabIndex = 97;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label5
+            // labelSeq
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 153);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Seq1#";
+            this.labelSeq.Lines = 0;
+            this.labelSeq.Location = new System.Drawing.Point(13, 153);
+            this.labelSeq.Name = "labelSeq";
+            this.labelSeq.Size = new System.Drawing.Size(65, 23);
+            this.labelSeq.TabIndex = 98;
+            this.labelSeq.Text = "Seq1#";
             // 
-            // textBox1
+            // txtReceiver
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(82, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(245, 23);
-            this.textBox1.TabIndex = 99;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtReceiver.BackColor = System.Drawing.Color.White;
+            this.txtReceiver.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtReceiver.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceiver.Location = new System.Drawing.Point(82, 13);
+            this.txtReceiver.Name = "txtReceiver";
+            this.txtReceiver.Size = new System.Drawing.Size(245, 23);
+            this.txtReceiver.TabIndex = 99;
+            this.txtReceiver.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
-            // txtuser1
+            // txtUserInCharge
             // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(82, 48);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 100;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtUserInCharge.DisplayBox1Binding = "";
+            this.txtUserInCharge.Location = new System.Drawing.Point(82, 48);
+            this.txtUserInCharge.Name = "txtUserInCharge";
+            this.txtUserInCharge.Size = new System.Drawing.Size(300, 23);
+            this.txtUserInCharge.TabIndex = 100;
+            this.txtUserInCharge.TextBox1Binding = "";
             // 
-            // textBox2
+            // txtCNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(82, 83);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(77, 23);
-            this.textBox2.TabIndex = 101;
+            this.txtCNo.BackColor = System.Drawing.Color.White;
+            this.txtCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCNo.Location = new System.Drawing.Point(82, 83);
+            this.txtCNo.Name = "txtCNo";
+            this.txtCNo.Size = new System.Drawing.Size(77, 23);
+            this.txtCNo.TabIndex = 101;
             // 
-            // textBox3
+            // txtSPNo
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(82, 118);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(130, 23);
-            this.textBox3.TabIndex = 102;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(82, 118);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNo.TabIndex = 102;
             // 
-            // textBox4
+            // txtSeqStart
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(82, 153);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(48, 23);
-            this.textBox4.TabIndex = 103;
+            this.txtSeqStart.BackColor = System.Drawing.Color.White;
+            this.txtSeqStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeqStart.Location = new System.Drawing.Point(82, 153);
+            this.txtSeqStart.Name = "txtSeqStart";
+            this.txtSeqStart.Size = new System.Drawing.Size(48, 23);
+            this.txtSeqStart.TabIndex = 103;
             // 
-            // textBox5
+            // txtSeqEnd
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(155, 153);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(48, 23);
-            this.textBox5.TabIndex = 104;
+            this.txtSeqEnd.BackColor = System.Drawing.Color.White;
+            this.txtSeqEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeqEnd.Location = new System.Drawing.Point(155, 153);
+            this.txtSeqEnd.Name = "txtSeqEnd";
+            this.txtSeqEnd.Size = new System.Drawing.Size(48, 23);
+            this.txtSeqEnd.TabIndex = 104;
             // 
             // label6
             // 
@@ -173,35 +173,34 @@
             // 
             this.ClientSize = new System.Drawing.Size(510, 211);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.txtuser1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.Controls.Add(this.txtSeqEnd);
+            this.Controls.Add(this.txtSeqStart);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.txtCNo);
+            this.Controls.Add(this.txtUserInCharge);
+            this.Controls.Add(this.txtReceiver);
+            this.Controls.Add(this.labelSeq);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.labelCNo);
+            this.Controls.Add(this.labelInCharge);
+            this.Controls.Add(this.labelReceiver);
             this.IsSupportToExcel = false;
             this.Name = "P02_BatchPrint";
             this.Text = "Batch Print";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.txtuser1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
-            this.Controls.SetChildIndex(this.textBox5, 0);
+            this.Controls.SetChildIndex(this.labelReceiver, 0);
+            this.Controls.SetChildIndex(this.labelInCharge, 0);
+            this.Controls.SetChildIndex(this.labelCNo, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.labelSeq, 0);
+            this.Controls.SetChildIndex(this.txtReceiver, 0);
+            this.Controls.SetChildIndex(this.txtUserInCharge, 0);
+            this.Controls.SetChildIndex(this.txtCNo, 0);
+            this.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.Controls.SetChildIndex(this.txtSeqStart, 0);
+            this.Controls.SetChildIndex(this.txtSeqEnd, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -210,17 +209,17 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.TextBox textBox1;
-        private Class.txtuser txtuser1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox5;
+        private Win.UI.Label labelReceiver;
+        private Win.UI.Label labelInCharge;
+        private Win.UI.Label labelCNo;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelSeq;
+        private Win.UI.TextBox txtReceiver;
+        private Class.txtuser txtUserInCharge;
+        private Win.UI.TextBox txtCNo;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.TextBox txtSeqStart;
+        private Win.UI.TextBox txtSeqEnd;
         private Win.UI.Label label6;
     }
 }

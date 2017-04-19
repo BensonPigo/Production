@@ -17,17 +17,17 @@ namespace Sci.Production.Shipping
         public P02_EditFromPO()
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "4,Material");
-            txtsupplier1.TextBox1.ReadOnly = true;
-            txtsupplier1.TextBox1.IsSupportEditMode = false;
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "4,Material");
+            txtsupplierID.TextBox1.ReadOnly = true;
+            txtsupplierID.TextBox1.IsSupportEditMode = false;
         }
 
         //CTN No.
         private void textBox2_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox2.OldValue != textBox2.Text)
+            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = textBox2.Text.Trim();
+                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
             }
         }
 
@@ -37,25 +37,25 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
-                textBox2.Focus();
+                txtCTNNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Qty"]))
             {
                 MyUtility.Msg.WarningBox("Q'ty can't empty!");
-                numericBox2.Focus();
+                numQty.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
-                numericBox3.Focus();
+                numNW.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
-                textBox3.Focus();
+                txtReceiver.Focus();
                 return false;
             }
             #endregion

@@ -19,7 +19,7 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()

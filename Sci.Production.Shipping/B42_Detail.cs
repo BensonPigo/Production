@@ -23,8 +23,8 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid1)
+            this.gridDetail.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridDetail)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Text("SuppID", header: "Supp ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
                     totalQty = totalQty + MyUtility.Convert.GetDecimal(dr["Qty"]);
                 }
             }
-            numericBox1.Value = MyUtility.Math.Round(totalQty,3);
+            numTotalQty.Value = MyUtility.Math.Round(totalQty,3);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             masterData = MasterData;
-            displayBox1.Value = "Material";
+            displayCategory.Value = "Material";
         }
 
         protected override void OnFormLoaded()
@@ -34,14 +34,14 @@ namespace Sci.Production.Shipping
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
                     dr["CTNNo"] = MyUtility.Convert.GetString(e.FormattedValue).Trim();
                 }
             };
             receiver.CharacterCasing = CharacterCasing.Normal;
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq1", header: "Seq1#", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -56,35 +56,35 @@ namespace Sci.Production.Shipping
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
 
-            grid1.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["Selected"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
         }
 
         //Find Now
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("SP# can't empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
-            if (MyUtility.Convert.GetString(textBox1.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(txtSPNo.Text).IndexOf("'") != -1)
             {
-                textBox1.Text = textBox1.Text.Replace("'","");
+                txtSPNo.Text = txtSPNo.Text.Replace("'","");
             }
 
-            if (MyUtility.Convert.GetString(textBox2.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(txtSEQ1.Text).IndexOf("'") != -1)
             {
-                textBox2.Text = textBox2.Text.Replace("'", "");
+                txtSEQ1.Text = txtSEQ1.Text.Replace("'", "");
             }
 
-            if (MyUtility.Convert.GetString(textBox3.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(txtSEQ2.Text).IndexOf("'") != -1)
             {
-                textBox3.Text = textBox3.Text.Replace("'", "");
+                txtSEQ2.Text = txtSEQ2.Text.Replace("'", "");
             }
 
             string sqlCmd = string.Format(@"select 0 as Selected, a.*, iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0) as Qty
@@ -98,8 +98,8 @@ left join PO_Supp ps WITH (NOLOCK) on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
 left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
 left join Orders o WITH (NOLOCK) on psd.ID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Text) ? "" : " and psd.SEQ1 = '" + textBox2.Text+"'",
-                               MyUtility.Check.Empty(textBox3.Text) ? "" : " and psd.SEQ2 = '" + textBox3.Text+"'");
+where psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtility.Check.Empty(txtSEQ1.Text) ? "" : " and psd.SEQ1 = '" + txtSEQ1.Text+"'",
+                               MyUtility.Check.Empty(txtSEQ2.Text) ? "" : " and psd.SEQ2 = '" + txtSEQ2.Text+"'");
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
@@ -118,7 +118,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
         //Update
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
 
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
@@ -135,10 +135,10 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
                 return;
             }
 
-            if (MyUtility.Check.Empty(textBox4.Text))
+            if (MyUtility.Check.Empty(txtRemark.Text))
             {
                 MyUtility.Msg.WarningBox("Remark can't empty!!");
-                textBox4.Focus();
+                txtRemark.Focus();
                 return;
             }
 
@@ -197,7 +197,7 @@ where psd.ID = '{0}'{1}{2}) a", textBox1.Text, MyUtility.Check.Empty(textBox2.Te
  values('{0}','{1}','{2}','{3}',{4},{5},'{6}','4','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{14}',GETDATE());",
                                             MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), MyUtility.Convert.GetString(dr["Qty"]),
                                             MyUtility.Convert.GetString(dr["NW"]), MyUtility.Convert.GetString(dr["CTNNo"]), MyUtility.Convert.GetString(dr["SuppID"]), MyUtility.Convert.GetString(dr["Price"]), MyUtility.Convert.GetString(dr["UnitID"]), MyUtility.Convert.GetString(dr["Receiver"]), MyUtility.Convert.GetString(dr["BrandID"]),
-                                            MyUtility.Convert.GetString(dr["LeaderID"]), textBox4.Text, Sci.Env.User.UserID));
+                                            MyUtility.Convert.GetString(dr["LeaderID"]), txtRemark.Text, Sci.Env.User.UserID));
             }
 
             //Qty不可為0

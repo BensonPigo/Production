@@ -18,7 +18,7 @@ namespace Sci.Production.Shipping
         public P02_AddNewItem()
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "5,Dox,6,Machine/Parts,7,Mock Up,8,Other Sample,9,Other Material");
         }
 
         protected override void OnFormLoaded()
@@ -26,10 +26,10 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             if (OperationMode != 2)
             {
-                textBox1.ReadOnly = true;
-                textBox1.IsSupportEditMode = false;
-                editBox1.ReadOnly = true;
-                editBox1.IsSupportEditMode = false;
+                txtSPNo.ReadOnly = true;
+                txtSPNo.IsSupportEditMode = false;
+                editDescription.ReadOnly = true;
+                editDescription.IsSupportEditMode = false;
             }
             GetLeaderName();
         }
@@ -37,10 +37,10 @@ namespace Sci.Production.Shipping
         //SP#
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
                 //sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
@@ -69,13 +69,13 @@ namespace Sci.Production.Shipping
         //SP#
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox1.OldValue != textBox1.Text)
+            if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
                 DataRow OrderData;
                 if (MyUtility.Check.Seek(string.Format(@"select SeasonID,StyleID,BrandID,SMR,[dbo].[getBOFMtlDesc](StyleUkey) as Description
-from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
+from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
                 {
-                    CurrentData["OrderID"] = textBox1.Text;
+                    CurrentData["OrderID"] = txtSPNo.Text;
                     CurrentData["SeasonID"] = OrderData["SeasonID"];
                     CurrentData["StyleID"] = OrderData["StyleID"];
                     CurrentData["BrandID"] = OrderData["BrandID"];
@@ -87,7 +87,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
                 }
                 else
                 {
-                    CurrentData["OrderID"] = textBox1.Text;
+                    CurrentData["OrderID"] = txtSPNo.Text;
                     CurrentData["SeasonID"] = "";
                     CurrentData["StyleID"] = "";
                     CurrentData["BrandID"] = "";
@@ -100,7 +100,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text), out OrderData))
         {
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format(@"select s.BulkSMR,[dbo].[getBOFMtlDesc](s.Ukey) as Description
-from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1.Text, txtseason1.Text), out dr))
+from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.Text, txtseason.Text), out dr))
             {
                 CurrentData["Leader"] = dr["BulkSMR"];
                 CurrentData["Description"] = dr["Description"];
@@ -110,7 +110,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1
         //Season
         private void txtseason1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtseason1.OldValue != txtseason1.Text && !MyUtility.Check.Empty(txtseason1.Text) && !MyUtility.Check.Empty(txtstyle1.Text))
+            if (EditMode && txtseason.OldValue != txtseason.Text && !MyUtility.Check.Empty(txtseason.Text) && !MyUtility.Check.Empty(txtstyle.Text))
             {
                 GetLeaderAndDesc();
             }
@@ -119,7 +119,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1
         //Style
         private void txtstyle1_Validated(object sender, EventArgs e)
         {
-            if (EditMode && txtstyle1.OldValue != txtstyle1.Text && !MyUtility.Check.Empty(txtstyle1.Text) && !MyUtility.Check.Empty(txtseason1.Text))
+            if (EditMode && txtstyle.OldValue != txtstyle.Text && !MyUtility.Check.Empty(txtstyle.Text) && !MyUtility.Check.Empty(txtseason.Text))
             {
                 GetLeaderAndDesc();
             }
@@ -128,9 +128,9 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1
         //CTN No.
         private void textBox2_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox2.OldValue != textBox2.Text)
+            if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {
-                CurrentData["CTNNo"] = textBox2.Text.Trim();
+                CurrentData["CTNNo"] = txtCTNNo.Text.Trim();
             }
         }
 
@@ -140,43 +140,43 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1
             if (MyUtility.Check.Empty(CurrentData["Description"]))
             {
                 MyUtility.Msg.WarningBox("Description can't empty!");
-                editBox1.Focus();
+                editDescription.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
                 MyUtility.Msg.WarningBox("CTN No. can't empty!");
-                textBox2.Focus();
+                txtCTNNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
                 MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
-                numericBox3.Focus();
+                numNW.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Category"]))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!");
-                comboBox1.Focus();
+                comboCategory.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
                 MyUtility.Msg.WarningBox("Receiver can't empty!");
-                textBox3.Focus();
+                txtReceiver.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Leader"]))
             {
                 MyUtility.Msg.WarningBox("Team Leader can't empty!");
-                textBox4.Focus();
+                txtTeamLeader.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }
 
@@ -185,7 +185,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle1
                 if (MyUtility.Check.Empty(CurrentData["StyleID"]))
                 {
                     MyUtility.Msg.WarningBox("Style can't empty!");
-                    txtstyle1.Focus();
+                    txtstyle.Focus();
                     return false;
                 }
             }
@@ -233,18 +233,18 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         //Team Leader
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", textBox4.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", txtTeamLeader.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox4.Text = item.GetSelectedString();
+            txtTeamLeader.Text = item.GetSelectedString();
         }
 
         //Team Leader
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox4.OldValue != textBox4.Text)
+            if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
             {
-                if (!MyUtility.Check.Seek(textBox4.Text, "TPEPass1", "ID"))
+                if (!MyUtility.Check.Seek(txtTeamLeader.Text, "TPEPass1", "ID"))
                 {
                     MyUtility.Msg.WarningBox("Data not found!!");
                     CurrentData["Leader"] = "";
@@ -257,7 +257,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         //Team Leader
         private void textBox4_Validated(object sender, EventArgs e)
         {
-            if (EditMode && textBox4.OldValue != textBox4.Text)
+            if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
             {
                 GetLeaderName();
             }
@@ -269,15 +269,15 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             DataRow dr;
             if (MyUtility.Check.Seek(selectSql, out dr))
             {
-                displayBox2.Text = MyUtility.Convert.GetString(dr["Name"]);
+                displayTeamLeader.Text = MyUtility.Convert.GetString(dr["Name"]);
                 if (!MyUtility.Check.Empty(dr["extNo"]))
                 {
-                    displayBox2.Text = this.displayBox2.Text + " #" + MyUtility.Convert.GetString(dr["extNo"]);
+                    displayTeamLeader.Text = this.displayTeamLeader.Text + " #" + MyUtility.Convert.GetString(dr["extNo"]);
                 }
             }
             else
             {
-                displayBox2.Text = "";
+                displayTeamLeader.Text = "";
             }
         }
     }

@@ -22,31 +22,31 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            label34.Text = "MR's \r\nComments";
-            label35.Text = "Cause &\r\nResponsible\r\nDetails";
-            txtuser1.TextBox1.ReadOnly = true;
-            txtuser1.TextBox1.IsSupportEditMode = false;
-            txtcountry1.TextBox1.ReadOnly = true;
-            txtcountry1.TextBox1.IsSupportEditMode = false;
+            labelComments.Text = "MR's \r\nComments";
+            labelResponsible.Text = "Cause &\r\nResponsible\r\nDetails";
+            txtUserPreparedBy.TextBox1.ReadOnly = true;
+            txtUserPreparedBy.TextBox1.IsSupportEditMode = false;
+            txtCountryDestination.TextBox1.ReadOnly = true;
+            txtCountryDestination.TextBox1.IsSupportEditMode = false;
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button5.Enabled = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved";
+            btnMailto.Enabled = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Approved";
 
             if (MyUtility.GetValue.Lookup(string.Format(@"select a.ShipQty-b.Qty as BalQty from 
 (select isnull(sum(ShipQty),0) as ShipQty from AirPP WITH (NOLOCK) where Status <> 'Junked' and OrderID = '{0}') a,
 (select isnull(sum(Qty),0) as Qty from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and ShipmodeID in (select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%')) b
 ", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))) != "0")
             {
-                this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-                this.button2.ForeColor = System.Drawing.Color.Red;
+                this.btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                this.btnAirPPList.ForeColor = System.Drawing.Color.Red;
             }
             else
             {
-                this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-                this.button2.ForeColor = System.Drawing.Color.Black;
+                this.btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+                this.btnAirPPList.ForeColor = System.Drawing.Color.Black;
             }
 
             DataTable orderData;
@@ -62,30 +62,30 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
                 {
                     MyUtility.Msg.ErrorBox("Query order fail.\r\n" + result.ToString());
                 }
-                displayBox2.Value = "";
-                displayBox3.Value = "";
-                displayBox4.Value = "";
-                displayBox5.Value = "";
-                displayBox6.Value = "";
-                numericBox1.Value = 0;
-                dateBox2.Value = null;
-                txtcountry1.TextBox1.Text = "";
+                displayStyleNo.Value = "";
+                displayBrand.Value = "";
+                displayDescription.Value = "";
+                displayFactory.Value = "";
+                displayShipMode.Value = "";
+                numOrderQty.Value = 0;
+                dateBuyerDelivery.Value = null;
+                txtCountryDestination.TextBox1.Text = "";
             }
             else
             {
-                displayBox2.Value = MyUtility.Convert.GetString(orderData.Rows[0]["StyleID"]);
-                displayBox3.Value = MyUtility.Convert.GetString(orderData.Rows[0]["BrandID"]);
-                displayBox4.Value = MyUtility.Convert.GetString(orderData.Rows[0]["Description"]);
-                displayBox5.Value = MyUtility.Convert.GetString(orderData.Rows[0]["FactoryID"]);
-                displayBox6.Value = MyUtility.Convert.GetString(orderData.Rows[0]["ShipmodeID"]);
-                numericBox1.Value = MyUtility.Convert.GetInt(orderData.Rows[0]["Qty"]);
-                dateBox2.Value = MyUtility.Convert.GetDate(orderData.Rows[0]["BuyerDelivery"]);
-                txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(orderData.Rows[0]["Dest"]);
+                displayStyleNo.Value = MyUtility.Convert.GetString(orderData.Rows[0]["StyleID"]);
+                displayBrand.Value = MyUtility.Convert.GetString(orderData.Rows[0]["BrandID"]);
+                displayDescription.Value = MyUtility.Convert.GetString(orderData.Rows[0]["Description"]);
+                displayFactory.Value = MyUtility.Convert.GetString(orderData.Rows[0]["FactoryID"]);
+                displayShipMode.Value = MyUtility.Convert.GetString(orderData.Rows[0]["ShipmodeID"]);
+                numOrderQty.Value = MyUtility.Convert.GetInt(orderData.Rows[0]["Qty"]);
+                dateBuyerDelivery.Value = MyUtility.Convert.GetDate(orderData.Rows[0]["BuyerDelivery"]);
+                txtCountryDestination.TextBox1.Text = MyUtility.Convert.GetString(orderData.Rows[0]["Dest"]);
             }
 
-            displayBox8.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ReasonID"])));
-            displayBox19.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
-            displayBox20.Value = MyUtility.Check.Empty(CurrentMaintain["FtySendDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            displayResponsibilityJustifcation.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ReasonID"])));
+            displayTPEEditDate.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            displayUpdTPEDate.Value = MyUtility.Check.Empty(CurrentMaintain["FtySendDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["FtySendDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             //狀態顯示
             switch (MyUtility.Convert.GetString(CurrentMaintain["Status"]))
             {
@@ -183,70 +183,70 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
                 MyUtility.Msg.WarningBox("Seq can't empty!!");
-                textBox2.Focus();
+                txtSeq.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["PPICMgr"]))
             {
                 MyUtility.Msg.WarningBox("PPIC mgr can't empty!!");
-                txtuser2.TextBox1.Focus();
+                txtUserPPICmgr.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["FtyMgr"]))
             {
                 MyUtility.Msg.WarningBox("Factory mgr can't empty!!");
-                txtuser3.TextBox1.Focus();
+                txtUserFactorymgr.TextBox1.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleFty"]) && MyUtility.Check.Empty(CurrentMaintain["RatioFty"]))
             {
                 MyUtility.Msg.WarningBox("Factory Ratio% can't empty!!");
-                numericBox11.Focus();
+                numFactoryRatio.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSubcon"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSubcon"]))
             {
                 MyUtility.Msg.WarningBox("Subcon Ratio% can't empty!!");
-                numericBox12.Focus();
+                numSubconRatio.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSCI"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSCI"]))
             {
                 MyUtility.Msg.WarningBox("SCI Ratio% can't empty!!");
-                numericBox13.Focus();
+                numSCIRatio.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSupp"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSupp"]))
             {
                 MyUtility.Msg.WarningBox("Supplier Ratio% can't empty!!");
-                numericBox14.Focus();
+                numSupplierRatio.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleBuyer"]) && MyUtility.Check.Empty(CurrentMaintain["RatioBuyer"]))
             {
                 MyUtility.Msg.WarningBox("Buyer Ratio% can't empty!!");
-                numericBox15.Focus();
+                numBuyerRatio.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleFty"]) && MyUtility.Check.Empty(CurrentMaintain["ResponsibleFtyNo"]))
             {
                 MyUtility.Msg.WarningBox("Factory can't empty!!");
-                txtfactory1.Focus();
+                txtfactory.Focus();
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSubcon"]) && MyUtility.Check.Empty(CurrentMaintain["SubConName"]))
             {
                 MyUtility.Msg.WarningBox("Subcon Name can't empty!!");
-                textBox6.Focus();
+                txtSubconName.Focus();
                 return false;
             }
 
@@ -258,7 +258,7 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             }
 
             //Air Qty要等於Order Qty
-            if (MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]) != MyUtility.Convert.GetInt(numericBox1.Value))
+            if (MyUtility.Convert.GetInt(CurrentMaintain["ShipQty"]) != MyUtility.Convert.GetInt(numOrderQty.Value))
             {
                 MyUtility.Msg.WarningBox("Air Q'ty not equal to Order Q'ty!!");
                 return false;
@@ -318,15 +318,15 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             worksheet.Cells[3, 5] = label30.Text;
             worksheet.Cells[3, 8] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(CurrentMaintain["ID"]);
-            worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBox2.Value)?"": Convert.ToDateTime(dateBox2.Value).ToString("d");
+            worksheet.Cells[4, 7] = MyUtility.Check.Empty(dateBuyerDelivery.Value)?"": Convert.ToDateTime(dateBuyerDelivery.Value).ToString("d");
             worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["MRHandle"])));
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
-            worksheet.Cells[6, 6] = displayBox5.Value;
-            worksheet.Cells[7, 2] = displayBox3.Value;
-            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", txtcountry1.TextBox1.Text));
-            worksheet.Cells[8, 2] = displayBox2.Value;
-            worksheet.Cells[8, 4] = displayBox4.Value;
-            worksheet.Cells[9, 2] = numericBox1.Value;
+            worksheet.Cells[6, 6] = displayFactory.Value;
+            worksheet.Cells[7, 2] = displayBrand.Value;
+            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup(string.Format("select Alias from Country WITH (NOLOCK) where ID = '{0}'", txtCountryDestination.TextBox1.Text));
+            worksheet.Cells[8, 2] = displayStyleNo.Value;
+            worksheet.Cells[8, 4] = displayDescription.Value;
+            worksheet.Cells[9, 2] = numOrderQty.Value;
             worksheet.Cells[10, 2] = MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]);
             worksheet.Cells[10, 4] = MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]) + " - " + MyUtility.GetValue.Lookup(string.Format("select Abb from LocalSupp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Forwarder"])));
             worksheet.Cells[10, 6] = MyUtility.Convert.GetString(CurrentMaintain["Quotation"]) + "/KG";
@@ -339,7 +339,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             worksheet.Cells[13, 2] = MyUtility.Convert.GetString(CurrentMaintain["Rate"]);
             worksheet.Cells[13, 5] = MyUtility.Convert.GetString(CurrentMaintain["EstAmount"]);
             worksheet.Cells[13, 8] = MyUtility.Convert.GetString(CurrentMaintain["ActualAmount"]);
-            worksheet.Cells[14, 2] = MyUtility.Convert.GetString(CurrentMaintain["ReasonID"]) + "." + displayBox8.Value;
+            worksheet.Cells[14, 2] = MyUtility.Convert.GetString(CurrentMaintain["ReasonID"]) + "." + displayResponsibilityJustifcation.Value;
             worksheet.Cells[15, 2] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFty"]).ToUpper() == "TRUE" ? "Y" : "";
             worksheet.Cells[15, 4] = MyUtility.Convert.GetString(CurrentMaintain["RatioFty"]) + "%";
             worksheet.Cells[15, 6] = MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFtyNo"]);
@@ -394,7 +394,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
 
                 IList<DataRow> reasonData = item.GetSelecteds();
                 CurrentMaintain["ReasonID"] = item.GetSelectedString();
-                displayBox8.Value = MyUtility.Convert.GetString(reasonData[0]["Name"]);
+                displayResponsibilityJustifcation.Value = MyUtility.Convert.GetString(reasonData[0]["Name"]);
             }
         }
 
@@ -410,7 +410,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         //Gross Weight(Kgs)
         private void numericBox3_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && numericBox3.OldValue != numericBox3.Value)
+            if (this.EditMode && numGrossWeight.OldValue != numGrossWeight.Value)
             {
                 CalculateEstAmt();
             }
@@ -419,7 +419,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         //V.Weight(Kgs)
         private void numericBox4_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && numericBox4.OldValue != numericBox4.Value)
+            if (this.EditMode && numVWeight.OldValue != numVWeight.Value)
             {
                 CalculateEstAmt();
             }
@@ -428,7 +428,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         //Quotation(USD/Kgs)
         private void numericBox6_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && numericBox6.OldValue != numericBox6.Value)
+            if (this.EditMode && numForwarderNQuotation.OldValue != numForwarderNQuotation.Value)
             {
                 CalculateEstAmt();
             }
@@ -439,9 +439,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                ControlFactoryRatio(!checkBox1.Checked);
-                CurrentMaintain["ResponsibleFty"] = checkBox1.Checked;
-                if (!checkBox1.Checked)
+                ControlFactoryRatio(!checkFactory.Checked);
+                CurrentMaintain["ResponsibleFty"] = checkFactory.Checked;
+                if (!checkFactory.Checked)
                 {
                     CurrentMaintain["RatioFty"] = 0;
                     CurrentMaintain["ResponsibleFtyNo"] = "";
@@ -454,9 +454,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                ControlSubconRatio(!checkBox2.Checked);
-                CurrentMaintain["ResponsibleSubcon"] = checkBox2.Checked;
-                if (!checkBox2.Checked)
+                ControlSubconRatio(!checkSubcon.Checked);
+                CurrentMaintain["ResponsibleSubcon"] = checkSubcon.Checked;
+                if (!checkSubcon.Checked)
                 {
                     CurrentMaintain["RatioSubcon"] = 0;
                     CurrentMaintain["SubconDBCNo"] = "";
@@ -470,9 +470,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                ControlSCIRatio(!checkBox3.Checked);
-                CurrentMaintain["ResponsibleSCI"] = checkBox3.Checked;
-                if (!checkBox3.Checked)
+                ControlSCIRatio(!checkSCI.Checked);
+                CurrentMaintain["ResponsibleSCI"] = checkSCI.Checked;
+                if (!checkSCI.Checked)
                 {
                     CurrentMaintain["RatioSCI"] = 0;
                 }
@@ -484,9 +484,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                ControlSupplierRatio(!checkBox4.Checked);
-                CurrentMaintain["ResponsibleSupp"] = checkBox4.Checked;
-                if (!checkBox4.Checked)
+                ControlSupplierRatio(!checkSupplier.Checked);
+                CurrentMaintain["ResponsibleSupp"] = checkSupplier.Checked;
+                if (!checkSupplier.Checked)
                 {
                     CurrentMaintain["RatioSupp"] = 0;
                 }
@@ -498,9 +498,9 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         {
             if (this.EditMode)
             {
-                ControlBuyerRatio(!checkBox5.Checked);
-                CurrentMaintain["ResponsibleBuyer"] = checkBox5.Checked;
-                if (!checkBox5.Checked)
+                ControlBuyerRatio(!checkBuyer.Checked);
+                CurrentMaintain["ResponsibleBuyer"] = checkBuyer.Checked;
+                if (!checkBuyer.Checked)
                 {
                     CurrentMaintain["RatioBuyer"] = 0;
                     CurrentMaintain["BuyerRemark"] = "";
@@ -510,31 +510,31 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
 
         private void ControlFactoryRatio(bool ReadOnly)
         {
-            numericBox11.ReadOnly = ReadOnly;
-            txtfactory1.ReadOnly = ReadOnly;
+            numFactoryRatio.ReadOnly = ReadOnly;
+            txtfactory.ReadOnly = ReadOnly;
         }
 
         private void ControlSubconRatio(bool ReadOnly)
         {
-            numericBox12.ReadOnly = ReadOnly;
-            textBox5.ReadOnly = ReadOnly;
-            textBox6.ReadOnly = ReadOnly;
+            numSubconRatio.ReadOnly = ReadOnly;
+            txtDebitMemo.ReadOnly = ReadOnly;
+            txtSubconName.ReadOnly = ReadOnly;
         }
 
         private void ControlSCIRatio(bool ReadOnly)
         {
-            numericBox13.ReadOnly = ReadOnly;
+            numSCIRatio.ReadOnly = ReadOnly;
         }
 
         private void ControlSupplierRatio(bool ReadOnly)
         {
-            numericBox14.ReadOnly = ReadOnly;
+            numSupplierRatio.ReadOnly = ReadOnly;
         }
 
         private void ControlBuyerRatio(bool ReadOnly)
         {
-            numericBox15.ReadOnly = ReadOnly;
-            textBox7.ReadOnly = ReadOnly;
+            numBuyerRatio.ReadOnly = ReadOnly;
+            txtBuyer.ReadOnly = ReadOnly;
         }
 
         //檢查輸入的SP#是否正確
@@ -586,14 +586,14 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
             if (MyUtility.Check.Empty(orderID))
             {
                 //OrderID為空值時，要把其他相關欄位值清空
-                displayBox2.Value = "";
-                displayBox3.Value = "";
-                displayBox4.Value = "";
-                displayBox5.Value = "";
-                displayBox6.Value = "";
-                numericBox1.Value = 0;
-                dateBox2.Value = null;
-                txtcountry1.TextBox1.Text = "";
+                displayStyleNo.Value = "";
+                displayBrand.Value = "";
+                displayDescription.Value = "";
+                displayFactory.Value = "";
+                displayShipMode.Value = "";
+                numOrderQty.Value = 0;
+                dateBuyerDelivery.Value = null;
+                txtCountryDestination.TextBox1.Text = "";
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["POHandle"] = "";
                 CurrentMaintain["POSMR"] = "";
@@ -614,11 +614,11 @@ where o.Id = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
-                    displayBox2.Value = MyUtility.Convert.GetString(orderData["StyleID"]);
-                    displayBox3.Value = MyUtility.Convert.GetString(orderData["BrandID"]);
-                    displayBox4.Value = MyUtility.Convert.GetString(orderData["Description"]);
-                    displayBox5.Value = MyUtility.Convert.GetString(orderData["FactoryID"]);
-                    txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(orderData["Dest"]);
+                    displayStyleNo.Value = MyUtility.Convert.GetString(orderData["StyleID"]);
+                    displayBrand.Value = MyUtility.Convert.GetString(orderData["BrandID"]);
+                    displayDescription.Value = MyUtility.Convert.GetString(orderData["Description"]);
+                    displayFactory.Value = MyUtility.Convert.GetString(orderData["FactoryID"]);
+                    txtCountryDestination.TextBox1.Text = MyUtility.Convert.GetString(orderData["Dest"]);
                     CurrentMaintain["POHandle"] = orderData["POHandle"];
                     CurrentMaintain["POSMR"] = orderData["POSMR"];
                     CurrentMaintain["MRHandle"] = orderData["MRHandle"];
@@ -639,24 +639,24 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                     {
                         if (orderQtyData.Rows.Count == 0)
                         {
-                            displayBox2.Text = "";
-                            dateBox1.Value = null;
-                            displayBox3.Text = "";
-                            displayBox4.Text = "";
-                            displayBox5.Text = "";
-                            txtcountry1.TextBox1.Text = "";
-                            txtcountry1.DisplayBox1.Text = "";
+                            displayStyleNo.Text = "";
+                            dateCreatedate.Value = null;
+                            displayBrand.Text = "";
+                            displayDescription.Text = "";
+                            displayFactory.Text = "";
+                            txtCountryDestination.TextBox1.Text = "";
+                            txtCountryDestination.DisplayBox1.Text = "";
 
-                            txttpeuser1.DisplayBox1.Text = "";
-                            txttpeuser1.DisplayBox2.Text = "";
-                            txttpeuser2.DisplayBox1.Text = "";
-                            txttpeuser2.DisplayBox2.Text = "";
-                            txttpeuser3.DisplayBox1.Text = "";
-                            txttpeuser3.DisplayBox2.Text = "";
-                            txttpeuser4.DisplayBox1.Text = "";
-                            txttpeuser4.DisplayBox2.Text = "";
-                            txttpeuser5.DisplayBox1.Text = "";
-                            txttpeuser5.DisplayBox2.Text = "";
+                            txttpeuserPOHandle.DisplayBox1.Text = "";
+                            txttpeuserPOHandle.DisplayBox2.Text = "";
+                            txttpeuserPOSMR.DisplayBox1.Text = "";
+                            txttpeuserPOSMR.DisplayBox2.Text = "";
+                            txttpeuserMR.DisplayBox1.Text = "";
+                            txttpeuserMR.DisplayBox2.Text = "";
+                            txttpeuserSMR.DisplayBox1.Text = "";
+                            txttpeuserSMR.DisplayBox2.Text = "";
+                            txttpeuserTask.DisplayBox1.Text = "";
+                            txttpeuserTask.DisplayBox2.Text = "";
                             MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<A/C>, it can't be created!", orderID));
                             txtSpNo.Text = "";
                             return;
@@ -664,10 +664,10 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                         if (orderQtyData.Rows.Count == 1)
                         {
                             CurrentMaintain["OrderShipmodeSeq"] = orderQtyData.Rows[0]["Seq"];
-                            displayBox6.Value = MyUtility.Convert.GetString(orderQtyData.Rows[0]["ShipmodeID"]);
-                            numericBox1.Value = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
+                            displayShipMode.Value = MyUtility.Convert.GetString(orderQtyData.Rows[0]["ShipmodeID"]);
+                            numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
                             CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyData.Rows[0]["Qty"]);
-                            dateBox2.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
+                            dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyData.Rows[0]["BuyerDelivery"]);
                         }
                         else
                         {
@@ -677,29 +677,29 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                             if (returnResult == DialogResult.Cancel)
                             {
                                 CurrentMaintain["OrderShipmodeSeq"] = "";
-                                displayBox6.Value = "";
-                                numericBox1.Value = 0;
+                                displayShipMode.Value = "";
+                                numOrderQty.Value = 0;
                                 CurrentMaintain["ShipQty"] = 0;
-                                dateBox1.Value = null;
+                                dateCreatedate.Value = null;
                             }
                             else
                             {
                                 orderQtyShipData = item.GetSelecteds();
                                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
-                                displayBox6.Value = MyUtility.Convert.GetString(orderQtyShipData[0]["ShipmodeID"]);
-                                numericBox1.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                                displayShipMode.Value = MyUtility.Convert.GetString(orderQtyShipData[0]["ShipmodeID"]);
+                                numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                                 CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
-                                dateBox2.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]);
+                                dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]);
                             }
                         }
                     }
                     else
                     {
                         CurrentMaintain["OrderShipmodeSeq"] = "";
-                        displayBox6.Value = "";
-                        numericBox1.Value = 0;
+                        displayShipMode.Value = "";
+                        numOrderQty.Value = 0;
                         CurrentMaintain["ShipQty"] = 0;
-                        dateBox1.Value = null;
+                        dateCreatedate.Value = null;
                         MyUtility.Msg.ErrorBox("Query Seq fail.\r\n" + result.ToString());
                     }
                     #endregion
@@ -733,22 +733,22 @@ where oq.Id = b.Id and oq.Seq = b.Seq", MyUtility.Check.Empty(CurrentMaintain["O
             {
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["ShipModeID"] = "";
-                numericBox1.Value = 0;
+                numOrderQty.Value = 0;
                 CurrentMaintain["ShipQty"] = 0;
-                dateBox1.Value = null;
+                dateCreatedate.Value = null;
             }
             else
             {
                 IList<DataRow> orderQtyShipData;
                 orderQtyShipData = item.GetSelecteds();
                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
-                displayBox6.Value = orderQtyShipData[0]["ShipmodeID"].ToString();
-                numericBox1.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                displayShipMode.Value = orderQtyShipData[0]["ShipmodeID"].ToString();
+                numOrderQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                 CurrentMaintain["ShipQty"] = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
                 if (MyUtility.Check.Empty(orderQtyShipData[0]["BuyerDelivery"]))
-                { dateBox2.Value = null; }
+                { dateBuyerDelivery.Value = null; }
                 else
-                { dateBox2.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]); }
+                { dateBuyerDelivery.Value = Convert.ToDateTime(orderQtyShipData[0]["BuyerDelivery"]); }
             }
         }
 
@@ -1069,7 +1069,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 string mailto = MyUtility.Convert.GetString(allMail.Rows[0]["POSMRMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["POHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["MRHandleMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["SMRMail"]) + ";";
                 string cc = MyUtility.Convert.GetString(allMail.Rows[0]["PPICMgrMail"]) + ";" + MyUtility.Convert.GetString(allMail.Rows[0]["FtyMgrMail"]) + ";" + MyUtility.Convert.GetString(dr["ToAddress"]);
                 string subject = string.Format(@"<{0}> {1} for SP#{2}, DD{3} - {4}",
-                    MyUtility.Convert.GetString(displayBox5.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
+                    MyUtility.Convert.GetString(displayFactory.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked" ? "cancel" : "request");
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(string.Format(@"Hi MR team, cc.Production team/Task Team
@@ -1083,8 +1083,8 @@ Responsibility: {9}{10}{11}{12}{13}
 If the responsibility is belong to the supplier or SCI-MR team (posmr team), please key in Debit Note and ICR#, tks!
 If the responsibility is belong to “Buyer”, please remark the reason, tks!
 Remind:Please return the air pp request – approved  within 24hrs to avoid any shipment delay.", MyUtility.Convert.GetString(allMail.Rows[0]["SMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["SMRExtNo"]),
-                                                                                              MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["POSMRExtNo"]), MyUtility.Convert.GetString(displayBox5.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]),
-                                                                                              MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Check.Empty(dateBox2.Value) ? "" : Convert.ToDateTime(dateBox2.Value).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]),
+                                                                                              MyUtility.Convert.GetString(allMail.Rows[0]["POSMRName"]), MyUtility.Convert.GetString(allMail.Rows[0]["POSMRExtNo"]), MyUtility.Convert.GetString(displayFactory.Value), MyUtility.Convert.GetString(CurrentMaintain["ID"]),
+                                                                                              MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.Check.Empty(dateBuyerDelivery.Value) ? "" : Convert.ToDateTime(dateBuyerDelivery.Value).ToString("yyyyMMdd"), MyUtility.Convert.GetString(CurrentMaintain["ShipQty"]),
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFty"]) == "True" ? "Factory:" + MyUtility.Convert.GetString(CurrentMaintain["ResponsibleFtyNo"]) + "\r\n" : "",
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSubcon"]) == "True" ? "Subcon:DBC #:" + MyUtility.Convert.GetString(CurrentMaintain["SubconDBCNo"]) + "\r\n" : "",
                                                                                               MyUtility.Convert.GetString(CurrentMaintain["ResponsibleSCI"]) == "True" ? "SCI:ICR #:" + MyUtility.Convert.GetString(CurrentMaintain["SCIICRNo"]) + "\r\n" : "",
@@ -1150,27 +1150,27 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
 
         private void textBox8_Validating(object sender, CancelEventArgs e)
         {
-            string str = this.textBox8.Text;
+            string str = this.txtResponsibilityJustifcation.Text;
             DataRow dr;
-            if (!MyUtility.Check.Empty(this.textBox8.Text))
+            if (!MyUtility.Check.Empty(this.txtResponsibilityJustifcation.Text))
             {
-                string cmd = string.Format(@"select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 and id='{0}' order by ID", this.textBox8.Text);
+                string cmd = string.Format(@"select ID,Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Air_Prepaid_Reason' and Junk = 0 and id='{0}' order by ID", this.txtResponsibilityJustifcation.Text);
                 if (!MyUtility.Check.Seek(cmd,out dr))
                 {
                     e.Cancel = true;
-                    this.textBox8.Text = "";
-                    displayBox8.Value = "";
+                    this.txtResponsibilityJustifcation.Text = "";
+                    displayResponsibilityJustifcation.Value = "";
                     MyUtility.Msg.WarningBox(string.Format("{0}, Data not Found!", str));
                     return;
                 }
                 else
                 {
-                    displayBox8.Value = MyUtility.Convert.GetString(dr["Name"]);
+                    displayResponsibilityJustifcation.Value = MyUtility.Convert.GetString(dr["Name"]);
                 }
             }
             else
             {
-                displayBox8.Value = "";
+                displayResponsibilityJustifcation.Value = "";
             }
         }
     }

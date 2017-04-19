@@ -22,13 +22,13 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             masterData = MasterData;
             detailData = DetailData;
-            radioButton1.Checked = true;
+            radioDetailList.Checked = true;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            reportType = radioButton1.Checked ? "1" : radioButton2.Checked ? "2" : "3";
+            reportType = radioDetailList.Checked ? "1" : radioPackingList.Checked ? "2" : "3";
             return base.ValidateInput();
         }
 

@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labelDescriptionofGoods = new Sci.Win.UI.Label();
+            this.labelHSCode = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelNo = new Sci.Win.UI.Label();
+            this.txtDescriptionofGoods = new Sci.Win.UI.TextBox();
+            this.txtHSCode = new Sci.Win.UI.TextBox();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.displayNo = new Sci.Win.UI.DisplayBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,15 +51,15 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.displayNo);
+            this.detailcont.Controls.Add(this.comboCategory);
+            this.detailcont.Controls.Add(this.txtHSCode);
+            this.detailcont.Controls.Add(this.txtDescriptionofGoods);
+            this.detailcont.Controls.Add(this.labelNo);
+            this.detailcont.Controls.Add(this.labelCategory);
+            this.detailcont.Controls.Add(this.labelHSCode);
+            this.detailcont.Controls.Add(this.labelDescriptionofGoods);
             this.detailcont.Size = new System.Drawing.Size(830, 261);
             // 
             // detailbtm
@@ -69,7 +69,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 299);
+            this.browse.Size = new System.Drawing.Size(830, 299);
             // 
             // tabs
             // 
@@ -88,95 +88,95 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelDescriptionofGoods
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(132, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Description of Goods";
+            this.labelDescriptionofGoods.Lines = 0;
+            this.labelDescriptionofGoods.Location = new System.Drawing.Point(16, 21);
+            this.labelDescriptionofGoods.Name = "labelDescriptionofGoods";
+            this.labelDescriptionofGoods.Size = new System.Drawing.Size(132, 23);
+            this.labelDescriptionofGoods.TabIndex = 0;
+            this.labelDescriptionofGoods.Text = "Description of Goods";
             // 
-            // label2
+            // labelHSCode
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(16, 57);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(132, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "HS Code";
+            this.labelHSCode.Lines = 0;
+            this.labelHSCode.Location = new System.Drawing.Point(16, 57);
+            this.labelHSCode.Name = "labelHSCode";
+            this.labelHSCode.Size = new System.Drawing.Size(132, 23);
+            this.labelHSCode.TabIndex = 1;
+            this.labelHSCode.Text = "HS Code";
             // 
-            // label3
+            // labelCategory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 94);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(132, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(16, 94);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(132, 23);
+            this.labelCategory.TabIndex = 2;
+            this.labelCategory.Text = "Category";
             // 
-            // label4
+            // labelNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 130);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(132, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "No.";
+            this.labelNo.Lines = 0;
+            this.labelNo.Location = new System.Drawing.Point(16, 130);
+            this.labelNo.Name = "labelNo";
+            this.labelNo.Size = new System.Drawing.Size(132, 23);
+            this.labelNo.TabIndex = 3;
+            this.labelNo.Text = "No.";
             // 
-            // textBox1
+            // txtDescriptionofGoods
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GoodsDescription", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(152, 21);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(400, 23);
-            this.textBox1.TabIndex = 4;
+            this.txtDescriptionofGoods.BackColor = System.Drawing.Color.White;
+            this.txtDescriptionofGoods.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GoodsDescription", true));
+            this.txtDescriptionofGoods.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescriptionofGoods.Location = new System.Drawing.Point(152, 21);
+            this.txtDescriptionofGoods.Name = "txtDescriptionofGoods";
+            this.txtDescriptionofGoods.Size = new System.Drawing.Size(400, 23);
+            this.txtDescriptionofGoods.TabIndex = 4;
             // 
-            // textBox2
+            // txtHSCode
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HSCode", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(152, 57);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 5;
+            this.txtHSCode.BackColor = System.Drawing.Color.White;
+            this.txtHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "HSCode", true));
+            this.txtHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtHSCode.Location = new System.Drawing.Point(152, 57);
+            this.txtHSCode.Name = "txtHSCode";
+            this.txtHSCode.Size = new System.Drawing.Size(80, 23);
+            this.txtHSCode.TabIndex = 5;
             // 
-            // comboBox1
+            // comboCategory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Category", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(152, 94);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 6;
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Category", true));
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(152, 94);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.TabIndex = 6;
             // 
-            // displayBox1
+            // displayNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NLCode", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(152, 130);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(60, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NLCode", true));
+            this.displayNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayNo.Location = new System.Drawing.Point(152, 130);
+            this.displayNo.Name = "displayNo";
+            this.displayNo.Size = new System.Drawing.Size(60, 23);
+            this.displayNo.TabIndex = 7;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(591, 21);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(591, 21);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 8;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // B50
             // 
@@ -204,14 +204,14 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayNo;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.TextBox txtHSCode;
+        private Win.UI.TextBox txtDescriptionofGoods;
+        private Win.UI.Label labelNo;
+        private Win.UI.Label labelCategory;
+        private Win.UI.Label labelHSCode;
+        private Win.UI.Label labelDescriptionofGoods;
     }
 }

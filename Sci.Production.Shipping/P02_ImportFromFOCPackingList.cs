@@ -32,14 +32,14 @@ namespace Sci.Production.Shipping
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
                     dr["CTNNo"] = MyUtility.Convert.GetString(e.FormattedValue).Trim();
                 }
             };
             receiver.CharacterCasing = CharacterCasing.Normal;
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -53,25 +53,25 @@ namespace Sci.Production.Shipping
                 .Text("Leader", header: "Team Leader", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
-            grid1.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["Price"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["UnitID"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
-            grid1.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["CTNNo"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["NW"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["Price"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["UnitID"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
+            gridImport.Columns["Receiver"].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 191);
         }
 
         //Find Now
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtFOCPL.Text))
             {
                 MyUtility.Msg.WarningBox("FOC PL# can't empty!!");
-                textBox1.Focus();
+                txtFOCPL.Focus();
                 return;
             }
 
             //檢查FOC PL#是否正確
-            if (!CheckPLNo(textBox1.Text))
+            if (!CheckPLNo(txtFOCPL.Text))
             {
                 return;
             }
@@ -82,7 +82,7 @@ t.Name as Leader, o.BrandID, [dbo].[getBOFMtlDesc](o.StyleUkey) as Description
 from PackingList_Detail pd WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
-where pd.ID = '{0}'", textBox1.Text);
+where pd.ID = '{0}'", txtFOCPL.Text);
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
@@ -131,7 +131,7 @@ where pd.ID = '{0}'", textBox1.Text);
         //Update
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
 
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;

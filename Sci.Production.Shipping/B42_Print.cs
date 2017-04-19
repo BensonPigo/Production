@@ -21,37 +21,37 @@ namespace Sci.Production.Shipping
         public B42_Print()
         {
             InitializeComponent();
-            radioButton1.Checked = true;
+            radioFormForCustomSystem.Checked = true;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateDate.Value1) && MyUtility.Check.Empty(dateDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Date can empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(textBox1.Text) != MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtCustomSPNoStart.Text) != MyUtility.Check.Empty(txtCustomSPNoEnd.Text))
             {
                 MyUtility.Msg.WarningBox("Custom SP# can empty!!");
-                if (MyUtility.Check.Empty(textBox1.Text))
+                if (MyUtility.Check.Empty(txtCustomSPNoStart.Text))
                 {
-                    textBox1.Focus();
+                    txtCustomSPNoStart.Focus();
                 }
                 else
                 {
-                    textBox2.Focus();
+                    txtCustomSPNoEnd.Focus();
                 }
                 return false;
             }
 
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            customSP1 = textBox1.Text;
-            customSP2 = textBox2.Text;
-            reportType = radioButton1.Checked ? "1" : radioButton2.Checked ? "2" : "3";
+            date1 = dateDate.Value1;
+            date2 = dateDate.Value2;
+            customSP1 = txtCustomSPNoStart.Text;
+            customSP2 = txtCustomSPNoEnd.Text;
+            reportType = radioFormForCustomSystem.Checked ? "1" : radioEachConsumption.Checked ? "2" : "3";
 
             return base.ValidateInput();
         }
