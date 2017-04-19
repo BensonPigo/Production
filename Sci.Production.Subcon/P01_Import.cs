@@ -88,9 +88,9 @@ from orders o WITH (NOLOCK) inner join order_qty q WITH (NOLOCK) on q.id = o.ID
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 where not exists (select * from artworkpo a WITH (NOLOCK) inner join ArtworkPO_Detail ap WITH (NOLOCK) on a.ID=ap.ID where a.POType = '{0}' 
-and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and ap.OrderID = o.ID and o.Junk=0)", poType);
+and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and ap.OrderID = o.ID )", poType);
 
-                strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' ", dr_artworkpo["artworktypeid"]);
+                strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
                 if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
                 if (!(dateRange2.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
@@ -201,9 +201,8 @@ and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and a
                 }
                 if (yns)
                 {
-                    Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason(string.Format("{0} sub-process subcon supplier is different with {1}. Do you want to continue?", ids.ToString(), dr_artworkpo["localsuppid"].ToString().ToUpper()));
-                    DialogResult dResult = callReason.ShowDialog(this);
-                    if (dResult != System.Windows.Forms.DialogResult.OK) return;
+                    DialogResult dResult = MyUtility.Msg.QuestionBox(string.Format("{0} sub-process subcon supplier is different with {1}. Do you want to continue?", ids.ToString(), dr_artworkpo["localsuppid"].ToString().ToUpper()));
+                    if (dResult == System.Windows.Forms.DialogResult.No) return;
                 }
                 foreach (DataRow tmp in dr2)
                 {
