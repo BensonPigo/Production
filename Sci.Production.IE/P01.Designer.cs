@@ -58,6 +58,7 @@
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.displayBox4 = new Sci.Win.UI.DisplayBox();
             this.txtseason1 = new Sci.Production.Class.txtseason();
+            this.button9 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.button9);
             this.masterpanel.Controls.Add(this.displayBox4);
             this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.label11);
@@ -134,6 +136,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.button9, 0);
             // 
             // detailpanel
             // 
@@ -188,7 +191,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(894, 481);
+            this.browse.Size = new System.Drawing.Size(1041, 481);
             // 
             // tabs
             // 
@@ -415,7 +418,7 @@
             // button4
             // 
             this.button4.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button4.Location = new System.Drawing.Point(708, 114);
+            this.button4.Location = new System.Drawing.Point(709, 114);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(58, 30);
             this.button4.TabIndex = 15;
@@ -425,7 +428,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(624, 114);
+            this.button5.Location = new System.Drawing.Point(574, 114);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(80, 30);
             this.button5.TabIndex = 14;
@@ -435,7 +438,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(539, 114);
+            this.button6.Location = new System.Drawing.Point(490, 114);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(80, 30);
             this.button6.TabIndex = 13;
@@ -446,7 +449,7 @@
             // button7
             // 
             this.button7.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button7.Location = new System.Drawing.Point(337, 114);
+            this.button7.Location = new System.Drawing.Point(289, 114);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(197, 30);
             this.button7.TabIndex = 12;
@@ -538,6 +541,17 @@
             this.txtseason1.TabIndex = 2;
             this.txtseason1.Validated += new System.EventHandler(this.GenCD);
             // 
+            // button9
+            // 
+            this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button9.Location = new System.Drawing.Point(656, 114);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(51, 30);
+            this.button9.TabIndex = 28;
+            this.button9.Text = "Del";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1049, 543);
@@ -604,5 +618,6 @@
         private Win.UI.DisplayBox displayBox3;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
+        private Win.UI.Button button9;
     }
 }

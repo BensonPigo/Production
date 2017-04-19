@@ -1020,6 +1020,19 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
         }
 
-
+        private void button9_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+               if (dr.RowState != DataRowState.Deleted)
+              {
+                  if (dr["Selected"].ToString() == "1")
+                  {
+                      dr.Delete();
+                  }
+               }
+            }
+         return;
+        }
     }
 }
