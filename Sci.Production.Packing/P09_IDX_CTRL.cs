@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Runtime.ExceptionServices;
+using System.Configuration;
 
 namespace Sci.Production.Packing
 {
     class P09_IDX_CTRL
-    {       
-        [DllImport("I:\\MIS\\ERP 2014\\PMS\\Scan & Pack auto conveyer\\Dll\\IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
+    {        
+        [DllImport(".\\IDX_CTRL\\IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
         static extern void IdxCallVB(int a, string b, Int32 c);
 
         [HandleProcessCorruptedStateExceptions]
