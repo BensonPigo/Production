@@ -292,7 +292,8 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    if ((decimal)e.FormattedValue > (decimal)CurrentDetailData["balance"] )
+                    decimal b = MyUtility.Check.Empty(CurrentDetailData["balance"]) ? 0 : MyUtility.Convert.GetDecimal(CurrentDetailData["balance"]);
+                    if ((decimal)e.FormattedValue > b)
                     {
                         MyUtility.Msg.WarningBox("can't over balance qty", "Warning");
                         e.Cancel = true;
