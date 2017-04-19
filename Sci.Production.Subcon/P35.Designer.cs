@@ -622,7 +622,6 @@
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
             this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_fty1.TabIndex = 0;
-            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
             // txtsubcon1

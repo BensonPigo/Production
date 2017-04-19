@@ -48,6 +48,21 @@ namespace Sci.Production.Subcon
 
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+
+            this.DetailSelectCommand = string.Format(@"
+select *,localap_detail.price*localap_detail.Qty as amount,balance = inqty - apqty,inqty,apqty,
+    dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
+from localap_detail WITH (NOLOCK) 
+left join localap WITH (NOLOCK) on localap.ID = localap_detail.ID
+left join localpo_detail lpod on lpod.Ukey = localpo_detailukey
+where localap_detail.id ='{0}'"
+                , masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         private void txtartworktype_fty1_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
@@ -198,25 +213,10 @@ namespace Sci.Production.Subcon
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
-                //(e.Details).Columns.Add("amount", typeof(decimal));
                 (e.Details).Columns["amount"].Expression = "price * qty";
-                //(e.Details).Columns.Add("balance", typeof(decimal));
-                //(e.Details).Columns.Add("inqty", typeof(decimal));
-                //(e.Details).Columns.Add("apqty", typeof(decimal));
-                //(e.Details).Columns.Add("description", typeof(string));
-
                 foreach (DataRow dr in e.Details.Rows)
                 {
-                    DataRow tmp;
-                    if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail WITH (NOLOCK) where ukey = '{0}'", dr["localpo_detailukey"]), out tmp))
-                    {
-                        dr["inqty"] = tmp["inqty"];
-                        dr["apqty"] = tmp["apqty"];
-                        dr["balance"] = (int)dr["inqty"] - (int)dr["apqty"];
-                    }
-                    
-                    dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());
-                    
+                    dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());                    
                 }
             }
             return base.OnRenewDataDetailPost(e);
@@ -254,13 +254,13 @@ namespace Sci.Production.Subcon
             txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
             txtpayterm_fty1.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
 
             #region Batch Import, Special record button
             button4.Enabled = this.EditMode;
-
             #endregion
 
             this.detailgrid.AutoResizeColumn(0);
@@ -565,11 +565,19 @@ namespace Sci.Production.Subcon
 
             var frm = new Sci.Production.Subcon.P35_Import(dr, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
-            this.RenewData();
+
+            foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+            {
+                DataRow tmp;
+                if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail WITH (NOLOCK) where ukey = '{0}'", drr["localpo_detailukey"]), out tmp))
+                {
+                    drr["inqty"] = tmp["inqty"];
+                    drr["apqty"] = tmp["apqty"];
+                    drr["balance"] = MyUtility.Convert.GetInt(tmp["inqty"]) - MyUtility.Convert.GetInt(tmp["apqty"]);
+                }
+            }
         }
-
-
-
+        
         private void button3_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
@@ -577,31 +585,10 @@ namespace Sci.Production.Subcon
             frm.ShowDialog(this);
             ReloadDatas();
         }
-
-        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-
-            this.DetailSelectCommand = string.Format(
-@"select *,localap_detail.price*localap_detail.Qty as amount,0.0 as balance,0 as inqty,0 as apqty,
-    dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
-from localap_detail WITH (NOLOCK) 
-left join localap WITH (NOLOCK) on localap.ID = localap_detail.ID
-where localap_detail.id = '{0}'", masterID);
-
-            return base.OnDetailSelectCommandPrepare(e);
-
-        }
-
+        
         protected override bool ClickNewBefore()
         {
-            this.DetailSelectCommand = string.Format(@"select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description 
-                                                                            from localap_detail WITH (NOLOCK)  where 1=2");
+            this.DetailSelectCommand = string.Format("select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description from localap_detail WITH (NOLOCK) where 1=0");
             return base.ClickNewBefore();
         }
 
