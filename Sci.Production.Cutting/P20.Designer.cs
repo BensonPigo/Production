@@ -345,7 +345,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(106, 23);
             this.label9.TabIndex = 41;
-            this.label9.Text = "label9";
+            this.label9.Text = "";
             this.label9.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // button1

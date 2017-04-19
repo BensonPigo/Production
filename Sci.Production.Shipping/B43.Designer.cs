@@ -312,7 +312,7 @@
             this.lab_status.Name = "lab_status";
             this.lab_status.Size = new System.Drawing.Size(76, 25);
             this.lab_status.TabIndex = 15;
-            this.lab_status.Text = "label7";
+            this.lab_status.Text = "";
             // 
             // B43
             // 

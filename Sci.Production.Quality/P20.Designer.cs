@@ -527,7 +527,7 @@
             this.labConfirm.Name = "labConfirm";
             this.labConfirm.Size = new System.Drawing.Size(85, 29);
             this.labConfirm.TabIndex = 138;
-            this.labConfirm.Text = "label1";
+            this.labConfirm.Text = "";
             // 
             // comboShift
             // 

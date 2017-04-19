@@ -195,7 +195,7 @@
             this.labelLabel.Name = "labelLabel";
             this.labelLabel.Size = new System.Drawing.Size(116, 23);
             this.labelLabel.TabIndex = 6;
-            this.labelLabel.Text = "Label";
+            this.labelLabel.Text = "";
             // 
             // labelPaymentTerm
             // 

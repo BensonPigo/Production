@@ -123,7 +123,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(76, 29);
             this.label15.TabIndex = 20;
-            this.label15.Text = "label15";
+            this.label15.Text = "";
             this.label15.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label15.TextStyle.Color = System.Drawing.Color.Blue;
             this.label15.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -148,7 +148,7 @@
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(76, 29);
             this.label17.TabIndex = 18;
-            this.label17.Text = "label17";
+            this.label17.Text = "";
             this.label17.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label17.TextStyle.Color = System.Drawing.Color.Blue;
             this.label17.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -184,7 +184,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(182, 29);
             this.label13.TabIndex = 15;
-            this.label13.Text = "label13";
+            this.label13.Text = "";
             this.label13.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label13.TextStyle.Color = System.Drawing.Color.Blue;
             this.label13.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -209,7 +209,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(59, 29);
             this.label11.TabIndex = 13;
-            this.label11.Text = "label11";
+            this.label11.Text = "";
             this.label11.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label11.TextStyle.Color = System.Drawing.Color.Blue;
             this.label11.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -234,7 +234,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(104, 29);
             this.label9.TabIndex = 11;
-            this.label9.Text = "label9";
+            this.label9.Text = "";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label9.TextStyle.Color = System.Drawing.Color.Blue;
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -259,7 +259,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(104, 29);
             this.label8.TabIndex = 9;
-            this.label8.Text = "label8";
+            this.label8.Text = "";
             this.label8.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label8.TextStyle.Color = System.Drawing.Color.Blue;
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -284,7 +284,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(160, 29);
             this.label6.TabIndex = 7;
-            this.label6.Text = "label6";
+            this.label6.Text = "";
             this.label6.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label6.TextStyle.Color = System.Drawing.Color.Blue;
             this.label6.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
@@ -299,7 +299,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(184, 29);
             this.label5.TabIndex = 6;
-            this.label5.Text = "label5";
+            this.label5.Text = "";
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             this.label5.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;

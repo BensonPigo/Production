@@ -666,7 +666,7 @@
             this.labConfirm.Name = "labConfirm";
             this.labConfirm.Size = new System.Drawing.Size(108, 31);
             this.labConfirm.TabIndex = 4;
-            this.labConfirm.Text = "label20";
+            this.labConfirm.Text = "";
             // 
             // txtdropdownlist1
             // 
