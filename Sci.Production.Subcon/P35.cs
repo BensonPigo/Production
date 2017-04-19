@@ -53,12 +53,16 @@ namespace Sci.Production.Subcon
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"
-select localap_detail.*,lpod.*,localap_detail.price*localap_detail.Qty as amount,balance = inqty - apqty,inqty,apqty,
-    dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
-from localap_detail WITH (NOLOCK) 
-left join localap WITH (NOLOCK) on localap.ID = localap_detail.ID
+
+select lapd.Localpoid	,lapd.orderid	,lapd.Refno	,lapd.ThreadColorID	,lapd.Qty	,lapd.Unitid	,lapd.price	,inqty	,apqty
+	,amount = lapd.price*lapd.Qty
+	,balance = inqty - apqty,inqty,apqty
+	,lapd.LocalPo_DetailUkey
+    ,dbo.getItemDesc(localap.Category,lapd.Refno) as description 
+from localap_detail lapd WITH (NOLOCK) 
+left join localap WITH (NOLOCK) on localap.ID = lapd.ID
 left join localpo_detail lpod on lpod.Ukey = localpo_detailukey
-where localap_detail.id ='{0}'"
+where lapd.id = '{0}'"
                 , masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
