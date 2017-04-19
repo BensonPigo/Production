@@ -331,79 +331,79 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Remark from Order_PFHis WITH (NOLOCK) where Id = '{0}' order by AddDate desc", MyUtility.Convert.GetString(CurrentMaintain["ID"]))), "Pull Forward Remark");
         }
 
-        //Shipment Finished
-        private void button31_Click(object sender, EventArgs e)
-        {
-            string sqlCmd;
-            if (MyUtility.Convert.GetString(CurrentMaintain["Category"]) == "M")
-            {
-                if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
-                {
-                    if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail WITH (NOLOCK) where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
-                    {
-                        MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                sqlCmd = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
-                string spList = MyUtility.GetValue.Lookup(sqlCmd);
-                if (!MyUtility.Check.Empty(spList))
-                {
-                    MyUtility.Msg.WarningBox("Below combined SP# not yet ship!!\r\n" + spList.Substring(0, spList.Length - 1));
-                    return;
-                }
-            }
+        ////Shipment Finished
+        //private void button31_Click(object sender, EventArgs e)
+        //{
+        //    string sqlCmd;
+        //    if (MyUtility.Convert.GetString(CurrentMaintain["Category"]) == "M")
+        //    {
+        //        if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
+        //        {
+        //            if (MyUtility.Check.Seek(string.Format("select ID from PO_Supp_Detail WITH (NOLOCK) where ID = '{0}' and (ETA > GETDATE() or InQty <> OutQty - AdjustQty)", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
+        //            {
+        //                MyUtility.Msg.WarningBox("Warehouse still have material, so can't finish shipment.");
+        //                return;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        sqlCmd = string.Format("select (select ID+',' from Orders WITH (NOLOCK) where POID = '{0}' and Qty > 0 and PulloutComplete = 0 for xml path('')) as SP", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+        //        string spList = MyUtility.GetValue.Lookup(sqlCmd);
+        //        if (!MyUtility.Check.Empty(spList))
+        //        {
+        //            MyUtility.Msg.WarningBox("Below combined SP# not yet ship!!\r\n" + spList.Substring(0, spList.Length - 1));
+        //            return;
+        //        }
+        //    }
 
-            DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
-            {
-                return;
-            }
-            sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','1'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Shipment finished fail!!" + result.ToString());
-                return;
-            }
-            ReloadDatas();
-            RenewData();
-        }
+        //    DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to finish shipment?", "Warning", MessageBoxButtons.YesNo);
+        //    if (buttonResult == System.Windows.Forms.DialogResult.No)
+        //    {
+        //        return;
+        //    }
+        //    sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','1'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+        //    DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+        //    if (!result)
+        //    {
+        //        MyUtility.Msg.ErrorBox("Shipment finished fail!!" + result.ToString());
+        //        return;
+        //    }
+        //    ReloadDatas();
+        //    RenewData();
+        //}
 
         //VAS/SHAS Instruction
-        private void button32_Click(object sender, EventArgs e)
-        {
-            Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["Packing2"]), "VAS/SHAS Instruction", false, null);
-            callNextForm.ShowDialog(this);
-        }
+        //private void button32_Click(object sender, EventArgs e)
+        //{
+        //    Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["Packing2"]), "VAS/SHAS Instruction", false, null);
+        //    callNextForm.ShowDialog(this);
+        //}
 
         //Back to P01. PPIC Master List
-        private void button33_Click(object sender, EventArgs e)
-        {
-            if (MyUtility.GetValue.Lookup(string.Format("select iif(WhseClose is null, 'TRUE','FALSE') as WHouseClose from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) == "FALSE")
-            {
-                MyUtility.Msg.WarningBox("W/House already closed R/mtl, so can not 'Back to P01. PPIC Master List'!!");
-                return;
-            }
+        //private void button33_Click(object sender, EventArgs e)
+        //{
+        //    if (MyUtility.GetValue.Lookup(string.Format("select iif(WhseClose is null, 'TRUE','FALSE') as WHouseClose from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) == "FALSE")
+        //    {
+        //        MyUtility.Msg.WarningBox("W/House already closed R/mtl, so can not 'Back to P01. PPIC Master List'!!");
+        //        return;
+        //    }
 
-            DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to 'Back to P01. PPIC Master List'?", "Warning", MessageBoxButtons.YesNo);
-            if (buttonResult == System.Windows.Forms.DialogResult.No)
-            {
-                return;
-            }
-            string sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','2'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("'Back to P01. PPIC Master List' fail!!" + result.ToString());
-                return;
-            }
-            ReloadDatas();
-            RenewData();
-        }
+        //    DialogResult buttonResult = MyUtility.Msg.QuestionBox("Are you sure you want to 'Back to P01. PPIC Master List'?", "Warning", MessageBoxButtons.YesNo);
+        //    if (buttonResult == System.Windows.Forms.DialogResult.No)
+        //    {
+        //        return;
+        //    }
+        //    string sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','2'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
+        //    DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+        //    if (!result)
+        //    {
+        //        MyUtility.Msg.ErrorBox("'Back to P01. PPIC Master List' fail!!" + result.ToString());
+        //        return;
+        //    }
+        //    ReloadDatas();
+        //    RenewData();
+        //}
 
         //Packing Method
         private void button29_Click(object sender, EventArgs e)
