@@ -567,6 +567,20 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 return false;
             }
 
+            //檢查Refno是否有改變，若有改變提醒使用者通知採購團隊紙箱號碼改變。
+            DataView dataView = DetailDatas.CopyToDataTable().DefaultView;
+            DataTable dataTableDistinct = dataView.ToTable(true, "OrderID", "RefNo");
+
+            foreach (DataRow dt in dataTableDistinct.Rows)
+            {
+                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}'", dt["OrderID"].ToString()))) continue;
+
+                if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}' and Refno='{1}'", dt["OrderID"].ToString(), dt["RefNo"].ToString())))
+                {
+                    MyUtility.Msg.InfoBox(string.Format("Please inform Purchase Team that the Carton Ref No. of <{0}> has been changed.", dt["OrderID"].ToString()));
+                }
+            }
+
             //GetID
             if (IsDetailInserting)
             {
