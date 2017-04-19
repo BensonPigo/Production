@@ -169,6 +169,7 @@
             this.encode_button.TabIndex = 212;
             this.encode_button.Text = "Encode";
             this.encode_button.UseVisualStyleBackColor = true;
+            this.encode_button.Click += new System.EventHandler(this.encode_button_Click);
             // 
             // ResultText
             // 
