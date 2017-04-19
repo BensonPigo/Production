@@ -179,25 +179,34 @@ namespace Sci.Production.Subcon
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
+            val(sender,e);
+        }
+
+        private void val(object sender, CancelEventArgs e)
+        {
             if (string.IsNullOrWhiteSpace(((Sci.Win.UI.TextBox)sender).Text)) return;
 
-            if (!MyUtility.Check.Seek(string.Format("select id from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
+            if (!MyUtility.Check.Seek(string.Format("select POID from orders WITH (NOLOCK) where id='{0}'", ((Sci.Win.UI.TextBox)sender).Text), null))
             {
-                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!",((Sci.Win.UI.TextBox)sender).Text));
+                MyUtility.Msg.WarningBox(string.Format("SP# ({0}) is not found!", ((Sci.Win.UI.TextBox)sender).Text));
                 return;
             }
 
-            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where  id= '{0}'", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where  POID = (select distinct POID from orders WITH (NOLOCK) where id='{0}')", ((Sci.Win.UI.TextBox)sender).Text), null);
             string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype WITH (NOLOCK) where id='{0}'", dr["artworktypeid"]), null);
 
-            if (cat=="B" && isArtwork.ToUpper()=="TRUE")
+            if (cat != "S" && isArtwork.ToUpper() == "TRUE")
             {
                 MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
-                ((Sci.Win.UI.TextBox)sender).Text="";
+                ((Sci.Win.UI.TextBox)sender).Text = "";
                 e.Cancel = true;
                 return;
             }
+        }
 
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            val(sender,e);
         }
     }
 }
