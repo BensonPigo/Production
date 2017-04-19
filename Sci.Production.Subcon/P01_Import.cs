@@ -78,17 +78,16 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor
 
                 string strSQLCmd = string.Format(@"
-select 0 as Selected,ot.LocalSuppID
-,'' as id, q.id as orderid
-,sum(q.qty) poqty
-, oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
-, oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
-from orders o WITH (NOLOCK) inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
-inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-where not exists (select * from artworkpo a WITH (NOLOCK) inner join ArtworkPO_Detail ap WITH (NOLOCK) on a.ID=ap.ID where a.POType = '{0}' 
-and a.ArtworkTypeID = oa.ArtworkTypeID and a.LocalSuppID = ot.localsuppid  and ap.OrderID = o.ID )", poType);
+                select 0 as Selected,ot.LocalSuppID
+                ,'' as id, q.id as orderid
+                ,sum(q.qty) poqty
+                , oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
+                ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
+                , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
+                from orders o WITH (NOLOCK) inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+                inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
+                inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+                where 1=1 ");
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
