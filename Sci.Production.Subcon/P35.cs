@@ -53,7 +53,7 @@ namespace Sci.Production.Subcon
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
             this.DetailSelectCommand = string.Format(@"
-select *,localap_detail.price*localap_detail.Qty as amount,balance = inqty - apqty,inqty,apqty,
+select localap_detail.*,lpod.*,localap_detail.price*localap_detail.Qty as amount,balance = inqty - apqty,inqty,apqty,
     dbo.getItemDesc(localap.Category,localap_detail.Refno) as description 
 from localap_detail WITH (NOLOCK) 
 left join localap WITH (NOLOCK) on localap.ID = localap_detail.ID
@@ -213,7 +213,6 @@ where localap_detail.id ='{0}'"
         {
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
             {
-                (e.Details).Columns["amount"].Expression = "price * qty";
                 foreach (DataRow dr in e.Details.Rows)
                 {
                     dr["description"] = Prgs.GetItemDesc(e.Master["category"].ToString(), dr["refno"].ToString());                    
@@ -602,37 +601,38 @@ where localap_detail.id ='{0}'"
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("",
-            @"select b.nameEn 
-			        ,b.AddressEN
-			        ,b.Tel
-			        ,a.Id
-                    ,c.name
-			        ,c.Address
-			        ,c.Tel
-					,a.PaytermID+d.Name [Terms]
-					,a.InvNo [Invoice]
-					,a.Remark [Remark]
-					,e.AccountNo [AC_No]
-                    ,e.AccountName [AC_Name]
-                    ,e.BankName [Bank_Name]
-                    ,e.CountryID [Country]
-                    ,e.city [city] 
-                    ,e.swiftcode [SwiftCode]
-					,cast(cast(isnull(round(a.amount,cr.Exact) , 0 ) as float) as varchar) [Total]	
-					,cast(cast(isnull(round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Vat]				
-                    ,cast(cast(isnull(round(a.amount,cr.Exact)+round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Grand_Total]	
-                    ,a.Handle+f.Name [Prepared_by]
-                    ,a.CurrencyID[CurrencyID]
-					,a.VatRate[VatRate]
-            from dbo.LocalAP a WITH (NOLOCK) 
-            left join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid
-			inner join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
-			left join dbo.PayTerm d WITH (NOLOCK) on d.id=a.PaytermID
-			left join dbo.LocalSupp_Bank e WITH (NOLOCK) on e.IsDefault=1 and e.id=a.LocalSuppID
-			left join dbo.Pass1 f WITH (NOLOCK) on f.id=a.Handle
-            left join dbo.Currency cr WITH (NOLOCK) on cr.ID = a.CurrencyID
-            where a.id = @ID", pars, out dt);
+            DualResult result = DBProxy.Current.Select("",@"
+select b.nameEn 
+		,b.AddressEN
+		,b.Tel
+		,a.Id
+        ,c.name
+		,c.Address
+		,c.Tel
+		,a.PaytermID+d.Name [Terms]
+		,a.InvNo [Invoice]
+		,a.Remark [Remark]
+		,e.AccountNo [AC_No]
+        ,e.AccountName [AC_Name]
+        ,e.BankName [Bank_Name]
+        ,e.CountryID [Country]
+        ,e.city [city] 
+        ,e.swiftcode [SwiftCode]
+		,cast(cast(isnull(round(a.amount,cr.Exact) , 0 ) as float) as varchar) [Total]	
+		,cast(cast(isnull(round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Vat]				
+        ,cast(cast(isnull(round(a.amount,cr.Exact)+round(a.Vat,cr.Exact) , 0 ) as float) as varchar) [Grand_Total]	
+        ,a.Handle+f.Name [Prepared_by]
+        ,a.CurrencyID[CurrencyID]
+		,a.VatRate[VatRate]
+from dbo.LocalAP a WITH (NOLOCK) 
+left join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid
+inner join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
+left join dbo.PayTerm d WITH (NOLOCK) on d.id=a.PaytermID
+left join dbo.LocalSupp_Bank e WITH (NOLOCK) on e.IsDefault=1 and e.id=a.LocalSuppID
+left join dbo.Pass1 f WITH (NOLOCK) on f.id=a.Handle
+left join dbo.Currency cr WITH (NOLOCK) on cr.ID = a.CurrencyID
+where a.id = @ID"
+                , pars, out dt);
             if (!result) { this.ShowErr(result); }
             string RptTitle = dt.Rows[0]["nameEn"].ToString();
             string address = dt.Rows[0]["AddressEN"].ToString();
