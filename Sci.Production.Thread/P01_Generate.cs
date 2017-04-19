@@ -257,6 +257,21 @@ namespace Sci.Production.Thread
             _transactionscope = null;
 
             #endregion
+
+            string computeConsPC = string.Format(@"
+update Tcc
+	Set ConsPC = ROUND(ConsPC.ConsPC, 2)
+from Style S
+inner join ThreadColorComb Tcc on S.Ukey = Tcc.StyleUkey
+Outer Apply(
+    Select ConsPC = sum(isnull(O.SeamLength, 0) * isnull(MtTr.UseRatioNumeric, 0) + isnull(MtTr.Allowance, 0))
+    From ThreadColorComb_operation TccO
+    left join Operation O on TccO.Operationid = O.ID
+    left join MachineType_ThreadRatio MtTr on Tcc.Machinetypeid = MtTr.ID
+    where   Tcc.ID = TccO.Id
+) ConsPC
+where S.Ukey = '{0}'", styleUkey);
+            DBProxy.Current.Execute(null, computeConsPC);
             this.Close();
         }
 
