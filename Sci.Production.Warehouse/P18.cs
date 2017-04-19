@@ -1164,7 +1164,7 @@ Outer Apply
                     {
                         if (Convert.ToInt32(dr[0]) > 0)
                         {
-                            listMsg.Add(string.Format("<SP#>:{0}, <Seq>:{1}, <Roll>:{2}", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"]));
+                            listMsg.Add(string.Format("<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Dyelot#>:{3}", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], row["Dyelot"]));
                         }
                     }
                 }
