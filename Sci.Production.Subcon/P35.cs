@@ -569,16 +569,16 @@ where lapd.id = '{0}'"
             var frm = new Sci.Production.Subcon.P35_Import(dr, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
 
-            foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
-            {
-                DataRow tmp;
-                if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail WITH (NOLOCK) where ukey = '{0}'", drr["localpo_detailukey"]), out tmp))
-                {
-                    drr["inqty"] = tmp["inqty"];
-                    drr["apqty"] = tmp["apqty"];
-                    drr["balance"] = MyUtility.Convert.GetInt(tmp["inqty"]) - MyUtility.Convert.GetInt(tmp["apqty"]);
-                }
-            }
+            //foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
+            //{
+            //    DataRow tmp;
+            //    if (MyUtility.Check.Seek(string.Format("select inqty,apqty from localpo_detail WITH (NOLOCK) where ukey = '{0}'", drr["localpo_detailukey"]), out tmp))
+            //    {
+            //        drr["inqty"] = tmp["inqty"];
+            //        drr["apqty"] = tmp["apqty"];
+            //        drr["balance"] = MyUtility.Convert.GetInt(tmp["inqty"]) - MyUtility.Convert.GetInt(tmp["apqty"]);
+            //    }
+            //}
         }
         
         private void button3_Click(object sender, EventArgs e)
