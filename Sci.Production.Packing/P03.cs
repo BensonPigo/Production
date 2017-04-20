@@ -750,6 +750,8 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             //檢查Refno是否有改變，若有改變提醒使用者通知採購團隊紙箱號碼改變。
             DataView dataView = DetailDatas.CopyToDataTable().DefaultView;
             DataTable dataTableDistinct = dataView.ToTable(true, "OrderID", "RefNo");
+            StringBuilder warningmsg = new StringBuilder();
+            warningmsg.Append("Please inform Purchase Team that the Carton Ref No. has been changed.");
 
             foreach (DataRow dt in dataTableDistinct.Rows)
             {
@@ -757,9 +759,12 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
 
                 if (!MyUtility.Check.Seek(string.Format("select * from LocalPO_Detail where OrderId='{0}' and Refno='{1}'", dt["OrderID"].ToString(), dt["RefNo"].ToString())))
                 {
-                    MyUtility.Msg.InfoBox(string.Format("Please inform Purchase Team that the Carton Ref No. of <{0}> has been changed.", dt["OrderID"].ToString()));                                
+                    warningmsg.Append(Environment.NewLine + string.Format("SP#：<{0}>, RefNo：<{1}>.", dt["OrderID"].ToString(), dt["RefNo"].ToString()));       
                 }                                   
             }
+            if (warningmsg.ToString() != "Please inform Purchase Team that the Carton Ref No. has been changed.")
+                MyUtility.Msg.InfoBox(warningmsg.ToString());
+
             //CTNQty, ShipQty, NW, GW, NNW, CBM
             CurrentMaintain["CTNQty"] = ctnQty;
             CurrentMaintain["ShipQty"] = shipQty;
