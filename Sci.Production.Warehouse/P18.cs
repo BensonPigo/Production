@@ -151,7 +151,7 @@ namespace Sci.Production.Warehouse
 			  AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
 			  AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
 			  ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
-            ,b.StockUnit
+            ,b.POUnit
 	        ,a.Qty
             ,dbo.Getlocation(f.ukey)[Location] 
             from dbo.TransferIn_detail a WITH (NOLOCK) 
@@ -183,7 +183,7 @@ namespace Sci.Production.Warehouse
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["DYELOT"].ToString().Trim(),
                     DESC = row1["Description"].ToString().Trim(),
-                    Unit = row1["StockUnit"].ToString().Trim(),
+                    Unit = row1["POUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim()
                 }).ToList();
@@ -354,7 +354,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     CurrentDetailData["seq"] = x[0]["seq"];
                     CurrentDetailData["seq1"] = x[0]["seq1"];
                     CurrentDetailData["seq2"] = x[0]["seq2"];
-                    //CurrentDetailData["stockunit"] = x[0]["stockunit"];
+                    //CurrentDetailData["POUnit"] = x[0]["POUnit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
                     //CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
 
@@ -374,7 +374,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                         CurrentDetailData["seq2"] = "";
                         CurrentDetailData["Roll"] = "";
                         CurrentDetailData["Dyelot"] = "";
-                        CurrentDetailData["stockunit"] = "";
+                        CurrentDetailData["POUnit"] = "";
                         CurrentDetailData["Description"] = "";
                         //CurrentDetailData["fabrictype"] = "";
                     }
@@ -389,7 +389,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                             return;
                         }
 
-                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, stockunit,fabrictype,qty,scirefno, dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail WITH (NOLOCK) 
+                        if (!MyUtility.Check.Seek(string.Format(@"select pounit, POUnit,fabrictype,qty,scirefno, dbo.getmtldesc(id,seq1,seq2,2,0) as [description] from po_supp_detail WITH (NOLOCK) 
 where id = '{0}' and seq1 ='{1}'and seq2 = '{2}'", CurrentDetailData["poid"], seq[0], seq[1]), out dr, null))
                         {
                             if (!MyUtility.Check.Seek(string.Format(@"select p.POID poid
@@ -416,7 +416,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                                 CurrentDetailData["seq2"] = seq[1];
                                 CurrentDetailData["Roll"] = "";
                                 CurrentDetailData["Dyelot"] = "";
-                                //CurrentDetailData["stockunit"] = dr["stockunit"];
+                                //CurrentDetailData["POUnit"] = dr["POUnit"];
                                 CurrentDetailData["Description"] = dr["description"];
                             }
                         }
@@ -427,7 +427,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                             CurrentDetailData["seq2"] = seq[1];
                             CurrentDetailData["Roll"] = "";
                             CurrentDetailData["Dyelot"] = "";
-                            CurrentDetailData["stockunit"] = dr["stockunit"];
+                            CurrentDetailData["POUnit"] = dr["POUnit"];
                             CurrentDetailData["Description"] = dr["description"];
                         }
                     }
@@ -553,7 +553,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6))  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+            .Text("POUnit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings:sk).Get(out cbb_stocktype)    //7
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2)    //8
@@ -1044,7 +1044,7 @@ select  a.id
         , a.Roll
         , a.Dyelot
         , [Description] = dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-        , p1.StockUnit
+        , p1.POUnit
         , a.Qty
         , a.StockType
         , a.location
