@@ -9,6 +9,10 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Transactions;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.PPIC
 {
@@ -103,21 +107,23 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         {
             Sci.Win.Tools.SelectItem item;
             string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
-            item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50,8", this.Text);
+            item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             textBox1.Text = item.GetSelectedString();
+            setFilter();
         }
 
         //Buyer
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,50,50", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             textBox2.Text = item.GetSelectedString();
+            setFilter();
         }
 
         //Style#
@@ -125,10 +131,20 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         {
             if (textBox1.OldValue != textBox1.Text)
             {
-                if (textBox1.Text.IndexOf("'") != -1)
+                if (textBox1.Text != "")
                 {
-                    MyUtility.Msg.WarningBox("Input errror!!");
-                    return;
+                    if (textBox1.Text.IndexOf("'") != -1)
+                    {
+                        textBox1.Text = "";
+                        MyUtility.Msg.WarningBox("Input errror!!");
+                        return;
+                    }
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Style WITH (NOLOCK) where Junk = 0 and ID = '{0}'", textBox1.Text)))
+                    {
+                        textBox1.Text = "";
+                        MyUtility.Msg.WarningBox("Style not found!!");
+                        return;
+                    }
                 }
                 setFilter();
             }
@@ -139,10 +155,20 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         {
             if (textBox2.OldValue != textBox2.Text)
             {
-                if (textBox2.Text.IndexOf("'") != -1)
+                if (textBox2.Text != "")
                 {
-                    MyUtility.Msg.WarningBox("Input errror!!");
-                    return;
+                    if (textBox2.Text.IndexOf("'") != -1)
+                    {
+                        textBox2.Text = "";
+                        MyUtility.Msg.WarningBox("Input errror!!");
+                        return;
+                    }
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where Junk = 0 and ID = '{0}'", textBox2.Text)))
+                    {
+                        textBox2.Text = "";
+                        MyUtility.Msg.WarningBox("Brand not found!!");
+                        return;
+                    }
                 }
                 setFilter();
             }
