@@ -58,7 +58,7 @@ select  0 as selected
         , b.Qty 
         , dbo.getmtldesc(b.poid,b.seq1,b.seq2,2,0) [description]
         , '' location
-        , psd.StockUnit
+        , psd.POUnit
         , psd.FabricType
 from TransferOut a WITH (NOLOCK) 
 inner join TransferOut_Detail b WITH (NOLOCK) on b.id = a.id
