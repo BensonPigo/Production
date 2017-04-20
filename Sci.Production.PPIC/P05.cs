@@ -178,7 +178,7 @@ namespace Sci.Production.PPIC
                 int i = e.RowIndex;
                 if (dr["MTLDelay"].ToString() == "Y")
                 {
-                    grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+                    grid1.Rows[i].Cells["ID"].Style.BackColor = Color.FromArgb(255, 255, 128);
                 }
             };
             
@@ -229,7 +229,7 @@ as
             sqlCmd.Append(@")
 select *,
 iif(EstPulloutDate is not null, datediff(day,EstPulloutDate,BuyerDelivery), iif(ReadyDate is not null,datediff(day,ReadyDate,BuyerDelivery),0)) as Diff,
-iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData");
+iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.Id");
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
