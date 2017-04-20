@@ -26,13 +26,18 @@ namespace Sci.Production.Thread
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.*,b.description,c.description as colordesc,
-            b.category,d.newCone as newconebook,d.usedcone as usedconebook
-            from ThreadTransfer_Detail a WITH (NOLOCK) 
-            left join Localitem b WITH (NOLOCK) on a.refno = b.refno 
-            left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno and d.threadColorid = a.threadColorid and d.threadLocationid = 
-                a.Locationfrom and d.mDivisionid = '{1}'
-            left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID, keyWord);
+            this.DetailSelectCommand = string.Format(@"
+select  a.*
+        , b.description
+        , c.description as colordesc
+        , b.category
+        , newconebook = isnull(d.newCone, 0)
+        , usedconebook = isnull(d.usedcone, 0)
+from ThreadTransfer_Detail a WITH (NOLOCK) 
+left join Localitem b WITH (NOLOCK) on a.refno = b.refno 
+left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno and d.threadColorid = a.threadColorid 
+    and d.threadLocationid = a.Locationfrom and d.mDivisionid = '{1}'
+left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0}'", masterID, keyWord);
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override bool OnGridSetup()
@@ -199,6 +204,7 @@ namespace Sci.Production.Thread
                 {
                     CurrentDetailData["NewCone"] = 0;
                 }
+                CurrentDetailData.EndEdit();
             };
             qty2.CellValidating += (s, e) =>
             {
@@ -208,6 +214,7 @@ namespace Sci.Production.Thread
                 {
                     CurrentDetailData["UsedCone"] = 0;
                 }
+                CurrentDetailData.EndEdit();
             };
             #region setup Grid
 
@@ -347,21 +354,34 @@ namespace Sci.Production.Thread
             string checksql;
             string sql, insertSql = "";
             DataRow stdr;
-            string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n", msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
+            string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n"
+                    , msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
  
             bool lmsg1 = false;
             bool lmsg2 = false;
-            sql = String.Format("Update ThreadTransfer set Status = 'Confirmed',editname='{0}', editdate = GETDATE() where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
+            sql = String.Format(@"
+Update ThreadTransfer 
+    set Status = 'Confirmed'
+        , editname = '{0}'
+        , editdate = GETDATE() 
+where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format(@"Select a.*,d.newCone as newconebook,d.usedcone as usedconebook 
+                checksql = string.Format(@"
+Select  a.*
+        , d.newCone as newconebook
+        , d.usedcone as usedconebook 
 from ThreadTransfer_Detail a WITH (NOLOCK) 
 left join ThreadStock d WITH (NOLOCK) on d.refno = a.refno 
-and d.threadColorid = a.threadColorid 
-and d.threadLocationid = a.Locationfrom 
-where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationfrom"], dr["threadcolorid"], keyWord);
-                if (MyUtility.Check.Seek(checksql, out stdr))//找不到庫存或不夠不可confirm
+    and d.threadColorid = a.threadColorid 
+    and d.threadLocationid = a.Locationfrom 
+where   d.refno ='{0}' 
+        and threadLocationid = '{1}' 
+        and d.threadcolorid = '{2}' 
+        and mDivisionid = '{3}'", dr["refno"], dr["locationfrom"], dr["threadcolorid"], keyWord);
+                
+                if (MyUtility.Check.Seek(checksql, out stdr))//找不到庫存或不夠不可confirm (這邊指的是轉出 Location 庫存)
                 {
                     if ((decimal)stdr["NewConebook"] < (decimal)dr["NewCone"])
                     {
@@ -373,43 +393,62 @@ where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' an
                         msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg2 = true;
                     }
-                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone-({0}),UsedCone = UsedCone - ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", dr["NewCone"], (decimal)dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationFrom"]); ///扣庫存
+                    insertSql = insertSql + string.Format(@"
+Update ThreadStock 
+    set NewCone = NewCone - ({0})
+        , UsedCone = UsedCone - ({1}) 
+where   refno = '{2}' 
+        and mDivisionid = '{3}' 
+        and ThreadColorid = '{4}' 
+        and ThreadLocationid = '{5}';", dr["NewCone"], (decimal)dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationFrom"]); ///扣庫存
 
-                    checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationTo"], dr["threadcolorid"], keyWord);
-                    if (MyUtility.Check.Seek(checksql, out stdr)) //找不到庫存就新增
+                    checksql = string.Format(@"
+Select * 
+from ThreadStock WITH (NOLOCK) 
+where   refno ='{0}' 
+        and threadLocationid = '{1}' 
+        and threadcolorid = '{2}' 
+        and mDivisionid = '{3}';", dr["refno"], dr["locationTo"], dr["threadcolorid"], keyWord);
+                    if (MyUtility.Check.Seek(checksql, out stdr)) //找不到庫存就新增 (這邊指的是轉入的 Location 庫存)
                     {
-                        insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", dr["NewCone"], dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationTo"]);
+                        insertSql = insertSql + string.Format(@"
+Update ThreadStock 
+    set NewCone = NewCone + ({0})
+        , UsedCone = UsedCone + ({1}) 
+where   refno = '{2}' 
+        and mDivisionid = '{3}' 
+        and ThreadColorid = '{4}' 
+        and ThreadLocationid = '{5}';", dr["NewCone"], dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationTo"]);
                     }
                     else
                     {
-                        insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationTo"],dr["NewCone"], dr["UsedCone"], loginID);                 
+                        insertSql = insertSql + string.Format(@"
+insert  ThreadStock(refno, mDivisionid, threadcolorid, threadlocationid, newcone, usedcone, addName, AddDate) 
+        values('{0}', '{1}', '{2}', '{3}', {4}, {5}, '{6}', GetDate());", dr["refno"], keyWord, dr["ThreadColorid"], dr["LocationTo"],dr["NewCone"], dr["UsedCone"], loginID);                 
                     }
                 }
                 else
                 {
-                    if ((decimal)stdr["NewConebook"] < (decimal)dr["NewCone"])
+                    /*
+                     * 0 代表找不到庫存，所以庫存是 0
+                     */
+                    if (0 < (decimal)dr["NewCone"])
                     {
                         msg1 = msg1 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg1 = true;
                     }
-                    if ((decimal)stdr["UsedConebook"] < (decimal)dr["UsedCone"])
+                    if (0 < (decimal)dr["UsedCone"])
                     {
                         msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationfrom"]);
                         lmsg2 = true;
                     }
-
-
                 }
 
             }
-            if (lmsg1)
+
+            if (lmsg1 || lmsg2)
             {
-                MyUtility.Msg.WarningBox(msg1);
-                return;
-            }
-            if (lmsg2)
-            {
-                MyUtility.Msg.WarningBox(msg2);
+                MyUtility.Msg.WarningBox(lmsg1 ? (lmsg2 ? msg1 + "\n\r" + msg2 : msg1) : (lmsg2 ? msg2 : ""));
                 return;
             }
             #region update Inqty,Status
@@ -457,15 +496,27 @@ where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' an
             string checksql;
             string sql, insertSql = "";
             DataRow stdr;
-            string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n", msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
+            string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n"
+                    , msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
 
             bool lmsg1 = false;
             bool lmsg2 = false;
-            sql = String.Format("Update ThreadTransfer set Status = 'New',editname='{0}', editdate = GETDATE() where id='{1}'", loginID, CurrentMaintain["ID"].ToString());
+            sql = String.Format(@"
+Update  ThreadTransfer 
+    set Status = 'New'
+        , editname = '{0}'
+        , editdate = GETDATE() 
+where id='{1}';", loginID, CurrentMaintain["ID"].ToString());
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationto"], dr["threadcolorid"], keyWord);
+                checksql = string.Format(@"
+Select * 
+from ThreadStock WITH (NOLOCK) 
+where   refno ='{0}' 
+        and threadLocationid = '{1}' 
+        and threadcolorid = '{2}' 
+        and mDivisionid = '{3}'", dr["refno"], dr["locationto"], dr["threadcolorid"], keyWord);
                 if (MyUtility.Check.Seek(checksql, out stdr))//找不到庫存或不夠不可confirm
                 {
                     if ((decimal)stdr["Newcone"] < (decimal)dr["NewCone"])
@@ -478,16 +529,38 @@ where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' an
                         msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["locationto"]);
                         lmsg2 = true;
                     }
-                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone-({0}),UsedCone = UsedCone - ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", dr["NewCone"], (decimal)dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["locationto"]); ///扣庫存
+                    insertSql = insertSql + string.Format(@"
+Update ThreadStock 
+    set NewCone = NewCone - ({0})
+        , UsedCone = UsedCone - ({1}) 
+where   refno='{2}' 
+        and mDivisionid = '{3}' 
+        and ThreadColorid = '{4}' 
+        and ThreadLocationid = '{5}';", dr["NewCone"], (decimal)dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["locationto"]); ///扣庫存
 
-                    checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["locationFrom"], dr["threadcolorid"], keyWord);
+                    checksql = string.Format(@"
+Select * 
+from ThreadStock WITH (NOLOCK) 
+where   refno ='{0}' 
+        and threadLocationid = '{1}' 
+        and threadcolorid = '{2}' 
+        and mDivisionid = '{3}';", dr["refno"], dr["locationFrom"], dr["threadcolorid"], keyWord);
                     if (MyUtility.Check.Seek(checksql, out stdr)) //找不到庫存就新增
                     {
-                        insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", dr["NewCone"], dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["locationfrom"]);
+                        insertSql = insertSql + string.Format(@"
+Update ThreadStock 
+    set NewCone = NewCone + ({0})
+        , UsedCone = UsedCone + ({1}) 
+where   refno='{2}' 
+        and mDivisionid = '{3}' 
+        and ThreadColorid = '{4}' 
+        and ThreadLocationid = '{5}';", dr["NewCone"], dr["UsedCone"], dr["refno"], keyWord, dr["ThreadColorid"], dr["locationfrom"]);
                     }
                     else
                     {
-                        insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"], keyWord, dr["ThreadColorid"], dr["locationfrom"], dr["NewCone"], dr["UsedCone"], loginID);
+                        insertSql = insertSql + string.Format(@"
+insert  ThreadStock (refno, mDivisionid, threadcolorid, threadlocationid, newcone, usedcone, addName, AddDate) 
+        values ('{0}', '{1}', '{2}', '{3}', {4}, {5}, '{6}', GetDate());", dr["refno"], keyWord, dr["ThreadColorid"], dr["locationfrom"], dr["NewCone"], dr["UsedCone"], loginID);
                     }
                 }
                 else
@@ -507,14 +580,10 @@ where d.refno ='{0}' and threadLocationid = '{1}' and d.threadcolorid = '{2}' an
                 }
 
             }
-            if (lmsg1)
+
+            if (lmsg1 || lmsg2)
             {
-                MyUtility.Msg.WarningBox(msg1);
-                return;
-            }
-            if (lmsg2)
-            {
-                MyUtility.Msg.WarningBox(msg2);
+                MyUtility.Msg.WarningBox(lmsg1 ? (lmsg2 ? msg1 + "\n\r" + msg2 : msg1) : (lmsg2 ? msg2 : ""));
                 return;
             }
             #region update Inqty,Status
