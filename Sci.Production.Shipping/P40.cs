@@ -41,13 +41,13 @@ namespace Sci.Production.Shipping
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    textBox3.ReadOnly = false;
+                    txtCustomdeclareno.ReadOnly = false;
                     dateBox1.ReadOnly = true;
-                    textBox1.ReadOnly = true;
-                    textBox2.ReadOnly = true;
-                    textBox4.ReadOnly = true;
-                    txtshipmode1.ReadOnly = true;
-                    txtcountry1.TextBox1.ReadOnly = true;
+                    txtContractNo.ReadOnly = true;
+                    txtBLNO.ReadOnly = true;
+                    txtWKNo.ReadOnly = true;
+                    txtshipmodeShipby.ReadOnly = true;
+                    txtcountryCountryfrom.TextBox1.ReadOnly = true;
                     gridicon.Append.Enabled = false;
                     gridicon.Insert.Enabled = false;
                     gridicon.Remove.Enabled = false;
@@ -55,11 +55,11 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    textBox3.ReadOnly = true;
+                    txtCustomdeclareno.ReadOnly = true;
                     dateBox1.ReadOnly = false;
-                    textBox1.ReadOnly = false;
-                    txtshipmode1.ReadOnly = false;
-                    txtcountry1.TextBox1.ReadOnly = false;
+                    txtContractNo.ReadOnly = false;
+                    txtshipmodeShipby.ReadOnly = false;
+                    txtcountryCountryfrom.TextBox1.ReadOnly = false;
                     
                     if (MyUtility.Convert.GetString(CurrentMaintain["IsSystemCalculate"]).ToUpper() == "TRUE")
                     {
@@ -80,18 +80,18 @@ namespace Sci.Production.Shipping
 
                     if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]) && MyUtility.Check.Empty(CurrentMaintain["WKNo"]))
                     {
-                        textBox2.ReadOnly = false;
-                        textBox4.ReadOnly = false;
+                        txtBLNO.ReadOnly = false;
+                        txtWKNo.ReadOnly = false;
                     }
                     else if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
                     {
-                        textBox2.ReadOnly = true;
-                        textBox4.ReadOnly = false;
+                        txtBLNO.ReadOnly = true;
+                        txtWKNo.ReadOnly = false;
                     }
                     else
                     {
-                        textBox2.ReadOnly = false;
-                        textBox4.ReadOnly = true;
+                        txtBLNO.ReadOnly = false;
+                        txtWKNo.ReadOnly = true;
                     }
                 }
                 detailgrid.EnsureStyle();                
@@ -203,7 +203,7 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
-                textBox1.Focus();
+                txtContractNo.Focus();
                 return false;
             }
             #endregion
@@ -318,20 +318,20 @@ namespace Sci.Production.Shipping
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtContractNo.Text = item.GetSelectedString();
         }
 
         //Contract No.
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
+            if (EditMode && !MyUtility.Check.Empty(txtContractNo.Text) && txtContractNo.Text != txtContractNo.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox1.Text)))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", textBox1.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
                         MyUtility.Msg.WarningBox("This Contract can't use.");
-                        textBox1.Text = "";
+                        txtContractNo.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -339,7 +339,7 @@ namespace Sci.Production.Shipping
                 else
                 {
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
-                    textBox1.Text = "";
+                    txtContractNo.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -351,16 +351,16 @@ namespace Sci.Production.Shipping
         {
             if (EditMode)
             {
-                if (textBox2.Text != textBox2.OldValue)
+                if (txtBLNO.Text != txtBLNO.OldValue)
                 {
                     foreach (DataRow dr in DetailDatas)
                     {
                         dr.Delete();
                     }
                     int isFtyExport = 0;
-                    if (MyUtility.Check.Empty(textBox2.Text))
+                    if (MyUtility.Check.Empty(txtBLNO.Text))
                     {
-                        textBox4.ReadOnly = false;
+                        txtWKNo.ReadOnly = false;
                         CurrentMaintain["IsSystemCalculate"] = 0;
                         CurrentMaintain["BLNo"] = "";
                         CurrentMaintain["IsFtyExport"] = 0;
@@ -371,12 +371,12 @@ namespace Sci.Production.Shipping
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export WITH (NOLOCK) where BLNo = '{0}'", textBox2.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select ShipModeID,ExportCountry from Export WITH (NOLOCK) where BLNo = '{0}'", txtBLNO.Text), out export))
                         {
                             isFtyExport = 0;
                             localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport WITH (NOLOCK) where BLNo = '{0}'", textBox2.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select Type,ShipModeID,ExportCountry from FtyExport WITH (NOLOCK) where BLNo = '{0}'", txtBLNO.Text), out export))
                         {
                             isFtyExport = 1;
                             localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
@@ -393,13 +393,13 @@ namespace Sci.Production.Shipping
                             e.Cancel = true;
                             return;
                         }
-                        CurrentMaintain["BLNo"] = textBox2.Text;
+                        CurrentMaintain["BLNo"] = txtBLNO.Text;
                         CurrentMaintain["ShipModeID"] = export["ShipModeID"];
                         CurrentMaintain["FromSite"] = export["ExportCountry"];
                         CurrentMaintain["IsFtyExport"] = isFtyExport;
                         CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;
                         CurrentMaintain["IsSystemCalculate"] = 1;
-                        textBox4.ReadOnly = true;
+                        txtWKNo.ReadOnly = true;
                     }
                 }
                 OnDetailEntered();
@@ -442,16 +442,16 @@ namespace Sci.Production.Shipping
         {
             if (EditMode)
             {
-                if (textBox4.Text != textBox4.OldValue)
+                if (txtWKNo.Text != txtWKNo.OldValue)
                 {
                     foreach (DataRow dr in DetailDatas)
                     {
                         dr.Delete();
                     }
 
-                    if (MyUtility.Check.Empty(textBox4.Text))
+                    if (MyUtility.Check.Empty(txtWKNo.Text))
                     {
-                        textBox2.ReadOnly = false;
+                        txtBLNO.ReadOnly = false;
                         CurrentMaintain["IsSystemCalculate"] = 0;
                         CurrentMaintain["WKNo"] = "";
                         CurrentMaintain["IsFtyExport"] = 0;
@@ -462,19 +462,19 @@ namespace Sci.Production.Shipping
                     else
                     {
                         DataRow export;
-                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export WITH (NOLOCK) where ID = '{0}'", textBox4.Text), out export))
+                        if (MyUtility.Check.Seek(string.Format("select BLNo,ShipModeID,ExportCountry from Export WITH (NOLOCK) where ID = '{0}'", txtWKNo.Text), out export))
                         {
                             if (!MyUtility.Check.Empty(export["BLNo"]))
                             {
                                 CurrentMaintain["BLNo"] = export["BLNo"];
                                 CurrentMaintain["WKNo"] = "";
-                                textBox2.ReadOnly = false;
-                                textBox4.ReadOnly = true;
+                                txtBLNO.ReadOnly = false;
+                                txtWKNo.ReadOnly = true;
                             }
                             else
                             {
-                                textBox2.ReadOnly = true;
-                                CurrentMaintain["WKNo"] = textBox4.Text;
+                                txtBLNO.ReadOnly = true;
+                                CurrentMaintain["WKNo"] = txtWKNo.Text;
                             }
                             CurrentMaintain["IsFtyExport"] = 0;
                             CurrentMaintain["IsLocalPO"] = 0;
@@ -483,7 +483,7 @@ namespace Sci.Production.Shipping
                             CurrentMaintain["IsSystemCalculate"] = 1;
                             localPurchase = false;
                         }
-                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport WITH (NOLOCK) where ID = '{0}'", textBox4.Text), out export))
+                        else if (MyUtility.Check.Seek(string.Format("select * from FtyExport WITH (NOLOCK) where ID = '{0}'", txtWKNo.Text), out export))
                         {
                             if (MyUtility.Convert.GetString(export["Type"]) == "1")
                             {
@@ -512,13 +512,13 @@ namespace Sci.Production.Shipping
                             {
                                 CurrentMaintain["BLNo"] = export["BLNo"];
                                 CurrentMaintain["WKNo"] = "";
-                                textBox2.ReadOnly = false;
-                                textBox4.ReadOnly = true;
+                                txtBLNO.ReadOnly = false;
+                                txtWKNo.ReadOnly = true;
                             }
                             else
                             {
-                                textBox2.ReadOnly = true;
-                                CurrentMaintain["WKNo"] = textBox4.Text;
+                                txtBLNO.ReadOnly = true;
+                                CurrentMaintain["WKNo"] = txtWKNo.Text;
                             }
                             CurrentMaintain["IsFtyExport"] = 1;
                             CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;

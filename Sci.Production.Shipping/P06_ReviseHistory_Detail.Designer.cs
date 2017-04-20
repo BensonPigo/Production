@@ -28,31 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.numShipQtyRevised = new Sci.Win.UI.NumericBox();
+            this.displayStatusRevised = new Sci.Win.UI.DisplayBox();
+            this.displayRevisedStatus = new Sci.Win.UI.DisplayBox();
+            this.labelShipQtyRevised = new Sci.Win.UI.Label();
+            this.labelStatusRevised = new Sci.Win.UI.Label();
+            this.labelRevisedStatus = new Sci.Win.UI.Label();
+            this.numShipQtyOld = new Sci.Win.UI.NumericBox();
+            this.displayStatusOld = new Sci.Win.UI.DisplayBox();
+            this.displaySPNo = new Sci.Win.UI.DisplayBox();
+            this.labelShipQtyOld = new Sci.Win.UI.Label();
+            this.labelStatusOld = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.gridReviseHistoryDetail = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReviseHistoryDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,182 +75,200 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.numericBox2);
-            this.panel3.Controls.Add(this.displayBox3);
-            this.panel3.Controls.Add(this.displayBox4);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.numericBox1);
-            this.panel3.Controls.Add(this.displayBox2);
-            this.panel3.Controls.Add(this.displayBox1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.numShipQtyRevised);
+            this.panel3.Controls.Add(this.displayStatusRevised);
+            this.panel3.Controls.Add(this.displayRevisedStatus);
+            this.panel3.Controls.Add(this.labelShipQtyRevised);
+            this.panel3.Controls.Add(this.labelStatusRevised);
+            this.panel3.Controls.Add(this.labelRevisedStatus);
+            this.panel3.Controls.Add(this.numShipQtyOld);
+            this.panel3.Controls.Add(this.displayStatusOld);
+            this.panel3.Controls.Add(this.displaySPNo);
+            this.panel3.Controls.Add(this.labelShipQtyOld);
+            this.panel3.Controls.Add(this.labelStatusOld);
+            this.panel3.Controls.Add(this.labelSPNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(488, 90);
             this.panel3.TabIndex = 2;
             // 
-            // numericBox2
+            // numShipQtyRevised
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(386, 61);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(65, 23);
-            this.numericBox2.TabIndex = 11;
+            this.numShipQtyRevised.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numShipQtyRevised.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numShipQtyRevised.IsSupportEditMode = false;
+            this.numShipQtyRevised.Location = new System.Drawing.Point(386, 61);
+            this.numShipQtyRevised.Name = "numShipQtyRevised";
+            this.numShipQtyRevised.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numShipQtyRevised.ReadOnly = true;
+            this.numShipQtyRevised.Size = new System.Drawing.Size(65, 23);
+            this.numShipQtyRevised.TabIndex = 11;
+            this.numShipQtyRevised.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // displayBox3
+            // displayStatusRevised
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(386, 34);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(75, 23);
-            this.displayBox3.TabIndex = 10;
+            this.displayStatusRevised.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStatusRevised.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStatusRevised.Location = new System.Drawing.Point(386, 34);
+            this.displayStatusRevised.Name = "displayStatusRevised";
+            this.displayStatusRevised.Size = new System.Drawing.Size(75, 23);
+            this.displayStatusRevised.TabIndex = 10;
             // 
-            // displayBox4
+            // displayRevisedStatus
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(386, 7);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(73, 23);
-            this.displayBox4.TabIndex = 9;
+            this.displayRevisedStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRevisedStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRevisedStatus.Location = new System.Drawing.Point(386, 7);
+            this.displayRevisedStatus.Name = "displayRevisedStatus";
+            this.displayRevisedStatus.Size = new System.Drawing.Size(73, 23);
+            this.displayRevisedStatus.TabIndex = 9;
             // 
-            // label4
+            // labelShipQtyRevised
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(260, 61);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(121, 23);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Ship Q\'ty (Revised)";
+            this.labelShipQtyRevised.Lines = 0;
+            this.labelShipQtyRevised.Location = new System.Drawing.Point(260, 61);
+            this.labelShipQtyRevised.Name = "labelShipQtyRevised";
+            this.labelShipQtyRevised.Size = new System.Drawing.Size(121, 23);
+            this.labelShipQtyRevised.TabIndex = 8;
+            this.labelShipQtyRevised.Text = "Ship Q\'ty (Revised)";
             // 
-            // label5
+            // labelStatusRevised
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(259, 34);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(122, 23);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Status (Revised)";
+            this.labelStatusRevised.Lines = 0;
+            this.labelStatusRevised.Location = new System.Drawing.Point(259, 34);
+            this.labelStatusRevised.Name = "labelStatusRevised";
+            this.labelStatusRevised.Size = new System.Drawing.Size(122, 23);
+            this.labelStatusRevised.TabIndex = 7;
+            this.labelStatusRevised.Text = "Status (Revised)";
             // 
-            // label6
+            // labelRevisedStatus
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(259, 7);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(122, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Revised Status";
+            this.labelRevisedStatus.Lines = 0;
+            this.labelRevisedStatus.Location = new System.Drawing.Point(259, 7);
+            this.labelRevisedStatus.Name = "labelRevisedStatus";
+            this.labelRevisedStatus.Size = new System.Drawing.Size(122, 23);
+            this.labelRevisedStatus.TabIndex = 6;
+            this.labelRevisedStatus.Text = "Revised Status";
             // 
-            // numericBox1
+            // numShipQtyOld
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(101, 61);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(65, 23);
-            this.numericBox1.TabIndex = 5;
+            this.numShipQtyOld.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numShipQtyOld.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numShipQtyOld.IsSupportEditMode = false;
+            this.numShipQtyOld.Location = new System.Drawing.Point(101, 61);
+            this.numShipQtyOld.Name = "numShipQtyOld";
+            this.numShipQtyOld.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numShipQtyOld.ReadOnly = true;
+            this.numShipQtyOld.Size = new System.Drawing.Size(65, 23);
+            this.numShipQtyOld.TabIndex = 5;
+            this.numShipQtyOld.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // displayBox2
+            // displayStatusOld
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(101, 34);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(75, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayStatusOld.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStatusOld.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStatusOld.Location = new System.Drawing.Point(101, 34);
+            this.displayStatusOld.Name = "displayStatusOld";
+            this.displayStatusOld.Size = new System.Drawing.Size(75, 23);
+            this.displayStatusOld.TabIndex = 4;
             // 
-            // displayBox1
+            // displaySPNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(101, 7);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 3;
+            this.displaySPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySPNo.Location = new System.Drawing.Point(101, 7);
+            this.displaySPNo.Name = "displaySPNo";
+            this.displaySPNo.Size = new System.Drawing.Size(130, 23);
+            this.displaySPNo.TabIndex = 3;
             // 
-            // label3
+            // labelShipQtyOld
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 61);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Ship Q\'ty (Old)";
+            this.labelShipQtyOld.Lines = 0;
+            this.labelShipQtyOld.Location = new System.Drawing.Point(4, 61);
+            this.labelShipQtyOld.Name = "labelShipQtyOld";
+            this.labelShipQtyOld.Size = new System.Drawing.Size(93, 23);
+            this.labelShipQtyOld.TabIndex = 2;
+            this.labelShipQtyOld.Text = "Ship Q\'ty (Old)";
             // 
-            // label2
+            // labelStatusOld
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(3, 34);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Status (Old)";
+            this.labelStatusOld.Lines = 0;
+            this.labelStatusOld.Location = new System.Drawing.Point(3, 34);
+            this.labelStatusOld.Name = "labelStatusOld";
+            this.labelStatusOld.Size = new System.Drawing.Size(94, 23);
+            this.labelStatusOld.TabIndex = 1;
+            this.labelStatusOld.Text = "Status (Old)";
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(3, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP No.";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(3, 7);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(94, 23);
+            this.labelSPNo.TabIndex = 0;
+            this.labelSPNo.Text = "SP No.";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 368);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(488, 43);
             this.panel4.TabIndex = 3;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(399, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(399, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridReviseHistoryDetail);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 90);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(488, 278);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridReviseHistoryDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridReviseHistoryDetail.AllowUserToAddRows = false;
+            this.gridReviseHistoryDetail.AllowUserToDeleteRows = false;
+            this.gridReviseHistoryDetail.AllowUserToResizeRows = false;
+            this.gridReviseHistoryDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridReviseHistoryDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridReviseHistoryDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridReviseHistoryDetail.DataSource = this.listControlBindingSource1;
+            this.gridReviseHistoryDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridReviseHistoryDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridReviseHistoryDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridReviseHistoryDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridReviseHistoryDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridReviseHistoryDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridReviseHistoryDetail.Name = "gridReviseHistoryDetail";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -257,19 +276,19 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(488, 278);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridReviseHistoryDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridReviseHistoryDetail.RowHeadersVisible = false;
+            this.gridReviseHistoryDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridReviseHistoryDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridReviseHistoryDetail.RowTemplate.Height = 24;
+            this.gridReviseHistoryDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridReviseHistoryDetail.Size = new System.Drawing.Size(488, 278);
+            this.gridReviseHistoryDetail.TabIndex = 0;
+            this.gridReviseHistoryDetail.TabStop = false;
             // 
             // P06_ReviseHistory_Detail
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(508, 411);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -285,7 +304,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReviseHistoryDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -298,20 +317,20 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridReviseHistoryDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.NumericBox numShipQtyRevised;
+        private Win.UI.DisplayBox displayStatusRevised;
+        private Win.UI.DisplayBox displayRevisedStatus;
+        private Win.UI.Label labelShipQtyRevised;
+        private Win.UI.Label labelStatusRevised;
+        private Win.UI.Label labelRevisedStatus;
+        private Win.UI.NumericBox numShipQtyOld;
+        private Win.UI.DisplayBox displayStatusOld;
+        private Win.UI.DisplayBox displaySPNo;
+        private Win.UI.Label labelShipQtyOld;
+        private Win.UI.Label labelStatusOld;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Button btnClose;
     }
 }

@@ -19,12 +19,12 @@ namespace Sci.Production.Shipping
         //OK
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(datePulloutDate.Value))
             {
                 MyUtility.Msg.WarningBox("Pull-out Date can't empty!!");
                 return;
             }
-            pulloutDate = (DateTime)dateBox1.Value;
+            pulloutDate = (DateTime)datePulloutDate.Value;
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }

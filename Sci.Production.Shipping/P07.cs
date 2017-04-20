@@ -22,7 +22,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "1,Wrong Price,2,Wrong Qty,3,Wrong Price & Qty,4,NoPullout");
+            MyUtility.Tool.SetupCombox(comboReason, 2, 1, "1,Wrong Price,2,Wrong Qty,3,Wrong Price & Qty,4,NoPullout");
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -49,12 +49,12 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            numericBox5.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"]);
-            numericBox6.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"]);
-            numericBox9.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]);
-            numericBox10.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]);
-            numericBox11.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["OrigAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]), 2);
-            numericBox12.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]), 2);
+            numOriginalSurchargeAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"]);
+            numChangetoSurchargeAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"]);
+            numOriginalCommAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]);
+            numChangetoCommAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]);
+            numOriginalTotalAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["OrigAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["OrigPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["OrigCommission"]), 2);
+            numChangetoTotalAmt.Value = MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutAmt"]) + MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustSurcharge"])) + MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustAddCharge"]) - MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustPulloutQty"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["AdjustCommission"]), 2);
 
         }
     }

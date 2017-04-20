@@ -19,23 +19,23 @@ namespace Sci.Production.Shipping
         public P41_Print()
         {
             InitializeComponent();
-            dateRange1.Value1 = DateTime.Today;
-            dateRange1.Value2 = DateTime.Today;
+            dateDate.Value1 = DateTime.Today;
+            dateDate.Value2 = DateTime.Today;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) || MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateDate.Value1) || MyUtility.Check.Empty(dateDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Date can't empty");
-                dateRange1.TextBox1.Focus();
+                dateDate.TextBox1.Focus();
 
                 return false;
             }
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            brand = txtbrand1.Text;
+            date1 = dateDate.Value1;
+            date2 = dateDate.Value2;
+            brand = txtbrand.Text;
             return base.ValidateInput();
         }
 

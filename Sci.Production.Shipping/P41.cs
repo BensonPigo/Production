@@ -106,10 +106,10 @@ order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"
         {
             base.OnDetailEntered();
 
-            numericBox1.Value = 0;
-            numericBox2.Value = 0;
-            numericBox3.Value = 0;
-            numericBox4.Value = 0;
+            numQty.Value = 0;
+            numNW.Value = 0;
+            numGW.Value = 0;
+            numCMP.Value = 0;
             string sqlCmd;
             if (!MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
             {
@@ -135,10 +135,10 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
                 if (result && tmpData.Rows.Count > 0)
                 {
-                    numericBox1.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["ShipQty"]);
-                    numericBox2.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["NW"]);
-                    numericBox3.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["GW"]);
-                    numericBox4.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["CMP"]);
+                    numQty.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["ShipQty"]);
+                    numNW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["NW"]);
+                    numGW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["GW"]);
+                    numCMP.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["CMP"]);
                 }
             }
 
@@ -146,16 +146,16 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
-                    dateBox1.ReadOnly = true;
-                    textBox1.ReadOnly = true;
-                    textBox2.ReadOnly = true;
-                    textBox3.ReadOnly = true;
-                    button1.Enabled = true;
+                    dateDate.ReadOnly = true;
+                    txtInvNo.ReadOnly = true;
+                    txtContractNo.ReadOnly = true;
+                    txtPortofExport.ReadOnly = true;
+                    btnReCalculate.Enabled = true;
                     detailgrid.IsEditingReadOnly = true;
                 }
                 else
                 {
-                    textBox4.ReadOnly = true;
+                    txtCustomdeclareno.ReadOnly = true;
                 }
                 detailgrid.EnsureStyle();
             }
@@ -201,25 +201,25 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
-                textBox2.Focus();
+                txtContractNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
             {
                 MyUtility.Msg.WarningBox("Inv No. can't empty!!");
-                textBox1.Focus();
+                txtInvNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNExportPortID"]))
             {
                 MyUtility.Msg.WarningBox("Port of Export can't empty!!");
-                textBox3.Focus();
+                txtPortofExport.Focus();
                 return false;
             }
 
@@ -446,20 +446,20 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
+            txtContractNo.Text = item.GetSelectedString();
         }
 
         //Contract No.
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox2.Text) && textBox2.Text != textBox2.OldValue)
+            if (EditMode && !MyUtility.Check.Empty(txtContractNo.Text) && txtContractNo.Text != txtContractNo.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", textBox2.Text)))
+                if (MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", textBox2.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
                         MyUtility.Msg.WarningBox("This Contract can't use.");
-                        textBox2.Text = "";
+                        txtContractNo.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -467,7 +467,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 else
                 {
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
-                    textBox2.Text = "";
+                    txtContractNo.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -480,18 +480,18 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name from VNExportPort WITH (NOLOCK) where Junk = 0", "10,50", this.Text, false, ",", headercaptions: "Code,Name");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox3.Text = item.GetSelectedString();
+            txtPortofExport.Text = item.GetSelectedString();
         }
 
         //Port of Export
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox3.Text) && textBox3.Text != textBox3.OldValue)
+            if (EditMode && !MyUtility.Check.Empty(txtPortofExport.Text) && txtPortofExport.Text != txtPortofExport.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNExportPort WITH (NOLOCK) where ID = '{0}'", textBox3.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNExportPort WITH (NOLOCK) where ID = '{0}'", txtPortofExport.Text)))
                 {
                     MyUtility.Msg.WarningBox("Data not found!!");
-                    textBox3.Text = "";
+                    txtPortofExport.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -501,39 +501,39 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         //Port of Export
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            displayBox2.Text = MyUtility.GetValue.Lookup("Name", textBox3.Text, "VNExportPort", "ID");
+            displayPortofExport.Text = MyUtility.GetValue.Lookup("Name", txtPortofExport.Text, "VNExportPort", "ID");
         }
 
         //Inv No.
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && textBox1.Text != textBox1.OldValue)
+            if (EditMode && txtInvNo.Text != txtInvNo.OldValue)
             {
                 foreach (DataRow dr in DetailDatas)
                 {
                     dr.Delete();
                 }
 
-                if (!MyUtility.Check.Empty(textBox1.Text))
+                if (!MyUtility.Check.Empty(txtInvNo.Text))
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", textBox1.Text)))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from GMTBooking WITH (NOLOCK) where ID = '{0}'", txtInvNo.Text)))
                     {
-                        if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", textBox1.Text)))
+                        if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", txtInvNo.Text)))
                         {
                             MyUtility.Msg.WarningBox("Data not found!!");
-                            textBox1.Text = "";
+                            txtInvNo.Text = "";
                             e.Cancel = true;
                             return;
                         }
                         else
                         {
-                            CurrentMaintain["InvNo"] = textBox1.Text;
+                            CurrentMaintain["InvNo"] = txtInvNo.Text;
                             CurrentMaintain["DataFrom"] = "PACKINGLIST";
                         }
                     }
                     else
                     {
-                        CurrentMaintain["InvNo"] = textBox1.Text;
+                        CurrentMaintain["InvNo"] = txtInvNo.Text;
                         CurrentMaintain["DataFrom"] = "GMTBOOKING";
                     }
 

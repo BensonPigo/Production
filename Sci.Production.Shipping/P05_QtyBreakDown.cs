@@ -16,15 +16,15 @@ namespace Sci.Production.Shipping
         public P05_QtyBreakDown(DataRow MasterData)
         {
             InitializeComponent();
-            displayBox1.Text = MyUtility.Convert.GetString(MasterData["ID"]);
+            displayInvoice.Text = MyUtility.Convert.GetString(MasterData["ID"]);
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             
-            grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridQtyBreakDown.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13))
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5))
@@ -52,7 +52,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = a.OrderID and oqd.S
 left join Orders o WITH (NOLOCK) on o.ID = a.OrderID
 left join Order_Article oa WITH (NOLOCK) on oa.ID = o.POID and oa.Article = a.Article
 left join Order_SizeCode os WITH (NOLOCK) on os.ID = o.POID and os.SizeCode = a.SizeCode
-order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", displayBox2.Text);
+order by a.OrderID,a.OrderShipmodeSeq,oa.Seq,os.Seq", displayPacking.Text);
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)

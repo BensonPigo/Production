@@ -39,8 +39,8 @@ namespace Sci.Production.Shipping
                 emptyDTMask = emptyDTMask + empmask;
             }
 
-            this.textBox6.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
-            this.textBox6.Mask = dateTimeMask;
+            this.txtCutoffDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutOffDate", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            this.txtCutoffDate.Mask = dateTimeMask;
 
         }
 
@@ -63,7 +63,7 @@ where {0}", masterID);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");         
+            MyUtility.Tool.SetupCombox(comboContainerType, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");         
            
         }      
        
@@ -72,7 +72,7 @@ where {0}", masterID);
         {
             base.OnDetailEntered();
 
-            textBox7.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
+            txtTerminalWhse.Text = MyUtility.GetValue.Lookup("WhseNo", MyUtility.Convert.GetString(CurrentMaintain["ForwarderWhse_DetailUKey"]), "ForwarderWhse_Detail", "UKey");
            
                 
             
@@ -85,13 +85,13 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
 
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
-                    button1.ForeColor = Color.Red;
-                    button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                    btnAirPPList.ForeColor = Color.Red;
+                    btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
                 else
                 {
-                    button1.ForeColor = Color.Black;
-                    button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+                    btnAirPPList.ForeColor = Color.Black;
+                    btnAirPPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
                 }
             }
             #endregion
@@ -101,19 +101,19 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             {
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "New")
                 {
-                    button4.Enabled = true;
+                    btnCFM.Enabled = true;
                 }
                 else
                 {
-                    button4.Enabled = false;
+                    btnCFM.Enabled = false;
                 }
                 if (MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
                 {
-                    button4.Text = "CFM";
+                    btnCFM.Text = "CFM";
                 }
                 else
                 {
-                    button4.Text = "Un CFM";
+                    btnCFM.Text = "Un CFM";
                 }
             }
             #endregion
@@ -244,39 +244,39 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
-            txtbrand1.ReadOnly = true;
-            txtcountry1.TextBox1.ReadOnly = true;
+            txtInvSerial.ReadOnly = true;
+            txtbrand.ReadOnly = true;
+            txtCountryDestination.TextBox1.ReadOnly = true;
             if (CurrentMaintain["Status"].ToString().ToUpper()=="NEW")
             {
-                txtshipmode1.ReadOnly = false;    
+                txtShipmodeShippingMode.ReadOnly = false;    
             }
             else
             {
-                txtshipmode1.ReadOnly = true;    
+                txtShipmodeShippingMode.ReadOnly = true;    
             }
             
 
             if (!MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
-                dateBox1.ReadOnly = true;
-                txtfactory1.ReadOnly = true;
-                dateBox2.ReadOnly = true;
-                textBox4.ReadOnly = true;
-                txtuser1.TextBox1.ReadOnly = true;
-                txtsubcon1.TextBox1.ReadOnly = true;
-                comboBox1.ReadOnly = true;
-                textBox3.ReadOnly = true;
+                dateInvDate.ReadOnly = true;
+                txtfactoryShipper.ReadOnly = true;
+                dateFCRDate.ReadOnly = true;
+                txtCustCD.ReadOnly = true;
+                txtUserHandle.TextBox1.ReadOnly = true;
+                txtSubconForwarder.TextBox1.ReadOnly = true;
+                comboContainerType.ReadOnly = true;
+                txtSONo.ReadOnly = true;
                 //textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndNonReadOnly;
                // textBox6.ReadOnly = true;
                 col_lock.IsEditingReadOnly = true;
                 col_crd.IsEditingReadOnly = true;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Black;
-                button6.Enabled = false;
+                btnImportfrompackinglist.Enabled = false;
                 gridicon.Remove.Enabled = false;
-                textBox6.ReadOnly = true;
-                textBox7.ReadOnly = true;
+                txtCutoffDate.ReadOnly = true;
+                txtTerminalWhse.ReadOnly = true;
             }
             else
             {
@@ -285,8 +285,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 col_crd.IsEditingReadOnly = false;
                 detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Red;
                 detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Red;
-                textBox6.ReadOnly = false;
-                textBox7.ReadOnly = false;
+                txtCutoffDate.ReadOnly = false;
+                txtTerminalWhse.ReadOnly = false;
                 //textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             }
         }
@@ -353,73 +353,73 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
             if (MyUtility.Check.Empty(CurrentMaintain["InvSerial"]))
             {
                 MyUtility.Msg.WarningBox("Inv. Serial can't empty!!");
-                textBox1.Focus();
+                txtInvSerial.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["InvDate"]))
             {
                 MyUtility.Msg.WarningBox("Inv. Date can't empty!!");
-                dateBox1.Focus();
+                dateInvDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shipper"]))
             {
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
-                txtfactory1.Focus();
+                txtfactoryShipper.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["FCRDate"]))
             {
                 MyUtility.Msg.WarningBox("FCR Date can't empty!!");
-                dateBox2.Focus();
+                dateFCRDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
                 MyUtility.Msg.WarningBox("CustCD can't empty!!");
-                textBox4.Focus();
+                txtCustCD.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
                 MyUtility.Msg.WarningBox("Destination can't empty!!");
-                txtcountry1.TextBox1.Focus();
+                txtCountryDestination.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PayTermARID"]))
             {
                 MyUtility.Msg.WarningBox("Payment Term can't empty!!");
-                txtpaytermar1.TextBox1.Focus();
+                txtpaytermarPaymentTerm.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("Shipping Mode can't empty!!");
-                txtshipmode1.Focus();
+                txtShipmodeShippingMode.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipTermID"]))
             {
                 MyUtility.Msg.WarningBox("Shipment Term can't empty!!");
-                txtshipterm1.Focus();
+                txtShiptermShipmentTerm.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
                 MyUtility.Msg.WarningBox("Handle can't empty!!");
-                txtuser1.TextBox1.Focus();
+                txtUserHandle.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Forwarder"]))
             {
                 MyUtility.Msg.WarningBox("Forwarder can't empty!!");
-                txtsubcon1.TextBox1.Focus();
+                txtSubconForwarder.TextBox1.Focus();
                 return false;
             }
             #endregion
@@ -432,7 +432,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
                     MyUtility.Msg.WarningBox("Inv. Serial already exist!!");
-                    textBox1.Focus();
+                    txtInvSerial.Focus();
                     return false;
                 }
                 CurrentMaintain["ID"] = newID;
@@ -647,7 +647,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //Inv. Serial:移除空白值
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            this.textBox1.Text = this.textBox1.Text.ToString().Replace(" ", "");            
+            this.txtInvSerial.Text = this.txtInvSerial.Text.ToString().Replace(" ", "");            
             CurrentMaintain["InvSerial"] = MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Replace(" ", "");
             
             }   
@@ -655,12 +655,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //檢查輸入的Inv. Date是否正確
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox1.Value))
+            if (this.EditMode && !MyUtility.Check.Empty(dateInvDate.Value))
             {
-                if (dateBox1.Value > DateTime.Today.AddDays(180) || dateBox1.Value < DateTime.Today.AddDays(-180))
+                if (dateInvDate.Value > DateTime.Today.AddDays(180) || dateInvDate.Value < DateTime.Today.AddDays(-180))
                 {
                     MyUtility.Msg.WarningBox("< Inv. Date > is invalid, it exceeds +/-180 days!!");
-                    dateBox1.Value = null;
+                    dateInvDate.Value = null;
                     e.Cancel = true;
                     return;
                 }
@@ -670,7 +670,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //輸入Brand後自動帶出Payment Term
         private void txtbrand1_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && txtbrand1.OldValue != txtbrand1.Text)
+            if (this.EditMode && txtbrand.OldValue != txtbrand.Text)
             {
                 GetPaytermAP();
             }
@@ -679,12 +679,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //檢查輸入的FCR Date是否正確
         private void dateBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox2.Value))
+            if (this.EditMode && !MyUtility.Check.Empty(dateFCRDate.Value))
             {
-                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox2.Value), -12, 12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateFCRDate.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< FCR Date > is invalid!!");
-                    dateBox2.Value = null;
+                    dateFCRDate.Value = null;
                     e.Cancel = true;
                     return;
                 }
@@ -692,8 +692,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 //新增單時，自動將FCR Date寫入Inv. Date欄位
                 if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                 {
-                    CurrentMaintain["FCRDate"] = dateBox2.Value;
-                    CurrentMaintain["InvDate"] = dateBox2.Value;
+                    CurrentMaintain["FCRDate"] = dateFCRDate.Value;
+                    CurrentMaintain["InvDate"] = dateFCRDate.Value;
                 }
             }
         }
@@ -706,32 +706,32 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 Sci.Win.Tools.SelectItem item;
                 if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), "17,3,17", txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
-                    textBox4.Text = item.GetSelectedString();
+                    txtCustCD.Text = item.GetSelectedString();
                 }
                 else
                 {
-                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Dest"])), "17,3,17", textBox4.Text);
+                    item = new Sci.Win.Tools.SelectItem(string.Format("select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = '{0}' and CountryID = '{1}' order by ID", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Dest"])), "17,3,17", txtCustCD.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
-                    textBox4.Text = item.GetSelectedString();
+                    txtCustCD.Text = item.GetSelectedString();
                 }
             }
-            this.textBox4.ValidateControl();
+            this.txtCustCD.ValidateControl();
         }
 
         //檢查輸入的CustCD是否正確
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(textBox4.Text) && textBox4.OldValue != textBox4.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(txtCustCD.Text) && txtCustCD.OldValue != txtCustCD.Text)
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
                 {
                     //sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]));
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcdid", textBox4.Text);
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcdid", txtCustCD.Text);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
@@ -749,15 +749,15 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", textBox4.Text));
+                            MyUtility.Msg.WarningBox(string.Format("< CustCD: {0} > not found!!!", txtCustCD.Text));
                         }
-                        textBox4.Text = "";
+                        txtCustCD.Text = "";
                         e.Cancel = true;
                         return;
                     }
                     else
                     {
-                        CurrentMaintain["CustCDID"] = textBox4.Text;
+                        CurrentMaintain["CustCDID"] = txtCustCD.Text;
                         GetPaytermAP();
                     }
                 }
@@ -766,29 +766,29 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
         private void textBox4_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(textBox4.Text) && textBox4.OldValue != textBox4.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(txtCustCD.Text) && txtCustCD.OldValue != txtCustCD.Text)
             {
-                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), textBox4.Text));
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtCustCD.Text));
             }
         }  
 
         //自動帶出PaytermARID
         private void GetPaytermAP()
         {
-            if (MyUtility.Check.Empty(txtbrand1.Text))
+            if (MyUtility.Check.Empty(txtbrand.Text))
             {
-                txtpaytermar1.TextBox1.Text = "";
+                txtpaytermarPaymentTerm.TextBox1.Text = "";
             }
             else
             {
                 string paytermAR = "";
-                if (MyUtility.Check.Empty(textBox4.Text))
+                if (MyUtility.Check.Empty(txtCustCD.Text))
                 {
-                    paytermAR = MyUtility.GetValue.Lookup("PayTermARIDBulk", txtbrand1.Text, "Brand", "ID");
+                    paytermAR = MyUtility.GetValue.Lookup("PayTermARIDBulk", txtbrand.Text, "Brand", "ID");
                 }
                 else
                 {
-                    paytermAR = MyUtility.GetValue.Lookup(string.Format("select PayTermARIDBulk from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", txtbrand1.Text, textBox4.Text));
+                    paytermAR = MyUtility.GetValue.Lookup(string.Format("select PayTermARIDBulk from CustCD WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", txtbrand.Text, txtCustCD.Text));
                 }
 
                 if (paytermAR != "")
@@ -801,22 +801,22 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //檢查輸入的Cut-off Date是否正確
         private void textBox6_Validating(object sender, CancelEventArgs e)
         {
-            if ((textBox6.Text == "/  /     :  :"))
+            if ((txtCutoffDate.Text == "/  /     :  :"))
             {
-                this.textBox5.Focus();
-                this.textBox6.Text = "";
+                this.txtVslvoyFltNo.Focus();
+                this.txtCutoffDate.Text = "";
                 CurrentMaintain["CutoffDate"] = DBNull.Value;
                 return;
             }
-            if (this.EditMode && textBox6.Text != emptyDTMask)
+            if (this.EditMode && txtCutoffDate.Text != emptyDTMask)
             {
-                string cutOffDate = textBox6.Text.Substring(0, 10).Replace(" ","1");
+                string cutOffDate = txtCutoffDate.Text.Substring(0, 10).Replace(" ","1");
                 try
                 {
                     if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
                     {
                         MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
-                        textBox6.Text = null;
+                        txtCutoffDate.Text = null;
                         e.Cancel = true;
                         return;
                     }
@@ -835,12 +835,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
         private void dateBox5_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox5.Value))
+            if (this.EditMode && !MyUtility.Check.Empty(dateETD.Value))
             {
-                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox5.Value), -12, 12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateETD.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< ETD > is invalid!!");
-                    dateBox5.Value = null;
+                    dateETD.Value = null;
                     e.Cancel = true;
                     return;
                 }
@@ -850,12 +850,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         //檢查輸入的ETA是否正確
         private void dateBox6_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox6.Value))
+            if (this.EditMode && !MyUtility.Check.Empty(dateETA.Value))
             {
-                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateBox6.Value), -12, 12))
+                if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateETA.Value), -12, 12))
                 {
                     MyUtility.Msg.WarningBox("< ETA > is invalid!!");
-                    dateBox6.Value = null;
+                    dateETA.Value = null;
                     e.Cancel = true;
                     return;
                 }
@@ -1036,25 +1036,25 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("< Brand > can't empty!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
                 MyUtility.Msg.WarningBox("< CustCD > can't empty!");
-                textBox4.Focus();
+                txtCustCD.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
                 MyUtility.Msg.WarningBox("< Destination > can't empty!");
-                txtcountry1.TextBox1.Focus();
+                txtCountryDestination.TextBox1.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("< Shipping Mode > can't empty!");
-                txtshipmode1.Focus();
+                txtShipmodeShippingMode.Focus();
                 return;
             }
 
@@ -1199,20 +1199,20 @@ and fw.ShipModeID = '{2}'
 order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["Forwarder"]), MyUtility.Convert.GetString(CurrentMaintain["ShipModeID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(textBox7.Text));
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(txtTerminalWhse.Text));
 
             DialogResult result1 = item.ShowDialog();
             if (result1 == DialogResult.Cancel) { return; }
             IList<DataRow> dr =  item.GetSelecteds();
-            textBox7.Text = item.GetSelectedString();
+            txtTerminalWhse.Text = item.GetSelectedString();
             CurrentMaintain["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
         }
 
         private void textBox7_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox7.Text))
+            if (MyUtility.Check.Empty(txtTerminalWhse.Text))
             {
-                this.textBox7.Text = "";
+                this.txtTerminalWhse.Text = "";
                 CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
                 return;
             }
@@ -1220,20 +1220,20 @@ order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), M
             string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fwd.whseno = '{0}'
-order by fwd.WhseNo", this.textBox7.Text.ToString().Trim());
+order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (result)
             {
                 if (dt.Rows.Count>=1)
                 {
-                    this.textBox7.Text = dt.Rows[0]["WhseNo"].ToString();
+                    this.txtTerminalWhse.Text = dt.Rows[0]["WhseNo"].ToString();
                     CurrentMaintain["ForwarderWhse_DetailUKey"] = dt.Rows[0]["Ukey"].ToString();
                 }
                 else
                 {
                     MyUtility.Msg.WarningBox("Whse# is not found!!");
                     CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
-                    this.textBox7.Text = "";
+                    this.txtTerminalWhse.Text = "";
                     e.Cancel = true;                    
                 }
             }           

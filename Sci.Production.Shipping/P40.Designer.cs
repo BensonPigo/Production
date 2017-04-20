@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelContractNo = new Sci.Win.UI.Label();
+            this.labelBLNO = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.txtContractNo = new Sci.Win.UI.TextBox();
+            this.txtBLNO = new Sci.Win.UI.TextBox();
+            this.labelShipby = new Sci.Win.UI.Label();
+            this.labelCountryfrom = new Sci.Win.UI.Label();
+            this.labelCustomdeclareno = new Sci.Win.UI.Label();
+            this.txtshipmodeShipby = new Sci.Production.Class.txtshipmode();
+            this.txtcountryCountryfrom = new Sci.Production.Class.txtcountry();
+            this.txtCustomdeclareno = new Sci.Win.UI.TextBox();
+            this.checkCalculatebysystem = new Sci.Win.UI.CheckBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.labelWKNo = new Sci.Win.UI.Label();
+            this.txtWKNo = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,44 +62,44 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.textBox4);
-            this.masterpanel.Controls.Add(this.label9);
+            this.masterpanel.Controls.Add(this.txtWKNo);
+            this.masterpanel.Controls.Add(this.labelWKNo);
             this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.textBox3);
-            this.masterpanel.Controls.Add(this.txtcountry1);
-            this.masterpanel.Controls.Add(this.txtshipmode1);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.checkCalculatebysystem);
+            this.masterpanel.Controls.Add(this.txtCustomdeclareno);
+            this.masterpanel.Controls.Add(this.txtcountryCountryfrom);
+            this.masterpanel.Controls.Add(this.txtshipmodeShipby);
+            this.masterpanel.Controls.Add(this.labelCustomdeclareno);
+            this.masterpanel.Controls.Add(this.labelCountryfrom);
+            this.masterpanel.Controls.Add(this.labelShipby);
+            this.masterpanel.Controls.Add(this.txtBLNO);
+            this.masterpanel.Controls.Add(this.txtContractNo);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelBLNO);
+            this.masterpanel.Controls.Add(this.labelContractNo);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateBox1);
             this.masterpanel.Size = new System.Drawing.Size(914, 148);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBLNO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtBLNO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShipby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCountryfrom, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCustomdeclareno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtshipmodeShipby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtcountryCountryfrom, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCustomdeclareno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkCalculatebysystem, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelWKNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtWKNo, 0);
             // 
             // detailpanel
             // 
@@ -146,7 +146,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(765, 451);
+            this.browse.Size = new System.Drawing.Size(914, 451);
             // 
             // tabs
             // 
@@ -165,51 +165,51 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(9, 7);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(88, 23);
+            this.labelID.TabIndex = 6;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 23);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(9, 37);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(88, 23);
+            this.labelDate.TabIndex = 7;
+            this.labelDate.Text = "Date";
             // 
-            // label3
+            // labelContractNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(88, 23);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Contract No.";
+            this.labelContractNo.Lines = 0;
+            this.labelContractNo.Location = new System.Drawing.Point(9, 67);
+            this.labelContractNo.Name = "labelContractNo";
+            this.labelContractNo.Size = new System.Drawing.Size(88, 23);
+            this.labelContractNo.TabIndex = 8;
+            this.labelContractNo.Text = "Contract No.";
             // 
-            // label4
+            // labelBLNO
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 97);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 23);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "B/L No.";
+            this.labelBLNO.Lines = 0;
+            this.labelBLNO.Location = new System.Drawing.Point(9, 97);
+            this.labelBLNO.Name = "labelBLNO";
+            this.labelBLNO.Size = new System.Drawing.Size(88, 23);
+            this.labelBLNO.TabIndex = 9;
+            this.labelBLNO.Text = "B/L No.";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(101, 7);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(101, 7);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(130, 23);
+            this.displayID.TabIndex = 11;
             // 
             // dateBox1
             // 
@@ -219,105 +219,105 @@
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 0;
             // 
-            // textBox1
+            // txtContractNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(101, 67);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(101, 67);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(150, 23);
+            this.txtContractNo.TabIndex = 1;
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtBLNO
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BLNo", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(101, 97);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 5;
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
-            this.textBox2.Validated += new System.EventHandler(this.textBox2_Validated);
+            this.txtBLNO.BackColor = System.Drawing.Color.White;
+            this.txtBLNO.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BLNo", true));
+            this.txtBLNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBLNO.Location = new System.Drawing.Point(101, 97);
+            this.txtBLNO.Name = "txtBLNO";
+            this.txtBLNO.Size = new System.Drawing.Size(200, 23);
+            this.txtBLNO.TabIndex = 5;
+            this.txtBLNO.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtBLNO.Validated += new System.EventHandler(this.textBox2_Validated);
             // 
-            // label5
+            // labelShipby
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(356, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(124, 23);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "Ship by";
+            this.labelShipby.Lines = 0;
+            this.labelShipby.Location = new System.Drawing.Point(356, 7);
+            this.labelShipby.Name = "labelShipby";
+            this.labelShipby.Size = new System.Drawing.Size(124, 23);
+            this.labelShipby.TabIndex = 12;
+            this.labelShipby.Text = "Ship by";
             // 
-            // label6
+            // labelCountryfrom
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(356, 37);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(124, 23);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Country from";
+            this.labelCountryfrom.Lines = 0;
+            this.labelCountryfrom.Location = new System.Drawing.Point(356, 37);
+            this.labelCountryfrom.Name = "labelCountryfrom";
+            this.labelCountryfrom.Size = new System.Drawing.Size(124, 23);
+            this.labelCountryfrom.TabIndex = 10;
+            this.labelCountryfrom.Text = "Country from";
             // 
-            // label7
+            // labelCustomdeclareno
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(356, 67);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(124, 23);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Custom declare no.";
+            this.labelCustomdeclareno.Lines = 0;
+            this.labelCustomdeclareno.Location = new System.Drawing.Point(356, 67);
+            this.labelCustomdeclareno.Name = "labelCustomdeclareno";
+            this.labelCustomdeclareno.Size = new System.Drawing.Size(124, 23);
+            this.labelCustomdeclareno.TabIndex = 11;
+            this.labelCustomdeclareno.Text = "Custom declare no.";
             // 
-            // txtshipmode1
+            // txtshipmodeShipby
             // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(484, 6);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 2;
-            this.txtshipmode1.UseFunction = null;
+            this.txtshipmodeShipby.BackColor = System.Drawing.Color.White;
+            this.txtshipmodeShipby.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtshipmodeShipby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmodeShipby.FormattingEnabled = true;
+            this.txtshipmodeShipby.IsSupportUnselect = true;
+            this.txtshipmodeShipby.Location = new System.Drawing.Point(484, 6);
+            this.txtshipmodeShipby.Name = "txtshipmodeShipby";
+            this.txtshipmodeShipby.Size = new System.Drawing.Size(80, 24);
+            this.txtshipmodeShipby.TabIndex = 2;
+            this.txtshipmodeShipby.UseFunction = null;
             // 
-            // txtcountry1
+            // txtcountryCountryfrom
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FromSite", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(484, 37);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 13;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryCountryfrom.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "FromSite", true));
+            this.txtcountryCountryfrom.DisplayBox1Binding = "";
+            this.txtcountryCountryfrom.Location = new System.Drawing.Point(484, 37);
+            this.txtcountryCountryfrom.Name = "txtcountryCountryfrom";
+            this.txtcountryCountryfrom.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryCountryfrom.TabIndex = 13;
+            this.txtcountryCountryfrom.TextBox1Binding = "";
             // 
-            // textBox3
+            // txtCustomdeclareno
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeclareNo", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(484, 67);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(168, 23);
-            this.textBox3.TabIndex = 3;
+            this.txtCustomdeclareno.BackColor = System.Drawing.Color.White;
+            this.txtCustomdeclareno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeclareNo", true));
+            this.txtCustomdeclareno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomdeclareno.Location = new System.Drawing.Point(484, 67);
+            this.txtCustomdeclareno.Name = "txtCustomdeclareno";
+            this.txtCustomdeclareno.Size = new System.Drawing.Size(168, 23);
+            this.txtCustomdeclareno.TabIndex = 3;
             // 
-            // checkBox1
+            // checkCalculatebysystem
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsSystemCalculate", true));
-            this.checkBox1.FalseValue = "0";
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(9, 124);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(152, 21);
-            this.checkBox1.TabIndex = 15;
-            this.checkBox1.Text = "Calculate by system";
-            this.checkBox1.TrueValue = "1";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkCalculatebysystem.AutoSize = true;
+            this.checkCalculatebysystem.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsSystemCalculate", true));
+            this.checkCalculatebysystem.FalseValue = "0";
+            this.checkCalculatebysystem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkCalculatebysystem.IsSupportEditMode = false;
+            this.checkCalculatebysystem.Location = new System.Drawing.Point(9, 124);
+            this.checkCalculatebysystem.Name = "checkCalculatebysystem";
+            this.checkCalculatebysystem.ReadOnly = true;
+            this.checkCalculatebysystem.Size = new System.Drawing.Size(152, 21);
+            this.checkCalculatebysystem.TabIndex = 15;
+            this.checkCalculatebysystem.Text = "Calculate by system";
+            this.checkCalculatebysystem.TrueValue = "1";
+            this.checkCalculatebysystem.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -335,26 +335,26 @@
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Magenta;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Magenta;
             // 
-            // label9
+            // labelWKNo
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(356, 94);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(124, 23);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "WK No.";
+            this.labelWKNo.Lines = 0;
+            this.labelWKNo.Location = new System.Drawing.Point(356, 94);
+            this.labelWKNo.Name = "labelWKNo";
+            this.labelWKNo.Size = new System.Drawing.Size(124, 23);
+            this.labelWKNo.TabIndex = 17;
+            this.labelWKNo.Text = "WK No.";
             // 
-            // textBox4
+            // txtWKNo
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WKNo", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(484, 94);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(130, 23);
-            this.textBox4.TabIndex = 4;
-            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
-            this.textBox4.Validated += new System.EventHandler(this.textBox4_Validated);
+            this.txtWKNo.BackColor = System.Drawing.Color.White;
+            this.txtWKNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WKNo", true));
+            this.txtWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKNo.Location = new System.Drawing.Point(484, 94);
+            this.txtWKNo.Name = "txtWKNo";
+            this.txtWKNo.Size = new System.Drawing.Size(130, 23);
+            this.txtWKNo.TabIndex = 4;
+            this.txtWKNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.txtWKNo.Validated += new System.EventHandler(this.textBox4_Validated);
             // 
             // P40
             // 
@@ -397,22 +397,22 @@
         #endregion
 
         private Win.UI.Label label8;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox3;
-        private Class.txtcountry txtcountry1;
-        private Class.txtshipmode txtshipmode1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.CheckBox checkCalculatebysystem;
+        private Win.UI.TextBox txtCustomdeclareno;
+        private Class.txtcountry txtcountryCountryfrom;
+        private Class.txtshipmode txtshipmodeShipby;
+        private Win.UI.Label labelCustomdeclareno;
+        private Win.UI.Label labelCountryfrom;
+        private Win.UI.Label labelShipby;
+        private Win.UI.TextBox txtBLNO;
+        private Win.UI.TextBox txtContractNo;
         private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.Label label9;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelBLNO;
+        private Win.UI.Label labelContractNo;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelID;
+        private Win.UI.TextBox txtWKNo;
+        private Win.UI.Label labelWKNo;
     }
 }

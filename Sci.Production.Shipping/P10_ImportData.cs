@@ -22,7 +22,7 @@ namespace Sci.Production.Shipping
         public P10_ImportData(DataRow MasterData, DataTable DetailData, DataTable Detail2Data)
         {
             InitializeComponent();
-            txtshipmode1.SelectedValue = "";
+            txtshipmode.SelectedValue = "";
             masterData = MasterData;
             detailData = DetailData;
             detail2Data = Detail2Data;
@@ -75,44 +75,44 @@ namespace Sci.Production.Shipping
 	  and pd.OrderID = oq.Id
 	  and pd.OrderShipmodeSeq = oq.Seq
 	  and g.Forwarder = ls.ID");
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtGBNoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and g.id >= '{0}'", textBox1.Text));
+                sqlCmd.Append(string.Format(" and g.id >= '{0}'", txtGBNoStart.Text));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtGBNoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and g.id <= '{0}'", textBox2.Text));
+                sqlCmd.Append(string.Format(" and g.id <= '{0}'", txtGBNoEnd.Text));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(dateBuyerDelivery.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(dateBuyerDelivery.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateBox1.Value))
+            if (!MyUtility.Check.Empty(dateCutoffDate.Value))
             {
                 // 20161126 撈取DateBox1用法怪怪的
                 //sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("d"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("d")));
 
-                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateBox1.Value).ToString("d"), (Convert.ToDateTime(dateBox1.Value).AddDays(1)).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateCutoffDate.Value).ToString("d"), (Convert.ToDateTime(dateCutoffDate.Value).AddDays(1)).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+            if (!MyUtility.Check.Empty(txtshipmode.SelectedValue))
             {
-                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", MyUtility.Convert.GetString(txtshipmode1.SelectedValue)));
+                sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", MyUtility.Convert.GetString(txtshipmode.SelectedValue)));
             }
-            if (!MyUtility.Check.Empty(txtbrand1.Text))
+            if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", txtbrand1.Text));
+                sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", txtbrand.Text));
             }
-            if (!MyUtility.Check.Empty(txtsubcon1.TextBox1.Text))
+            if (!MyUtility.Check.Empty(txtSubconForwarder.TextBox1.Text))
             {
-                sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", txtsubcon1.TextBox1.Text));
+                sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", txtSubconForwarder.TextBox1.Text));
             }
-            if (!MyUtility.Check.Empty(textBox3.Text))
+            if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and pd.OrderID = '{0}'", textBox3.Text));
+                sqlCmd.Append(string.Format(" and pd.OrderID = '{0}'", txtSPNo.Text));
             }
             #endregion
 
@@ -160,10 +160,10 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
             if (MyUtility.Check.Empty(masterData["Remark"]))
             {
                 masterData["Remark"] = string.Format(@"GB#:{0}~{1}, Buyer Delivery:{2}~{3}, Cut-off Date:{4}, Ship Mode:{5}, Brand:{6}, Forwarder:{7}, SP#:{8}",
-                    MyUtility.Check.Empty(textBox1.Text) ? " " : textBox1.Text, MyUtility.Check.Empty(textBox2.Text) ? " " : textBox2.Text,
-                    MyUtility.Check.Empty(dateRange1.Value1) ? " " : Convert.ToDateTime(dateRange1.Value1).ToString("d"), MyUtility.Check.Empty(dateRange1.Value2) ? " " : Convert.ToDateTime(dateRange1.Value2).ToString("d"),
-                    MyUtility.Check.Empty(dateBox1.Value) ? " " : Convert.ToDateTime(dateBox1.Value).ToString("d"), MyUtility.Check.Empty(txtshipmode1.SelectedValue) ? " " : txtshipmode1.SelectedValue.ToString(),
-                    MyUtility.Check.Empty(txtbrand1.Text) ? " " : txtbrand1.Text, MyUtility.Check.Empty(txtsubcon1.TextBox1.Text) ? " " : txtsubcon1.TextBox1.Text, MyUtility.Check.Empty(textBox3.Text) ? " " : textBox3.Text);
+                    MyUtility.Check.Empty(txtGBNoStart.Text) ? " " : txtGBNoStart.Text, MyUtility.Check.Empty(txtGBNoEnd.Text) ? " " : txtGBNoEnd.Text,
+                    MyUtility.Check.Empty(dateBuyerDelivery.Value1) ? " " : Convert.ToDateTime(dateBuyerDelivery.Value1).ToString("d"), MyUtility.Check.Empty(dateBuyerDelivery.Value2) ? " " : Convert.ToDateTime(dateBuyerDelivery.Value2).ToString("d"),
+                    MyUtility.Check.Empty(dateCutoffDate.Value) ? " " : Convert.ToDateTime(dateCutoffDate.Value).ToString("d"), MyUtility.Check.Empty(txtshipmode.SelectedValue) ? " " : txtshipmode.SelectedValue.ToString(),
+                    MyUtility.Check.Empty(txtbrand.Text) ? " " : txtbrand.Text, MyUtility.Check.Empty(txtSubconForwarder.TextBox1.Text) ? " " : txtSubconForwarder.TextBox1.Text, MyUtility.Check.Empty(txtSPNo.Text) ? " " : txtSPNo.Text);
             }
 
             StringBuilder allID = new StringBuilder();

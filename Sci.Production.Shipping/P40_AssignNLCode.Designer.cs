@@ -28,57 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnSaveNLCode = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.panel6 = new Sci.Win.UI.Panel();
-            this.panel8 = new Sci.Win.UI.Panel();
             this.panel7 = new Sci.Win.UI.Panel();
-            this.panel9 = new Sci.Win.UI.Panel();
-            this.panel10 = new Sci.Win.UI.Panel();
-            this.panel11 = new Sci.Win.UI.Panel();
             this.panel12 = new Sci.Win.UI.Panel();
-            this.panel13 = new Sci.Win.UI.Panel();
+            this.gridBelowDataisNotInpurchaseorder = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel11 = new Sci.Win.UI.Panel();
+            this.labelBelowDataisNotInpurchaseorder = new Sci.Win.UI.Label();
+            this.panel8 = new Sci.Win.UI.Panel();
             this.panel14 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
-            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.label2 = new Sci.Win.UI.Label();
-            this.grid2 = new Sci.Win.UI.Grid();
-            this.label3 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.grid3 = new Sci.Win.UI.Grid();
+            this.gridBelowDataisNoTransferformula = new Sci.Win.UI.Grid();
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel13 = new Sci.Win.UI.Panel();
+            this.labelBelowDataisNoTransferformula = new Sci.Win.UI.Label();
+            this.panel6 = new Sci.Win.UI.Panel();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.gridBelowDataIsnoNLCode = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel9 = new Sci.Win.UI.Panel();
+            this.labelBelowDataIsnoNLCode = new Sci.Win.UI.Label();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            this.panel6.SuspendLayout();
-            this.panel8.SuspendLayout();
             this.panel7.SuspendLayout();
-            this.panel9.SuspendLayout();
-            this.panel10.SuspendLayout();
-            this.panel11.SuspendLayout();
             this.panel12.SuspendLayout();
-            this.panel13.SuspendLayout();
-            this.panel14.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataisNotInpurchaseorder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.panel11.SuspendLayout();
+            this.panel8.SuspendLayout();
+            this.panel14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataisNoTransferformula)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid3)).BeginInit();
+            this.panel13.SuspendLayout();
+            this.panel6.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataIsnoNLCode)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -107,13 +102,33 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button2);
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnCancel);
+            this.panel4.Controls.Add(this.btnSaveNLCode);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 405);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(822, 38);
             this.panel4.TabIndex = 3;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(739, 3);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 1;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveNLCode
+            // 
+            this.btnSaveNLCode.Location = new System.Drawing.Point(517, 3);
+            this.btnSaveNLCode.Name = "btnSaveNLCode";
+            this.btnSaveNLCode.Size = new System.Drawing.Size(216, 30);
+            this.btnSaveNLCode.TabIndex = 0;
+            this.btnSaveNLCode.Text = "Save NL Code && Re-Calculate";
+            this.btnSaveNLCode.UseVisualStyleBackColor = true;
+            this.btnSaveNLCode.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel5
             // 
@@ -126,15 +141,79 @@
             this.panel5.Size = new System.Drawing.Size(822, 400);
             this.panel5.TabIndex = 4;
             // 
-            // panel6
+            // panel7
             // 
-            this.panel6.Controls.Add(this.panel10);
-            this.panel6.Controls.Add(this.panel9);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(0, 0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(822, 153);
-            this.panel6.TabIndex = 0;
+            this.panel7.Controls.Add(this.panel12);
+            this.panel7.Controls.Add(this.panel11);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel7.Location = new System.Drawing.Point(0, 153);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(822, 145);
+            this.panel7.TabIndex = 3;
+            // 
+            // panel12
+            // 
+            this.panel12.Controls.Add(this.gridBelowDataisNotInpurchaseorder);
+            this.panel12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel12.Location = new System.Drawing.Point(0, 32);
+            this.panel12.Name = "panel12";
+            this.panel12.Size = new System.Drawing.Size(822, 113);
+            this.panel12.TabIndex = 1;
+            // 
+            // gridBelowDataisNotInpurchaseorder
+            // 
+            this.gridBelowDataisNotInpurchaseorder.AllowUserToAddRows = false;
+            this.gridBelowDataisNotInpurchaseorder.AllowUserToDeleteRows = false;
+            this.gridBelowDataisNotInpurchaseorder.AllowUserToResizeRows = false;
+            this.gridBelowDataisNotInpurchaseorder.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBelowDataisNotInpurchaseorder.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBelowDataisNotInpurchaseorder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBelowDataisNotInpurchaseorder.DataSource = this.listControlBindingSource2;
+            this.gridBelowDataisNotInpurchaseorder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBelowDataisNotInpurchaseorder.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBelowDataisNotInpurchaseorder.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBelowDataisNotInpurchaseorder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBelowDataisNotInpurchaseorder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBelowDataisNotInpurchaseorder.Location = new System.Drawing.Point(0, 0);
+            this.gridBelowDataisNotInpurchaseorder.Name = "gridBelowDataisNotInpurchaseorder";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBelowDataisNotInpurchaseorder.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridBelowDataisNotInpurchaseorder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBelowDataisNotInpurchaseorder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBelowDataisNotInpurchaseorder.RowTemplate.Height = 24;
+            this.gridBelowDataisNotInpurchaseorder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBelowDataisNotInpurchaseorder.Size = new System.Drawing.Size(822, 113);
+            this.gridBelowDataisNotInpurchaseorder.TabIndex = 0;
+            this.gridBelowDataisNotInpurchaseorder.TabStop = false;
+            // 
+            // panel11
+            // 
+            this.panel11.Controls.Add(this.labelBelowDataisNotInpurchaseorder);
+            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel11.Location = new System.Drawing.Point(0, 0);
+            this.panel11.Name = "panel11";
+            this.panel11.Size = new System.Drawing.Size(822, 32);
+            this.panel11.TabIndex = 0;
+            // 
+            // labelBelowDataisNotInpurchaseorder
+            // 
+            this.labelBelowDataisNotInpurchaseorder.BackColor = System.Drawing.Color.Transparent;
+            this.labelBelowDataisNotInpurchaseorder.Lines = 0;
+            this.labelBelowDataisNotInpurchaseorder.Location = new System.Drawing.Point(2, 8);
+            this.labelBelowDataisNotInpurchaseorder.Name = "labelBelowDataisNotInpurchaseorder";
+            this.labelBelowDataisNotInpurchaseorder.Size = new System.Drawing.Size(222, 23);
+            this.labelBelowDataisNotInpurchaseorder.TabIndex = 0;
+            this.labelBelowDataisNotInpurchaseorder.Text = "Below data is not in purchase order:";
+            this.labelBelowDataisNotInpurchaseorder.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataisNotInpurchaseorder.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBelowDataisNotInpurchaseorder.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataisNotInpurchaseorder.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
             // panel8
             // 
@@ -146,278 +225,147 @@
             this.panel8.Size = new System.Drawing.Size(822, 102);
             this.panel8.TabIndex = 2;
             // 
-            // panel7
-            // 
-            this.panel7.Controls.Add(this.panel12);
-            this.panel7.Controls.Add(this.panel11);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(0, 153);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(822, 145);
-            this.panel7.TabIndex = 3;
-            // 
-            // panel9
-            // 
-            this.panel9.Controls.Add(this.label1);
-            this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel9.Location = new System.Drawing.Point(0, 0);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(822, 25);
-            this.panel9.TabIndex = 0;
-            // 
-            // panel10
-            // 
-            this.panel10.Controls.Add(this.grid1);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel10.Location = new System.Drawing.Point(0, 25);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(822, 128);
-            this.panel10.TabIndex = 1;
-            // 
-            // panel11
-            // 
-            this.panel11.Controls.Add(this.label2);
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel11.Location = new System.Drawing.Point(0, 0);
-            this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(822, 32);
-            this.panel11.TabIndex = 0;
-            // 
-            // panel12
-            // 
-            this.panel12.Controls.Add(this.grid2);
-            this.panel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel12.Location = new System.Drawing.Point(0, 32);
-            this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(822, 113);
-            this.panel12.TabIndex = 1;
-            // 
-            // panel13
-            // 
-            this.panel13.Controls.Add(this.label3);
-            this.panel13.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel13.Location = new System.Drawing.Point(0, 0);
-            this.panel13.Name = "panel13";
-            this.panel13.Size = new System.Drawing.Size(822, 30);
-            this.panel13.TabIndex = 0;
-            // 
             // panel14
             // 
-            this.panel14.Controls.Add(this.grid3);
+            this.panel14.Controls.Add(this.gridBelowDataisNoTransferformula);
             this.panel14.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel14.Location = new System.Drawing.Point(0, 30);
             this.panel14.Name = "panel14";
             this.panel14.Size = new System.Drawing.Size(822, 72);
             this.panel14.TabIndex = 1;
             // 
-            // label1
+            // gridBelowDataisNoTransferformula
             // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(2, 1);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(248, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Below data is no NL Code in B40, B41:";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.gridBelowDataisNoTransferformula.AllowUserToAddRows = false;
+            this.gridBelowDataisNoTransferformula.AllowUserToDeleteRows = false;
+            this.gridBelowDataisNoTransferformula.AllowUserToResizeRows = false;
+            this.gridBelowDataisNoTransferformula.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBelowDataisNoTransferformula.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBelowDataisNoTransferformula.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBelowDataisNoTransferformula.DataSource = this.listControlBindingSource3;
+            this.gridBelowDataisNoTransferformula.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBelowDataisNoTransferformula.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBelowDataisNoTransferformula.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBelowDataisNoTransferformula.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBelowDataisNoTransferformula.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBelowDataisNoTransferformula.Location = new System.Drawing.Point(0, 0);
+            this.gridBelowDataisNoTransferformula.Name = "gridBelowDataisNoTransferformula";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBelowDataisNoTransferformula.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridBelowDataisNoTransferformula.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBelowDataisNoTransferformula.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBelowDataisNoTransferformula.RowTemplate.Height = 24;
+            this.gridBelowDataisNoTransferformula.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBelowDataisNoTransferformula.Size = new System.Drawing.Size(822, 72);
+            this.gridBelowDataisNoTransferformula.TabIndex = 0;
+            this.gridBelowDataisNoTransferformula.TabStop = false;
             // 
-            // grid1
+            // panel13
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid1.DefaultCellStyle = dataGridViewCellStyle11;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(822, 128);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.panel13.Controls.Add(this.labelBelowDataisNoTransferformula);
+            this.panel13.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel13.Location = new System.Drawing.Point(0, 0);
+            this.panel13.Name = "panel13";
+            this.panel13.Size = new System.Drawing.Size(822, 30);
+            this.panel13.TabIndex = 0;
             // 
-            // label2
+            // labelBelowDataisNoTransferformula
             // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(2, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(222, 23);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Below data is not in purchase order:";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.labelBelowDataisNoTransferformula.BackColor = System.Drawing.Color.Transparent;
+            this.labelBelowDataisNoTransferformula.Lines = 0;
+            this.labelBelowDataisNoTransferformula.Location = new System.Drawing.Point(2, 6);
+            this.labelBelowDataisNoTransferformula.Name = "labelBelowDataisNoTransferformula";
+            this.labelBelowDataisNoTransferformula.Size = new System.Drawing.Size(404, 23);
+            this.labelBelowDataisNoTransferformula.TabIndex = 0;
+            this.labelBelowDataisNoTransferformula.Text = "Below data is no transfer formula. Please contact with Taipei MIS.";
+            this.labelBelowDataisNoTransferformula.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataisNoTransferformula.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBelowDataisNoTransferformula.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataisNoTransferformula.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // grid2
+            // panel6
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid2.DefaultCellStyle = dataGridViewCellStyle14;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 0);
-            this.grid2.Name = "grid2";
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(822, 113);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.panel6.Controls.Add(this.panel10);
+            this.panel6.Controls.Add(this.panel9);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(822, 153);
+            this.panel6.TabIndex = 0;
             // 
-            // label3
+            // panel10
             // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(2, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(404, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Below data is no transfer formula. Please contact with Taipei MIS.";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            this.label3.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.panel10.Controls.Add(this.gridBelowDataIsnoNLCode);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Location = new System.Drawing.Point(0, 25);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(822, 128);
+            this.panel10.TabIndex = 1;
             // 
-            // button1
+            // gridBelowDataIsnoNLCode
             // 
-            this.button1.Location = new System.Drawing.Point(517, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(216, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Save NL Code && Re-Calculate";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.gridBelowDataIsnoNLCode.AllowUserToAddRows = false;
+            this.gridBelowDataIsnoNLCode.AllowUserToDeleteRows = false;
+            this.gridBelowDataIsnoNLCode.AllowUserToResizeRows = false;
+            this.gridBelowDataIsnoNLCode.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBelowDataIsnoNLCode.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBelowDataIsnoNLCode.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBelowDataIsnoNLCode.DataSource = this.listControlBindingSource1;
+            this.gridBelowDataIsnoNLCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBelowDataIsnoNLCode.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBelowDataIsnoNLCode.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBelowDataIsnoNLCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBelowDataIsnoNLCode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBelowDataIsnoNLCode.Location = new System.Drawing.Point(0, 0);
+            this.gridBelowDataIsnoNLCode.Name = "gridBelowDataIsnoNLCode";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBelowDataIsnoNLCode.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridBelowDataIsnoNLCode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBelowDataIsnoNLCode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBelowDataIsnoNLCode.RowTemplate.Height = 24;
+            this.gridBelowDataIsnoNLCode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBelowDataIsnoNLCode.Size = new System.Drawing.Size(822, 128);
+            this.gridBelowDataIsnoNLCode.TabIndex = 0;
+            this.gridBelowDataIsnoNLCode.TabStop = false;
             // 
-            // button2
+            // panel9
             // 
-            this.button2.Location = new System.Drawing.Point(739, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.panel9.Controls.Add(this.labelBelowDataIsnoNLCode);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel9.Location = new System.Drawing.Point(0, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(822, 25);
+            this.panel9.TabIndex = 0;
             // 
-            // grid3
+            // labelBelowDataIsnoNLCode
             // 
-            this.grid3.AllowUserToAddRows = false;
-            this.grid3.AllowUserToDeleteRows = false;
-            this.grid3.AllowUserToResizeRows = false;
-            this.grid3.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid3.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid3.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle16;
-            this.grid3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid3.DataSource = this.listControlBindingSource3;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid3.DefaultCellStyle = dataGridViewCellStyle17;
-            this.grid3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid3.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid3.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid3.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid3.Location = new System.Drawing.Point(0, 0);
-            this.grid3.Name = "grid3";
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle18.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid3.RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
-            this.grid3.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid3.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid3.RowTemplate.Height = 24;
-            this.grid3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid3.Size = new System.Drawing.Size(822, 72);
-            this.grid3.TabIndex = 0;
-            this.grid3.TabStop = false;
+            this.labelBelowDataIsnoNLCode.BackColor = System.Drawing.Color.Transparent;
+            this.labelBelowDataIsnoNLCode.Lines = 0;
+            this.labelBelowDataIsnoNLCode.Location = new System.Drawing.Point(2, 1);
+            this.labelBelowDataIsnoNLCode.Name = "labelBelowDataIsnoNLCode";
+            this.labelBelowDataIsnoNLCode.Size = new System.Drawing.Size(248, 23);
+            this.labelBelowDataIsnoNLCode.TabIndex = 0;
+            this.labelBelowDataIsnoNLCode.Text = "Below data is no NL Code in B40, B41:";
+            this.labelBelowDataIsnoNLCode.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataIsnoNLCode.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBelowDataIsnoNLCode.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelBelowDataIsnoNLCode.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
             // P40_AssignNLCode
             // 
-            this.CancelButton = this.button2;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(842, 443);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -428,21 +376,21 @@
             this.Text = "Assign NL Code";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            this.panel6.ResumeLayout(false);
-            this.panel8.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
-            this.panel9.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            this.panel11.ResumeLayout(false);
             this.panel12.ResumeLayout(false);
-            this.panel13.ResumeLayout(false);
-            this.panel14.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataisNotInpurchaseorder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.panel11.ResumeLayout(false);
+            this.panel8.ResumeLayout(false);
+            this.panel14.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataisNoTransferformula)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid3)).EndInit();
+            this.panel13.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridBelowDataIsnoNLCode)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.panel9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -457,22 +405,22 @@
         private Win.UI.Panel panel7;
         private Win.UI.Panel panel8;
         private Win.UI.Panel panel6;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnSaveNLCode;
         private Win.UI.Panel panel12;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridBelowDataisNotInpurchaseorder;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Panel panel11;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelBelowDataisNotInpurchaseorder;
         private Win.UI.Panel panel14;
-        private Win.UI.Grid grid3;
+        private Win.UI.Grid gridBelowDataisNoTransferformula;
         private Win.UI.ListControlBindingSource listControlBindingSource3;
         private Win.UI.Panel panel13;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelBelowDataisNoTransferformula;
         private Win.UI.Panel panel10;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridBelowDataIsnoNLCode;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel9;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelBelowDataIsnoNLCode;
     }
 }

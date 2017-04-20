@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelOrderby = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateRange();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.comboOrderby = new Sci.Win.UI.ComboBox();
+            this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
             this.SuspendLayout();
             // 
             // print
@@ -50,107 +50,107 @@
             // 
             this.close.Location = new System.Drawing.Point(382, 84);
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(13, 13);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(61, 23);
+            this.labelDate.TabIndex = 94;
+            this.labelDate.Text = "Date";
             // 
-            // label2
+            // labelM
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 48);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(61, 23);
+            this.labelM.TabIndex = 95;
+            this.labelM.Text = "M";
             // 
-            // label3
+            // labelSupplier
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(13, 84);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(61, 23);
+            this.labelSupplier.TabIndex = 96;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label4
+            // labelOrderby
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Order by";
+            this.labelOrderby.Lines = 0;
+            this.labelOrderby.Location = new System.Drawing.Point(13, 120);
+            this.labelOrderby.Name = "labelOrderby";
+            this.labelOrderby.Size = new System.Drawing.Size(61, 23);
+            this.labelOrderby.TabIndex = 97;
+            this.labelOrderby.Text = "Order by";
             // 
-            // dateRange1
+            // dateDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(78, 13);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 98;
+            this.dateDate.IsRequired = false;
+            this.dateDate.Location = new System.Drawing.Point(78, 13);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDate.TabIndex = 98;
             // 
-            // comboBox1
+            // comboM
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(78, 48);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(68, 24);
-            this.comboBox1.TabIndex = 99;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(78, 48);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(68, 24);
+            this.comboM.TabIndex = 99;
             // 
-            // comboBox2
+            // comboOrderby
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(78, 120);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(103, 24);
-            this.comboBox2.TabIndex = 100;
+            this.comboOrderby.BackColor = System.Drawing.Color.White;
+            this.comboOrderby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOrderby.FormattingEnabled = true;
+            this.comboOrderby.IsSupportUnselect = true;
+            this.comboOrderby.Location = new System.Drawing.Point(78, 120);
+            this.comboOrderby.Name = "comboOrderby";
+            this.comboOrderby.Size = new System.Drawing.Size(103, 24);
+            this.comboOrderby.TabIndex = 100;
             // 
-            // txtsubcon1
+            // txtSubconSupplier
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = true;
-            this.txtsubcon1.Location = new System.Drawing.Point(78, 84);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 101;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtSubconSupplier.DisplayBox1Binding = "";
+            this.txtSubconSupplier.IsIncludeJunk = true;
+            this.txtSubconSupplier.Location = new System.Drawing.Point(78, 84);
+            this.txtSubconSupplier.Name = "txtSubconSupplier";
+            this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtSubconSupplier.TabIndex = 101;
+            this.txtSubconSupplier.TextBox1Binding = "";
             // 
             // R05
             // 
             this.ClientSize = new System.Drawing.Size(474, 185);
-            this.Controls.Add(this.txtsubcon1);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtSubconSupplier);
+            this.Controls.Add(this.comboOrderby);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.dateDate);
+            this.Controls.Add(this.labelOrderby);
+            this.Controls.Add(this.labelSupplier);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelDate);
             this.IsSupportToPrint = false;
             this.Name = "R05";
             this.Text = "R05. Outstanding Payment List - Shipping";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.txtsubcon1, 0);
+            this.Controls.SetChildIndex(this.labelDate, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelSupplier, 0);
+            this.Controls.SetChildIndex(this.labelOrderby, 0);
+            this.Controls.SetChildIndex(this.dateDate, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboOrderby, 0);
+            this.Controls.SetChildIndex(this.txtSubconSupplier, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -158,13 +158,13 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.ComboBox comboBox2;
-        private Class.txtsubcon txtsubcon1;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelOrderby;
+        private Win.UI.DateRange dateDate;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.ComboBox comboOrderby;
+        private Class.txtsubcon txtSubconSupplier;
     }
 }

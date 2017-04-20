@@ -23,12 +23,12 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
-            comboBox1.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "All,Confirmed,UnConfirmed");
-            comboBox2.SelectedIndex = 0;
-            txtshipmode1.SelectedIndex = -1;
-            radioButton1.Checked = true;
+            MyUtility.Tool.SetupCombox(comboShipper, 1, factory);
+            comboShipper.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "All,Confirmed,UnConfirmed");
+            comboStatus.SelectedIndex = 0;
+            txtshipmodeShippingMode.SelectedIndex = -1;
+            radioMainList.Checked = true;
         }
 
         // 驗證輸入條件
@@ -40,17 +40,17 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            shipper = comboBox1.Text;
-            brand = txtbrand1.Text;
-            shipmode = txtshipmode1.Text;
-            shipterm = txtshipterm1.Text;
-            dest = txtcountry1.TextBox1.Text;
-            status = comboBox2.Text;
-            reportType = radioButton1.Checked ? "1" : "2";
-            invdate1 = dateRange1.Value1;
-            invdate2 = dateRange1.Value2;
-            etd1 = dateRange2.Value1;
-            etd2 = dateRange2.Value2;
+            shipper = comboShipper.Text;
+            brand = txtbrand.Text;
+            shipmode = txtshipmodeShippingMode.Text;
+            shipterm = txtshiptermShipmentTerm.Text;
+            dest = txtcountryDestination.TextBox1.Text;
+            status = comboStatus.Text;
+            reportType = radioMainList.Checked ? "1" : "2";
+            invdate1 = dateInvoiceDate.Value1;
+            invdate2 = dateInvoiceDate.Value2;
+            etd1 = dateETD.Value1;
+            etd2 = dateETD.Value2;
            
             return base.ValidateInput();
         }

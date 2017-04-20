@@ -21,7 +21,7 @@ namespace Sci.Production.Shipping
         public P05_ImportFromPackingList(DataRow MasterData, DataTable DetailData)
         {
             InitializeComponent();
-            txtmultifactory1.Text = Sci.Env.User.FactoryList;
+            txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
             this.masterData = MasterData;
             this.detailData = DetailData;
         }
@@ -29,9 +29,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("ID", header: "Packing#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -83,22 +83,22 @@ InvalidData
 as
 (select distinct ID
  from AllPackData
- where 1=1", txtmultifactory1.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+ where 1=1", txtmultifactoryFactory.Text, MyUtility.Convert.GetString(masterData["ShipModeID"]), MyUtility.Convert.GetString(masterData["BrandID"]), MyUtility.Convert.GetString(masterData["Dest"]), MyUtility.Convert.GetString(masterData["CustCDID"])));
+            if (!MyUtility.Check.Empty(dateSDPDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and SDPDate >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and SDPDate >= '{0}' ", Convert.ToDateTime(dateSDPDate.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateSDPDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and SDPDate <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and SDPDate <= '{0}' ", Convert.ToDateTime(dateSDPDate.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange2.Value1))
+            if (!MyUtility.Check.Empty(dateDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(@" and BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateDelivery.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange2.Value2))
+            if (!MyUtility.Check.Empty(dateDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(@" and BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateDelivery.Value2).ToString("d")));
             }
 
             sqlCmd.Append(@"
@@ -135,7 +135,7 @@ from PackData pd");
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             gridData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData))

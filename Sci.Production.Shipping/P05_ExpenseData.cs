@@ -55,9 +55,9 @@ where se.WKNo = '{0}'", id);
             }
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridExpenseData.IsEditingReadOnly = true;
+            this.gridExpenseData.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridExpenseData)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(33))
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3))
                 .Numeric("Amount",header: "Expense",decimal_places: 2)

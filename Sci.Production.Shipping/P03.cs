@@ -47,22 +47,22 @@ where ed.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            textBox1.ReadOnly = false;
-            textBox2.ReadOnly = false;
+            txtLocateSP.ReadOnly = false;
+            txtLocateSP2.ReadOnly = false;
             label21.Visible = MyUtility.Convert.GetString(CurrentMaintain["Junk"]) == "True" ? true : false;
             switch (MyUtility.Convert.GetString(CurrentMaintain["Payer"]))
             {
                 case "S":
-                    displayBox7.Value = "By Sci Taipei Office(Sender)";
+                    displayPayer.Value = "By Sci Taipei Office(Sender)";
                     break;
                 case "M":
-                    displayBox7.Value = "By Mill(Sender)";
+                    displayPayer.Value = "By Mill(Sender)";
                     break;
                 case "F":
-                    displayBox7.Value = "By Factory(Receiver)";
+                    displayPayer.Value = "By Factory(Receiver)";
                     break;
                 default:
-                    displayBox7.Value = "";
+                    displayPayer.Value = "";
                     break;
             }
         }
@@ -140,7 +140,7 @@ where ed.ID = '{0}'", masterID);
         //Find
         private void button3_Click(object sender, EventArgs e)
         {
-            string poID = textBox1.Text + textBox2.Text;
+            string poID = txtLocateSP.Text + txtLocateSP2.Text;
 
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("FindColumn", poID);

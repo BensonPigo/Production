@@ -42,9 +42,9 @@ left join AirPP a WITH (NOLOCK) on a.OrderID = p.OrderID and a.OrderShipmodeSeq 
             }
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAirPrePaidList.IsEditingReadOnly = true;
+            this.gridAirPrePaidList.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAirPrePaidList)
                 .Text("PackID", header: "Packing No.", width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13))
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2))

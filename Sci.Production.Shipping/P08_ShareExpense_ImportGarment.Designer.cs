@@ -28,37 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.comboDatafrom = new Sci.Win.UI.ComboBox();
+            this.labelDatafrom = new Sci.Win.UI.Label();
+            this.datePulloutDate = new Sci.Win.UI.DateRange();
+            this.labelPulloutDate = new Sci.Win.UI.Label();
+            this.txtShipmode = new Sci.Production.Class.txtshipmode();
+            this.labelShipMode = new Sci.Win.UI.Label();
+            this.txtCountryDestination = new Sci.Production.Class.txtcountry();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtTruck = new Sci.Win.UI.TextBox();
+            this.labelTruckNo = new Sci.Win.UI.Label();
+            this.txtSubconForwarder = new Sci.Production.Class.txtsubcon();
+            this.labelForwarder = new Sci.Win.UI.Label();
+            this.dateFCRDate = new Sci.Win.UI.DateRange();
+            this.labelFCRDate = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.label6 = new Sci.Win.UI.Label();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.label7 = new Sci.Win.UI.Label();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label8 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.gridImport = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -79,256 +80,255 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.label8);
-            this.panel3.Controls.Add(this.dateRange2);
-            this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.txtshipmode1);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.txtcountry1);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.txtbrand1);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.txtsubcon1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.comboDatafrom);
+            this.panel3.Controls.Add(this.labelDatafrom);
+            this.panel3.Controls.Add(this.datePulloutDate);
+            this.panel3.Controls.Add(this.labelPulloutDate);
+            this.panel3.Controls.Add(this.txtShipmode);
+            this.panel3.Controls.Add(this.labelShipMode);
+            this.panel3.Controls.Add(this.txtCountryDestination);
+            this.panel3.Controls.Add(this.labelDestination);
+            this.panel3.Controls.Add(this.txtbrand);
+            this.panel3.Controls.Add(this.labelBrand);
+            this.panel3.Controls.Add(this.txtTruck);
+            this.panel3.Controls.Add(this.labelTruckNo);
+            this.panel3.Controls.Add(this.txtSubconForwarder);
+            this.panel3.Controls.Add(this.labelForwarder);
+            this.panel3.Controls.Add(this.dateFCRDate);
+            this.panel3.Controls.Add(this.labelFCRDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(773, 102);
             this.panel3.TabIndex = 2;
             // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(675, 67);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 16;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // comboDatafrom
+            // 
+            this.comboDatafrom.BackColor = System.Drawing.Color.White;
+            this.comboDatafrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDatafrom.FormattingEnabled = true;
+            this.comboDatafrom.IsSupportUnselect = true;
+            this.comboDatafrom.Location = new System.Drawing.Point(604, 38);
+            this.comboDatafrom.Name = "comboDatafrom";
+            this.comboDatafrom.Size = new System.Drawing.Size(151, 24);
+            this.comboDatafrom.TabIndex = 15;
+            // 
+            // labelDatafrom
+            // 
+            this.labelDatafrom.Lines = 0;
+            this.labelDatafrom.Location = new System.Drawing.Point(528, 39);
+            this.labelDatafrom.Name = "labelDatafrom";
+            this.labelDatafrom.Size = new System.Drawing.Size(71, 23);
+            this.labelDatafrom.TabIndex = 14;
+            this.labelDatafrom.Text = "Data from";
+            // 
+            // datePulloutDate
+            // 
+            this.datePulloutDate.IsRequired = false;
+            this.datePulloutDate.Location = new System.Drawing.Point(475, 7);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
+            this.datePulloutDate.TabIndex = 13;
+            // 
+            // labelPulloutDate
+            // 
+            this.labelPulloutDate.Lines = 0;
+            this.labelPulloutDate.Location = new System.Drawing.Point(392, 7);
+            this.labelPulloutDate.Name = "labelPulloutDate";
+            this.labelPulloutDate.Size = new System.Drawing.Size(79, 23);
+            this.labelPulloutDate.TabIndex = 12;
+            this.labelPulloutDate.Text = "Pullout Date";
+            // 
+            // txtShipmode
+            // 
+            this.txtShipmode.BackColor = System.Drawing.Color.White;
+            this.txtShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipmode.FormattingEnabled = true;
+            this.txtShipmode.IsSupportUnselect = true;
+            this.txtShipmode.Location = new System.Drawing.Point(416, 38);
+            this.txtShipmode.Name = "txtShipmode";
+            this.txtShipmode.Size = new System.Drawing.Size(80, 24);
+            this.txtShipmode.TabIndex = 11;
+            this.txtShipmode.UseFunction = null;
+            // 
+            // labelShipMode
+            // 
+            this.labelShipMode.Lines = 0;
+            this.labelShipMode.Location = new System.Drawing.Point(337, 39);
+            this.labelShipMode.Name = "labelShipMode";
+            this.labelShipMode.Size = new System.Drawing.Size(75, 23);
+            this.labelShipMode.TabIndex = 10;
+            this.labelShipMode.Text = "Ship Mode";
+            // 
+            // txtCountryDestination
+            // 
+            this.txtCountryDestination.DisplayBox1Binding = "";
+            this.txtCountryDestination.Location = new System.Drawing.Point(83, 39);
+            this.txtCountryDestination.Name = "txtCountryDestination";
+            this.txtCountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtCountryDestination.TabIndex = 9;
+            this.txtCountryDestination.TextBox1Binding = "";
+            // 
+            // labelDestination
+            // 
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(4, 39);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(75, 23);
+            this.labelDestination.TabIndex = 8;
+            this.labelDestination.Text = "Destination";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(51, 71);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 7;
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(4, 72);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(44, 23);
+            this.labelBrand.TabIndex = 6;
+            this.labelBrand.Text = "Brand";
+            // 
+            // txtTruck
+            // 
+            this.txtTruck.BackColor = System.Drawing.Color.White;
+            this.txtTruck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTruck.Location = new System.Drawing.Point(466, 71);
+            this.txtTruck.Name = "txtTruck";
+            this.txtTruck.Size = new System.Drawing.Size(159, 23);
+            this.txtTruck.TabIndex = 5;
+            // 
+            // labelTruckNo
+            // 
+            this.labelTruckNo.Lines = 0;
+            this.labelTruckNo.Location = new System.Drawing.Point(411, 71);
+            this.labelTruckNo.Name = "labelTruckNo";
+            this.labelTruckNo.Size = new System.Drawing.Size(51, 23);
+            this.labelTruckNo.TabIndex = 4;
+            this.labelTruckNo.Text = "Truck#";
+            // 
+            // txtSubconForwarder
+            // 
+            this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsIncludeJunk = false;
+            this.txtSubconForwarder.Location = new System.Drawing.Point(217, 71);
+            this.txtSubconForwarder.Name = "txtSubconForwarder";
+            this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
+            this.txtSubconForwarder.TabIndex = 3;
+            this.txtSubconForwarder.TextBox1Binding = "";
+            // 
+            // labelForwarder
+            // 
+            this.labelForwarder.Lines = 0;
+            this.labelForwarder.Location = new System.Drawing.Point(142, 71);
+            this.labelForwarder.Name = "labelForwarder";
+            this.labelForwarder.Size = new System.Drawing.Size(71, 23);
+            this.labelForwarder.TabIndex = 2;
+            this.labelForwarder.Text = "Forwarder";
+            // 
+            // dateFCRDate
+            // 
+            this.dateFCRDate.IsRequired = false;
+            this.dateFCRDate.Location = new System.Drawing.Point(76, 7);
+            this.dateFCRDate.Name = "dateFCRDate";
+            this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
+            this.dateFCRDate.TabIndex = 1;
+            // 
+            // labelFCRDate
+            // 
+            this.labelFCRDate.Lines = 0;
+            this.labelFCRDate.Location = new System.Drawing.Point(4, 7);
+            this.labelFCRDate.Name = "labelFCRDate";
+            this.labelFCRDate.Size = new System.Drawing.Size(68, 23);
+            this.labelFCRDate.TabIndex = 0;
+            this.labelFCRDate.Text = "FCR Date";
+            // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnImport);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 476);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(773, 39);
             this.panel4.TabIndex = 3;
             // 
+            // btnClose
+            // 
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(684, 4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(589, 4);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 102);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(773, 374);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridImport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(773, 374);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "FCR Date";
-            // 
-            // dateRange1
-            // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(76, 7);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(142, 71);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Forwarder";
-            // 
-            // txtsubcon1
-            // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(217, 71);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 3;
-            this.txtsubcon1.TextBox1Binding = "";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(411, 71);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Truck#";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(466, 71);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(159, 23);
-            this.textBox1.TabIndex = 5;
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(4, 72);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(44, 23);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Brand";
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(51, 71);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 7;
-            // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(4, 39);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Destination";
-            // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(83, 39);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 9;
-            this.txtcountry1.TextBox1Binding = "";
-            // 
-            // label6
-            // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(337, 39);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Ship Mode";
-            // 
-            // txtshipmode1
-            // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(416, 38);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 11;
-            this.txtshipmode1.UseFunction = null;
-            // 
-            // label7
-            // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(392, 7);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(79, 23);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Pullout Date";
-            // 
-            // dateRange2
-            // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(475, 7);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 13;
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(528, 39);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(71, 23);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "Data from";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(604, 38);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(151, 24);
-            this.comboBox1.TabIndex = 15;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(675, 67);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(589, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(684, 4);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Close";
-            this.button3.UseVisualStyleBackColor = true;
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 0);
+            this.gridImport.Name = "gridImport";
+            this.gridImport.RowHeadersVisible = false;
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(773, 374);
+            this.gridImport.TabIndex = 0;
+            this.gridImport.TabStop = false;
             // 
             // P08_ShareExpense_ImportGarment
             // 
-            this.AcceptButton = this.button2;
-            this.CancelButton = this.button3;
+            this.AcceptButton = this.btnImport;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(783, 515);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -342,8 +342,8 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -353,28 +353,28 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Button button1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label8;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label7;
-        private Class.txtshipmode txtshipmode1;
-        private Win.UI.Label label6;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.Label label5;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label3;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.Label label2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnQuery;
+        private Win.UI.ComboBox comboDatafrom;
+        private Win.UI.Label labelDatafrom;
+        private Win.UI.DateRange datePulloutDate;
+        private Win.UI.Label labelPulloutDate;
+        private Class.txtshipmode txtShipmode;
+        private Win.UI.Label labelShipMode;
+        private Class.txtcountry txtCountryDestination;
+        private Win.UI.Label labelDestination;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelBrand;
+        private Win.UI.TextBox txtTruck;
+        private Win.UI.Label labelTruckNo;
+        private Class.txtsubcon txtSubconForwarder;
+        private Win.UI.Label labelForwarder;
+        private Win.UI.DateRange dateFCRDate;
+        private Win.UI.Label labelFCRDate;
         private Win.UI.Panel panel4;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnImport;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

@@ -21,9 +21,9 @@ namespace Sci.Production.Shipping
         {
             InitializeComponent();
             apData = APData;
-            displayBox1.Value = MyUtility.Convert.GetString(apData["CurrencyID"]);
-            numericBox1.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(apData["CurrencyID"]), "Currency", "ID"));
-            numericBox1.Value = MyUtility.Convert.GetDecimal(apData["Amount"]);
+            displayCurrency.Value = MyUtility.Convert.GetString(apData["CurrencyID"]);
+            numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(apData["CurrencyID"]), "Currency", "ID"));
+            numTtlAmt.Value = MyUtility.Convert.GetDecimal(apData["Amount"]);
             ControlButton();
         }
 
@@ -41,7 +41,7 @@ namespace Sci.Production.Shipping
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]);
                 DataRow dr ;
-                DataRow drGrid = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
 
                 DataTable dts = (DataTable)listControlBindingSource1.DataSource;
                 if (drGrid["BLNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
@@ -175,7 +175,7 @@ select * from Expt", e.FormattedValue.ToString());
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", apData["ID"]);
                 DataRow dr;
-                DataRow drGrid = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
 
                 DataTable dts = (DataTable)listControlBindingSource1.DataSource;
                 if (drGrid["WKNO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper()) return;
@@ -273,18 +273,18 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBLNo.IsEditingReadOnly = false;
+            gridBLNo.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBLNo)
                 .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13), settings: BLNo)
                 .Text(MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18),settings: WKNO)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("Amount", header: "Total Amount", decimal_places: 2,iseditingreadonly:true);
-            grid1.SelectionChanged += (s, e) =>
+            gridBLNo.SelectionChanged += (s, e) =>
             {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(grid1.GetSelectedRowIndex());
+                DataRow dr = this.gridBLNo.GetDataRow<DataRow>(gridBLNo.GetSelectedRowIndex());
                 if (EditMode == true)
                 {
                     if (dr != null)
@@ -303,9 +303,9 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                 }
             };
 
-            this.grid2.IsEditingReadOnly = true;
-            grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridAccountID.IsEditingReadOnly = true;
+            gridAccountID.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridAccountID)
                 .Text("AccountID", header: "Account No", width: Widths.AnsiChars(8))
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
@@ -318,9 +318,9 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             DataRow queryData;
             string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}') a", MyUtility.Convert.GetString(apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
-            numericBox2.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
-            numericBox3.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
-            numericBox4.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
+            numTtlGW.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
+            numTtlCBM.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
+            numTtlNumberofDeliverySheets.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
 
             sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
 case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number of Deliver Sheets' end as ShareRule 
@@ -350,13 +350,13 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         {
             if (EditMode == true)
             {
-                button5.Text = "Save";
-                button6.Text = "Undo";
+                btnSave.Text = "Save";
+                btnUndo.Text = "Undo";
             }
             else
             {
-                button5.Text = "Edit";
-                button6.Text = "Close";
+                btnSave.Text = "Edit";
+                btnUndo.Text = "Close";
                 return;
             }
             //DataRow dr;
@@ -381,20 +381,20 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
             //}
             if (MyUtility.Check.Empty(SEGroupData))
             {
-                this.button2.Enabled = false;
-                this.button3.Enabled = false;
+                this.btnDelete.Enabled = false;
+                this.btnDeleteAll.Enabled = false;
                 return;
             }
             else
             {
                 if (SEGroupData.Rows.Count==0)
                 {
-                    this.button2.Enabled = false;
-                    this.button3.Enabled = false;
+                    this.btnDelete.Enabled = false;
+                    this.btnDeleteAll.Enabled = false;
                     return;
                 }
-                this.button2.Enabled = true;
-                this.button3.Enabled = true;
+                this.btnDelete.Enabled = true;
+                this.btnDeleteAll.Enabled = true;
             }
             
         }
@@ -450,11 +450,11 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
 
             var deletedata = SEGroupData;
             if (null == deletedata) return;
-            foreach (DataGridViewRow row in this.grid1.SelectedRows)
+            foreach (DataGridViewRow row in this.gridBLNo.SelectedRows)
             {
                 try
                 {
-                    this.grid1.Rows.Remove(row);
+                    this.gridBLNo.Rows.Remove(row);
                 }
                 catch (Exception)
                 {
@@ -468,7 +468,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         //Edit / Save
         private void button5_Click(object sender, EventArgs e)
         {
-            if (button5.Text == "Edit")
+            if (btnSave.Text == "Edit")
             {
                 this.EditMode = true;
             }
@@ -651,7 +651,7 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
         //Close / Undo
         private void button6_Click(object sender, EventArgs e)
         {
-            if (button6.Text == "Close")
+            if (btnUndo.Text == "Close")
             {
                 Close();
             }

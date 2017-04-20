@@ -28,57 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelPulloutDate = new Sci.Win.UI.Label();
+            this.datePulloutDate = new Sci.Win.UI.DateBox();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // labelPulloutDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Pull-out Date";
+            this.labelPulloutDate.Lines = 0;
+            this.labelPulloutDate.Location = new System.Drawing.Point(16, 26);
+            this.labelPulloutDate.Name = "labelPulloutDate";
+            this.labelPulloutDate.Size = new System.Drawing.Size(84, 23);
+            this.labelPulloutDate.TabIndex = 0;
+            this.labelPulloutDate.Text = "Pull-out Date";
             // 
-            // dateBox1
+            // datePulloutDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(104, 26);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.datePulloutDate.Location = new System.Drawing.Point(104, 26);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(130, 23);
+            this.datePulloutDate.TabIndex = 1;
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Location = new System.Drawing.Point(24, 84);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Location = new System.Drawing.Point(24, 84);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 2;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(156, 84);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(156, 84);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // P06_Append
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnOK;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(261, 120);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.datePulloutDate);
+            this.Controls.Add(this.labelPulloutDate);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "P06_Append";
             this.Text = "Append";
@@ -88,9 +88,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelPulloutDate;
+        private Win.UI.DateBox datePulloutDate;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
     }
 }

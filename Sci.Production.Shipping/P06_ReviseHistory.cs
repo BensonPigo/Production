@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             oldqty.CellMouseDoubleClick += (s, e) =>
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (e.Button == System.Windows.Forms.MouseButtons.Left)
                     {
                         Sci.Production.Shipping.P06_ReviseHistory_Detail callNextForm = new Sci.Production.Shipping.P06_ReviseHistory_Detail(dr);
@@ -37,7 +37,7 @@ namespace Sci.Production.Shipping
 
             newqty.CellMouseDoubleClick += (s, e) =>
             {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.gridReviseHistory.GetDataRow<DataRow>(e.RowIndex);
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     Sci.Production.Shipping.P06_ReviseHistory_Detail callNextForm = new Sci.Production.Shipping.P06_ReviseHistory_Detail(dr);
@@ -45,9 +45,9 @@ namespace Sci.Production.Shipping
                 }
             };
 
-            this.grid1.IsEditingReadOnly = true;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridReviseHistory.IsEditingReadOnly = true;
+            gridReviseHistory.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridReviseHistory)
                 .DateTime("AddDate", header: "Edit Date", width: Widths.AnsiChars(20))
                 .Text("ReviseStatus", header: "Revise Status", width: Widths.AnsiChars(7))
                 .Text("OrderID", header: "SP no.", width: Widths.AnsiChars(15))

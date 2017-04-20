@@ -26,8 +26,8 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
 
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid1)
+            this.gridDetail.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridDetail)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(10), iseditingreadonly: true)

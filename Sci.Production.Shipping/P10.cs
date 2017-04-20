@@ -55,19 +55,19 @@ where {0} order by g.ID", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button1.Enabled = !EditMode && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
+            btnUpdatePulloutDate.Enabled = !EditMode && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
         }
 
         protected override void OnDetailUIConvertToMaintain()
         {
             base.OnDetailUIConvertToMaintain();
-            grid1.IsEditingReadOnly = false;
+            gridDetail.IsEditingReadOnly = false;
         }
 
         protected override void OnDetailUIConvertToView()
         {
             base.OnDetailUIConvertToView();
-            grid1.IsEditingReadOnly = true;
+            gridDetail.IsEditingReadOnly = true;
         }
 
         protected override void OnDetailGridSetup()
@@ -89,7 +89,7 @@ where {0} order by g.ID", masterID);
                 .Numeric("ClogCTNQty", header: "Total CTN Q'ty at C-Logs", iseditingreadonly: true);
             detailgrid.SelectionChanged += (s, e) =>
             {
-                grid1.ValidateControl();
+                gridDetail.ValidateControl();
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(detailgrid.GetSelectedRowIndex());
                 if (dr != null)
                 {
@@ -98,9 +98,9 @@ where {0} order by g.ID", masterID);
                 }
             };
 
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridDetail.DataSource = listControlBindingSource1;
+            gridDetail.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
@@ -112,12 +112,12 @@ where {0} order by g.ID", masterID);
                 .Text("InspStatus", header: "Inspection Status", width: Widths.AnsiChars(10))
                 .Date("PulloutDate", header: "Pullout Date").Get(out col_pulloutdate);
             #region 欄位值檢查
-            grid1.CellValidating += (s, e) =>
+            gridDetail.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-                    if (grid1.Columns[e.ColumnIndex].DataPropertyName == col_inspdate.DataPropertyName)
+                    DataRow dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
+                    if (gridDetail.Columns[e.ColumnIndex].DataPropertyName == col_inspdate.DataPropertyName)
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
@@ -135,7 +135,7 @@ where {0} order by g.ID", masterID);
                     }
 
                     //輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
-                    if (grid1.Columns[e.ColumnIndex].DataPropertyName == col_pulloutdate.DataPropertyName)
+                    if (gridDetail.Columns[e.ColumnIndex].DataPropertyName == col_pulloutdate.DataPropertyName)
                     {
 
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
@@ -193,7 +193,7 @@ where {0} order by g.ID", masterID);
             base.ClickEditAfter();
             if (MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "New")
             {
-                button2.Enabled = false;
+                btnImportData.Enabled = false;
             }
         }
 
@@ -222,7 +222,7 @@ where {0} order by g.ID", masterID);
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             updateCmds.Clear();
-            grid1.EndEdit();
+            gridDetail.EndEdit();
             listControlBindingSource1.EndEdit();
 
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
@@ -414,7 +414,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             //檢查此筆記錄的Pullout Data是否還有值，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                grid1.ValidateControl();
+                gridDetail.ValidateControl();
                 foreach (DataRow pldr in plData.Select(string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(CurrentDetailData["ID"]))))
                 {
                     if (!MyUtility.Check.Empty(pldr["PulloutDate"]))

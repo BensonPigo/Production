@@ -21,14 +21,14 @@ namespace Sci.Production.Shipping
         protected override void OnAttached()
         {
             base.OnAttached();
-            displayBox1.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
-            displayBox2.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderShipmodeSeq"]);
-            displayBox3.Value = MyUtility.Convert.GetString(CurrentDetailData["PackingListID"]);
-            displayBox4.Value = MyUtility.Convert.GetString(CurrentDetailData["ShipmodeID"]);
-            displayBox5.Value = MyUtility.Convert.GetString(CurrentDetailData["StatusExp"]);
-            numericBox1.Value = MyUtility.Convert.GetInt(CurrentDetailData["OrderQty"]);
-            numericBox2.Value = MyUtility.Convert.GetInt(CurrentDetailData["ShipModeSeqQty"]);
-            numericBox3.Value = MyUtility.Convert.GetInt(CurrentDetailData["ShipQty"]);
+            displaySPNo.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
+            displaySEQ.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderShipmodeSeq"]);
+            displayPackingNo.Value = MyUtility.Convert.GetString(CurrentDetailData["PackingListID"]);
+            displayShipMode.Value = MyUtility.Convert.GetString(CurrentDetailData["ShipmodeID"]);
+            displayStatus.Value = MyUtility.Convert.GetString(CurrentDetailData["StatusExp"]);
+            numOrderQty.Value = MyUtility.Convert.GetInt(CurrentDetailData["OrderQty"]);
+            numOrderQtybySeq.Value = MyUtility.Convert.GetInt(CurrentDetailData["ShipModeSeqQty"]);
+            numShipQty.Value = MyUtility.Convert.GetInt(CurrentDetailData["ShipQty"]);
 
         }
 

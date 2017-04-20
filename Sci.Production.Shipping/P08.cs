@@ -37,13 +37,13 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
-            txtuser2.TextBox1.IsSupportEditMode = false;
-            txtuser2.TextBox1.ReadOnly = true;
+            txtSserAccountant.TextBox1.IsSupportEditMode = false;
+            txtSserAccountant.TextBox1.ReadOnly = true;
             
             #region 輸入Supplier後自動帶出Currency & Terms，清空表身Grid資料
-            txtsubcon1.TextBox1.Validated += (s, e) =>
+            txtSubconSupplier.TextBox1.Validated += (s, e) =>
                 {
-                    if (EditMode == true && txtsubcon1.TextBox1.ReadOnly == false)
+                    if (EditMode == true && txtSubconSupplier.TextBox1.ReadOnly == false)
                     {
                         if (MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]))
                         {
@@ -95,16 +95,16 @@ namespace Sci.Production.Shipping
             //comboxbs2_1 = new BindingSource(comboBox2_RowSource1, null);
             //comboxbs2_2 = new BindingSource(comboBox2_RowSource2, null);
 
-            comboBox2.ValueMember = "Key";
-            comboBox2.DisplayMember = "Value";
+            comboType2.ValueMember = "Key";
+            comboType2.DisplayMember = "Value";
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("IMPORT","IMPORT");
             comboBox1_RowSource.Add("EXPORT","EXPORT");
             comboxbs1 = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.DataSource = comboxbs1;
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboType.DataSource = comboxbs1;
+            comboType.ValueMember = "Key";
+            comboType.DisplayMember = "Value";
 
             //((Binding)this.comboBox1.DataBindings[0]).BindingComplete += (a, b) =>
             //{
@@ -130,10 +130,10 @@ where sd.ID = '{0}'", masterID);
             {
                 string exact = MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(e.Data["CurrencyID"]), "Currency", "ID");
                 int decimalPlaces = MyUtility.Check.Empty(exact) ? 0 : Convert.ToInt32(exact);
-                numericBox1.DecimalPlaces = decimalPlaces;
-                numericBox3.DecimalPlaces = decimalPlaces;
-                numericBox4.DecimalPlaces = decimalPlaces;
-                numericBox4.Value = MyUtility.Convert.GetDecimal(e.Data["Amount"]) + MyUtility.Convert.GetDecimal(e.Data["VAT"]);
+                numAmount.DecimalPlaces = decimalPlaces;
+                numVAT.DecimalPlaces = decimalPlaces;
+                numTotal.DecimalPlaces = decimalPlaces;
+                numTotal.Value = MyUtility.Convert.GetDecimal(e.Data["Amount"]) + MyUtility.Convert.GetDecimal(e.Data["VAT"]);
             }
             return base.OnRenewDataPost(e);
         }
@@ -147,22 +147,22 @@ where sd.ID = '{0}'", masterID);
             {
                 case "IMPORT":
                     //comboxbs2_1.Position = 0;
-                    comboBox2.DataSource = subType_1;
+                    comboType2.DataSource = subType_1;
                     //CurrentMaintain["SubType"] = temp;
                     break;
                 case "EXPORT":
                     //comboxbs2_2.Position = 0;
-                    comboBox2.DataSource = subType_2;
+                    comboType2.DataSource = subType_2;
                     //CurrentMaintain["SubType"] = temp;
                     break;
             }
             #endregion
 
             bool status = MyUtility.Check.Empty(CurrentMaintain["Accountant"]);
-            button2.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
-            button2.Text = status ? "Acct. Approve" : "Acct. Unapprove";
-            button2.ForeColor = status ? Color.Blue : Color.Black;
-            this.comboBox2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
+            btnAcctApprove.Enabled = status ? !EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
+            btnAcctApprove.Text = status ? "Acct. Approve" : "Acct. Unapprove";
+            btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
+            this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
         }
 
         protected override void OnDetailGridSetup()
@@ -297,7 +297,7 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "IMPORT";
             CurrentMaintain["SubType"] = "MATERIAL";
-            numericBox4.Value = 0;
+            numTotal.Value = 0;
             gridicon.Append.Enabled = true;
             gridicon.Insert.Enabled = true;
             gridicon.Remove.Enabled = true;
@@ -309,15 +309,15 @@ where sd.ID = '{0}'", masterID);
             base.ClickEditAfter();
             if (!MyUtility.Check.Empty(CurrentMaintain["Accountant"]))
             {
-                dateBox1.ReadOnly = true;
-                comboBox1.ReadOnly = true;
-                comboBox2.ReadOnly = true;
-                txtsubcon1.TextBox1.ReadOnly = true;
-                txtpayterm_fty1.TextBox1.ReadOnly = true;
-                textBox2.ReadOnly = true;
-                numericBox2.ReadOnly = true;
-                textBox3.ReadOnly = true;
-                txtuser1.TextBox1.ReadOnly = true;
+                dateDate.ReadOnly = true;
+                comboType.ReadOnly = true;
+                comboType2.ReadOnly = true;
+                txtSubconSupplier.TextBox1.ReadOnly = true;
+                txtpayterm_ftyTerms.TextBox1.ReadOnly = true;
+                txtInvoice.ReadOnly = true;
+                numVATRate.ReadOnly = true;
+                txtBLNo.ReadOnly = true;
+                txtUserHandle.TextBox1.ReadOnly = true;
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
                 gridicon.Remove.Enabled = false;
@@ -330,7 +330,7 @@ where sd.ID = '{0}'", masterID);
                 gridicon.Remove.Enabled = true;
                 DetailGridEditing(true);
             }
-            txtsubcon1.TextBox1.ReadOnly = true;
+            txtSubconSupplier.TextBox1.ReadOnly = true;
         }
 
         //protected override void ClickUndo()
@@ -341,48 +341,48 @@ where sd.ID = '{0}'", masterID);
 
         protected override bool ClickSaveBefore()
         {
-            base.CurrentMaintain["SubType"] = this.comboBox2.SelectedValue;
+            base.CurrentMaintain["SubType"] = this.comboType2.SelectedValue;
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("Type can't empty!!");
-                comboBox1.Focus();
+                comboType.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SubType"]))
             {
                 MyUtility.Msg.WarningBox("SubType can't empty!!");
-                comboBox2.Focus();
+                comboType2.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]))
             {
                 MyUtility.Msg.WarningBox("Supplier can't empty!!");
-                txtsubcon1.TextBox1.Focus();
+                txtSubconSupplier.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PayTermID"]))
             {
                 MyUtility.Msg.WarningBox("Terms can't empty!!");
-                txtpayterm_fty1.TextBox1.Focus();
+                txtpayterm_ftyTerms.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
                 MyUtility.Msg.WarningBox("B/L No. can't empty!!");
-                textBox3.Focus();
+                txtBLNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
                 MyUtility.Msg.WarningBox("Handle can't empty!!");
-                txtuser1.TextBox1.Focus();
+                txtUserHandle.TextBox1.Focus();
                 return false;
             }
             #endregion
@@ -721,31 +721,31 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             if (base.CurrentMaintain == null)
                 return;
 
-            if (EditMode == true && !MyUtility.Check.Empty(comboBox1.OldValue))
+            if (EditMode == true && !MyUtility.Check.Empty(comboType.OldValue))
             {
-                if (!comboBox1.OldValue.EqualString(comboBox1.SelectedValue))
+                if (!comboType.OldValue.EqualString(comboType.SelectedValue))
                 {
                     switch (CurrentMaintain["Type"].ToString())
                     {
                         case "IMPORT":
                             //comboxbs2_1.Position = 0;
-                            comboBox2.DataSource = subType_1;
+                            comboType2.DataSource = subType_1;
                             //CurrentMaintain["SubType"] = temp;
                             break;
                         case "EXPORT":
                             //comboxbs2_2.Position = 0;
-                            comboBox2.DataSource = subType_2;
+                            comboType2.DataSource = subType_2;
                             //CurrentMaintain["SubType"] = temp;
                             break;
                         default:
                             //comboxbs2_1.Position = 0;
-                            comboBox2.DataSource = subType_1;
+                            comboType2.DataSource = subType_1;
                             //CurrentMaintain["SubType"] = temp;
                             break;
                     }
 
                     CurrentMaintain["SubType"] = "";
-                    comboBox2.SelectedIndex = -1;
+                    comboType2.SelectedIndex = -1;
                 }
             }
         }

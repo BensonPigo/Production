@@ -28,28 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.label7 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelInvNo = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.txtInvNo = new Sci.Win.UI.TextBox();
+            this.labelContractNo = new Sci.Win.UI.Label();
+            this.labelPortofExport = new Sci.Win.UI.Label();
+            this.labelCustomdeclareno = new Sci.Win.UI.Label();
+            this.txtContractNo = new Sci.Win.UI.TextBox();
+            this.txtPortofExport = new Sci.Win.UI.TextBox();
+            this.displayPortofExport = new Sci.Win.UI.DisplayBox();
+            this.txtCustomdeclareno = new Sci.Win.UI.TextBox();
+            this.btnReCalculate = new Sci.Win.UI.Button();
+            this.labelQty = new Sci.Win.UI.Label();
+            this.numQty = new Sci.Win.UI.NumericBox();
+            this.numNW = new Sci.Win.UI.NumericBox();
+            this.labelNW = new Sci.Win.UI.Label();
+            this.numGW = new Sci.Win.UI.NumericBox();
+            this.labelGW = new Sci.Win.UI.Label();
+            this.numCMP = new Sci.Win.UI.NumericBox();
+            this.labelCMP = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,36 +66,36 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.textBox4);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.textBox3);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.btnReCalculate);
+            this.masterpanel.Controls.Add(this.txtCustomdeclareno);
+            this.masterpanel.Controls.Add(this.displayPortofExport);
+            this.masterpanel.Controls.Add(this.txtPortofExport);
+            this.masterpanel.Controls.Add(this.txtContractNo);
+            this.masterpanel.Controls.Add(this.labelCustomdeclareno);
+            this.masterpanel.Controls.Add(this.labelPortofExport);
+            this.masterpanel.Controls.Add(this.labelContractNo);
+            this.masterpanel.Controls.Add(this.txtInvNo);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelInvNo);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.labelID);
+            this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(830, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInvNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtInvNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPortofExport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCustomdeclareno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtContractNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPortofExport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPortofExport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCustomdeclareno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnReCalculate, 0);
             // 
             // detailpanel
             // 
@@ -136,24 +136,24 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.numericBox4);
-            this.detailbtm.Controls.Add(this.label10);
-            this.detailbtm.Controls.Add(this.numericBox3);
-            this.detailbtm.Controls.Add(this.label9);
-            this.detailbtm.Controls.Add(this.numericBox2);
-            this.detailbtm.Controls.Add(this.label8);
-            this.detailbtm.Controls.Add(this.numericBox1);
-            this.detailbtm.Controls.Add(this.label7);
+            this.detailbtm.Controls.Add(this.numCMP);
+            this.detailbtm.Controls.Add(this.labelCMP);
+            this.detailbtm.Controls.Add(this.numGW);
+            this.detailbtm.Controls.Add(this.labelGW);
+            this.detailbtm.Controls.Add(this.numNW);
+            this.detailbtm.Controls.Add(this.labelNW);
+            this.detailbtm.Controls.Add(this.numQty);
+            this.detailbtm.Controls.Add(this.labelQty);
             this.detailbtm.Location = new System.Drawing.Point(0, 361);
             this.detailbtm.Size = new System.Drawing.Size(830, 69);
-            this.detailbtm.Controls.SetChildIndex(this.label7, 0);
-            this.detailbtm.Controls.SetChildIndex(this.numericBox1, 0);
-            this.detailbtm.Controls.SetChildIndex(this.label8, 0);
-            this.detailbtm.Controls.SetChildIndex(this.numericBox2, 0);
-            this.detailbtm.Controls.SetChildIndex(this.label9, 0);
-            this.detailbtm.Controls.SetChildIndex(this.numericBox3, 0);
-            this.detailbtm.Controls.SetChildIndex(this.label10, 0);
-            this.detailbtm.Controls.SetChildIndex(this.numericBox4, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelQty, 0);
+            this.detailbtm.Controls.SetChildIndex(this.numQty, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelNW, 0);
+            this.detailbtm.Controls.SetChildIndex(this.numNW, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelGW, 0);
+            this.detailbtm.Controls.SetChildIndex(this.numGW, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelCMP, 0);
+            this.detailbtm.Controls.SetChildIndex(this.numCMP, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -162,7 +162,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(802, 430);
+            this.browse.Size = new System.Drawing.Size(830, 430);
             // 
             // tabs
             // 
@@ -186,266 +186,266 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(425, 44);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(8, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(8, 7);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(50, 23);
+            this.labelID.TabIndex = 4;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(8, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(8, 37);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(50, 23);
+            this.labelDate.TabIndex = 5;
+            this.labelDate.Text = "Date";
             // 
-            // label3
+            // labelInvNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(8, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 23);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Inv No.";
+            this.labelInvNo.Lines = 0;
+            this.labelInvNo.Location = new System.Drawing.Point(8, 67);
+            this.labelInvNo.Name = "labelInvNo";
+            this.labelInvNo.Size = new System.Drawing.Size(50, 23);
+            this.labelInvNo.TabIndex = 6;
+            this.labelInvNo.Text = "Inv No.";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(62, 7);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(62, 7);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(130, 23);
+            this.displayID.TabIndex = 7;
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(62, 37);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
+            this.dateDate.Location = new System.Drawing.Point(62, 37);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // textBox1
+            // txtInvNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(62, 67);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(200, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtInvNo.BackColor = System.Drawing.Color.White;
+            this.txtInvNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
+            this.txtInvNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInvNo.Location = new System.Drawing.Point(62, 67);
+            this.txtInvNo.Name = "txtInvNo";
+            this.txtInvNo.Size = new System.Drawing.Size(200, 23);
+            this.txtInvNo.TabIndex = 1;
+            this.txtInvNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label4
+            // labelContractNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(308, 7);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(125, 23);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Contract No.";
+            this.labelContractNo.Lines = 0;
+            this.labelContractNo.Location = new System.Drawing.Point(308, 7);
+            this.labelContractNo.Name = "labelContractNo";
+            this.labelContractNo.Size = new System.Drawing.Size(125, 23);
+            this.labelContractNo.TabIndex = 9;
+            this.labelContractNo.Text = "Contract No.";
             // 
-            // label5
+            // labelPortofExport
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(308, 37);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(125, 23);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Port of Export";
+            this.labelPortofExport.Lines = 0;
+            this.labelPortofExport.Location = new System.Drawing.Point(308, 37);
+            this.labelPortofExport.Name = "labelPortofExport";
+            this.labelPortofExport.Size = new System.Drawing.Size(125, 23);
+            this.labelPortofExport.TabIndex = 10;
+            this.labelPortofExport.Text = "Port of Export";
             // 
-            // label6
+            // labelCustomdeclareno
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(308, 67);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(125, 23);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Custom declare no.";
+            this.labelCustomdeclareno.Lines = 0;
+            this.labelCustomdeclareno.Location = new System.Drawing.Point(308, 67);
+            this.labelCustomdeclareno.Name = "labelCustomdeclareno";
+            this.labelCustomdeclareno.Size = new System.Drawing.Size(125, 23);
+            this.labelCustomdeclareno.TabIndex = 11;
+            this.labelCustomdeclareno.Text = "Custom declare no.";
             // 
-            // textBox2
+            // txtContractNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(437, 7);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(150, 23);
-            this.textBox2.TabIndex = 2;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNContractID", true));
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(437, 7);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(150, 23);
+            this.txtContractNo.TabIndex = 2;
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox3
+            // txtPortofExport
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNExportPortID", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(437, 37);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 3;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
-            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtPortofExport.BackColor = System.Drawing.Color.White;
+            this.txtPortofExport.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VNExportPortID", true));
+            this.txtPortofExport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPortofExport.Location = new System.Drawing.Point(437, 37);
+            this.txtPortofExport.Name = "txtPortofExport";
+            this.txtPortofExport.Size = new System.Drawing.Size(100, 23);
+            this.txtPortofExport.TabIndex = 3;
+            this.txtPortofExport.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtPortofExport.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            this.txtPortofExport.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
-            // displayBox2
+            // displayPortofExport
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(539, 37);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(200, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displayPortofExport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPortofExport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPortofExport.Location = new System.Drawing.Point(539, 37);
+            this.displayPortofExport.Name = "displayPortofExport";
+            this.displayPortofExport.Size = new System.Drawing.Size(200, 23);
+            this.displayPortofExport.TabIndex = 12;
             // 
-            // textBox4
+            // txtCustomdeclareno
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeclareNo", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(437, 67);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(168, 23);
-            this.textBox4.TabIndex = 4;
+            this.txtCustomdeclareno.BackColor = System.Drawing.Color.White;
+            this.txtCustomdeclareno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DeclareNo", true));
+            this.txtCustomdeclareno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomdeclareno.Location = new System.Drawing.Point(437, 67);
+            this.txtCustomdeclareno.Name = "txtCustomdeclareno";
+            this.txtCustomdeclareno.Size = new System.Drawing.Size(168, 23);
+            this.txtCustomdeclareno.TabIndex = 4;
             // 
-            // button1
+            // btnReCalculate
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(687, 64);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(109, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Re-Calculate";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnReCalculate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnReCalculate.Location = new System.Drawing.Point(687, 64);
+            this.btnReCalculate.Name = "btnReCalculate";
+            this.btnReCalculate.Size = new System.Drawing.Size(109, 30);
+            this.btnReCalculate.TabIndex = 8;
+            this.btnReCalculate.Text = "Re-Calculate";
+            this.btnReCalculate.UseVisualStyleBackColor = true;
+            this.btnReCalculate.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label7
+            // labelQty
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(8, 7);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(30, 23);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "Q\'ty";
+            this.labelQty.Lines = 0;
+            this.labelQty.Location = new System.Drawing.Point(8, 7);
+            this.labelQty.Name = "labelQty";
+            this.labelQty.Size = new System.Drawing.Size(30, 23);
+            this.labelQty.TabIndex = 3;
+            this.labelQty.Text = "Q\'ty";
             // 
-            // numericBox1
+            // numQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(41, 7);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numQty.IsSupportEditMode = false;
+            this.numQty.Location = new System.Drawing.Point(41, 7);
+            this.numQty.Name = "numQty";
+            this.numQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(80, 23);
-            this.numericBox1.TabIndex = 4;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DecimalPlaces = 3;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(203, 7);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(80, 23);
-            this.numericBox2.TabIndex = 6;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numQty.ReadOnly = true;
+            this.numQty.Size = new System.Drawing.Size(80, 23);
+            this.numQty.TabIndex = 4;
+            this.numQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label8
+            // numNW
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(170, 7);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(30, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "NW";
-            // 
-            // numericBox3
-            // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DecimalPlaces = 3;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(374, 7);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numNW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNW.DecimalPlaces = 3;
+            this.numNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNW.IsSupportEditMode = false;
+            this.numNW.Location = new System.Drawing.Point(203, 7);
+            this.numNW.Name = "numNW";
+            this.numNW.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(80, 23);
-            this.numericBox3.TabIndex = 8;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numNW.ReadOnly = true;
+            this.numNW.Size = new System.Drawing.Size(80, 23);
+            this.numNW.TabIndex = 6;
+            this.numNW.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label9
+            // labelNW
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(341, 7);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(30, 23);
-            this.label9.TabIndex = 7;
-            this.label9.Text = "GW";
+            this.labelNW.Lines = 0;
+            this.labelNW.Location = new System.Drawing.Point(170, 7);
+            this.labelNW.Name = "labelNW";
+            this.labelNW.Size = new System.Drawing.Size(30, 23);
+            this.labelNW.TabIndex = 5;
+            this.labelNW.Text = "NW";
             // 
-            // numericBox4
+            // numGW
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 2;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(545, 7);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numGW.DecimalPlaces = 3;
+            this.numGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numGW.IsSupportEditMode = false;
+            this.numGW.Location = new System.Drawing.Point(374, 7);
+            this.numGW.Name = "numGW";
+            this.numGW.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(80, 23);
-            this.numericBox4.TabIndex = 10;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numGW.ReadOnly = true;
+            this.numGW.Size = new System.Drawing.Size(80, 23);
+            this.numGW.TabIndex = 8;
+            this.numGW.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label10
+            // labelGW
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(507, 7);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(35, 23);
-            this.label10.TabIndex = 9;
-            this.label10.Text = "CMP";
+            this.labelGW.Lines = 0;
+            this.labelGW.Location = new System.Drawing.Point(341, 7);
+            this.labelGW.Name = "labelGW";
+            this.labelGW.Size = new System.Drawing.Size(30, 23);
+            this.labelGW.TabIndex = 7;
+            this.labelGW.Text = "GW";
+            // 
+            // numCMP
+            // 
+            this.numCMP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCMP.DecimalPlaces = 2;
+            this.numCMP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCMP.IsSupportEditMode = false;
+            this.numCMP.Location = new System.Drawing.Point(545, 7);
+            this.numCMP.Name = "numCMP";
+            this.numCMP.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCMP.ReadOnly = true;
+            this.numCMP.Size = new System.Drawing.Size(80, 23);
+            this.numCMP.TabIndex = 10;
+            this.numCMP.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labelCMP
+            // 
+            this.labelCMP.Lines = 0;
+            this.labelCMP.Location = new System.Drawing.Point(507, 7);
+            this.labelCMP.Name = "labelCMP";
+            this.labelCMP.Size = new System.Drawing.Size(35, 23);
+            this.labelCMP.TabIndex = 9;
+            this.labelCMP.Text = "CMP";
             // 
             // P41
             // 
@@ -490,27 +490,27 @@
 
         #endregion
 
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Button button1;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.Label label10;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.Label label9;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label8;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label7;
+        private Win.UI.Label labelCustomdeclareno;
+        private Win.UI.Label labelPortofExport;
+        private Win.UI.Label labelContractNo;
+        private Win.UI.TextBox txtInvNo;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelInvNo;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelID;
+        private Win.UI.TextBox txtCustomdeclareno;
+        private Win.UI.DisplayBox displayPortofExport;
+        private Win.UI.TextBox txtPortofExport;
+        private Win.UI.TextBox txtContractNo;
+        private Win.UI.Button btnReCalculate;
+        private Win.UI.NumericBox numCMP;
+        private Win.UI.Label labelCMP;
+        private Win.UI.NumericBox numGW;
+        private Win.UI.Label labelGW;
+        private Win.UI.NumericBox numNW;
+        private Win.UI.Label labelNW;
+        private Win.UI.NumericBox numQty;
+        private Win.UI.Label labelQty;
     }
 }

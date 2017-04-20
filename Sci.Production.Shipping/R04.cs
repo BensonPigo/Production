@@ -23,13 +23,13 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk+Sample,Bulk,Sample");
-            comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = -1;
-            comboBox3.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.SelectedIndex = -1;
+            comboCategory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -41,16 +41,16 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            mDivision = comboBox1.Text;
-            buyerDlv1 = dateRange1.Value1;
-            buyerDlv2 = dateRange1.Value2;
-            estPullout1 = dateRange2.Value1;
-            estPullout2 = dateRange2.Value2;
-            brand = txtbrand1.Text;
-            factory = comboBox2.Text;
-            category = comboBox3.Text;
-            orderNo = textBox1.Text;
-            includeLO = checkBox1.Checked;
+            mDivision = comboM.Text;
+            buyerDlv1 = dateBuyerDelivery.Value1;
+            buyerDlv2 = dateBuyerDelivery.Value2;
+            estPullout1 = dateEstimatePullout.Value1;
+            estPullout2 = dateEstimatePullout.Value2;
+            brand = txtbrand.Text;
+            factory = comboFactory.Text;
+            category = comboCategory.Text;
+            orderNo = txtOrderNo.Text;
+            includeLO = checkIncludeLocalOrder.Checked;
 
             return base.ValidateInput();
         }

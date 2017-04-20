@@ -28,21 +28,21 @@ namespace Sci.Production.Shipping
             #region Combox
             if (result = DBProxy.Current.Select(null, "select distinct MDivisionID from Factory WITH (NOLOCK) where Junk = 0 ", out MDivision))
             {
-                MyUtility.Tool.SetupCombox(comboBox1, 1, MDivision);
+                MyUtility.Tool.SetupCombox(comboM, 1, MDivision);
             }
             else
             {
                 MyUtility.Msg.ErrorBox("Query Combox fail\r\n"+result.ToString());
             }
-            comboBox1.SelectedIndex = -1;
+            comboM.SelectedIndex = -1;
 
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Shipped,Not Ship,All");
-            comboBox2.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboDataType, 1, 1, "Shipped,Not Ship,All");
+            comboDataType.SelectedIndex = 0;
             #endregion 
 
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridDelayShipmentOrderDetail.DataSource = listControlBindingSource1;
+            gridDelayShipmentOrderDetail.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridDelayShipmentOrderDetail)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
@@ -83,22 +83,22 @@ as
  and o.LocalOrder = 0 
  and 1=1"));
 
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(dateBuyerDelivery.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(dateBuyerDelivery.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(txtbrand1.Text))
+            if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand1.Text));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'",txtbrand.Text));
             }
 
-            if (!MyUtility.Check.Empty(comboBox1.SelectedValue))
+            if (!MyUtility.Check.Empty(comboM.SelectedValue))
             {
-                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'",MyUtility.Convert.GetString(comboBox1.SelectedValue).Trim()));
+                sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'",MyUtility.Convert.GetString(comboM.SelectedValue).Trim()));
             }
             sqlCmd.Append(@") 
 select ID,Seq,StyleID,BrandID,FactoryID,CustPONo,Customize1,CustCDID,Alias,Qty,
@@ -107,15 +107,15 @@ OSReason,OutstandingRemark as OSRemark
 from tempData 
 where iif(PulloutDate is null,EstPulloutDate,PulloutDate) > BuyerDelivery
 and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
-            if (comboBox2.SelectedIndex != -1)
+            if (comboDataType.SelectedIndex != -1)
             {
-                if (MyUtility.Convert.GetString(comboBox2.SelectedValue) == "Shipped")
+                if (MyUtility.Convert.GetString(comboDataType.SelectedValue) == "Shipped")
                 {
                     sqlCmd.Append("and PulloutDate is not null");
                 }
                 else
                 {
-                    if (MyUtility.Convert.GetString(comboBox2.SelectedValue) == "Not Ship")
+                    if (MyUtility.Convert.GetString(comboDataType.SelectedValue) == "Not Ship")
                     {
                         sqlCmd.Append("and PulloutDate is null");
                     }
@@ -151,10 +151,10 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            worksheet.Cells[2, 1] = "Buyer Delivery: " + Convert.ToDateTime(dateRange1.Value1).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)) + " ~ " + Convert.ToDateTime(dateRange1.Value2).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            worksheet.Cells[2, 6] = "Brand: " + (MyUtility.Check.Empty(txtbrand1.Text) ? "" : txtbrand1.Text);
-            worksheet.Cells[2, 9] = "M: " + (MyUtility.Check.Empty(comboBox1.SelectedValue) ? "" : comboBox1.SelectedValue.ToString());
-            worksheet.Cells[2, 12] = "Data Type: " + (MyUtility.Check.Empty(comboBox2.SelectedValue) ? "" : comboBox2.SelectedValue.ToString());
+            worksheet.Cells[2, 1] = "Buyer Delivery: " + Convert.ToDateTime(dateBuyerDelivery.Value1).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)) + " ~ " + Convert.ToDateTime(dateBuyerDelivery.Value2).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            worksheet.Cells[2, 6] = "Brand: " + (MyUtility.Check.Empty(txtbrand.Text) ? "" : txtbrand.Text);
+            worksheet.Cells[2, 9] = "M: " + (MyUtility.Check.Empty(comboM.SelectedValue) ? "" : comboM.SelectedValue.ToString());
+            worksheet.Cells[2, 12] = "Data Type: " + (MyUtility.Check.Empty(comboDataType.SelectedValue) ? "" : comboDataType.SelectedValue.ToString());
 
             int intRowsStart = 4;
             object[,] objArray = new object[1, 14];

@@ -30,9 +30,9 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("WKNo", header: "WK#/Fty WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -44,11 +44,11 @@ namespace Sci.Production.Shipping
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(textBox1.Text) && 
-                MyUtility.Check.Empty(textBox2.Text) && MyUtility.Check.Empty(textBox3.Text))
+            if (MyUtility.Check.Empty(dateArrivePortDate.Value1) && MyUtility.Check.Empty(dateArrivePortDate.Value2) && MyUtility.Check.Empty(txtInvoiceNo.Text) && 
+                MyUtility.Check.Empty(txtBLNo.Text) && MyUtility.Check.Empty(txtWKNo.Text))
             {
                 MyUtility.Msg.WarningBox("< Arrive Port Date > or < Invoice No. > or < B/L No. > or < WK No. > can not be empty!");
-                dateRange1.TextBox1.Focus();
+                dateArrivePortDate.TextBox1.Focus();
                 return;
             }
 
@@ -61,29 +61,29 @@ namespace Sci.Production.Shipping
 '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
 from FtyExport WITH (NOLOCK) 
 where Type = 3 ");
-                if (!MyUtility.Check.Empty(dateRange1.Value1))
+                if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(dateRange1.Value2))
+                if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(textBox1.Text))
+                if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and INVNo = '{0}' ", textBox1.Text));
+                    sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
                 }
 
-                if (!MyUtility.Check.Empty(textBox2.Text))
+                if (!MyUtility.Check.Empty(txtBLNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and BLNo = '{0}' ", textBox2.Text));
+                    sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
                 }
 
-                if (!MyUtility.Check.Empty(textBox3.Text))
+                if (!MyUtility.Check.Empty(txtWKNo.Text))
                 {
-                    sqlCmd.Append(string.Format(" and ID = '{0}' ", textBox3.Text));
+                    sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
                 }
                 #endregion
             }
@@ -98,29 +98,29 @@ as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
  from Export WITH (NOLOCK) 
  where 1 = 1 ");
-                    if (!MyUtility.Check.Empty(dateRange1.Value1))
+                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(dateRange1.Value2))
+                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", textBox1.Text));
+                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox2.Text))
+                    if (!MyUtility.Check.Empty(txtBLNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", textBox2.Text));
+                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox3.Text))
+                    if (!MyUtility.Check.Empty(txtWKNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and ID = '{0}' ", textBox3.Text));
+                        sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
                     }
                     sqlCmd.Append("), ");
                 }
@@ -141,29 +141,29 @@ as
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
  from FtyExport WITH (NOLOCK) 
  where Type <> 3 ");
-                    if (!MyUtility.Check.Empty(dateRange1.Value1))
+                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value1))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival >= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value1).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(dateRange1.Value2))
+                    if (!MyUtility.Check.Empty(dateArrivePortDate.Value2))
                     {
-                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and PortArrival <= '{0}' ", Convert.ToDateTime(dateArrivePortDate.Value2).ToString("d")));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(txtInvoiceNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", textBox1.Text));
+                        sqlCmd.Append(string.Format(" and INVNo = '{0}' ", txtInvoiceNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox2.Text))
+                    if (!MyUtility.Check.Empty(txtBLNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", textBox2.Text));
+                        sqlCmd.Append(string.Format(" and BLNo = '{0}' ", txtBLNo.Text));
                     }
 
-                    if (!MyUtility.Check.Empty(textBox3.Text))
+                    if (!MyUtility.Check.Empty(txtWKNo.Text))
                     {
-                        sqlCmd.Append(string.Format(" and ID = '{0}' ", textBox3.Text));
+                        sqlCmd.Append(string.Format(" and ID = '{0}' ", txtWKNo.Text));
                     }
                     sqlCmd.Append(") ");
                 }
@@ -202,7 +202,7 @@ select * from FtyExportData");
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             gridData = (DataTable)listControlBindingSource1.DataSource;
 

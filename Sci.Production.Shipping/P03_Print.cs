@@ -19,9 +19,9 @@ namespace Sci.Production.Shipping
         public P03_Print(DataRow MasterData, DataTable DetailData)
         {
             InitializeComponent();
-            radioButton1.Checked = true;
-            dateRange1.Enabled = false;
-            txtfactory1.Enabled = false;
+            radioDetailReport.Checked = true;
+            dateETA.Enabled = false;
+            txtfactory.Enabled = false;
             masterData = MasterData;
             detailData = DetailData;
         }
@@ -29,25 +29,25 @@ namespace Sci.Production.Shipping
         //控制ETA & Factory可否輸入
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (radioListReport.Checked)
             {
-                dateRange1.Enabled = true;
-                txtfactory1.Enabled = true;
+                dateETA.Enabled = true;
+                txtfactory.Enabled = true;
             }
             else
             {
-                dateRange1.Enabled = false;
-                txtfactory1.Enabled = false;
+                dateETA.Enabled = false;
+                txtfactory.Enabled = false;
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            reportType = radioButton1.Checked ? "1" : "2";
-            eta1 = MyUtility.Check.Empty(dateRange1.Value1) ? "" : Convert.ToDateTime(dateRange1.Value1).ToString("d");
-            eta2 = MyUtility.Check.Empty(dateRange1.Value2) ? "" : Convert.ToDateTime(dateRange1.Value2).ToString("d");
-            factory = txtfactory1.Text;
+            reportType = radioDetailReport.Checked ? "1" : "2";
+            eta1 = MyUtility.Check.Empty(dateETA.Value1) ? "" : Convert.ToDateTime(dateETA.Value1).ToString("d");
+            eta2 = MyUtility.Check.Empty(dateETA.Value2) ? "" : Convert.ToDateTime(dateETA.Value2).ToString("d");
+            factory = txtfactory.Text;
 
             return base.ValidateInput();
         }

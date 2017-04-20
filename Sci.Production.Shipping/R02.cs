@@ -23,8 +23,8 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -36,15 +36,15 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            mDivisionID = comboBox1.Text;
-            pulloutDate1 = dateRange1.Value1;
-            pulloutDate2 = dateRange1.Value2;
-            sp1 = textBox1.Text;
-            sp2 = textBox2.Text;
-            sdpDate1 = dateRange2.Value1;
-            sdpDate2 = dateRange2.Value2;
-            sciDlv1 = dateRange3.Value1;
-            sciDlv2 = dateRange3.Value2;
+            mDivisionID = comboM.Text;
+            pulloutDate1 = datePulloutDate.Value1;
+            pulloutDate2 = datePulloutDate.Value2;
+            sp1 = txtSPNoStart.Text;
+            sp2 = txtSPNoEnd.Text;
+            sdpDate1 = dateSDPDate.Value1;
+            sdpDate2 = dateSDPDate.Value2;
+            sciDlv1 = dateSCIDelivery.Value1;
+            sciDlv2 = dateSCIDelivery.Value2;
 
             return base.ValidateInput();
         }

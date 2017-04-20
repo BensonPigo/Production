@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
+            this.radioFormForCustomSystem = new Sci.Win.UI.RadioButton();
+            this.radioCommercialInvoice = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,42 +48,41 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioFormForCustomSystem);
+            this.radioPanel1.Controls.Add(this.radioCommercialInvoice);
             this.radioPanel1.Location = new System.Drawing.Point(7, 12);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(212, 102);
             this.radioPanel1.TabIndex = 94;
             // 
-            // radioButton1
+            // radioFormForCustomSystem
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(13, 13);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(147, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Commercial Invoice";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioFormForCustomSystem.AutoSize = true;
+            this.radioFormForCustomSystem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioFormForCustomSystem.Location = new System.Drawing.Point(13, 49);
+            this.radioFormForCustomSystem.Name = "radioFormForCustomSystem";
+            this.radioFormForCustomSystem.Size = new System.Drawing.Size(176, 21);
+            this.radioFormForCustomSystem.TabIndex = 1;
+            this.radioFormForCustomSystem.TabStop = true;
+            this.radioFormForCustomSystem.Text = "Form for custom system";
+            this.radioFormForCustomSystem.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioCommercialInvoice
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(13, 49);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(176, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Form for custom system";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioCommercialInvoice.AutoSize = true;
+            this.radioCommercialInvoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioCommercialInvoice.Location = new System.Drawing.Point(13, 13);
+            this.radioCommercialInvoice.Name = "radioCommercialInvoice";
+            this.radioCommercialInvoice.Size = new System.Drawing.Size(147, 21);
+            this.radioCommercialInvoice.TabIndex = 0;
+            this.radioCommercialInvoice.TabStop = true;
+            this.radioCommercialInvoice.Text = "Commercial Invoice";
+            this.radioCommercialInvoice.UseVisualStyleBackColor = true;
             // 
             // P40_Print
             // 
             this.ClientSize = new System.Drawing.Size(348, 148);
             this.Controls.Add(this.radioPanel1);
-            this.EditMode = true;
             this.IsSupportToPrint = false;
             this.Name = "P40_Print";
             this.Text = "Print";
@@ -101,7 +100,7 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioFormForCustomSystem;
+        private Win.UI.RadioButton radioCommercialInvoice;
     }
 }

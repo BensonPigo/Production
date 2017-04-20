@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.btnUpdatePulloutDate = new Sci.Win.UI.Button();
+            this.btnImportData = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.label3 = new Sci.Win.UI.Label();
+            this.gridDetail = new Sci.Win.UI.Grid();
+            this.labelDetail = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
@@ -55,7 +55,7 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -63,20 +63,20 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.btnImportData);
+            this.masterpanel.Controls.Add(this.btnUpdatePulloutDate);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Size = new System.Drawing.Size(914, 87);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdatePulloutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportData, 0);
             // 
             // detailpanel
             // 
@@ -128,7 +128,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(877, 524);
+            this.browse.Size = new System.Drawing.Size(914, 524);
             // 
             // tabs
             // 
@@ -147,100 +147,100 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(4, 4);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(55, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelRemark
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(4, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(4, 31);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(55, 23);
+            this.labelRemark.TabIndex = 2;
+            this.labelRemark.Text = "Remark";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(63, 4);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 3;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(63, 4);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 3;
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(63, 31);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(445, 50);
-            this.editBox1.TabIndex = 2;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(63, 31);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(445, 50);
+            this.editRemark.TabIndex = 2;
             // 
-            // button1
+            // btnUpdatePulloutDate
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(593, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(160, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Update Pullout Date";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnUpdatePulloutDate.Enabled = false;
+            this.btnUpdatePulloutDate.Location = new System.Drawing.Point(593, 7);
+            this.btnUpdatePulloutDate.Name = "btnUpdatePulloutDate";
+            this.btnUpdatePulloutDate.Size = new System.Drawing.Size(160, 30);
+            this.btnUpdatePulloutDate.TabIndex = 3;
+            this.btnUpdatePulloutDate.Text = "Update Pullout Date";
+            this.btnUpdatePulloutDate.UseVisualStyleBackColor = true;
+            this.btnUpdatePulloutDate.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnImportData
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(593, 53);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(116, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Import Data";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImportData.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportData.Location = new System.Drawing.Point(593, 53);
+            this.btnImportData.Name = "btnImportData";
+            this.btnImportData.Size = new System.Drawing.Size(116, 30);
+            this.btnImportData.TabIndex = 0;
+            this.btnImportData.Text = "Import Data";
+            this.btnImportData.UseVisualStyleBackColor = true;
+            this.btnImportData.Click += new System.EventHandler(this.button2_Click);
             // 
-            // grid1
+            // gridDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(914, 145);
-            this.grid1.TabIndex = 2;
-            this.grid1.TabStop = false;
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowHeadersVisible = false;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.Size = new System.Drawing.Size(914, 145);
+            this.gridDetail.TabIndex = 2;
+            this.gridDetail.TabStop = false;
             // 
-            // label3
+            // labelDetail
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(42, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Detail";
+            this.labelDetail.Lines = 0;
+            this.labelDetail.Location = new System.Drawing.Point(4, 5);
+            this.labelDetail.Name = "labelDetail";
+            this.labelDetail.Size = new System.Drawing.Size(42, 23);
+            this.labelDetail.TabIndex = 3;
+            this.labelDetail.Text = "Detail";
             // 
             // panel1
             // 
@@ -254,7 +254,7 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.grid1);
+            this.panel3.Controls.Add(this.gridDetail);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 32);
             this.panel3.Name = "panel3";
@@ -263,7 +263,7 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.labelDetail);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
@@ -315,7 +315,7 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -326,14 +326,14 @@
 
         #endregion
 
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Label label3;
-        private Win.UI.Grid grid1;
+        private Win.UI.Button btnImportData;
+        private Win.UI.Button btnUpdatePulloutDate;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelID;
+        private Win.UI.Label labelDetail;
+        private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel1;

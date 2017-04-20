@@ -27,13 +27,13 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
-            comboBox1.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(comboDatafrom, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
+            comboDatafrom.SelectedIndex = -1;
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("InvNo", header: "GB#/Packing#", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -44,19 +44,19 @@ namespace Sci.Production.Shipping
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(comboBox1.SelectedValue) && MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
-                MyUtility.Check.Empty(txtcountry1.TextBox1.Text) && MyUtility.Check.Empty(txtshipmode1.SelectedValue) && MyUtility.Check.Empty(txtbrand1.Text) &&
-                MyUtility.Check.Empty(txtsubcon1.TextBox1.Text) && MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2))
+            if (MyUtility.Check.Empty(comboDatafrom.SelectedValue) && MyUtility.Check.Empty(dateFCRDate.Value1) && MyUtility.Check.Empty(dateFCRDate.Value2) &&
+                MyUtility.Check.Empty(txtCountryDestination.TextBox1.Text) && MyUtility.Check.Empty(txtShipmode.SelectedValue) && MyUtility.Check.Empty(txtbrand.Text) &&
+                MyUtility.Check.Empty(txtSubconForwarder.TextBox1.Text) && MyUtility.Check.Empty(txtTruck.Text) && MyUtility.Check.Empty(datePulloutDate.Value1) && MyUtility.Check.Empty(datePulloutDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< FCR Date > or < Pullout Date > or < Destination > or < Ship Mode > or < Data from > or < Brand > or < Forwarder > or < Truck# > can not be empty!");
-                dateRange1.TextBox1.Focus();
+                dateFCRDate.TextBox1.Focus();
                 return;
             }
 
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             #region Garment Booking
-            if (MyUtility.Check.Empty(comboBox1.SelectedValue) || MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Garment Booking")
+            if (MyUtility.Check.Empty(comboDatafrom.SelectedValue) || MyUtility.Convert.GetString(comboDatafrom.SelectedValue) == "Garment Booking")
             {
                 sqlCmd.Append(@"with GB 
 as 
@@ -68,49 +68,49 @@ as
  left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
  where 1=1 ");
 
-                if (!MyUtility.Check.Empty(dateRange1.Value1))
+                if (!MyUtility.Check.Empty(dateFCRDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(dateFCRDate.Value1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(dateRange1.Value2))
+                if (!MyUtility.Check.Empty(dateFCRDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(dateFCRDate.Value2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(txtcountry1.TextBox1.Text))
+                if (!MyUtility.Check.Empty(txtCountryDestination.TextBox1.Text))
                 {
-                    sqlCmd.Append(string.Format(" and g.Dest = '{0}' ", txtcountry1.TextBox1.Text));
+                    sqlCmd.Append(string.Format(" and g.Dest = '{0}' ", txtCountryDestination.TextBox1.Text));
                 }
 
-                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+                if (!MyUtility.Check.Empty(txtShipmode.SelectedValue))
                 {
-                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtshipmode1.SelectedValue)));
+                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtShipmode.SelectedValue)));
                 }
 
-                if (!MyUtility.Check.Empty(txtbrand1.Text))
+                if (!MyUtility.Check.Empty(txtbrand.Text))
                 {
-                    sqlCmd.Append(string.Format(" and g.BrandID = '{0}' ", txtbrand1.Text));
+                    sqlCmd.Append(string.Format(" and g.BrandID = '{0}' ", txtbrand.Text));
                 }
 
-                if (!MyUtility.Check.Empty(txtsubcon1.TextBox1.Text))
+                if (!MyUtility.Check.Empty(txtSubconForwarder.TextBox1.Text))
                 {
-                    sqlCmd.Append(string.Format(" and g.Forwarder = '{0}' ", txtsubcon1.TextBox1.Text));
+                    sqlCmd.Append(string.Format(" and g.Forwarder = '{0}' ", txtSubconForwarder.TextBox1.Text));
                 }
 
-                if (!MyUtility.Check.Empty(textBox1.Text))
+                if (!MyUtility.Check.Empty(txtTruck.Text))
                 {
-                    sqlCmd.Append(string.Format(" and gc.TruckNo = '{0}' ", textBox1.Text));
+                    sqlCmd.Append(string.Format(" and gc.TruckNo = '{0}' ", txtTruck.Text));
                 }
 
-                if (!MyUtility.Check.Empty(dateRange2.Value1))
+                if (!MyUtility.Check.Empty(datePulloutDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(datePulloutDate.Value1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(dateRange2.Value2))
+                if (!MyUtility.Check.Empty(datePulloutDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(datePulloutDate.Value2).ToString("d")));
                 }
                 sqlCmd.Append("), ");
             }
@@ -127,7 +127,7 @@ as
             #endregion
 
             #region PackingList
-            if (!MyUtility.Check.Empty(comboBox1.SelectedValue) && MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Garment Booking")
+            if (!MyUtility.Check.Empty(comboDatafrom.SelectedValue) && MyUtility.Convert.GetString(comboDatafrom.SelectedValue) == "Garment Booking")
             {
                 sqlCmd.Append(@"PL 
 as 
@@ -146,13 +146,13 @@ as
 '' as ShareBase, 0 as FtyWK 
  from PackingList WITH (NOLOCK) 
  where ");
-                if (MyUtility.Check.Empty(comboBox1.SelectedValue))
+                if (MyUtility.Check.Empty(comboDatafrom.SelectedValue))
                 {
                     sqlCmd.Append(" (Type = 'F' or Type = 'L') ");
                 }
                 else
                 {
-                    if (MyUtility.Convert.GetString(comboBox1.SelectedValue) == "Packing FOC")
+                    if (MyUtility.Convert.GetString(comboDatafrom.SelectedValue) == "Packing FOC")
                     {
                         sqlCmd.Append(" Type = 'F' ");
                     }
@@ -162,24 +162,24 @@ as
                     }
                 }
 
-                if (!MyUtility.Check.Empty(dateRange2.Value1))
+                if (!MyUtility.Check.Empty(datePulloutDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and PulloutDate >= '{0}' ", Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PulloutDate >= '{0}' ", Convert.ToDateTime(datePulloutDate.Value1).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(dateRange2.Value2))
+                if (!MyUtility.Check.Empty(datePulloutDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and PulloutDate <= '{0}' ", Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PulloutDate <= '{0}' ", Convert.ToDateTime(datePulloutDate.Value2).ToString("d")));
                 }
 
-                if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+                if (!MyUtility.Check.Empty(txtShipmode.SelectedValue))
                 {
-                    sqlCmd.Append(string.Format(" and ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtshipmode1.SelectedValue)));
+                    sqlCmd.Append(string.Format(" and ShipModeID = '{0}' ", MyUtility.Convert.GetString(txtShipmode.SelectedValue)));
                 }
 
-                if (!MyUtility.Check.Empty(txtbrand1.Text))
+                if (!MyUtility.Check.Empty(txtbrand.Text))
                 {
-                    sqlCmd.Append(string.Format(" and BrandID = '{0}' ", txtbrand1.Text));
+                    sqlCmd.Append(string.Format(" and BrandID = '{0}' ", txtbrand.Text));
                 }
                 sqlCmd.Append(") ");
             }
@@ -209,7 +209,7 @@ select * from PL");
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             gridData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData)) return;

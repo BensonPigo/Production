@@ -25,9 +25,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -45,22 +45,22 @@ namespace Sci.Production.Shipping
         //Qurey
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("SP# can't be empty!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
-            if (MyUtility.Check.Empty(txtsupplier1.TextBox1.Text))
+            if (MyUtility.Check.Empty(txtsupplier.TextBox1.Text))
             {
                 MyUtility.Msg.WarningBox("Supplier can't be empty!");
-                txtsupplier1.TextBox1.Focus();
+                txtsupplier.TextBox1.Focus();
                 return;
             }
 
             //sql參數
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textBox1.Text.Trim());
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@suppid", txtsupplier1.TextBox1.Text.Trim());
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSPNo.Text.Trim());
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@suppid", txtsupplier.TextBox1.Text.Trim());
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -94,7 +94,7 @@ and ps.SuppID = @suppid";
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData)|| gridData.Rows.Count == 0)

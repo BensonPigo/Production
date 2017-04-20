@@ -24,16 +24,16 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
 
-            displayBox1.Value = MyUtility.Convert.GetString(masterData["OrderID"]);
-            displayBox2.Value = MyUtility.Convert.GetString(masterData["OldStatusExp"]);
-            displayBox3.Value = MyUtility.Convert.GetString(masterData["NewStatusExp"]);
-            displayBox4.Value = MyUtility.Convert.GetString(masterData["ReviseStatus"]);
-            numericBox1.Value = MyUtility.Convert.GetInt(masterData["OldShipQty"]);
-            numericBox2.Value = MyUtility.Convert.GetInt(masterData["NewShipQty"]);
+            displaySPNo.Value = MyUtility.Convert.GetString(masterData["OrderID"]);
+            displayStatusOld.Value = MyUtility.Convert.GetString(masterData["OldStatusExp"]);
+            displayStatusRevised.Value = MyUtility.Convert.GetString(masterData["NewStatusExp"]);
+            displayRevisedStatus.Value = MyUtility.Convert.GetString(masterData["ReviseStatus"]);
+            numShipQtyOld.Value = MyUtility.Convert.GetInt(masterData["OldShipQty"]);
+            numShipQtyRevised.Value = MyUtility.Convert.GetInt(masterData["NewShipQty"]);
 
-            this.grid1.IsEditingReadOnly = true;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridReviseHistoryDetail.IsEditingReadOnly = true;
+            gridReviseHistoryDetail.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridReviseHistoryDetail)
                 .Text("Article", header: "Color way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("OldShipQty", header: "Old Q'ty", width: Widths.AnsiChars(6))

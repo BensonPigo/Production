@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.labelPulloutDate = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelSDPDate = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.datePulloutDate = new Sci.Win.UI.DateRange();
+            this.dateSDPDate = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -54,103 +54,103 @@
             // 
             this.close.Location = new System.Drawing.Point(413, 84);
             // 
-            // label1
+            // labelPulloutDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Pullout Date";
+            this.labelPulloutDate.Lines = 0;
+            this.labelPulloutDate.Location = new System.Drawing.Point(13, 12);
+            this.labelPulloutDate.Name = "labelPulloutDate";
+            this.labelPulloutDate.Size = new System.Drawing.Size(80, 23);
+            this.labelPulloutDate.TabIndex = 94;
+            this.labelPulloutDate.Text = "Pullout Date";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "SP No";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(13, 48);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(80, 23);
+            this.labelSPNo.TabIndex = 95;
+            this.labelSPNo.Text = "SP No";
             // 
-            // label3
+            // labelSDPDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "SDP Date";
+            this.labelSDPDate.Lines = 0;
+            this.labelSDPDate.Location = new System.Drawing.Point(13, 84);
+            this.labelSDPDate.Name = "labelSDPDate";
+            this.labelSDPDate.Size = new System.Drawing.Size(80, 23);
+            this.labelSDPDate.TabIndex = 96;
+            this.labelSDPDate.Text = "SDP Date";
             // 
-            // label4
+            // labelSCIDelivery
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 120);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(80, 23);
+            this.labelSCIDelivery.TabIndex = 97;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label5
+            // labelM
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 156);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 156);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(80, 23);
+            this.labelM.TabIndex = 98;
+            this.labelM.Text = "M";
             // 
-            // dateRange1
+            // datePulloutDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(97, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 99;
+            this.datePulloutDate.IsRequired = false;
+            this.datePulloutDate.Location = new System.Drawing.Point(97, 12);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
+            this.datePulloutDate.TabIndex = 99;
             // 
-            // dateRange2
+            // dateSDPDate
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(96, 84);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 100;
+            this.dateSDPDate.IsRequired = false;
+            this.dateSDPDate.Location = new System.Drawing.Point(96, 84);
+            this.dateSDPDate.Name = "dateSDPDate";
+            this.dateSDPDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSDPDate.TabIndex = 100;
             // 
-            // dateRange3
+            // dateSCIDelivery
             // 
-            this.dateRange3.IsRequired = false;
-            this.dateRange3.Location = new System.Drawing.Point(97, 120);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 101;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(97, 120);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 101;
             // 
-            // comboBox1
+            // comboM
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(97, 156);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(81, 24);
-            this.comboBox1.TabIndex = 102;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(97, 156);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(81, 24);
+            this.comboM.TabIndex = 102;
             // 
-            // textBox1
+            // txtSPNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(97, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 103;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(97, 48);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNoStart.TabIndex = 103;
             // 
-            // textBox2
+            // txtSPNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(252, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(130, 23);
-            this.textBox2.TabIndex = 104;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(252, 48);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNoEnd.TabIndex = 104;
             // 
             // label6
             // 
@@ -170,34 +170,34 @@
             // 
             this.ClientSize = new System.Drawing.Size(505, 217);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange3);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtSPNoEnd);
+            this.Controls.Add(this.txtSPNoStart);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.dateSDPDate);
+            this.Controls.Add(this.datePulloutDate);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.labelSDPDate);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.labelPulloutDate);
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Pullout Report List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.dateRange3, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
+            this.Controls.SetChildIndex(this.labelPulloutDate, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.labelSDPDate, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.datePulloutDate, 0);
+            this.Controls.SetChildIndex(this.dateSDPDate, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.txtSPNoStart, 0);
+            this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -206,17 +206,17 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.Label labelPulloutDate;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelSDPDate;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelM;
+        private Win.UI.DateRange datePulloutDate;
+        private Win.UI.DateRange dateSDPDate;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.TextBox txtSPNoStart;
+        private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.Label label6;
     }
 }

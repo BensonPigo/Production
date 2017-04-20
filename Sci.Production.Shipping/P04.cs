@@ -70,13 +70,13 @@ where ed.ID = '{0}'", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["Forwarder"]))
             {
                 MyUtility.Msg.WarningBox("Forwarder can't empty!!");
-                txtsubcon1.TextBox1.Focus();
+                txtSubconForwarder.TextBox1.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("ShipMode can't empty!!");
-                txtshipmode1.Focus();
+                txtShipmodeShippingMode.Focus();
                 return false;
             }
 
@@ -93,7 +93,7 @@ where ed.ID = '{0}'", masterID);
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
                     MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
-                    textBox5.Focus();
+                    txtBLAWBNo.Focus();
                     return false;
                 }
             }
@@ -140,7 +140,7 @@ where ed.ID = '{0}'", masterID);
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", textBox3.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", txtPortofLoading.Text);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -154,7 +154,7 @@ where ed.ID = '{0}'", masterID);
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", textBox4.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", txtPortofDischarge.Text);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -169,11 +169,11 @@ where ed.ID = '{0}'", masterID);
         {
             if (radioPanel1.Value == "3")
             {
-                label16.Text = "Ship Date";
+                labelArrivePortDate.Text = "Ship Date";
             }
             else
             {
-                label16.Text = "Arrive Port Date";
+                labelArrivePortDate.Text = "Arrive Port Date";
             }
 
             if (this.EditMode)

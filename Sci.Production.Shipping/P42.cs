@@ -114,10 +114,10 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
 
             if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
-                dateBox1.ReadOnly = true;
-                textBox1.ReadOnly = true;
-                textBox2.ReadOnly = true;
-                button1.Enabled = false;
+                dateDate.ReadOnly = true;
+                txtContractNo.ReadOnly = true;
+                txtRemark.ReadOnly = true;
+                btnImportfromExcel.Enabled = false;
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
                 gridicon.Remove.Enabled = false;
@@ -140,13 +140,13 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
-                textBox1.Focus();
+                txtContractNo.Focus();
                 return false;
             }
             #endregion

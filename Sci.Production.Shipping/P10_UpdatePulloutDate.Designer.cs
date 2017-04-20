@@ -34,17 +34,17 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.labelPulloutDate = new Sci.Win.UI.Label();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.datePulloutDate = new Sci.Win.UI.DateBox();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridUpdatePulloutDate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridUpdatePulloutDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,10 +75,10 @@
             // panel4
             // 
             this.panel4.Controls.Add(this.pictureBox1);
-            this.panel4.Controls.Add(this.label1);
-            this.panel4.Controls.Add(this.button2);
-            this.panel4.Controls.Add(this.button1);
-            this.panel4.Controls.Add(this.dateBox1);
+            this.panel4.Controls.Add(this.labelPulloutDate);
+            this.panel4.Controls.Add(this.btnCancel);
+            this.panel4.Controls.Add(this.btnSave);
+            this.panel4.Controls.Add(this.datePulloutDate);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 464);
             this.panel4.Name = "panel4";
@@ -97,83 +97,83 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // label1
+            // labelPulloutDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(213, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Pullout Date";
+            this.labelPulloutDate.Lines = 0;
+            this.labelPulloutDate.Location = new System.Drawing.Point(213, 11);
+            this.labelPulloutDate.Name = "labelPulloutDate";
+            this.labelPulloutDate.Size = new System.Drawing.Size(82, 23);
+            this.labelPulloutDate.TabIndex = 4;
+            this.labelPulloutDate.Text = "Pullout Date";
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(755, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(755, 6);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnSave
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(665, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(84, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(665, 6);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(84, 30);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button1_Click);
             // 
-            // dateBox1
+            // datePulloutDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(300, 11);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
-            this.dateBox1.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
+            this.datePulloutDate.Location = new System.Drawing.Point(300, 11);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(130, 23);
+            this.datePulloutDate.TabIndex = 0;
+            this.datePulloutDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridUpdatePulloutDate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 5);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(838, 459);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridUpdatePulloutDate
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(838, 459);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridUpdatePulloutDate.AllowUserToAddRows = false;
+            this.gridUpdatePulloutDate.AllowUserToDeleteRows = false;
+            this.gridUpdatePulloutDate.AllowUserToResizeRows = false;
+            this.gridUpdatePulloutDate.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridUpdatePulloutDate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridUpdatePulloutDate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridUpdatePulloutDate.DataSource = this.listControlBindingSource1;
+            this.gridUpdatePulloutDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridUpdatePulloutDate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridUpdatePulloutDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridUpdatePulloutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridUpdatePulloutDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridUpdatePulloutDate.Location = new System.Drawing.Point(0, 0);
+            this.gridUpdatePulloutDate.Name = "gridUpdatePulloutDate";
+            this.gridUpdatePulloutDate.RowHeadersVisible = false;
+            this.gridUpdatePulloutDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridUpdatePulloutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridUpdatePulloutDate.RowTemplate.Height = 24;
+            this.gridUpdatePulloutDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridUpdatePulloutDate.Size = new System.Drawing.Size(838, 459);
+            this.gridUpdatePulloutDate.TabIndex = 0;
+            this.gridUpdatePulloutDate.TabStop = false;
             // 
             // P10_UpdatePulloutDate
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnSave;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(848, 507);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -186,7 +186,7 @@
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridUpdatePulloutDate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -198,13 +198,13 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.DateBox datePulloutDate;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridUpdatePulloutDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnSave;
+        private Win.UI.Label labelPulloutDate;
         private Win.UI.PictureBox pictureBox1;
     }
 }

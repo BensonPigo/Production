@@ -34,7 +34,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridBelowDataIsnoNLCode.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["NLCode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                     {
                         DataRow seekData;
@@ -61,7 +61,7 @@ namespace Sci.Production.Shipping
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridBelowDataisNotInpurchaseorder.GetDataRow<DataRow>(e.RowIndex);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["NLCode"]) != MyUtility.Convert.GetString(e.FormattedValue))
                     {
                         DataRow seekData;
@@ -85,8 +85,8 @@ namespace Sci.Production.Shipping
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid1)
+            this.gridBelowDataIsnoNLCode.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridBelowDataIsnoNLCode)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -99,14 +99,14 @@ namespace Sci.Production.Shipping
                 .Numeric("PcsKg", header: "KG/Pcs", decimal_places: 3)
                 .CheckBox("NoDeclare", header: "No need to declare", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
 
-            grid1.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid1.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataIsnoNLCode.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataIsnoNLCode.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataIsnoNLCode.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataIsnoNLCode.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataIsnoNLCode.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
 
-            this.grid2.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid2)
+            this.gridBelowDataisNotInpurchaseorder.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridBelowDataisNotInpurchaseorder)
                 .Text("ID", header: "WK No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -120,14 +120,14 @@ namespace Sci.Production.Shipping
                 .Numeric("PcsKg", header: "KG/Pcs", decimal_places: 3)
                 .CheckBox("NoDeclare", header: "No need to declare", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
 
-            grid2.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
-            grid2.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataisNotInpurchaseorder.Columns["NLCode"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataisNotInpurchaseorder.Columns["PcsWidth"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataisNotInpurchaseorder.Columns["PcsLength"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataisNotInpurchaseorder.Columns["PcsKg"].DefaultCellStyle.BackColor = Color.LightYellow;
+            gridBelowDataisNotInpurchaseorder.Columns["NoDeclare"].DefaultCellStyle.BackColor = Color.LightYellow;
 
-            this.grid3.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(grid3)
+            this.gridBelowDataisNoTransferformula.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(gridBelowDataisNoTransferformula)
                 .Text("OriUnit", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CustomsUnit", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(20), iseditingreadonly: true);
@@ -140,7 +140,7 @@ namespace Sci.Production.Shipping
         //Save NL Code & Re-Calculate
         private void button1_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridBelowDataIsnoNLCode.ValidateControl();
             listControlBindingSource1.EndEdit();
 
             DataRow[] dataCheck = noNLCode.Select("NLCode = ''");

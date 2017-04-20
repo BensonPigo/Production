@@ -28,26 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.txtshipterm1 = new Sci.Production.Class.txtshipterm();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.labelShipper = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelInvoiceDate = new Sci.Win.UI.Label();
+            this.labelETD = new Sci.Win.UI.Label();
+            this.labelShippingMode = new Sci.Win.UI.Label();
+            this.labelShipmentTerm = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.labelStatus = new Sci.Win.UI.Label();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.comboShipper = new Sci.Win.UI.ComboBox();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.dateInvoiceDate = new Sci.Win.UI.DateRange();
+            this.dateETD = new Sci.Win.UI.DateRange();
+            this.txtshipmodeShippingMode = new Sci.Production.Class.txtshipmode();
+            this.txtshiptermShipmentTerm = new Sci.Production.Class.txtshipterm();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.comboStatus = new Sci.Win.UI.ComboBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioDetailList = new Sci.Win.UI.RadioButton();
+            this.radioMainList = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,241 +63,241 @@
             // 
             this.close.Location = new System.Drawing.Point(430, 84);
             // 
-            // label1
+            // labelShipper
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(98, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Shipper";
+            this.labelShipper.Lines = 0;
+            this.labelShipper.Location = new System.Drawing.Point(13, 12);
+            this.labelShipper.Name = "labelShipper";
+            this.labelShipper.Size = new System.Drawing.Size(98, 23);
+            this.labelShipper.TabIndex = 94;
+            this.labelShipper.Text = "Shipper";
             // 
-            // label2
+            // labelBrand
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(98, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 48);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(98, 23);
+            this.labelBrand.TabIndex = 95;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelInvoiceDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Invoice Date";
+            this.labelInvoiceDate.Lines = 0;
+            this.labelInvoiceDate.Location = new System.Drawing.Point(13, 84);
+            this.labelInvoiceDate.Name = "labelInvoiceDate";
+            this.labelInvoiceDate.Size = new System.Drawing.Size(98, 23);
+            this.labelInvoiceDate.TabIndex = 96;
+            this.labelInvoiceDate.Text = "Invoice Date";
             // 
-            // label4
+            // labelETD
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "ETD";
+            this.labelETD.Lines = 0;
+            this.labelETD.Location = new System.Drawing.Point(13, 120);
+            this.labelETD.Name = "labelETD";
+            this.labelETD.Size = new System.Drawing.Size(98, 23);
+            this.labelETD.TabIndex = 97;
+            this.labelETD.Text = "ETD";
             // 
-            // label5
+            // labelShippingMode
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 156);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(98, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Shipping Mode";
+            this.labelShippingMode.Lines = 0;
+            this.labelShippingMode.Location = new System.Drawing.Point(13, 156);
+            this.labelShippingMode.Name = "labelShippingMode";
+            this.labelShippingMode.Size = new System.Drawing.Size(98, 23);
+            this.labelShippingMode.TabIndex = 98;
+            this.labelShippingMode.Text = "Shipping Mode";
             // 
-            // label6
+            // labelShipmentTerm
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 192);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(98, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Shipment Term";
+            this.labelShipmentTerm.Lines = 0;
+            this.labelShipmentTerm.Location = new System.Drawing.Point(13, 192);
+            this.labelShipmentTerm.Name = "labelShipmentTerm";
+            this.labelShipmentTerm.Size = new System.Drawing.Size(98, 23);
+            this.labelShipmentTerm.TabIndex = 99;
+            this.labelShipmentTerm.Text = "Shipment Term";
             // 
-            // label7
+            // labelDestination
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 228);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(98, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(13, 228);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(98, 23);
+            this.labelDestination.TabIndex = 100;
+            this.labelDestination.Text = "Destination";
             // 
-            // label8
+            // labelStatus
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(13, 264);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(98, 23);
-            this.label8.TabIndex = 101;
-            this.label8.Text = "Status";
+            this.labelStatus.Lines = 0;
+            this.labelStatus.Location = new System.Drawing.Point(13, 264);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(98, 23);
+            this.labelStatus.TabIndex = 101;
+            this.labelStatus.Text = "Status";
             // 
-            // label9
+            // labelReportType
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 300);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(98, 23);
-            this.label9.TabIndex = 102;
-            this.label9.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(13, 300);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(98, 23);
+            this.labelReportType.TabIndex = 102;
+            this.labelReportType.Text = "Report Type";
             // 
-            // comboBox1
+            // comboShipper
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(114, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 103;
+            this.comboShipper.BackColor = System.Drawing.Color.White;
+            this.comboShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShipper.FormattingEnabled = true;
+            this.comboShipper.IsSupportUnselect = true;
+            this.comboShipper.Location = new System.Drawing.Point(114, 11);
+            this.comboShipper.Name = "comboShipper";
+            this.comboShipper.Size = new System.Drawing.Size(121, 24);
+            this.comboShipper.TabIndex = 103;
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(114, 48);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(86, 23);
-            this.txtbrand1.TabIndex = 104;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(114, 48);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(86, 23);
+            this.txtbrand.TabIndex = 104;
             // 
-            // dateRange1
+            // dateInvoiceDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(115, 84);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 105;
+            this.dateInvoiceDate.IsRequired = false;
+            this.dateInvoiceDate.Location = new System.Drawing.Point(115, 84);
+            this.dateInvoiceDate.Name = "dateInvoiceDate";
+            this.dateInvoiceDate.Size = new System.Drawing.Size(280, 23);
+            this.dateInvoiceDate.TabIndex = 105;
             // 
-            // dateRange2
+            // dateETD
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(114, 120);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 106;
+            this.dateETD.IsRequired = false;
+            this.dateETD.Location = new System.Drawing.Point(114, 120);
+            this.dateETD.Name = "dateETD";
+            this.dateETD.Size = new System.Drawing.Size(280, 23);
+            this.dateETD.TabIndex = 106;
             // 
-            // txtshipmode1
+            // txtshipmodeShippingMode
             // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(114, 156);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 107;
-            this.txtshipmode1.UseFunction = "ORDER";
+            this.txtshipmodeShippingMode.BackColor = System.Drawing.Color.White;
+            this.txtshipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmodeShippingMode.FormattingEnabled = true;
+            this.txtshipmodeShippingMode.IsSupportUnselect = true;
+            this.txtshipmodeShippingMode.Location = new System.Drawing.Point(114, 156);
+            this.txtshipmodeShippingMode.Name = "txtshipmodeShippingMode";
+            this.txtshipmodeShippingMode.Size = new System.Drawing.Size(80, 24);
+            this.txtshipmodeShippingMode.TabIndex = 107;
+            this.txtshipmodeShippingMode.UseFunction = "ORDER";
             // 
-            // txtshipterm1
+            // txtshiptermShipmentTerm
             // 
-            this.txtshipterm1.BackColor = System.Drawing.Color.White;
-            this.txtshipterm1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipterm1.Location = new System.Drawing.Point(114, 192);
-            this.txtshipterm1.Name = "txtshipterm1";
-            this.txtshipterm1.Size = new System.Drawing.Size(50, 23);
-            this.txtshipterm1.TabIndex = 108;
+            this.txtshiptermShipmentTerm.BackColor = System.Drawing.Color.White;
+            this.txtshiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshiptermShipmentTerm.Location = new System.Drawing.Point(114, 192);
+            this.txtshiptermShipmentTerm.Name = "txtshiptermShipmentTerm";
+            this.txtshiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
+            this.txtshiptermShipmentTerm.TabIndex = 108;
             // 
-            // txtcountry1
+            // txtcountryDestination
             // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(115, 228);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 109;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(115, 228);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 109;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
-            // comboBox2
+            // comboStatus
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(114, 263);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
-            this.comboBox2.TabIndex = 110;
+            this.comboStatus.BackColor = System.Drawing.Color.White;
+            this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStatus.FormattingEnabled = true;
+            this.comboStatus.IsSupportUnselect = true;
+            this.comboStatus.Location = new System.Drawing.Point(114, 263);
+            this.comboStatus.Name = "comboStatus";
+            this.comboStatus.Size = new System.Drawing.Size(121, 24);
+            this.comboStatus.TabIndex = 110;
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioDetailList);
+            this.radioPanel1.Controls.Add(this.radioMainList);
             this.radioPanel1.Location = new System.Drawing.Point(114, 299);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(248, 31);
             this.radioPanel1.TabIndex = 111;
             // 
-            // radioButton2
+            // radioDetailList
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(138, 3);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(88, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Detail List";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioDetailList.AutoSize = true;
+            this.radioDetailList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetailList.Location = new System.Drawing.Point(138, 3);
+            this.radioDetailList.Name = "radioDetailList";
+            this.radioDetailList.Size = new System.Drawing.Size(88, 21);
+            this.radioDetailList.TabIndex = 1;
+            this.radioDetailList.TabStop = true;
+            this.radioDetailList.Text = "Detail List";
+            this.radioDetailList.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // radioMainList
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(4, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(82, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Main List";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioMainList.AutoSize = true;
+            this.radioMainList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioMainList.Location = new System.Drawing.Point(4, 3);
+            this.radioMainList.Name = "radioMainList";
+            this.radioMainList.Size = new System.Drawing.Size(82, 21);
+            this.radioMainList.TabIndex = 0;
+            this.radioMainList.TabStop = true;
+            this.radioMainList.Text = "Main List";
+            this.radioMainList.UseVisualStyleBackColor = true;
             // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(522, 360);
             this.Controls.Add(this.radioPanel1);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.txtcountry1);
-            this.Controls.Add(this.txtshipterm1);
-            this.Controls.Add(this.txtshipmode1);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboStatus);
+            this.Controls.Add(this.txtcountryDestination);
+            this.Controls.Add(this.txtshiptermShipmentTerm);
+            this.Controls.Add(this.txtshipmodeShippingMode);
+            this.Controls.Add(this.dateETD);
+            this.Controls.Add(this.dateInvoiceDate);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.comboShipper);
+            this.Controls.Add(this.labelReportType);
+            this.Controls.Add(this.labelStatus);
+            this.Controls.Add(this.labelDestination);
+            this.Controls.Add(this.labelShipmentTerm);
+            this.Controls.Add(this.labelShippingMode);
+            this.Controls.Add(this.labelETD);
+            this.Controls.Add(this.labelInvoiceDate);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelShipper);
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Garment Booking Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.txtshipmode1, 0);
-            this.Controls.SetChildIndex(this.txtshipterm1, 0);
-            this.Controls.SetChildIndex(this.txtcountry1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
+            this.Controls.SetChildIndex(this.labelShipper, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelInvoiceDate, 0);
+            this.Controls.SetChildIndex(this.labelETD, 0);
+            this.Controls.SetChildIndex(this.labelShippingMode, 0);
+            this.Controls.SetChildIndex(this.labelShipmentTerm, 0);
+            this.Controls.SetChildIndex(this.labelDestination, 0);
+            this.Controls.SetChildIndex(this.labelStatus, 0);
+            this.Controls.SetChildIndex(this.labelReportType, 0);
+            this.Controls.SetChildIndex(this.comboShipper, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.dateInvoiceDate, 0);
+            this.Controls.SetChildIndex(this.dateETD, 0);
+            this.Controls.SetChildIndex(this.txtshipmodeShippingMode, 0);
+            this.Controls.SetChildIndex(this.txtshiptermShipmentTerm, 0);
+            this.Controls.SetChildIndex(this.txtcountryDestination, 0);
+            this.Controls.SetChildIndex(this.comboStatus, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
@@ -308,25 +308,25 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.ComboBox comboBox1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.DateRange dateRange2;
-        private Class.txtshipmode txtshipmode1;
-        private Class.txtshipterm txtshipterm1;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.ComboBox comboBox2;
+        private Win.UI.Label labelShipper;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelInvoiceDate;
+        private Win.UI.Label labelETD;
+        private Win.UI.Label labelShippingMode;
+        private Win.UI.Label labelShipmentTerm;
+        private Win.UI.Label labelDestination;
+        private Win.UI.Label labelStatus;
+        private Win.UI.Label labelReportType;
+        private Win.UI.ComboBox comboShipper;
+        private Class.txtbrand txtbrand;
+        private Win.UI.DateRange dateInvoiceDate;
+        private Win.UI.DateRange dateETD;
+        private Class.txtshipmode txtshipmodeShippingMode;
+        private Class.txtshipterm txtshiptermShipmentTerm;
+        private Class.txtcountry txtcountryDestination;
+        private Win.UI.ComboBox comboStatus;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioDetailList;
+        private Win.UI.RadioButton radioMainList;
     }
 }

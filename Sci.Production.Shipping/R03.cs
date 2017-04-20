@@ -22,13 +22,13 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk+Sample,Bulk,Sample");
-            comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = -1;
-            comboBox3.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.SelectedIndex = -1;
+            comboCategory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -40,12 +40,12 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            mDivision = comboBox1.Text;
-            pulloutDate1 = dateRange1.Value1;
-            pulloutDate2 = dateRange1.Value2;
-            brand = txtbrand1.Text;
-            factory = comboBox2.Text;
-            category = comboBox3.Text;
+            mDivision = comboM.Text;
+            pulloutDate1 = datePulloutDate.Value1;
+            pulloutDate2 = datePulloutDate.Value2;
+            brand = txtbrand.Text;
+            factory = comboFactory.Text;
+            category = comboCategory.Text;
 
             return base.ValidateInput();
         }

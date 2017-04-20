@@ -32,24 +32,24 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.txtmultifactory1 = new Sci.Production.Class.txtmultifactory();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.dateDelivery = new Sci.Win.UI.DateRange();
+            this.labelDelivery = new Sci.Win.UI.Label();
+            this.dateSDPDate = new Sci.Win.UI.DateRange();
+            this.txtmultifactoryFactory = new Sci.Production.Class.txtmultifactory();
+            this.labelSDPDate = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridImport = new Sci.Win.UI.Grid();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -70,147 +70,147 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.dateRange2);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.txtmultifactory1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.dateDelivery);
+            this.panel3.Controls.Add(this.labelDelivery);
+            this.panel3.Controls.Add(this.dateSDPDate);
+            this.panel3.Controls.Add(this.txtmultifactoryFactory);
+            this.panel3.Controls.Add(this.labelSDPDate);
+            this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(859, 76);
             this.panel3.TabIndex = 3;
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(745, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(745, 9);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 6;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // dateRange2
+            // dateDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(444, 44);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 5;
+            this.dateDelivery.IsRequired = false;
+            this.dateDelivery.Location = new System.Drawing.Point(444, 44);
+            this.dateDelivery.Name = "dateDelivery";
+            this.dateDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateDelivery.TabIndex = 5;
             // 
-            // label3
+            // labelDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(383, 44);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(57, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Delivery";
+            this.labelDelivery.Lines = 0;
+            this.labelDelivery.Location = new System.Drawing.Point(383, 44);
+            this.labelDelivery.Name = "labelDelivery";
+            this.labelDelivery.Size = new System.Drawing.Size(57, 23);
+            this.labelDelivery.TabIndex = 4;
+            this.labelDelivery.Text = "Delivery";
             // 
-            // dateRange1
+            // dateSDPDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(75, 44);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateSDPDate.IsRequired = false;
+            this.dateSDPDate.Location = new System.Drawing.Point(75, 44);
+            this.dateSDPDate.Name = "dateSDPDate";
+            this.dateSDPDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSDPDate.TabIndex = 3;
             // 
-            // txtmultifactory1
+            // txtmultifactoryFactory
             // 
-            this.txtmultifactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtmultifactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtmultifactory1.IsSupportEditMode = false;
-            this.txtmultifactory1.Location = new System.Drawing.Point(75, 13);
-            this.txtmultifactory1.Name = "txtmultifactory1";
-            this.txtmultifactory1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtmultifactory1.ReadOnly = true;
-            this.txtmultifactory1.Size = new System.Drawing.Size(450, 23);
-            this.txtmultifactory1.TabIndex = 2;
+            this.txtmultifactoryFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultifactoryFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtmultifactoryFactory.IsSupportEditMode = false;
+            this.txtmultifactoryFactory.Location = new System.Drawing.Point(75, 13);
+            this.txtmultifactoryFactory.Name = "txtmultifactoryFactory";
+            this.txtmultifactoryFactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtmultifactoryFactory.ReadOnly = true;
+            this.txtmultifactoryFactory.Size = new System.Drawing.Size(450, 23);
+            this.txtmultifactoryFactory.TabIndex = 2;
             // 
-            // label2
+            // labelSDPDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(4, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "SDP Date";
+            this.labelSDPDate.Lines = 0;
+            this.labelSDPDate.Location = new System.Drawing.Point(4, 44);
+            this.labelSDPDate.Name = "labelSDPDate";
+            this.labelSDPDate.Size = new System.Drawing.Size(67, 23);
+            this.labelSDPDate.TabIndex = 1;
+            this.labelSDPDate.Text = "SDP Date";
             // 
-            // label1
+            // labelFactory
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(4, 13);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(67, 23);
+            this.labelFactory.TabIndex = 0;
+            this.labelFactory.Text = "Factory";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnImport);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 416);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(859, 42);
             this.panel4.TabIndex = 4;
             // 
-            // button3
+            // btnClose
             // 
-            this.button3.Location = new System.Drawing.Point(755, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Close";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnClose.Location = new System.Drawing.Point(755, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // btnImport
             // 
-            this.button2.Location = new System.Drawing.Point(664, 7);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Location = new System.Drawing.Point(664, 7);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 76);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(859, 340);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridImport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(859, 340);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.DataSource = this.listControlBindingSource1;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 0);
+            this.gridImport.Name = "gridImport";
+            this.gridImport.RowHeadersVisible = false;
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(859, 340);
+            this.gridImport.TabIndex = 0;
+            this.gridImport.TabStop = false;
             // 
             // P05_ImportFromPackingList
             // 
@@ -233,7 +233,7 @@
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -243,19 +243,19 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelSDPDate;
+        private Win.UI.Label labelFactory;
         private Win.UI.Panel panel4;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label3;
-        private Win.UI.DateRange dateRange1;
-        private Class.txtmultifactory txtmultifactory1;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
+        private Win.UI.Grid gridImport;
+        private Win.UI.Button btnQuery;
+        private Win.UI.DateRange dateDelivery;
+        private Win.UI.Label labelDelivery;
+        private Win.UI.DateRange dateSDPDate;
+        private Class.txtmultifactory txtmultifactoryFactory;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnImport;
 
     }
 }

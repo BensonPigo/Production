@@ -28,44 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.numericBox5 = new Sci.Win.UI.NumericBox();
-            this.numericBox6 = new Sci.Win.UI.NumericBox();
-            this.numericBox7 = new Sci.Win.UI.NumericBox();
-            this.numericBox8 = new Sci.Win.UI.NumericBox();
-            this.numericBox9 = new Sci.Win.UI.NumericBox();
-            this.numericBox10 = new Sci.Win.UI.NumericBox();
-            this.numericBox11 = new Sci.Win.UI.NumericBox();
-            this.numericBox12 = new Sci.Win.UI.NumericBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelReason = new Sci.Win.UI.Label();
+            this.labelInvoiceNo = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelPulloutdate = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelARVoucherNo = new Sci.Win.UI.Label();
+            this.labelVoucherNo = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.comboReason = new Sci.Win.UI.ComboBox();
+            this.displayInvoiceNo = new Sci.Win.UI.DisplayBox();
+            this.displaySPNo = new Sci.Win.UI.DisplayBox();
+            this.datePulloutdate = new Sci.Win.UI.DateBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayARVoucherNo = new Sci.Win.UI.DisplayBox();
+            this.displayVoucherNo = new Sci.Win.UI.DisplayBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.labelPulloutQty = new Sci.Win.UI.Label();
+            this.labelPulloutAmt = new Sci.Win.UI.Label();
+            this.labelSurchargeAmt = new Sci.Win.UI.Label();
+            this.labelAdditionalCharge = new Sci.Win.UI.Label();
+            this.labelCommAmt = new Sci.Win.UI.Label();
+            this.labelTotalAmt = new Sci.Win.UI.Label();
+            this.labelOriginal = new Sci.Win.UI.Label();
+            this.labelChangeto = new Sci.Win.UI.Label();
+            this.numOriginalPulloutQty = new Sci.Win.UI.NumericBox();
+            this.numChangetoPulloutQty = new Sci.Win.UI.NumericBox();
+            this.numOriginalPulloutAmt = new Sci.Win.UI.NumericBox();
+            this.numChangetoPulloutAmt = new Sci.Win.UI.NumericBox();
+            this.numOriginalSurchargeAmt = new Sci.Win.UI.NumericBox();
+            this.numChangetoSurchargeAmt = new Sci.Win.UI.NumericBox();
+            this.numOriginalAdditionalCharge = new Sci.Win.UI.NumericBox();
+            this.numChangetoAdditionalCharge = new Sci.Win.UI.NumericBox();
+            this.numOriginalCommAmt = new Sci.Win.UI.NumericBox();
+            this.numChangetoCommAmt = new Sci.Win.UI.NumericBox();
+            this.numOriginalTotalAmt = new Sci.Win.UI.NumericBox();
+            this.numChangetoTotalAmt = new Sci.Win.UI.NumericBox();
             this.label18 = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -85,88 +85,88 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.numericBox12);
-            this.masterpanel.Controls.Add(this.numericBox11);
-            this.masterpanel.Controls.Add(this.numericBox10);
-            this.masterpanel.Controls.Add(this.numericBox9);
-            this.masterpanel.Controls.Add(this.numericBox8);
-            this.masterpanel.Controls.Add(this.numericBox7);
-            this.masterpanel.Controls.Add(this.numericBox6);
-            this.masterpanel.Controls.Add(this.numericBox5);
-            this.masterpanel.Controls.Add(this.numericBox4);
-            this.masterpanel.Controls.Add(this.numericBox3);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.label17);
-            this.masterpanel.Controls.Add(this.label16);
-            this.masterpanel.Controls.Add(this.label15);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.displayBox6);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.numChangetoTotalAmt);
+            this.masterpanel.Controls.Add(this.numOriginalTotalAmt);
+            this.masterpanel.Controls.Add(this.numChangetoCommAmt);
+            this.masterpanel.Controls.Add(this.numOriginalCommAmt);
+            this.masterpanel.Controls.Add(this.numChangetoAdditionalCharge);
+            this.masterpanel.Controls.Add(this.numOriginalAdditionalCharge);
+            this.masterpanel.Controls.Add(this.numChangetoSurchargeAmt);
+            this.masterpanel.Controls.Add(this.numOriginalSurchargeAmt);
+            this.masterpanel.Controls.Add(this.numChangetoPulloutAmt);
+            this.masterpanel.Controls.Add(this.numOriginalPulloutAmt);
+            this.masterpanel.Controls.Add(this.numChangetoPulloutQty);
+            this.masterpanel.Controls.Add(this.numOriginalPulloutQty);
+            this.masterpanel.Controls.Add(this.labelChangeto);
+            this.masterpanel.Controls.Add(this.labelOriginal);
+            this.masterpanel.Controls.Add(this.labelTotalAmt);
+            this.masterpanel.Controls.Add(this.labelCommAmt);
+            this.masterpanel.Controls.Add(this.labelAdditionalCharge);
+            this.masterpanel.Controls.Add(this.labelSurchargeAmt);
+            this.masterpanel.Controls.Add(this.labelPulloutAmt);
+            this.masterpanel.Controls.Add(this.labelPulloutQty);
+            this.masterpanel.Controls.Add(this.displayFactory);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.displayVoucherNo);
+            this.masterpanel.Controls.Add(this.displayARVoucherNo);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySPNo);
+            this.masterpanel.Controls.Add(this.displayInvoiceNo);
+            this.masterpanel.Controls.Add(this.datePulloutdate);
+            this.masterpanel.Controls.Add(this.comboReason);
+            this.masterpanel.Controls.Add(this.labelVoucherNo);
+            this.masterpanel.Controls.Add(this.labelARVoucherNo);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelPulloutdate);
+            this.masterpanel.Controls.Add(this.labelSPNo);
+            this.masterpanel.Controls.Add(this.labelInvoiceNo);
+            this.masterpanel.Controls.Add(this.labelReason);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Controls.Add(this.shapeContainer1);
             this.masterpanel.Controls.Add(this.label18);
             this.masterpanel.Size = new System.Drawing.Size(911, 248);
             this.masterpanel.Controls.SetChildIndex(this.label18, 0);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPulloutdate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelARVoucherNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelVoucherNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datePulloutdate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayInvoiceNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayARVoucherNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayVoucherNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPulloutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPulloutAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSurchargeAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelAdditionalCharge, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCommAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOriginal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelChangeto, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalPulloutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoPulloutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalPulloutAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoPulloutAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalSurchargeAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoSurchargeAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalAdditionalCharge, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoAdditionalCharge, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalCommAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoCommAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriginalTotalAmt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numChangetoTotalAmt, 0);
             // 
             // detailpanel
             // 
@@ -188,15 +188,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(911, 488);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(905, 442);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(905, 40);
             // 
             // detail
             // 
@@ -213,7 +213,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 488);
+            this.browse.Size = new System.Drawing.Size(911, 488);
             // 
             // tabs
             // 
@@ -232,526 +232,526 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(5, 4);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(80, 23);
+            this.labelDate.TabIndex = 1;
+            this.labelDate.Text = "Date";
             // 
-            // label2
+            // labelReason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Reason";
+            this.labelReason.Lines = 0;
+            this.labelReason.Location = new System.Drawing.Point(5, 31);
+            this.labelReason.Name = "labelReason";
+            this.labelReason.Size = new System.Drawing.Size(80, 23);
+            this.labelReason.TabIndex = 2;
+            this.labelReason.Text = "Reason";
             // 
-            // label3
+            // labelInvoiceNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(5, 58);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Invoice no.";
+            this.labelInvoiceNo.Lines = 0;
+            this.labelInvoiceNo.Location = new System.Drawing.Point(5, 58);
+            this.labelInvoiceNo.Name = "labelInvoiceNo";
+            this.labelInvoiceNo.Size = new System.Drawing.Size(80, 23);
+            this.labelInvoiceNo.TabIndex = 3;
+            this.labelInvoiceNo.Text = "Invoice no.";
             // 
-            // label4
+            // labelSPNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(5, 85);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "SP No.";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(5, 85);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(80, 23);
+            this.labelSPNo.TabIndex = 4;
+            this.labelSPNo.Text = "SP No.";
             // 
-            // label5
+            // labelPulloutdate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(5, 112);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Pullout date";
+            this.labelPulloutdate.Lines = 0;
+            this.labelPulloutdate.Location = new System.Drawing.Point(5, 112);
+            this.labelPulloutdate.Name = "labelPulloutdate";
+            this.labelPulloutdate.Size = new System.Drawing.Size(80, 23);
+            this.labelPulloutdate.TabIndex = 5;
+            this.labelPulloutdate.Text = "Pullout date";
             // 
-            // label6
+            // labelBrand
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(5, 139);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(51, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(5, 139);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(51, 23);
+            this.labelBrand.TabIndex = 6;
+            this.labelBrand.Text = "Brand";
             // 
-            // label7
+            // labelARVoucherNo
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(5, 166);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(105, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "A/R Voucher no.";
+            this.labelARVoucherNo.Lines = 0;
+            this.labelARVoucherNo.Location = new System.Drawing.Point(5, 166);
+            this.labelARVoucherNo.Name = "labelARVoucherNo";
+            this.labelARVoucherNo.Size = new System.Drawing.Size(105, 23);
+            this.labelARVoucherNo.TabIndex = 7;
+            this.labelARVoucherNo.Text = "A/R Voucher no.";
             // 
-            // label8
+            // labelVoucherNo
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(5, 193);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(105, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Voucher no.";
+            this.labelVoucherNo.Lines = 0;
+            this.labelVoucherNo.Location = new System.Drawing.Point(5, 193);
+            this.labelVoucherNo.Name = "labelVoucherNo";
+            this.labelVoucherNo.Size = new System.Drawing.Size(105, 23);
+            this.labelVoucherNo.TabIndex = 8;
+            this.labelVoucherNo.Text = "Voucher no.";
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(89, 4);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(100, 23);
-            this.dateBox1.TabIndex = 9;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
+            this.dateDate.IsSupportEditMode = false;
+            this.dateDate.Location = new System.Drawing.Point(89, 4);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.ReadOnly = true;
+            this.dateDate.Size = new System.Drawing.Size(100, 23);
+            this.dateDate.TabIndex = 9;
             // 
-            // comboBox1
+            // comboReason
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "REASON", true));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(89, 31);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(151, 24);
-            this.comboBox1.TabIndex = 10;
+            this.comboReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboReason.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "REASON", true));
+            this.comboReason.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Location = new System.Drawing.Point(89, 31);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.ReadOnly = true;
+            this.comboReason.Size = new System.Drawing.Size(151, 24);
+            this.comboReason.TabIndex = 10;
             // 
-            // displayBox1
+            // displayInvoiceNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentInvoiceID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(89, 58);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(180, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayInvoiceNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayInvoiceNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GarmentInvoiceID", true));
+            this.displayInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayInvoiceNo.Location = new System.Drawing.Point(89, 58);
+            this.displayInvoiceNo.Name = "displayInvoiceNo";
+            this.displayInvoiceNo.Size = new System.Drawing.Size(180, 23);
+            this.displayInvoiceNo.TabIndex = 11;
             // 
-            // displayBox2
+            // displaySPNo
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(89, 85);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(130, 23);
-            this.displayBox2.TabIndex = 12;
+            this.displaySPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySPNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderID", true));
+            this.displaySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySPNo.Location = new System.Drawing.Point(89, 85);
+            this.displaySPNo.Name = "displaySPNo";
+            this.displaySPNo.Size = new System.Drawing.Size(130, 23);
+            this.displaySPNo.TabIndex = 12;
             // 
-            // dateBox2
+            // datePulloutdate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PullDate", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(89, 112);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(100, 23);
-            this.dateBox2.TabIndex = 13;
+            this.datePulloutdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PullDate", true));
+            this.datePulloutdate.IsSupportEditMode = false;
+            this.datePulloutdate.Location = new System.Drawing.Point(89, 112);
+            this.datePulloutdate.Name = "datePulloutdate";
+            this.datePulloutdate.ReadOnly = true;
+            this.datePulloutdate.Size = new System.Drawing.Size(100, 23);
+            this.datePulloutdate.TabIndex = 13;
             // 
-            // displayBox3
+            // displayBrand
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(59, 139);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 14;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(59, 139);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(80, 23);
+            this.displayBrand.TabIndex = 14;
             // 
-            // displayBox4
+            // displayARVoucherNo
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ARVoucherID", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(114, 166);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(150, 23);
-            this.displayBox4.TabIndex = 15;
+            this.displayARVoucherNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayARVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ARVoucherID", true));
+            this.displayARVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayARVoucherNo.Location = new System.Drawing.Point(114, 166);
+            this.displayARVoucherNo.Name = "displayARVoucherNo";
+            this.displayARVoucherNo.Size = new System.Drawing.Size(150, 23);
+            this.displayARVoucherNo.TabIndex = 15;
             // 
-            // displayBox5
+            // displayVoucherNo
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(114, 193);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(150, 23);
-            this.displayBox5.TabIndex = 16;
+            this.displayVoucherNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
+            this.displayVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayVoucherNo.Location = new System.Drawing.Point(114, 193);
+            this.displayVoucherNo.Name = "displayVoucherNo";
+            this.displayVoucherNo.Size = new System.Drawing.Size(150, 23);
+            this.displayVoucherNo.TabIndex = 16;
             // 
-            // label9
+            // labelFactory
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(156, 139);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(50, 23);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(156, 139);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(50, 23);
+            this.labelFactory.TabIndex = 17;
+            this.labelFactory.Text = "Factory";
             // 
-            // displayBox6
+            // displayFactory
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(210, 139);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(55, 23);
-            this.displayBox6.TabIndex = 18;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(210, 139);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(55, 23);
+            this.displayFactory.TabIndex = 18;
             // 
-            // label10
+            // labelPulloutQty
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(363, 31);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(116, 23);
-            this.label10.TabIndex = 19;
-            this.label10.Text = "Pullout Q\'ty";
+            this.labelPulloutQty.Lines = 0;
+            this.labelPulloutQty.Location = new System.Drawing.Point(363, 31);
+            this.labelPulloutQty.Name = "labelPulloutQty";
+            this.labelPulloutQty.Size = new System.Drawing.Size(116, 23);
+            this.labelPulloutQty.TabIndex = 19;
+            this.labelPulloutQty.Text = "Pullout Q\'ty";
             // 
-            // label11
+            // labelPulloutAmt
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(363, 58);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(116, 23);
-            this.label11.TabIndex = 20;
-            this.label11.Text = "Pullout Amt";
+            this.labelPulloutAmt.Lines = 0;
+            this.labelPulloutAmt.Location = new System.Drawing.Point(363, 58);
+            this.labelPulloutAmt.Name = "labelPulloutAmt";
+            this.labelPulloutAmt.Size = new System.Drawing.Size(116, 23);
+            this.labelPulloutAmt.TabIndex = 20;
+            this.labelPulloutAmt.Text = "Pullout Amt";
             // 
-            // label12
+            // labelSurchargeAmt
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(363, 85);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(116, 23);
-            this.label12.TabIndex = 21;
-            this.label12.Text = "Surcharge Amt";
+            this.labelSurchargeAmt.Lines = 0;
+            this.labelSurchargeAmt.Location = new System.Drawing.Point(363, 85);
+            this.labelSurchargeAmt.Name = "labelSurchargeAmt";
+            this.labelSurchargeAmt.Size = new System.Drawing.Size(116, 23);
+            this.labelSurchargeAmt.TabIndex = 21;
+            this.labelSurchargeAmt.Text = "Surcharge Amt";
             // 
-            // label13
+            // labelAdditionalCharge
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(363, 112);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(116, 23);
-            this.label13.TabIndex = 22;
-            this.label13.Text = "Additional Charge";
+            this.labelAdditionalCharge.Lines = 0;
+            this.labelAdditionalCharge.Location = new System.Drawing.Point(363, 112);
+            this.labelAdditionalCharge.Name = "labelAdditionalCharge";
+            this.labelAdditionalCharge.Size = new System.Drawing.Size(116, 23);
+            this.labelAdditionalCharge.TabIndex = 22;
+            this.labelAdditionalCharge.Text = "Additional Charge";
             // 
-            // label14
+            // labelCommAmt
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(363, 139);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(116, 23);
-            this.label14.TabIndex = 23;
-            this.label14.Text = "Comm Amt(-)";
+            this.labelCommAmt.Lines = 0;
+            this.labelCommAmt.Location = new System.Drawing.Point(363, 139);
+            this.labelCommAmt.Name = "labelCommAmt";
+            this.labelCommAmt.Size = new System.Drawing.Size(116, 23);
+            this.labelCommAmt.TabIndex = 23;
+            this.labelCommAmt.Text = "Comm Amt(-)";
             // 
-            // label15
+            // labelTotalAmt
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(363, 166);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(116, 23);
-            this.label15.TabIndex = 24;
-            this.label15.Text = "Total Amt";
+            this.labelTotalAmt.Lines = 0;
+            this.labelTotalAmt.Location = new System.Drawing.Point(363, 166);
+            this.labelTotalAmt.Name = "labelTotalAmt";
+            this.labelTotalAmt.Size = new System.Drawing.Size(116, 23);
+            this.labelTotalAmt.TabIndex = 24;
+            this.labelTotalAmt.Text = "Total Amt";
             // 
-            // label16
+            // labelOriginal
             // 
-            this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(501, 4);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(55, 23);
-            this.label16.TabIndex = 25;
-            this.label16.Text = "Original";
-            this.label16.TextStyle.BorderColor = System.Drawing.Color.Blue;
-            this.label16.TextStyle.Color = System.Drawing.Color.Blue;
-            this.label16.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
-            this.label16.TextStyle.GradientColor = System.Drawing.Color.Blue;
+            this.labelOriginal.BackColor = System.Drawing.Color.Transparent;
+            this.labelOriginal.Lines = 0;
+            this.labelOriginal.Location = new System.Drawing.Point(501, 4);
+            this.labelOriginal.Name = "labelOriginal";
+            this.labelOriginal.Size = new System.Drawing.Size(55, 23);
+            this.labelOriginal.TabIndex = 25;
+            this.labelOriginal.Text = "Original";
+            this.labelOriginal.TextStyle.BorderColor = System.Drawing.Color.Blue;
+            this.labelOriginal.TextStyle.Color = System.Drawing.Color.Blue;
+            this.labelOriginal.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
+            this.labelOriginal.TextStyle.GradientColor = System.Drawing.Color.Blue;
             // 
-            // label17
+            // labelChangeto
             // 
-            this.label17.BackColor = System.Drawing.Color.Transparent;
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(587, 4);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(65, 23);
-            this.label17.TabIndex = 26;
-            this.label17.Text = "Change to";
-            this.label17.TextStyle.BorderColor = System.Drawing.Color.Blue;
-            this.label17.TextStyle.Color = System.Drawing.Color.Blue;
-            this.label17.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
-            this.label17.TextStyle.GradientColor = System.Drawing.Color.Blue;
+            this.labelChangeto.BackColor = System.Drawing.Color.Transparent;
+            this.labelChangeto.Lines = 0;
+            this.labelChangeto.Location = new System.Drawing.Point(587, 4);
+            this.labelChangeto.Name = "labelChangeto";
+            this.labelChangeto.Size = new System.Drawing.Size(65, 23);
+            this.labelChangeto.TabIndex = 26;
+            this.labelChangeto.Text = "Change to";
+            this.labelChangeto.TextStyle.BorderColor = System.Drawing.Color.Blue;
+            this.labelChangeto.TextStyle.Color = System.Drawing.Color.Blue;
+            this.labelChangeto.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
+            this.labelChangeto.TextStyle.GradientColor = System.Drawing.Color.Blue;
             // 
-            // numericBox1
+            // numOriginalPulloutQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigPulloutQty", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(483, 31);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numOriginalPulloutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalPulloutQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigPulloutQty", true));
+            this.numOriginalPulloutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalPulloutQty.IsSupportEditMode = false;
+            this.numOriginalPulloutQty.Location = new System.Drawing.Point(483, 31);
+            this.numOriginalPulloutQty.Name = "numOriginalPulloutQty";
+            this.numOriginalPulloutQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(90, 23);
-            this.numericBox1.TabIndex = 27;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustPulloutQty", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(577, 31);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(90, 23);
-            this.numericBox2.TabIndex = 28;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numOriginalPulloutQty.ReadOnly = true;
+            this.numOriginalPulloutQty.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalPulloutQty.TabIndex = 27;
+            this.numOriginalPulloutQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox3
+            // numChangetoPulloutQty
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigPulloutAmt", true));
-            this.numericBox3.DecimalPlaces = 2;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(483, 58);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numChangetoPulloutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoPulloutQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustPulloutQty", true));
+            this.numChangetoPulloutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoPulloutQty.IsSupportEditMode = false;
+            this.numChangetoPulloutQty.Location = new System.Drawing.Point(577, 31);
+            this.numChangetoPulloutQty.Name = "numChangetoPulloutQty";
+            this.numChangetoPulloutQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(90, 23);
-            this.numericBox3.TabIndex = 29;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustPulloutAmt", true));
-            this.numericBox4.DecimalPlaces = 2;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(577, 58);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(90, 23);
-            this.numericBox4.TabIndex = 30;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numChangetoPulloutQty.ReadOnly = true;
+            this.numChangetoPulloutQty.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoPulloutQty.TabIndex = 28;
+            this.numChangetoPulloutQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox5
+            // numOriginalPulloutAmt
             // 
-            this.numericBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox5.DecimalPlaces = 5;
-            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox5.IsSupportEditMode = false;
-            this.numericBox5.Location = new System.Drawing.Point(483, 85);
-            this.numericBox5.Name = "numericBox5";
-            this.numericBox5.NullValue = new decimal(new int[] {
+            this.numOriginalPulloutAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalPulloutAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigPulloutAmt", true));
+            this.numOriginalPulloutAmt.DecimalPlaces = 2;
+            this.numOriginalPulloutAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalPulloutAmt.IsSupportEditMode = false;
+            this.numOriginalPulloutAmt.Location = new System.Drawing.Point(483, 58);
+            this.numOriginalPulloutAmt.Name = "numOriginalPulloutAmt";
+            this.numOriginalPulloutAmt.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox5.ReadOnly = true;
-            this.numericBox5.Size = new System.Drawing.Size(90, 23);
-            this.numericBox5.TabIndex = 31;
-            this.numericBox5.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox6
-            // 
-            this.numericBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox6.DecimalPlaces = 5;
-            this.numericBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox6.IsSupportEditMode = false;
-            this.numericBox6.Location = new System.Drawing.Point(577, 85);
-            this.numericBox6.Name = "numericBox6";
-            this.numericBox6.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox6.ReadOnly = true;
-            this.numericBox6.Size = new System.Drawing.Size(90, 23);
-            this.numericBox6.TabIndex = 32;
-            this.numericBox6.Value = new decimal(new int[] {
+            this.numOriginalPulloutAmt.ReadOnly = true;
+            this.numOriginalPulloutAmt.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalPulloutAmt.TabIndex = 29;
+            this.numOriginalPulloutAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox7
+            // numChangetoPulloutAmt
             // 
-            this.numericBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox7.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigAddCharge", true));
-            this.numericBox7.DecimalPlaces = 2;
-            this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox7.IsSupportEditMode = false;
-            this.numericBox7.Location = new System.Drawing.Point(483, 112);
-            this.numericBox7.Name = "numericBox7";
-            this.numericBox7.NullValue = new decimal(new int[] {
+            this.numChangetoPulloutAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoPulloutAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustPulloutAmt", true));
+            this.numChangetoPulloutAmt.DecimalPlaces = 2;
+            this.numChangetoPulloutAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoPulloutAmt.IsSupportEditMode = false;
+            this.numChangetoPulloutAmt.Location = new System.Drawing.Point(577, 58);
+            this.numChangetoPulloutAmt.Name = "numChangetoPulloutAmt";
+            this.numChangetoPulloutAmt.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox7.ReadOnly = true;
-            this.numericBox7.Size = new System.Drawing.Size(90, 23);
-            this.numericBox7.TabIndex = 33;
-            this.numericBox7.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox8
-            // 
-            this.numericBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustAddCharge", true));
-            this.numericBox8.DecimalPlaces = 2;
-            this.numericBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox8.IsSupportEditMode = false;
-            this.numericBox8.Location = new System.Drawing.Point(577, 112);
-            this.numericBox8.Name = "numericBox8";
-            this.numericBox8.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox8.ReadOnly = true;
-            this.numericBox8.Size = new System.Drawing.Size(90, 23);
-            this.numericBox8.TabIndex = 34;
-            this.numericBox8.Value = new decimal(new int[] {
+            this.numChangetoPulloutAmt.ReadOnly = true;
+            this.numChangetoPulloutAmt.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoPulloutAmt.TabIndex = 30;
+            this.numChangetoPulloutAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox9
+            // numOriginalSurchargeAmt
             // 
-            this.numericBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox9.DecimalPlaces = 5;
-            this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox9.IsSupportEditMode = false;
-            this.numericBox9.Location = new System.Drawing.Point(483, 139);
-            this.numericBox9.Name = "numericBox9";
-            this.numericBox9.NullValue = new decimal(new int[] {
+            this.numOriginalSurchargeAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalSurchargeAmt.DecimalPlaces = 5;
+            this.numOriginalSurchargeAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalSurchargeAmt.IsSupportEditMode = false;
+            this.numOriginalSurchargeAmt.Location = new System.Drawing.Point(483, 85);
+            this.numOriginalSurchargeAmt.Name = "numOriginalSurchargeAmt";
+            this.numOriginalSurchargeAmt.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox9.ReadOnly = true;
-            this.numericBox9.Size = new System.Drawing.Size(90, 23);
-            this.numericBox9.TabIndex = 35;
-            this.numericBox9.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox10
-            // 
-            this.numericBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox10.DecimalPlaces = 5;
-            this.numericBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox10.IsSupportEditMode = false;
-            this.numericBox10.Location = new System.Drawing.Point(577, 139);
-            this.numericBox10.Name = "numericBox10";
-            this.numericBox10.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox10.ReadOnly = true;
-            this.numericBox10.Size = new System.Drawing.Size(90, 23);
-            this.numericBox10.TabIndex = 36;
-            this.numericBox10.Value = new decimal(new int[] {
+            this.numOriginalSurchargeAmt.ReadOnly = true;
+            this.numOriginalSurchargeAmt.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalSurchargeAmt.TabIndex = 31;
+            this.numOriginalSurchargeAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox11
+            // numChangetoSurchargeAmt
             // 
-            this.numericBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox11.DecimalPlaces = 2;
-            this.numericBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox11.IsSupportEditMode = false;
-            this.numericBox11.Location = new System.Drawing.Point(483, 166);
-            this.numericBox11.Name = "numericBox11";
-            this.numericBox11.NullValue = new decimal(new int[] {
+            this.numChangetoSurchargeAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoSurchargeAmt.DecimalPlaces = 5;
+            this.numChangetoSurchargeAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoSurchargeAmt.IsSupportEditMode = false;
+            this.numChangetoSurchargeAmt.Location = new System.Drawing.Point(577, 85);
+            this.numChangetoSurchargeAmt.Name = "numChangetoSurchargeAmt";
+            this.numChangetoSurchargeAmt.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox11.ReadOnly = true;
-            this.numericBox11.Size = new System.Drawing.Size(90, 23);
-            this.numericBox11.TabIndex = 37;
-            this.numericBox11.Value = new decimal(new int[] {
+            this.numChangetoSurchargeAmt.ReadOnly = true;
+            this.numChangetoSurchargeAmt.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoSurchargeAmt.TabIndex = 32;
+            this.numChangetoSurchargeAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox12
+            // numOriginalAdditionalCharge
             // 
-            this.numericBox12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox12.DecimalPlaces = 2;
-            this.numericBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox12.IsSupportEditMode = false;
-            this.numericBox12.Location = new System.Drawing.Point(577, 166);
-            this.numericBox12.Name = "numericBox12";
-            this.numericBox12.NullValue = new decimal(new int[] {
+            this.numOriginalAdditionalCharge.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalAdditionalCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrigAddCharge", true));
+            this.numOriginalAdditionalCharge.DecimalPlaces = 2;
+            this.numOriginalAdditionalCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalAdditionalCharge.IsSupportEditMode = false;
+            this.numOriginalAdditionalCharge.Location = new System.Drawing.Point(483, 112);
+            this.numOriginalAdditionalCharge.Name = "numOriginalAdditionalCharge";
+            this.numOriginalAdditionalCharge.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox12.ReadOnly = true;
-            this.numericBox12.Size = new System.Drawing.Size(90, 23);
-            this.numericBox12.TabIndex = 38;
-            this.numericBox12.Value = new decimal(new int[] {
+            this.numOriginalAdditionalCharge.ReadOnly = true;
+            this.numOriginalAdditionalCharge.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalAdditionalCharge.TabIndex = 33;
+            this.numOriginalAdditionalCharge.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numChangetoAdditionalCharge
+            // 
+            this.numChangetoAdditionalCharge.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoAdditionalCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AdjustAddCharge", true));
+            this.numChangetoAdditionalCharge.DecimalPlaces = 2;
+            this.numChangetoAdditionalCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoAdditionalCharge.IsSupportEditMode = false;
+            this.numChangetoAdditionalCharge.Location = new System.Drawing.Point(577, 112);
+            this.numChangetoAdditionalCharge.Name = "numChangetoAdditionalCharge";
+            this.numChangetoAdditionalCharge.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numChangetoAdditionalCharge.ReadOnly = true;
+            this.numChangetoAdditionalCharge.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoAdditionalCharge.TabIndex = 34;
+            this.numChangetoAdditionalCharge.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numOriginalCommAmt
+            // 
+            this.numOriginalCommAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalCommAmt.DecimalPlaces = 5;
+            this.numOriginalCommAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalCommAmt.IsSupportEditMode = false;
+            this.numOriginalCommAmt.Location = new System.Drawing.Point(483, 139);
+            this.numOriginalCommAmt.Name = "numOriginalCommAmt";
+            this.numOriginalCommAmt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOriginalCommAmt.ReadOnly = true;
+            this.numOriginalCommAmt.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalCommAmt.TabIndex = 35;
+            this.numOriginalCommAmt.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numChangetoCommAmt
+            // 
+            this.numChangetoCommAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoCommAmt.DecimalPlaces = 5;
+            this.numChangetoCommAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoCommAmt.IsSupportEditMode = false;
+            this.numChangetoCommAmt.Location = new System.Drawing.Point(577, 139);
+            this.numChangetoCommAmt.Name = "numChangetoCommAmt";
+            this.numChangetoCommAmt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numChangetoCommAmt.ReadOnly = true;
+            this.numChangetoCommAmt.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoCommAmt.TabIndex = 36;
+            this.numChangetoCommAmt.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numOriginalTotalAmt
+            // 
+            this.numOriginalTotalAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriginalTotalAmt.DecimalPlaces = 2;
+            this.numOriginalTotalAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriginalTotalAmt.IsSupportEditMode = false;
+            this.numOriginalTotalAmt.Location = new System.Drawing.Point(483, 166);
+            this.numOriginalTotalAmt.Name = "numOriginalTotalAmt";
+            this.numOriginalTotalAmt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOriginalTotalAmt.ReadOnly = true;
+            this.numOriginalTotalAmt.Size = new System.Drawing.Size(90, 23);
+            this.numOriginalTotalAmt.TabIndex = 37;
+            this.numOriginalTotalAmt.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numChangetoTotalAmt
+            // 
+            this.numChangetoTotalAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numChangetoTotalAmt.DecimalPlaces = 2;
+            this.numChangetoTotalAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numChangetoTotalAmt.IsSupportEditMode = false;
+            this.numChangetoTotalAmt.Location = new System.Drawing.Point(577, 166);
+            this.numChangetoTotalAmt.Name = "numChangetoTotalAmt";
+            this.numChangetoTotalAmt.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numChangetoTotalAmt.ReadOnly = true;
+            this.numChangetoTotalAmt.Size = new System.Drawing.Size(90, 23);
+            this.numChangetoTotalAmt.TabIndex = 38;
+            this.numChangetoTotalAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -833,44 +833,44 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.NumericBox numericBox12;
-        private Win.UI.NumericBox numericBox11;
-        private Win.UI.NumericBox numericBox10;
-        private Win.UI.NumericBox numericBox9;
-        private Win.UI.NumericBox numericBox8;
-        private Win.UI.NumericBox numericBox7;
-        private Win.UI.NumericBox numericBox6;
-        private Win.UI.NumericBox numericBox5;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.Label label9;
+        private Win.UI.DisplayBox displayVoucherNo;
+        private Win.UI.DisplayBox displayARVoucherNo;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DateBox datePulloutdate;
+        private Win.UI.DisplayBox displaySPNo;
+        private Win.UI.DisplayBox displayInvoiceNo;
+        private Win.UI.ComboBox comboReason;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.Label labelVoucherNo;
+        private Win.UI.Label labelARVoucherNo;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelPulloutdate;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelInvoiceNo;
+        private Win.UI.Label labelReason;
+        private Win.UI.Label labelDate;
+        private Win.UI.NumericBox numChangetoTotalAmt;
+        private Win.UI.NumericBox numOriginalTotalAmt;
+        private Win.UI.NumericBox numChangetoCommAmt;
+        private Win.UI.NumericBox numOriginalCommAmt;
+        private Win.UI.NumericBox numChangetoAdditionalCharge;
+        private Win.UI.NumericBox numOriginalAdditionalCharge;
+        private Win.UI.NumericBox numChangetoSurchargeAmt;
+        private Win.UI.NumericBox numOriginalSurchargeAmt;
+        private Win.UI.NumericBox numChangetoPulloutAmt;
+        private Win.UI.NumericBox numOriginalPulloutAmt;
+        private Win.UI.NumericBox numChangetoPulloutQty;
+        private Win.UI.NumericBox numOriginalPulloutQty;
+        private Win.UI.Label labelChangeto;
+        private Win.UI.Label labelOriginal;
+        private Win.UI.Label labelTotalAmt;
+        private Win.UI.Label labelCommAmt;
+        private Win.UI.Label labelAdditionalCharge;
+        private Win.UI.Label labelSurchargeAmt;
+        private Win.UI.Label labelPulloutAmt;
+        private Win.UI.Label labelPulloutQty;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelFactory;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Label label18;

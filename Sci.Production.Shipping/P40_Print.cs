@@ -20,14 +20,14 @@ namespace Sci.Production.Shipping
         public P40_Print(DataRow MasterData)
         {
             InitializeComponent();
-            radioButton1.Checked = true;
+            radioCommercialInvoice.Checked = true;
             masterData = MasterData;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            type = radioButton1.Checked ? "1" : "2";
+            type = radioCommercialInvoice.Checked ? "1" : "2";
 
             return base.ValidateInput();
         }

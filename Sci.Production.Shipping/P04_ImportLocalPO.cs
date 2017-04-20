@@ -25,9 +25,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("LocalPOID", header: "Local Purchase#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -45,20 +45,20 @@ namespace Sci.Production.Shipping
         //Qurey
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text) && MyUtility.Check.Empty(txtLocalPurchase.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Local Purchase# > can't be empty!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
-            if (MyUtility.Convert.GetString(textBox1.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(txtSPNo.Text).IndexOf("'") != -1)
             {
                 MyUtility.Msg.WarningBox("SP# can not enter the  '  character!!");
                 return;
             }
 
-            if (MyUtility.Convert.GetString(textBox2.Text).IndexOf("'") != -1)
+            if (MyUtility.Convert.GetString(txtLocalPurchase.Text).IndexOf("'") != -1)
             {
                 MyUtility.Msg.WarningBox("Local Purchase# can not enter the  '  character!!");
                 return;
@@ -71,17 +71,17 @@ o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as Factor
 from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
       from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) 
 	  where l.Id = ld.Id");
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtLocalPurchase.Text))
             {
-                sqlCmd.Append(string.Format(" and l.id = '{0}'",textBox2.Text.Trim()));
+                sqlCmd.Append(string.Format(" and l.id = '{0}'",txtLocalPurchase.Text.Trim()));
             }
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and ld.OrderId = '{0}'",textBox1.Text.Trim()));
+                sqlCmd.Append(string.Format(" and ld.OrderId = '{0}'",txtSPNo.Text.Trim()));
             }
-            if (!MyUtility.Check.Empty(txtsubcon1.TextBox1.Text))
+            if (!MyUtility.Check.Empty(txtSubconSupplier.TextBox1.Text))
             {
-                sqlCmd.Append(string.Format(" and l.LocalSuppID = '{0}'",txtsubcon1.TextBox1.Text.Trim()));
+                sqlCmd.Append(string.Format(" and l.LocalSuppID = '{0}'",txtSubconSupplier.TextBox1.Text.Trim()));
             }
             sqlCmd.Append(@") lo
 left join Orders o on o.ID = lo.POID
@@ -104,7 +104,7 @@ left join LocalSupp ls on ls.ID = lo.SuppID");
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)

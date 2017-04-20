@@ -25,9 +25,9 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -45,28 +45,28 @@ namespace Sci.Production.Shipping
         //Qurey
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
-            if (MyUtility.Check.Empty(txtscifactory1.Text))
+            if (MyUtility.Check.Empty(txtScifactoryFromFactory.Text))
             {
                 MyUtility.Msg.WarningBox("< From Factory > can't be empty!");
-                txtscifactory1.Focus();
+                txtScifactoryFromFactory.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(txtscifactory2.Text))
+            if (MyUtility.Check.Empty(txtScifactoryToFactory.Text))
             {
                 MyUtility.Msg.WarningBox("< To Factory > can't be empty!");
-                txtscifactory2.Focus();
+                txtScifactoryToFactory.Focus();
                 return;
             }
 
             string sqlCmd;
-            if (MyUtility.Check.Seek(textBox1.Text.Trim(), "PO_Supp", "ID"))
+            if (MyUtility.Check.Seek(txtSPNo.Text.Trim(), "PO_Supp", "ID"))
             {
                 sqlCmd = string.Format(@"select 1 as Selected,ps.ID as POID,ps.SEQ1,psd.SEQ2,(left(ps.SEQ1+' ',3)+'-'+isnull(psd.SEQ2,'')) as Seq,ps.SuppID,
 (ps.SuppID+'-'+ isnull(s.AbbEN,'')) as Supp,psd.Refno,psd.SCIRefno,f.DescDetail as Description,
@@ -78,7 +78,7 @@ left join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.S
 left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o WITH (NOLOCK) on o.ID = ps.ID
-where ps.ID = '{0}'", textBox1.Text.Trim());
+where ps.ID = '{0}'", txtSPNo.Text.Trim());
             }
             else
             {
@@ -91,7 +91,7 @@ from Invtrans i WITH (NOLOCK)
 where i.InventoryPOID = '{0}'
 and (i.Type = '2' or i.Type = '3')
 and i.FactoryID = '{1}'
-and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory1.Text.Trim(), txtscifactory2.Text.Trim());
+and i.TransferFactory = '{2}'", txtSPNo.Text.Trim(), txtScifactoryFromFactory.Text.Trim(), txtScifactoryToFactory.Text.Trim());
             }
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
@@ -110,7 +110,7 @@ and i.TransferFactory = '{2}'", textBox1.Text.Trim(), txtscifactory1.Text.Trim()
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(gridData) || gridData.Rows.Count == 0)

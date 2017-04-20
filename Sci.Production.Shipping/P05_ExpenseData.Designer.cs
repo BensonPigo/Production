@@ -30,39 +30,39 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridExpenseData = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridExpenseData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 342);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(562, 39);
             this.panel4.TabIndex = 8;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(469, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(469, 4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel3
             // 
@@ -90,41 +90,41 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridExpenseData);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 5);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(562, 337);
             this.panel5.TabIndex = 9;
             // 
-            // grid1
+            // gridExpenseData
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(562, 337);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridExpenseData.AllowUserToAddRows = false;
+            this.gridExpenseData.AllowUserToDeleteRows = false;
+            this.gridExpenseData.AllowUserToResizeRows = false;
+            this.gridExpenseData.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridExpenseData.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridExpenseData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridExpenseData.DataSource = this.listControlBindingSource1;
+            this.gridExpenseData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridExpenseData.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridExpenseData.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridExpenseData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridExpenseData.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridExpenseData.Location = new System.Drawing.Point(0, 0);
+            this.gridExpenseData.Name = "gridExpenseData";
+            this.gridExpenseData.RowHeadersVisible = false;
+            this.gridExpenseData.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridExpenseData.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridExpenseData.RowTemplate.Height = 24;
+            this.gridExpenseData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridExpenseData.Size = new System.Drawing.Size(562, 337);
+            this.gridExpenseData.TabIndex = 0;
+            this.gridExpenseData.TabStop = false;
             // 
             // P05_ExpenseData
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(572, 381);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -136,7 +136,7 @@
             this.Text = "Expense Data";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridExpenseData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -145,12 +145,12 @@
         #endregion
 
         private Win.UI.Panel panel4;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridExpenseData;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

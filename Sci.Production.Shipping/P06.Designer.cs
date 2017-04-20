@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.labelNo = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.displayNo = new Sci.Win.UI.DisplayBox();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.labelPulloutdate = new Sci.Win.UI.Label();
+            this.datePulloutdate = new Sci.Win.UI.DateBox();
+            this.dateSendtoSCI = new Sci.Win.UI.DateBox();
+            this.btnRevise = new Sci.Win.UI.Button();
             this.label6 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.label5 = new Sci.Win.UI.Label();
+            this.btnHistory = new Sci.Win.UI.Button();
+            this.btnRevisedHistory = new Sci.Win.UI.Button();
+            this.labelSendtoSCI = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -56,30 +56,30 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button2);
+            this.masterpanel.Controls.Add(this.btnHistory);
             this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.btnRevise);
+            this.masterpanel.Controls.Add(this.labelSendtoSCI);
+            this.masterpanel.Controls.Add(this.labelPulloutdate);
+            this.masterpanel.Controls.Add(this.displayM);
+            this.masterpanel.Controls.Add(this.displayNo);
+            this.masterpanel.Controls.Add(this.labelM);
+            this.masterpanel.Controls.Add(this.labelNo);
+            this.masterpanel.Controls.Add(this.dateSendtoSCI);
+            this.masterpanel.Controls.Add(this.datePulloutdate);
             this.masterpanel.Size = new System.Drawing.Size(1053, 71);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datePulloutdate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSendtoSCI, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPulloutdate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSendtoSCI, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnRevise, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnHistory, 0);
             // 
             // detailpanel
             // 
@@ -110,7 +110,7 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.button3);
+            this.detailbtm.Controls.Add(this.btnRevisedHistory);
             this.detailbtm.Location = new System.Drawing.Point(0, 510);
             this.detailbtm.Size = new System.Drawing.Size(1053, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -118,11 +118,11 @@
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.button3, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnRevisedHistory, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(971, 548);
+            this.browse.Size = new System.Drawing.Size(1053, 548);
             // 
             // tabs
             // 
@@ -141,83 +141,83 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "No.";
+            this.labelNo.Lines = 0;
+            this.labelNo.Location = new System.Drawing.Point(5, 5);
+            this.labelNo.Name = "labelNo";
+            this.labelNo.Size = new System.Drawing.Size(28, 23);
+            this.labelNo.TabIndex = 1;
+            this.labelNo.Text = "No.";
             // 
-            // label2
+            // labelM
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 32);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(28, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(5, 32);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(28, 23);
+            this.labelM.TabIndex = 2;
+            this.labelM.Text = "M";
             // 
-            // displayBox1
+            // displayNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(37, 5);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 3;
+            this.displayNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayNo.Location = new System.Drawing.Point(37, 5);
+            this.displayNo.Name = "displayNo";
+            this.displayNo.Size = new System.Drawing.Size(130, 23);
+            this.displayNo.TabIndex = 3;
             // 
-            // displayBox2
+            // displayM
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(37, 32);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(68, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(37, 32);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(68, 23);
+            this.displayM.TabIndex = 4;
             // 
-            // label3
+            // labelPulloutdate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(196, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Pull-out date";
+            this.labelPulloutdate.Lines = 0;
+            this.labelPulloutdate.Location = new System.Drawing.Point(196, 5);
+            this.labelPulloutdate.Name = "labelPulloutdate";
+            this.labelPulloutdate.Size = new System.Drawing.Size(83, 23);
+            this.labelPulloutdate.TabIndex = 5;
+            this.labelPulloutdate.Text = "Pull-out date";
             // 
-            // dateBox1
+            // datePulloutdate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(283, 5);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(100, 23);
-            this.dateBox1.TabIndex = 7;
+            this.datePulloutdate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
+            this.datePulloutdate.IsSupportEditMode = false;
+            this.datePulloutdate.Location = new System.Drawing.Point(283, 5);
+            this.datePulloutdate.Name = "datePulloutdate";
+            this.datePulloutdate.ReadOnly = true;
+            this.datePulloutdate.Size = new System.Drawing.Size(100, 23);
+            this.datePulloutdate.TabIndex = 7;
             // 
-            // dateBox2
+            // dateSendtoSCI
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SendToTPE", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(506, 5);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(100, 23);
-            this.dateBox2.TabIndex = 10;
+            this.dateSendtoSCI.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SendToTPE", true));
+            this.dateSendtoSCI.IsSupportEditMode = false;
+            this.dateSendtoSCI.Location = new System.Drawing.Point(506, 5);
+            this.dateSendtoSCI.Name = "dateSendtoSCI";
+            this.dateSendtoSCI.ReadOnly = true;
+            this.dateSendtoSCI.Size = new System.Drawing.Size(100, 23);
+            this.dateSendtoSCI.TabIndex = 10;
             // 
-            // button1
+            // btnRevise
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(612, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(173, 63);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Revise from ship plan and FOC/LO packing list";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnRevise.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnRevise.Location = new System.Drawing.Point(612, 5);
+            this.btnRevise.Name = "btnRevise";
+            this.btnRevise.Size = new System.Drawing.Size(173, 63);
+            this.btnRevise.TabIndex = 11;
+            this.btnRevise.Text = "Revise from ship plan and FOC/LO packing list";
+            this.btnRevise.UseVisualStyleBackColor = true;
+            this.btnRevise.Click += new System.EventHandler(this.button1_Click);
             // 
             // label6
             // 
@@ -234,36 +234,36 @@
             this.label6.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label6.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
-            // button2
+            // btnHistory
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Location = new System.Drawing.Point(852, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "History";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnHistory.Location = new System.Drawing.Point(852, 5);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(80, 30);
+            this.btnHistory.TabIndex = 13;
+            this.btnHistory.Text = "History";
+            this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // btnRevisedHistory
             // 
-            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Location = new System.Drawing.Point(913, 2);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(130, 30);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Revised History";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnRevisedHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnRevisedHistory.Location = new System.Drawing.Point(913, 2);
+            this.btnRevisedHistory.Name = "btnRevisedHistory";
+            this.btnRevisedHistory.Size = new System.Drawing.Size(130, 30);
+            this.btnRevisedHistory.TabIndex = 3;
+            this.btnRevisedHistory.Text = "Revised History";
+            this.btnRevisedHistory.UseVisualStyleBackColor = true;
+            this.btnRevisedHistory.Click += new System.EventHandler(this.button3_Click);
             // 
-            // label5
+            // labelSendtoSCI
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(422, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Send to SCI";
+            this.labelSendtoSCI.Lines = 0;
+            this.labelSendtoSCI.Location = new System.Drawing.Point(422, 5);
+            this.labelSendtoSCI.Name = "labelSendtoSCI";
+            this.labelSendtoSCI.Size = new System.Drawing.Size(80, 23);
+            this.labelSendtoSCI.TabIndex = 9;
+            this.labelSendtoSCI.Text = "Send to SCI";
             // 
             // P06
             // 
@@ -308,17 +308,17 @@
 
         #endregion
 
-        private Win.UI.Button button2;
+        private Win.UI.Button btnHistory;
         private Win.UI.Label label6;
-        private Win.UI.Button button1;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.Label label5;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnRevise;
+        private Win.UI.DateBox dateSendtoSCI;
+        private Win.UI.Label labelSendtoSCI;
+        private Win.UI.DateBox datePulloutdate;
+        private Win.UI.Label labelPulloutdate;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.DisplayBox displayNo;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelNo;
+        private Win.UI.Button btnRevisedHistory;
     }
 }

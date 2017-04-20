@@ -95,8 +95,8 @@ order by os.Seq", masterID);
         {
             base.OnDetailEntered();
             label6.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "LOCKED" ? true : false;
-            button2.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_History WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
-            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_Revise WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            btnHistory.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_History WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            btnRevisedHistory.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Pullout_Revise WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
         }
 
         protected override void OnDetailGridSetup()
