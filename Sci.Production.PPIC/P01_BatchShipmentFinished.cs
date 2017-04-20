@@ -223,7 +223,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                     {
                         transactionScope.Complete();
                         haveupdate = true;
-                        MyUtility.Msg.InfoBox("Update completed!");
+                        MyUtility.Msg.InfoBox("Update completed!");                      
                     }
                     else
                     {
@@ -240,6 +240,42 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                 }
             }
             #endregion
+            DataTable GridData;
+            string sqlCmd = string.Format(@"with wantToClose
+as
+(
+select distinct POID
+from Orders o WITH (NOLOCK) 
+where o.Finished = 0 
+and o.MDivisionID = '{0}'
+and (o.Junk = 1 or o.PulloutComplete = 1)
+and (o.Category = 'B' or o.Category = 'S')
+),
+canNotClose
+as
+(
+select distinct POID
+from Orders o WITH (NOLOCK) 
+where o.Finished = 0 
+and o.MDivisionID = '{0}'
+and o.PulloutComplete = 0
+and o.Junk = 0
+and (o.Category = 'B' or o.Category = 'S')
+)
+select 1 as Selected,a.POID,isnull(o.StyleID,'') as StyleID,isnull(b.BuyerID,'') as BuyerID,o.BuyerDelivery,[dbo].getPOComboList(a.POID,a.POID) as POCombo,(o.MCHandle+' - '+isnull(p.Name,'')) as MCHandle
+from (select * from wantToClose
+	  except
+	  select * from canNotClose) a
+left join Orders o WITH (NOLOCK) on a.POID = o.ID
+left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
+left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
+            DualResult Renewresult = DBProxy.Current.Select(null, sqlCmd, out GridData);
+            if (!Renewresult)
+            {
+                MyUtility.Msg.ErrorBox("Query data fail!!" + Renewresult.ToString());
+            }
+            listControlBindingSource1.DataSource = GridData;
+            setFilter();
         }
 
         //To Excel
