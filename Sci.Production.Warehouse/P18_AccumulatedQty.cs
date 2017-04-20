@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
 			and a1.seq70seq2 = a.seq2 
 			and a1.type = 2 
 			AND A1.FactoryID ='{2}' 
-			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK))
+			and A1.TransferFactory in (select Id from scifty WITH (NOLOCK))
 		)
 	) X
 	where a.Id = '{0}'
