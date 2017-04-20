@@ -11191,6 +11191,18 @@
             在ReportView顯示之前, 可客製修改 Subs.ReportView.viewer ( WinForm.ReportView )
             </summary>
         </member>
+        <member name="P:Sci.Win.Tems.PrintForm.PrintToPDF">
+            <summary>
+            Print button will output PDF file or not.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.PrintForm.OnToPDF(Sci.Win.ReportDefinition)">
+            <summary>
+            PrintToPDF 設定為true的時候會執行此程式而不使用ReportViewer 作預覽列印 
+            <para>此程式會將RDLC直接轉成PDF檔儲存, 再打開給user看</para>
+            </summary>
+            <param name="report"></param>
+        </member>
         <member name="F:Sci.Win.Tems.PrintForm.components">
             <summary>
             Required designer variable.
@@ -12931,7 +12943,7 @@
             </summary>
             <returns>SQL expression string.</returns>
         </member>
-        <member name="M:Sci.Win.Tools.QueryBuilderCondition.ToOpSql(Sci.Win.Tools.QueryBuilderCondition.DataTypeInfo,System.String,System.Text.StringBuilder)">
+        <member name="M:Sci.Win.Tools.QueryBuilderCondition.ToOpSql(Sci.Win.Tools.QueryBuilderCondition.DataTypeInfo,System.String,System.Text.StringBuilder,System.Boolean,System.Boolean)">
             <summary>
             Generate SQL command string.
             </summary>
