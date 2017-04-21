@@ -52,16 +52,16 @@ namespace Sci.Production.Subcon
             Inline_b = null;
             Inline_e = null;
 
-            if (dateRange1.Value1 != null) apvdate_b = this.dateRange1.Text1;
-            if (dateRange1.Value2 != null) { apvdate_e = this.dateRange1.Text2; }
-            if (dateRange2.Value1 != null) sciDelivery_b = this.dateRange2.Text1;
-            if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
-            if (dateRange3.Value1 != null) Inline_b = this.dateRange3.Text1;
-            if (dateRange3.Value2 != null) { Inline_e = this.dateRange3.Text2; }
+            if (dateApproveDate.Value1 != null) apvdate_b = this.dateApproveDate.Text1;
+            if (dateApproveDate.Value2 != null) { apvdate_e = this.dateApproveDate.Text2; }
+            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
+            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
+            if (dateInlineDate.Value1 != null) Inline_b = this.dateInlineDate.Text1;
+            if (dateInlineDate.Value2 != null) { Inline_e = this.dateInlineDate.Text2; }
 
 
-            String sp_b = this.textBox1.Text;
-            String sp_e = this.textBox2.Text;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
 
             if ((apvdate_b == null && apvdate_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null) &&
@@ -69,7 +69,7 @@ namespace Sci.Production.Subcon
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
                 MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
-                dateRange1.Focus1();
+                dateApproveDate.Focus1();
                 return;
             }
 
@@ -95,12 +95,12 @@ namespace Sci.Production.Subcon
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
-                if (!(dateRange2.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-                if (!(dateRange2.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-                if (!(dateRange1.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
-                if (!(dateRange1.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
-                if (!(dateRange3.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
-                if (!(dateRange3.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
+                if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+                if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+                if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
+                if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
+                if (!(dateInlineDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
+                if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
                 strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty";
@@ -123,7 +123,7 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 ddr["UnitPrice"] = Convert.ToDecimal(e.FormattedValue);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToInt32(ddr["qtygarment"]);
@@ -132,7 +132,7 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToDecimal(ddr["UnitPrice"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToDecimal(ddr["UnitPrice"]);
             };
@@ -140,7 +140,7 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
             ns3.CellValidating += (s, e) =>
             {
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 Decimal SourcePoqty = Convert.ToDecimal(ddr["OrderQty"]) - Convert.ToDecimal(ddr["IssueQty"]);
                 if ((decimal)e.FormattedValue > SourcePoqty)
                 {
@@ -151,10 +151,10 @@ namespace Sci.Production.Subcon
                 ddr["poqty"] = e.FormattedValue;
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
             };
-            this.grid1.Font = new Font("Arial", 9);
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchImport.Font = new Font("Arial", 9);
+            this.gridBatchImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridBatchImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("LocalSuppID", header: "Supplier", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -177,13 +177,12 @@ namespace Sci.Production.Subcon
 
             //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
             //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
-            this.grid1.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
-            this.grid1.Columns["poqty"].DefaultCellStyle.BackColor = Color.Pink;  //poqty
-
-            this.grid1.Columns["Cost"].Visible = flag;
-            this.grid1.Columns["UnitPrice"].Visible = flag;
-            this.grid1.Columns["Price"].Visible = flag;
-            this.grid1.Columns["Amount"].Visible = flag;
+            this.gridBatchImport.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.gridBatchImport.Columns["poqty"].DefaultCellStyle.BackColor = Color.Pink;  //poqty
+            this.gridBatchImport.Columns["Cost"].Visible = flag;
+            this.gridBatchImport.Columns["UnitPrice"].Visible = flag;
+            this.gridBatchImport.Columns["Price"].Visible = flag;
+            this.gridBatchImport.Columns["Amount"].Visible = flag;
 
         }
 
