@@ -95,11 +95,12 @@ group by f.Seq1,f.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     DataRow poData;
                     sqlCmd = string.Format(@"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
 dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
-from dbo.PO_Supp_Detail psd WITH (NOLOCK) , dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
-where id ='{0}' 
-and psd.seq1 = '{1} ' 
+from dbo.PO_Supp_Detail psd WITH (NOLOCK) inner join dbo.Factory f on psd.FactoryID=f.ID
+, dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
+where psd.id ='{0}' 
+and psd.seq1 = '{1}' 
 and psd.seq2 = '{2}' 
-and mpd.MDivisionId = '{3}'
+and f.MDivisionID = '{3}'
 and mpd.POID = psd.ID
 and mpd.Seq1 = psd.SEQ1
 and mpd.Seq2 = psd.SEQ2
