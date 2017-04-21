@@ -419,6 +419,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                                 CurrentDetailData["Dyelot"] = "";
                                 //CurrentDetailData["stockunit"] = dr["stockunit"];
                                 CurrentDetailData["Description"] = dr["description"];
+                                CurrentDetailData["fabrictype"] = dr["fabrictype"];
                             }
                         }
                         else
@@ -430,6 +431,7 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                             CurrentDetailData["Dyelot"] = "";
                             CurrentDetailData["stockunit"] = dr["stockunit"];
                             CurrentDetailData["Description"] = dr["description"];
+                            CurrentDetailData["fabrictype"] = dr["fabrictype"];
                         }
                     }
                 }
