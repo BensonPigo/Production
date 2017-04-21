@@ -281,6 +281,12 @@ where a.Selected = 1", out selectData);
             string location = this.txtcloglocation1.Text.Trim();
             int pos = this.listControlBindingSource1.Position;     //記錄目前指標位置
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Please select data first!");
+                return;
+            }
+
             foreach (DataRow currentRecord in dt.Rows)
             {
                 currentRecord["ClogLocationId"] = location;
