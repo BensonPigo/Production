@@ -92,6 +92,9 @@ order by rd.Seq1,rd.Seq2", masterID);
             DataGridViewGeneratorNumericColumnSettings ttlrequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cturequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings occurcost = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Desc = new DataGridViewGeneratorTextColumnSettings();
+
+            Desc.CharacterCasing = CharacterCasing.Normal;
             estinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             actinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             ttlrequest.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
@@ -102,7 +105,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("DescriptionDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .EditText("DescriptionDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: Desc)
             .Text("INVNo", header: "Invoice#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("ETA", header: "ETA", iseditingreadonly: true)
             .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
