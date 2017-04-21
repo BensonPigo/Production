@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as DescriptionDetail,
+            this.DetailSelectCommand = string.Format(@"select rd.*,(left(rd.Seq1+' ',3)+rd.Seq2) as Seq, f.Description, [dbo].[getMtlDesc](r.POID,rd.Seq1,rd.Seq2,2,0) as Description,
 isnull((select top(1) ExportId from Receiving WITH (NOLOCK) where InvNo = rd.INVNo),'') as ExportID,
 CASE rd.Responsibility
 WHEN 'M' THEN N'Mill'
@@ -36,7 +36,7 @@ WHEN 'S' THEN N'Subcon in Local'
 WHEN 'F' THEN N'Factory'
 WHEN 'T' THEN N'SCI dep. (purchase / s. mrs / sample room)'
 ELSE N''
-END as CategoryName
+END as Responsibility
 from ReplacementReport r WITH (NOLOCK) 
 inner join ReplacementReport_Detail rd WITH (NOLOCK) on rd.ID = r.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = r.POID and psd.SEQ1 = rd.Seq1 and psd.SEQ2 = rd.Seq2
@@ -105,7 +105,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Seq", header: "SEQ#", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("RefNo", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .EditText("DescriptionDetail", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: Desc)
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: Desc)
             .Text("INVNo", header: "Invoice#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("ETA", header: "ETA", iseditingreadonly: true)
             .Text("ColorID", header: "Color Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -117,7 +117,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             .Text("AWBNo", header: "AWB# Of\r\nDamage\r\nSample", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("ReplacementETA", header: "Replacement\r\nETA", iseditingreadonly: true)
             .Numeric("OccurCost", header: "Cost Occurred", decimal_places: 3, width: Widths.AnsiChars(7), settings: occurcost, iseditingreadonly: true)
-            .Text("CategoryName", header: "Defect\r\nResponsibility", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Responsibility", header: "Defect\r\nResponsibility", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .EditText("ResponsibilityReason", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .EditText("Suggested", header: "Factory Suggested Solution", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
