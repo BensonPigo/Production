@@ -751,16 +751,16 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
             TransactionScope _transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection(null, out sqlConn);
-            using (_transactionscope)
-            using (sqlConn)
+            try
             {
-                try
+                using (_transactionscope)
+                using (sqlConn)
                 {
                     /*
-                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
-                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
-                     * 因為要在同一 SqlConnection 之下執行
-                     */
+                        * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                        * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                        * 因為要在同一 SqlConnection 之下執行
+                        */
                     DataTable resulttb;
                     #region FtyInventory
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, "", upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -769,7 +769,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                         ShowErr(result);
                         return;
                     }
-                    #endregion 
+                    #endregion
 
                     #region MDivisionPoDetail
                     if (data_MD_2T.Count > 0)
@@ -802,16 +802,14 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                     }
 
                     _transactionscope.Complete();
-                    MyUtility.Msg.InfoBox("Confirmed successful");
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
+                    MyUtility.Msg.InfoBox("Confirmed successful");                    
                 }
             }
-            #endregion
+            catch (Exception ex)
+            {
+                ShowErr("Commit transaction error.", ex);
+            }
+            #endregion               
             _transactionscope.Dispose();
             _transactionscope = null;
             this.RenewData();
