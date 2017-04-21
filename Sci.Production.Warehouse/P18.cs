@@ -338,6 +338,7 @@ namespace Sci.Production.Warehouse
 , p.Refno
 , (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) as Description 
 ,p.scirefno
+,p.FabricType
 from dbo.Inventory p WITH (NOLOCK) 
 where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -356,7 +357,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     CurrentDetailData["seq2"] = x[0]["seq2"];
                     //CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
-                    //CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
+                    CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
 
                 }
             };
@@ -376,7 +377,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                         CurrentDetailData["Dyelot"] = "";
                         CurrentDetailData["stockunit"] = "";
                         CurrentDetailData["Description"] = "";
-                        //CurrentDetailData["fabrictype"] = "";
+                        CurrentDetailData["fabrictype"] = "";
                     }
                     else
                     {
