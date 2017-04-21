@@ -46,15 +46,15 @@ namespace Sci.Production.Subcon
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
-                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow ddr = gridSpecialRecord.GetDataRow<DataRow>(e.RowIndex);
                     ddr["Price"] = (decimal)e.FormattedValue * 1;
                     ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"]*1;
                     ddr["UnitPrice"] = (decimal)e.FormattedValue;
                 };
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridSpecialRecord.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridSpecialRecord.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridSpecialRecord)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Numeric("poqty", header: "PO QTY", iseditingreadonly: true)
@@ -63,22 +63,22 @@ namespace Sci.Production.Subcon
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
                 .Numeric("Amount", header: "Amount", iseditingreadonly: true);
 
-            this.grid1.Columns["UnitPrice"].Visible = flag;
-            this.grid1.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
-            this.grid1.Columns["Price"].Visible = flag;
-            this.grid1.Columns["Amount"].Visible = flag;
+            this.gridSpecialRecord.Columns["UnitPrice"].Visible = flag;
+            this.gridSpecialRecord.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.gridSpecialRecord.Columns["Price"].Visible = flag;
+            this.gridSpecialRecord.Columns["Amount"].Visible = flag;
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string orderID = this.textBox1.Text;
-            String poid = this.textBox2.Text;
+            string orderID = this.txtSPNo.Text;
+            String poid = this.txtMotherSPNo.Text;
 
             if (string.IsNullOrWhiteSpace(orderID) && string.IsNullOrWhiteSpace(poid))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Mother SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
             else

@@ -29,26 +29,26 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboReport = new Sci.Win.UI.ComboBox();
-            this.comboPay = new Sci.Win.UI.ComboBox();
-            this.combFac = new Sci.Win.UI.ComboBox();
-            this.txttSMR = new Sci.Production.Class.txttpeuser_canedit();
-            this.Han = new Sci.Production.Class.txttpeuser_canedit();
-            this.SettDate = new Sci.Win.UI.DateRange();
-            this.ConDate = new Sci.Win.UI.DateRange();
-            this.DebDate = new Sci.Win.UI.DateRange();
-            this.DebNo2 = new Sci.Win.UI.TextBox();
+            this.comboReportType = new Sci.Win.UI.ComboBox();
+            this.comboPaymentSettled = new Sci.Win.UI.ComboBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
+            this.txttpeuser_caneditHandle = new Sci.Production.Class.txttpeuser_canedit();
+            this.dateSettledDate = new Sci.Win.UI.DateRange();
+            this.dateConfirmDate = new Sci.Win.UI.DateRange();
+            this.dateDebitDate = new Sci.Win.UI.DateRange();
+            this.txtDebitNoEnd = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.DebNo1 = new Sci.Win.UI.TextBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtDebitNoStart = new Sci.Win.UI.TextBox();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.labelPaymentSettled = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelSMR = new Sci.Win.UI.Label();
+            this.labelHandle = new Sci.Win.UI.Label();
+            this.labelDebitNo = new Sci.Win.UI.Label();
+            this.labelSettledDate = new Sci.Win.UI.Label();
+            this.labelConfirmDate = new Sci.Win.UI.Label();
+            this.labelDebitDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,121 +66,121 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.comboReport);
-            this.panel1.Controls.Add(this.comboPay);
-            this.panel1.Controls.Add(this.combFac);
-            this.panel1.Controls.Add(this.txttSMR);
-            this.panel1.Controls.Add(this.Han);
-            this.panel1.Controls.Add(this.SettDate);
-            this.panel1.Controls.Add(this.ConDate);
-            this.panel1.Controls.Add(this.DebDate);
-            this.panel1.Controls.Add(this.DebNo2);
+            this.panel1.Controls.Add(this.comboReportType);
+            this.panel1.Controls.Add(this.comboPaymentSettled);
+            this.panel1.Controls.Add(this.comboFactory);
+            this.panel1.Controls.Add(this.txttpeuser_caneditSMR);
+            this.panel1.Controls.Add(this.txttpeuser_caneditHandle);
+            this.panel1.Controls.Add(this.dateSettledDate);
+            this.panel1.Controls.Add(this.dateConfirmDate);
+            this.panel1.Controls.Add(this.dateDebitDate);
+            this.panel1.Controls.Add(this.txtDebitNoEnd);
             this.panel1.Controls.Add(this.label10);
-            this.panel1.Controls.Add(this.DebNo1);
-            this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtDebitNoStart);
+            this.panel1.Controls.Add(this.labelReportType);
+            this.panel1.Controls.Add(this.labelPaymentSettled);
+            this.panel1.Controls.Add(this.labelFactory);
+            this.panel1.Controls.Add(this.labelSMR);
+            this.panel1.Controls.Add(this.labelHandle);
+            this.panel1.Controls.Add(this.labelDebitNo);
+            this.panel1.Controls.Add(this.labelSettledDate);
+            this.panel1.Controls.Add(this.labelConfirmDate);
+            this.panel1.Controls.Add(this.labelDebitDate);
             this.panel1.Location = new System.Drawing.Point(18, 10);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(511, 305);
             this.panel1.TabIndex = 0;
             // 
-            // comboReport
+            // comboReportType
             // 
-            this.comboReport.BackColor = System.Drawing.Color.White;
-            this.comboReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboReport.FormattingEnabled = true;
-            this.comboReport.IsSupportUnselect = true;
-            this.comboReport.Items.AddRange(new object[] {
+            this.comboReportType.BackColor = System.Drawing.Color.White;
+            this.comboReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReportType.FormattingEnabled = true;
+            this.comboReportType.IsSupportUnselect = true;
+            this.comboReportType.Items.AddRange(new object[] {
             "List",
             "Detail List"});
-            this.comboReport.Location = new System.Drawing.Point(139, 270);
-            this.comboReport.Name = "comboReport";
-            this.comboReport.Size = new System.Drawing.Size(121, 24);
-            this.comboReport.TabIndex = 9;
+            this.comboReportType.Location = new System.Drawing.Point(139, 270);
+            this.comboReportType.Name = "comboReportType";
+            this.comboReportType.Size = new System.Drawing.Size(121, 24);
+            this.comboReportType.TabIndex = 9;
             // 
-            // comboPay
+            // comboPaymentSettled
             // 
-            this.comboPay.BackColor = System.Drawing.Color.White;
-            this.comboPay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboPay.FormattingEnabled = true;
-            this.comboPay.IsSupportUnselect = true;
-            this.comboPay.Items.AddRange(new object[] {
+            this.comboPaymentSettled.BackColor = System.Drawing.Color.White;
+            this.comboPaymentSettled.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPaymentSettled.FormattingEnabled = true;
+            this.comboPaymentSettled.IsSupportUnselect = true;
+            this.comboPaymentSettled.Items.AddRange(new object[] {
             " ",
             "Settled",
             "Not Settled"});
-            this.comboPay.Location = new System.Drawing.Point(139, 235);
-            this.comboPay.Name = "comboPay";
-            this.comboPay.Size = new System.Drawing.Size(121, 24);
-            this.comboPay.TabIndex = 8;
+            this.comboPaymentSettled.Location = new System.Drawing.Point(139, 235);
+            this.comboPaymentSettled.Name = "comboPaymentSettled";
+            this.comboPaymentSettled.Size = new System.Drawing.Size(121, 24);
+            this.comboPaymentSettled.TabIndex = 8;
             // 
-            // combFac
+            // comboFactory
             // 
-            this.combFac.BackColor = System.Drawing.Color.White;
-            this.combFac.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combFac.FormattingEnabled = true;
-            this.combFac.IsSupportUnselect = true;
-            this.combFac.Location = new System.Drawing.Point(139, 199);
-            this.combFac.Name = "combFac";
-            this.combFac.Size = new System.Drawing.Size(121, 24);
-            this.combFac.TabIndex = 7;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(139, 199);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 7;
             // 
-            // txttSMR
+            // txttpeuser_caneditSMR
             // 
-            this.txttSMR.DisplayBox1Binding = "";
-            this.txttSMR.Location = new System.Drawing.Point(139, 167);
-            this.txttSMR.Name = "txttSMR";
-            this.txttSMR.Size = new System.Drawing.Size(300, 23);
-            this.txttSMR.TabIndex = 6;
-            this.txttSMR.TextBox1Binding = "";
+            this.txttpeuser_caneditSMR.DisplayBox1Binding = "";
+            this.txttpeuser_caneditSMR.Location = new System.Drawing.Point(139, 167);
+            this.txttpeuser_caneditSMR.Name = "txttpeuser_caneditSMR";
+            this.txttpeuser_caneditSMR.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuser_caneditSMR.TabIndex = 6;
+            this.txttpeuser_caneditSMR.TextBox1Binding = "";
             // 
-            // Han
+            // txttpeuser_caneditHandle
             // 
-            this.Han.DisplayBox1Binding = "";
-            this.Han.Location = new System.Drawing.Point(139, 134);
-            this.Han.Name = "Han";
-            this.Han.Size = new System.Drawing.Size(300, 23);
-            this.Han.TabIndex = 5;
-            this.Han.TextBox1Binding = "";
+            this.txttpeuser_caneditHandle.DisplayBox1Binding = "";
+            this.txttpeuser_caneditHandle.Location = new System.Drawing.Point(139, 134);
+            this.txttpeuser_caneditHandle.Name = "txttpeuser_caneditHandle";
+            this.txttpeuser_caneditHandle.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuser_caneditHandle.TabIndex = 5;
+            this.txttpeuser_caneditHandle.TextBox1Binding = "";
             // 
-            // SettDate
+            // dateSettledDate
             // 
-            this.SettDate.IsRequired = false;
-            this.SettDate.Location = new System.Drawing.Point(139, 74);
-            this.SettDate.Name = "SettDate";
-            this.SettDate.Size = new System.Drawing.Size(280, 23);
-            this.SettDate.TabIndex = 2;
+            this.dateSettledDate.IsRequired = false;
+            this.dateSettledDate.Location = new System.Drawing.Point(139, 74);
+            this.dateSettledDate.Name = "dateSettledDate";
+            this.dateSettledDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSettledDate.TabIndex = 2;
             // 
-            // ConDate
+            // dateConfirmDate
             // 
-            this.ConDate.IsRequired = false;
-            this.ConDate.Location = new System.Drawing.Point(139, 45);
-            this.ConDate.Name = "ConDate";
-            this.ConDate.Size = new System.Drawing.Size(280, 23);
-            this.ConDate.TabIndex = 1;
+            this.dateConfirmDate.IsRequired = false;
+            this.dateConfirmDate.Location = new System.Drawing.Point(139, 45);
+            this.dateConfirmDate.Name = "dateConfirmDate";
+            this.dateConfirmDate.Size = new System.Drawing.Size(280, 23);
+            this.dateConfirmDate.TabIndex = 1;
             // 
-            // DebDate
+            // dateDebitDate
             // 
-            this.DebDate.IsRequired = false;
-            this.DebDate.Location = new System.Drawing.Point(139, 16);
-            this.DebDate.Name = "DebDate";
-            this.DebDate.Size = new System.Drawing.Size(280, 23);
-            this.DebDate.TabIndex = 0;
+            this.dateDebitDate.IsRequired = false;
+            this.dateDebitDate.Location = new System.Drawing.Point(139, 16);
+            this.dateDebitDate.Name = "dateDebitDate";
+            this.dateDebitDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDebitDate.TabIndex = 0;
             // 
-            // DebNo2
+            // txtDebitNoEnd
             // 
-            this.DebNo2.BackColor = System.Drawing.Color.White;
-            this.DebNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.DebNo2.Location = new System.Drawing.Point(322, 104);
-            this.DebNo2.Name = "DebNo2";
-            this.DebNo2.Size = new System.Drawing.Size(164, 23);
-            this.DebNo2.TabIndex = 4;
+            this.txtDebitNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtDebitNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDebitNoEnd.Location = new System.Drawing.Point(322, 104);
+            this.txtDebitNoEnd.Name = "txtDebitNoEnd";
+            this.txtDebitNoEnd.Size = new System.Drawing.Size(164, 23);
+            this.txtDebitNoEnd.TabIndex = 4;
             // 
             // label10
             // 
@@ -194,95 +194,95 @@
             this.label10.Text = "~";
             this.label10.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // DebNo1
+            // txtDebitNoStart
             // 
-            this.DebNo1.BackColor = System.Drawing.Color.White;
-            this.DebNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.DebNo1.Location = new System.Drawing.Point(139, 104);
-            this.DebNo1.Name = "DebNo1";
-            this.DebNo1.Size = new System.Drawing.Size(159, 23);
-            this.DebNo1.TabIndex = 3;
+            this.txtDebitNoStart.BackColor = System.Drawing.Color.White;
+            this.txtDebitNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDebitNoStart.Location = new System.Drawing.Point(139, 104);
+            this.txtDebitNoStart.Name = "txtDebitNoStart";
+            this.txtDebitNoStart.Size = new System.Drawing.Size(159, 23);
+            this.txtDebitNoStart.TabIndex = 3;
             // 
-            // label9
+            // labelReportType
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(21, 268);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(111, 23);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Report Type......:";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(21, 268);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(111, 23);
+            this.labelReportType.TabIndex = 8;
+            this.labelReportType.Text = "Report Type......:";
             // 
-            // label8
+            // labelPaymentSettled
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(22, 233);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(110, 23);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Payment Settled:";
+            this.labelPaymentSettled.Lines = 0;
+            this.labelPaymentSettled.Location = new System.Drawing.Point(22, 233);
+            this.labelPaymentSettled.Name = "labelPaymentSettled";
+            this.labelPaymentSettled.Size = new System.Drawing.Size(110, 23);
+            this.labelPaymentSettled.TabIndex = 7;
+            this.labelPaymentSettled.Text = "Payment Settled:";
             // 
-            // label7
+            // labelFactory
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(22, 200);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(110, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Factory..........:";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(22, 200);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(110, 23);
+            this.labelFactory.TabIndex = 6;
+            this.labelFactory.Text = "Factory..........:";
             // 
-            // label6
+            // labelSMR
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(22, 168);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "SMR..................:";
+            this.labelSMR.Lines = 0;
+            this.labelSMR.Location = new System.Drawing.Point(22, 168);
+            this.labelSMR.Name = "labelSMR";
+            this.labelSMR.Size = new System.Drawing.Size(110, 23);
+            this.labelSMR.TabIndex = 5;
+            this.labelSMR.Text = "SMR..................:";
             // 
-            // label5
+            // labelHandle
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(22, 135);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(110, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Handle..............:";
+            this.labelHandle.Lines = 0;
+            this.labelHandle.Location = new System.Drawing.Point(22, 135);
+            this.labelHandle.Name = "labelHandle";
+            this.labelHandle.Size = new System.Drawing.Size(110, 23);
+            this.labelHandle.TabIndex = 4;
+            this.labelHandle.Text = "Handle..............:";
             // 
-            // label4
+            // labelDebitNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(22, 104);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(110, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Debit No............:";
+            this.labelDebitNo.Lines = 0;
+            this.labelDebitNo.Location = new System.Drawing.Point(22, 104);
+            this.labelDebitNo.Name = "labelDebitNo";
+            this.labelDebitNo.Size = new System.Drawing.Size(110, 23);
+            this.labelDebitNo.TabIndex = 3;
+            this.labelDebitNo.Text = "Debit No............:";
             // 
-            // label3
+            // labelSettledDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(22, 75);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Settled Date......:";
+            this.labelSettledDate.Lines = 0;
+            this.labelSettledDate.Location = new System.Drawing.Point(22, 75);
+            this.labelSettledDate.Name = "labelSettledDate";
+            this.labelSettledDate.Size = new System.Drawing.Size(110, 23);
+            this.labelSettledDate.TabIndex = 2;
+            this.labelSettledDate.Text = "Settled Date......:";
             // 
-            // label2
+            // labelConfirmDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(22, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Confirm Date....:";
+            this.labelConfirmDate.Lines = 0;
+            this.labelConfirmDate.Location = new System.Drawing.Point(22, 45);
+            this.labelConfirmDate.Name = "labelConfirmDate";
+            this.labelConfirmDate.Size = new System.Drawing.Size(110, 23);
+            this.labelConfirmDate.TabIndex = 1;
+            this.labelConfirmDate.Text = "Confirm Date....:";
             // 
-            // label1
+            // labelDebitDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Debit Date........:";
+            this.labelDebitDate.Lines = 0;
+            this.labelDebitDate.Location = new System.Drawing.Point(22, 16);
+            this.labelDebitDate.Name = "labelDebitDate";
+            this.labelDebitDate.Size = new System.Drawing.Size(110, 23);
+            this.labelDebitDate.TabIndex = 0;
+            this.labelDebitDate.Text = "Debit Date........:";
             // 
             // R37
             // 
@@ -306,26 +306,26 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelConfirmDate;
+        private Win.UI.Label labelDebitDate;
         private Win.UI.Label label10;
-        private Win.UI.TextBox DebNo1;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.DateRange SettDate;
-        private Win.UI.DateRange ConDate;
-        private Win.UI.DateRange DebDate;
-        private Win.UI.TextBox DebNo2;
-        private Win.UI.ComboBox combFac;
-        private Class.txttpeuser_canedit txttSMR;
-        private Class.txttpeuser_canedit Han;
-        private Win.UI.ComboBox comboReport;
-        private Win.UI.ComboBox comboPay;
+        private Win.UI.TextBox txtDebitNoStart;
+        private Win.UI.Label labelReportType;
+        private Win.UI.Label labelPaymentSettled;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelSMR;
+        private Win.UI.Label labelHandle;
+        private Win.UI.Label labelDebitNo;
+        private Win.UI.Label labelSettledDate;
+        private Win.UI.DateRange dateSettledDate;
+        private Win.UI.DateRange dateConfirmDate;
+        private Win.UI.DateRange dateDebitDate;
+        private Win.UI.TextBox txtDebitNoEnd;
+        private Win.UI.ComboBox comboFactory;
+        private Class.txttpeuser_canedit txttpeuser_caneditSMR;
+        private Class.txttpeuser_canedit txttpeuser_caneditHandle;
+        private Win.UI.ComboBox comboReportType;
+        private Win.UI.ComboBox comboPaymentSettled;
 
     }
 }

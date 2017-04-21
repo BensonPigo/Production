@@ -23,35 +23,35 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
 
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
             int year = DateTime.Today.Year;
-            this.dateRange1.Value1 = DateTime.Today.AddDays(-day + 1);
-            this.dateRange1.Value2 = DateTime.Now;
-            this.dateRange2.Value1 = DateTime.Today.AddDays(-day + 1);
-            this.dateRange2.Value2 = DateTime.Today.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
+            this.dateIssueDate.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateIssueDate.Value2 = DateTime.Now;
+            this.dateApproveDate.Value1 = DateTime.Today.AddDays(-day + 1);
+            this.dateApproveDate.Value2 = DateTime.Today.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) || MyUtility.Check.Empty(dateRange2.Value1))
+            if (MyUtility.Check.Empty(dateIssueDate.Value1) || MyUtility.Check.Empty(dateApproveDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< Issue Date > & < Approve Date > can't empty!!");
                 return false;
             }
-            issueDate1 = dateRange1.Value1;
-            issueDate2 = dateRange1.Value2;
-            approveDate1 = dateRange2.Value1;
-            approveDate2 = dateRange2.Value2;
-            category = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            subcon = txtsubcon1.TextBox1.Text;
+            issueDate1 = dateIssueDate.Value1;
+            issueDate2 = dateIssueDate.Value2;
+            approveDate1 = dateApproveDate.Value1;
+            approveDate2 = dateApproveDate.Value2;
+            category = txtartworktype_ftyCategory.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
 
             return base.ValidateInput();
         }
@@ -61,7 +61,7 @@ namespace Sci.Production.Subcon
         {
             
             StringBuilder sqlCmd = new StringBuilder();
-            if (this.checkBox1.Checked)
+            if (this.checkSummary.Checked)
             {
                 #region -- Summary Sql Command --
                 sqlCmd.Append(string.Format(@"Select distinct a.MDivisionID
@@ -205,7 +205,7 @@ where 1=1"));
                 cmds.Add(sp_subcon);
             }
 
-            if (this.checkBox1.Checked)
+            if (this.checkSummary.Checked)
             {
                 sqlCmd.Append(@" group by a.MDivisionID, a.FactoryID, a.LocalSuppID, d.Abb, a.Category, a.CurrencyID, a.PayTermID
                                 order by a.category, a.currencyid, a.factoryid, a.LocalSuppID");
@@ -236,7 +236,7 @@ where 1=1"));
                 return false;
             }
 
-            if (checkBox1.Checked)
+            if (checkSummary.Checked)
                 MyUtility.Excel.CopyToXls(printData, "", "Subcon_R22_LocalPaymentSummary.xltx", 2);
             else
                 MyUtility.Excel.CopyToXls(printData, "", "Subcon_R22_LocalPaymentList.xltx", 2);

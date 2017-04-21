@@ -30,10 +30,10 @@
         {
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBundleReceive = new Sci.Win.UI.DateRange();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelSubProcess = new Sci.Win.UI.Label();
+            this.labelBundleReceiveDate = new Sci.Win.UI.Label();
+            this.dateBundleReceiveDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -74,50 +74,50 @@
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
             this.comboSubProcess.TabIndex = 1;
             // 
-            // label5
+            // labelM
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(32, 79);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(134, 23);
-            this.label5.TabIndex = 115;
-            this.label5.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(32, 79);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(134, 23);
+            this.labelM.TabIndex = 115;
+            this.labelM.Text = "M";
             // 
-            // label4
+            // labelSubProcess
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(32, 49);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(134, 23);
-            this.label4.TabIndex = 114;
-            this.label4.Text = "Sub Process";
+            this.labelSubProcess.Lines = 0;
+            this.labelSubProcess.Location = new System.Drawing.Point(32, 49);
+            this.labelSubProcess.Name = "labelSubProcess";
+            this.labelSubProcess.Size = new System.Drawing.Size(134, 23);
+            this.labelSubProcess.TabIndex = 114;
+            this.labelSubProcess.Text = "Sub Process";
             // 
-            // label1
+            // labelBundleReceiveDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(32, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 23);
-            this.label1.TabIndex = 118;
-            this.label1.Text = "Bundle Receive Date";
+            this.labelBundleReceiveDate.Lines = 0;
+            this.labelBundleReceiveDate.Location = new System.Drawing.Point(32, 19);
+            this.labelBundleReceiveDate.Name = "labelBundleReceiveDate";
+            this.labelBundleReceiveDate.Size = new System.Drawing.Size(134, 23);
+            this.labelBundleReceiveDate.TabIndex = 118;
+            this.labelBundleReceiveDate.Text = "Bundle Receive Date";
             // 
-            // dateBundleReceive
+            // dateBundleReceiveDate
             // 
-            this.dateBundleReceive.IsRequired = false;
-            this.dateBundleReceive.Location = new System.Drawing.Point(169, 19);
-            this.dateBundleReceive.Name = "dateBundleReceive";
-            this.dateBundleReceive.Size = new System.Drawing.Size(280, 23);
-            this.dateBundleReceive.TabIndex = 0;
+            this.dateBundleReceiveDate.IsRequired = false;
+            this.dateBundleReceiveDate.Location = new System.Drawing.Point(169, 19);
+            this.dateBundleReceiveDate.Name = "dateBundleReceiveDate";
+            this.dateBundleReceiveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateBundleReceiveDate.TabIndex = 0;
             // 
             // R43
             // 
             this.ClientSize = new System.Drawing.Size(565, 145);
-            this.Controls.Add(this.dateBundleReceive);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateBundleReceiveDate);
+            this.Controls.Add(this.labelBundleReceiveDate);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboSubProcess);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelSubProcess);
             this.DefaultControl = "dateBundleReceive";
             this.DefaultControlForEdit = "dateBundleReceive";
             this.Name = "R43";
@@ -125,12 +125,12 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.labelSubProcess, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateBundleReceive, 0);
+            this.Controls.SetChildIndex(this.labelBundleReceiveDate, 0);
+            this.Controls.SetChildIndex(this.dateBundleReceiveDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -140,9 +140,9 @@
 
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboSubProcess;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateBundleReceive;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelSubProcess;
+        private Win.UI.Label labelBundleReceiveDate;
+        private Win.UI.DateRange dateBundleReceiveDate;
     }
 }

@@ -24,15 +24,15 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
 
-            txtdropdownlist1.SelectedIndex = 0;
+            txtdropdownlistOrderType.SelectedIndex = 0;
 
-            txtFinanceEnReason1.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
-            cbbStatus.SelectedIndex = 2;
+            txtFinanceEnReasonRateType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
+            comboStatus.SelectedIndex = 2;
             
         }
 
@@ -40,22 +40,22 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangePoIssueDate.Value1) && MyUtility.Check.Empty(dateRangePoIssueDate.Value2))
+            if (comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Issue Date can't empty!!");
                 return false;
             }
-            Issuedate1 = dateRangePoIssueDate.Value1;
-            Issuedate2 = dateRangePoIssueDate.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
+            Issuedate1 = dateIssueDate.Value1;
+            Issuedate2 = dateIssueDate.Value2;
+            spno1 = txtSpnoStart.Text;
+            spno2 = txtSpnoEnd.Text;
 
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            ordertypeindex = txtdropdownlist1.SelectedIndex;
-            ratetype = txtFinanceEnReason1.SelectedValue.ToString();
-            statusindex = cbbStatus.SelectedIndex;
+            artworktype = txtartworktype_ftyArtworkType.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            ordertypeindex = txtdropdownlistOrderType.SelectedIndex;
+            ratetype = txtFinanceEnReasonRateType.SelectedValue.ToString();
+            statusindex = comboStatus.SelectedIndex;
 
             switch (ordertypeindex)
             {
@@ -79,7 +79,7 @@ namespace Sci.Production.Subcon
                     break;
             }
 
-            style = txtstyle1.Text;
+            style = txtstyle.Text;
 
             return base.ValidateInput();
         }
@@ -382,7 +382,7 @@ where po_qty > 0
 
         private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateRangePoIssueDate.Enabled = !(cbbStatus.SelectedIndex == 1);
+            dateIssueDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }
     }
 }

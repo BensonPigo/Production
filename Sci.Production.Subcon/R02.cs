@@ -23,18 +23,18 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Issue date,Supplier");
-            cbbOrderBy.SelectedIndex = 0;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Issue date,Supplier");
+            comboOrderBy.SelectedIndex = 0;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            issuedate1 = dateRange1.Value1;
-            issuedate2 = dateRange1.Value2;
+            issuedate1 = dateIssueDate.Value1;
+            issuedate2 = dateIssueDate.Value2;
 
             if (issuedate1.Empty() && issuedate2.Empty())
             {
@@ -42,13 +42,13 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            subcon = txtsubcon1.TextBox1.Text;
+            artworktype = txtartworktype_ftyArtworkType.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
             spno = txtSPNO.Text;
-            style = txtstyle1.Text;
-            orderby = cbbOrderBy.Text;
+            style = txtstyle.Text;
+            orderby = comboOrderBy.Text;
 
             return base.ValidateInput();
         }

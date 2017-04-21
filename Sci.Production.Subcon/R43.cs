@@ -50,7 +50,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBundleReceive.Value1) && MyUtility.Check.Empty(dateBundleReceive.Value2))
+            if (MyUtility.Check.Empty(dateBundleReceiveDate.Value1) && MyUtility.Check.Empty(dateBundleReceiveDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Bundel receive date can't empty!!");
                 return false;
@@ -58,8 +58,8 @@ namespace Sci.Production.Subcon
 
             SubProcess = comboSubProcess.Text;
             M = comboM.Text;
-            dateBundleReceive1 = dateBundleReceive.Value1;
-            dateBundleReceive2 = dateBundleReceive.Value2;
+            dateBundleReceive1 = dateBundleReceiveDate.Value1;
+            dateBundleReceive2 = dateBundleReceiveDate.Value2;
             return base.ValidateInput();
         }
         //非同步讀取資料

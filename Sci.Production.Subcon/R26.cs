@@ -26,10 +26,10 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            comboBox2.Text = Sci.Env.User.Factory;
-            this.comboBox1.SelectedIndex = 0;
-            this.checkBox1.Enabled = false;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            this.comboReportType.SelectedIndex = 0;
+            this.checkShippingMark.Enabled = false;
         }
         List<SqlParameter> lis;
         string sqlWhere = "";
@@ -63,35 +63,35 @@ namespace Sci.Production.Subcon
         
         protected override bool ValidateInput()
         {
-            if (!this.dateRange1.HasValue && !this.dateRange2.HasValue)
+            if (!this.dateSCIDelivery.HasValue && !this.dateIssueDate.HasValue)
             {
                 MyUtility.Msg.ErrorBox("[SCI Delivery] or [Issue_Date] one of the inputs must be selected");
-                dateRange1.Focus();
+                dateSCIDelivery.Focus();
 
                 return false;
             }
 
-            if (this.comboBox1.SelectedItem.Empty())
+            if (this.comboReportType.SelectedItem.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Report_Type] can't empty!!");
-                textBox1.Focus();
+                txtSPNoStart.Focus();
                 return false;
             }
 
             lis = new List<SqlParameter>();
-            SCI_Delivery = dateRange1.Value1;
-            SCI_Delivery2 = dateRange1.Value2;
-            Issue_Date1 = dateRange2.Value1;
-            Issue_Date2 = dateRange2.Value2;
-            SP = textBox1.Text.ToString();
-            SP2 = textBox2.Text.ToString();
-            Location_Poid = textBox3.Text.ToString();
-            Location_Poid2 = textBox4.Text.ToString();
-            Factory1 = comboBox2.Text.ToString();
-            Category = txtartworktype_fty1.Text.ToString();
-            Supplier = txtsubcon1.Text.ToString();
-            Report_Type = comboBox1.SelectedItem.ToString();
-            Shipping_Mark = checkBox1.Checked.ToString();
+            SCI_Delivery = dateSCIDelivery.Value1;
+            SCI_Delivery2 = dateSCIDelivery.Value2;
+            Issue_Date1 = dateIssueDate.Value1;
+            Issue_Date2 = dateIssueDate.Value2;
+            SP = txtSPNoStart.Text.ToString();
+            SP2 = txtSPNoEnd.Text.ToString();
+            Location_Poid = txtLocalPoidStart.Text.ToString();
+            Location_Poid2 = txtLocalPoidEnd.Text.ToString();
+            Factory1 = comboFactory.Text.ToString();
+            Category = txtartworktype_ftyCategory.Text.ToString();
+            Supplier = txtsubconSupplier.Text.ToString();
+            Report_Type = comboReportType.SelectedItem.ToString();
+            Shipping_Mark = checkShippingMark.Checked.ToString();
             
             sqlWheres.Clear();
 
@@ -369,7 +369,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             }
 
 
-            if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkBox1.Checked == true)
+            if (Category.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase) && checkShippingMark.Checked == true)
             {
             #region Shipping Mark
                 string scmd = string.Format(@"select distinct c.id [id]
@@ -421,7 +421,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
 
             #region PO List
-            if ("PO List".EqualString(this.comboBox1.Text))
+            if ("PO List".EqualString(this.comboReportType.Text))
             {
                MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, true, null, null);      // 將datatable copy to excel
                return true;
@@ -429,7 +429,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #endregion
                 
             #region PO Order
-            else if ("PO Order".EqualString(this.comboBox1.Text))
+            else if ("PO Order".EqualString(this.comboReportType.Text))
             {
                 var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Local_PO_Order.xltx");
@@ -477,7 +477,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             #endregion
 
             #region Shipping Mark
-            if (checkBox1.Checked == true)
+            if (checkShippingMark.Checked == true)
             {
                 var saveDialog1 = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R26_Shipping_Mark.xltx");
@@ -518,43 +518,43 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
 
         private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
         {
-            checkBox1.Checked = false;
+            checkShippingMark.Checked = false;
 
-            if (txtartworktype_fty1.Text.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase))
+            if (txtartworktype_ftyCategory.Text.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase))
             //if (txtartworktype_fty1.Text.EqualString ("CARTON"))
             {
-                checkBox1.Enabled = true;
+                checkShippingMark.Enabled = true;
                 toexcel.Enabled = true;
             }
             else
             {
-                checkBox1.Enabled = false;
+                checkShippingMark.Enabled = false;
 
             }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(comboBox1.Text == "PO Form")
-                toexcel.Enabled = checkBox1.Checked;
+            if(comboReportType.Text == "PO Form")
+                toexcel.Enabled = checkShippingMark.Checked;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.Text == "PO List")
+            if (comboReportType.Text == "PO List")
             {
                 print.Enabled = false;
                 toexcel.Enabled = true;
 
             }
-            else if (comboBox1.Text == "PO Form")
+            else if (comboReportType.Text == "PO Form")
             {
                 toexcel.Enabled = false;
                 print.Enabled = true;
-                if (checkBox1.Checked == true)
+                if (checkShippingMark.Checked == true)
                     toexcel.Enabled = true;
             }
-            else if (comboBox1.Text == "PO Order")
+            else if (comboReportType.Text == "PO Order")
             {
                 print.Enabled = false;
                 toexcel.Enabled = true;

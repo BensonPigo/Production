@@ -44,8 +44,8 @@ namespace Sci.Production.Subcon
                 this.Text += " (In-House Requisition)";
             }
 
-            dateBox1.Value = DateTime.Today;
-            dateBox2.Value = DateTime.Today;
+            dateIssueDate.Value = DateTime.Today;
+            dateDelivery.Value = DateTime.Today;
         }
 
         //Find Now Button
@@ -60,16 +60,16 @@ namespace Sci.Production.Subcon
             Inline_e = null;
             artworktype = null;
 
-            if (dateRange1.Value1 != null) apvdate_b = this.dateRange1.Text1;
-            if (dateRange1.Value2 != null) { apvdate_e = this.dateRange1.Text2; }
-            if (dateRange2.Value1 != null) sciDelivery_b = this.dateRange2.Text1;
-            if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
-            if (dateRange3.Value1 != null) Inline_b = this.dateRange3.Text1;
-            if (dateRange3.Value2 != null) { Inline_e = this.dateRange3.Text2; }
+            if (dateApproveDate.Value1 != null) apvdate_b = this.dateApproveDate.Text1;
+            if (dateApproveDate.Value2 != null) { apvdate_e = this.dateApproveDate.Text2; }
+            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
+            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
+            if (dateInlineDate.Value1 != null) Inline_b = this.dateInlineDate.Text1;
+            if (dateInlineDate.Value2 != null) { Inline_e = this.dateInlineDate.Text2; }
 
-            String sp_b = this.textBox1.Text;
-            String sp_e = this.textBox2.Text;
-            artworktype = txtartworktype_fty1.Text;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            artworktype = txtartworktype_ftyArtworkType.Text;
 
             if ((apvdate_b == null && apvdate_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null) &&
@@ -77,7 +77,7 @@ namespace Sci.Production.Subcon
                 string.IsNullOrWhiteSpace(sp_b) && string.IsNullOrWhiteSpace(sp_e))
             {
                 MyUtility.Msg.WarningBox("< Approve Date > or < SCI Delivery > or < Inline Date > or < SP# > can't be empty!!");
-                dateRange1.Focus1();
+                dateApproveDate.Focus1();
                 return;
             }
 
@@ -86,7 +86,7 @@ namespace Sci.Production.Subcon
             if (string.IsNullOrWhiteSpace(artworktype))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > can't be empty!!");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return;
             }
 
@@ -250,9 +250,9 @@ Order_TmsCost.ApvDate
         {
             base.OnFormLoaded();
             #region -- Grid 設定 --
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchCreateFromSubProcessData.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridBatchCreateFromSubProcessData.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBatchCreateFromSubProcessData)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("FTYGroup", header: "Fty", iseditingreadonly: true)   //1
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))   //2
@@ -274,8 +274,8 @@ Order_TmsCost.ApvDate
                 .Text("message", header: "Message", iseditingreadonly: true, width: Widths.AnsiChars(30))
                 ;
             #endregion
-            this.grid1.Columns[12].Visible = poType == "O";
-            this.grid1.Columns[13].Visible = poType == "O";
+            this.gridBatchCreateFromSubProcessData.Columns[12].Visible = poType == "O";
+            this.gridBatchCreateFromSubProcessData.Columns[13].Visible = poType == "O";
 
         }
 
@@ -290,19 +290,19 @@ Order_TmsCost.ApvDate
         {
             listControlBindingSource1.EndEdit();
             string issuedate, delivery;
-            issuedate = dateBox1.Text;
-            delivery = dateBox2.Text;
+            issuedate = dateIssueDate.Text;
+            delivery = dateDelivery.Text;
 
-            if (dateBox1.Value == null)
+            if (dateIssueDate.Value == null)
             {
                 MyUtility.Msg.WarningBox("< Issue Date > can't be empty!!");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return;
             }
-            if (dateBox2.Value == null)
+            if (dateDelivery.Value == null)
             {
                 MyUtility.Msg.WarningBox("< Delivery > can't be empty!!");
-                dateBox2.Focus();
+                dateDelivery.Focus();
                 return;
             }
 
@@ -328,7 +328,7 @@ Order_TmsCost.ApvDate
                         dr["message"] = "Unit price = 0 or Approve Date is null";
                     }
                     MyUtility.Msg.WarningBox("Unit Price and Approve Date of out sourcing can't be zero or empty", "Warning");
-                    grid1.Sort(grid1.Columns[17], ListSortDirection.Descending);
+                    gridBatchCreateFromSubProcessData.Sort(gridBatchCreateFromSubProcessData.Columns[17], ListSortDirection.Descending);
                     return;
                 }
             }
@@ -374,7 +374,7 @@ Order_TmsCost.ApvDate
                             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'ARTWORKPO1'), 'ARTWORKPO', IssueDate, 2)
                             string ftyKeyWord = MyUtility.GetValue.Lookup(string.Format("select keyword from dbo.factory WITH (NOLOCK) where id='{0}'", q.ftygroup));
                             
-                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateBox1.Text));
+                            string id = Sci.MyUtility.GetValue.GetID(ftyKeyWord + "OS", "artworkpo", DateTime.Parse(dateIssueDate.Text));
                             if (MyUtility.Check.Empty(id))
                             {
                                 _transactionscope.Dispose();
@@ -502,7 +502,7 @@ Order_TmsCost.ApvDate
 
                             //若是EMB則QTYGarment=1,View_order_artworks.Qty->Coststich&Stich
                             StringBuilder sqlcmd2 = new StringBuilder();
-                            if (txtartworktype_fty1.Text == "EMBROIDERY")
+                            if (txtartworktype_ftyArtworkType.Text == "EMBROIDERY")
                             {
                                 foreach (var q2 in query2.ToList()) // 明細資料
                                 {

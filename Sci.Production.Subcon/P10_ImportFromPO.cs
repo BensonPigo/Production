@@ -31,15 +31,15 @@ namespace Sci.Production.Subcon
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
-            String sp_b = this.textBox1.Text;
-            String sp_e = this.textBox2.Text;
-            String poid_b = this.textBox4.Text;
-            String poid_e = this.textBox3.Text;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            String poid_b = this.txtArtworkPOIDStart.Text;
+            String poid_e = this.txtArtworkPOIDEnd.Text;
 
             if (MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
             {
                 MyUtility.Msg.WarningBox("SP# and Artwork POID can't be emtpqy");
-                textBox1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
             else
@@ -106,7 +106,7 @@ namespace Sci.Production.Subcon
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
-            this.grid1.AutoResizeColumns();
+            this.gridImportFromPO.AutoResizeColumns();
         }
 
         protected override void OnFormLoaded()
@@ -118,7 +118,7 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow ddr = gridImportFromPO.GetDataRow<DataRow>(e.RowIndex);
                     if ((decimal)e.FormattedValue > (decimal)ddr["balance"])
                     {
                         e.Cancel = true;
@@ -139,9 +139,9 @@ namespace Sci.Production.Subcon
             };
 
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImportFromPO.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImportFromPO.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImportFromPO)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("artworkpoid", header: "Artwork PO", iseditingreadonly: true)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -159,7 +159,7 @@ namespace Sci.Production.Subcon
                 .Numeric("apqty", header: "Qty",settings:ns)//14
                 .Numeric("amount", header: "Amount", width: Widths.AnsiChars(12), iseditingreadonly: true, decimal_places: 4, integer_places: 14);
 
-            this.grid1.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+            this.gridImportFromPO.Columns["apqty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
 
         }
 
@@ -173,7 +173,7 @@ namespace Sci.Production.Subcon
         private void button2_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImportFromPO.ValidateControl();
             
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             

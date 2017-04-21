@@ -23,8 +23,8 @@ namespace Sci.Production.Subcon
             DataTable factory = null;
 
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
-            comboBox1.SelectedValue = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.SelectedValue = Sci.Env.User.Factory;
             this.print.Enabled = false;
         }
 
@@ -38,21 +38,21 @@ namespace Sci.Production.Subcon
 
         protected override bool ValidateInput()
         {
-            if (!this.dateRange1.HasValue && this.textBox1.Text.Empty())
+            if (!this.dateReceiveDate.HasValue && this.txtSPNo.Text.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Receive Date] or [SP#] must input one !!");
-                dateRange1.Focus();
-                textBox1.Focus();
+                dateReceiveDate.Focus();
+                txtSPNo.Focus();
                 return false;
             }
            
-             ReceiveDate = dateRange1.Value1;
-             ReceiveDate2 = dateRange1.Value2;
-             SP = textBox1.Text.ToString();
-             Refno = textBox2.Text.ToString();
-             Category = txtartworktype_fty1.Text.ToString();
-             Supplier = txtsubcon1.TextBox1.Text;
-             Factory = comboBox1.SelectedValue.ToString();
+             ReceiveDate = dateReceiveDate.Value1;
+             ReceiveDate2 = dateReceiveDate.Value2;
+             SP = txtSPNo.Text.ToString();
+             Refno = txtRefno.Text.ToString();
+             Category = txtartworktype_ftyCategory.Text.ToString();
+             Supplier = txtsubconSupplier.TextBox1.Text;
+             Factory = comboFactory.SelectedValue.ToString();
             
             return base.ValidateInput();
         }
@@ -63,32 +63,32 @@ namespace Sci.Production.Subcon
             List<SqlParameter> lis = new List<SqlParameter>();
             string sqlWhere = ""; string order = "";
             List<string> sqlWheres = new List<string>();
-            if (!this.dateRange1.Value1.Empty())
+            if (!this.dateReceiveDate.Value1.Empty())
             {
                 sqlWheres.Add("lr.issuedate >= @ReceiveDate");
                 lis.Add(new SqlParameter("@ReceiveDate", ReceiveDate));
             }
-            if (!this.dateRange1.Value2.Empty())
+            if (!this.dateReceiveDate.Value2.Empty())
             {
                 sqlWheres.Add("lr.issuedate <= @ReceiveDate2");
                 lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
             }
-            if (!this.textBox1.Text.Empty())
+            if (!this.txtSPNo.Text.Empty())
             {
                 sqlWheres.Add("lrd.orderid=@SP");
                 lis.Add(new SqlParameter("@SP", SP));
             }
-            if (!this.textBox2.Text.Empty())
+            if (!this.txtRefno.Text.Empty())
             {
                 sqlWheres.Add("lrd.refno=@Refno");
                 lis.Add(new SqlParameter("@Refno", Refno));
             }
-            if (!this.txtartworktype_fty1.Text.Empty())
+            if (!this.txtartworktype_ftyCategory.Text.Empty())
             {
                 sqlWheres.Add("lrd.category=@Category");
                 lis.Add(new SqlParameter("@Category", Category));
             }
-            if (!this.txtsubcon1.TextBox1.Text.Empty())
+            if (!this.txtsubconSupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("lr.localsuppid=@Supplier");
                 lis.Add(new SqlParameter("@Supplier", Supplier));

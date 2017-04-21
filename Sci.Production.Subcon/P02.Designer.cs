@@ -28,33 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
+            this.labelPONo = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelArtworkType = new Sci.Win.UI.Label();
+            this.labelInternalRemark = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.labelApproveName = new Sci.Win.UI.Label();
+            this.labelApproveDate = new Sci.Win.UI.Label();
+            this.labelHandle = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
             this.label17 = new Sci.Win.UI.Label();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button5 = new Sci.Win.UI.Button();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.btnBatchImport = new Sci.Win.UI.Button();
+            this.btnSpecialRecord = new Sci.Win.UI.Button();
+            this.displayPONo = new Sci.Win.UI.DisplayBox();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.txtInternalRemark = new Sci.Win.UI.TextBox();
+            this.labelDeliveryDate = new Sci.Win.UI.Label();
+            this.dateDeliveryDate = new Sci.Win.UI.DateBox();
+            this.btnBatchCreate = new Sci.Win.UI.Button();
+            this.dateApproveDate = new Sci.Win.UI.DateBox();
+            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtuserApproveName = new Sci.Production.Class.txtuser();
+            this.txtuserHandle = new Sci.Production.Class.txtuser();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -71,60 +71,60 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.txtmfactory1);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.txtuser2);
-            this.masterpanel.Controls.Add(this.txtuser1);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.txtartworktype_fty1);
-            this.masterpanel.Controls.Add(this.txtsubcon1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.button5);
-            this.masterpanel.Controls.Add(this.button4);
+            this.masterpanel.Controls.Add(this.dateApproveDate);
+            this.masterpanel.Controls.Add(this.txtmfactory);
+            this.masterpanel.Controls.Add(this.labelDeliveryDate);
+            this.masterpanel.Controls.Add(this.txtuserApproveName);
+            this.masterpanel.Controls.Add(this.txtuserHandle);
+            this.masterpanel.Controls.Add(this.txtInternalRemark);
+            this.masterpanel.Controls.Add(this.txtRemark);
+            this.masterpanel.Controls.Add(this.txtartworktype_ftyArtworkType);
+            this.masterpanel.Controls.Add(this.txtsubconSupplier);
+            this.masterpanel.Controls.Add(this.displayPONo);
+            this.masterpanel.Controls.Add(this.btnSpecialRecord);
+            this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.label17);
             this.masterpanel.Controls.Add(this.label25);
-            this.masterpanel.Controls.Add(this.label19);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.labelHandle);
+            this.masterpanel.Controls.Add(this.labelApproveDate);
+            this.masterpanel.Controls.Add(this.labelApproveName);
+            this.masterpanel.Controls.Add(this.labelIssueDate);
+            this.masterpanel.Controls.Add(this.labelInternalRemark);
+            this.masterpanel.Controls.Add(this.labelArtworkType);
+            this.masterpanel.Controls.Add(this.labelSupplier);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelPONo);
+            this.masterpanel.Controls.Add(this.dateDeliveryDate);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Size = new System.Drawing.Size(1058, 248);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label19, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelArtworkType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInternalRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelApproveName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelApproveDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtartworktype_fty1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtuser2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtmfactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSpecialRecord, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsubconSupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtartworktype_ftyArtworkType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtInternalRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserApproveName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateApproveDate, 0);
             // 
             // detailpanel
             // 
@@ -147,15 +147,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
             // 
             // detail
             // 
@@ -194,95 +194,95 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(444, 13);
             // 
-            // label3
+            // labelPONo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 14);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "PO #";
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(16, 14);
+            this.labelPONo.Name = "labelPONo";
+            this.labelPONo.Size = new System.Drawing.Size(75, 23);
+            this.labelPONo.TabIndex = 1;
+            this.labelPONo.Text = "PO #";
             // 
-            // label4
+            // labelFactory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(264, 14);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(264, 14);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(92, 23);
+            this.labelFactory.TabIndex = 4;
+            this.labelFactory.Text = "Factory";
             // 
-            // label5
+            // labelRemark
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 119);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(16, 119);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 5;
+            this.labelRemark.Text = "Remark";
             // 
-            // label6
+            // labelSupplier
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(16, 48);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(16, 48);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(75, 23);
+            this.labelSupplier.TabIndex = 6;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label7
+            // labelArtworkType
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(264, 48);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(92, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "ArtworkType";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(264, 48);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(92, 23);
+            this.labelArtworkType.TabIndex = 7;
+            this.labelArtworkType.Text = "ArtworkType";
             // 
-            // label8
+            // labelInternalRemark
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(16, 153);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(109, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Internal Remark";
+            this.labelInternalRemark.Lines = 0;
+            this.labelInternalRemark.Location = new System.Drawing.Point(16, 153);
+            this.labelInternalRemark.Name = "labelInternalRemark";
+            this.labelInternalRemark.Size = new System.Drawing.Size(109, 23);
+            this.labelInternalRemark.TabIndex = 8;
+            this.labelInternalRemark.Text = "Internal Remark";
             // 
-            // label9
+            // labelIssueDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(16, 82);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(16, 82);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
+            this.labelIssueDate.TabIndex = 9;
+            this.labelIssueDate.Text = "Issue Date";
             // 
-            // label11
+            // labelApproveName
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(512, 14);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(92, 23);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "ApproveName";
+            this.labelApproveName.Lines = 0;
+            this.labelApproveName.Location = new System.Drawing.Point(512, 14);
+            this.labelApproveName.Name = "labelApproveName";
+            this.labelApproveName.Size = new System.Drawing.Size(92, 23);
+            this.labelApproveName.TabIndex = 11;
+            this.labelApproveName.Text = "ApproveName";
             // 
-            // label14
+            // labelApproveDate
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(512, 47);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(92, 23);
-            this.label14.TabIndex = 14;
-            this.label14.Text = "ApprovedDate";
+            this.labelApproveDate.Lines = 0;
+            this.labelApproveDate.Location = new System.Drawing.Point(512, 47);
+            this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.Size = new System.Drawing.Size(92, 23);
+            this.labelApproveDate.TabIndex = 14;
+            this.labelApproveDate.Text = "ApprovedDate";
             // 
-            // label19
+            // labelHandle
             // 
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(512, 81);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(75, 23);
-            this.label19.TabIndex = 19;
-            this.label19.Text = "Handle";
+            this.labelHandle.Lines = 0;
+            this.labelHandle.Location = new System.Drawing.Point(512, 81);
+            this.labelHandle.Name = "labelHandle";
+            this.labelHandle.Size = new System.Drawing.Size(75, 23);
+            this.labelHandle.TabIndex = 19;
+            this.labelHandle.Text = "Handle";
             // 
             // label25
             // 
@@ -308,167 +308,167 @@
             this.label17.Text = "Exceed Qty";
             this.label17.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // button4
+            // btnBatchImport
             // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(909, 40);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(134, 30);
-            this.button4.TabIndex = 8;
-            this.button4.Text = "Batch Import";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchImport.Location = new System.Drawing.Point(909, 40);
+            this.btnBatchImport.Name = "btnBatchImport";
+            this.btnBatchImport.Size = new System.Drawing.Size(134, 30);
+            this.btnBatchImport.TabIndex = 8;
+            this.btnBatchImport.Text = "Batch Import";
+            this.btnBatchImport.UseVisualStyleBackColor = true;
+            this.btnBatchImport.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button5
+            // btnSpecialRecord
             // 
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(909, 75);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(134, 30);
-            this.button5.TabIndex = 9;
-            this.button5.Text = "Special Record";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSpecialRecord.Location = new System.Drawing.Point(909, 75);
+            this.btnSpecialRecord.Name = "btnSpecialRecord";
+            this.btnSpecialRecord.Size = new System.Drawing.Size(134, 30);
+            this.btnSpecialRecord.TabIndex = 9;
+            this.btnSpecialRecord.Text = "Special Record";
+            this.btnSpecialRecord.UseVisualStyleBackColor = true;
+            this.btnSpecialRecord.Click += new System.EventHandler(this.button5_Click);
             // 
-            // displayBox1
+            // displayPONo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(94, 14);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayPONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPONo.Location = new System.Drawing.Point(94, 14);
+            this.displayPONo.Name = "displayPONo";
+            this.displayPONo.Size = new System.Drawing.Size(120, 23);
+            this.displayPONo.TabIndex = 0;
             // 
-            // dateBox1
+            // dateIssueDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
-            this.dateBox1.Location = new System.Drawing.Point(94, 81);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
+            this.dateIssueDate.Location = new System.Drawing.Point(94, 81);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 1;
             // 
-            // textBox2
+            // txtRemark
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(94, 119);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(796, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(94, 119);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(796, 23);
+            this.txtRemark.TabIndex = 2;
             // 
-            // textBox1
+            // txtInternalRemark
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "internalremark", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(128, 153);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(762, 23);
-            this.textBox1.TabIndex = 3;
+            this.txtInternalRemark.BackColor = System.Drawing.Color.White;
+            this.txtInternalRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "internalremark", true));
+            this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInternalRemark.Location = new System.Drawing.Point(128, 153);
+            this.txtInternalRemark.Name = "txtInternalRemark";
+            this.txtInternalRemark.Size = new System.Drawing.Size(762, 23);
+            this.txtInternalRemark.TabIndex = 3;
             // 
-            // label12
+            // labelDeliveryDate
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(264, 82);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(92, 23);
-            this.label12.TabIndex = 69;
-            this.label12.Text = "Delivery Date";
+            this.labelDeliveryDate.Lines = 0;
+            this.labelDeliveryDate.Location = new System.Drawing.Point(264, 82);
+            this.labelDeliveryDate.Name = "labelDeliveryDate";
+            this.labelDeliveryDate.Size = new System.Drawing.Size(92, 23);
+            this.labelDeliveryDate.TabIndex = 69;
+            this.labelDeliveryDate.Text = "Delivery Date";
             // 
-            // dateBox2
+            // dateDeliveryDate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
-            this.dateBox2.Location = new System.Drawing.Point(359, 81);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 6;
+            this.dateDeliveryDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
+            this.dateDeliveryDate.Location = new System.Drawing.Point(359, 81);
+            this.dateDeliveryDate.Name = "dateDeliveryDate";
+            this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDeliveryDate.TabIndex = 6;
             // 
-            // button3
+            // btnBatchCreate
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(932, 12);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(115, 30);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "Batch Create";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchCreate.Location = new System.Drawing.Point(932, 12);
+            this.btnBatchCreate.Name = "btnBatchCreate";
+            this.btnBatchCreate.Size = new System.Drawing.Size(115, 30);
+            this.btnBatchCreate.TabIndex = 0;
+            this.btnBatchCreate.Text = "Batch Create";
+            this.btnBatchCreate.UseVisualStyleBackColor = true;
+            this.btnBatchCreate.Click += new System.EventHandler(this.button3_Click);
             // 
-            // dateBox3
+            // dateApproveDate
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(607, 47);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 5;
-            this.dateBox3.TabStop = false;
+            this.dateApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
+            this.dateApproveDate.IsSupportEditMode = false;
+            this.dateApproveDate.Location = new System.Drawing.Point(607, 47);
+            this.dateApproveDate.Name = "dateApproveDate";
+            this.dateApproveDate.ReadOnly = true;
+            this.dateApproveDate.Size = new System.Drawing.Size(130, 23);
+            this.dateApproveDate.TabIndex = 5;
+            this.dateApproveDate.TabStop = false;
             // 
-            // txtmfactory1
+            // txtmfactory
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(359, 14);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 4;
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.Location = new System.Drawing.Point(359, 14);
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory.TabIndex = 4;
             // 
-            // txtuser2
+            // txtuserApproveName
             // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Enabled = false;
-            this.txtuser2.Location = new System.Drawing.Point(607, 14);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(283, 23);
-            this.txtuser2.TabIndex = 2;
-            this.txtuser2.TextBox1Binding = "";
+            this.txtuserApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
+            this.txtuserApproveName.DisplayBox1Binding = "";
+            this.txtuserApproveName.Enabled = false;
+            this.txtuserApproveName.Location = new System.Drawing.Point(607, 14);
+            this.txtuserApproveName.Name = "txtuserApproveName";
+            this.txtuserApproveName.Size = new System.Drawing.Size(283, 23);
+            this.txtuserApproveName.TabIndex = 2;
+            this.txtuserApproveName.TextBox1Binding = "";
             // 
-            // txtuser1
+            // txtuserHandle
             // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(590, 81);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 7;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
+            this.txtuserHandle.DisplayBox1Binding = "";
+            this.txtuserHandle.Location = new System.Drawing.Point(590, 81);
+            this.txtuserHandle.Name = "txtuserHandle";
+            this.txtuserHandle.Size = new System.Drawing.Size(300, 23);
+            this.txtuserHandle.TabIndex = 7;
+            this.txtuserHandle.TextBox1Binding = "";
             // 
-            // txtartworktype_fty1
+            // txtartworktype_ftyArtworkType
             // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
-            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(359, 47);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 5;
-            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.cClassify = "";
+            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(359, 47);
+            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_ftyArtworkType.TabIndex = 5;
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
             // 
-            // txtsubcon1
+            // txtsubconSupplier
             // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(94, 48);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 0;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(94, 48);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
+            this.txtsubconSupplier.TabIndex = 0;
+            this.txtsubconSupplier.TextBox1Binding = "";
             // 
             // P02
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.CloseChkValue = "Approved";
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnBatchCreate);
             this.DefaultControl = "txtsubcon1";
             this.DefaultControlForEdit = "dateBox1";
             this.DefaultFilter = "POTYPE=\'I\'";
@@ -488,7 +488,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkPO";
             this.Controls.SetChildIndex(this.tabs, 0);
-            this.Controls.SetChildIndex(this.button3, 0);
+            this.Controls.SetChildIndex(this.btnBatchCreate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -510,32 +510,32 @@
 
         #endregion
 
-        private Win.UI.Label label19;
-        private Win.UI.Label label14;
-        private Win.UI.Label label11;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Class.txtartworktype_fty txtartworktype_fty1;
-        private Win.UI.DateBox dateBox1;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Button button5;
-        private Win.UI.Button button4;
+        private Win.UI.Label labelHandle;
+        private Win.UI.Label labelApproveDate;
+        private Win.UI.Label labelApproveName;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelInternalRemark;
+        private Win.UI.Label labelArtworkType;
+        private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelPONo;
+        private Win.UI.TextBox txtInternalRemark;
+        private Win.UI.TextBox txtRemark;
+        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
+        private Win.UI.DateBox dateIssueDate;
+        private Class.txtsubcon txtsubconSupplier;
+        private Win.UI.DisplayBox displayPONo;
+        private Win.UI.Button btnSpecialRecord;
+        private Win.UI.Button btnBatchImport;
         private Win.UI.Label label17;
         private Win.UI.Label label25;
-        private Class.txtuser txtuser2;
-        private Class.txtuser txtuser1;
-        private Win.UI.Label label12;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.Button button3;
-        private Class.txtmfactory txtmfactory1;
-        private Win.UI.DateBox dateBox3;
+        private Class.txtuser txtuserApproveName;
+        private Class.txtuser txtuserHandle;
+        private Win.UI.Label labelDeliveryDate;
+        private Win.UI.DateBox dateDeliveryDate;
+        private Win.UI.Button btnBatchCreate;
+        private Class.txtmfactory txtmfactory;
+        private Win.UI.DateBox dateApproveDate;
     }
 }

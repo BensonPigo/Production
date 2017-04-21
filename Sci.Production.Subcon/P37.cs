@@ -67,12 +67,12 @@ namespace Sci.Production.Subcon
             numBalance.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) - decimal.Parse(CurrentMaintain["received"].ToString());
             DataRow ftyVD;
            MyUtility.Check.Seek(string.Format(@"SELECT VoucherDate FROM [FinanceEN].[dbo].[Voucher] WHERE ID=(SELECT VoucherFactory FROM Debit WHERE ID='{0}')"
- , displayBox1.Text), out ftyVD);
+ , displayDebitNo.Text), out ftyVD);
            if (ftyVD != null)
            {
-               dateBox4.Text = Convert.ToDateTime(ftyVD["VoucherDate"]).ToString("yyyy/MM/dd");
+               dateFactoryVoucherDate.Text = Convert.ToDateTime(ftyVD["VoucherDate"]).ToString("yyyy/MM/dd");
            }
-           else { dateBox4.Text = ""; }
+           else { dateFactoryVoucherDate.Text = ""; }
         }
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
@@ -100,7 +100,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["Tax"] = 0;
             CurrentMaintain["TaxRate"] = 0;
             CurrentMaintain["Status"] = "New";
-            this.dateBox4.ReadOnly = true;
+            this.dateFactoryVoucherDate.ReadOnly = true;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

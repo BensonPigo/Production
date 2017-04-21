@@ -31,10 +31,10 @@ namespace Sci.Production.Subcon
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
-            String sp_b = this.textBox1.Text;
-            String sp_e = this.textBox2.Text;
-            String poid_b = this.textBox4.Text;
-            String poid_e = this.textBox3.Text;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            String poid_b = this.txtPOIDStart.Text;
+            String poid_e = this.txtPOIDEnd.Text;
             string issuedate_b, issuedate_e, delivery_b, delivery_e;
             issuedate_b = null;
             issuedate_e = null;
@@ -42,17 +42,17 @@ namespace Sci.Production.Subcon
             delivery_e = null;
             
 
-            if (dateRange1.Value1 != null) issuedate_b = this.dateRange1.Text1;
-            if (dateRange1.Value2 != null) { issuedate_e = this.dateRange1.Text2; }
-            if (dateRange2.Value1 != null) delivery_b = this.dateRange2.Text1;
-            if (dateRange2.Value2 != null) { delivery_e = this.dateRange2.Text2; }
+            if (datePOIssueDate.Value1 != null) issuedate_b = this.datePOIssueDate.Text1;
+            if (datePOIssueDate.Value2 != null) { issuedate_e = this.datePOIssueDate.Text2; }
+            if (dateDelivery.Value1 != null) delivery_b = this.dateDelivery.Text1;
+            if (dateDelivery.Value2 != null) { delivery_e = this.dateDelivery.Text2; }
 
             if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
                 (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e ))  &&
                 MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
             {
                 MyUtility.Msg.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
             
@@ -134,7 +134,7 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow ddr = gridImport.GetDataRow<DataRow>(e.RowIndex);
                     if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
                     {
                         e.Cancel = true;
@@ -147,9 +147,9 @@ namespace Sci.Production.Subcon
             };
 
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("localpoid", header: "local PO", iseditingreadonly: true) //1
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
@@ -165,7 +165,7 @@ namespace Sci.Production.Subcon
                 .Numeric("qty", header: "Qty", settings: ns);//10
 
 
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //Qty
 
         }
 
@@ -179,7 +179,7 @@ namespace Sci.Production.Subcon
         private void button2_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             

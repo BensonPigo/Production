@@ -23,7 +23,7 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
-            txtmfactory1.ReadOnly = true;            
+            txtmfactory.ReadOnly = true;            
         }
 
         // detail 新增時設定預設值
@@ -96,28 +96,28 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                txtuser1.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
             #endregion
@@ -220,9 +220,9 @@ outer apply(
         {
             base.OnDetailEntered();
             
-            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+            txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
            
-            this.txtmfactory1.ReadOnly = true;
+            this.txtmfactory.ReadOnly = true;
 
             #region -- 加總明細金額，顯示於表頭 --
             if (!(CurrentMaintain == null))
@@ -235,14 +235,14 @@ outer apply(
                
                 Console.WriteLine("get {0}", x);
               
-                numericBox3.Text= x.ToString();
+                numTotalQty.Text= x.ToString();
             }
             #endregion
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region Batch Import
-            button2.Enabled = this.EditMode;
+            btnImportFromRealTime.Enabled = this.EditMode;
             #endregion
 
         }
@@ -284,7 +284,7 @@ outer apply(
                     if (MyUtility.Check.Empty(CurrentMaintain["artworktypeid"]))
                     {
                         MyUtility.Msg.WarningBox("Please fill Artwork Type first");
-                        this.txtartworktype_fty1.Focus();
+                        this.txtartworktype_ftyArtworkType.Focus();
                         return;
                     }
 

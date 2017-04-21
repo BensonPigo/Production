@@ -44,17 +44,17 @@ namespace Sci.Production.Subcon
             base.OnDetailEntered();
             if (!MyUtility.Check.Empty(CurrentMaintain["cfmdate"]))
             {
-                this.displayBox7.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd");
+                this.displayConfirmed.Text = Convert.ToDateTime(CurrentMaintain["cfmdate"]).ToString("yyyy/MM/dd");
             }
-            else this.displayBox7.Text = "";
+            else this.displayConfirmed.Text = "";
           
             lblStatus.Text = CurrentMaintain["status"].ToString();
             if (!MyUtility.Check.Empty(CurrentMaintain["amtrevisedate"]))
             {
-                this.displayBox5.Text = Convert.ToDateTime(CurrentMaintain["amtrevisedate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayAmtReceived.Text = Convert.ToDateTime(CurrentMaintain["amtrevisedate"]).ToString("yyyy/MM/dd HH:mm:ss");
             }
             else
-                this.displayBox5.Text = "";
+                this.displayAmtReceived.Text = "";
             lblTaipeiDebitNote.Visible = (!MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]));
             numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
             btnDebitSchedule.Enabled = !this.EditMode && CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED";
@@ -67,12 +67,12 @@ over (order by issuedate
 												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{0}' and voucherid !='' and voucherid is not null 
 )
 SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], numTotalAmt.Value.ToString()), out dr);
-            displayBoxVoucherID.Text = null == dr ? "" : dr["voucherid"].ToString();
+            displaySettleVoucher.Text = null == dr ? "" : dr["voucherid"].ToString();
             if (dr != null)
             {
                 if (!MyUtility.Check.Empty(dr["voucherdate"]))
                 {
-                    displayBoxSettleDate.Text = Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
+                    displaySettleDate.Text = Convert.ToDateTime(dr["voucherdate"]).ToString("yyyy/MM/dd");
                 }
             }
         }
@@ -133,14 +133,14 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            dateBox4.ReadOnly = true;
+            dateReceiveDate.ReadOnly = true;
         }
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
         {
             detailgridbs.EndEdit();
-            dateBox4.ReadOnly = true;
+            dateReceiveDate.ReadOnly = true;
             #region 必輸檢查
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
@@ -157,21 +157,21 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                txtuser_Handle.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SMR"]))
             {
                 MyUtility.Msg.WarningBox("< SMR >  can't be empty!", "Warning");
-                txtuser_SMR.TextBox1.Focus();
+                txtuserSMR.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SMR"]))
             {
                 MyUtility.Msg.WarningBox("< SMR >  can't be empty!", "Warning");
-                txtuser_SMR.TextBox1.Focus();
+                txtuserSMR.TextBox1.Focus();
                 return false;
             }
 
@@ -256,7 +256,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 this.RenewData();
                 return false;
             }
-            dateBox4.ReadOnly = true;
+            dateReceiveDate.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
@@ -330,7 +330,7 @@ values ('LocalDebit','{3}','{0}','{1}','','','{2}',getdate())", oldvalue, newVal
                     {
                         if (!(result = DBProxy.Current.Execute(null, string.Format(@"update debit set LCLName ='{0}' , LCLCurrency='{1}' ,LCLAmount={2}, LCLRate={3} ,editdate=getdate()
 where id = '{4}'"
-                            , txtsubcon1.DisplayBox1.Text
+                            , txtsubconSupplier.DisplayBox1.Text
                             , CurrentMaintain["currencyid"]
                             , decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString())
                             , CurrentMaintain["exchange"]
@@ -411,7 +411,7 @@ where id = '{4}'"
         }
         protected override bool ClickNew()
         {
-            dateBox4.ReadOnly = true;
+            dateReceiveDate.ReadOnly = true;
             return base.ClickNew();
         }
         protected override void ClickUnconfirm()

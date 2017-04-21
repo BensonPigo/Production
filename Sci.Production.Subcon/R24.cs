@@ -24,23 +24,23 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
-            cbbOrderType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
-            cbbRateType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
-            cbbStatus.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Material,Bulk+Sample,Bulk+Sample+Forecast,Bulk+Sample+Material+Forecast");
+            comboOrderType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboRateType, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
+            comboRateType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
+            comboStatus.SelectedIndex = 0;
 
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
             int year = DateTime.Today.Year;
-            this.dateRangeAPDate.Value1 = DateTime.Today.AddMonths(-1);
-            this.dateRangeAPDate.Value2 = DateTime.Now;
-            this.dateRangeGLDate.Value1 = DateTime.Today.AddMonths(-1);
-            this.dateRangeGLDate.Value2 = DateTime.Now;
+            this.dateAPDate.Value1 = DateTime.Today.AddMonths(-1);
+            this.dateAPDate.Value2 = DateTime.Now;
+            this.dateGLDate.Value1 = DateTime.Today.AddMonths(-1);
+            this.dateGLDate.Value2 = DateTime.Now;
 
         }
 
@@ -48,24 +48,24 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
 
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeAPDate.Value1) && MyUtility.Check.Empty(dateRangeAPDate.Value2))
+            if (comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2))
             {
                 MyUtility.Msg.WarningBox("A/P Date can't empty!!");
                 return false;
             }
-            APdate1 = dateRangeAPDate.Value1;
-            APdate2 = dateRangeAPDate.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
-            GLdate1 = dateRangeGLDate.Value1;
-            GLdate2 = dateRangeGLDate.Value2;
+            APdate1 = dateAPDate.Value1;
+            APdate2 = dateAPDate.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
+            GLdate1 = dateGLDate.Value1;
+            GLdate2 = dateGLDate.Value2;
 
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            ordertypeindex = cbbOrderType.SelectedIndex;
-            ratetype = cbbRateType.SelectedValue.ToString();
-            statusindex = cbbStatus.SelectedIndex;
+            artworktype = txtartworktype_ftyCategory.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            ordertypeindex = comboOrderType.SelectedIndex;
+            ratetype = comboRateType.SelectedValue.ToString();
+            statusindex = comboStatus.SelectedIndex;
             switch (ordertypeindex)
             {
                 case 0:
@@ -87,8 +87,8 @@ namespace Sci.Production.Subcon
                     ordertype = "('B','S','M')";
                     break;
             }
-            brandid = txtbrand1.Text;
-            style = txtstyle1.Text;
+            brandid = txtbrand.Text;
+            style = txtstyle.Text;
 
             return base.ValidateInput();
         }
@@ -341,8 +341,8 @@ where ap_qty > 0
 
         private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateRangeAPDate.Enabled = !(cbbStatus.SelectedIndex == 1);
-            dateRangeGLDate.Enabled = !(cbbStatus.SelectedIndex == 1);
+            dateAPDate.Enabled = !(comboStatus.SelectedIndex == 1);
+            dateGLDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }
     }
 }

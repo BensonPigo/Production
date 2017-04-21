@@ -50,19 +50,19 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBundle.Value1) && MyUtility.Check.Empty(dateBundle.Value2) &&
+            if (MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleTransDate.Value1) && MyUtility.Check.Empty(dateBundleTransDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Bundel CDate or Bundle Trans date can't empty!!");
                 return false;
             }
             SubProcess = comboSubProcess.Text;
-            SP = textSP.Text;
+            SP = txtSPNo.Text;
             Factory = comboM.Text;
-            CutRef1 = textCutRef_Start.Text;
-            CutRef2 = textCutRef_End.Text;
-            dateBundle1 = dateBundle.Value1;
-            dateBundle2 = dateBundle.Value2;
+            CutRef1 = txtCutRefStart.Text;
+            CutRef2 = txtCutRefEnd.Text;
+            dateBundle1 = dateBundleCDate.Value1;
+            dateBundle2 = dateBundleCDate.Value2;
             dateBundleTransDate1 = dateBundleTransDate.Value1;
             dateBundleTransDate2 = dateBundleTransDate.Value2;
             return base.ValidateInput();

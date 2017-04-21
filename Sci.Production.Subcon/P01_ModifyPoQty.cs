@@ -22,22 +22,22 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             dr = data;
-            this.displayBox1.Text = dr["orderid"].ToString();
-            this.displayBox2.Text = dr["patterncode"].ToString();
-            this.displayBox3.Text = dr["artworkid"].ToString();
-            this.displayBox4.Text = dr["patterndesc"].ToString();
-            this.displayBox5.Text = dr["farmout"].ToString();
-            this.displayBox7.Text = dr["farmin"].ToString();
-            this.displayBox6.Text = dr["apqty"].ToString();
-            this.displayBox9.Text = dr["exceedqty"].ToString();
-            this.numericBox1.Text = dr["poqty"].ToString();
+            this.displaySPNo.Text = dr["orderid"].ToString();
+            this.displayCutpartID.Text = dr["patterncode"].ToString();
+            this.displayArtwork.Text = dr["artworkid"].ToString();
+            this.displayCutpartName.Text = dr["patterndesc"].ToString();
+            this.displayFarmOut.Text = dr["farmout"].ToString();
+            this.displayFarmIn.Text = dr["farmin"].ToString();
+            this.displayAPQty.Text = dr["apqty"].ToString();
+            this.displayExceedQty.Text = dr["exceedqty"].ToString();
+            this.numPOQty.Text = dr["poqty"].ToString();
 
             DataTable tmpdt;
             Sci.Data.DBProxy.Current.Select(null, string.Format("select sum(qty) from order_qty WITH (NOLOCK) where id = '{0}'", data["orderid"]), out tmpdt);
             if (MyUtility.Check.Empty(tmpdt.Rows[0][0]))
-            { this.displayBox8.Text = ""; }
+            { this.displayCurrentOrderQty.Text = ""; }
             else
-            { sum_order_qty = int.Parse(tmpdt.Rows[0][0].ToString()); this.displayBox8.Text = tmpdt.Rows[0][0].ToString(); }
+            { sum_order_qty = int.Parse(tmpdt.Rows[0][0].ToString()); this.displayCurrentOrderQty.Text = tmpdt.Rows[0][0].ToString(); }
 
         }
         protected override void OnClosed(EventArgs e)
@@ -51,12 +51,12 @@ namespace Sci.Production.Subcon
             if (((Sci.Win.UI.NumericBox)sender).Value > sum_order_qty)
             {
                 dr["exceedqty"] = ((Sci.Win.UI.NumericBox)sender).Value - sum_order_qty;
-                this.displayBox9.Text = dr["exceedqty"].ToString();
+                this.displayExceedQty.Text = dr["exceedqty"].ToString();
             }
             else
             {
                 dr["exceedqty"] = 0;
-                this.displayBox9.Text = dr["exceedqty"].ToString();
+                this.displayExceedQty.Text = dr["exceedqty"].ToString();
             }
 
             dr["amount"] = Convert.ToDecimal(dr["poqty"]) * Convert.ToDecimal(dr["price"]);

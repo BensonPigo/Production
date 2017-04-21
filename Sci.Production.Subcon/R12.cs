@@ -23,11 +23,11 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
-            cbbOrderBy.SelectedIndex = 0;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,Handle");
+            comboOrderBy.SelectedIndex = 0;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
             this.dateRange1.Value1 = DateTime.Today.AddMonths(-month + 1).AddDays(-day + 1);
@@ -45,11 +45,11 @@ namespace Sci.Production.Subcon
             APdate1 = dateRange1.Value1;
             APdate2 = dateRange1.Value2;
            
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            subcon = txtsubcon1.TextBox1.Text;
-            orderby = cbbOrderBy.Text;
+            artworktype = txtartworktype_ftyArtworkType.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
+            orderby = comboOrderBy.Text;
             
             return base.ValidateInput();
         }

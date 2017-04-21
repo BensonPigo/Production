@@ -36,9 +36,9 @@ namespace Sci.Production.Subcon
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridFarmInList.IsEditingReadOnly = true;
+            this.gridFarmInList.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridFarmInList)
                  .Text("id", header: "Farm-In#", width: Widths.AnsiChars(13))
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(13))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)

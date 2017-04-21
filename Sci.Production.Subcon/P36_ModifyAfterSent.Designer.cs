@@ -29,64 +29,64 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.editDescription = new Sci.Win.UI.EditBox();
             this.mtbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.numExchange = new Sci.Win.UI.NumericBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
-            this.txtAccountNo1 = new Sci.Production.Class.txtAccountNo();
+            this.labelExchange = new Sci.Win.UI.Label();
+            this.numtaxrate = new Sci.Win.UI.NumericBox();
+            this.numTax = new Sci.Win.UI.NumericBox();
+            this.labelTax = new Sci.Win.UI.Label();
+            this.numAmount = new Sci.Win.UI.NumericBox();
+            this.labelAmount = new Sci.Win.UI.Label();
+            this.labelAccountNo = new Sci.Win.UI.Label();
+            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(472, 302);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(472, 302);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 7;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnSave
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(386, 302);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Save";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSave.Location = new System.Drawing.Point(386, 302);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 6;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label1
+            // labelDescription
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 90);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(16, 90);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 2;
+            this.labelDescription.Text = "Description";
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(94, 90);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(459, 155);
-            this.editBox1.TabIndex = 4;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(94, 90);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(459, 155);
+            this.editDescription.TabIndex = 4;
             // 
             // numExchange
             // 
@@ -110,134 +110,134 @@
             0,
             0});
             // 
-            // label12
+            // labelExchange
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(16, 54);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(75, 23);
-            this.label12.TabIndex = 87;
-            this.label12.Text = "Exchange";
+            this.labelExchange.Lines = 0;
+            this.labelExchange.Location = new System.Drawing.Point(16, 54);
+            this.labelExchange.Name = "labelExchange";
+            this.labelExchange.Size = new System.Drawing.Size(75, 23);
+            this.labelExchange.TabIndex = 87;
+            this.labelExchange.Text = "Exchange";
             // 
-            // numericBox4
+            // numtaxrate
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.White;
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "taxrate", true));
-            this.numericBox4.DecimalPlaces = 2;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox4.Location = new System.Drawing.Point(462, 19);
-            this.numericBox4.MaxBytes = 5;
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numtaxrate.BackColor = System.Drawing.Color.White;
+            this.numtaxrate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "taxrate", true));
+            this.numtaxrate.DecimalPlaces = 2;
+            this.numtaxrate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numtaxrate.Location = new System.Drawing.Point(462, 19);
+            this.numtaxrate.MaxBytes = 5;
+            this.numtaxrate.Name = "numtaxrate";
+            this.numtaxrate.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.Size = new System.Drawing.Size(60, 23);
-            this.numericBox4.TabIndex = 2;
-            this.numericBox4.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "tax", true));
-            this.numericBox2.DecimalPlaces = 2;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(356, 19);
-            this.numericBox2.MaxBytes = 11;
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 1;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numtaxrate.Size = new System.Drawing.Size(60, 23);
+            this.numtaxrate.TabIndex = 2;
+            this.numtaxrate.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label10
+            // numTax
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(278, 19);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
-            this.label10.TabIndex = 84;
-            this.label10.Text = "Tax";
-            // 
-            // numericBox1
-            // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
-            this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(94, 19);
-            this.numericBox1.MaxBytes = 12;
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numTax.BackColor = System.Drawing.Color.White;
+            this.numTax.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "tax", true));
+            this.numTax.DecimalPlaces = 2;
+            this.numTax.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTax.Location = new System.Drawing.Point(356, 19);
+            this.numTax.MaxBytes = 11;
+            this.numTax.Name = "numTax";
+            this.numTax.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 0;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numTax.Size = new System.Drawing.Size(100, 23);
+            this.numTax.TabIndex = 1;
+            this.numTax.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label9
+            // labelTax
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(16, 19);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 82;
-            this.label9.Text = "Amount";
+            this.labelTax.Lines = 0;
+            this.labelTax.Location = new System.Drawing.Point(278, 19);
+            this.labelTax.Name = "labelTax";
+            this.labelTax.Size = new System.Drawing.Size(75, 23);
+            this.labelTax.TabIndex = 84;
+            this.labelTax.Text = "Tax";
             // 
-            // label16
+            // numAmount
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(16, 258);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(75, 23);
-            this.label16.TabIndex = 90;
-            this.label16.Text = "Account No";
+            this.numAmount.BackColor = System.Drawing.Color.White;
+            this.numAmount.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
+            this.numAmount.DecimalPlaces = 2;
+            this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAmount.Location = new System.Drawing.Point(94, 19);
+            this.numAmount.MaxBytes = 12;
+            this.numAmount.Name = "numAmount";
+            this.numAmount.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numAmount.Size = new System.Drawing.Size(100, 23);
+            this.numAmount.TabIndex = 0;
+            this.numAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // txtAccountNo1
+            // labelAmount
             // 
-            this.txtAccountNo1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
-            this.txtAccountNo1.DisplayBox1Binding = "";
-            this.txtAccountNo1.Location = new System.Drawing.Point(94, 258);
-            this.txtAccountNo1.Name = "txtAccountNo1";
-            this.txtAccountNo1.Size = new System.Drawing.Size(300, 23);
-            this.txtAccountNo1.TabIndex = 5;
-            this.txtAccountNo1.TextBox1Binding = "";
+            this.labelAmount.Lines = 0;
+            this.labelAmount.Location = new System.Drawing.Point(16, 19);
+            this.labelAmount.Name = "labelAmount";
+            this.labelAmount.Size = new System.Drawing.Size(75, 23);
+            this.labelAmount.TabIndex = 82;
+            this.labelAmount.Text = "Amount";
+            // 
+            // labelAccountNo
+            // 
+            this.labelAccountNo.Lines = 0;
+            this.labelAccountNo.Location = new System.Drawing.Point(16, 258);
+            this.labelAccountNo.Name = "labelAccountNo";
+            this.labelAccountNo.Size = new System.Drawing.Size(75, 23);
+            this.labelAccountNo.TabIndex = 90;
+            this.labelAccountNo.Text = "Account No";
+            // 
+            // txtAccountNo
+            // 
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
+            this.txtAccountNo.DisplayBox1Binding = "";
+            this.txtAccountNo.Location = new System.Drawing.Point(94, 258);
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(300, 23);
+            this.txtAccountNo.TabIndex = 5;
+            this.txtAccountNo.TextBox1Binding = "";
             // 
             // P36_ModifyAfterSent
             // 
             this.ClientSize = new System.Drawing.Size(565, 344);
             this.Controls.Add(this.numExchange);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.numericBox4);
-            this.Controls.Add(this.numericBox2);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.txtAccountNo1);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.labelExchange);
+            this.Controls.Add(this.numtaxrate);
+            this.Controls.Add(this.numTax);
+            this.Controls.Add(this.labelTax);
+            this.Controls.Add(this.numAmount);
+            this.Controls.Add(this.labelAmount);
+            this.Controls.Add(this.labelAccountNo);
+            this.Controls.Add(this.txtAccountNo);
+            this.Controls.Add(this.editDescription);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnClose);
             this.DefaultControl = "numericBox1";
             this.Name = "P36_ModifyAfterSent";
             this.Text = "P36. Modify After Sent";
@@ -249,19 +249,19 @@
 
         #endregion
 
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
-        private Win.UI.Label label1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
+        private Win.UI.Label labelDescription;
+        private Win.UI.EditBox editDescription;
         private Win.UI.NumericBox numExchange;
-        private Win.UI.Label label12;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label10;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label9;
-        private Win.UI.Label label16;
-        private Class.txtAccountNo txtAccountNo1;
+        private Win.UI.Label labelExchange;
+        private Win.UI.NumericBox numtaxrate;
+        private Win.UI.NumericBox numTax;
+        private Win.UI.Label labelTax;
+        private Win.UI.NumericBox numAmount;
+        private Win.UI.Label labelAmount;
+        private Win.UI.Label labelAccountNo;
+        private Class.txtAccountNo txtAccountNo;
         private Win.UI.ListControlBindingSource mtbs;
     }
 }

@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.txtunit1 = new Sci.Production.Class.txtunit();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtReason1 = new Sci.Production.Class.txtReason();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.txtUnit = new Sci.Production.Class.txtunit();
+            this.labelAffectQty = new Sci.Win.UI.Label();
+            this.numAffectQty = new Sci.Win.UI.NumericBox();
+            this.numClaimAmt = new Sci.Win.UI.NumericBox();
+            this.labelClaimAmt = new Sci.Win.UI.Label();
+            this.numAdditionCharge = new Sci.Win.UI.NumericBox();
+            this.labelAdditionCharge = new Sci.Win.UI.Label();
+            this.labelReason = new Sci.Win.UI.Label();
+            this.txtReason = new Sci.Production.Class.txtReason();
+            this.labelUnit = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.editDescription = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -66,219 +66,219 @@
             // 
             this.right.TabIndex = 1;
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(10, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 95;
-            this.label1.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(10, 9);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(75, 23);
+            this.labelSPNo.TabIndex = 95;
+            this.labelSPNo.Text = "SP#";
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(88, 9);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(138, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(88, 9);
+            this.txtSPNo.MaxLength = 13;
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(138, 23);
+            this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // txtunit1
+            // txtUnit
             // 
-            this.txtunit1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "unitid", true));
-            this.txtunit1.DisplayBox1Binding = "";
-            this.txtunit1.Location = new System.Drawing.Point(88, 111);
-            this.txtunit1.Name = "txtunit1";
-            this.txtunit1.Size = new System.Drawing.Size(320, 23);
-            this.txtunit1.TabIndex = 5;
-            this.txtunit1.TextBox1Binding = "";
+            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "unitid", true));
+            this.txtUnit.DisplayBox1Binding = "";
+            this.txtUnit.Location = new System.Drawing.Point(88, 111);
+            this.txtUnit.Name = "txtUnit";
+            this.txtUnit.Size = new System.Drawing.Size(320, 23);
+            this.txtUnit.TabIndex = 5;
+            this.txtUnit.TextBox1Binding = "";
             // 
-            // label2
+            // labelAffectQty
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(273, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "Affect Qty";
+            this.labelAffectQty.Lines = 0;
+            this.labelAffectQty.Location = new System.Drawing.Point(273, 9);
+            this.labelAffectQty.Name = "labelAffectQty";
+            this.labelAffectQty.Size = new System.Drawing.Size(109, 23);
+            this.labelAffectQty.TabIndex = 98;
+            this.labelAffectQty.Text = "Affect Qty";
             // 
-            // numericBox1
+            // numAffectQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "qty", true));
-            this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(385, 9);
-            this.numericBox1.MaxBytes = 8;
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numAffectQty.BackColor = System.Drawing.Color.White;
+            this.numAffectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "qty", true));
+            this.numAffectQty.DecimalPlaces = 2;
+            this.numAffectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAffectQty.Location = new System.Drawing.Point(385, 9);
+            this.numAffectQty.MaxBytes = 8;
+            this.numAffectQty.Name = "numAffectQty";
+            this.numAffectQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 1;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numAffectQty.Size = new System.Drawing.Size(100, 23);
+            this.numAffectQty.TabIndex = 1;
+            this.numAffectQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numClaimAmt
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
-            this.numericBox2.DecimalPlaces = 2;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(88, 42);
-            this.numericBox2.MaxBytes = 12;
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numClaimAmt.BackColor = System.Drawing.Color.White;
+            this.numClaimAmt.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "amount", true));
+            this.numClaimAmt.DecimalPlaces = 2;
+            this.numClaimAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numClaimAmt.Location = new System.Drawing.Point(88, 42);
+            this.numClaimAmt.MaxBytes = 12;
+            this.numClaimAmt.Name = "numClaimAmt";
+            this.numClaimAmt.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 2;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numClaimAmt.Size = new System.Drawing.Size(100, 23);
+            this.numClaimAmt.TabIndex = 2;
+            this.numClaimAmt.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numClaimAmt.Validated += new System.EventHandler(this.numericBox2_Validated);
             // 
-            // label3
+            // labelClaimAmt
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(10, 42);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 100;
-            this.label3.Text = "Claim Amt";
+            this.labelClaimAmt.Lines = 0;
+            this.labelClaimAmt.Location = new System.Drawing.Point(10, 42);
+            this.labelClaimAmt.Name = "labelClaimAmt";
+            this.labelClaimAmt.Size = new System.Drawing.Size(75, 23);
+            this.labelClaimAmt.TabIndex = 100;
+            this.labelClaimAmt.Text = "Claim Amt";
             // 
-            // numericBox3
+            // numAdditionCharge
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.White;
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "addition", true));
-            this.numericBox3.DecimalPlaces = 2;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox3.Location = new System.Drawing.Point(385, 42);
-            this.numericBox3.MaxBytes = 12;
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numAdditionCharge.BackColor = System.Drawing.Color.White;
+            this.numAdditionCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "addition", true));
+            this.numAdditionCharge.DecimalPlaces = 2;
+            this.numAdditionCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAdditionCharge.Location = new System.Drawing.Point(385, 42);
+            this.numAdditionCharge.MaxBytes = 12;
+            this.numAdditionCharge.Name = "numAdditionCharge";
+            this.numAdditionCharge.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 3;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numAdditionCharge.Size = new System.Drawing.Size(100, 23);
+            this.numAdditionCharge.TabIndex = 3;
+            this.numAdditionCharge.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numAdditionCharge.Validated += new System.EventHandler(this.numericBox2_Validated);
             // 
-            // label4
+            // labelAdditionCharge
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(273, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(109, 23);
-            this.label4.TabIndex = 102;
-            this.label4.Text = "Addition Charge";
+            this.labelAdditionCharge.Lines = 0;
+            this.labelAdditionCharge.Location = new System.Drawing.Point(273, 42);
+            this.labelAdditionCharge.Name = "labelAdditionCharge";
+            this.labelAdditionCharge.Size = new System.Drawing.Size(109, 23);
+            this.labelAdditionCharge.TabIndex = 102;
+            this.labelAdditionCharge.Text = "Addition Charge";
             // 
-            // label5
+            // labelReason
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(10, 76);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 104;
-            this.label5.Text = "Reason";
+            this.labelReason.Lines = 0;
+            this.labelReason.Location = new System.Drawing.Point(10, 76);
+            this.labelReason.Name = "labelReason";
+            this.labelReason.Size = new System.Drawing.Size(75, 23);
+            this.labelReason.TabIndex = 104;
+            this.labelReason.Text = "Reason";
             // 
-            // txtReason1
+            // txtReason
             // 
-            this.txtReason1.BackColor = System.Drawing.Color.White;
-            this.txtReason1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "reasonid", true));
-            this.txtReason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReason1.FormattingEnabled = true;
-            this.txtReason1.IsSupportUnselect = true;
-            this.txtReason1.Location = new System.Drawing.Point(88, 76);
-            this.txtReason1.Name = "txtReason1";
-            this.txtReason1.ReasonTypeID = "DebitNote_Factory";
-            this.txtReason1.Size = new System.Drawing.Size(168, 24);
-            this.txtReason1.TabIndex = 4;
+            this.txtReason.BackColor = System.Drawing.Color.White;
+            this.txtReason.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "reasonid", true));
+            this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReason.FormattingEnabled = true;
+            this.txtReason.IsSupportUnselect = true;
+            this.txtReason.Location = new System.Drawing.Point(88, 76);
+            this.txtReason.Name = "txtReason";
+            this.txtReason.ReasonTypeID = "DebitNote_Factory";
+            this.txtReason.Size = new System.Drawing.Size(168, 24);
+            this.txtReason.TabIndex = 4;
             // 
-            // label6
+            // labelUnit
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(10, 111);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 106;
-            this.label6.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(10, 111);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(75, 23);
+            this.labelUnit.TabIndex = 106;
+            this.labelUnit.Text = "Unit";
             // 
-            // label7
+            // labelDescription
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(10, 146);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 107;
-            this.label7.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(10, 146);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 107;
+            this.labelDescription.Text = "Description";
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(88, 146);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(406, 162);
-            this.editBox1.TabIndex = 6;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(88, 146);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(406, 162);
+            this.editDescription.TabIndex = 6;
             // 
             // P36_ModifyDetail
             // 
             this.ClientSize = new System.Drawing.Size(584, 365);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.txtReason1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.numericBox3);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.numericBox2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtunit1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.editDescription);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.labelUnit);
+            this.Controls.Add(this.txtReason);
+            this.Controls.Add(this.labelReason);
+            this.Controls.Add(this.numAdditionCharge);
+            this.Controls.Add(this.labelAdditionCharge);
+            this.Controls.Add(this.numClaimAmt);
+            this.Controls.Add(this.labelClaimAmt);
+            this.Controls.Add(this.numAffectQty);
+            this.Controls.Add(this.labelAffectQty);
+            this.Controls.Add(this.txtUnit);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.labelSPNo);
             this.DefaultControl = "textBox1";
             this.Name = "P36_ModifyDetail";
             this.Text = "P36 Detail";
             this.WorkAlias = "Localdebit_detail";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.txtunit1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.numericBox1, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.numericBox2, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.numericBox3, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.txtReason1, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.Controls.SetChildIndex(this.txtUnit, 0);
+            this.Controls.SetChildIndex(this.labelAffectQty, 0);
+            this.Controls.SetChildIndex(this.numAffectQty, 0);
+            this.Controls.SetChildIndex(this.labelClaimAmt, 0);
+            this.Controls.SetChildIndex(this.numClaimAmt, 0);
+            this.Controls.SetChildIndex(this.labelAdditionCharge, 0);
+            this.Controls.SetChildIndex(this.numAdditionCharge, 0);
+            this.Controls.SetChildIndex(this.labelReason, 0);
+            this.Controls.SetChildIndex(this.txtReason, 0);
+            this.Controls.SetChildIndex(this.labelUnit, 0);
+            this.Controls.SetChildIndex(this.labelDescription, 0);
+            this.Controls.SetChildIndex(this.editDescription, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -288,19 +288,19 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox1;
-        private Class.txtunit txtunit1;
-        private Win.UI.Label label2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Class.txtReason txtReason1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.TextBox txtSPNo;
+        private Class.txtunit txtUnit;
+        private Win.UI.Label labelAffectQty;
+        private Win.UI.NumericBox numAffectQty;
+        private Win.UI.NumericBox numClaimAmt;
+        private Win.UI.Label labelClaimAmt;
+        private Win.UI.NumericBox numAdditionCharge;
+        private Win.UI.Label labelAdditionCharge;
+        private Win.UI.Label labelReason;
+        private Class.txtReason txtReason;
+        private Win.UI.Label labelUnit;
+        private Win.UI.Label labelDescription;
+        private Win.UI.EditBox editDescription;
     }
 }

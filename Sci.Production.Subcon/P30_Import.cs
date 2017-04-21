@@ -26,15 +26,15 @@ namespace Sci.Production.Subcon
             dr_localPO = master;
             dt_localPODetail = detail;
             this.Text += string.Format(" ( Categgory:{0} - Supplier:{1} )", dr_localPO["category"].ToString(), dr_localPO["localsuppid"].ToString());
-            this.dateRangeApvDate.Enabled = dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON";
+            this.dateApproveDate.Enabled = dr_localPO["category"].ToString().TrimEnd().ToUpper() == "CARTON";
         }
 
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
-            String sp_b = this.textBox1.Text;
-            String sp_e = this.textBox2.Text;
-            String brandid = this.txtbrand1.Text;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            String brandid = this.txtbrand.Text;
 
             string booking_b, booking_e, sewinline_b, sewinline_e, arrived_b, arrived_e, approved_b, approved_e, scidelivery_b, scidelivery_e, sql, tmp;
             booking_b = null;
@@ -49,16 +49,16 @@ namespace Sci.Production.Subcon
             scidelivery_e = null;
             
 
-            if (dateRangeBooking.Value1 != null) booking_b = this.dateRangeBooking.Text1;
-            if (dateRangeBooking.Value2 != null) { booking_e = this.dateRangeBooking.Text2; }
-            if (dateRangeSewInLine.Value1 != null) sewinline_b = this.dateRangeSewInLine.Text1;
-            if (dateRangeSewInLine.Value2 != null) { sewinline_e = this.dateRangeSewInLine.Text2; }
-            if (dateRangeArrived.Value1 != null) arrived_b = this.dateRangeArrived.Text1;
-            if (dateRangeArrived.Value2 != null) { arrived_e = this.dateRangeArrived.Text2; }
-            if (dateRangeApvDate.Value1 != null) approved_b = this.dateRangeApvDate.Text1;
-            if (dateRangeApvDate.Value2 != null) { approved_e = this.dateRangeApvDate.Text2; }
-            if (dateRangeSciDelivery.Value1 != null) scidelivery_b = this.dateRangeSciDelivery.Text1;
-            if (dateRangeSciDelivery.Value2 != null) { scidelivery_e = this.dateRangeSciDelivery.Text2; }
+            if (dateEstBookingDate.Value1 != null) booking_b = this.dateEstBookingDate.Text1;
+            if (dateEstBookingDate.Value2 != null) { booking_e = this.dateEstBookingDate.Text2; }
+            if (dateSewingInlineDate.Value1 != null) sewinline_b = this.dateSewingInlineDate.Text1;
+            if (dateSewingInlineDate.Value2 != null) { sewinline_e = this.dateSewingInlineDate.Text2; }
+            if (dateEstArrivedDate.Value1 != null) arrived_b = this.dateEstArrivedDate.Text1;
+            if (dateEstArrivedDate.Value2 != null) { arrived_e = this.dateEstArrivedDate.Text2; }
+            if (dateApproveDate.Value1 != null) approved_b = this.dateApproveDate.Text1;
+            if (dateApproveDate.Value2 != null) { approved_e = this.dateApproveDate.Text2; }
+            if (dateSCIDelivery.Value1 != null) scidelivery_b = this.dateSCIDelivery.Text1;
+            if (dateSCIDelivery.Value2 != null) { scidelivery_e = this.dateSCIDelivery.Text2; }
 
             
 
@@ -71,7 +71,7 @@ namespace Sci.Production.Subcon
             {
                 MyUtility.Msg.WarningBox(@"< Booking Date > or < Sci Delivery > or < Arrived Date > or < Sewing Inline >  
                                                 or < Approve Date > or  < SP# > or  < Brand > can't be empty!!");
-                textBox1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
             else
@@ -261,7 +261,7 @@ and b.PurchaseQty > 0 and b.PoId =''
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow ddr = gridImport.GetDataRow<DataRow>(e.RowIndex);
                     if ((decimal)e.FormattedValue > (decimal)ddr["unpaid"])
                     {
                         e.Cancel = true;
@@ -274,9 +274,9 @@ and b.PurchaseQty > 0 and b.PoId =''
             };
 
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("poid", header: "Master SP#", iseditingreadonly: true) //0
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//1
@@ -307,7 +307,7 @@ and b.PurchaseQty > 0 and b.PoId =''
         private void button2_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
             

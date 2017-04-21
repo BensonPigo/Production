@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text))
                 return;
 
             #region -- sql parameters declare --
@@ -26,7 +26,7 @@ namespace Sci.Production.Subcon
             sp_id.ParameterName = "@id";
 
             List<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            sp_id.Value = textBox1.Text;
+            sp_id.Value = txtSPNo.Text;
             cmds.Add(sp_id);
             #endregion
             if (!MyUtility.Check.Seek(string.Format(@"select id from dbo.orders WITH (NOLOCK) 

@@ -24,39 +24,39 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtdropdownlist1.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
+            txtdropdownlistOrderType.SelectedIndex = 0;
             //MyUtility.Tool.SetupCombox(txtFinanceEnReason1, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
-            txtFinanceEnReason1.SelectedIndex= 0;
+            txtFinanceEnReasonRateType.SelectedIndex= 0;
 
-            MyUtility.Tool.SetupCombox(cbbStatus, 1, 1, "Only Approved,Only Unapproved,All");
-            cbbStatus.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
+            comboStatus.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
 
-            if (cbbStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateRangeApIssueDate.Value1) && MyUtility.Check.Empty(dateRangeApIssueDate.Value2))
+            if (comboStatus.SelectedIndex != 1 && MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2))
             {
                 MyUtility.Msg.WarningBox("AP Date can't empty!!");
                 return false;
             }
-            Issuedate1 = dateRangeApIssueDate.Value1;
-            Issuedate2 = dateRangeApIssueDate.Value2;
-            GLdate1 = dateRangeGLDate.Value1;
-            GLdate2 = dateRangeGLDate.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
+            Issuedate1 = dateAPDate.Value1;
+            Issuedate2 = dateAPDate.Value2;
+            GLdate1 = dateGLDate.Value1;
+            GLdate2 = dateGLDate.Value2;
+            spno1 = txtSpnoStart.Text;
+            spno2 = txtSpnoEnd.Text;
 
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            ordertypeindex = txtdropdownlist1.SelectedIndex;
-            ratetype = txtFinanceEnReason1.SelectedValue.ToString();
-            statusindex = cbbStatus.SelectedIndex;
+            artworktype = txtartworktype_ftyArtworkType.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            ordertypeindex = txtdropdownlistOrderType.SelectedIndex;
+            ratetype = txtFinanceEnReasonRateType.SelectedValue.ToString();
+            statusindex = comboStatus.SelectedIndex;
             switch (ordertypeindex)
             {
                 case 0:
@@ -79,7 +79,7 @@ namespace Sci.Production.Subcon
                     break;
             }
             
-            style = txtstyle1.Text;
+            style = txtstyle.Text;
             
             return base.ValidateInput();
         }
@@ -403,7 +403,7 @@ namespace Sci.Production.Subcon
 
         private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dateRangeApIssueDate.Enabled = !(cbbStatus.SelectedIndex == 1);
+            dateAPDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }
     }
 }

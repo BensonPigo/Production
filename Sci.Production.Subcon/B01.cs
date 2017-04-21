@@ -30,9 +30,9 @@ namespace Sci.Production.Subcon
             dr[0] = "MM";
             dt.Rows.Add(dr);
 
-            this.comboBox1.DataSource = dt;
-            this.comboBox1.DisplayMember = "Value";
-            this.comboBox1.ValueMember = "Value";
+            this.comboCartonDimension.DataSource = dt;
+            this.comboCartonDimension.DisplayMember = "Value";
+            this.comboCartonDimension.ValueMember = "Value";
 
         }
 
@@ -51,16 +51,16 @@ namespace Sci.Production.Subcon
             CurrentMaintain["price"] = DBNull.Value;
             CurrentMaintain["quotdate"] = DBNull.Value;
             CurrentMaintain["currencyid"] = DBNull.Value;
-            textRefno.Focus();
-            txtartworktype_fty1.ValidateControl();
+            tetRefno.Focus();
+            txtartworktype_ftyCategory.ValidateControl();
         }
 
         //編輯狀態限制
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textRefno.ReadOnly = true;
-            this.txtsubcon1.TextBox1.ReadOnly=true;
+            this.tetRefno.ReadOnly = true;
+            this.txtSubconSupplier.TextBox1.ReadOnly=true;
         }
 
         //存檔前檢查
@@ -69,28 +69,28 @@ namespace Sci.Production.Subcon
             if (String.IsNullOrWhiteSpace(CurrentMaintain["refno"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Refno > can not be empty!");
-                this.textRefno.Focus();
+                this.tetRefno.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Category > can not be empty!");
-                this.txtartworktype_fty1.Focus();
+                this.txtartworktype_ftyCategory.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Unitid"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Unit > can not be empty!");
-                this.txtunit_fty1.Focus();
+                this.txtunit_ftyUnit.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.textBox2.Focus();
+                this.txtDescription.Focus();
                 return false;
             }
 
@@ -99,31 +99,31 @@ namespace Sci.Production.Subcon
                 if (CurrentMaintain["CtnLength"]==DBNull.Value || (decimal)CurrentMaintain["CtnLength"]==0)
                 {
                     MyUtility.Msg.WarningBox("< CtnLength > can not be empty!");
-                    this.numericBox1.Focus();
+                    this.numL.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnWidth"]==DBNull.Value || (decimal)CurrentMaintain["CtnWidth"] ==0)
                 {
                     MyUtility.Msg.WarningBox("< CtnWidth > can not be empty!");
-                    this.numericBox2.Focus();
+                    this.numW.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CtnHeight"]==DBNull.Value || (decimal)CurrentMaintain["CtnHeight"] ==0)
                 {
                     MyUtility.Msg.WarningBox("< CtnHeight > can not be empty!");
-                    this.numericBox7.Focus();
+                    this.numH.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["CtnUnit"].ToString()))
                 {
                     MyUtility.Msg.WarningBox("< CtnUnit > can not be empty!");
-                    this.comboBox1.Focus();
+                    this.comboCartonDimension.Focus();
                     return false;
                 }
                 if (CurrentMaintain["CBM"]==DBNull.Value || (decimal)CurrentMaintain["CBM"] ==0)
                 {
                     MyUtility.Msg.WarningBox("< CBM > can not be empty!");
-                    this.numericBox3.Focus();
+                    this.numCBM.Focus();
                     return false;
                 }
             }
@@ -133,31 +133,31 @@ namespace Sci.Production.Subcon
                 if (CurrentMaintain["MeterToCone"]==DBNull.Value || (decimal)CurrentMaintain["MeterToCone"] ==0)
                 {
                     MyUtility.Msg.WarningBox("< MeterToCone > can not be empty!");
-                    this.numericBox8.Focus();
+                    this.numCone.Focus();
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(CurrentMaintain["ThreadTypeID"].ToString()))
                 {
                     MyUtility.Msg.WarningBox("< Thread Type > can not be empty!");
-                    this.textBox8.Focus();
+                    this.txtThreadType.Focus();
                     return false;
                 }
                 if (CurrentMaintain["ThreadTex"]==DBNull.Value || (decimal)CurrentMaintain["ThreadTex"] ==0)
                 {
                     MyUtility.Msg.WarningBox("< ThreadTex > can not be empty!");
-                    this.numericBox5.Focus();
+                    this.numThreadTex.Focus();
                     return false;
                 }
                 if (CurrentMaintain["Weight"]==DBNull.Value || (decimal)CurrentMaintain["Weight"]  ==0)
                 {
                     MyUtility.Msg.WarningBox("< Weight > can not be empty!");
-                    this.numericBox4.Focus();
+                    this.numWeightGW.Focus();
                     return false;
                 }
                 if (CurrentMaintain["AxleWeight"]==DBNull.Value || (decimal)CurrentMaintain["AxleWeight"] == 0)
                 {
                     MyUtility.Msg.WarningBox("< AxleWeight > can not be empty!");
-                    this.numericBox6.Focus();
+                    this.numWeightofAxle.Focus();
                     return false;
                 }
             }
@@ -176,7 +176,7 @@ namespace Sci.Production.Subcon
             {
                 return;
             }
-            if (this.comboBox1.SelectedValue.ToString() == "Inch")
+            if (this.comboCartonDimension.SelectedValue.ToString() == "Inch")
             {
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
@@ -189,7 +189,7 @@ namespace Sci.Production.Subcon
                 double i = double.Parse(CurrentMaintain["CtnLength"].ToString()) *
                     double.Parse(CurrentMaintain["CtnWidth"].ToString()) *
                     double.Parse(CurrentMaintain["CtnHeight"].ToString()) / 1000000000;
-                this.numericBox3.Text = MyUtility.Math.Round(i, 4).ToString();
+                this.numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
             }
             
         }
@@ -203,9 +203,9 @@ namespace Sci.Production.Subcon
         //計算cbm相關欄位的valid事件
         private void textBox3_Validated(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(this.numericBox1.Text)
-               || string.IsNullOrWhiteSpace(numericBox2.Text)
-               || string.IsNullOrWhiteSpace(numericBox7.Text))
+            if (string.IsNullOrWhiteSpace(this.numL.Text)
+               || string.IsNullOrWhiteSpace(numW.Text)
+               || string.IsNullOrWhiteSpace(numH.Text))
             {
                 return;
             }
@@ -229,21 +229,21 @@ namespace Sci.Production.Subcon
             string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
             if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnQuotationRecord.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnQuotationRecord.ForeColor = Color.Black;
             }
 
             sqlcmd = "select refno from localap_detail WITH (NOLOCK) where refno = '" + CurrentMaintain["refno"].ToString() + "';";
              if (MyUtility.Check.Seek(sqlcmd, "Production"))
             {
-                this.button2.ForeColor = Color.Blue;
+                this.btnPaymentHistory.ForeColor = Color.Blue;
             }
             else
             {
-                this.button2.ForeColor = Color.Black;
+                this.btnPaymentHistory.ForeColor = Color.Black;
             }
         }
 
@@ -257,8 +257,8 @@ namespace Sci.Production.Subcon
 
         private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
         {
-            CurrentMaintain["category"] = txtartworktype_fty1.Text;
-            switch (this.txtartworktype_fty1.Text.Trim())
+            CurrentMaintain["category"] = txtartworktype_ftyCategory.Text;
+            switch (this.txtartworktype_ftyCategory.Text.Trim())
             {
                 case "CARTON":
                     this.groupBox1.Enabled = true;
@@ -268,9 +268,9 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["ThreadTex"] = DBNull.Value;
                     CurrentMaintain["Weight"] = DBNull.Value;
                     CurrentMaintain["AxleWeight"] = DBNull.Value;
-                    if (string.IsNullOrWhiteSpace(comboBox1.SelectedText.ToString()))
+                    if (string.IsNullOrWhiteSpace(comboCartonDimension.SelectedText.ToString()))
                     {
-                        comboBox1.SelectedIndex = 0;
+                        comboCartonDimension.SelectedIndex = 0;
                     }
                     break;
                 case "EMB_THREAD":
@@ -306,23 +306,23 @@ namespace Sci.Production.Subcon
         private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
-            if (myForm.EditMode == false || textBox8.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.textBox8.Text);
+            if (myForm.EditMode == false || txtThreadType.ReadOnly == true) return;
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from ThreadType WITH (NOLOCK) WHERE Junk=0", "20", this.txtThreadType.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            this.textBox8.Text = item.GetSelectedString();
+            this.txtThreadType.Text = item.GetSelectedString();
         }
 
         //[Thread Type]檢核
         private void textBox8_Validating(object sender, CancelEventArgs e)
         {
-            string textValue = this.textBox8.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox8.OldValue)
+            string textValue = this.txtThreadType.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtThreadType.OldValue)
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WITH (NOLOCK) WHERE Junk=0 and id = '{0}'", textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
-                    this.textBox8.Text = "";
+                    this.txtThreadType.Text = "";
                     e.Cancel = true;
                     return;
                 }

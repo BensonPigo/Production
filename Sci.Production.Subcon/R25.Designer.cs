@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.dateReceiveDate = new Sci.Win.UI.DateRange();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelReceiveDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,134 +61,134 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtartworktype_fty1);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.comboBox1);
-            this.panel1.Controls.Add(this.dateRange1);
-            this.panel1.Controls.Add(this.txtsubcon1);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtartworktype_ftyCategory);
+            this.panel1.Controls.Add(this.txtRefno);
+            this.panel1.Controls.Add(this.txtSPNo);
+            this.panel1.Controls.Add(this.comboFactory);
+            this.panel1.Controls.Add(this.dateReceiveDate);
+            this.panel1.Controls.Add(this.txtsubconSupplier);
+            this.panel1.Controls.Add(this.labelFactory);
+            this.panel1.Controls.Add(this.labelSupplier);
+            this.panel1.Controls.Add(this.labelCategory);
+            this.panel1.Controls.Add(this.labelRefno);
+            this.panel1.Controls.Add(this.labelSPNo);
+            this.panel1.Controls.Add(this.labelReceiveDate);
             this.panel1.Location = new System.Drawing.Point(9, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(414, 244);
             this.panel1.TabIndex = 0;
             // 
-            // txtartworktype_fty1
+            // txtartworktype_ftyCategory
             // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "\'p\'";
-            this.txtartworktype_fty1.cSubprocess = "";
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(118, 131);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(100, 23);
-            this.txtartworktype_fty1.TabIndex = 3;
+            this.txtartworktype_ftyCategory.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyCategory.cClassify = "\'p\'";
+            this.txtartworktype_ftyCategory.cSubprocess = "";
+            this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(118, 131);
+            this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
+            this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(100, 23);
+            this.txtartworktype_ftyCategory.TabIndex = 3;
             // 
-            // textBox2
+            // txtRefno
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(118, 92);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(118, 92);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(100, 23);
+            this.txtRefno.TabIndex = 2;
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(118, 51);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 1;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(118, 51);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(100, 23);
+            this.txtSPNo.TabIndex = 1;
             // 
-            // comboBox1
+            // comboFactory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(118, 208);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(118, 208);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 5;
             // 
-            // dateRange1
+            // dateReceiveDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(118, 14);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateReceiveDate.IsRequired = false;
+            this.dateReceiveDate.Location = new System.Drawing.Point(118, 14);
+            this.dateReceiveDate.Name = "dateReceiveDate";
+            this.dateReceiveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReceiveDate.TabIndex = 0;
             // 
-            // txtsubcon1
+            // txtsubconSupplier
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = true;
-            this.txtsubcon1.Location = new System.Drawing.Point(118, 169);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 4;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = true;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(118, 169);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconSupplier.TabIndex = 4;
+            this.txtsubconSupplier.TextBox1Binding = "";
             // 
-            // label6
+            // labelFactory
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 209);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 209);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(102, 23);
+            this.labelFactory.TabIndex = 5;
+            this.labelFactory.Text = "Factory";
             // 
-            // label5
+            // labelSupplier
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 169);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(13, 169);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(102, 23);
+            this.labelSupplier.TabIndex = 4;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label4
+            // labelCategory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 131);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(13, 131);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(102, 23);
+            this.labelCategory.TabIndex = 3;
+            this.labelCategory.Text = "Category";
             // 
-            // label3
+            // labelRefno
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 92);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Refno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(13, 92);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(102, 23);
+            this.labelRefno.TabIndex = 2;
+            this.labelRefno.Text = "Refno";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(13, 51);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(102, 23);
+            this.labelSPNo.TabIndex = 1;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label1
+            // labelReceiveDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Receive Date";
+            this.labelReceiveDate.Lines = 0;
+            this.labelReceiveDate.Location = new System.Drawing.Point(13, 14);
+            this.labelReceiveDate.Name = "labelReceiveDate";
+            this.labelReceiveDate.Size = new System.Drawing.Size(102, 23);
+            this.labelReceiveDate.TabIndex = 0;
+            this.labelReceiveDate.Text = "Receive Date";
             // 
             // R25
             // 
@@ -212,17 +212,17 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.Label label1;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.TextBox textBox2;
-        private Class.txtartworktype_fty txtartworktype_fty1;
+        private Win.UI.Label labelReceiveDate;
+        private Class.txtsubcon txtsubconSupplier;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelCategory;
+        private Win.UI.Label labelRefno;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.DateRange dateReceiveDate;
+        private Win.UI.TextBox txtRefno;
+        private Class.txtartworktype_fty txtartworktype_ftyCategory;
     }
 }

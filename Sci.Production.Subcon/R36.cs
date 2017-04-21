@@ -38,86 +38,86 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select DISTINCT ftygroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox5, 1, factory);
-            comboBox5.Text = Sci.Env.User.Factory;
-            this.comboBox1.SelectedIndex = 0;
-            this.comboBox2.SelectedIndex = 0;
-            this.comboBox3.SelectedIndex = 0;
-            this.comboBox4.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            this.comboReportType.SelectedIndex = 0;
+            this.comboStatus.SelectedIndex = 0;
+            this.comboPaymentSettled.SelectedIndex = 0;
+            this.comboOrderBy.SelectedIndex = 0;
             print.Enabled = false;
         }
         protected override bool ValidateInput()
         {
-            bool dateRange1_Empty = !this.dateRange_Debit.HasValue, dateRange2_Empty = !this.dateRange_Approve.HasValue, dateRange3_Empty = !this.dateRange3.HasValue, textbox1_Empty = this.textBox1.Text.Empty(), textbox2_Empty = this.textBox2.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSupp1.TextBox1.Text.Empty()
-                , txtuser1_Empty = this.txtuser1.TextBox1.Text.Empty(), txtuser2_Empty = this.txtuser2.TextBox1.Text.Empty(), comboBox5_Empty = this.comboBox5.Text.Empty(), comboBox2_Empty = this.comboBox2.Text.Empty(), comboBox3_Empty = this.comboBox3.Text.Empty(), dateRange4_Empty = !this.dateRange4.HasValue, dateRange5_Empty = !this.dateRange5.HasValue;
+            bool dateRange1_Empty = !this.dateDebitDate.HasValue, dateRange2_Empty = !this.dateApprovedDate.HasValue, dateRange3_Empty = !this.dateSettledDate.HasValue, textbox1_Empty = this.txtSDNoStart.Text.Empty(), textbox2_Empty = this.txtSDNoEnd.Text.Empty(), txtLocalSupp1_Empty =this.txtLocalSuppSupplier.TextBox1.Text.Empty()
+                , txtuser1_Empty = this.txtuserHandle.TextBox1.Text.Empty(), txtuser2_Empty = this.txtuserSMR.TextBox1.Text.Empty(), comboBox5_Empty = this.comboFactory.Text.Empty(), comboBox2_Empty = this.comboStatus.Text.Empty(), comboBox3_Empty = this.comboPaymentSettled.Text.Empty(), dateRange4_Empty = !this.dateAmtRevised.HasValue, dateRange5_Empty = !this.dateReceiveddate.HasValue;
 
             if (dateRange1_Empty && dateRange2_Empty && dateRange3_Empty && textbox1_Empty && textbox2_Empty && txtLocalSupp1_Empty && txtuser1_Empty && txtuser2_Empty && comboBox5_Empty && comboBox2_Empty && comboBox3_Empty
                && dateRange4_Empty && dateRange5_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select at least one field entry");
 
-                textBox1.Focus();
+                txtSDNoStart.Focus();
 
                 return false;
             }
 
-            debitdate1 = dateRange_Debit.Value1;
-            debitdate2 = dateRange_Debit.Value2;
-            aprdate1 = dateRange_Approve.Value1;
-            aprdate2 = dateRange_Approve.Value2;
-            SDNo1= textBox1.Text.ToString();
-            SDNo2 = textBox2.Text.ToString();
-            Supplier = txtLocalSupp1.TextBox1.Text;
-            handle = txtuser1.TextBox1.Text;
-            smr = txtuser2.TextBox1.Text;
-            status = comboBox2.SelectedItem.ToString();
-            factoryid = comboBox5.Text.ToString();
-            amtrevisedate1 = dateRange4.Value1;
-            amtrevisedate2 = dateRange4.Value2;
-            ReceiveDate1 = dateRange5.Value1;
-            ReceiveDate2 = dateRange5.Value2;
-            SettledDate1 = dateRange3.Value1;
-            SettledDate2 = dateRange3.Value2;
-            payment = comboBox3.SelectedItem.ToString();
+            debitdate1 = dateDebitDate.Value1;
+            debitdate2 = dateDebitDate.Value2;
+            aprdate1 = dateApprovedDate.Value1;
+            aprdate2 = dateApprovedDate.Value2;
+            SDNo1= txtSDNoStart.Text.ToString();
+            SDNo2 = txtSDNoEnd.Text.ToString();
+            Supplier = txtLocalSuppSupplier.TextBox1.Text;
+            handle = txtuserHandle.TextBox1.Text;
+            smr = txtuserSMR.TextBox1.Text;
+            status = comboStatus.SelectedItem.ToString();
+            factoryid = comboFactory.Text.ToString();
+            amtrevisedate1 = dateAmtRevised.Value1;
+            amtrevisedate2 = dateAmtRevised.Value2;
+            ReceiveDate1 = dateReceiveddate.Value1;
+            ReceiveDate2 = dateReceiveddate.Value2;
+            SettledDate1 = dateSettledDate.Value1;
+            SettledDate2 = dateSettledDate.Value2;
+            payment = comboPaymentSettled.SelectedItem.ToString();
            lis = new List<SqlParameter>();
            string sqlWhere = ""; string order = "";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.textBox1.Text.Empty())
+            if (!this.txtSDNoStart.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @SDNo1 and @SDNo2");
                 lis.Add(new SqlParameter("@SDNo1", SDNo1));
                 lis.Add(new SqlParameter("@SDNo2", SDNo2));
             } 
-            if (!this.dateRange_Debit.Value1.Empty())
+            if (!this.dateDebitDate.Value1.Empty())
             {
                 sqlWheres.Add("a.Issuedate >= @debitdate1");
                 lis.Add(new SqlParameter("@debitdate1", debitdate1));
             }
-            if (!this.dateRange_Debit.Value2.Empty())
+            if (!this.dateDebitDate.Value2.Empty())
             {
                 sqlWheres.Add("a.Issuedate <= @debitdate2");
                 lis.Add(new SqlParameter("@debitdate2", debitdate2));
             }
-            if (!this.dateRange_Approve.Value1.Empty())
+            if (!this.dateApprovedDate.Value1.Empty())
             {
                 sqlWheres.Add("a.CfmDate >= @aprdate1");
                 lis.Add(new SqlParameter("@aprdate1", aprdate1));
             }
-            if (!this.dateRange_Approve.Value2.Empty())
+            if (!this.dateApprovedDate.Value2.Empty())
             {
                 sqlWheres.Add("a.CfmDate <= @aprdate2");
                 lis.Add(new SqlParameter("@aprdate2", aprdate2));
             }
-            if (!this.txtLocalSupp1.TextBox1.Text.Empty())
+            if (!this.txtLocalSuppSupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.localsuppid = @localsuppid");
                 lis.Add(new SqlParameter("@localsuppid", Supplier));
-            } if (!this.txtuser1.TextBox1.Text.Empty())
+            } if (!this.txtuserHandle.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.handle = @handle");
                 lis.Add(new SqlParameter("@handle", handle));
-            } if (!this.txtuser2.TextBox1.Text.Empty())
+            } if (!this.txtuserSMR.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.smr = @smr");
                 lis.Add(new SqlParameter("@smr", smr));
@@ -125,67 +125,67 @@ namespace Sci.Production.Subcon
             {
                 sqlWheres.Add("a.factoryid = @factoryid");
                 lis.Add(new SqlParameter("@factoryid", factoryid));
-            } if (!this.comboBox2.SelectedItem.ToString().Empty())
+            } if (!this.comboStatus.SelectedItem.ToString().Empty())
             {
                 sqlWheres.Add("a.Status = @status");
                 lis.Add(new SqlParameter("@status", status));
             } 
-            if (!this.dateRange4.Value1.Empty())
+            if (!this.dateAmtRevised.Value1.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate >= @amtrevisedate1");
                 lis.Add(new SqlParameter("@amtrevisedate1", amtrevisedate1));
             }
-            if (!this.dateRange4.Value2.Empty())
+            if (!this.dateAmtRevised.Value2.Empty())
             {
                 sqlWheres.Add("a.amtrevisedate <= @amtrevisedate2");
                 lis.Add(new SqlParameter("@amtrevisedate2", amtrevisedate2));
             }
-            if (!this.dateRange5.Value1.Empty())
+            if (!this.dateReceiveddate.Value1.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate >= @ReceiveDate1");
                 lis.Add(new SqlParameter("@ReceiveDate1", ReceiveDate1));
             }
-            if (!this.dateRange5.Value2.Empty())
+            if (!this.dateReceiveddate.Value2.Empty())
             {
                 sqlWheres.Add("a.ReceiveDate <= @ReceiveDate2");
                 lis.Add(new SqlParameter("@ReceiveDate2", ReceiveDate2));
             } 
             int needSettleData = 0;
-            if (!this.dateRange3.Value1.Empty())
+            if (!this.dateSettledDate.Value1.Empty())
             {
                 lis.Add(new SqlParameter("@SettledDate1", SettledDate1));
                 needSettleData = 1;
             }
-            if (!this.dateRange3.Value2.Empty())
+            if (!this.dateSettledDate.Value2.Empty())
             {
                 lis.Add(new SqlParameter("@SettledDate2", SettledDate2));
                 needSettleData = 1;
             } 
-            if (this.comboBox3.Text == "Settled")
+            if (this.comboPaymentSettled.Text == "Settled")
             {
                 lis.Add(new SqlParameter("@payment", payment));
                 needSettleData = 1;
-            } if (this.comboBox3.Text == "Not Settled")
+            } if (this.comboPaymentSettled.Text == "Not Settled")
             {
                 lis.Add(new SqlParameter("@payment", payment));
                 needSettleData = 0;
             }
-            if (this.comboBox3.Text == " ")
+            if (this.comboPaymentSettled.Text == " ")
             {
                 needSettleData = 1;
             }
           
             lis.Add(new SqlParameter("@NeedSettleData", needSettleData));
 
-            if (this.comboBox4.Text == "By Handle")
+            if (this.comboOrderBy.Text == "By Handle")
             {
                 order="order by  a.handle";
             }    
-            else if (this.comboBox4.Text == "By Supp")
+            else if (this.comboOrderBy.Text == "By Supp")
             {
                 order="order by  a.localsuppid";
             }
-            else if (this.comboBox4.Text == "By SD#")
+            else if (this.comboOrderBy.Text == "By SD#")
             {
                 order="order by  a.id";
             }
@@ -358,7 +358,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
 
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
 
-            if ("Debit Note List".EqualString(this.comboBox1.Text))
+            if ("Debit Note List".EqualString(this.comboReportType.Text))
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
@@ -368,7 +368,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 return true;
             }
 
-            else if ("Summary".EqualString(this.comboBox1.Text))
+            else if ("Summary".EqualString(this.comboReportType.Text))
             {
                 
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx");
@@ -395,7 +395,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.Save();
                 return true;
             }
-            else if ("Detail".EqualString(this.comboBox1.Text))
+            else if ("Detail".EqualString(this.comboReportType.Text))
             {
                 
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNoteDetail(LocalSupplier).xltx");
@@ -423,7 +423,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.Save();
                 return true;
             }
-            else if ("Debit Schedule Detail".EqualString(this.comboBox1.Text))
+            else if ("Debit Schedule Detail".EqualString(this.comboReportType.Text))
             {
                
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitScheduleDetail(LocalSupplier).xltx");

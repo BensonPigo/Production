@@ -36,30 +36,30 @@ namespace Sci.Production.Subcon
             comboType_RowSource.Add("1", "In");
             comboType_RowSource.Add("2", "Out");
             comboType_RowSource.Add("3", "In/Out");
-            comboType.DataSource = new BindingSource(comboType_RowSource, null);
-            comboType.ValueMember = "Key";
-            comboType.DisplayMember = "Value";
+            comboStockType.DataSource = new BindingSource(comboType_RowSource, null);
+            comboStockType.ValueMember = "Key";
+            comboStockType.DisplayMember = "Value";
         
         }
         protected override void ClickCopyAfter()
         {
-            textID.ReadOnly = false;
+            txtID.ReadOnly = false;
         }
 
         protected override bool ClickNew()
         {
-            textID.ReadOnly = false;
+            txtID.ReadOnly = false;
             return base.ClickNew();
         }
 
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(textID.Text))
+            if (MyUtility.Check.Empty(txtID.Text))
             {
                 MyUtility.Msg.WarningBox("ID can not empty!");
                 return false;
             }
-            if (MyUtility.Check.Empty(comboSubprocess.Text)|| MyUtility.Check.Empty(comboType.Text))
+            if (MyUtility.Check.Empty(comboSubprocess.Text)|| MyUtility.Check.Empty(comboStockType.Text))
             {
                 MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
                 return false;
@@ -71,12 +71,12 @@ namespace Sci.Production.Subcon
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            textID.ReadOnly = true;
+            txtID.ReadOnly = true;
         }
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            this.textID.ReadOnly = true;
+            this.txtID.ReadOnly = true;
         }
     }
 }

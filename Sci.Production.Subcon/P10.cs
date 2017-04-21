@@ -35,12 +35,12 @@ namespace Sci.Production.Subcon
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
            
-            this.txtsubcon1.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
-                    CurrentMaintain["Paytermid"] = MyUtility.GetValue.Lookup("paytermid", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["Paytermid"] = MyUtility.GetValue.Lookup("paytermid", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
                 }
             };
@@ -133,21 +133,21 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["LocalSuppID"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
 		    {
                 MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!","Warning");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
 		    {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
 		    {
                 MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return false;
             }
 
@@ -160,21 +160,21 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["Handle"]==DBNull.Value|| string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
 		    {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                txtuser1.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
 
             if (CurrentMaintain["PayTermid"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["PayTermid"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Terms >  can't be empty!", "Warning");
-                txtpayterm_fty1.Focus();
+                txtpayterm_ftyTerms.Focus();
                 return false;
             }
             #endregion
@@ -273,20 +273,20 @@ namespace Sci.Production.Subcon
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
                 {
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
-                    numericBox4.Text = amount.ToString();
+                    numTotal.Text = amount.ToString();
                 }
             }
-            txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
-            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
-            txtpayterm_fty1.Enabled =  !this.EditMode || IsDetailInserting;
-            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
-            dateBox2.ReadOnly = true;
+            txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
+            txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
+            txtpayterm_ftyTerms.Enabled =  !this.EditMode || IsDetailInserting;
+            txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+            dateApprovedDate.ReadOnly = true;
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
 
             #region Batch Import, Special record button
-            button4.Enabled = this.EditMode;
+            btnImportFromPO.Enabled = this.EditMode;
 
             #endregion
 
@@ -553,13 +553,13 @@ namespace Sci.Production.Subcon
             if (MyUtility.Check.Empty(dr["localsuppid"]))
             {
                 MyUtility.Msg.WarningBox("Please fill Supplier first!");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(dr["artworktypeid"]))
             {
                 MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return;
             }
             var frm = new Sci.Production.Subcon.P10_ImportFromPO(dr, (DataTable)detailgridbs.DataSource);

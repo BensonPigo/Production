@@ -31,83 +31,83 @@ namespace Sci.Production.Subcon
             DBProxy.Current.Select("", sqlcmd, out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "BrandID";
-            this.combFac.DataSource = factory;
-            this.combFac.ValueMember = "BrandID";
-            this.combFac.DisplayMember = "BrandID";
-            this.combFac.SelectedIndex = 0;
-            this.combFac.Text = Sci.Env.User.Factory;
-            this.comboPay.SelectedIndex = 0;
-            this.comboReport.SelectedIndex = 0;
+            this.comboFactory.DataSource = factory;
+            this.comboFactory.ValueMember = "BrandID";
+            this.comboFactory.DisplayMember = "BrandID";
+            this.comboFactory.SelectedIndex = 0;
+            this.comboFactory.Text = Sci.Env.User.Factory;
+            this.comboPaymentSettled.SelectedIndex = 0;
+            this.comboReportType.SelectedIndex = 0;
             print.Enabled = false;
         }
 
         protected override bool ValidateInput()
         {
 
-            DebDate1 = DebDate.Value1;
-            DebDate2 = DebDate.Value2;
-            ConDate1 = ConDate.Value1;
-            ConDate2 = ConDate.Value2;
-            SettDate1 = SettDate.Value1;
-            SettDate2 = SettDate.Value2;
-            DebitNo1 = DebNo1.Text.ToString();
-            DebitNo2 = DebNo2.Text.ToString();
-            handle = Han.TextBox1.Text;
-            smr = txttSMR.TextBox1.Text;
-            fac = combFac.Text.ToString();
-            Pay = comboPay.SelectedItem.ToString();
+            DebDate1 = dateDebitDate.Value1;
+            DebDate2 = dateDebitDate.Value2;
+            ConDate1 = dateConfirmDate.Value1;
+            ConDate2 = dateConfirmDate.Value2;
+            SettDate1 = dateSettledDate.Value1;
+            SettDate2 = dateSettledDate.Value2;
+            DebitNo1 = txtDebitNoStart.Text.ToString();
+            DebitNo2 = txtDebitNoEnd.Text.ToString();
+            handle = txttpeuser_caneditHandle.TextBox1.Text;
+            smr = txttpeuser_caneditSMR.TextBox1.Text;
+            fac = comboFactory.Text.ToString();
+            Pay = comboPaymentSettled.SelectedItem.ToString();
             list = new List<SqlParameter>();
             string sqlWhere = ""; string sqlHaving = "";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
             
-            if (!this.DebDate.Value1.Empty())
+            if (!this.dateDebitDate.Value1.Empty())
             {
                 sqlWheres.Add("a.Issuedate >= @DebDate1");
                 list.Add(new SqlParameter("@DebDate1", DebDate1));
             }
-            if (!this.DebDate.Value2.Empty())
+            if (!this.dateDebitDate.Value2.Empty())
             {
                 sqlWheres.Add("a.Issuedate <= @DebDate2");
                 list.Add(new SqlParameter("@DebDate2", DebDate2));
             }
-            if (!this.ConDate.Value1.Empty())
+            if (!this.dateConfirmDate.Value1.Empty())
             {
                 sqlWheres.Add("a.cfmdate >= @ConDate1");
                 list.Add(new SqlParameter("@ConDate1", ConDate1));
             }
-            if (!this.ConDate.Value2.Empty())
+            if (!this.dateConfirmDate.Value2.Empty())
             {
                 sqlWheres.Add("a.cfmdate <= @ConDate2");
                 list.Add(new SqlParameter("@ConDate2", ConDate2));
             }
-            if (!this.DebNo1.Text.Empty())
+            if (!this.txtDebitNoStart.Text.Empty())
             {
                 sqlWheres.Add("a.Id between @DebNo1 and @DebNo2");
                 list.Add(new SqlParameter("@DebNo1", DebitNo1));
                 list.Add(new SqlParameter("@DebNo2", DebitNo2));
-            } if (!this.Han.TextBox1.Text.Empty())
+            } if (!this.txttpeuser_caneditHandle.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.handle = @handle");
                 list.Add(new SqlParameter("@handle", handle));
-            } if (!this.txttSMR.TextBox1.Text.Empty())
+            } if (!this.txttpeuser_caneditSMR.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("a.smr = @smr");
                 list.Add(new SqlParameter("@smr", smr));
-            } if (!this.combFac.Text.ToString().Empty())
+            } if (!this.comboFactory.Text.ToString().Empty())
             {
                 sqlWheres.Add("a.BrandID  = @factory");
                 list.Add(new SqlParameter("@factory", fac));
-            } if (this.comboPay.Text == "Settled")
+            } if (this.comboPaymentSettled.Text == "Settled")
             {
                 list.Add(new SqlParameter("@payment", Pay));
             }
-            if (!this.SettDate.Value1.Empty())
+            if (!this.dateSettledDate.Value1.Empty())
             {
                 sqlHaving = "and finalVoucher.[Settled Date] >= @SettledDate1";
                 list.Add(new SqlParameter("@SettledDate1", SettDate1));
             }
-            if (!this.SettDate.Value2.Empty())
+            if (!this.dateSettledDate.Value2.Empty())
             {
                 sqlHaving = "and finalVoucher.[Settled Date] <= @SettledDate2";
                 list.Add(new SqlParameter("@SettledDate2", SettDate2));
@@ -211,7 +211,7 @@ namespace Sci.Production.Subcon
                 return false;
             }
           
-            if ("List".EqualString(this.comboReport.Text))
+            if ("List".EqualString(this.comboReportType.Text))
             {
                
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_List.xltx");
@@ -233,7 +233,7 @@ namespace Sci.Production.Subcon
                 objSheets.Cells[2, 19] = Pay;
                 return true;
             }
-            else if ("Detail List".EqualString(this.comboReport.Text))
+            else if ("Detail List".EqualString(this.comboReportType.Text))
             {
                 
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R37_DetailList.xltx");

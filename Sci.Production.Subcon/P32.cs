@@ -89,45 +89,45 @@ namespace Sci.Production.Subcon
                 }
             }
           
-            bool sewingdate1_Empty = !this.dateRange_Sewing.HasValue, scidate_Empty = !this.dateRange_SCI.HasValue, txtsp_Empty1 = this.txt_SPStart.Text.Empty(), txtsp_Empty = this.txt_SPEnd.Text.Empty();
+            bool sewingdate1_Empty = !this.dateSewingInline.HasValue, scidate_Empty = !this.dateSCIDelivery.HasValue, txtsp_Empty1 = this.txtSPStart.Text.Empty(), txtsp_Empty = this.txtSPEnd.Text.Empty();
             if (sewingdate1_Empty && scidate_Empty && txtsp_Empty1 && txtsp_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select at least one field entry");
-                txt_SPStart.Focus();
+                txtSPStart.Focus();
                 return;
             }
 
-            SP1 = txt_SPStart.Text.ToString();
-            SP2 = txt_SPEnd.Text.ToString();
-            sewingdate1 = dateRange_Sewing.Value1;
-            sewingdate2 = dateRange_Sewing.Value2;
-            scidate1 = dateRange_SCI.Value1;
-            scidate2 = dateRange_SCI.Value2;
+            SP1 = txtSPStart.Text.ToString();
+            SP2 = txtSPEnd.Text.ToString();
+            sewingdate1 = dateSewingInline.Value1;
+            sewingdate2 = dateSewingInline.Value2;
+            scidate1 = dateSCIDelivery.Value1;
+            scidate2 = dateSCIDelivery.Value2;
             M = Sci.Env.User.Keyword;
             #region --組WHERE--
-            if (!this.txt_SPStart.Text.Empty())
+            if (!this.txtSPStart.Text.Empty())
             {
                 sqlWheres.Add(" and LD.POID >= '"+ SP1 + "'");
             }
-            if (!this.txt_SPEnd.Text.Empty())
+            if (!this.txtSPEnd.Text.Empty())
             {
                 sqlWheres.Add(" and LD.POID <= '" + SP2 + "'");
             }
-            if (!this.dateRange_SCI.Value1.Empty() )
+            if (!this.dateSCIDelivery.Value1.Empty() )
             {
                 sqlWheres.Add(" and o.SciDelivery >= '" + Convert.ToDateTime(scidate1).ToShortDateString() + "'");
 
             } 
-            if (!this.dateRange_SCI.Value2.Empty())
+            if (!this.dateSCIDelivery.Value2.Empty())
             {
                 sqlWheres.Add(" and o.SciDelivery <= '" + Convert.ToDateTime(scidate2).ToShortDateString() + "'");
 
             }
-            if (!this.dateRange_Sewing.Value1.Empty())
+            if (!this.dateSewingInline.Value1.Empty())
             {
                 sqlWheres.Add(" and o.SewInLine >= '" + Convert.ToDateTime(sewingdate1).ToShortDateString() + "'");
             }
-            if (!this.dateRange_Sewing.Value2.Empty())
+            if (!this.dateSewingInline.Value2.Empty())
             {
                 sqlWheres.Add(" and o.SewInLine <= '" + Convert.ToDateTime(sewingdate2).ToShortDateString() + "'");
             }

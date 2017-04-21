@@ -18,8 +18,8 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.motherData = data;
-            this.displayBox1.Text = motherData["refno"].ToString();
-            this.displayBox2.Text = motherData["description"].ToString();
+            this.displayRefno.Text = motherData["refno"].ToString();
+            this.displayDescription.Text = motherData["description"].ToString();
         }
 
         protected override void OnFormLoaded()
@@ -34,9 +34,9 @@ namespace Sci.Production.Subcon
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridHistory.IsEditingReadOnly = true;
+            this.gridHistory.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridHistory)
                  .Text("issuedate", header: "A/P Date", width: Widths.AnsiChars(10))
                  .Text("id", header: "A/P No", width: Widths.AnsiChars(16))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6),integer_places:6,decimal_places:2)

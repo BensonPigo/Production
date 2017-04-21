@@ -32,13 +32,13 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
-            dateBox3.ReadOnly = true;
+            dateApproveDate.ReadOnly = true;
 
-            this.txtsubcon1.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();
                     
                 }
@@ -113,28 +113,28 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Delivery"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Delivery"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Delivery Date >  can't be empty!", "Warning");
-                dateBox2.Focus();
+                dateDeliveryDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return false;
             }
 
@@ -147,14 +147,14 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                txtuser1.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
             #endregion
@@ -230,7 +230,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            dateBox3.ReadOnly = true;
+            dateApproveDate.ReadOnly = true;
             #region --動態unit header --
             string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
@@ -243,7 +243,7 @@ namespace Sci.Production.Subcon
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
                 {
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
-                    numericBox4.Text = amount.ToString();
+                    numTotal.Text = amount.ToString();
                 }
 
                 decimal x = 0; decimal x1 = 0; decimal x2 = 0;
@@ -254,14 +254,14 @@ namespace Sci.Production.Subcon
                 x2 = x * (decimal)CurrentMaintain["VatRate"]/100;
                 x1 += x + x2;
                 Console.WriteLine("get {0}", x);
-                numericBox3.Text = x.ToString();
-                numericBox4.Text = x1.ToString();
-                numericBox2.Text = x2.ToString();
+                numAmount.Text = x.ToString();
+                numTotal.Text = x1.ToString();
+                numVat.Text = x2.ToString();
             }
             #endregion
-            txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
-            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
-            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+            txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
+            txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
+            txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -269,11 +269,11 @@ namespace Sci.Production.Subcon
             label17.Visible = CurrentMaintain["Exceed"].ToString().ToUpper() == "TRUE";
             #endregion
             #region Batch Import, Special record button
-            button4.Enabled = this.EditMode;
-            button5.Enabled = this.EditMode;
+            btnBatchImport.Enabled = this.EditMode;
+            btnSpecialRecord.Enabled = this.EditMode;
             #endregion
             #region Batch create
-            button3.Enabled = !this.EditMode;
+            btnBatchCreate.Enabled = !this.EditMode;
             #endregion
         }
 
@@ -296,7 +296,7 @@ namespace Sci.Production.Subcon
 
                         string sqlcmd2 = string.Format(@"
                                 update artworkpo set Amount = {0}, Vat = {1}
-                                where id = '{2}'", numericBox3.Value, numericBox2.Value, this.CurrentMaintain["ID"].ToString());
+                                where id = '{2}'", numAmount.Value, numVat.Value, this.CurrentMaintain["ID"].ToString());
                         DBProxy.Current.Execute(null, sqlcmd2);
                     }
 
@@ -516,13 +516,13 @@ namespace Sci.Production.Subcon
             if (dr["localsuppid"] == DBNull.Value)
             {
                 MyUtility.Msg.WarningBox("Please fill Supplier first!");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return;
             }
             if (dr["artworktypeid"] == DBNull.Value)
             {
                 MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return;
             }
             var frm = new Sci.Production.Subcon.P01_Import(dr, (DataTable)detailgridbs.DataSource, "P01");
@@ -554,7 +554,7 @@ namespace Sci.Production.Subcon
             if (dr["artworktypeid"] == DBNull.Value)
             {
                 MyUtility.Msg.WarningBox("Please fill Artworktype first!");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return;
             }
 
@@ -597,9 +597,9 @@ namespace Sci.Production.Subcon
             string Issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string Delivery = ((DateTime)MyUtility.Convert.GetDate(row["Delivery"])).ToShortDateString();
             string Remark = row["Remark"].ToString();
-            string TOTAL = numericBox3.Text;
+            string TOTAL = numAmount.Text;
             string VAT = row["Vat"].ToString();
-            string GRATOTAL = numericBox4.Text;
+            string GRATOTAL = numTotal.Text;
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();

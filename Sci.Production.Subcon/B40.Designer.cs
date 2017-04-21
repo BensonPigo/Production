@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textID = new Sci.Win.UI.TextBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelSubprocess = new Sci.Win.UI.Label();
+            this.labelStockType = new Sci.Win.UI.Label();
+            this.txtID = new Sci.Win.UI.TextBox();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
-            this.comboType = new Sci.Win.UI.ComboBox();
+            this.comboStockType = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,12 +48,12 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.comboType);
+            this.detailcont.Controls.Add(this.comboStockType);
             this.detailcont.Controls.Add(this.comboSubprocess);
-            this.detailcont.Controls.Add(this.textID);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtID);
+            this.detailcont.Controls.Add(this.labelStockType);
+            this.detailcont.Controls.Add(this.labelSubprocess);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(844, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -63,7 +63,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(844, 395);
             // 
             // tabs
             // 
@@ -83,44 +83,44 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(35, 37);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(86, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(35, 37);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(86, 23);
+            this.labelID.TabIndex = 0;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelSubprocess
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(35, 94);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Sub-process";
+            this.labelSubprocess.Lines = 0;
+            this.labelSubprocess.Location = new System.Drawing.Point(35, 94);
+            this.labelSubprocess.Name = "labelSubprocess";
+            this.labelSubprocess.Size = new System.Drawing.Size(86, 23);
+            this.labelSubprocess.TabIndex = 1;
+            this.labelSubprocess.Text = "Sub-process";
             // 
-            // label3
+            // labelStockType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(35, 151);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Stock Type";
+            this.labelStockType.Lines = 0;
+            this.labelStockType.Location = new System.Drawing.Point(35, 151);
+            this.labelStockType.Name = "labelStockType";
+            this.labelStockType.Size = new System.Drawing.Size(86, 23);
+            this.labelStockType.TabIndex = 2;
+            this.labelStockType.Text = "Stock Type";
             // 
-            // textID
+            // txtID
             // 
-            this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textID.IsSupportEditMode = false;
-            this.textID.Location = new System.Drawing.Point(124, 37);
-            this.textID.Name = "textID";
-            this.textID.ReadOnly = true;
-            this.textID.Size = new System.Drawing.Size(201, 23);
-            this.textID.TabIndex = 0;
+            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtID.IsSupportEditMode = false;
+            this.txtID.Location = new System.Drawing.Point(124, 37);
+            this.txtID.Name = "txtID";
+            this.txtID.ReadOnly = true;
+            this.txtID.Size = new System.Drawing.Size(201, 23);
+            this.txtID.TabIndex = 0;
             // 
             // comboSubprocess
             // 
@@ -134,17 +134,17 @@
             this.comboSubprocess.Size = new System.Drawing.Size(121, 24);
             this.comboSubprocess.TabIndex = 1;
             // 
-            // comboType
+            // comboStockType
             // 
-            this.comboType.BackColor = System.Drawing.Color.White;
-            this.comboType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboType.FormattingEnabled = true;
-            this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(124, 150);
-            this.comboType.Name = "comboType";
-            this.comboType.Size = new System.Drawing.Size(121, 24);
-            this.comboType.TabIndex = 2;
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Location = new System.Drawing.Point(124, 150);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboStockType.TabIndex = 2;
             // 
             // B40
             // 
@@ -171,11 +171,11 @@
 
         #endregion
 
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textID;
-        private Win.UI.ComboBox comboType;
+        private Win.UI.Label labelStockType;
+        private Win.UI.Label labelSubprocess;
+        private Win.UI.Label labelID;
+        private Win.UI.TextBox txtID;
+        private Win.UI.ComboBox comboStockType;
         private Win.UI.ComboBox comboSubprocess;
     }
 }

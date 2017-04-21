@@ -24,32 +24,32 @@ namespace Sci.Production.Subcon
             this.DefaultFilter = "refno = '"+ b01_refno+"'";
 
             //選完Supp後要將回寫CurrencyID
-            this.txtsubcon1.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier1.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier1.TextBox1.Text != this.txtsubconSupplier1.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID1"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID1"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier1.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon2.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier2.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon2.TextBox1.Text != this.txtsubcon2.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier2.TextBox1.Text != this.txtsubconSupplier2.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID2"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon2.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID2"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier2.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon3.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier3.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon3.TextBox1.Text != this.txtsubcon3.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier3.TextBox1.Text != this.txtsubconSupplier3.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID3"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon3.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID3"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier3.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
-            this.txtsubcon4.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier4.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon4.TextBox1.Text != this.txtsubcon4.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier4.TextBox1.Text != this.txtsubconSupplier4.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID4"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon4.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID4"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier4.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
             
@@ -111,7 +111,7 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button1.Enabled = (CurrentMaintain["Status"].ToString().ToUpper() == "NEW") && !this.EditMode;
+            this.btnApprove.Enabled = (CurrentMaintain["Status"].ToString().ToUpper() == "NEW") && !this.EditMode;
         }
 
         //Encode button

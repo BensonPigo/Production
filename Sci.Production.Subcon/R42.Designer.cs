@@ -30,18 +30,18 @@
         {
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
-            this.dateBundle = new Sci.Win.UI.DateRange();
-            this.textSP = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.dateBundleCDate = new Sci.Win.UI.DateRange();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelSubProcess = new Sci.Win.UI.Label();
+            this.labelBundleCDate = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelCutRefNo = new Sci.Win.UI.Label();
             this.dateBundleTransDate = new Sci.Win.UI.DateRange();
-            this.label6 = new Sci.Win.UI.Label();
-            this.textCutRef_Start = new Sci.Win.UI.TextBox();
+            this.labelBundleTransDate = new Sci.Win.UI.Label();
+            this.txtCutRefStart = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
-            this.textCutRef_End = new Sci.Win.UI.TextBox();
+            this.txtCutRefEnd = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -82,67 +82,67 @@
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
             this.comboSubProcess.TabIndex = 5;
             // 
-            // dateBundle
+            // dateBundleCDate
             // 
-            this.dateBundle.IsRequired = false;
-            this.dateBundle.Location = new System.Drawing.Point(145, 70);
-            this.dateBundle.Name = "dateBundle";
-            this.dateBundle.Size = new System.Drawing.Size(280, 23);
-            this.dateBundle.TabIndex = 3;
+            this.dateBundleCDate.IsRequired = false;
+            this.dateBundleCDate.Location = new System.Drawing.Point(145, 70);
+            this.dateBundleCDate.Name = "dateBundleCDate";
+            this.dateBundleCDate.Size = new System.Drawing.Size(280, 23);
+            this.dateBundleCDate.TabIndex = 3;
             // 
-            // textSP
+            // txtSPNo
             // 
-            this.textSP.BackColor = System.Drawing.Color.White;
-            this.textSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSP.Location = new System.Drawing.Point(145, 41);
-            this.textSP.Name = "textSP";
-            this.textSP.Size = new System.Drawing.Size(143, 23);
-            this.textSP.TabIndex = 2;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(145, 41);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(143, 23);
+            this.txtSPNo.TabIndex = 2;
             // 
-            // label5
+            // labelM
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(22, 159);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(120, 23);
-            this.label5.TabIndex = 108;
-            this.label5.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(22, 159);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(120, 23);
+            this.labelM.TabIndex = 108;
+            this.labelM.Text = "M";
             // 
-            // label4
+            // labelSubProcess
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(22, 129);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(120, 23);
-            this.label4.TabIndex = 107;
-            this.label4.Text = "Sub Process";
+            this.labelSubProcess.Lines = 0;
+            this.labelSubProcess.Location = new System.Drawing.Point(22, 129);
+            this.labelSubProcess.Name = "labelSubProcess";
+            this.labelSubProcess.Size = new System.Drawing.Size(120, 23);
+            this.labelSubProcess.TabIndex = 107;
+            this.labelSubProcess.Text = "Sub Process";
             // 
-            // label3
+            // labelBundleCDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(22, 70);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 23);
-            this.label3.TabIndex = 106;
-            this.label3.Text = "Bundle CDate";
+            this.labelBundleCDate.Lines = 0;
+            this.labelBundleCDate.Location = new System.Drawing.Point(22, 70);
+            this.labelBundleCDate.Name = "labelBundleCDate";
+            this.labelBundleCDate.Size = new System.Drawing.Size(120, 23);
+            this.labelBundleCDate.TabIndex = 106;
+            this.labelBundleCDate.Text = "Bundle CDate";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(22, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 105;
-            this.label2.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(22, 41);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(120, 23);
+            this.labelSPNo.TabIndex = 105;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label1
+            // labelCutRefNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 23);
-            this.label1.TabIndex = 104;
-            this.label1.Text = "Cut Ref#";
+            this.labelCutRefNo.Lines = 0;
+            this.labelCutRefNo.Location = new System.Drawing.Point(22, 12);
+            this.labelCutRefNo.Name = "labelCutRefNo";
+            this.labelCutRefNo.Size = new System.Drawing.Size(120, 23);
+            this.labelCutRefNo.TabIndex = 104;
+            this.labelCutRefNo.Text = "Cut Ref#";
             // 
             // dateBundleTransDate
             // 
@@ -152,23 +152,23 @@
             this.dateBundleTransDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleTransDate.TabIndex = 4;
             // 
-            // label6
+            // labelBundleTransDate
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(22, 99);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(120, 23);
-            this.label6.TabIndex = 114;
-            this.label6.Text = "Bundle Trans Date";
+            this.labelBundleTransDate.Lines = 0;
+            this.labelBundleTransDate.Location = new System.Drawing.Point(22, 99);
+            this.labelBundleTransDate.Name = "labelBundleTransDate";
+            this.labelBundleTransDate.Size = new System.Drawing.Size(120, 23);
+            this.labelBundleTransDate.TabIndex = 114;
+            this.labelBundleTransDate.Text = "Bundle Trans Date";
             // 
-            // textCutRef_Start
+            // txtCutRefStart
             // 
-            this.textCutRef_Start.BackColor = System.Drawing.Color.White;
-            this.textCutRef_Start.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textCutRef_Start.Location = new System.Drawing.Point(145, 12);
-            this.textCutRef_Start.Name = "textCutRef_Start";
-            this.textCutRef_Start.Size = new System.Drawing.Size(116, 23);
-            this.textCutRef_Start.TabIndex = 0;
+            this.txtCutRefStart.BackColor = System.Drawing.Color.White;
+            this.txtCutRefStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRefStart.Location = new System.Drawing.Point(145, 12);
+            this.txtCutRefStart.Name = "txtCutRefStart";
+            this.txtCutRefStart.Size = new System.Drawing.Size(116, 23);
+            this.txtCutRefStart.TabIndex = 0;
             // 
             // label7
             // 
@@ -181,32 +181,32 @@
             this.label7.Text = "～";
             this.label7.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textCutRef_End
+            // txtCutRefEnd
             // 
-            this.textCutRef_End.BackColor = System.Drawing.Color.White;
-            this.textCutRef_End.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textCutRef_End.Location = new System.Drawing.Point(291, 12);
-            this.textCutRef_End.Name = "textCutRef_End";
-            this.textCutRef_End.Size = new System.Drawing.Size(116, 23);
-            this.textCutRef_End.TabIndex = 1;
+            this.txtCutRefEnd.BackColor = System.Drawing.Color.White;
+            this.txtCutRefEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRefEnd.Location = new System.Drawing.Point(291, 12);
+            this.txtCutRefEnd.Name = "txtCutRefEnd";
+            this.txtCutRefEnd.Size = new System.Drawing.Size(116, 23);
+            this.txtCutRefEnd.TabIndex = 1;
             // 
             // R42
             // 
             this.ClientSize = new System.Drawing.Size(599, 240);
-            this.Controls.Add(this.textCutRef_End);
+            this.Controls.Add(this.txtCutRefEnd);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.textCutRef_Start);
+            this.Controls.Add(this.txtCutRefStart);
             this.Controls.Add(this.dateBundleTransDate);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.labelBundleTransDate);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboSubProcess);
-            this.Controls.Add(this.dateBundle);
-            this.Controls.Add(this.textSP);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateBundleCDate);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelSubProcess);
+            this.Controls.Add(this.labelBundleCDate);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.labelCutRefNo);
             this.DefaultControl = "textCutRef_Start";
             this.DefaultControlForEdit = "textCutRef_Start";
             this.Name = "R42";
@@ -214,20 +214,20 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.textSP, 0);
-            this.Controls.SetChildIndex(this.dateBundle, 0);
+            this.Controls.SetChildIndex(this.labelCutRefNo, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.labelBundleCDate, 0);
+            this.Controls.SetChildIndex(this.labelSubProcess, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.Controls.SetChildIndex(this.dateBundleCDate, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.labelBundleTransDate, 0);
             this.Controls.SetChildIndex(this.dateBundleTransDate, 0);
-            this.Controls.SetChildIndex(this.textCutRef_Start, 0);
+            this.Controls.SetChildIndex(this.txtCutRefStart, 0);
             this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.textCutRef_End, 0);
+            this.Controls.SetChildIndex(this.txtCutRefEnd, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,17 +237,17 @@
 
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboSubProcess;
-        private Win.UI.DateRange dateBundle;
-        private Win.UI.TextBox textSP;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DateRange dateBundleCDate;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelSubProcess;
+        private Win.UI.Label labelBundleCDate;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelCutRefNo;
         private Win.UI.DateRange dateBundleTransDate;
-        private Win.UI.Label label6;
-        private Win.UI.TextBox textCutRef_Start;
+        private Win.UI.Label labelBundleTransDate;
+        private Win.UI.TextBox txtCutRefStart;
         private Win.UI.Label label7;
-        private Win.UI.TextBox textCutRef_End;
+        private Win.UI.TextBox txtCutRefEnd;
     }
 }

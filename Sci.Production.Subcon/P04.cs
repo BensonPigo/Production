@@ -88,7 +88,7 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
-            this.txtmfactory1.ReadOnly = true;
+            this.txtmfactory.ReadOnly = true;
             return base.ClickEditBefore();
         }
        
@@ -102,28 +102,28 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["ArtworktypeId"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["ArtworktypeId"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type >  can't be empty!", "Warning");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyArtworkType.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Handle"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Handle"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Handle >  can't be empty!", "Warning");
-                txtuser1.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
             #endregion
@@ -187,14 +187,14 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
+            txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             //txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
-            this.txtmfactory1.ReadOnly = true;
+            this.txtmfactory.ReadOnly = true;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region Batch Import
-            button2.Enabled = this.EditMode;
+            btnImportFromRealTime.Enabled = this.EditMode;
             #endregion
         }
 
@@ -238,7 +238,7 @@ namespace Sci.Production.Subcon
                     if (MyUtility.Check.Empty(CurrentMaintain["artworktypeid"]))
                     {
                         MyUtility.Msg.WarningBox("Please fill Artwork Type first");
-                        this.txtartworktype_fty1.Focus();
+                        this.txtartworktype_ftyArtworkType.Focus();
                         return;
                     }
 

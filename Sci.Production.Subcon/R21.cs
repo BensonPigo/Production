@@ -23,35 +23,35 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,Handle");
-            cbbOrderBy.SelectedIndex = 0;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,Handle");
+            comboOrderBy.SelectedIndex = 0;
+            txtMdivisionM.Text = Sci.Env.User.Keyword;
 
             int month = DateTime.Today.Month;
             int day = DateTime.Today.Day;
             int year = DateTime.Today.Year;
-            this.dateRange1.Value1 = DateTime.Today.AddMonths(-month+1).AddDays(-day + 1);
-            this.dateRange1.Value2 = DateTime.Now;
+            this.dateAPDate.Value1 = DateTime.Today.AddMonths(-month+1).AddDays(-day + 1);
+            this.dateAPDate.Value2 = DateTime.Now;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateAPDate.Value1) && MyUtility.Check.Empty(dateAPDate.Value2))
             {
                 MyUtility.Msg.WarningBox("AP Date can't empty!!");
                 return false;
             }
-            APdate1 = dateRange1.Value1;
-            APdate2 = dateRange1.Value2;
+            APdate1 = dateAPDate.Value1;
+            APdate2 = dateAPDate.Value2;
            
-            category = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            subcon = txtsubcon1.TextBox1.Text;
-            orderby = cbbOrderBy.Text;
+            category = txtartworktype_ftyCategory.Text;
+            mdivision = txtMdivisionM.Text;
+            factory = comboFactory.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
+            orderby = comboOrderBy.Text;
             
             return base.ValidateInput();
         }

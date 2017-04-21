@@ -30,98 +30,98 @@
         {
             this.components = new System.ComponentModel.Container();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
+            this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.gridHistory = new Sci.Win.UI.Grid();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.labelDescription = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridHistory)).BeginInit();
             this.SuspendLayout();
             // 
-            // displayBox1
+            // displayRefno
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(87, 9);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(197, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefno.Location = new System.Drawing.Point(87, 9);
+            this.displayRefno.Name = "displayRefno";
+            this.displayRefno.Size = new System.Drawing.Size(197, 23);
+            this.displayRefno.TabIndex = 0;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(405, 9);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(486, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(405, 9);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(486, 23);
+            this.displayDescription.TabIndex = 1;
             // 
-            // grid1
+            // gridHistory
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 41);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(938, 470);
-            this.grid1.TabIndex = 2;
-            this.grid1.TabStop = false;
+            this.gridHistory.AllowUserToAddRows = false;
+            this.gridHistory.AllowUserToDeleteRows = false;
+            this.gridHistory.AllowUserToResizeRows = false;
+            this.gridHistory.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridHistory.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridHistory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridHistory.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridHistory.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridHistory.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridHistory.Location = new System.Drawing.Point(12, 41);
+            this.gridHistory.Name = "gridHistory";
+            this.gridHistory.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridHistory.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridHistory.RowTemplate.Height = 24;
+            this.gridHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridHistory.Size = new System.Drawing.Size(938, 470);
+            this.gridHistory.TabIndex = 2;
+            this.gridHistory.TabStop = false;
             // 
-            // label1
+            // labelRefno
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Refno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(9, 9);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelRefno.TabIndex = 3;
+            this.labelRefno.Text = "Refno";
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(870, 519);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(870, 519);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(327, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(327, 9);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 5;
+            this.labelDescription.Text = "Description";
             // 
             // B01_History
             // 
             this.ClientSize = new System.Drawing.Size(962, 561);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.grid1);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.displayBox1);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.labelRefno);
+            this.Controls.Add(this.gridHistory);
+            this.Controls.Add(this.displayDescription);
+            this.Controls.Add(this.displayRefno);
             this.Name = "B01_History";
             this.Text = "Payment History";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridHistory)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -130,11 +130,11 @@
         #endregion
 
         private System.Windows.Forms.BindingSource bindingSource1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Grid grid1;
-        private Win.UI.Label label1;
-        private Win.UI.Button button1;
-        private Win.UI.Label label2;
+        private Win.UI.DisplayBox displayRefno;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.Grid gridHistory;
+        private Win.UI.Label labelRefno;
+        private Win.UI.Button btnClose;
+        private Win.UI.Label labelDescription;
     }
 }

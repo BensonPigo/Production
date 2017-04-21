@@ -29,125 +29,125 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.gridBatchCreateFromSubProcessData = new Sci.Win.UI.Grid();
+            this.dateInlineDate = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.dateApproveDate = new Sci.Win.UI.DateRange();
+            this.labelInlineDate = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
+            this.labelApproveDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelArtworkType = new Sci.Win.UI.Label();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelDelivery = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.dateDelivery = new Sci.Win.UI.DateBox();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.button4 = new Sci.Win.UI.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // grid1
+            // gridBatchCreateFromSubProcessData
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1181, 379);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridBatchCreateFromSubProcessData.AllowUserToAddRows = false;
+            this.gridBatchCreateFromSubProcessData.AllowUserToDeleteRows = false;
+            this.gridBatchCreateFromSubProcessData.AllowUserToResizeRows = false;
+            this.gridBatchCreateFromSubProcessData.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBatchCreateFromSubProcessData.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridBatchCreateFromSubProcessData.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBatchCreateFromSubProcessData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchCreateFromSubProcessData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBatchCreateFromSubProcessData.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBatchCreateFromSubProcessData.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBatchCreateFromSubProcessData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBatchCreateFromSubProcessData.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBatchCreateFromSubProcessData.Location = new System.Drawing.Point(0, 0);
+            this.gridBatchCreateFromSubProcessData.Name = "gridBatchCreateFromSubProcessData";
+            this.gridBatchCreateFromSubProcessData.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBatchCreateFromSubProcessData.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBatchCreateFromSubProcessData.RowTemplate.Height = 24;
+            this.gridBatchCreateFromSubProcessData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCreateFromSubProcessData.Size = new System.Drawing.Size(1181, 379);
+            this.gridBatchCreateFromSubProcessData.TabIndex = 0;
+            this.gridBatchCreateFromSubProcessData.TabStop = false;
             // 
-            // dateRange3
+            // dateInlineDate
             // 
-            this.dateRange3.IsRequired = false;
-            this.dateRange3.Location = new System.Drawing.Point(509, 15);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 3;
+            this.dateInlineDate.IsRequired = false;
+            this.dateInlineDate.Location = new System.Drawing.Point(509, 15);
+            this.dateInlineDate.Name = "dateInlineDate";
+            this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
+            this.dateInlineDate.TabIndex = 3;
             // 
-            // dateRange2
+            // dateSCIDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(107, 45);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 6;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(107, 45);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 6;
             // 
-            // dateRange1
+            // dateApproveDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(107, 15);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 1;
+            this.dateApproveDate.IsRequired = false;
+            this.dateApproveDate.Location = new System.Drawing.Point(107, 15);
+            this.dateApproveDate.Name = "dateApproveDate";
+            this.dateApproveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateApproveDate.TabIndex = 1;
             // 
-            // label4
+            // labelInlineDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(411, 15);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 23);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Inline Date";
+            this.labelInlineDate.Lines = 0;
+            this.labelInlineDate.Location = new System.Drawing.Point(411, 15);
+            this.labelInlineDate.Name = "labelInlineDate";
+            this.labelInlineDate.Size = new System.Drawing.Size(95, 23);
+            this.labelInlineDate.TabIndex = 8;
+            this.labelInlineDate.Text = "Inline Date";
             // 
-            // label3
+            // labelSCIDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 45);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "SCI  Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 45);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelSCIDelivery.TabIndex = 7;
+            this.labelSCIDelivery.Text = "SCI  Delivery";
             // 
-            // textBox2
+            // txtSPNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(655, 45);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(122, 23);
-            this.textBox2.TabIndex = 8;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(655, 45);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
+            this.txtSPNoEnd.TabIndex = 8;
             // 
-            // label2
+            // labelApproveDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 15);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Approve Date";
+            this.labelApproveDate.Lines = 0;
+            this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
+            this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
+            this.labelApproveDate.TabIndex = 5;
+            this.labelApproveDate.Text = "Approve Date";
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridBatchCreateFromSubProcessData);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 109);
             this.panel1.Name = "panel1";
@@ -157,18 +157,18 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.txtartworktype_fty1);
-            this.groupBox1.Controls.Add(this.dateRange3);
-            this.groupBox1.Controls.Add(this.dateRange2);
-            this.groupBox1.Controls.Add(this.dateRange1);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.textBox2);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.labelArtworkType);
+            this.groupBox1.Controls.Add(this.txtartworktype_ftyArtworkType);
+            this.groupBox1.Controls.Add(this.dateInlineDate);
+            this.groupBox1.Controls.Add(this.dateSCIDelivery);
+            this.groupBox1.Controls.Add(this.dateApproveDate);
+            this.groupBox1.Controls.Add(this.labelInlineDate);
+            this.groupBox1.Controls.Add(this.labelSCIDelivery);
+            this.groupBox1.Controls.Add(this.txtSPNoEnd);
+            this.groupBox1.Controls.Add(this.labelApproveDate);
+            this.groupBox1.Controls.Add(this.btnFindNow);
+            this.groupBox1.Controls.Add(this.txtSPNoStart);
+            this.groupBox1.Controls.Add(this.labelSPNo);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -185,123 +185,123 @@
             this.label8.TabIndex = 13;
             this.label8.Text = "~";
             // 
-            // label5
+            // labelArtworkType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(809, 15);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "Artwork Type";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(809, 15);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(95, 23);
+            this.labelArtworkType.TabIndex = 12;
+            this.labelArtworkType.Text = "Artwork Type";
             // 
-            // txtartworktype_fty1
+            // txtartworktype_ftyArtworkType
             // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "Y";
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(910, 15);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 4;
-            this.txtartworktype_fty1.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_fty1.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.cClassify = "";
+            this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(910, 15);
+            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_ftyArtworkType.TabIndex = 4;
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
+            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
             // 
-            // button1
+            // btnFindNow
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(1068, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(1068, 15);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 9;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // txtSPNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(509, 45);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 7;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(509, 45);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(122, 23);
+            this.txtSPNoStart.TabIndex = 7;
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(411, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(411, 45);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(95, 23);
+            this.labelSPNo.TabIndex = 0;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label7
+            // labelDelivery
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(653, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 23);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Delivery";
+            this.labelDelivery.Lines = 0;
+            this.labelDelivery.Location = new System.Drawing.Point(653, 20);
+            this.labelDelivery.Name = "labelDelivery";
+            this.labelDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelDelivery.TabIndex = 14;
+            this.labelDelivery.Text = "Delivery";
             // 
-            // label6
+            // labelIssueDate
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(405, 20);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 23);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(405, 20);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(95, 23);
+            this.labelIssueDate.TabIndex = 13;
+            this.labelIssueDate.Text = "Issue Date";
             // 
-            // dateBox2
+            // dateDelivery
             // 
-            this.dateBox2.Location = new System.Drawing.Point(754, 20);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 1;
+            this.dateDelivery.Location = new System.Drawing.Point(754, 20);
+            this.dateDelivery.Name = "dateDelivery";
+            this.dateDelivery.Size = new System.Drawing.Size(130, 23);
+            this.dateDelivery.TabIndex = 1;
             // 
-            // dateBox1
+            // dateIssueDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(506, 20);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateIssueDate.Location = new System.Drawing.Point(506, 20);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 0;
             // 
-            // button3
+            // btnCancel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(1085, 15);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Cancel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(1085, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // btnImport
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(989, 16);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(90, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(989, 16);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 3;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.button3);
-            this.groupBox2.Controls.Add(this.dateBox2);
-            this.groupBox2.Controls.Add(this.dateBox1);
-            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.labelDelivery);
+            this.groupBox2.Controls.Add(this.btnToExcel);
+            this.groupBox2.Controls.Add(this.labelIssueDate);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.dateDelivery);
+            this.groupBox2.Controls.Add(this.dateIssueDate);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 488);
             this.groupBox2.Name = "groupBox2";
@@ -309,17 +309,17 @@
             this.groupBox2.TabIndex = 22;
             this.groupBox2.TabStop = false;
             // 
-            // button4
+            // btnToExcel
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(893, 16);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(90, 30);
-            this.button4.TabIndex = 2;
-            this.button4.Text = "To Excel";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnToExcel.Location = new System.Drawing.Point(893, 16);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(90, 30);
+            this.btnToExcel.TabIndex = 2;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button4_Click);
             // 
             // P01_BatchCreate
             // 
@@ -330,7 +330,7 @@
             this.DefaultControl = "dateRange1";
             this.Name = "P01_BatchCreate";
             this.Text = "Batch Create From Sub Process Data";
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).EndInit();
             this.panel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -342,29 +342,29 @@
 
         #endregion
 
-        private Win.UI.Grid grid1;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label2;
+        private Win.UI.Grid gridBatchCreateFromSubProcessData;
+        private Win.UI.DateRange dateInlineDate;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.DateRange dateApproveDate;
+        private Win.UI.Label labelInlineDate;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.Label labelApproveDate;
         private Win.UI.Panel panel1;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnFindNow;
+        private Win.UI.TextBox txtSPNoStart;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
         private Win.UI.GroupBox groupBox2;
-        private Win.UI.Button button4;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Class.txtartworktype_fty txtartworktype_fty1;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Label labelDelivery;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelArtworkType;
+        private Win.UI.DateBox dateDelivery;
+        private Win.UI.DateBox dateIssueDate;
+        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Label label8;
     }

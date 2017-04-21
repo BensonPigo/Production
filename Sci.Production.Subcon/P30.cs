@@ -34,11 +34,11 @@ namespace Sci.Production.Subcon
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
           
-            this.txtsubcon1.TextBox1.Validated += (s, e) =>
+            this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
-                if (this.EditMode && this.txtsubcon1.TextBox1.Text != this.txtsubcon1.TextBox1.OldValue)
+                if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
                 {
-                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubcon1.TextBox1.Text, "LocalSupp", "ID");
+                    CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                     if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
                     {
                         ((DataTable)detailgridbs.DataSource).Rows.Clear();
@@ -67,7 +67,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["ISSUEDATE"] = System.DateTime.Today;
             CurrentMaintain["VatRate"] = 0;
             CurrentMaintain["Status"] = "New";
-            txtmfactory1.ReadOnly = true;  //新增時[factory]預設唯讀
+            txtmfactory.ReadOnly = true;  //新增時[factory]預設唯讀
             //((DataTable)(detailgridbs.DataSource)).Rows[0].Delete();
         }
 
@@ -117,7 +117,7 @@ namespace Sci.Production.Subcon
                 this.RenewData();
 
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
-                if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+                if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
 
                 return false;
             }
@@ -133,21 +133,21 @@ namespace Sci.Production.Subcon
             if (CurrentMaintain["LocalSuppID"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["LocalSuppID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Suppiler >  can't be empty!", "Warning");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return false;
             }
 
             if (CurrentMaintain["issuedate"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (CurrentMaintain["Category"] == DBNull.Value || string.IsNullOrWhiteSpace(CurrentMaintain["Category"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Category >  can't be empty!", "Warning");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyCategory.Focus();
                 return false;
             }
 
@@ -160,7 +160,7 @@ namespace Sci.Production.Subcon
             if (MyUtility.Check.Empty(CurrentMaintain["factoryid"]))
             {
                 MyUtility.Msg.WarningBox("< Factory Id >  can't be empty!", "Warning");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
             foreach (DataRow Ddr in DetailDatas)
@@ -244,24 +244,24 @@ namespace Sci.Production.Subcon
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
                 {
                     decimal amount = (decimal)CurrentMaintain["amount"] + (decimal)CurrentMaintain["vat"];
-                    numericBox4.Text = amount.ToString();
+                    numTotal.Text = amount.ToString();
                 }
 
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
                 if (!(CurrentMaintain["ApvDate"] == DBNull.Value))
                 {
-                    displayBox7.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+                    displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
                 }
             }
-            txtsubcon1.Enabled = !this.EditMode || IsDetailInserting;
-            txtartworktype_fty1.Enabled = !this.EditMode || IsDetailInserting;
-            txtmfactory1.Enabled = !this.EditMode || IsDetailInserting;
+            txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
+            txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
+            txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
             
             #region Batch Import, Special record button
-            button4.Enabled = this.EditMode;
+            btnImportThread.Enabled = this.EditMode;
             #endregion
 
         }
@@ -448,13 +448,13 @@ namespace Sci.Production.Subcon
             if (MyUtility.Check.Empty(dr["localsuppid"]))
             {
                 MyUtility.Msg.WarningBox("Please fill Supplier first!");
-                txtsubcon1.TextBox1.Focus();
+                txtsubconSupplier.TextBox1.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(dr["category"]))
             {
                 MyUtility.Msg.WarningBox("Please fill category first!");
-                txtartworktype_fty1.Focus();
+                txtartworktype_ftyCategory.Focus();
                 return;
             }
             DataTable dg = (DataTable)detailgridbs.DataSource;
