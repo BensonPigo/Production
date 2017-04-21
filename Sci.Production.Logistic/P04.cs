@@ -219,6 +219,11 @@ from (
             string location = this.txtcloglocation1.Text.Trim();
             int pos = this.listControlBindingSource1.Position;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
             foreach (DataRow currentRecord in dt.Rows)
             {
                 if (currentRecord["selected"].ToString() == "1")
@@ -241,6 +246,11 @@ from (
             this.grid1.EndEdit();
             listControlBindingSource1.EndEdit();
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(detailData))
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
             DataRow[] dr = detailData.Select("Selected = 1");
             if (dr.Length <= 0)
             {
@@ -443,7 +453,11 @@ from (
         //Print Move Ticket
         private void button3_Click(object sender, EventArgs e)
         {
-
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
             DualResult result;
             IReportResource reportresource;
             ReportDefinition rd = new ReportDefinition();

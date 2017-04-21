@@ -199,6 +199,11 @@ namespace Sci.Production.Logistic
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (MyUtility.Check.Empty(dt))
+            {
+                MyUtility.Msg.WarningBox("No data need to import!");
+                return;
+            }
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
