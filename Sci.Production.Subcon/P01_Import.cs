@@ -151,7 +151,7 @@ namespace Sci.Production.Subcon
                 ddr["poqty"] = e.FormattedValue;
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
             };
-            this.grid1.Font = new Font("Arial", 10);
+            this.grid1.Font = new Font("Arial", 9);
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
