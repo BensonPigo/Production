@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
 			and a1.seq70seq2 = a.seq2 
 			and a1.type = 2 
 			AND A1.FactoryID ='{2}' 
-			and A1.TransferFactory in (select Id from scifty WITH (NOLOCK))
+			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK))
 		)
 	) X
 	where a.Id = '{0}'
@@ -126,9 +126,9 @@ namespace Sci.Production.Warehouse
 			Select Sum(Qty)
 			from Invtrans B WITH (NOLOCK) 
 			where B.Type = '6' 
-			and B.InventoryPoId = a.PoId 
-			and B.InventorySeq1 = a.Seq1 
-			and B.InventorySeq2 = a.Seq2 
+			and B.seq70PoId = a.PoId 
+			and B.seq70Seq1 = a.Seq1 
+			and B.seq70Seq2 = a.Seq2 
 			and B.FactoryId = '{2}'
 		)
 	) X
