@@ -470,6 +470,7 @@ namespace Sci.Production.Cutting
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
@@ -566,6 +567,7 @@ namespace Sci.Production.Cutting
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)

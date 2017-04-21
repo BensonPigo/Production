@@ -219,6 +219,7 @@ namespace Sci.Production.Cutting
                         }
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)//絕對進不來catch
@@ -284,6 +285,7 @@ namespace Sci.Production.Cutting
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
