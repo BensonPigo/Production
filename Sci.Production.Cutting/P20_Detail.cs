@@ -25,15 +25,15 @@ namespace Sci.Production.Cutting
         }
         private void viewText()
         {
-            editBox1.Text = CurrentDetailData["OrderID"].ToString();
-            displayBox1.Text = CurrentDetailData["Cutref"].ToString();
-            displayBox2.Text = CurrentDetailData["cutno"].ToString();
-            displayBox3.Text = CurrentDetailData["colorid"].ToString();
-            displayBox4.Text = CurrentDetailData["cons"].ToString();
-            displayBox5.Text = CurrentDetailData["MarkerName"].ToString();
-            displayBox6.Text = CurrentDetailData["MarkerLength"].ToString();
-            displayBox7.Text = CurrentDetailData["FabricCombo"].ToString();
-            displayBox8.Text = CurrentDetailData["FabricPanelCode"].ToString();
+            editSPNo.Text = CurrentDetailData["OrderID"].ToString();
+            displayCutRefNo.Text = CurrentDetailData["Cutref"].ToString();
+            displayCutNo.Text = CurrentDetailData["cutno"].ToString();
+            displayColor.Text = CurrentDetailData["colorid"].ToString();
+            displayCons.Text = CurrentDetailData["cons"].ToString();
+            displayMarkerName.Text = CurrentDetailData["MarkerName"].ToString();
+            displayMarkerLength.Text = CurrentDetailData["MarkerLength"].ToString();
+            displayFabricCombo.Text = CurrentDetailData["FabricCombo"].ToString();
+            displayFabricPanelCode.Text = CurrentDetailData["FabricPanelCode"].ToString();
         }
         protected override void ToNext()
         {

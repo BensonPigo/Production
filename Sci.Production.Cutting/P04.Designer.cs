@@ -28,23 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.labelCutplanID = new Sci.Win.UI.Label();
+            this.labelPONo = new Sci.Win.UI.Label();
+            this.labelCuttingDate = new Sci.Win.UI.Label();
+            this.labelCutCell = new Sci.Win.UI.Label();
+            this.labelBulkMarkerReqNo = new Sci.Win.UI.Label();
+            this.labelCuttingSPNo = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.displayCutplanID = new Sci.Win.UI.DisplayBox();
+            this.displayPONo = new Sci.Win.UI.DisplayBox();
+            this.displayCuttingSPNo = new Sci.Win.UI.DisplayBox();
+            this.displayBulkMarkerReqNo = new Sci.Win.UI.DisplayBox();
+            this.dateCuttingDate = new Sci.Win.UI.DateBox();
+            this.btnimport = new Sci.Win.UI.Button();
+            this.displayCutCell = new Sci.Win.UI.DisplayBox();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.btnSendMail = new Sci.Win.UI.Button();
+            this.btnFabricIssueList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,42 +61,42 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button3);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.displayBox6);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.btnFabricIssueList);
+            this.masterpanel.Controls.Add(this.btnSendMail);
+            this.masterpanel.Controls.Add(this.displayM);
+            this.masterpanel.Controls.Add(this.displayCutCell);
+            this.masterpanel.Controls.Add(this.btnimport);
+            this.masterpanel.Controls.Add(this.dateCuttingDate);
+            this.masterpanel.Controls.Add(this.displayBulkMarkerReqNo);
+            this.masterpanel.Controls.Add(this.displayCuttingSPNo);
+            this.masterpanel.Controls.Add(this.displayPONo);
+            this.masterpanel.Controls.Add(this.displayCutplanID);
+            this.masterpanel.Controls.Add(this.labelM);
+            this.masterpanel.Controls.Add(this.labelCuttingSPNo);
+            this.masterpanel.Controls.Add(this.labelBulkMarkerReqNo);
+            this.masterpanel.Controls.Add(this.labelCutCell);
+            this.masterpanel.Controls.Add(this.labelCuttingDate);
+            this.masterpanel.Controls.Add(this.labelPONo);
+            this.masterpanel.Controls.Add(this.labelCutplanID);
             this.masterpanel.Size = new System.Drawing.Size(1078, 111);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCutplanID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCutCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBulkMarkerReqNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCuttingSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCutplanID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCuttingSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBulkMarkerReqNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnimport, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCutCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSendMail, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFabricIssueList, 0);
             // 
             // detailpanel
             // 
@@ -161,171 +161,171 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelCutplanID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(18, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Cutplan ID";
+            this.labelCutplanID.Lines = 0;
+            this.labelCutplanID.Location = new System.Drawing.Point(18, 15);
+            this.labelCutplanID.Name = "labelCutplanID";
+            this.labelCutplanID.Size = new System.Drawing.Size(82, 23);
+            this.labelCutplanID.TabIndex = 1;
+            this.labelCutplanID.Text = "Cutplan ID";
             // 
-            // label2
+            // labelPONo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(18, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "PO#";
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(18, 45);
+            this.labelPONo.Name = "labelPONo";
+            this.labelPONo.Size = new System.Drawing.Size(82, 23);
+            this.labelPONo.TabIndex = 2;
+            this.labelPONo.Text = "PO#";
             // 
-            // label3
+            // labelCuttingDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(18, 75);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Cutting Date";
+            this.labelCuttingDate.Lines = 0;
+            this.labelCuttingDate.Location = new System.Drawing.Point(18, 75);
+            this.labelCuttingDate.Name = "labelCuttingDate";
+            this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
+            this.labelCuttingDate.TabIndex = 3;
+            this.labelCuttingDate.Text = "Cutting Date";
             // 
-            // label4
+            // labelCutCell
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(247, 75);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(87, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Cut Cell";
+            this.labelCutCell.Lines = 0;
+            this.labelCutCell.Location = new System.Drawing.Point(247, 75);
+            this.labelCutCell.Name = "labelCutCell";
+            this.labelCutCell.Size = new System.Drawing.Size(87, 23);
+            this.labelCutCell.TabIndex = 4;
+            this.labelCutCell.Text = "Cut Cell";
             // 
-            // label5
+            // labelBulkMarkerReqNo
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(461, 13);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(148, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Bulk Marker Req#";
+            this.labelBulkMarkerReqNo.Lines = 0;
+            this.labelBulkMarkerReqNo.Location = new System.Drawing.Point(461, 13);
+            this.labelBulkMarkerReqNo.Name = "labelBulkMarkerReqNo";
+            this.labelBulkMarkerReqNo.Size = new System.Drawing.Size(148, 23);
+            this.labelBulkMarkerReqNo.TabIndex = 5;
+            this.labelBulkMarkerReqNo.Text = "Bulk Marker Req#";
             // 
-            // label9
+            // labelCuttingSPNo
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(247, 15);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(87, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Cutting SP#";
+            this.labelCuttingSPNo.Lines = 0;
+            this.labelCuttingSPNo.Location = new System.Drawing.Point(247, 15);
+            this.labelCuttingSPNo.Name = "labelCuttingSPNo";
+            this.labelCuttingSPNo.Size = new System.Drawing.Size(87, 23);
+            this.labelCuttingSPNo.TabIndex = 9;
+            this.labelCuttingSPNo.Text = "Cutting SP#";
             // 
-            // label10
+            // labelM
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(247, 45);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(87, 23);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(247, 45);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(87, 23);
+            this.labelM.TabIndex = 10;
+            this.labelM.Text = "M";
             // 
-            // displayBox1
+            // displayCutplanID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(103, 15);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(108, 23);
-            this.displayBox1.TabIndex = 11;
+            this.displayCutplanID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutplanID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayCutplanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutplanID.Location = new System.Drawing.Point(103, 15);
+            this.displayCutplanID.Name = "displayCutplanID";
+            this.displayCutplanID.Size = new System.Drawing.Size(108, 23);
+            this.displayCutplanID.TabIndex = 11;
             // 
-            // displayBox3
+            // displayPONo
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "poid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(103, 45);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(108, 23);
-            this.displayBox3.TabIndex = 12;
+            this.displayPONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "poid", true));
+            this.displayPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPONo.Location = new System.Drawing.Point(103, 45);
+            this.displayPONo.Name = "displayPONo";
+            this.displayPONo.Size = new System.Drawing.Size(108, 23);
+            this.displayPONo.TabIndex = 12;
             // 
-            // displayBox4
+            // displayCuttingSPNo
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cuttingid", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(337, 15);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(108, 23);
-            this.displayBox4.TabIndex = 13;
+            this.displayCuttingSPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCuttingSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cuttingid", true));
+            this.displayCuttingSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCuttingSPNo.Location = new System.Drawing.Point(337, 15);
+            this.displayCuttingSPNo.Name = "displayCuttingSPNo";
+            this.displayCuttingSPNo.Size = new System.Drawing.Size(108, 23);
+            this.displayCuttingSPNo.TabIndex = 13;
             // 
-            // displayBox5
+            // displayBulkMarkerReqNo
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "markerreqid", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(614, 13);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(108, 23);
-            this.displayBox5.TabIndex = 14;
+            this.displayBulkMarkerReqNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBulkMarkerReqNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "markerreqid", true));
+            this.displayBulkMarkerReqNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBulkMarkerReqNo.Location = new System.Drawing.Point(614, 13);
+            this.displayBulkMarkerReqNo.Name = "displayBulkMarkerReqNo";
+            this.displayBulkMarkerReqNo.Size = new System.Drawing.Size(108, 23);
+            this.displayBulkMarkerReqNo.TabIndex = 14;
             // 
-            // dateBox1
+            // dateCuttingDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(103, 75);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 15;
+            this.dateCuttingDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
+            this.dateCuttingDate.IsSupportEditMode = false;
+            this.dateCuttingDate.Location = new System.Drawing.Point(103, 75);
+            this.dateCuttingDate.Name = "dateCuttingDate";
+            this.dateCuttingDate.ReadOnly = true;
+            this.dateCuttingDate.Size = new System.Drawing.Size(130, 23);
+            this.dateCuttingDate.TabIndex = 15;
             // 
-            // button1
+            // btnimport
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(772, 77);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 30);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "import";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnimport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnimport.Enabled = false;
+            this.btnimport.Location = new System.Drawing.Point(772, 77);
+            this.btnimport.Name = "btnimport";
+            this.btnimport.Size = new System.Drawing.Size(95, 30);
+            this.btnimport.TabIndex = 17;
+            this.btnimport.Text = "import";
+            this.btnimport.UseVisualStyleBackColor = true;
+            this.btnimport.Visible = false;
+            this.btnimport.Click += new System.EventHandler(this.button1_Click);
             // 
-            // displayBox2
+            // displayCutCell
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutcellid", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(337, 75);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(48, 23);
-            this.displayBox2.TabIndex = 18;
+            this.displayCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutCell.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutcellid", true));
+            this.displayCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutCell.Location = new System.Drawing.Point(337, 75);
+            this.displayCutCell.Name = "displayCutCell";
+            this.displayCutCell.Size = new System.Drawing.Size(48, 23);
+            this.displayCutCell.TabIndex = 18;
             // 
-            // displayBox6
+            // displayM
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(337, 45);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(67, 23);
-            this.displayBox6.TabIndex = 19;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(337, 45);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(67, 23);
+            this.displayM.TabIndex = 19;
             // 
-            // button2
+            // btnSendMail
             // 
-            this.button2.Location = new System.Drawing.Point(772, 9);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(95, 30);
-            this.button2.TabIndex = 20;
-            this.button2.Text = "Send Mail";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnSendMail.Location = new System.Drawing.Point(772, 9);
+            this.btnSendMail.Name = "btnSendMail";
+            this.btnSendMail.Size = new System.Drawing.Size(95, 30);
+            this.btnSendMail.TabIndex = 20;
+            this.btnSendMail.Text = "Send Mail";
+            this.btnSendMail.UseVisualStyleBackColor = true;
+            this.btnSendMail.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // btnFabricIssueList
             // 
-            this.button3.Location = new System.Drawing.Point(873, 77);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(119, 30);
-            this.button3.TabIndex = 21;
-            this.button3.Text = "Fabric issue list";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnFabricIssueList.Location = new System.Drawing.Point(873, 77);
+            this.btnFabricIssueList.Name = "btnFabricIssueList";
+            this.btnFabricIssueList.Size = new System.Drawing.Size(119, 30);
+            this.btnFabricIssueList.TabIndex = 21;
+            this.btnFabricIssueList.Text = "Fabric issue list";
+            this.btnFabricIssueList.UseVisualStyleBackColor = true;
+            this.btnFabricIssueList.Click += new System.EventHandler(this.button3_Click);
             // 
             // P04
             // 
@@ -367,22 +367,22 @@
 
         #endregion
 
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button2;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Button button1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Button button3;
+        private Win.UI.Label labelBulkMarkerReqNo;
+        private Win.UI.Label labelCutCell;
+        private Win.UI.Label labelCuttingDate;
+        private Win.UI.Label labelPONo;
+        private Win.UI.Label labelCutplanID;
+        private Win.UI.Button btnSendMail;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.DisplayBox displayCutCell;
+        private Win.UI.Button btnimport;
+        private Win.UI.DateBox dateCuttingDate;
+        private Win.UI.DisplayBox displayBulkMarkerReqNo;
+        private Win.UI.DisplayBox displayCuttingSPNo;
+        private Win.UI.DisplayBox displayPONo;
+        private Win.UI.DisplayBox displayCutplanID;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelCuttingSPNo;
+        private Win.UI.Button btnFabricIssueList;
     }
 }

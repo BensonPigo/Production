@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
             _WorkType = WorkType;
             requery();
             gridSetup();
-            this.grid1.AutoResizeColumns();
+            this.gridCutpartcheck.AutoResizeColumns();
         }
         private void requery()
         {
@@ -126,24 +126,24 @@ namespace Sci.Production.Cutting
                         }
                     }
                 }
-                grid1.DataSource = gridtb;
+                gridCutpartcheck.DataSource = gridtb;
             }
         }
 
         private void gridSetup()
         {
-            grid1.RowPostPaint += (s, e) =>
+            gridCutpartcheck.RowPostPaint += (s, e) =>
             {
                 for (int i = 0; i < e.RowIndex; i++)
                 {
-                    if (grid1.Rows[i].Cells[4].Value.ToString() == "=")
+                    if (gridCutpartcheck.Rows[i].Cells[4].Value.ToString() == "=")
                     {
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.Pink;
+                        gridCutpartcheck.Rows[i].DefaultCellStyle.BackColor = Color.Pink;
                     }
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridCutpartcheck)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)

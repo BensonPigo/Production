@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.cmb_Factory = new Sci.Win.UI.ComboBox();
-            this.cmb_M = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateR_EstCutDate = new Sci.Win.UI.DateRange();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelEstCutDate = new Sci.Win.UI.Label();
+            this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.label4 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,73 +57,73 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.cmb_Factory);
-            this.panel1.Controls.Add(this.cmb_M);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.dateR_EstCutDate);
+            this.panel1.Controls.Add(this.comboFactory);
+            this.panel1.Controls.Add(this.comboM);
+            this.panel1.Controls.Add(this.labelFactory);
+            this.panel1.Controls.Add(this.labelM);
+            this.panel1.Controls.Add(this.labelEstCutDate);
+            this.panel1.Controls.Add(this.dateEstCutDate);
             this.panel1.Location = new System.Drawing.Point(13, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(429, 127);
             this.panel1.TabIndex = 0;
             // 
-            // cmb_Factory
+            // comboFactory
             // 
-            this.cmb_Factory.BackColor = System.Drawing.Color.White;
-            this.cmb_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmb_Factory.FormattingEnabled = true;
-            this.cmb_Factory.IsSupportUnselect = true;
-            this.cmb_Factory.Location = new System.Drawing.Point(107, 78);
-            this.cmb_Factory.Name = "cmb_Factory";
-            this.cmb_Factory.Size = new System.Drawing.Size(121, 24);
-            this.cmb_Factory.TabIndex = 2;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(107, 78);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 2;
             // 
-            // cmb_M
+            // comboM
             // 
-            this.cmb_M.BackColor = System.Drawing.Color.White;
-            this.cmb_M.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmb_M.FormattingEnabled = true;
-            this.cmb_M.IsSupportUnselect = true;
-            this.cmb_M.Location = new System.Drawing.Point(107, 42);
-            this.cmb_M.Name = "cmb_M";
-            this.cmb_M.Size = new System.Drawing.Size(121, 24);
-            this.cmb_M.TabIndex = 1;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(107, 42);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 1;
             // 
-            // label2
+            // labelFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(10, 79);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(10, 79);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(95, 23);
+            this.labelFactory.TabIndex = 98;
+            this.labelFactory.Text = "Factory";
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(10, 43);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(10, 43);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(94, 23);
+            this.labelM.TabIndex = 97;
+            this.labelM.Text = "M";
             // 
-            // label3
+            // labelEstCutDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(10, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(94, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Est. Cut Date";
+            this.labelEstCutDate.Lines = 0;
+            this.labelEstCutDate.Location = new System.Drawing.Point(10, 7);
+            this.labelEstCutDate.Name = "labelEstCutDate";
+            this.labelEstCutDate.Size = new System.Drawing.Size(94, 23);
+            this.labelEstCutDate.TabIndex = 3;
+            this.labelEstCutDate.Text = "Est. Cut Date";
             // 
-            // dateR_EstCutDate
+            // dateEstCutDate
             // 
-            this.dateR_EstCutDate.IsRequired = false;
-            this.dateR_EstCutDate.Location = new System.Drawing.Point(107, 7);
-            this.dateR_EstCutDate.Name = "dateR_EstCutDate";
-            this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EstCutDate.TabIndex = 0;
+            this.dateEstCutDate.IsRequired = false;
+            this.dateEstCutDate.Location = new System.Drawing.Point(107, 7);
+            this.dateEstCutDate.Name = "dateEstCutDate";
+            this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstCutDate.TabIndex = 0;
             // 
             // label4
             // 
@@ -157,12 +157,12 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.DateRange dateR_EstCutDate;
-        private Win.UI.Label label3;
-        private Win.UI.ComboBox cmb_Factory;
-        private Win.UI.ComboBox cmb_M;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DateRange dateEstCutDate;
+        private Win.UI.Label labelEstCutDate;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelM;
         private Win.UI.Label label4;
     }
 }

@@ -20,7 +20,7 @@ namespace Sci.Production.Cutting
             cutid = cID;
             requery();
             gridSetup();
-            this.grid1.AutoResizeColumns();
+            this.gridBundleCard.AutoResizeColumns();
         }
         private void requery()
         {
@@ -31,11 +31,11 @@ Where a.id = b.id and a.POID = '{0}' order by BundleNo"
                 , cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
-            grid1.DataSource = gridtb;
+            gridBundleCard.DataSource = gridtb;
         }
         private void gridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridBundleCard)
                 .Text("bundleno", header: "Bundle No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("cdate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)

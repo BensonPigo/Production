@@ -23,7 +23,7 @@ namespace Sci.Production.Cutting
 
         private void Copy_Click(object sender, EventArgs e)
         {
-            copycutref = textBox1.Text;
+            copycutref = txtCutRef.Text;
             if (MyUtility.Check.Empty(copycutref))
             {
                 MyUtility.Msg.WarningBox("CutRef# can not empty!");

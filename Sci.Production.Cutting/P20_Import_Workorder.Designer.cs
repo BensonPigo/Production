@@ -28,106 +28,106 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.Query = new Sci.Win.UI.Button();
-            this.Import = new Sci.Win.UI.Button();
-            this.Close = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.gridImport = new Sci.Win.UI.Grid();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.labelEstCutDate = new Sci.Win.UI.Label();
+            this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTOP = new Sci.Win.UI.Panel();
             this.panelBOTTOM = new Sci.Win.UI.Panel();
             this.panelMIDDLE = new Sci.Win.UI.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTOP.SuspendLayout();
             this.panelBOTTOM.SuspendLayout();
             this.panelMIDDLE.SuspendLayout();
             this.SuspendLayout();
             // 
-            // grid1
+            // gridImport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(944, 439);
-            this.grid1.TabIndex = 3;
-            this.grid1.TabStop = false;
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 0);
+            this.gridImport.Name = "gridImport";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(944, 439);
+            this.gridImport.TabIndex = 3;
+            this.gridImport.TabStop = false;
             // 
-            // Query
+            // btnQuery
             // 
-            this.Query.Location = new System.Drawing.Point(852, 7);
-            this.Query.Name = "Query";
-            this.Query.Size = new System.Drawing.Size(80, 30);
-            this.Query.TabIndex = 1;
-            this.Query.Text = "Query";
-            this.Query.UseVisualStyleBackColor = true;
-            this.Query.Click += new System.EventHandler(this.Query_Click);
+            this.btnQuery.Location = new System.Drawing.Point(852, 7);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 1;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.Query_Click);
             // 
-            // Import
+            // btnImport
             // 
-            this.Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Import.Location = new System.Drawing.Point(766, 5);
-            this.Import.Name = "Import";
-            this.Import.Size = new System.Drawing.Size(80, 30);
-            this.Import.TabIndex = 0;
-            this.Import.Text = "Import";
-            this.Import.UseVisualStyleBackColor = true;
-            this.Import.Click += new System.EventHandler(this.Import_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(766, 5);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.Import_Click);
             // 
-            // Close
+            // btnClose
             // 
-            this.Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Close.Location = new System.Drawing.Point(852, 5);
-            this.Close.Name = "Close";
-            this.Close.Size = new System.Drawing.Size(80, 30);
-            this.Close.TabIndex = 1;
-            this.Close.Text = "Close";
-            this.Close.UseVisualStyleBackColor = true;
-            this.Close.Click += new System.EventHandler(this.Close_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(852, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.Close_Click);
             // 
-            // label2
+            // labelEstCutDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Est. Cut Date";
+            this.labelEstCutDate.Lines = 0;
+            this.labelEstCutDate.Location = new System.Drawing.Point(13, 12);
+            this.labelEstCutDate.Name = "labelEstCutDate";
+            this.labelEstCutDate.Size = new System.Drawing.Size(99, 23);
+            this.labelEstCutDate.TabIndex = 5;
+            this.labelEstCutDate.Text = "Est. Cut Date";
             // 
-            // dateBox1
+            // dateEstCutDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(115, 12);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateEstCutDate.Location = new System.Drawing.Point(115, 12);
+            this.dateEstCutDate.Name = "dateEstCutDate";
+            this.dateEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateEstCutDate.TabIndex = 0;
             // 
             // panelTOP
             // 
-            this.panelTOP.Controls.Add(this.label2);
-            this.panelTOP.Controls.Add(this.dateBox1);
-            this.panelTOP.Controls.Add(this.Query);
+            this.panelTOP.Controls.Add(this.labelEstCutDate);
+            this.panelTOP.Controls.Add(this.dateEstCutDate);
+            this.panelTOP.Controls.Add(this.btnQuery);
             this.panelTOP.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTOP.Location = new System.Drawing.Point(0, 0);
             this.panelTOP.Name = "panelTOP";
@@ -136,8 +136,8 @@
             // 
             // panelBOTTOM
             // 
-            this.panelBOTTOM.Controls.Add(this.Close);
-            this.panelBOTTOM.Controls.Add(this.Import);
+            this.panelBOTTOM.Controls.Add(this.btnClose);
+            this.panelBOTTOM.Controls.Add(this.btnImport);
             this.panelBOTTOM.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBOTTOM.Location = new System.Drawing.Point(0, 483);
             this.panelBOTTOM.Name = "panelBOTTOM";
@@ -146,7 +146,7 @@
             // 
             // panelMIDDLE
             // 
-            this.panelMIDDLE.Controls.Add(this.grid1);
+            this.panelMIDDLE.Controls.Add(this.gridImport);
             this.panelMIDDLE.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMIDDLE.Location = new System.Drawing.Point(0, 44);
             this.panelMIDDLE.Name = "panelMIDDLE";
@@ -162,7 +162,7 @@
             this.DefaultControl = "dateBox1";
             this.Name = "P20_Import_Workorder";
             this.Text = "P20_Import";
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.panelTOP.ResumeLayout(false);
             this.panelBOTTOM.ResumeLayout(false);
             this.panelMIDDLE.ResumeLayout(false);
@@ -172,12 +172,12 @@
 
         #endregion
 
-        private Win.UI.Grid grid1;
-        private Win.UI.Button Query;
-        private Win.UI.Button Import;
-        private new Win.UI.Button Close;
-        private Win.UI.Label label2;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.Grid gridImport;
+        private Win.UI.Button btnQuery;
+        private Win.UI.Button btnImport;
+        private new Win.UI.Button btnClose;
+        private Win.UI.Label labelEstCutDate;
+        private Win.UI.DateBox dateEstCutDate;
         private Win.UI.Panel panelTOP;
         private Win.UI.Panel panelBOTTOM;
         private Win.UI.Panel panelMIDDLE;

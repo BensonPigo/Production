@@ -29,20 +29,20 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txt_CuttingSP2 = new Sci.Win.UI.TextBox();
+            this.txtCuttingSPEnd = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txt_CuttingSP1 = new Sci.Win.UI.TextBox();
-            this.cmd_Factory = new Sci.Win.UI.ComboBox();
-            this.cmb_M = new Sci.Win.UI.ComboBox();
-            this.dateR_EarliestSewingInline = new Sci.Win.UI.DateRange();
-            this.dateR_EarliestSCIDelivery = new Sci.Win.UI.DateRange();
-            this.dateR_EstCutDate = new Sci.Win.UI.DateRange();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.txtCuttingSPStart = new Sci.Win.UI.TextBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.dateEarliestSewingInline = new Sci.Win.UI.DateRange();
+            this.dateEarliestSCIDelivery = new Sci.Win.UI.DateRange();
+            this.dateEstCutDate = new Sci.Win.UI.DateRange();
+            this.labelEarliestSewingInline = new Sci.Win.UI.Label();
+            this.labelEarliestSCIDelivery = new Sci.Win.UI.Label();
+            this.labelCuttingSP = new Sci.Win.UI.Label();
+            this.labelEstCutDate = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -64,34 +64,34 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txt_CuttingSP2);
+            this.panel1.Controls.Add(this.txtCuttingSPEnd);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.txt_CuttingSP1);
-            this.panel1.Controls.Add(this.cmd_Factory);
-            this.panel1.Controls.Add(this.cmb_M);
-            this.panel1.Controls.Add(this.dateR_EarliestSewingInline);
-            this.panel1.Controls.Add(this.dateR_EarliestSCIDelivery);
-            this.panel1.Controls.Add(this.dateR_EstCutDate);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.labelFactory);
+            this.panel1.Controls.Add(this.labelM);
+            this.panel1.Controls.Add(this.txtCuttingSPStart);
+            this.panel1.Controls.Add(this.comboFactory);
+            this.panel1.Controls.Add(this.comboM);
+            this.panel1.Controls.Add(this.dateEarliestSewingInline);
+            this.panel1.Controls.Add(this.dateEarliestSCIDelivery);
+            this.panel1.Controls.Add(this.dateEstCutDate);
+            this.panel1.Controls.Add(this.labelEarliestSewingInline);
+            this.panel1.Controls.Add(this.labelEarliestSCIDelivery);
+            this.panel1.Controls.Add(this.labelCuttingSP);
+            this.panel1.Controls.Add(this.labelEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 231);
             this.panel1.TabIndex = 0;
             // 
-            // txt_CuttingSP2
+            // txtCuttingSPEnd
             // 
-            this.txt_CuttingSP2.BackColor = System.Drawing.Color.White;
-            this.txt_CuttingSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_CuttingSP2.Location = new System.Drawing.Point(312, 128);
-            this.txt_CuttingSP2.MaxLength = 13;
-            this.txt_CuttingSP2.Name = "txt_CuttingSP2";
-            this.txt_CuttingSP2.Size = new System.Drawing.Size(126, 23);
-            this.txt_CuttingSP2.TabIndex = 4;
+            this.txtCuttingSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtCuttingSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCuttingSPEnd.Location = new System.Drawing.Point(312, 128);
+            this.txtCuttingSPEnd.MaxLength = 13;
+            this.txtCuttingSPEnd.Name = "txtCuttingSPEnd";
+            this.txtCuttingSPEnd.Size = new System.Drawing.Size(126, 23);
+            this.txtCuttingSPEnd.TabIndex = 4;
             // 
             // label9
             // 
@@ -107,115 +107,115 @@
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // label2
+            // labelFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(15, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(142, 23);
-            this.label2.TabIndex = 96;
-            this.label2.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(15, 55);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(142, 23);
+            this.labelFactory.TabIndex = 96;
+            this.labelFactory.Text = "Factory";
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(141, 23);
-            this.label1.TabIndex = 95;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(16, 16);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(141, 23);
+            this.labelM.TabIndex = 95;
+            this.labelM.Text = "M";
             // 
-            // txt_CuttingSP1
+            // txtCuttingSPStart
             // 
-            this.txt_CuttingSP1.BackColor = System.Drawing.Color.White;
-            this.txt_CuttingSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_CuttingSP1.Location = new System.Drawing.Point(160, 128);
-            this.txt_CuttingSP1.MaxLength = 13;
-            this.txt_CuttingSP1.Name = "txt_CuttingSP1";
-            this.txt_CuttingSP1.Size = new System.Drawing.Size(126, 23);
-            this.txt_CuttingSP1.TabIndex = 3;
+            this.txtCuttingSPStart.BackColor = System.Drawing.Color.White;
+            this.txtCuttingSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCuttingSPStart.Location = new System.Drawing.Point(160, 128);
+            this.txtCuttingSPStart.MaxLength = 13;
+            this.txtCuttingSPStart.Name = "txtCuttingSPStart";
+            this.txtCuttingSPStart.Size = new System.Drawing.Size(126, 23);
+            this.txtCuttingSPStart.TabIndex = 3;
             // 
-            // cmd_Factory
+            // comboFactory
             // 
-            this.cmd_Factory.BackColor = System.Drawing.Color.White;
-            this.cmd_Factory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmd_Factory.FormattingEnabled = true;
-            this.cmd_Factory.IsSupportUnselect = true;
-            this.cmd_Factory.Location = new System.Drawing.Point(160, 54);
-            this.cmd_Factory.Name = "cmd_Factory";
-            this.cmd_Factory.Size = new System.Drawing.Size(121, 24);
-            this.cmd_Factory.TabIndex = 1;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(160, 54);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 1;
             // 
-            // cmb_M
+            // comboM
             // 
-            this.cmb_M.BackColor = System.Drawing.Color.White;
-            this.cmb_M.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmb_M.FormattingEnabled = true;
-            this.cmb_M.IsSupportUnselect = true;
-            this.cmb_M.Location = new System.Drawing.Point(160, 16);
-            this.cmb_M.Name = "cmb_M";
-            this.cmb_M.Size = new System.Drawing.Size(121, 24);
-            this.cmb_M.TabIndex = 0;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(160, 16);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 0;
             // 
-            // dateR_EarliestSewingInline
+            // dateEarliestSewingInline
             // 
-            this.dateR_EarliestSewingInline.IsRequired = false;
-            this.dateR_EarliestSewingInline.Location = new System.Drawing.Point(160, 195);
-            this.dateR_EarliestSewingInline.Name = "dateR_EarliestSewingInline";
-            this.dateR_EarliestSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EarliestSewingInline.TabIndex = 6;
+            this.dateEarliestSewingInline.IsRequired = false;
+            this.dateEarliestSewingInline.Location = new System.Drawing.Point(160, 195);
+            this.dateEarliestSewingInline.Name = "dateEarliestSewingInline";
+            this.dateEarliestSewingInline.Size = new System.Drawing.Size(280, 23);
+            this.dateEarliestSewingInline.TabIndex = 6;
             // 
-            // dateR_EarliestSCIDelivery
+            // dateEarliestSCIDelivery
             // 
-            this.dateR_EarliestSCIDelivery.IsRequired = false;
-            this.dateR_EarliestSCIDelivery.Location = new System.Drawing.Point(160, 161);
-            this.dateR_EarliestSCIDelivery.Name = "dateR_EarliestSCIDelivery";
-            this.dateR_EarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EarliestSCIDelivery.TabIndex = 5;
+            this.dateEarliestSCIDelivery.IsRequired = false;
+            this.dateEarliestSCIDelivery.Location = new System.Drawing.Point(160, 161);
+            this.dateEarliestSCIDelivery.Name = "dateEarliestSCIDelivery";
+            this.dateEarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateEarliestSCIDelivery.TabIndex = 5;
             // 
-            // dateR_EstCutDate
+            // dateEstCutDate
             // 
-            this.dateR_EstCutDate.IsRequired = false;
-            this.dateR_EstCutDate.Location = new System.Drawing.Point(160, 90);
-            this.dateR_EstCutDate.Name = "dateR_EstCutDate";
-            this.dateR_EstCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_EstCutDate.TabIndex = 2;
+            this.dateEstCutDate.IsRequired = false;
+            this.dateEstCutDate.Location = new System.Drawing.Point(160, 90);
+            this.dateEstCutDate.Name = "dateEstCutDate";
+            this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstCutDate.TabIndex = 2;
             // 
-            // label6
+            // labelEarliestSewingInline
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(16, 195);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(141, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Earliest Sewing Inline";
+            this.labelEarliestSewingInline.Lines = 0;
+            this.labelEarliestSewingInline.Location = new System.Drawing.Point(16, 195);
+            this.labelEarliestSewingInline.Name = "labelEarliestSewingInline";
+            this.labelEarliestSewingInline.Size = new System.Drawing.Size(141, 23);
+            this.labelEarliestSewingInline.TabIndex = 5;
+            this.labelEarliestSewingInline.Text = "Earliest Sewing Inline";
             // 
-            // label5
+            // labelEarliestSCIDelivery
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 161);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(141, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Earliest SCI Delivery";
+            this.labelEarliestSCIDelivery.Lines = 0;
+            this.labelEarliestSCIDelivery.Location = new System.Drawing.Point(16, 161);
+            this.labelEarliestSCIDelivery.Name = "labelEarliestSCIDelivery";
+            this.labelEarliestSCIDelivery.Size = new System.Drawing.Size(141, 23);
+            this.labelEarliestSCIDelivery.TabIndex = 4;
+            this.labelEarliestSCIDelivery.Text = "Earliest SCI Delivery";
             // 
-            // label4
+            // labelCuttingSP
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 128);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(141, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Cutting SP#";
+            this.labelCuttingSP.Lines = 0;
+            this.labelCuttingSP.Location = new System.Drawing.Point(16, 128);
+            this.labelCuttingSP.Name = "labelCuttingSP";
+            this.labelCuttingSP.Size = new System.Drawing.Size(141, 23);
+            this.labelCuttingSP.TabIndex = 3;
+            this.labelCuttingSP.Text = "Cutting SP#";
             // 
-            // label3
+            // labelEstCutDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 90);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(141, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Est. Cut Date";
+            this.labelEstCutDate.Lines = 0;
+            this.labelEstCutDate.Location = new System.Drawing.Point(16, 90);
+            this.labelEstCutDate.Name = "labelEstCutDate";
+            this.labelEstCutDate.Size = new System.Drawing.Size(141, 23);
+            this.labelEstCutDate.TabIndex = 2;
+            this.labelEstCutDate.Text = "Est. Cut Date";
             // 
             // label7
             // 
@@ -251,19 +251,19 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.TextBox txt_CuttingSP1;
-        private Win.UI.ComboBox cmd_Factory;
-        private Win.UI.ComboBox cmb_M;
-        private Win.UI.DateRange dateR_EarliestSewingInline;
-        private Win.UI.DateRange dateR_EarliestSCIDelivery;
-        private Win.UI.DateRange dateR_EstCutDate;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox txt_CuttingSP2;
+        private Win.UI.TextBox txtCuttingSPStart;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.DateRange dateEarliestSewingInline;
+        private Win.UI.DateRange dateEarliestSCIDelivery;
+        private Win.UI.DateRange dateEstCutDate;
+        private Win.UI.Label labelEarliestSewingInline;
+        private Win.UI.Label labelEarliestSCIDelivery;
+        private Win.UI.Label labelCuttingSP;
+        private Win.UI.Label labelEstCutDate;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelFactory;
+        private Win.UI.TextBox txtCuttingSPEnd;
         private Win.UI.Label label9;
         private Win.UI.Label label7;
     }

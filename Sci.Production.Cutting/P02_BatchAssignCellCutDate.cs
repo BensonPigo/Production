@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
             InitializeComponent();
-            txtcell.FactoryId = Sci.Env.User.Keyword;
+            txtCutCell.FactoryId = Sci.Env.User.Keyword;
             txtCell2.FactoryId = Sci.Env.User.Keyword;
             detailTb = cursor;
             curTb = cursor.Copy();
@@ -34,7 +34,7 @@ namespace Sci.Production.Cutting
         private void gridsetup()
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Cell.EditingMouseDown += (s, e) => 
             {
                  DualResult  DR; DataTable DT; SelectItem S;
@@ -59,7 +59,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
                 dr.EndEdit();
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
              .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
@@ -100,23 +100,23 @@ namespace Sci.Production.Cutting
              .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
-            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["Cutcellid"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
-            this.grid1.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
 
         }
 
         private void filter_button_Click(object sender, EventArgs e)
         {
-            string sp = SP_textbox.Text;
-            string article = article_textbox.Text;
-            string markername = markername_textbox.Text;
-            string sizecode = sizecode_textbox.Text;
-            string cutcell = txtcell.Text;
-            string fabriccombo = fabriccombo_textbox.Text;
-            string estcutdate = estcutdate_textbox1.Text.ToString();
+            string sp = txtSPNo.Text;
+            string article = txtArticle.Text;
+            string markername = txtMarkerName.Text;
+            string sizecode = txtSizeCode.Text;
+            string cutcell = txtCutCell.Text;
+            string fabriccombo = txtFabricCombo.Text;
+            string estcutdate = txtEstCutDate.Text.ToString();
             string filter="(cutref is null or cutref = '') and (cutplanid is null or cutplanid = '') ";
             if (!MyUtility.Check.Empty(sp)) filter = filter + string.Format(" and OrderID ='{0}'", sp);
             if (!MyUtility.Check.Empty(article)) filter = filter + string.Format(" and article like '%{0}%'", article);
@@ -124,13 +124,13 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(sizecode)) filter = filter + string.Format(" and sizecode like '%{0}%'", sizecode);
             if (!MyUtility.Check.Empty(cutcell)) filter = filter + string.Format(" and cutcellid ='{0}'", cutcell);
             if (!MyUtility.Check.Empty(fabriccombo)) filter = filter + string.Format(" and fabriccombo ='{0}'", fabriccombo);
-            if (!MyUtility.Check.Empty(cutno_numericbox.Value)) filter = filter + string.Format(" and cutno ={0}", cutno_numericbox.Value);
-            if (!MyUtility.Check.Empty(estcutdate_textbox1.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
-            if (only_checkBox.Value == "True") filter = filter + " and estcutdate is null ";
+            if (!MyUtility.Check.Empty(numCutNo.Value)) filter = filter + string.Format(" and cutno ={0}", numCutNo.Value);
+            if (!MyUtility.Check.Empty(txtEstCutDate.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
+            if (checkOnlyShowEmptyEstCutDate.Value == "True") filter = filter + " and estcutdate is null ";
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
             curTb.DefaultView.RowFilter=filter;
             curTb.DefaultView.Sort = orderby;
-            grid1.DataSource = curTb;
+            gridBatchAssignCellEstCutDate.DataSource = curTb;
             
         }
        
@@ -157,9 +157,9 @@ namespace Sci.Production.Cutting
         private void batchestcutdate_button_Click(object sender, EventArgs e)
         {
             string cdate =""; 
-                if(!MyUtility.Check.Empty(estcutdate_textbox2.Value))
+                if(!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
                 {
-                    cdate = estcutdate_textbox2.Text;
+                    cdate = txtBatchUpdateEstCutDate.Text;
                 };
             foreach (DataRow dr in curTb.Rows)
             {
@@ -187,11 +187,11 @@ namespace Sci.Production.Cutting
 
         private void btn_Confirm_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridBatchAssignCellEstCutDate.ValidateControl();
             string cell = txtCell2.Text;string cdate = ""; 
-            if (!MyUtility.Check.Empty(estcutdate_textbox2.Value))
+            if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
-                cdate = estcutdate_textbox2.Text;
+                cdate = txtBatchUpdateEstCutDate.Text;
             };
             foreach (DataRow dr in curTb.Rows)
             {

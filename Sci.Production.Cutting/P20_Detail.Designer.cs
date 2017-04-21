@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
+            this.labelCutRefNo = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelFabricCombo = new Sci.Win.UI.Label();
+            this.labelFabricPanelCode = new Sci.Win.UI.Label();
+            this.labelCutNo = new Sci.Win.UI.Label();
+            this.displayCutRefNo = new Sci.Win.UI.DisplayBox();
+            this.labelMarkerName = new Sci.Win.UI.Label();
+            this.labelMarkerLength = new Sci.Win.UI.Label();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.labelCons = new Sci.Win.UI.Label();
+            this.editSPNo = new Sci.Win.UI.EditBox();
+            this.displayCutNo = new Sci.Win.UI.DisplayBox();
+            this.displayColor = new Sci.Win.UI.DisplayBox();
+            this.displayCons = new Sci.Win.UI.DisplayBox();
+            this.displayMarkerName = new Sci.Win.UI.DisplayBox();
+            this.displayMarkerLength = new Sci.Win.UI.DisplayBox();
+            this.displayFabricCombo = new Sci.Win.UI.DisplayBox();
+            this.displayFabricPanelCode = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -88,192 +88,192 @@
             this.prev.Location = new System.Drawing.Point(125, 5);
             this.prev.TabIndex = 2;
             // 
-            // label1
+            // labelCutRefNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 47);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 99;
-            this.label1.Text = "CutRef#";
+            this.labelCutRefNo.Lines = 0;
+            this.labelCutRefNo.Location = new System.Drawing.Point(12, 47);
+            this.labelCutRefNo.Name = "labelCutRefNo";
+            this.labelCutRefNo.Size = new System.Drawing.Size(75, 23);
+            this.labelCutRefNo.TabIndex = 99;
+            this.labelCutRefNo.Text = "CutRef#";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(12, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(12, 9);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(75, 23);
+            this.labelSPNo.TabIndex = 100;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label3
+            // labelFabricCombo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(180, 114);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(94, 23);
-            this.label3.TabIndex = 101;
-            this.label3.Text = "FabricCombo";
+            this.labelFabricCombo.Lines = 0;
+            this.labelFabricCombo.Location = new System.Drawing.Point(180, 114);
+            this.labelFabricCombo.Name = "labelFabricCombo";
+            this.labelFabricCombo.Size = new System.Drawing.Size(94, 23);
+            this.labelFabricCombo.TabIndex = 101;
+            this.labelFabricCombo.Text = "FabricCombo";
             // 
-            // label4
+            // labelFabricPanelCode
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(180, 149);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(94, 23);
-            this.label4.TabIndex = 102;
-            this.label4.Text = "FabricPanelCode";
+            this.labelFabricPanelCode.Lines = 0;
+            this.labelFabricPanelCode.Location = new System.Drawing.Point(180, 149);
+            this.labelFabricPanelCode.Name = "labelFabricPanelCode";
+            this.labelFabricPanelCode.Size = new System.Drawing.Size(94, 23);
+            this.labelFabricPanelCode.TabIndex = 102;
+            this.labelFabricPanelCode.Text = "FabricPanelCode";
             // 
-            // label5
+            // labelCutNo
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(12, 81);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 103;
-            this.label5.Text = "Cut#";
+            this.labelCutNo.Lines = 0;
+            this.labelCutNo.Location = new System.Drawing.Point(12, 81);
+            this.labelCutNo.Name = "labelCutNo";
+            this.labelCutNo.Size = new System.Drawing.Size(75, 23);
+            this.labelCutNo.TabIndex = 103;
+            this.labelCutNo.Text = "Cut#";
             // 
-            // displayBox1
+            // displayCutRefNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(90, 47);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(69, 23);
-            this.displayBox1.TabIndex = 1;
+            this.displayCutRefNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutRefNo.Location = new System.Drawing.Point(90, 47);
+            this.displayCutRefNo.Name = "displayCutRefNo";
+            this.displayCutRefNo.Size = new System.Drawing.Size(69, 23);
+            this.displayCutRefNo.TabIndex = 1;
             // 
-            // label6
+            // labelMarkerName
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(180, 47);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(94, 23);
-            this.label6.TabIndex = 105;
-            this.label6.Text = "Marker Name";
+            this.labelMarkerName.Lines = 0;
+            this.labelMarkerName.Location = new System.Drawing.Point(180, 47);
+            this.labelMarkerName.Name = "labelMarkerName";
+            this.labelMarkerName.Size = new System.Drawing.Size(94, 23);
+            this.labelMarkerName.TabIndex = 105;
+            this.labelMarkerName.Text = "Marker Name";
             // 
-            // label7
+            // labelMarkerLength
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(180, 81);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(94, 23);
-            this.label7.TabIndex = 106;
-            this.label7.Text = "Marker Length";
+            this.labelMarkerLength.Lines = 0;
+            this.labelMarkerLength.Location = new System.Drawing.Point(180, 81);
+            this.labelMarkerLength.Name = "labelMarkerLength";
+            this.labelMarkerLength.Size = new System.Drawing.Size(94, 23);
+            this.labelMarkerLength.TabIndex = 106;
+            this.labelMarkerLength.Text = "Marker Length";
             // 
-            // label8
+            // labelColor
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(12, 115);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 107;
-            this.label8.Text = "Color";
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(12, 115);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(75, 23);
+            this.labelColor.TabIndex = 107;
+            this.labelColor.Text = "Color";
             // 
-            // label9
+            // labelCons
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(12, 149);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 108;
-            this.label9.Text = "Cons";
+            this.labelCons.Lines = 0;
+            this.labelCons.Location = new System.Drawing.Point(12, 149);
+            this.labelCons.Name = "labelCons";
+            this.labelCons.Size = new System.Drawing.Size(75, 23);
+            this.labelCons.TabIndex = 108;
+            this.labelCons.Text = "Cons";
             // 
-            // editBox1
+            // editSPNo
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(90, 9);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(256, 36);
-            this.editBox1.TabIndex = 0;
+            this.editSPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editSPNo.IsSupportEditMode = false;
+            this.editSPNo.Location = new System.Drawing.Point(90, 9);
+            this.editSPNo.Multiline = true;
+            this.editSPNo.Name = "editSPNo";
+            this.editSPNo.ReadOnly = true;
+            this.editSPNo.Size = new System.Drawing.Size(256, 36);
+            this.editSPNo.TabIndex = 0;
             // 
-            // displayBox2
+            // displayCutNo
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(90, 81);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(50, 23);
-            this.displayBox2.TabIndex = 3;
+            this.displayCutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutNo.Location = new System.Drawing.Point(90, 81);
+            this.displayCutNo.Name = "displayCutNo";
+            this.displayCutNo.Size = new System.Drawing.Size(50, 23);
+            this.displayCutNo.TabIndex = 3;
             // 
-            // displayBox3
+            // displayColor
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(90, 115);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 5;
+            this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColor.Location = new System.Drawing.Point(90, 115);
+            this.displayColor.Name = "displayColor";
+            this.displayColor.Size = new System.Drawing.Size(80, 23);
+            this.displayColor.TabIndex = 5;
             // 
-            // displayBox4
+            // displayCons
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(90, 149);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(69, 23);
-            this.displayBox4.TabIndex = 7;
+            this.displayCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCons.Location = new System.Drawing.Point(90, 149);
+            this.displayCons.Name = "displayCons";
+            this.displayCons.Size = new System.Drawing.Size(69, 23);
+            this.displayCons.TabIndex = 7;
             // 
-            // displayBox5
+            // displayMarkerName
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(277, 47);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(69, 23);
-            this.displayBox5.TabIndex = 2;
+            this.displayMarkerName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMarkerName.Location = new System.Drawing.Point(277, 47);
+            this.displayMarkerName.Name = "displayMarkerName";
+            this.displayMarkerName.Size = new System.Drawing.Size(69, 23);
+            this.displayMarkerName.TabIndex = 2;
             // 
-            // displayBox6
+            // displayMarkerLength
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(277, 81);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(108, 23);
-            this.displayBox6.TabIndex = 4;
+            this.displayMarkerLength.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMarkerLength.Location = new System.Drawing.Point(277, 81);
+            this.displayMarkerLength.Name = "displayMarkerLength";
+            this.displayMarkerLength.Size = new System.Drawing.Size(108, 23);
+            this.displayMarkerLength.TabIndex = 4;
             // 
-            // displayBox7
+            // displayFabricCombo
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(277, 115);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(108, 23);
-            this.displayBox7.TabIndex = 6;
+            this.displayFabricCombo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricCombo.Location = new System.Drawing.Point(277, 115);
+            this.displayFabricCombo.Name = "displayFabricCombo";
+            this.displayFabricCombo.Size = new System.Drawing.Size(108, 23);
+            this.displayFabricCombo.TabIndex = 6;
             // 
-            // displayBox8
+            // displayFabricPanelCode
             // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(277, 149);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(108, 23);
-            this.displayBox8.TabIndex = 8;
+            this.displayFabricPanelCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricPanelCode.Location = new System.Drawing.Point(277, 149);
+            this.displayFabricPanelCode.Name = "displayFabricPanelCode";
+            this.displayFabricPanelCode.Size = new System.Drawing.Size(108, 23);
+            this.displayFabricPanelCode.TabIndex = 8;
             // 
             // P20_Detail
             // 
             this.ClientSize = new System.Drawing.Size(405, 395);
-            this.Controls.Add(this.displayBox8);
-            this.Controls.Add(this.displayBox7);
-            this.Controls.Add(this.displayBox6);
-            this.Controls.Add(this.displayBox5);
-            this.Controls.Add(this.displayBox4);
-            this.Controls.Add(this.displayBox3);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.displayBox1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.displayFabricPanelCode);
+            this.Controls.Add(this.displayFabricCombo);
+            this.Controls.Add(this.displayMarkerLength);
+            this.Controls.Add(this.displayMarkerName);
+            this.Controls.Add(this.displayCons);
+            this.Controls.Add(this.displayColor);
+            this.Controls.Add(this.displayCutNo);
+            this.Controls.Add(this.editSPNo);
+            this.Controls.Add(this.labelCons);
+            this.Controls.Add(this.labelColor);
+            this.Controls.Add(this.labelMarkerLength);
+            this.Controls.Add(this.labelMarkerName);
+            this.Controls.Add(this.displayCutRefNo);
+            this.Controls.Add(this.labelCutNo);
+            this.Controls.Add(this.labelFabricPanelCode);
+            this.Controls.Add(this.labelFabricCombo);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.labelCutRefNo);
             this.IsSupportDelete = false;
             this.IsSupportNew = false;
             this.IsSupportUpdate = false;
@@ -282,26 +282,26 @@
             this.Text = "Cutting Daily Output";
             this.WorkAlias = "ThreadRequisition_Detail_Cons";
             this.Load += new System.EventHandler(this.P20_Detail_Load);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.displayBox1, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.labelCutRefNo, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.labelFabricCombo, 0);
+            this.Controls.SetChildIndex(this.labelFabricPanelCode, 0);
+            this.Controls.SetChildIndex(this.labelCutNo, 0);
+            this.Controls.SetChildIndex(this.displayCutRefNo, 0);
+            this.Controls.SetChildIndex(this.labelMarkerName, 0);
+            this.Controls.SetChildIndex(this.labelMarkerLength, 0);
+            this.Controls.SetChildIndex(this.labelColor, 0);
+            this.Controls.SetChildIndex(this.labelCons, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
-            this.Controls.SetChildIndex(this.displayBox2, 0);
-            this.Controls.SetChildIndex(this.displayBox3, 0);
-            this.Controls.SetChildIndex(this.displayBox4, 0);
-            this.Controls.SetChildIndex(this.displayBox5, 0);
-            this.Controls.SetChildIndex(this.displayBox6, 0);
-            this.Controls.SetChildIndex(this.displayBox7, 0);
-            this.Controls.SetChildIndex(this.displayBox8, 0);
+            this.Controls.SetChildIndex(this.editSPNo, 0);
+            this.Controls.SetChildIndex(this.displayCutNo, 0);
+            this.Controls.SetChildIndex(this.displayColor, 0);
+            this.Controls.SetChildIndex(this.displayCons, 0);
+            this.Controls.SetChildIndex(this.displayMarkerName, 0);
+            this.Controls.SetChildIndex(this.displayMarkerLength, 0);
+            this.Controls.SetChildIndex(this.displayFabricCombo, 0);
+            this.Controls.SetChildIndex(this.displayFabricPanelCode, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -312,23 +312,23 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox7;
-        private Win.UI.DisplayBox displayBox8;
+        private Win.UI.Label labelCutRefNo;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelFabricCombo;
+        private Win.UI.Label labelFabricPanelCode;
+        private Win.UI.Label labelCutNo;
+        private Win.UI.DisplayBox displayCutRefNo;
+        private Win.UI.Label labelMarkerName;
+        private Win.UI.Label labelMarkerLength;
+        private Win.UI.Label labelColor;
+        private Win.UI.Label labelCons;
+        private Win.UI.EditBox editSPNo;
+        private Win.UI.DisplayBox displayCutNo;
+        private Win.UI.DisplayBox displayColor;
+        private Win.UI.DisplayBox displayCons;
+        private Win.UI.DisplayBox displayMarkerName;
+        private Win.UI.DisplayBox displayMarkerLength;
+        private Win.UI.DisplayBox displayFabricCombo;
+        private Win.UI.DisplayBox displayFabricPanelCode;
     }
 }

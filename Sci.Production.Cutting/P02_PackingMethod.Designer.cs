@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.labelOrderList = new Sci.Win.UI.Label();
+            this.labelPackingMethod = new Sci.Win.UI.Label();
+            this.labelQtyCarton = new Sci.Win.UI.Label();
+            this.numQtyCarton = new Sci.Win.UI.NumericBox();
+            this.btnBreakdown = new Sci.Win.UI.Button();
+            this.editpacking = new Sci.Win.UI.EditBox();
+            this.displayPackingMethod = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -62,96 +62,96 @@
             // 
             this.save.Location = new System.Drawing.Point(462, 5);
             // 
-            // label1
+            // labelOrderList
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "Order List";
+            this.labelOrderList.Lines = 0;
+            this.labelOrderList.Location = new System.Drawing.Point(12, 22);
+            this.labelOrderList.Name = "labelOrderList";
+            this.labelOrderList.Size = new System.Drawing.Size(108, 23);
+            this.labelOrderList.TabIndex = 98;
+            this.labelOrderList.Text = "Order List";
             // 
-            // label2
+            // labelPackingMethod
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(190, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "Packing Method";
+            this.labelPackingMethod.Lines = 0;
+            this.labelPackingMethod.Location = new System.Drawing.Point(190, 22);
+            this.labelPackingMethod.Name = "labelPackingMethod";
+            this.labelPackingMethod.Size = new System.Drawing.Size(108, 23);
+            this.labelPackingMethod.TabIndex = 100;
+            this.labelPackingMethod.Text = "Packing Method";
             // 
-            // label3
+            // labelQtyCarton
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(368, 22);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 101;
-            this.label3.Text = "Qty/Carton";
+            this.labelQtyCarton.Lines = 0;
+            this.labelQtyCarton.Location = new System.Drawing.Point(368, 22);
+            this.labelQtyCarton.Name = "labelQtyCarton";
+            this.labelQtyCarton.Size = new System.Drawing.Size(82, 23);
+            this.labelQtyCarton.TabIndex = 101;
+            this.labelQtyCarton.Text = "Qty/Carton";
             // 
-            // numericBox1
+            // numQtyCarton
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CtnQty", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.Location = new System.Drawing.Point(368, 49);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numQtyCarton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numQtyCarton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CtnQty", true));
+            this.numQtyCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numQtyCarton.Location = new System.Drawing.Point(368, 49);
+            this.numQtyCarton.Name = "numQtyCarton";
+            this.numQtyCarton.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 102;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numQtyCarton.ReadOnly = true;
+            this.numQtyCarton.Size = new System.Drawing.Size(100, 23);
+            this.numQtyCarton.TabIndex = 102;
+            this.numQtyCarton.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // button1
+            // btnBreakdown
             // 
-            this.button1.Location = new System.Drawing.Point(474, 45);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(96, 30);
-            this.button1.TabIndex = 103;
-            this.button1.Text = "Breakdown";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnBreakdown.Location = new System.Drawing.Point(474, 45);
+            this.btnBreakdown.Name = "btnBreakdown";
+            this.btnBreakdown.Size = new System.Drawing.Size(96, 30);
+            this.btnBreakdown.TabIndex = 103;
+            this.btnBreakdown.Text = "Breakdown";
+            this.btnBreakdown.UseVisualStyleBackColor = true;
+            this.btnBreakdown.Click += new System.EventHandler(this.button1_Click);
             // 
-            // editBox1
+            // editpacking
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "packing", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.Location = new System.Drawing.Point(190, 78);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(418, 331);
-            this.editBox1.TabIndex = 104;
+            this.editpacking.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editpacking.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "packing", true));
+            this.editpacking.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editpacking.Location = new System.Drawing.Point(190, 78);
+            this.editpacking.Multiline = true;
+            this.editpacking.Name = "editpacking";
+            this.editpacking.ReadOnly = true;
+            this.editpacking.Size = new System.Drawing.Size(418, 331);
+            this.editpacking.TabIndex = 104;
             // 
-            // displayBox1
+            // displayPackingMethod
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packingmethod", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(190, 49);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(172, 23);
-            this.displayBox1.TabIndex = 105;
+            this.displayPackingMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPackingMethod.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packingmethod", true));
+            this.displayPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPackingMethod.Location = new System.Drawing.Point(190, 49);
+            this.displayPackingMethod.Name = "displayPackingMethod";
+            this.displayPackingMethod.Size = new System.Drawing.Size(172, 23);
+            this.displayPackingMethod.TabIndex = 105;
             // 
             // P02_PackingMethod
             // 
             this.ClientSize = new System.Drawing.Size(632, 455);
-            this.Controls.Add(this.displayBox1);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.displayPackingMethod);
+            this.Controls.Add(this.editpacking);
+            this.Controls.Add(this.btnBreakdown);
+            this.Controls.Add(this.numQtyCarton);
+            this.Controls.Add(this.labelQtyCarton);
+            this.Controls.Add(this.labelPackingMethod);
+            this.Controls.Add(this.labelOrderList);
             this.GridEdit = false;
             this.GridPopUp = false;
             this.KeyField1 = "cuttingsp";
@@ -160,13 +160,13 @@
             this.WorkAlias = "orders";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.numericBox1, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
-            this.Controls.SetChildIndex(this.displayBox1, 0);
+            this.Controls.SetChildIndex(this.labelOrderList, 0);
+            this.Controls.SetChildIndex(this.labelPackingMethod, 0);
+            this.Controls.SetChildIndex(this.labelQtyCarton, 0);
+            this.Controls.SetChildIndex(this.numQtyCarton, 0);
+            this.Controls.SetChildIndex(this.btnBreakdown, 0);
+            this.Controls.SetChildIndex(this.editpacking, 0);
+            this.Controls.SetChildIndex(this.displayPackingMethod, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -177,12 +177,12 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Button button1;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label labelOrderList;
+        private Win.UI.Label labelPackingMethod;
+        private Win.UI.Label labelQtyCarton;
+        private Win.UI.NumericBox numQtyCarton;
+        private Win.UI.Button btnBreakdown;
+        private Win.UI.EditBox editpacking;
+        private Win.UI.DisplayBox displayPackingMethod;
     }
 }

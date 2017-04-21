@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelManPower = new Sci.Win.UI.Label();
+            this.labelWorkingHourPerDay = new Sci.Win.UI.Label();
+            this.labelActoutputYDS = new Sci.Win.UI.Label();
+            this.labelActoutputGMTPCS = new Sci.Win.UI.Label();
+            this.labelPPH = new Sci.Win.UI.Label();
+            this.numManPower = new Sci.Win.UI.NumericBox();
+            this.numWorkingHourPerDay = new Sci.Win.UI.NumericBox();
+            this.displayPPH = new Sci.Win.UI.DisplayBox();
+            this.displayActoutputYDS = new Sci.Win.UI.DisplayBox();
+            this.displayActoutputGMTPCS = new Sci.Win.UI.DisplayBox();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnImportfromWorkOrder = new Sci.Win.UI.Button();
+            this.btnImportfromRealtimeBundleTracking = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,44 +62,44 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.btnImportfromRealtimeBundleTracking);
+            this.masterpanel.Controls.Add(this.btnImportfromWorkOrder);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.displayActoutputGMTPCS);
+            this.masterpanel.Controls.Add(this.displayActoutputYDS);
+            this.masterpanel.Controls.Add(this.displayPPH);
+            this.masterpanel.Controls.Add(this.numWorkingHourPerDay);
+            this.masterpanel.Controls.Add(this.numManPower);
+            this.masterpanel.Controls.Add(this.labelPPH);
+            this.masterpanel.Controls.Add(this.labelActoutputGMTPCS);
+            this.masterpanel.Controls.Add(this.labelActoutputYDS);
+            this.masterpanel.Controls.Add(this.labelWorkingHourPerDay);
+            this.masterpanel.Controls.Add(this.labelManPower);
+            this.masterpanel.Controls.Add(this.dateDate);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelID);
+            this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Size = new System.Drawing.Size(918, 135);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelManPower, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelWorkingHourPerDay, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelActoutputYDS, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelActoutputGMTPCS, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPPH, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numManPower, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numWorkingHourPerDay, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPPH, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayActoutputYDS, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayActoutputGMTPCS, 0);
             this.masterpanel.Controls.SetChildIndex(this.label8, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportfromWorkOrder, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportfromRealtimeBundleTracking, 0);
             // 
             // detailpanel
             // 
@@ -133,7 +133,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(820, 414);
+            this.browse.Size = new System.Drawing.Size(918, 414);
             // 
             // tabs
             // 
@@ -153,176 +153,176 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
-            this.dateBox1.Location = new System.Drawing.Point(99, 49);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 3;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
+            this.dateDate.Location = new System.Drawing.Point(99, 49);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 3;
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(99, 11);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(108, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(99, 11);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(108, 23);
+            this.displayID.TabIndex = 0;
             // 
-            // label3
+            // labelDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(14, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 17;
-            this.label3.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(14, 49);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(82, 23);
+            this.labelDate.TabIndex = 17;
+            this.labelDate.Text = "Date";
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(14, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(14, 11);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(82, 23);
+            this.labelID.TabIndex = 16;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelManPower
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(242, 88);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 20;
-            this.label2.Text = "ManPower";
+            this.labelManPower.Lines = 0;
+            this.labelManPower.Location = new System.Drawing.Point(242, 88);
+            this.labelManPower.Name = "labelManPower";
+            this.labelManPower.Size = new System.Drawing.Size(82, 23);
+            this.labelManPower.TabIndex = 20;
+            this.labelManPower.Text = "ManPower";
             // 
-            // label4
+            // labelWorkingHourPerDay
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(242, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(142, 23);
-            this.label4.TabIndex = 21;
-            this.label4.Text = "Working hour per day";
+            this.labelWorkingHourPerDay.Lines = 0;
+            this.labelWorkingHourPerDay.Location = new System.Drawing.Point(242, 10);
+            this.labelWorkingHourPerDay.Name = "labelWorkingHourPerDay";
+            this.labelWorkingHourPerDay.Size = new System.Drawing.Size(142, 23);
+            this.labelWorkingHourPerDay.TabIndex = 21;
+            this.labelWorkingHourPerDay.Text = "Working hour per day";
             // 
-            // label5
+            // labelActoutputYDS
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(454, 11);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(142, 23);
-            this.label5.TabIndex = 22;
-            this.label5.Text = "Act. output(YDS)";
+            this.labelActoutputYDS.Lines = 0;
+            this.labelActoutputYDS.Location = new System.Drawing.Point(454, 11);
+            this.labelActoutputYDS.Name = "labelActoutputYDS";
+            this.labelActoutputYDS.Size = new System.Drawing.Size(142, 23);
+            this.labelActoutputYDS.TabIndex = 22;
+            this.labelActoutputYDS.Text = "Act. output(YDS)";
             // 
-            // label6
+            // labelActoutputGMTPCS
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(454, 49);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(142, 23);
-            this.label6.TabIndex = 23;
-            this.label6.Text = "Act. output(GMT PCS)";
+            this.labelActoutputGMTPCS.Lines = 0;
+            this.labelActoutputGMTPCS.Location = new System.Drawing.Point(454, 49);
+            this.labelActoutputGMTPCS.Name = "labelActoutputGMTPCS";
+            this.labelActoutputGMTPCS.Size = new System.Drawing.Size(142, 23);
+            this.labelActoutputGMTPCS.TabIndex = 23;
+            this.labelActoutputGMTPCS.Text = "Act. output(GMT PCS)";
             // 
-            // label7
+            // labelPPH
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(242, 49);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(82, 23);
-            this.label7.TabIndex = 24;
-            this.label7.Text = "PPH";
+            this.labelPPH.Lines = 0;
+            this.labelPPH.Location = new System.Drawing.Point(242, 49);
+            this.labelPPH.Name = "labelPPH";
+            this.labelPPH.Size = new System.Drawing.Size(82, 23);
+            this.labelPPH.TabIndex = 24;
+            this.labelPPH.Text = "PPH";
             // 
-            // numericBox2
+            // numManPower
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manpower", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(327, 88);
-            this.numericBox2.Maximum = new decimal(new int[] {
+            this.numManPower.BackColor = System.Drawing.Color.White;
+            this.numManPower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manpower", true));
+            this.numManPower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numManPower.Location = new System.Drawing.Point(327, 88);
+            this.numManPower.Maximum = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.numericBox2.Minimum = new decimal(new int[] {
+            this.numManPower.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numManPower.Name = "numManPower";
+            this.numManPower.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(46, 23);
-            this.numericBox2.TabIndex = 6;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numManPower.Size = new System.Drawing.Size(46, 23);
+            this.numManPower.TabIndex = 6;
+            this.numManPower.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox1
+            // numWorkingHourPerDay
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manhours", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(387, 11);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numWorkingHourPerDay.BackColor = System.Drawing.Color.White;
+            this.numWorkingHourPerDay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manhours", true));
+            this.numWorkingHourPerDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWorkingHourPerDay.Location = new System.Drawing.Point(387, 11);
+            this.numWorkingHourPerDay.Maximum = new decimal(new int[] {
             24,
             0,
             0,
             0});
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numWorkingHourPerDay.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numWorkingHourPerDay.Name = "numWorkingHourPerDay";
+            this.numWorkingHourPerDay.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(46, 23);
-            this.numericBox1.TabIndex = 1;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numWorkingHourPerDay.Size = new System.Drawing.Size(46, 23);
+            this.numWorkingHourPerDay.TabIndex = 1;
+            this.numWorkingHourPerDay.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // displayBox2
+            // displayPPH
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pph", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(327, 49);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(70, 23);
-            this.displayBox2.TabIndex = 4;
+            this.displayPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pph", true));
+            this.displayPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPPH.Location = new System.Drawing.Point(327, 49);
+            this.displayPPH.Name = "displayPPH";
+            this.displayPPH.Size = new System.Drawing.Size(70, 23);
+            this.displayPPH.TabIndex = 4;
             // 
-            // displayBox3
+            // displayActoutputYDS
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actoutput", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(599, 11);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(70, 23);
-            this.displayBox3.TabIndex = 2;
+            this.displayActoutputYDS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayActoutputYDS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actoutput", true));
+            this.displayActoutputYDS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayActoutputYDS.Location = new System.Drawing.Point(599, 11);
+            this.displayActoutputYDS.Name = "displayActoutputYDS";
+            this.displayActoutputYDS.Size = new System.Drawing.Size(70, 23);
+            this.displayActoutputYDS.TabIndex = 2;
             // 
-            // displayBox4
+            // displayActoutputGMTPCS
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actgarment", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(599, 49);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(70, 23);
-            this.displayBox4.TabIndex = 5;
+            this.displayActoutputGMTPCS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayActoutputGMTPCS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actgarment", true));
+            this.displayActoutputGMTPCS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayActoutputGMTPCS.Location = new System.Drawing.Point(599, 49);
+            this.displayActoutputGMTPCS.Name = "displayActoutputGMTPCS";
+            this.displayActoutputGMTPCS.Size = new System.Drawing.Size(70, 23);
+            this.displayActoutputGMTPCS.TabIndex = 5;
             // 
             // label8
             // 
@@ -345,29 +345,28 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(106, 23);
             this.label9.TabIndex = 41;
-            this.label9.Text = "";
             this.label9.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // button1
+            // btnImportfromWorkOrder
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(448, 102);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 30);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Import from WorkOrder";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnImportfromWorkOrder.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportfromWorkOrder.Location = new System.Drawing.Point(448, 102);
+            this.btnImportfromWorkOrder.Name = "btnImportfromWorkOrder";
+            this.btnImportfromWorkOrder.Size = new System.Drawing.Size(200, 30);
+            this.btnImportfromWorkOrder.TabIndex = 7;
+            this.btnImportfromWorkOrder.Text = "Import from WorkOrder";
+            this.btnImportfromWorkOrder.UseVisualStyleBackColor = true;
+            this.btnImportfromWorkOrder.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnImportfromRealtimeBundleTracking
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(657, 81);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(160, 50);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "Import from Realtime Bundle Tracking";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnImportfromRealtimeBundleTracking.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportfromRealtimeBundleTracking.Location = new System.Drawing.Point(657, 81);
+            this.btnImportfromRealtimeBundleTracking.Name = "btnImportfromRealtimeBundleTracking";
+            this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(160, 50);
+            this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
+            this.btnImportfromRealtimeBundleTracking.Text = "Import from Realtime Bundle Tracking";
+            this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
             // 
             // P20
             // 
@@ -416,23 +415,23 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label3;
+        private Win.UI.NumericBox numWorkingHourPerDay;
+        private Win.UI.NumericBox numManPower;
+        private Win.UI.Label labelPPH;
+        private Win.UI.Label labelActoutputGMTPCS;
+        private Win.UI.Label labelActoutputYDS;
+        private Win.UI.Label labelWorkingHourPerDay;
+        private Win.UI.Label labelManPower;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelID;
+        private Win.UI.Label labelDate;
         private Win.UI.Label label8;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.DisplayBox displayActoutputGMTPCS;
+        private Win.UI.DisplayBox displayActoutputYDS;
+        private Win.UI.DisplayBox displayPPH;
         private Win.UI.Label label9;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnImportfromRealtimeBundleTracking;
+        private Win.UI.Button btnImportfromWorkOrder;
     }
 }

@@ -42,30 +42,30 @@ namespace Sci.Production.Cutting
             {
                 if (orders.Rows.Count != 0)
                 {
-                    displayBox_Season.Text = orders.Rows[0]["Seasonid"].ToString();
-                    displayBox_Style.Text = orders.Rows[0]["Styleid"].ToString();
+                    displaySeason.Text = orders.Rows[0]["Seasonid"].ToString();
+                    displayStyle.Text = orders.Rows[0]["Styleid"].ToString();
                     cuttingid = orders.Rows[0]["cuttingsp"].ToString();
                 }
                 else
                 {
-                    displayBox_Season.Text = "";
-                    displayBox_Style.Text = "";
+                    displaySeason.Text = "";
+                    displayStyle.Text = "";
                 }
             }
             else
             {
-                displayBox_Season.Text = "";
-                displayBox_Style.Text = "";
+                displaySeason.Text = "";
+                displayStyle.Text = "";
             }
 
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
-            if (!MyUtility.Check.Empty(estcutdate))  displayBox_EstCutdate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
+            if (!MyUtility.Check.Empty(estcutdate))  displayEstCutDate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
             
             int qty = 0;
             if(bundle_Detail_Qty_Tb.Rows.Count==0)  qty =0;
             else  qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)",""));
            
-            numericBox_GroupQty.Value = qty;
+            numQtyperBundleGroup.Value = qty;
 
             string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b WITH (NOLOCK) inner join orders o WITH (NOLOCK) on b.Orderid=o.ID where b.Orderid='{0}'", orderid), null);
 
@@ -75,11 +75,11 @@ namespace Sci.Production.Cutting
             {
                 DateTime? lastTime = (DateTime?)this.CurrentMaintain["printdate"];
                 string FtyLastupdate = lastTime == null ? "" : ((DateTime)lastTime).ToString("yyyy/MM/dd HH:mm:ss");
-                this.displayBox_PrintDate.Text = FtyLastupdate;
+                this.displayPrintDate.Text = FtyLastupdate;
             }
             else
             {
-                this.displayBox_PrintDate.Text = "";
+                this.displayPrintDate.Text = "";
             }            
         }
         public void queryTable()
@@ -194,8 +194,8 @@ namespace Sci.Production.Cutting
             base.ClickNewAfter();
             CurrentMaintain["Cdate"] = DateTime.Today;
             CurrentMaintain["mDivisionid"] = keyword;
-            displayBox_EstCutdate.Text = "";
-            displayBox_PrintDate.Text = "";
+            displayEstCutDate.Text = "";
+            displayPrintDate.Text = "";
             bundle_Detail_allpart_Tb.Clear();
             bundle_Detail_Art_Tb.Clear();
             bundle_Detail_Qty_Tb.Clear();
@@ -435,9 +435,9 @@ namespace Sci.Production.Cutting
 
         private void clear()
         {
-            displayBox_Season.Text = "";
-            displayBox_Style.Text = "";
-            displayBox_PrintDate.Text = "";
+            displaySeason.Text = "";
+            displayStyle.Text = "";
+            displayPrintDate.Text = "";
             CurrentMaintain["Cutno"] = 0;
             CurrentMaintain["sewinglineid"] = "";
             CurrentMaintain["OrderID"] = "";
@@ -452,7 +452,7 @@ namespace Sci.Production.Cutting
             CurrentMaintain["startno"] = 1;
             CurrentMaintain["cutref"] = "";
             CurrentMaintain["ITEM"] = "";
-            textBox_FabricPanelCode.Text = "";
+            txtFabricPanelCode.Text = "";
 
             DetailDatas.Clear();
             bundle_Detail_allpart_Tb.Clear();
@@ -467,14 +467,14 @@ namespace Sci.Production.Cutting
         private void textBox_Cutref_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
-            if (textBox_Cutref.Text == "")
+            if (txtCutRef.Text == "")
             {
                 clear();
                 return;
             }
             
-            string newvalue = textBox_Cutref.Text;
-            if (textBox_Cutref.OldValue.ToString() == newvalue) return;
+            string newvalue = txtCutRef.Text;
+            if (txtCutRef.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
             @"Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
 
@@ -507,7 +507,7 @@ namespace Sci.Production.Cutting
                 Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
             ) as Qty
             From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
-            Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id", textBox_Cutref.Text, keyword);
+            Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id", txtCutRef.Text, keyword);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
@@ -530,9 +530,9 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["Qty"] = cutdr["Qty"];
 
                 CurrentMaintain["FabricPanelCode"] = cutdr["FabricPanelCode"].ToString();
-                displayBox_Season.Text = cutdr["Seasonid"].ToString();
-                displayBox_Style.Text = cutdr["Styleid"].ToString();
-                displayBox_EstCutdate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"])?"":((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
+                displaySeason.Text = cutdr["Seasonid"].ToString();
+                displayStyle.Text = cutdr["Styleid"].ToString();
+                displayEstCutDate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"])?"":((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
                 
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
@@ -566,14 +566,14 @@ namespace Sci.Production.Cutting
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox_orderid.Text = item.GetSelectedString();
+            txtSPNo.Text = item.GetSelectedString();
         }
 
         private void textBox_orderid_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
-            string newvalue = textBox_orderid.Text;
-            if (textBox_orderid.OldValue.ToString() == newvalue) return;
+            string newvalue = txtSPNo.Text;
+            if (txtSPNo.OldValue.ToString() == newvalue) return;
             string cuttingsp = MyUtility.GetValue.Lookup("Cuttingsp", newvalue, "Orders", "ID");
             if (!MyUtility.Check.Empty(CurrentMaintain["Cutref"]))
             {
@@ -581,7 +581,7 @@ namespace Sci.Production.Cutting
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
                     MyUtility.Msg.WarningBox("<Cutref> is different.");
-                    textBox_orderid.Text = "";
+                    txtSPNo.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -592,7 +592,7 @@ namespace Sci.Production.Cutting
                     if (articleTb.Rows.Count ==0 )
                     {
                         MyUtility.Msg.WarningBox("<Cutref> is different.");
-                        textBox_orderid.Text = "";
+                        txtSPNo.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -622,8 +622,8 @@ namespace Sci.Production.Cutting
                         CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
                         CurrentMaintain["OrderID"] = cutdr["id"].ToString();
                         CurrentMaintain["POID"] = cutdr["POID"].ToString();
-                        displayBox_Season.Text = cutdr["Seasonid"].ToString();
-                        displayBox_Style.Text = cutdr["Styleid"].ToString();
+                        displaySeason.Text = cutdr["Seasonid"].ToString();
+                        displayStyle.Text = cutdr["Styleid"].ToString();
                         #region Item
                         string item_cmd = string.Format("Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK)  where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{0}' and b.ApparelType = a.id", cutdr["styleukey"]);
                         string item = MyUtility.GetValue.Lookup(item_cmd, null);
@@ -718,8 +718,8 @@ namespace Sci.Production.Cutting
 
         private void numericBox_Group_Validated(object sender, EventArgs e)
         {
-            decimal no = (decimal)numericBox_Group.Value;
-            decimal oldvalue = (decimal)numericBox_Group.OldValue;
+            decimal no = (decimal)numBeginBundleGroup.Value;
+            decimal oldvalue = (decimal)numBeginBundleGroup.OldValue;
             decimal nGroup = no - oldvalue;
             foreach (DataRow dr in DetailDatas)
             {
@@ -742,7 +742,7 @@ namespace Sci.Production.Cutting
             P10_Print p = new P10_Print(this.CurrentMaintain);
             p.ShowDialog();
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-            this.displayBox_PrintDate.Text = dtn;
+            this.displayPrintDate.Text = dtn;
             string sqlcmd = string.Format(@"update Bundle set PrintDate = '{0}' where ID = '{1}'", dtn, CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null,sqlcmd);
             return true;
@@ -763,7 +763,7 @@ namespace Sci.Production.Cutting
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                textBox_Article.Text = item.GetSelectedString();
+                txtArticle.Text = item.GetSelectedString();
             }
             else
             {
@@ -773,7 +773,7 @@ namespace Sci.Production.Cutting
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
-                    textBox_Article.Text = item.GetSelectedString();
+                    txtArticle.Text = item.GetSelectedString();
                 }
             }
         }
@@ -781,8 +781,8 @@ namespace Sci.Production.Cutting
         private void textBox_Article_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
-            string newvalue = textBox_Article.Text;
-            if (textBox_Article.OldValue.ToString() == newvalue) return;
+            string newvalue = txtArticle.Text;
+            if (txtArticle.OldValue.ToString() == newvalue) return;
             string sql;
             DataTable dtTEMP;
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
@@ -794,7 +794,7 @@ namespace Sci.Production.Cutting
                     if (dtTEMP.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("<Article> can't find !!");
-                        textBox_Article.Text = "";
+                        txtArticle.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -810,7 +810,7 @@ namespace Sci.Production.Cutting
                         if (dtTEMP.Rows.Count == 0)
                         {
                             MyUtility.Msg.WarningBox("<Article> can't find !!");
-                            textBox_Article.Text = "";
+                            txtArticle.Text = "";
                             e.Cancel = true;
                             return;
                         }
@@ -828,20 +828,20 @@ namespace Sci.Production.Cutting
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "2,8,16", this.Text, false, ",");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            txtLine.Text = item.GetSelectedString();
+            txtLineNo.Text = item.GetSelectedString();
         }
 
         private void txtLine_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
-            string newvalue = txtLine.Text;
-            if (txtLine.OldValue.ToString() == newvalue) return;
+            string newvalue = txtLineNo.Text;
+            if (txtLineNo.OldValue.ToString() == newvalue) return;
             string sql = string.Format(@"Select ID  From SewingLine WITH (NOLOCK)  
                     where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}') and ID='{1}'", Sci.Env.User.Keyword, newvalue);
             string tmp = MyUtility.GetValue.Lookup(sql);
             if (string.IsNullOrWhiteSpace(tmp))
             {
-                txtLine.Text = "";
+                txtLineNo.Text = "";
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox(string.Format("< Sewing Line> : {0} not found!!!", newvalue));
                 return;

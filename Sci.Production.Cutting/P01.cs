@@ -40,41 +40,41 @@ namespace Sci.Production.Cutting
             DataRow orderdr;
             if (MyUtility.Check.Seek(String.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"]), out orderdr))
             {
-                displayBox2.Text = orderdr["Styleid"].ToString();
-                displayBox4.Text = orderdr["Seasonid"].ToString();
-                displayBox7.Text = orderdr["Category"].ToString();
-                displayBox3.Text = orderdr["Projectid"].ToString();
-                displayBox5.Text = orderdr["styleUnit"].ToString();
+                displayStyleNo.Text = orderdr["Styleid"].ToString();
+                displaySeason.Text = orderdr["Seasonid"].ToString();
+                displayCategory.Text = orderdr["Category"].ToString();
+                displayProject.Text = orderdr["Projectid"].ToString();
+                displayOrderQty.Text = orderdr["styleUnit"].ToString();
                 StyleUkey = orderdr["StyleUkey"].ToString();
-                if (orderdr["eachconsapv"] == DBNull.Value) dateBox11.Value = null;
-                else dateBox11.Value = Convert.ToDateTime(orderdr["eachconsapv"]);
-                if (orderdr["LETA"] == DBNull.Value) dateBox3.Value = null;
-                else dateBox3.Value = Convert.ToDateTime(orderdr["LETA"]);
-                if (orderdr["MTLETA"] == DBNull.Value) dateBox4.Value = null;
-                else dateBox4.Value = Convert.ToDateTime(orderdr["MTLETA"]);
+                if (orderdr["eachconsapv"] == DBNull.Value) dateEachConsApvDate.Value = null;
+                else dateEachConsApvDate.Value = Convert.ToDateTime(orderdr["eachconsapv"]);
+                if (orderdr["LETA"] == DBNull.Value) dateSewingScheduleLastMtlETA.Value = null;
+                else dateSewingScheduleLastMtlETA.Value = Convert.ToDateTime(orderdr["LETA"]);
+                if (orderdr["MTLETA"] == DBNull.Value) dateSewingScheduleRMtlETA.Value = null;
+                else dateSewingScheduleRMtlETA.Value = Convert.ToDateTime(orderdr["MTLETA"]);
             }
             else
             {
-                displayBox2.Text = "";
-                displayBox4.Text = "";
-                displayBox7.Text = "";
-                displayBox3.Text = "";
-                displayBox5.Text = "";
-                dateBox11.Value = null;
-                dateBox3.Value = null;
-                dateBox4.Value = null;
+                displayStyleNo.Text = "";
+                displaySeason.Text = "";
+                displayCategory.Text = "";
+                displayProject.Text = "";
+                displayOrderQty.Text = "";
+                dateEachConsApvDate.Value = null;
+                dateSewingScheduleLastMtlETA.Value = null;
+                dateSewingScheduleRMtlETA.Value = null;
             }
             //Switch to WordOrder
             switch (CurrentMaintain["Worktype"].ToString())
             {
                 case "1":
-                    displayBox8.Text = "By Combination";
+                    displaySwitchtoWorkOrder.Text = "By Combination";
                     break;
                 case "2":
-                    displayBox8.Text = "By PO";
+                    displaySwitchtoWorkOrder.Text = "By PO";
                     break;
                 default:
-                    displayBox8.Text = "";
+                    displaySwitchtoWorkOrder.Text = "";
                     break;
             }
             #endregion
@@ -92,20 +92,20 @@ from Orders o WITH (NOLOCK) where ID = '{0}'"
             {
                 if (OrdersData.Rows.Count > 0)
                 {
-                    editBox1.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"].ToString().Replace(" ", ""));
-                    editBox2.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"].ToString().Replace(" ", ""));
+                    editPOCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"].ToString().Replace(" ", ""));
+                    editCuttingCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"].ToString().Replace(" ", ""));
                 }
                 else
                 {
-                    editBox1.Text = "";
-                    editBox2.Text = "";
+                    editPOCombo.Text = "";
+                    editCuttingCombo.Text = "";
                 }
             }
             else
             {
                 MyUtility.Msg.ErrorBox("Query OrdersData fail!! " + result.ToString());
-                editBox1.Text = "";
-                editBox2.Text = "";
+                editPOCombo.Text = "";
+                editCuttingCombo.Text = "";
             }
             #endregion
             #region from Orders sum FOC & OrderQty
@@ -118,37 +118,37 @@ where CuttingSp = '{0}'"
                 , CurrentMaintain["ID"]);
             if (MyUtility.Check.Seek(sqlCmd, out orderdr))
             {
-                numericBox1.Value = Convert.ToDecimal(orderdr["FOC"]);
-                numericBox2.Value = Convert.ToDecimal(orderdr["Qty"]);
+                numFOCQty.Value = Convert.ToDecimal(orderdr["FOC"]);
+                numOrderQty.Value = Convert.ToDecimal(orderdr["Qty"]);
             }
             else
             {
-                numericBox1.Value = 0;
-                numericBox2.Value = 0;
+                numFOCQty.Value = 0;
+                numOrderQty.Value = 0;
             }
             #endregion
             #region from System Cutinline,Cutoffline 是減System.Cutday計算
             int cutday = Convert.ToInt16(MyUtility.GetValue.Lookup(String.Format("Select cutday from System WITH (NOLOCK)")));
-            if (CurrentMaintain["sewinline"] == DBNull.Value) dateBox1.Value = null;
-            else dateBox1.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
-            if (CurrentMaintain["sewoffline"] == DBNull.Value) dateBox2.Value = null;
-            else dateBox2.Value = Convert.ToDateTime(CurrentMaintain["sewoffline"]).AddDays(-cutday);
+            if (CurrentMaintain["sewinline"] == DBNull.Value) dateCuttingInLine.Value = null;
+            else dateCuttingInLine.Value = Convert.ToDateTime(CurrentMaintain["sewinline"]).AddDays(-cutday);
+            if (CurrentMaintain["sewoffline"] == DBNull.Value) dateSewingScheduleCuttingOffLine.Value = null;
+            else dateSewingScheduleCuttingOffLine.Value = Convert.ToDateTime(CurrentMaintain["sewoffline"]).AddDays(-cutday);
             #endregion
             #region button1 color change
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_MarkerList", "ID")) button1.ForeColor = Color.Blue;
-            else button1.ForeColor = Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_MarkerList", "ID")) btnMarkerList.ForeColor = Color.Blue;
+            else btnMarkerList.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID")) button2.ForeColor = Color.Blue;
-            else button2.ForeColor = Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID")) btnEachCons.ForeColor = Color.Blue;
+            else btnEachCons.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_Qty", "ID")) button5.ForeColor = Color.Blue;
-            else button5.ForeColor = Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_Qty", "ID")) btnQuantitybreakdown.ForeColor = Color.Blue;
+            else btnQuantitybreakdown.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) button12.ForeColor = Color.Blue;
-            else button12.ForeColor = Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_ColorCombo", "ID")) btnColorCombo.ForeColor = Color.Blue;
+            else btnColorCombo.ForeColor = Color.Black;
 
-            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID")) button3.ForeColor = Color.Blue;
-            else button3.ForeColor = Color.Black;
+            if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Bundle", "POID")) btnBundleCard.ForeColor = Color.Blue;
+            else btnBundleCard.ForeColor = Color.Black;
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
             string patidsql = String.Format(@"
@@ -158,23 +158,23 @@ WHERE STYLEUKEY = '{0}' and Status = 'Completed'
 AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey = '{0}' and Status = 'Completed')"
                 , ukey);
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            if (patternukey != "") button9.ForeColor = Color.Blue;
-            else button9.ForeColor = Color.Black;  
+            if (patternukey != "") btnGarmentList.ForeColor = Color.Blue;
+            else btnGarmentList.ForeColor = Color.Black;  
 
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
             {
-                button7.ForeColor = Color.Blue;
-                button8.ForeColor = Color.Blue;
+                btnCutPartsCheckSummary.ForeColor = Color.Blue;
+                btnCutPartsCheck.ForeColor = Color.Blue;
             }
             else
             {
-                button7.ForeColor = Color.Black;
-                button8.ForeColor = Color.Black;
+                btnCutPartsCheckSummary.ForeColor = Color.Black;
+                btnCutPartsCheck.ForeColor = Color.Black;
             }
 
-            if (MyUtility.Check.Empty(StyleUkey)) button11.ForeColor = Color.Black;
+            if (MyUtility.Check.Empty(StyleUkey)) btnProductionkit.ForeColor = Color.Black;
             else
-                button11.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
+                btnProductionkit.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", StyleUkey)) ? Color.Blue : Color.Black;
             #endregion
         }
 
@@ -218,7 +218,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         private void button5_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
-            var frm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editBox1.Text);
+            var frm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editPOCombo.Text);
             frm.ShowDialog(this);
         }
         //ColorComb

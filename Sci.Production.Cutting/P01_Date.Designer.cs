@@ -28,55 +28,55 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelSewingInLineDateBefore = new Sci.Win.UI.Label();
+            this.dateSewingInLineDateBefore = new Sci.Win.UI.DateBox();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // labelSewingInLineDateBefore
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(26, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(174, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Sewing in-Line date before";
+            this.labelSewingInLineDateBefore.Lines = 0;
+            this.labelSewingInLineDateBefore.Location = new System.Drawing.Point(26, 22);
+            this.labelSewingInLineDateBefore.Name = "labelSewingInLineDateBefore";
+            this.labelSewingInLineDateBefore.Size = new System.Drawing.Size(174, 23);
+            this.labelSewingInLineDateBefore.TabIndex = 0;
+            this.labelSewingInLineDateBefore.Text = "Sewing in-Line date before";
             // 
-            // dateBox1
+            // dateSewingInLineDateBefore
             // 
-            this.dateBox1.Location = new System.Drawing.Point(41, 61);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateSewingInLineDateBefore.Location = new System.Drawing.Point(41, 61);
+            this.dateSewingInLineDateBefore.Name = "dateSewingInLineDateBefore";
+            this.dateSewingInLineDateBefore.Size = new System.Drawing.Size(130, 23);
+            this.dateSewingInLineDateBefore.TabIndex = 0;
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Location = new System.Drawing.Point(218, 22);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Location = new System.Drawing.Point(218, 22);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 1;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.Location = new System.Drawing.Point(218, 61);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnCancel.Location = new System.Drawing.Point(218, 61);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button2_Click);
             // 
             // P01_Date
             // 
             this.ClientSize = new System.Drawing.Size(310, 121);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.dateSewingInLineDateBefore);
+            this.Controls.Add(this.labelSewingInLineDateBefore);
             this.DefaultControl = "dateBox1";
             this.Name = "P01_Date";
             this.Text = "Cutting Generate";
@@ -86,9 +86,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelSewingInLineDateBefore;
+        private Win.UI.DateBox dateSewingInLineDateBefore;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
     }
 }

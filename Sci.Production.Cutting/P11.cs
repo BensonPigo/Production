@@ -113,7 +113,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
                 int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
                 int newcount = Convert.ToInt16(e.FormattedValue);
-                numericBox_noofbundle.Value = newcount;
+                numNoOfBundle.Value = newcount;
                 distSizeQty(rowcount, newcount, dr);
 
             };
@@ -386,9 +386,9 @@ namespace Sci.Production.Cutting
             this.ShowWaitMessage("Query");
             DBProxy.Current.DefaultTimeout = 300;
             //判斷必須有一條件存在
-            string cutref = Cutref_textBox.Text;
-            string cutdate = CutDate_dateBox.Text;
-            string poid = POID_TextBox.Text;
+            string cutref = txtCutref.Text;
+            string cutdate = dateEstCutDate.Text;
+            string poid = txtPOID.Text;
             if (CutRefTb != null)CutRefTb.Clear();
             if(ArticleSizeTb != null)ArticleSizeTb.Clear();
             if (allpartTb != null) allpartTb.Clear();
@@ -437,7 +437,7 @@ namespace Sci.Production.Cutting
                 distru_cmd = distru_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 Excess_cmd = Excess_cmd + string.Format(" and a.cutref='{0}'", cutref);
             }
-            if (!MyUtility.Check.Empty(CutDate_dateBox.Value))
+            if (!MyUtility.Check.Empty(dateEstCutDate.Value))
             {
                 query_cmd = query_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
                 distru_cmd = distru_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
@@ -703,8 +703,8 @@ namespace Sci.Production.Cutting
             allpartTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             patternTb.DefaultView.RowFilter = string.Format("iden ='{0}'", selectDr_Artsize["iden"]);
             label_TotalCutOutput.Text = selectDr_Artsize["Cutoutput"].ToString();
-            numericBox_noofbundle.Value = Convert.ToInt16(selectDr_Artsize["Qty"]);
-            totalpart_numericBox.Value = Convert.ToInt16(selectDr_Artsize["TotalParts"]);
+            numNoOfBundle.Value = Convert.ToInt16(selectDr_Artsize["Qty"]);
+            numTotalPart.Value = Convert.ToInt16(selectDr_Artsize["TotalParts"]);
             label_TotalQty.Text = qtyTb.Compute("Sum(Qty)",string.Format("iden={0}",selectDr_Artsize["iden"])).ToString();
         }
 
@@ -771,8 +771,8 @@ namespace Sci.Production.Cutting
         private void numericBox_noofbundle_Validated(object sender, EventArgs e)
         {
 
-            int oldcount = Convert.ToInt16(numericBox_noofbundle.OldValue);
-            int newcount = Convert.ToInt16(numericBox_noofbundle.Value);
+            int oldcount = Convert.ToInt16(numNoOfBundle.OldValue);
+            int newcount = Convert.ToInt16(numNoOfBundle.Value);
             if (ArticleSizeTb == null) return;
             if (ArticleSizeTb.Rows.Count == 0) return;
             DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -888,7 +888,7 @@ namespace Sci.Production.Cutting
                 allpartdr[0]["Parts"] = allpart;
             }
             int Totalpart =MyUtility.Convert.GetInt(patternTb.Compute("Sum(Parts)", string.Format("iden={0}", selectDr["iden"])));
-            totalpart_numericBox.Value = Totalpart;
+            numTotalPart.Value = Totalpart;
             selectDr["TotalParts"] = Totalpart;
         }
 
@@ -1094,8 +1094,8 @@ namespace Sci.Production.Cutting
             int idofnum = ArticleSizeTb.Select("Sel=1").Length; //會產生表頭數
             int bundleofnum = 0;
             int autono = 0,qtycount = 0, patterncount = 0;
-            if (withcuto.Value == "1") autono = 0; //自動根據之前的往下排
-            if (begin1.Value == "1") autono = 1;//從1開始
+            if (radioWithcuto.Value == "1") autono = 0; //自動根據之前的往下排
+            if (radiobegin1.Value == "1") autono = 1;//從1開始
 
             #region 計算Bundle數 並填入Ratio,Startno
             DataTable spStartnoTb = new DataTable(); //for Startno,分SP給

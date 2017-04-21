@@ -29,56 +29,56 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(cmb_MDivisionID, 1, WorkOrder);
-            cmb_MDivisionID.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
+            comboM.Text = Sci.Env.User.Keyword;
         }         
         
         private void radioBtn_Byonedaydetial_CheckedChanged(object sender, EventArgs e)
         {
-            dateR_CuttingDate.Control2.Visible = !radioBtn_Byonedaydetial.Checked;
-            if (radioBtn_Byonedaydetial.Checked)
-                dateR_CuttingDate.Control2.Text = "";
+            dateCuttingDate.Control2.Visible = !radioByOneDayDetial.Checked;
+            if (radioByOneDayDetial.Checked)
+                dateCuttingDate.Control2.Text = "";
             else
-                dateR_CuttingDate.Value2 = dateR_CuttingDate.Value1;
+                dateCuttingDate.Value2 = dateCuttingDate.Value1;
         }
 
         private void Leave_CuttingDate(object sender, EventArgs e)
         {
-            if (radiobtn_BySummary.Checked || radiobtn_Bydetail.Checked)
-                if (MyUtility.Check.Empty(dateR_CuttingDate.Value2))
-                    dateR_CuttingDate.Value2 = dateR_CuttingDate.Value1;
+            if (radioBySummary.Checked || radioByDetail.Checked)
+                if (MyUtility.Check.Empty(dateCuttingDate.Value2))
+                    dateCuttingDate.Value2 = dateCuttingDate.Value1;
         }
         
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateR_CuttingDate.Value1))
+            if (MyUtility.Check.Empty(dateCuttingDate.Value1))
             {
                 MyUtility.Msg.WarningBox("CuttingDate can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(txt_CutCell1.Text.Trim()))
+            if (MyUtility.Check.Empty(txtCutCellStart.Text.Trim()))
             {
                 MyUtility.Msg.WarningBox("CutCell can't empty!!");
                 return false;
             }
 
-            MD = cmb_MDivisionID.Text;
-            dateR_CuttingDate1 = dateR_CuttingDate.Value1;
-            dateR_CuttingDate2 = dateR_CuttingDate.Value2;
+            MD = comboM.Text;
+            dateR_CuttingDate1 = dateCuttingDate.Value1;
+            dateR_CuttingDate2 = dateCuttingDate.Value2;
 
             //select distinct cutcellid from cutplan order by cutcellid 不只有數字,where條件要''單引號,且mask是00
             int c1, c2;
             bool bc1, bc2;
-            bc1 = int.TryParse(txt_CutCell1.Text.Trim(), out c1);
+            bc1 = int.TryParse(txtCutCellStart.Text.Trim(), out c1);
             if (bc1) CutCell1 = c1.ToString("D2");
-            else CutCell1 = txt_CutCell1.Text.Trim();
+            else CutCell1 = txtCutCellStart.Text.Trim();
             //若CutCell2為空則=CutCell1
-            if (!MyUtility.Check.Empty(txt_CutCell2.Text.Trim()))
+            if (!MyUtility.Check.Empty(txtCutCellEnd.Text.Trim()))
             {
-                bc2 = int.TryParse(txt_CutCell2.Text.Trim(), out c2);
+                bc2 = int.TryParse(txtCutCellEnd.Text.Trim(), out c2);
                 if (bc2) CutCell2 = c2.ToString("D2");
-                else CutCell2 = txt_CutCell2.Text.Trim();
+                else CutCell2 = txtCutCellEnd.Text.Trim();
             }
             else
             {
@@ -93,7 +93,7 @@ namespace Sci.Production.Cutting
         {
             //準備CutCell包含非數字
             string scell;
-            if (radiobtn_Bydetail.Checked || radiobtn_BySummary.Checked)
+            if (radioByDetail.Checked || radioBySummary.Checked)
             {
                 scell = string.Format(
 @"select distinct CutCellID 
@@ -125,7 +125,7 @@ order by CutCellID"
             StringBuilder sqlCmd = new StringBuilder();
 
             #region radiobtnByM
-            if (radiobtn_Bydetail.Checked)
+            if (radioByDetail.Checked)
             {
                 for (int i = 0; i < CutCellcount; i++)
                 {
@@ -276,7 +276,7 @@ drop table #tmpall");
             #endregion
 
             #region radioBtnByCutCell
-            if (radioBtn_Byonedaydetial.Checked)
+            if (radioByOneDayDetial.Checked)
             {
                 for (int i = 0; i < CutCellcount; i++)
                 {
@@ -435,7 +435,7 @@ drop table #tmpall");
             #endregion
 
             #region radiobtn By Detail3
-            if (radiobtn_BySummary.Checked)
+            if (radioBySummary.Checked)
             {
                 for (int i = 0; i < CutCellcount; i++)
                 {
@@ -565,7 +565,7 @@ where 1 = 1
                 cuttings[i] = printData[i].Rows.Count.ToString() + " cuttings";                
             }
             #region Bydetail OR Byonedaydetial OR Byonedaydetial依狀況插入列
-            if (radiobtn_Bydetail.Checked || radioBtn_Byonedaydetial.Checked)
+            if (radioByDetail.Checked || radioByOneDayDetial.Checked)
             {
                 for (int i = 0; i < printData.Count(); i++)
                 {
@@ -647,7 +647,7 @@ where 1 = 1
             }
 
             #region radiobtn_Bydetail
-            if (radiobtn_Bydetail.Checked)
+            if (radioByDetail.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
@@ -705,7 +705,7 @@ where 1 = 1
             #endregion
 
             #region radioBtn_Byonedaydetial
-            if (radioBtn_Byonedaydetial.Checked)
+            if (radioByOneDayDetial.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
@@ -765,7 +765,7 @@ where 1 = 1
             #endregion
 
             #region radioBtn_BySUMMY
-            if (radiobtn_BySummary.Checked)
+            if (radioBySummary.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出

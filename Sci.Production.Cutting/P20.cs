@@ -236,19 +236,19 @@ namespace Sci.Production.Cutting
         }
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Date> can not be empty.");
                 return false;
             }
-            if (MyUtility.Check.Empty(numericBox2.Text))
+            if (MyUtility.Check.Empty(numManPower.Text))
             {
                 MyUtility.Msg.WarningBox("<Man Power> can not be empty.");
                 return false;
             }
             if (this.IsDetailInserting)
             {
-                string date = dateBox1.Text;
+                string date = dateDate.Text;
                 string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) Where cdate = '{0}' and id !='{1}'", date, CurrentMaintain["ID"]);
                 if (MyUtility.Check.Seek(sql, null))
                 {

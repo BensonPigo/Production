@@ -33,16 +33,16 @@ namespace Sci.Production.Cutting
         string Extend_All_Parts;
         protected override bool ValidateInput()
         {
-            Bundle_Card = radioButton1.Checked.ToString();
-            Bundle_Check_list = radioButton2.Checked.ToString();
-            Extend_All_Parts = checkBox1.Checked.ToString();
+            Bundle_Card = radioBundleCard.Checked.ToString();
+            Bundle_Check_list = radioBundleChecklist.Checked.ToString();
+            Extend_All_Parts = checkExtendAllParts.Checked.ToString();
             return base.ValidateInput();
         }
         DataTable dtt; 
         DataTable dt;
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            if (radioButton1.Checked == true)
+            if (radioBundleCard.Checked == true)
             {
                 #region report
                 DataRow row = this.CurrentDataRow;
@@ -50,13 +50,13 @@ namespace Sci.Production.Cutting
                 
                 List<SqlParameter> pars = new List<SqlParameter>(); 
                 pars.Add(new SqlParameter("@ID", id));
-                if (checkBox1.Checked)
+                if (checkExtendAllParts.Checked)
                     pars.Add(new SqlParameter("@extend", "1"));
                 else
                     pars.Add(new SqlParameter("@extend", "0"));
 
                 string scmd = string.Empty;
-                if (checkBox1.Checked)  //有勾[Extend All Parts]
+                if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
                 {
                     #region SQL
                     scmd = string.Format(@"select a.BundleGroup [Group_right]
@@ -214,13 +214,13 @@ namespace Sci.Production.Cutting
                 string id = row["ID"].ToString();
                 List<SqlParameter> lis = new List<SqlParameter>();
                 lis.Add(new SqlParameter("@ID", id));
-                if (checkBox1.Checked)
+                if (checkExtendAllParts.Checked)
                     lis.Add(new SqlParameter("@extend", "1"));
                 else
                     lis.Add(new SqlParameter("@extend", "0"));
 
                 string sqlcmd = string.Empty;
-                if (checkBox1.Checked)  //有勾[Extend All Parts]
+                if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
                 {
                     #region SQL
                     sqlcmd = string.Format(@"select b.id [Bundle_ID]
@@ -374,12 +374,12 @@ namespace Sci.Production.Cutting
         private void radioPanel1_Paint(object sender, PaintEventArgs e)
         {
 
-            if ( radioButton1.Checked==true)
+            if ( radioBundleCard.Checked==true)
             {
                 print.Enabled = true;
                 toexcel.Enabled = false;
             }
-            else if (radioButton2.Checked == true)
+            else if (radioBundleChecklist.Checked == true)
             {
                 toexcel.Enabled = true;
                 print.Enabled = false;

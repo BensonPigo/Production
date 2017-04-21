@@ -24,28 +24,28 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             DataTable WorkOrder, factory;
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
+            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);//要預設空白
-            MyUtility.Tool.SetupCombox(cmd_Factory, 1, factory);
-            cmb_M.Text = Sci.Env.User.Keyword;
-            cmd_Factory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.SelectedIndex = 0;
         }
         
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
             
-            WorkOrder = cmb_M.Text;
-            factory = cmd_Factory.Text;
+            WorkOrder = comboM.Text;
+            factory = comboFactory.Text;
             
-            Est_CutDate1 = dateR_EstCutDate.Value1;
-            Est_CutDate2 = dateR_EstCutDate.Value2;
-            CuttingSP1 = txt_CuttingSP1.Text;
-            CuttingSP2 = txt_CuttingSP2.Text;
-            EarliestSCIDelivery1 = dateR_EarliestSCIDelivery.Value1;
-            EarliestSCIDelivery2 = dateR_EarliestSCIDelivery.Value2;
-            EarliestSewingInline1 = dateR_EarliestSewingInline.Value1;
-            EarliestSewingInline2 = dateR_EarliestSewingInline.Value2;
+            Est_CutDate1 = dateEstCutDate.Value1;
+            Est_CutDate2 = dateEstCutDate.Value2;
+            CuttingSP1 = txtCuttingSPStart.Text;
+            CuttingSP2 = txtCuttingSPEnd.Text;
+            EarliestSCIDelivery1 = dateEarliestSCIDelivery.Value1;
+            EarliestSCIDelivery2 = dateEarliestSCIDelivery.Value2;
+            EarliestSewingInline1 = dateEarliestSewingInline.Value1;
+            EarliestSewingInline2 = dateEarliestSewingInline.Value2;
             //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline四項全為空值
             if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2))
             {

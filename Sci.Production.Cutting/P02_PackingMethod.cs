@@ -65,7 +65,7 @@ Where cuttingsp = '{0}'"
         private void gridbs_PositionChanged(object sender, EventArgs e)
         {
             DBProxy.Current.Select(null, string.Format("SELECT *,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList FROM ORDERS o WITH (NOLOCK)  WHERE ID = '{0}'", CurrentData["id"]), out ODT);
-            button1.Enabled = ODT.Rows.Count != 0 && MyUtility.Convert.GetString(ODT.Rows[0]["CtnType"]) == "2";
+            btnBreakdown.Enabled = ODT.Rows.Count != 0 && MyUtility.Convert.GetString(ODT.Rows[0]["CtnType"]) == "2";
         }
     }
 }

@@ -29,12 +29,12 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             cutplanid = str;
             DBProxy.Current.Select(null, string.Format("Select id,issuedate from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", str), out gridTb);
-            grid1.DataSource = gridTb;
+            gridFabricIssueList.DataSource = gridTb;
         }
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridFabricIssueList)
             .Text("id", header: "Issue ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }

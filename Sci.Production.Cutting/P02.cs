@@ -57,25 +57,25 @@ namespace Sci.Production.Cutting
             comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboBox1.ValueMember = "Key";
             comboBox1.DisplayMember = "Value";
-            txtCell1.FactoryId = Sci.Env.User.Factory;
+            txtCutCell.FactoryId = Sci.Env.User.Factory;
             /*
              *設定Binding Source for Text
             */
-            this.displayBox_MarkerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerName", true));
-            this.displayBox_Color.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "colorid", true));
-            this.numericBox_UnitCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "Conspc", true));
-            this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutCellid", true));
-            this.numericBox_Cons.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "Cons", true));
-            this.textBox_FabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricCombo", true));
-            this.textBox_FabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricPanelCode", true));
-            this.displayBox_FabricRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "SCIRefno", true));
-            this.displayBox_WorkOrderDownloadid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerDownLoadId", true));
-            this.displayBox_Cutplanid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
-            this.displayBox_TotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
-            this.numericBox_MarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthY", true));
-            this.textBox_MarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthE", true));
-            this.textBox_MarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
-            this.textBox_PatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
+            this.displayMarkerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerName", true));
+            this.displayColor.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "colorid", true));
+            this.numUnitCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "Conspc", true));
+            this.txtCutCell.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutCellid", true));
+            this.numCons.DataBindings.Add(new System.Windows.Forms.Binding("Value", bindingSource2, "Cons", true));
+            this.txtFabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricCombo", true));
+            this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricPanelCode", true));
+            this.displayFabricRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "SCIRefno", true));
+            this.displayWorkOrderDownloadid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerDownLoadId", true));
+            this.displayCutplanNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
+            this.displayTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
+            this.numMarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthY", true));
+            this.txtMarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthE", true));
+            this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
+            this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
 
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
@@ -233,12 +233,12 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailEntered();
 
-            sizeratio_grid.DataSource = sizeratiobs;
+            gridSizeRatio.DataSource = sizeratiobs;
             sizeratiobs.DataSource = sizeratioTb;
             distributebs.DataSource = distqtyTb;
-            distribute_grid.DataSource = distributebs;
+            gridDistributetoSPNo.DataSource = distributebs;
             qtybreakds.DataSource = qtybreakTb;
-            qtybreak_grid.DataSource = qtybreakds;
+            gridQtyBreakdown.DataSource = qtybreakds;
 
             sizeratioTb.DefaultView.RowFilter = "";
             qtybreakTb.DefaultView.RowFilter = "";
@@ -247,8 +247,8 @@ namespace Sci.Production.Cutting
             DataRow orderdr;
             MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"]), out orderdr);
 
-            textbox_Style.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
-            textbox_Line.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
+            txtStyle.Text = orderdr == null ? "" : orderdr["Styleid"].ToString();
+            txtLine.Text = orderdr == null ? "" : orderdr["SewLine"].ToString();
             string maxcutrefCmd = string.Format("Select Max(Cutref) from workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord);
             textbox_LastCutRef.Text = MyUtility.GetValue.Lookup(maxcutrefCmd);
             comboBox1.Enabled = !EditMode;  //Sorting於編輯模式時不可選取
@@ -300,17 +300,17 @@ namespace Sci.Production.Cutting
                 .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
 
-            Helper.Controls.Grid.Generator(this.sizeratio_grid)
+            Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
                 .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(5), integer_places: 6).Get(out col_sizeRatio_qty);
 
-            Helper.Controls.Grid.Generator(this.distribute_grid)
+            Helper.Controls.Grid.Generator(this.gridDistributetoSPNo)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(15)).Get(out col_dist_sp)
                 .Text("article", header: "article", width: Widths.AnsiChars(8)).Get(out col_dist_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out col_dist_size)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6).Get(out col_dist_qty);
 
-            Helper.Controls.Grid.Generator(this.qtybreak_grid)
+            Helper.Controls.Grid.Generator(this.gridQtyBreakdown)
                 .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("article", header: "article", width: Widths.AnsiChars(7))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3))
@@ -431,7 +431,7 @@ namespace Sci.Production.Cutting
                     if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
 
                     DataRow[] drar = layersTb.Select(string.Format("MarkerName = '{0}' and Colorid = '{1}'", CurrentDetailData["MarkerName"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0) BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
+                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerMarker"]);
                 }
                 else
                 {
@@ -439,7 +439,7 @@ namespace Sci.Production.Cutting
                     if (!O_sumLayer.Empty()) sumlayer = Convert.ToInt32(O_sumLayer);
 
                     DataRow[] drar = layersTb.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", CurrentDetailData["Order_EachConsUkey"], CurrentDetailData["Colorid"]));
-                    if (drar.Length != 0) BalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
+                    if (drar.Length != 0) numBalanceLayer.Value = sumlayer - Convert.ToInt16(drar[0]["TotalLayerUkey"]);
                 }
                 cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
                 
@@ -450,9 +450,9 @@ namespace Sci.Production.Cutting
                     if (!Sq.Empty()) newsumQty = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
                 }
 
-                int oldttlqty = (int)totaldisqtybox.Value;
+                int oldttlqty = (int)numTotalDistributionQty.Value;
                 int diff = newsumQty - oldttlqty;
-                totaldisqtybox.Value = newsumQty;
+                numTotalDistributionQty.Value = newsumQty;
                 
                 if (diff > 0)
                 {
@@ -800,7 +800,7 @@ namespace Sci.Production.Cutting
                 {
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode || CurrentDetailData["Cutplanid"].ToString() != "") { return; }
-                    DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
+                    DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                     SelectItem sele;
 
                     sele = new SelectItem(sizeGroup, "SizeCode", "15@300,300", dr["SizeCode"].ToString(), false, ",");
@@ -812,7 +812,7 @@ namespace Sci.Production.Cutting
             col_sizeRatio_size.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
-                DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
@@ -822,7 +822,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                 string oldvalue = dr["SizeCode"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -837,7 +837,7 @@ namespace Sci.Production.Cutting
             col_sizeRatio_qty.EditingControlShowing += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
-                DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
 
@@ -848,7 +848,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = sizeratio_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
                 int oldvalue = Convert.ToInt16(dr["Qty"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 if (oldvalue == newvalue) return;
@@ -870,7 +870,7 @@ namespace Sci.Production.Cutting
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     if (CurrentDetailData == null) return;
-                    DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                    DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(spTb, "ID", "15@300,400", dr["OrderID"].ToString(), false, ",");
@@ -883,7 +883,7 @@ namespace Sci.Production.Cutting
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
@@ -893,7 +893,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 string oldvalue = dr["orderid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue || newvalue.ToUpper() == "EXCESS") return;
@@ -932,7 +932,7 @@ namespace Sci.Production.Cutting
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     if (CurrentDetailData == null) return;
-                    DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                    DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;                   
                     DataTable srdt = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable();
@@ -948,7 +948,7 @@ namespace Sci.Production.Cutting
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") 
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
@@ -959,7 +959,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 string oldvalue = dr["SizeCode"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -997,7 +997,7 @@ namespace Sci.Production.Cutting
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
                     if (CurrentDetailData == null) return;
-                    DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                    DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     if (dr["OrderID"].ToString().ToUpper() == "EXCESS" || CurrentDetailData["Cutplanid"].ToString() != "") return;
                     sele = new SelectItem(artTb, "article", "15@300,300", dr["Article"].ToString(), false, ",");
@@ -1010,7 +1010,7 @@ namespace Sci.Production.Cutting
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
 
@@ -1021,7 +1021,7 @@ namespace Sci.Production.Cutting
                 // 右鍵彈出功能
 
                 if (e.RowIndex == -1) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Article"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -1054,7 +1054,7 @@ namespace Sci.Production.Cutting
             {
                 if (e.RowIndex == -1) return;
                 if (CurrentDetailData == null) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode && dr["OrderID"].ToString().ToUpper() != "EXCESS") ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
             };
@@ -1064,7 +1064,7 @@ namespace Sci.Production.Cutting
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
-                DataRow dr = distribute_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridDistributetoSPNo.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Qty"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -1147,14 +1147,14 @@ namespace Sci.Production.Cutting
             if (sizeratiobs.DataSource != null)
             {
                 object Sq = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", "");
-                if (!Sq.Empty()) totaldisqtybox.Value = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
+                if (!Sq.Empty()) numTotalDistributionQty.Value = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
             }
         }
 
         private void gridValid()
         {
-            sizeratio_grid.ValidateControl();
-            distribute_grid.ValidateControl();
+            gridSizeRatio.ValidateControl();
+            gridDistributetoSPNo.ValidateControl();
         }
 
         protected override void OnEditModeChanged()
@@ -1182,13 +1182,13 @@ namespace Sci.Production.Cutting
 
             if (MyUtility.Check.Seek(string.Format("Select * from Fabric WITH (NOLOCK) Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
             {
-                displayBox_FabricType.Text = fabdr["MtlTypeid"].ToString();
-                editBox_desc.Text = fabdr["Description"].ToString();
+                displayFabricType.Text = fabdr["MtlTypeid"].ToString();
+                editDescription.Text = fabdr["Description"].ToString();
             }
             else
             {
-                displayBox_FabricType.Text = "";
-                editBox_desc.Text = "";
+                displayFabricType.Text = "";
+                editDescription.Text = "";
             }
 
             #region 根據左邊Grid Filter 右邊資訊
@@ -1238,13 +1238,13 @@ namespace Sci.Production.Cutting
                 DataRow[] laydr = layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
                 {
-                    TotalLayer.Value = 0;
-                    BalanceLayer.Value = 0;
+                    numTotalLayer.Value = 0;
+                    numBalanceLayer.Value = 0;
                 }
                 else
                 {
-                    TotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
-                    BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
+                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerMarker"];
+                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerMarker"];
                 }
             }
             else
@@ -1254,19 +1254,19 @@ namespace Sci.Production.Cutting
                 DataRow[] laydr = layersTb.Select(selectcondition);
                 if (laydr.Length == 0)
                 {
-                    TotalLayer.Value = 0;
-                    BalanceLayer.Value = 0;
+                    numTotalLayer.Value = 0;
+                    numBalanceLayer.Value = 0;
                 }
                 else
                 {
-                    TotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                    BalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
+                    numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
+                    numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
 
             #region 判斷download id
             string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
-            displayBox_Downloadid.Text = downloadid;
+            displayEachConsDownloadID.Text = downloadid;
             if (downloadid.Trim() != CurrentDetailData["MarkerDownLoadid"].ToString().Trim())
                 downloadid_Text.Visible = true;
             else
@@ -1276,32 +1276,32 @@ namespace Sci.Production.Cutting
             #region 判斷可否開放修改
             if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode)
             {
-                numericBox_MarkerLengthY.ReadOnly = false;
-                textBox_MarkerLengthE.ReadOnly = false;
-                numericBox_UnitCons.ReadOnly = false;
-                txtCell1.ReadOnly = false;
-                numericBox_Cons.ReadOnly = false;
-                textBox_FabricCombo.ReadOnly = false;
-                textBox_FabricPanelCode.ReadOnly = false;
+                numMarkerLengthY.ReadOnly = false;
+                txtMarkerLengthE.ReadOnly = false;
+                numUnitCons.ReadOnly = false;
+                txtCutCell.ReadOnly = false;
+                numCons.ReadOnly = false;
+                txtFabricCombo.ReadOnly = false;
+                txtFabricPanelCode.ReadOnly = false;
                 sizeratioMenuStrip.Enabled = true;
                 distributeMenuStrip.Enabled = true;
             }
             else
             {
-                numericBox_MarkerLengthY.ReadOnly = true;
-                textBox_MarkerLengthE.ReadOnly = true;
-                numericBox_UnitCons.ReadOnly = true;
-                txtCell1.ReadOnly = true;
-                numericBox_Cons.ReadOnly = true;
-                textBox_FabricCombo.ReadOnly = true;
-                textBox_FabricPanelCode.ReadOnly = true;
+                numMarkerLengthY.ReadOnly = true;
+                txtMarkerLengthE.ReadOnly = true;
+                numUnitCons.ReadOnly = true;
+                txtCutCell.ReadOnly = true;
+                numCons.ReadOnly = true;
+                txtFabricCombo.ReadOnly = true;
+                txtFabricPanelCode.ReadOnly = true;
                 sizeratioMenuStrip.Enabled = false;
                 distributeMenuStrip.Enabled = false;
             }
             #endregion
             totalDisQty();
-            this.sizeratio_grid.AutoResizeColumns();            
-            this.qtybreak_grid.AutoResizeColumns();
+            this.gridSizeRatio.AutoResizeColumns();            
+            this.gridQtyBreakdown.AutoResizeColumns();
         }
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
@@ -1692,7 +1692,7 @@ order by id,article,sizecode"
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataRow selectDr = ((DataRowView)sizeratio_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridSizeRatio.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
 
             cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
@@ -1701,20 +1701,20 @@ order by id,article,sizecode"
         #region MarkerLengt驗證/UnitCons/Cons計算
         private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
         {
-            if (numericBox_MarkerLengthY.Text.Trim() == "") return;
-            if (numericBox_MarkerLengthY.OldValue == numericBox_MarkerLengthY.Text) return;
+            if (numMarkerLengthY.Text.Trim() == "") return;
+            if (numMarkerLengthY.OldValue == numMarkerLengthY.Text) return;
 
             int y;
-            y = int.Parse(numericBox_MarkerLengthY.Text);
+            y = int.Parse(numMarkerLengthY.Text);
             CurrentDetailData["MarkerLengthY"] = y.ToString("D2");
             cal_Cons(true, true);
         }
 
         private void textBox_MarkerLengthE_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox_MarkerLengthE.OldValue == textBox_MarkerLengthE.Text) return;
+            if (txtMarkerLengthE.OldValue == txtMarkerLengthE.Text) return;
 
-            CurrentDetailData["MarkerLengthE"] = textBox_MarkerLengthE.Text;
+            CurrentDetailData["MarkerLengthE"] = txtMarkerLengthE.Text;
             cal_Cons(true, true);
         }
 
@@ -1726,8 +1726,8 @@ order by id,article,sizecode"
         private void cal_Cons(bool updateConsPC, bool updateCons) //update Cons
         {
             gridValid();
-            if (numericBox_MarkerLengthY.Text.Trim() == "") return;
-            string me = textBox_MarkerLengthE.Text.Trim();
+            if (numMarkerLengthY.Text.Trim() == "") return;
+            string me = txtMarkerLengthE.Text.Trim();
             string[] me1 = me.Split('-'); if (me1[0].ToString().Trim().Length == 0) return;
             string[] me2 = me1[1].Split('/'); if (me2[0].ToString().Trim().Length == 0) return;
             string[] me3 = me2[1].Split('+'); if (me3[0].ToString().Trim().Length == 0) return;
@@ -1759,8 +1759,8 @@ order by id,article,sizecode"
                 else
                     CurrentDetailData["Cons"] = MarkerLengthNum * Convert.ToInt32(CurrentDetailData["Layer"]);
             }
-            this.textBox_MarkerLength.Text = MarkerLengthstr;
-            this.textBox_MarkerLength.ValidateControl();
+            this.txtMarkerLength.Text = MarkerLengthstr;
+            this.txtMarkerLength.ValidateControl();
         }
         #endregion
 
@@ -1796,7 +1796,7 @@ order by id,article,sizecode"
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DataRow selectDr = ((DataRowView)distribute_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridDistributetoSPNo.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
 
             totalDisQty();

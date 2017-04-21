@@ -28,57 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.Copy = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelCutRef = new Sci.Win.UI.Label();
+            this.txtCutRef = new Sci.Win.UI.TextBox();
+            this.btnCopy = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // labelCutRef
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(35, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "CutRef#";
+            this.labelCutRef.Lines = 0;
+            this.labelCutRef.Location = new System.Drawing.Point(35, 19);
+            this.labelCutRef.Name = "labelCutRef";
+            this.labelCutRef.Size = new System.Drawing.Size(75, 23);
+            this.labelCutRef.TabIndex = 6;
+            this.labelCutRef.Text = "CutRef#";
             // 
-            // textBox1
+            // txtCutRef
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(114, 19);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtCutRef.BackColor = System.Drawing.Color.White;
+            this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRef.Location = new System.Drawing.Point(114, 19);
+            this.txtCutRef.Name = "txtCutRef";
+            this.txtCutRef.Size = new System.Drawing.Size(100, 23);
+            this.txtCutRef.TabIndex = 0;
             // 
-            // Copy
+            // btnCopy
             // 
-            this.Copy.Location = new System.Drawing.Point(35, 64);
-            this.Copy.Name = "Copy";
-            this.Copy.Size = new System.Drawing.Size(80, 30);
-            this.Copy.TabIndex = 1;
-            this.Copy.Text = "Copy";
-            this.Copy.UseVisualStyleBackColor = true;
-            this.Copy.Click += new System.EventHandler(this.Copy_Click);
+            this.btnCopy.Location = new System.Drawing.Point(35, 64);
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(80, 30);
+            this.btnCopy.TabIndex = 1;
+            this.btnCopy.Text = "Copy";
+            this.btnCopy.UseVisualStyleBackColor = true;
+            this.btnCopy.Click += new System.EventHandler(this.Copy_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.Location = new System.Drawing.Point(134, 64);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnCancel.Location = new System.Drawing.Point(134, 64);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button2_Click);
             // 
             // P11_copytocutref
             // 
             this.ClientSize = new System.Drawing.Size(254, 110);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.Copy);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.labelCutRef);
+            this.Controls.Add(this.txtCutRef);
+            this.Controls.Add(this.btnCopy);
             this.DefaultControl = "textBox1";
             this.Name = "P11_copytocutref";
             this.Text = "Copy Cutpart/Artwork to other CutRef#";
@@ -89,9 +89,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Button Copy;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelCutRef;
+        private Win.UI.TextBox txtCutRef;
+        private Win.UI.Button btnCopy;
+        private Win.UI.Button btnCancel;
     }
 }

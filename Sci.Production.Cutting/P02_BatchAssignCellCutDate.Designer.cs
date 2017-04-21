@@ -29,56 +29,56 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.button1 = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.SP_textbox = new Sci.Win.UI.TextBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.article_textbox = new Sci.Win.UI.TextBox();
-            this.cutno_numericbox = new Sci.Win.UI.NumericBox();
-            this.sizecode_textbox = new Sci.Win.UI.TextBox();
-            this.estcutdate_textbox1 = new Sci.Win.UI.DateBox();
-            this.fabriccombo_textbox = new Sci.Win.UI.TextBox();
-            this.markername_textbox = new Sci.Win.UI.TextBox();
-            this.only_checkBox = new Sci.Win.UI.CheckBox();
-            this.filter_button = new Sci.Win.UI.Button();
-            this.label9 = new Sci.Win.UI.Label();
-            this.estcutdate_textbox2 = new Sci.Win.UI.DateBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.gridBatchAssignCellEstCutDate = new Sci.Win.UI.Grid();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelArticle = new Sci.Win.UI.Label();
+            this.labelSizeCode = new Sci.Win.UI.Label();
+            this.labelCutNo = new Sci.Win.UI.Label();
+            this.labelFabricCombo = new Sci.Win.UI.Label();
+            this.labelEstCutDate = new Sci.Win.UI.Label();
+            this.labelMarkerName = new Sci.Win.UI.Label();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelCutCell = new Sci.Win.UI.Label();
+            this.txtArticle = new Sci.Win.UI.TextBox();
+            this.numCutNo = new Sci.Win.UI.NumericBox();
+            this.txtSizeCode = new Sci.Win.UI.TextBox();
+            this.txtEstCutDate = new Sci.Win.UI.DateBox();
+            this.txtFabricCombo = new Sci.Win.UI.TextBox();
+            this.txtMarkerName = new Sci.Win.UI.TextBox();
+            this.checkOnlyShowEmptyEstCutDate = new Sci.Win.UI.CheckBox();
+            this.btnFilter = new Sci.Win.UI.Button();
+            this.labelBatchUpdateEstCutCell = new Sci.Win.UI.Label();
+            this.txtBatchUpdateEstCutDate = new Sci.Win.UI.DateBox();
+            this.labelBatchUpdateEstCutDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.batchcutcell_button = new Sci.Win.UI.Button();
-            this.batchestcutdate_button = new Sci.Win.UI.Button();
+            this.btnBatchUpdateEstCutCell = new Sci.Win.UI.Button();
+            this.btnBatchUpdateEstCutDate = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.txtCell2 = new Sci.Production.Class.txtCell();
-            this.txtcell = new Sci.Production.Class.txtCell();
-            this.btn_Confirm = new Sci.Win.UI.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.txtCutCell = new Sci.Production.Class.txtCell();
+            this.btnConfirm = new Sci.Win.UI.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).BeginInit();
             this.SuspendLayout();
             // 
-            // grid1
+            // gridBatchAssignCellEstCutDate
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridBatchAssignCellEstCutDate.AllowUserToAddRows = false;
+            this.gridBatchAssignCellEstCutDate.AllowUserToDeleteRows = false;
+            this.gridBatchAssignCellEstCutDate.AllowUserToResizeRows = false;
+            this.gridBatchAssignCellEstCutDate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(6, 123);
-            this.grid1.Name = "grid1";
+            this.gridBatchAssignCellEstCutDate.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBatchAssignCellEstCutDate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBatchAssignCellEstCutDate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchAssignCellEstCutDate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBatchAssignCellEstCutDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBatchAssignCellEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBatchAssignCellEstCutDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBatchAssignCellEstCutDate.Location = new System.Drawing.Point(6, 123);
+            this.gridBatchAssignCellEstCutDate.Name = "gridBatchAssignCellEstCutDate";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -86,216 +86,216 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(996, 338);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
-            this.grid1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_CellContentClick);
+            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
+            this.gridBatchAssignCellEstCutDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(996, 338);
+            this.gridBatchAssignCellEstCutDate.TabIndex = 0;
+            this.gridBatchAssignCellEstCutDate.TabStop = false;
+            this.gridBatchAssignCellEstCutDate.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_CellContentClick);
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(916, 467);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 15;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.AutoSize = true;
+            this.btnClose.Location = new System.Drawing.Point(916, 467);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 15;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(12, 9);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(65, 23);
+            this.labelSPNo.TabIndex = 2;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label2
+            // labelArticle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(12, 46);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Article";
+            this.labelArticle.Lines = 0;
+            this.labelArticle.Location = new System.Drawing.Point(12, 46);
+            this.labelArticle.Name = "labelArticle";
+            this.labelArticle.Size = new System.Drawing.Size(65, 23);
+            this.labelArticle.TabIndex = 3;
+            this.labelArticle.Text = "Article";
             // 
-            // label3
+            // labelSizeCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(197, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(73, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "SizeCode";
+            this.labelSizeCode.Lines = 0;
+            this.labelSizeCode.Location = new System.Drawing.Point(197, 46);
+            this.labelSizeCode.Name = "labelSizeCode";
+            this.labelSizeCode.Size = new System.Drawing.Size(73, 23);
+            this.labelSizeCode.TabIndex = 4;
+            this.labelSizeCode.Text = "SizeCode";
             // 
-            // label4
+            // labelCutNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(197, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(73, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Cut#";
+            this.labelCutNo.Lines = 0;
+            this.labelCutNo.Location = new System.Drawing.Point(197, 9);
+            this.labelCutNo.Name = "labelCutNo";
+            this.labelCutNo.Size = new System.Drawing.Size(73, 23);
+            this.labelCutNo.TabIndex = 4;
+            this.labelCutNo.Text = "Cut#";
             // 
-            // label5
+            // labelFabricCombo
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(359, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "FabricCombo";
+            this.labelFabricCombo.Lines = 0;
+            this.labelFabricCombo.Location = new System.Drawing.Point(359, 9);
+            this.labelFabricCombo.Name = "labelFabricCombo";
+            this.labelFabricCombo.Size = new System.Drawing.Size(88, 23);
+            this.labelFabricCombo.TabIndex = 5;
+            this.labelFabricCombo.Text = "FabricCombo";
             // 
-            // label6
+            // labelEstCutDate
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(359, 46);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(88, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Est. Cut Date";
+            this.labelEstCutDate.Lines = 0;
+            this.labelEstCutDate.Location = new System.Drawing.Point(359, 46);
+            this.labelEstCutDate.Name = "labelEstCutDate";
+            this.labelEstCutDate.Size = new System.Drawing.Size(88, 23);
+            this.labelEstCutDate.TabIndex = 6;
+            this.labelEstCutDate.Text = "Est. Cut Date";
             // 
-            // label7
+            // labelMarkerName
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(517, 9);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(92, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Marker Name";
+            this.labelMarkerName.Lines = 0;
+            this.labelMarkerName.Location = new System.Drawing.Point(517, 9);
+            this.labelMarkerName.Name = "labelMarkerName";
+            this.labelMarkerName.Size = new System.Drawing.Size(92, 23);
+            this.labelMarkerName.TabIndex = 7;
+            this.labelMarkerName.Text = "Marker Name";
             // 
-            // SP_textbox
+            // txtSPNo
             // 
-            this.SP_textbox.BackColor = System.Drawing.Color.White;
-            this.SP_textbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_textbox.Location = new System.Drawing.Point(80, 9);
-            this.SP_textbox.Name = "SP_textbox";
-            this.SP_textbox.Size = new System.Drawing.Size(108, 23);
-            this.SP_textbox.TabIndex = 0;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(80, 9);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(108, 23);
+            this.txtSPNo.TabIndex = 0;
             // 
-            // label8
+            // labelCutCell
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(598, 46);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(92, 23);
-            this.label8.TabIndex = 9;
-            this.label8.Text = "Cut Cell";
+            this.labelCutCell.Lines = 0;
+            this.labelCutCell.Location = new System.Drawing.Point(598, 46);
+            this.labelCutCell.Name = "labelCutCell";
+            this.labelCutCell.Size = new System.Drawing.Size(92, 23);
+            this.labelCutCell.TabIndex = 9;
+            this.labelCutCell.Text = "Cut Cell";
             // 
-            // article_textbox
+            // txtArticle
             // 
-            this.article_textbox.BackColor = System.Drawing.Color.White;
-            this.article_textbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.article_textbox.Location = new System.Drawing.Point(80, 46);
-            this.article_textbox.Name = "article_textbox";
-            this.article_textbox.Size = new System.Drawing.Size(78, 23);
-            this.article_textbox.TabIndex = 4;
+            this.txtArticle.BackColor = System.Drawing.Color.White;
+            this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtArticle.Location = new System.Drawing.Point(80, 46);
+            this.txtArticle.Name = "txtArticle";
+            this.txtArticle.Size = new System.Drawing.Size(78, 23);
+            this.txtArticle.TabIndex = 4;
             // 
-            // cutno_numericbox
+            // numCutNo
             // 
-            this.cutno_numericbox.BackColor = System.Drawing.Color.White;
-            this.cutno_numericbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cutno_numericbox.Location = new System.Drawing.Point(273, 9);
-            this.cutno_numericbox.Name = "cutno_numericbox";
-            this.cutno_numericbox.NullValue = new decimal(new int[] {
+            this.numCutNo.BackColor = System.Drawing.Color.White;
+            this.numCutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCutNo.Location = new System.Drawing.Point(273, 9);
+            this.numCutNo.Name = "numCutNo";
+            this.numCutNo.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.cutno_numericbox.Size = new System.Drawing.Size(45, 23);
-            this.cutno_numericbox.TabIndex = 1;
-            this.cutno_numericbox.Value = new decimal(new int[] {
+            this.numCutNo.Size = new System.Drawing.Size(45, 23);
+            this.numCutNo.TabIndex = 1;
+            this.numCutNo.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // sizecode_textbox
+            // txtSizeCode
             // 
-            this.sizecode_textbox.BackColor = System.Drawing.Color.White;
-            this.sizecode_textbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.sizecode_textbox.Location = new System.Drawing.Point(273, 46);
-            this.sizecode_textbox.Name = "sizecode_textbox";
-            this.sizecode_textbox.Size = new System.Drawing.Size(78, 23);
-            this.sizecode_textbox.TabIndex = 5;
+            this.txtSizeCode.BackColor = System.Drawing.Color.White;
+            this.txtSizeCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSizeCode.Location = new System.Drawing.Point(273, 46);
+            this.txtSizeCode.Name = "txtSizeCode";
+            this.txtSizeCode.Size = new System.Drawing.Size(78, 23);
+            this.txtSizeCode.TabIndex = 5;
             // 
-            // estcutdate_textbox1
+            // txtEstCutDate
             // 
-            this.estcutdate_textbox1.Location = new System.Drawing.Point(450, 46);
-            this.estcutdate_textbox1.Name = "estcutdate_textbox1";
-            this.estcutdate_textbox1.Size = new System.Drawing.Size(130, 23);
-            this.estcutdate_textbox1.TabIndex = 6;
+            this.txtEstCutDate.Location = new System.Drawing.Point(450, 46);
+            this.txtEstCutDate.Name = "txtEstCutDate";
+            this.txtEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.txtEstCutDate.TabIndex = 6;
             // 
-            // fabriccombo_textbox
+            // txtFabricCombo
             // 
-            this.fabriccombo_textbox.BackColor = System.Drawing.Color.White;
-            this.fabriccombo_textbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.fabriccombo_textbox.Location = new System.Drawing.Point(450, 9);
-            this.fabriccombo_textbox.Name = "fabriccombo_textbox";
-            this.fabriccombo_textbox.Size = new System.Drawing.Size(44, 23);
-            this.fabriccombo_textbox.TabIndex = 2;
+            this.txtFabricCombo.BackColor = System.Drawing.Color.White;
+            this.txtFabricCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFabricCombo.Location = new System.Drawing.Point(450, 9);
+            this.txtFabricCombo.Name = "txtFabricCombo";
+            this.txtFabricCombo.Size = new System.Drawing.Size(44, 23);
+            this.txtFabricCombo.TabIndex = 2;
             // 
-            // markername_textbox
+            // txtMarkerName
             // 
-            this.markername_textbox.BackColor = System.Drawing.Color.White;
-            this.markername_textbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.markername_textbox.Location = new System.Drawing.Point(612, 9);
-            this.markername_textbox.Name = "markername_textbox";
-            this.markername_textbox.Size = new System.Drawing.Size(60, 23);
-            this.markername_textbox.TabIndex = 3;
+            this.txtMarkerName.BackColor = System.Drawing.Color.White;
+            this.txtMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerName.Location = new System.Drawing.Point(612, 9);
+            this.txtMarkerName.Name = "txtMarkerName";
+            this.txtMarkerName.Size = new System.Drawing.Size(60, 23);
+            this.txtMarkerName.TabIndex = 3;
             // 
-            // only_checkBox
+            // checkOnlyShowEmptyEstCutDate
             // 
-            this.only_checkBox.AutoSize = true;
-            this.only_checkBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.only_checkBox.Location = new System.Drawing.Point(729, 48);
-            this.only_checkBox.Name = "only_checkBox";
-            this.only_checkBox.Size = new System.Drawing.Size(221, 21);
-            this.only_checkBox.TabIndex = 8;
-            this.only_checkBox.Text = "Only show empty Est. Cut Date";
-            this.only_checkBox.UseVisualStyleBackColor = true;
+            this.checkOnlyShowEmptyEstCutDate.AutoSize = true;
+            this.checkOnlyShowEmptyEstCutDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOnlyShowEmptyEstCutDate.Location = new System.Drawing.Point(729, 48);
+            this.checkOnlyShowEmptyEstCutDate.Name = "checkOnlyShowEmptyEstCutDate";
+            this.checkOnlyShowEmptyEstCutDate.Size = new System.Drawing.Size(221, 21);
+            this.checkOnlyShowEmptyEstCutDate.TabIndex = 8;
+            this.checkOnlyShowEmptyEstCutDate.Text = "Only show empty Est. Cut Date";
+            this.checkOnlyShowEmptyEstCutDate.UseVisualStyleBackColor = true;
             // 
-            // filter_button
+            // btnFilter
             // 
-            this.filter_button.Location = new System.Drawing.Point(693, 9);
-            this.filter_button.Name = "filter_button";
-            this.filter_button.Size = new System.Drawing.Size(80, 30);
-            this.filter_button.TabIndex = 9;
-            this.filter_button.Text = "Filter";
-            this.filter_button.UseVisualStyleBackColor = true;
-            this.filter_button.Click += new System.EventHandler(this.filter_button_Click);
+            this.btnFilter.Location = new System.Drawing.Point(693, 9);
+            this.btnFilter.Name = "btnFilter";
+            this.btnFilter.Size = new System.Drawing.Size(80, 30);
+            this.btnFilter.TabIndex = 9;
+            this.btnFilter.Text = "Filter";
+            this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.filter_button_Click);
             // 
-            // label9
+            // labelBatchUpdateEstCutCell
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(12, 87);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(92, 23);
-            this.label9.TabIndex = 19;
-            this.label9.Text = "Cut Cell";
+            this.labelBatchUpdateEstCutCell.Lines = 0;
+            this.labelBatchUpdateEstCutCell.Location = new System.Drawing.Point(12, 87);
+            this.labelBatchUpdateEstCutCell.Name = "labelBatchUpdateEstCutCell";
+            this.labelBatchUpdateEstCutCell.Size = new System.Drawing.Size(92, 23);
+            this.labelBatchUpdateEstCutCell.TabIndex = 19;
+            this.labelBatchUpdateEstCutCell.Text = "Cut Cell";
             // 
-            // estcutdate_textbox2
+            // txtBatchUpdateEstCutDate
             // 
-            this.estcutdate_textbox2.Location = new System.Drawing.Point(450, 87);
-            this.estcutdate_textbox2.Name = "estcutdate_textbox2";
-            this.estcutdate_textbox2.Size = new System.Drawing.Size(130, 23);
-            this.estcutdate_textbox2.TabIndex = 12;
+            this.txtBatchUpdateEstCutDate.Location = new System.Drawing.Point(450, 87);
+            this.txtBatchUpdateEstCutDate.Name = "txtBatchUpdateEstCutDate";
+            this.txtBatchUpdateEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.txtBatchUpdateEstCutDate.TabIndex = 12;
             // 
-            // label10
+            // labelBatchUpdateEstCutDate
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(359, 87);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(88, 23);
-            this.label10.TabIndex = 21;
-            this.label10.Text = "Est. Cut Date";
+            this.labelBatchUpdateEstCutDate.Lines = 0;
+            this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(359, 87);
+            this.labelBatchUpdateEstCutDate.Name = "labelBatchUpdateEstCutDate";
+            this.labelBatchUpdateEstCutDate.Size = new System.Drawing.Size(88, 23);
+            this.labelBatchUpdateEstCutDate.TabIndex = 21;
+            this.labelBatchUpdateEstCutDate.Text = "Est. Cut Date";
             // 
             // panel1
             // 
@@ -304,25 +304,25 @@
             this.panel1.Size = new System.Drawing.Size(996, 75);
             this.panel1.TabIndex = 23;
             // 
-            // batchcutcell_button
+            // btnBatchUpdateEstCutCell
             // 
-            this.batchcutcell_button.Location = new System.Drawing.Point(143, 83);
-            this.batchcutcell_button.Name = "batchcutcell_button";
-            this.batchcutcell_button.Size = new System.Drawing.Size(175, 30);
-            this.batchcutcell_button.TabIndex = 11;
-            this.batchcutcell_button.Text = "Batch update Cut Cell";
-            this.batchcutcell_button.UseVisualStyleBackColor = true;
-            this.batchcutcell_button.Click += new System.EventHandler(this.batchcutcell_button_Click);
+            this.btnBatchUpdateEstCutCell.Location = new System.Drawing.Point(143, 83);
+            this.btnBatchUpdateEstCutCell.Name = "btnBatchUpdateEstCutCell";
+            this.btnBatchUpdateEstCutCell.Size = new System.Drawing.Size(175, 30);
+            this.btnBatchUpdateEstCutCell.TabIndex = 11;
+            this.btnBatchUpdateEstCutCell.Text = "Batch update Cut Cell";
+            this.btnBatchUpdateEstCutCell.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateEstCutCell.Click += new System.EventHandler(this.batchcutcell_button_Click);
             // 
-            // batchestcutdate_button
+            // btnBatchUpdateEstCutDate
             // 
-            this.batchestcutdate_button.Location = new System.Drawing.Point(586, 83);
-            this.batchestcutdate_button.Name = "batchestcutdate_button";
-            this.batchestcutdate_button.Size = new System.Drawing.Size(199, 30);
-            this.batchestcutdate_button.TabIndex = 13;
-            this.batchestcutdate_button.Text = "Batch update Est. Cut Date";
-            this.batchestcutdate_button.UseVisualStyleBackColor = true;
-            this.batchestcutdate_button.Click += new System.EventHandler(this.batchestcutdate_button_Click);
+            this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(586, 83);
+            this.btnBatchUpdateEstCutDate.Name = "btnBatchUpdateEstCutDate";
+            this.btnBatchUpdateEstCutDate.Size = new System.Drawing.Size(199, 30);
+            this.btnBatchUpdateEstCutDate.TabIndex = 13;
+            this.btnBatchUpdateEstCutDate.Text = "Batch update Est. Cut Date";
+            this.btnBatchUpdateEstCutDate.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.batchestcutdate_button_Click);
             // 
             // shapeContainer1
             // 
@@ -353,64 +353,64 @@
             this.txtCell2.Size = new System.Drawing.Size(30, 23);
             this.txtCell2.TabIndex = 10;
             // 
-            // txtcell
+            // txtCutCell
             // 
-            this.txtcell.BackColor = System.Drawing.Color.White;
-            this.txtcell.FactoryId = "";
-            this.txtcell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcell.Location = new System.Drawing.Point(693, 46);
-            this.txtcell.Name = "txtcell";
-            this.txtcell.Size = new System.Drawing.Size(30, 23);
-            this.txtcell.TabIndex = 7;
+            this.txtCutCell.BackColor = System.Drawing.Color.White;
+            this.txtCutCell.FactoryId = "";
+            this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutCell.Location = new System.Drawing.Point(693, 46);
+            this.txtCutCell.Name = "txtCutCell";
+            this.txtCutCell.Size = new System.Drawing.Size(30, 23);
+            this.txtCutCell.TabIndex = 7;
             // 
-            // btn_Confirm
+            // btnConfirm
             // 
-            this.btn_Confirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Confirm.AutoSize = true;
-            this.btn_Confirm.Location = new System.Drawing.Point(819, 467);
-            this.btn_Confirm.Name = "btn_Confirm";
-            this.btn_Confirm.Size = new System.Drawing.Size(80, 30);
-            this.btn_Confirm.TabIndex = 14;
-            this.btn_Confirm.Text = "Confirm";
-            this.btn_Confirm.UseVisualStyleBackColor = true;
-            this.btn_Confirm.Click += new System.EventHandler(this.btn_Confirm_Click);
+            this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConfirm.AutoSize = true;
+            this.btnConfirm.Location = new System.Drawing.Point(819, 467);
+            this.btnConfirm.Name = "btnConfirm";
+            this.btnConfirm.Size = new System.Drawing.Size(80, 30);
+            this.btnConfirm.TabIndex = 14;
+            this.btnConfirm.Text = "Confirm";
+            this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.btn_Confirm_Click);
             // 
             // P02_BatchAssignCellCutDate
             // 
             this.ClientSize = new System.Drawing.Size(1010, 503);
-            this.Controls.Add(this.btn_Confirm);
-            this.Controls.Add(this.batchestcutdate_button);
-            this.Controls.Add(this.batchcutcell_button);
-            this.Controls.Add(this.estcutdate_textbox2);
-            this.Controls.Add(this.label10);
+            this.Controls.Add(this.btnConfirm);
+            this.Controls.Add(this.btnBatchUpdateEstCutDate);
+            this.Controls.Add(this.btnBatchUpdateEstCutCell);
+            this.Controls.Add(this.txtBatchUpdateEstCutDate);
+            this.Controls.Add(this.labelBatchUpdateEstCutDate);
             this.Controls.Add(this.txtCell2);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.filter_button);
-            this.Controls.Add(this.only_checkBox);
-            this.Controls.Add(this.markername_textbox);
-            this.Controls.Add(this.fabriccombo_textbox);
-            this.Controls.Add(this.estcutdate_textbox1);
-            this.Controls.Add(this.sizecode_textbox);
-            this.Controls.Add(this.cutno_numericbox);
-            this.Controls.Add(this.txtcell);
-            this.Controls.Add(this.article_textbox);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.SP_textbox);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.labelBatchUpdateEstCutCell);
+            this.Controls.Add(this.btnFilter);
+            this.Controls.Add(this.checkOnlyShowEmptyEstCutDate);
+            this.Controls.Add(this.txtMarkerName);
+            this.Controls.Add(this.txtFabricCombo);
+            this.Controls.Add(this.txtEstCutDate);
+            this.Controls.Add(this.txtSizeCode);
+            this.Controls.Add(this.numCutNo);
+            this.Controls.Add(this.txtCutCell);
+            this.Controls.Add(this.txtArticle);
+            this.Controls.Add(this.labelCutCell);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.labelMarkerName);
+            this.Controls.Add(this.labelEstCutDate);
+            this.Controls.Add(this.labelFabricCombo);
+            this.Controls.Add(this.labelCutNo);
+            this.Controls.Add(this.labelSizeCode);
+            this.Controls.Add(this.labelArticle);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.gridBatchAssignCellEstCutDate);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.shapeContainer1);
             this.DefaultControl = "SP_textbox";
             this.Name = "P02_BatchAssignCellCutDate";
             this.Text = "Batch Assign Cell/Est. Cut Date";
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -418,35 +418,35 @@
 
         #endregion
 
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.TextBox SP_textbox;
-        private Win.UI.Label label8;
-        private Win.UI.TextBox article_textbox;
-        private Class.txtCell txtcell;
-        private Win.UI.NumericBox cutno_numericbox;
-        private Win.UI.TextBox sizecode_textbox;
-        private Win.UI.DateBox estcutdate_textbox1;
-        private Win.UI.TextBox fabriccombo_textbox;
-        private Win.UI.TextBox markername_textbox;
-        private Win.UI.CheckBox only_checkBox;
-        private Win.UI.Button filter_button;
+        private Win.UI.Grid gridBatchAssignCellEstCutDate;
+        private Win.UI.Button btnClose;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelArticle;
+        private Win.UI.Label labelSizeCode;
+        private Win.UI.Label labelCutNo;
+        private Win.UI.Label labelFabricCombo;
+        private Win.UI.Label labelEstCutDate;
+        private Win.UI.Label labelMarkerName;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label labelCutCell;
+        private Win.UI.TextBox txtArticle;
+        private Class.txtCell txtCutCell;
+        private Win.UI.NumericBox numCutNo;
+        private Win.UI.TextBox txtSizeCode;
+        private Win.UI.DateBox txtEstCutDate;
+        private Win.UI.TextBox txtFabricCombo;
+        private Win.UI.TextBox txtMarkerName;
+        private Win.UI.CheckBox checkOnlyShowEmptyEstCutDate;
+        private Win.UI.Button btnFilter;
         private Class.txtCell txtCell2;
-        private Win.UI.Label label9;
-        private Win.UI.DateBox estcutdate_textbox2;
-        private Win.UI.Label label10;
+        private Win.UI.Label labelBatchUpdateEstCutCell;
+        private Win.UI.DateBox txtBatchUpdateEstCutDate;
+        private Win.UI.Label labelBatchUpdateEstCutDate;
         private Win.UI.Panel panel1;
-        private Win.UI.Button batchcutcell_button;
-        private Win.UI.Button batchestcutdate_button;
+        private Win.UI.Button btnBatchUpdateEstCutCell;
+        private Win.UI.Button btnBatchUpdateEstCutDate;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Win.UI.Button btn_Confirm;
+        private Win.UI.Button btnConfirm;
     }
 }

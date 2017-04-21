@@ -27,7 +27,7 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             GridSetup();
             this.EditMode = true;
-            this.comboBox1.SelectedIndex = 0;
+            this.comboSortBy.SelectedIndex = 0;
         }
 
         string Cut_Ref;
@@ -76,27 +76,27 @@ namespace Sci.Production.Cutting
         private void button1_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data processing, please wait...");
-            if (this.textBox1.Text.Empty() && this.textBox2.Text.Empty() && this.textBox4.Text.Empty() && this.textBox3.Text.Empty() && this.textBox7.Text.Empty() && this.textBox6.Text.Empty()
-                && this.textBox5.Text.Empty() && this.dateBox1.Value.Empty())
+            if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
+                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty())
             {
                 MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
-                textBox1.Focus();
+                txtCutRefStart.Focus();
                 return;
             }
 
 
-            Cut_Ref = textBox1.Text.ToString();
-            Cut_Ref1 = textBox2.Text.ToString();
-            SP = textBox4.Text.ToString();
-            SP1 = textBox3.Text.ToString();
-            POID = textBox7.Text.ToString();
-            Bundle = textBox6.Text.ToString();
-            Bundle1 = textBox5.Text.ToString();
+            Cut_Ref = txtCutRefStart.Text.ToString();
+            Cut_Ref1 = txtCutRefEnd.Text.ToString();
+            SP = txtSPNoStart.Text.ToString();
+            SP1 = txtSPNoEnd.Text.ToString();
+            POID = txtPOID.Text.ToString();
+            Bundle = txtBundleStart.Text.ToString();
+            Bundle1 = txtBundleEnd.Text.ToString();
             Est_CutDate = dateBox1.Value;
-            Cell = textBox10.Text.ToString();
-            size = textBox9.Text.ToString();
-            Sort_by = comboBox1.SelectedIndex.ToString();
-            Extend = checkBox1.Checked.ToString();
+            Cell = txtCell.Text.ToString();
+            size = txtSize.Text.ToString();
+            Sort_by = comboSortBy.SelectedIndex.ToString();
+            Extend = checkExtendAllParts.Checked.ToString();
 
 
             List<SqlParameter> lis = new List<SqlParameter>();
@@ -107,35 +107,35 @@ namespace Sci.Production.Cutting
             lis.Add(new SqlParameter("@Keyword", Sci.Env.User.Keyword));
 
 
-            if (!this.textBox1.Text.Empty() && !this.textBox2.Text.Empty())
+            if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
                 sqlWheres.Add("b.CutRef between @Cut_Ref and @Cut_Ref1");
                 lis.Add(new SqlParameter("@Cut_Ref", Cut_Ref));
                 lis.Add(new SqlParameter("@Cut_Ref1", Cut_Ref1));
             }
-            if (!this.textBox4.Text.Empty() && !this.textBox3.Text.Empty())
+            if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
                 sqlWheres.Add("b.OrderID  between @SP and @SP1");
                 lis.Add(new SqlParameter("@SP", SP));
                 lis.Add(new SqlParameter("@SP1", SP1));
             }
-            if (!this.textBox7.Text.Empty())
+            if (!this.txtPOID.Text.Empty())
             {
                 sqlWheres.Add("b.POID=@POID");
                 lis.Add(new SqlParameter("@POID", POID));
             }
-            if (!this.textBox6.Text.Empty() && !this.textBox5.Text.Empty())
+            if (!this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
             {
                 sqlWheres.Add("a.BundleNo between @Bundle and @Bundle1");
                 lis.Add(new SqlParameter("@Bundle", Bundle));
                 lis.Add(new SqlParameter("@Bundle1", Bundle1));
             }
-            if (!this.textBox10.Text.Empty())
+            if (!this.txtCell.Text.Empty())
             {
                 sqlWheres.Add("b.SewingCell =@Cell");
                 lis.Add(new SqlParameter("@Cell", Cell));
             }
-            if (!this.textBox9.Text.Empty())
+            if (!this.txtSize.Text.Empty())
             {
                 sqlWheres.Add("a.SizeCode  =@Size");
                 lis.Add(new SqlParameter("@Size", size));
@@ -147,11 +147,11 @@ namespace Sci.Production.Cutting
                 lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
             }
 
-            if (this.comboBox1.Text == "Bundle#")
+            if (this.comboSortBy.Text == "Bundle#")
             {
                 sb = "order by a.BundleNo,b.OrderID,b.PatternPanel,b.Article,a.SizeCode";
             }
-            else if (this.comboBox1.Text == "SP#")
+            else if (this.comboSortBy.Text == "SP#")
             {
                 sb = "order by b.OrderID,b.CutRef,b.PatternPanel,b.Article,a.SizeCode";
             }
@@ -163,13 +163,13 @@ namespace Sci.Production.Cutting
                 sqlWhere = " where " + sqlWhere;
             }
 
-            if (checkBox1.Checked)
+            if (checkExtendAllParts.Checked)
                 lis.Add(new SqlParameter("@extend", "1"));
             else
                 lis.Add(new SqlParameter("@extend", "0"));
 
             string sqlcmd = string.Empty;
-            if (checkBox1.Checked)  //有勾[Extend All Parts]
+            if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
             {
                 #region SQL
                 sqlcmd = string.Format(@"select Convert(bit,0) as selected

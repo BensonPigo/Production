@@ -74,7 +74,7 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailEntered();
             this.label7.Text = CurrentMaintain["Status"].ToString();
-            this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
+            this.displayRequestedby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
             this.detailgrid.AutoResizeColumns();
         }
         protected override bool ClickSaveBefore()
@@ -201,8 +201,8 @@ content, false, false);
         private void button1_Click(object sender, EventArgs e)
         {
             grid.ValidateControl();
-            if (MyUtility.Check.Empty(dateBox2.Value)) return;
-            string reDate = dateBox2.Text;
+            if (MyUtility.Check.Empty(dateReleaseDate.Value)) return;
+            string reDate = dateReleaseDate.Text;
             foreach (DataRow dr in DetailDatas)
             {
                 dr["releaseDate"] = reDate;

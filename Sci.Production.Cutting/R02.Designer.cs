@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.radiobtn_BySummary = new Sci.Win.UI.RadioButton();
-            this.radioBtn_Byonedaydetial = new Sci.Win.UI.RadioButton();
-            this.radiobtn_Bydetail = new Sci.Win.UI.RadioButton();
-            this.cmb_MDivisionID = new Sci.Win.UI.ComboBox();
-            this.txt_CutCell2 = new Sci.Win.UI.TextBox();
+            this.radioBySummary = new Sci.Win.UI.RadioButton();
+            this.radioByOneDayDetial = new Sci.Win.UI.RadioButton();
+            this.radioByDetail = new Sci.Win.UI.RadioButton();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.txtCutCellEnd = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.txt_CutCell1 = new Sci.Win.UI.TextBox();
-            this.dateR_CuttingDate = new Sci.Win.UI.DateRange();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label_CutCell = new Sci.Win.UI.Label();
+            this.txtCutCellStart = new Sci.Win.UI.TextBox();
+            this.dateCuttingDate = new Sci.Win.UI.DateRange();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelCutCell = new Sci.Win.UI.Label();
             this.labelCuttingDate = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.btn_sendmail = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
@@ -67,81 +67,81 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.radiobtn_BySummary);
-            this.panel1.Controls.Add(this.radioBtn_Byonedaydetial);
-            this.panel1.Controls.Add(this.radiobtn_Bydetail);
-            this.panel1.Controls.Add(this.cmb_MDivisionID);
-            this.panel1.Controls.Add(this.txt_CutCell2);
+            this.panel1.Controls.Add(this.radioBySummary);
+            this.panel1.Controls.Add(this.radioByOneDayDetial);
+            this.panel1.Controls.Add(this.radioByDetail);
+            this.panel1.Controls.Add(this.comboM);
+            this.panel1.Controls.Add(this.txtCutCellEnd);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.txt_CutCell1);
-            this.panel1.Controls.Add(this.dateR_CuttingDate);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label_CutCell);
+            this.panel1.Controls.Add(this.txtCutCellStart);
+            this.panel1.Controls.Add(this.dateCuttingDate);
+            this.panel1.Controls.Add(this.labelType);
+            this.panel1.Controls.Add(this.labelCutCell);
             this.panel1.Controls.Add(this.labelCuttingDate);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelM);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(413, 198);
             this.panel1.TabIndex = 0;
             // 
-            // radiobtn_BySummary
+            // radioBySummary
             // 
-            this.radiobtn_BySummary.AutoSize = true;
-            this.radiobtn_BySummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_BySummary.Location = new System.Drawing.Point(123, 171);
-            this.radiobtn_BySummary.Name = "radiobtn_BySummary";
-            this.radiobtn_BySummary.Size = new System.Drawing.Size(105, 21);
-            this.radiobtn_BySummary.TabIndex = 6;
-            this.radiobtn_BySummary.TabStop = true;
-            this.radiobtn_BySummary.Text = "By Summary";
-            this.radiobtn_BySummary.UseVisualStyleBackColor = true;
+            this.radioBySummary.AutoSize = true;
+            this.radioBySummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBySummary.Location = new System.Drawing.Point(123, 171);
+            this.radioBySummary.Name = "radioBySummary";
+            this.radioBySummary.Size = new System.Drawing.Size(105, 21);
+            this.radioBySummary.TabIndex = 6;
+            this.radioBySummary.TabStop = true;
+            this.radioBySummary.Text = "By Summary";
+            this.radioBySummary.UseVisualStyleBackColor = true;
             // 
-            // radioBtn_Byonedaydetial
+            // radioByOneDayDetial
             // 
-            this.radioBtn_Byonedaydetial.AutoSize = true;
-            this.radioBtn_Byonedaydetial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBtn_Byonedaydetial.Location = new System.Drawing.Point(123, 144);
-            this.radioBtn_Byonedaydetial.Name = "radioBtn_Byonedaydetial";
-            this.radioBtn_Byonedaydetial.Size = new System.Drawing.Size(135, 21);
-            this.radioBtn_Byonedaydetial.TabIndex = 5;
-            this.radioBtn_Byonedaydetial.TabStop = true;
-            this.radioBtn_Byonedaydetial.Text = "By one day detial";
-            this.radioBtn_Byonedaydetial.UseVisualStyleBackColor = true;
-            this.radioBtn_Byonedaydetial.CheckedChanged += new System.EventHandler(this.radioBtn_Byonedaydetial_CheckedChanged);
+            this.radioByOneDayDetial.AutoSize = true;
+            this.radioByOneDayDetial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByOneDayDetial.Location = new System.Drawing.Point(123, 144);
+            this.radioByOneDayDetial.Name = "radioByOneDayDetial";
+            this.radioByOneDayDetial.Size = new System.Drawing.Size(135, 21);
+            this.radioByOneDayDetial.TabIndex = 5;
+            this.radioByOneDayDetial.TabStop = true;
+            this.radioByOneDayDetial.Text = "By one day detial";
+            this.radioByOneDayDetial.UseVisualStyleBackColor = true;
+            this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.radioBtn_Byonedaydetial_CheckedChanged);
             // 
-            // radiobtn_Bydetail
+            // radioByDetail
             // 
-            this.radiobtn_Bydetail.AutoSize = true;
-            this.radiobtn_Bydetail.Checked = true;
-            this.radiobtn_Bydetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_Bydetail.Location = new System.Drawing.Point(123, 117);
-            this.radiobtn_Bydetail.Name = "radiobtn_Bydetail";
-            this.radiobtn_Bydetail.Size = new System.Drawing.Size(82, 21);
-            this.radiobtn_Bydetail.TabIndex = 4;
-            this.radiobtn_Bydetail.TabStop = true;
-            this.radiobtn_Bydetail.Text = "By Detail";
-            this.radiobtn_Bydetail.UseVisualStyleBackColor = true;
+            this.radioByDetail.AutoSize = true;
+            this.radioByDetail.Checked = true;
+            this.radioByDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByDetail.Location = new System.Drawing.Point(123, 117);
+            this.radioByDetail.Name = "radioByDetail";
+            this.radioByDetail.Size = new System.Drawing.Size(82, 21);
+            this.radioByDetail.TabIndex = 4;
+            this.radioByDetail.TabStop = true;
+            this.radioByDetail.Text = "By Detail";
+            this.radioByDetail.UseVisualStyleBackColor = true;
             // 
-            // cmb_MDivisionID
+            // comboM
             // 
-            this.cmb_MDivisionID.BackColor = System.Drawing.Color.White;
-            this.cmb_MDivisionID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmb_MDivisionID.FormattingEnabled = true;
-            this.cmb_MDivisionID.IsSupportUnselect = true;
-            this.cmb_MDivisionID.Location = new System.Drawing.Point(123, 79);
-            this.cmb_MDivisionID.Name = "cmb_MDivisionID";
-            this.cmb_MDivisionID.Size = new System.Drawing.Size(121, 24);
-            this.cmb_MDivisionID.TabIndex = 3;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(123, 79);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(121, 24);
+            this.comboM.TabIndex = 3;
             // 
-            // txt_CutCell2
+            // txtCutCellEnd
             // 
-            this.txt_CutCell2.BackColor = System.Drawing.Color.White;
-            this.txt_CutCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_CutCell2.Location = new System.Drawing.Point(214, 43);
-            this.txt_CutCell2.MaxLength = 2;
-            this.txt_CutCell2.Name = "txt_CutCell2";
-            this.txt_CutCell2.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell2.TabIndex = 2;
+            this.txtCutCellEnd.BackColor = System.Drawing.Color.White;
+            this.txtCutCellEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutCellEnd.Location = new System.Drawing.Point(214, 43);
+            this.txtCutCellEnd.MaxLength = 2;
+            this.txtCutCellEnd.Name = "txtCutCellEnd";
+            this.txtCutCellEnd.Size = new System.Drawing.Size(65, 23);
+            this.txtCutCellEnd.TabIndex = 2;
             // 
             // label9
             // 
@@ -157,42 +157,42 @@
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // txt_CutCell1
+            // txtCutCellStart
             // 
-            this.txt_CutCell1.BackColor = System.Drawing.Color.White;
-            this.txt_CutCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_CutCell1.Location = new System.Drawing.Point(123, 43);
-            this.txt_CutCell1.MaxLength = 2;
-            this.txt_CutCell1.Name = "txt_CutCell1";
-            this.txt_CutCell1.Size = new System.Drawing.Size(65, 23);
-            this.txt_CutCell1.TabIndex = 1;
+            this.txtCutCellStart.BackColor = System.Drawing.Color.White;
+            this.txtCutCellStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutCellStart.Location = new System.Drawing.Point(123, 43);
+            this.txtCutCellStart.MaxLength = 2;
+            this.txtCutCellStart.Name = "txtCutCellStart";
+            this.txtCutCellStart.Size = new System.Drawing.Size(65, 23);
+            this.txtCutCellStart.TabIndex = 1;
             // 
-            // dateR_CuttingDate
+            // dateCuttingDate
             // 
-            this.dateR_CuttingDate.IsRequired = false;
-            this.dateR_CuttingDate.Location = new System.Drawing.Point(123, 7);
-            this.dateR_CuttingDate.Name = "dateR_CuttingDate";
-            this.dateR_CuttingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateR_CuttingDate.TabIndex = 0;
-            this.dateR_CuttingDate.Leave += new System.EventHandler(this.Leave_CuttingDate);
+            this.dateCuttingDate.IsRequired = false;
+            this.dateCuttingDate.Location = new System.Drawing.Point(123, 7);
+            this.dateCuttingDate.Name = "dateCuttingDate";
+            this.dateCuttingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateCuttingDate.TabIndex = 0;
+            this.dateCuttingDate.Leave += new System.EventHandler(this.Leave_CuttingDate);
             // 
-            // label5
+            // labelType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(12, 115);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(99, 23);
-            this.label5.TabIndex = 99;
-            this.label5.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(12, 115);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(99, 23);
+            this.labelType.TabIndex = 99;
+            this.labelType.Text = "Type";
             // 
-            // label_CutCell
+            // labelCutCell
             // 
-            this.label_CutCell.Lines = 0;
-            this.label_CutCell.Location = new System.Drawing.Point(12, 43);
-            this.label_CutCell.Name = "label_CutCell";
-            this.label_CutCell.Size = new System.Drawing.Size(99, 23);
-            this.label_CutCell.TabIndex = 98;
-            this.label_CutCell.Text = "Cut Cell";
+            this.labelCutCell.Lines = 0;
+            this.labelCutCell.Location = new System.Drawing.Point(12, 43);
+            this.labelCutCell.Name = "labelCutCell";
+            this.labelCutCell.Size = new System.Drawing.Size(99, 23);
+            this.labelCutCell.TabIndex = 98;
+            this.labelCutCell.Text = "Cut Cell";
             // 
             // labelCuttingDate
             // 
@@ -203,14 +203,14 @@
             this.labelCuttingDate.TabIndex = 97;
             this.labelCuttingDate.Text = "Cutting Date";
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 79);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 96;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(12, 79);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(99, 23);
+            this.labelM.TabIndex = 96;
+            this.labelM.Text = "M";
             // 
             // label4
             // 
@@ -260,18 +260,18 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label_CutCell;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelCutCell;
         private Win.UI.Label labelCuttingDate;
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateR_CuttingDate;
-        private Win.UI.RadioButton radiobtn_BySummary;
-        private Win.UI.RadioButton radioBtn_Byonedaydetial;
-        private Win.UI.RadioButton radiobtn_Bydetail;
-        private Win.UI.ComboBox cmb_MDivisionID;
-        private Win.UI.TextBox txt_CutCell2;
+        private Win.UI.Label labelM;
+        private Win.UI.DateRange dateCuttingDate;
+        private Win.UI.RadioButton radioBySummary;
+        private Win.UI.RadioButton radioByOneDayDetial;
+        private Win.UI.RadioButton radioByDetail;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.TextBox txtCutCellEnd;
         private Win.UI.Label label9;
-        private Win.UI.TextBox txt_CutCell1;
+        private Win.UI.TextBox txtCutCellStart;
         private Win.UI.Button btn_sendmail;
 
     }

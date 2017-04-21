@@ -33,11 +33,11 @@ namespace Sci.Production.Cutting
 
             if (MyUtility.Check.Empty(drCurrentMaintain["cDate"]))
             {
-                dateBox1.Value = DateTime.Today;
+                dateEstCutDate.Value = DateTime.Today;
             }
             else
             {
-                dateBox1.Value = Convert.ToDateTime(drCurrentMaintain["cDate"]);
+                dateEstCutDate.Value = Convert.ToDateTime(drCurrentMaintain["cDate"]);
             }
 
         }
@@ -49,9 +49,9 @@ namespace Sci.Production.Cutting
             '' as FabricPanelCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
             0 as Cons, '' as Ratio from Workorder WITH (NOLOCK) where 1=0", out gridTable);
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridTable;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = gridTable;
+            Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -65,7 +65,7 @@ namespace Sci.Production.Cutting
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true);
-            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -76,13 +76,13 @@ namespace Sci.Production.Cutting
 
         private void Query_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
             }
             gridTable.Clear();
-            string estcutdate = dateBox1.Text;
+            string estcutdate = dateEstCutDate.Text;
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
             string sqlcmd = string.Format(
@@ -107,7 +107,7 @@ namespace Sci.Production.Cutting
             if (dResult)
             {
                 gridTable = detailTable.Copy();
-                grid1.DataSource = gridTable;
+                gridImport.DataSource = gridTable;
             }
             else
             {
@@ -118,7 +118,7 @@ namespace Sci.Production.Cutting
 
         private void Import_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataRow[] selDr = gridTable.Select("Sel=1","");
             if(selDr.Length>0)
             {

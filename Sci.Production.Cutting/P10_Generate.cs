@@ -46,7 +46,7 @@ namespace Sci.Production.Cutting
             //table_bundle_Detail.Clear();
             detailTb = table_bundle_Detail;
 
-            numericBox_noBundle.Value = (decimal)maindr["Qty"];
+            numNoOfBundle.Value = (decimal)maindr["Qty"];
             
             DataTable bdwtb2 = null;
             if (table_bundleqty.Rows.Count != 0)
@@ -54,7 +54,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Tool.ProcessWithDatatable(table_bundleqty, "", "Select SizeCode,Ukey,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
             }
             NoOfBunble = bdwtb2 == null ? Convert.ToInt16(maindr["Qty"]) : bdwtb2.Rows.Count;
-            displayBox_pattern.Text = maindr["PatternPanel"].ToString();
+            displayPatternPanel.Text = maindr["PatternPanel"].ToString();
             //calsumQty();
             garmentlist(); //排出所有GarmentList
 
@@ -62,8 +62,8 @@ namespace Sci.Production.Cutting
             #region Size-CutQty
             if (MyUtility.Check.Empty(maindr["cutref"])) //因為無CutRef 就直接抓取Order_Qty 的SizeCode
             {
-                label2.Visible = false;
-                displayBox_Cutoutput.Visible = false;
+                labelTotalCutOutput.Visible = false;
+                displayTotalCutOutput.Visible = false;
                 string size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
             }
@@ -78,7 +78,7 @@ namespace Sci.Production.Cutting
                    dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
                 }
             }
-            displayBox_Cutoutput.Value = totalCutQty;
+            displayTotalCutOutput.Value = totalCutQty;
             #endregion
 
             if (qtyTb.Rows.Count == 0)
@@ -94,7 +94,7 @@ namespace Sci.Production.Cutting
             calAllPart();
             caltotalpart();
 
-            int newvalue = (int)numericBox_noBundle.Value;
+            int newvalue = (int)numNoOfBundle.Value;
             distributeQty(newvalue);
         }
 
@@ -497,8 +497,8 @@ namespace Sci.Production.Cutting
 
         private void numericBox_noBundle_Validated(object sender, EventArgs e)
         {
-            int newvalue = (int)numericBox_noBundle.Value;
-            int oldvalue = (int)numericBox_noBundle.OldValue;
+            int newvalue = (int)numNoOfBundle.Value;
+            int oldvalue = (int)numNoOfBundle.OldValue;
             //if (newvalue == oldvalue) return;
             distributeQty(newvalue);
         }
@@ -551,7 +551,7 @@ namespace Sci.Production.Cutting
         {
             int qty=0;
             if(qtyTb.Rows.Count>0) qty = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
-            displayBox1.Value = qty;
+            displayTotalQty.Value = qty;
         }
         private void qtyTbclear()
         {
@@ -721,7 +721,7 @@ namespace Sci.Production.Cutting
         {
             decimal totalpart = 0;
             if (patternTb.Rows.Count > 0) totalpart = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
-            totalpart_numericBox.Value = totalpart;
+            numTotalParts.Value = totalpart;
         }
 
         public void calAllPart() //計算all part
@@ -779,7 +779,7 @@ namespace Sci.Production.Cutting
             }
             #endregion 
 
-            maindatarow["Qty"] = numericBox_noBundle.Value;
+            maindatarow["Qty"] = numNoOfBundle.Value;
             DataTable bundle_detail_tmp;
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
             int bundlegroup = Convert.ToInt16(maindatarow["startno"]);

@@ -32,33 +32,33 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.textBox10 = new Sci.Win.UI.TextBox();
-            this.textBox9 = new Sci.Win.UI.TextBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
+            this.txtCell = new Sci.Win.UI.TextBox();
+            this.txtSize = new Sci.Win.UI.TextBox();
+            this.txtPOID = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.textBox5 = new Sci.Win.UI.TextBox();
-            this.textBox6 = new Sci.Win.UI.TextBox();
+            this.txtBundleEnd = new Sci.Win.UI.TextBox();
+            this.txtBundleStart = new Sci.Win.UI.TextBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.checkExtendAllParts = new Sci.Win.UI.CheckBox();
+            this.txtCutRefEnd = new Sci.Win.UI.TextBox();
+            this.txtCutRefStart = new Sci.Win.UI.TextBox();
+            this.labelSize = new Sci.Win.UI.Label();
+            this.labelCell = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelBundleNo = new Sci.Win.UI.Label();
+            this.labelPOID = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelCutRef = new Sci.Win.UI.Label();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label11 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
+            this.labelSortBy = new Sci.Win.UI.Label();
+            this.comboSortBy = new Sci.Win.UI.ComboBox();
+            this.btnBundleCard = new Sci.Win.UI.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -72,27 +72,27 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.dateBox1);
-            this.panel1.Controls.Add(this.textBox10);
-            this.panel1.Controls.Add(this.textBox9);
-            this.panel1.Controls.Add(this.textBox7);
+            this.panel1.Controls.Add(this.txtCell);
+            this.panel1.Controls.Add(this.txtSize);
+            this.panel1.Controls.Add(this.txtPOID);
             this.panel1.Controls.Add(this.label10);
-            this.panel1.Controls.Add(this.textBox5);
-            this.panel1.Controls.Add(this.textBox6);
+            this.panel1.Controls.Add(this.txtBundleEnd);
+            this.panel1.Controls.Add(this.txtBundleStart);
             this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.textBox3);
-            this.panel1.Controls.Add(this.textBox4);
+            this.panel1.Controls.Add(this.txtSPNoEnd);
+            this.panel1.Controls.Add(this.txtSPNoStart);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.btnQuery);
+            this.panel1.Controls.Add(this.checkExtendAllParts);
+            this.panel1.Controls.Add(this.txtCutRefEnd);
+            this.panel1.Controls.Add(this.txtCutRefStart);
+            this.panel1.Controls.Add(this.labelSize);
+            this.panel1.Controls.Add(this.labelCell);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelBundleNo);
+            this.panel1.Controls.Add(this.labelPOID);
+            this.panel1.Controls.Add(this.labelSPNo);
+            this.panel1.Controls.Add(this.labelCutRef);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -106,32 +106,32 @@
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 3;
             // 
-            // textBox10
+            // txtCell
             // 
-            this.textBox10.BackColor = System.Drawing.Color.White;
-            this.textBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox10.Location = new System.Drawing.Point(706, 49);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(100, 23);
-            this.textBox10.TabIndex = 8;
+            this.txtCell.BackColor = System.Drawing.Color.White;
+            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell.Location = new System.Drawing.Point(706, 49);
+            this.txtCell.Name = "txtCell";
+            this.txtCell.Size = new System.Drawing.Size(100, 23);
+            this.txtCell.TabIndex = 8;
             // 
-            // textBox9
+            // txtSize
             // 
-            this.textBox9.BackColor = System.Drawing.Color.White;
-            this.textBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox9.Location = new System.Drawing.Point(883, 48);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(100, 23);
-            this.textBox9.TabIndex = 9;
+            this.txtSize.BackColor = System.Drawing.Color.White;
+            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSize.Location = new System.Drawing.Point(883, 48);
+            this.txtSize.Name = "txtSize";
+            this.txtSize.Size = new System.Drawing.Size(100, 23);
+            this.txtSize.TabIndex = 9;
             // 
-            // textBox7
+            // txtPOID
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(389, 15);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 2;
+            this.txtPOID.BackColor = System.Drawing.Color.White;
+            this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPOID.Location = new System.Drawing.Point(389, 15);
+            this.txtPOID.Name = "txtPOID";
+            this.txtPOID.Size = new System.Drawing.Size(100, 23);
+            this.txtPOID.TabIndex = 2;
             // 
             // label10
             // 
@@ -142,23 +142,23 @@
             this.label10.TabIndex = 18;
             this.label10.Text = "~";
             // 
-            // textBox5
+            // txtBundleEnd
             // 
-            this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox5.Location = new System.Drawing.Point(534, 49);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(99, 23);
-            this.textBox5.TabIndex = 7;
+            this.txtBundleEnd.BackColor = System.Drawing.Color.White;
+            this.txtBundleEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBundleEnd.Location = new System.Drawing.Point(534, 49);
+            this.txtBundleEnd.Name = "txtBundleEnd";
+            this.txtBundleEnd.Size = new System.Drawing.Size(99, 23);
+            this.txtBundleEnd.TabIndex = 7;
             // 
-            // textBox6
+            // txtBundleStart
             // 
-            this.textBox6.BackColor = System.Drawing.Color.White;
-            this.textBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox6.Location = new System.Drawing.Point(408, 50);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(99, 23);
-            this.textBox6.TabIndex = 6;
+            this.txtBundleStart.BackColor = System.Drawing.Color.White;
+            this.txtBundleStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBundleStart.Location = new System.Drawing.Point(408, 50);
+            this.txtBundleStart.Name = "txtBundleStart";
+            this.txtBundleStart.Size = new System.Drawing.Size(99, 23);
+            this.txtBundleStart.TabIndex = 6;
             // 
             // label8
             // 
@@ -169,23 +169,23 @@
             this.label8.TabIndex = 15;
             this.label8.Text = "~";
             // 
-            // textBox3
+            // txtSPNoEnd
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(214, 49);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(99, 23);
-            this.textBox3.TabIndex = 5;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(214, 49);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(99, 23);
+            this.txtSPNoEnd.TabIndex = 5;
             // 
-            // textBox4
+            // txtSPNoStart
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(88, 50);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(99, 23);
-            this.textBox4.TabIndex = 4;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(88, 50);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(99, 23);
+            this.txtSPNoStart.TabIndex = 4;
             // 
             // label9
             // 
@@ -196,62 +196,62 @@
             this.label9.TabIndex = 12;
             this.label9.Text = "~";
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(1041, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 35);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(1041, 9);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(94, 35);
+            this.btnQuery.TabIndex = 11;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // checkBox1
+            // checkExtendAllParts
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(1009, 54);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(126, 21);
-            this.checkBox1.TabIndex = 10;
-            this.checkBox1.Text = "Extend All Parts";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkExtendAllParts.AutoSize = true;
+            this.checkExtendAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExtendAllParts.Location = new System.Drawing.Point(1009, 54);
+            this.checkExtendAllParts.Name = "checkExtendAllParts";
+            this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
+            this.checkExtendAllParts.TabIndex = 10;
+            this.checkExtendAllParts.Text = "Extend All Parts";
+            this.checkExtendAllParts.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // txtCutRefEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(214, 15);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(99, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtCutRefEnd.BackColor = System.Drawing.Color.White;
+            this.txtCutRefEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRefEnd.Location = new System.Drawing.Point(214, 15);
+            this.txtCutRefEnd.Name = "txtCutRefEnd";
+            this.txtCutRefEnd.Size = new System.Drawing.Size(99, 23);
+            this.txtCutRefEnd.TabIndex = 1;
             // 
-            // textBox1
+            // txtCutRefStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(88, 16);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(99, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtCutRefStart.BackColor = System.Drawing.Color.White;
+            this.txtCutRefStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRefStart.Location = new System.Drawing.Point(88, 16);
+            this.txtCutRefStart.Name = "txtCutRefStart";
+            this.txtCutRefStart.Size = new System.Drawing.Size(99, 23);
+            this.txtCutRefStart.TabIndex = 0;
             // 
-            // label7
+            // labelSize
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(844, 48);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(36, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Size";
+            this.labelSize.Lines = 0;
+            this.labelSize.Location = new System.Drawing.Point(844, 48);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(36, 23);
+            this.labelSize.TabIndex = 6;
+            this.labelSize.Text = "Size";
             // 
-            // label6
+            // labelCell
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(671, 48);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(32, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Cell";
+            this.labelCell.Lines = 0;
+            this.labelCell.Location = new System.Drawing.Point(671, 48);
+            this.labelCell.Name = "labelCell";
+            this.labelCell.Size = new System.Drawing.Size(32, 23);
+            this.labelCell.TabIndex = 5;
+            this.labelCell.Text = "Cell";
             // 
             // label5
             // 
@@ -262,105 +262,105 @@
             this.label5.TabIndex = 4;
             this.label5.Text = "Est. Cut Date";
             // 
-            // label4
+            // labelBundleNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(339, 49);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Bundle#";
+            this.labelBundleNo.Lines = 0;
+            this.labelBundleNo.Location = new System.Drawing.Point(339, 49);
+            this.labelBundleNo.Name = "labelBundleNo";
+            this.labelBundleNo.Size = new System.Drawing.Size(66, 23);
+            this.labelBundleNo.TabIndex = 3;
+            this.labelBundleNo.Text = "Bundle#";
             // 
-            // label3
+            // labelPOID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(339, 15);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(47, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "POID";
+            this.labelPOID.Lines = 0;
+            this.labelPOID.Location = new System.Drawing.Point(339, 15);
+            this.labelPOID.Name = "labelPOID";
+            this.labelPOID.Size = new System.Drawing.Size(47, 23);
+            this.labelPOID.TabIndex = 2;
+            this.labelPOID.Text = "POID";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(10, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 21);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(10, 51);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(75, 21);
+            this.labelSPNo.TabIndex = 1;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label1
+            // labelCutRef
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(10, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 22);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Cut Ref";
+            this.labelCutRef.Lines = 0;
+            this.labelCutRef.Location = new System.Drawing.Point(10, 16);
+            this.labelCutRef.Name = "labelCutRef";
+            this.labelCutRef.Size = new System.Drawing.Size(75, 22);
+            this.labelCutRef.TabIndex = 0;
+            this.labelCutRef.Text = "Cut Ref";
             // 
-            // label11
+            // labelSortBy
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(10, 11);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(50, 22);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Sort by";
+            this.labelSortBy.Lines = 0;
+            this.labelSortBy.Location = new System.Drawing.Point(10, 11);
+            this.labelSortBy.Name = "labelSortBy";
+            this.labelSortBy.Size = new System.Drawing.Size(50, 22);
+            this.labelSortBy.TabIndex = 0;
+            this.labelSortBy.Text = "Sort by";
             // 
-            // comboBox1
+            // comboSortBy
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboSortBy.BackColor = System.Drawing.Color.White;
+            this.comboSortBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortBy.FormattingEnabled = true;
+            this.comboSortBy.IsSupportUnselect = true;
+            this.comboSortBy.Items.AddRange(new object[] {
             "Bundle#",
             "SP#"});
-            this.comboBox1.Location = new System.Drawing.Point(63, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(144, 24);
-            this.comboBox1.TabIndex = 0;
+            this.comboSortBy.Location = new System.Drawing.Point(63, 11);
+            this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.Size = new System.Drawing.Size(144, 24);
+            this.comboSortBy.TabIndex = 0;
             // 
-            // button2
+            // btnBundleCard
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(742, 11);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(123, 33);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Bundle Card";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnBundleCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBundleCard.Location = new System.Drawing.Point(742, 11);
+            this.btnBundleCard.Name = "btnBundleCard";
+            this.btnBundleCard.Size = new System.Drawing.Size(123, 33);
+            this.btnBundleCard.TabIndex = 1;
+            this.btnBundleCard.Text = "Bundle Card";
+            this.btnBundleCard.UseVisualStyleBackColor = true;
+            this.btnBundleCard.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // btnToExcel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(881, 11);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(136, 33);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "ToExcel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(881, 11);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(136, 33);
+            this.btnToExcel.TabIndex = 2;
+            this.btnToExcel.Text = "ToExcel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(1034, 11);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(136, 33);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(1034, 11);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(136, 33);
+            this.btnClose.TabIndex = 3;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.label11);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.button4);
-            this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.button3);
+            this.panel3.Controls.Add(this.labelSortBy);
+            this.panel3.Controls.Add(this.comboSortBy);
+            this.panel3.Controls.Add(this.btnClose);
+            this.panel3.Controls.Add(this.btnBundleCard);
+            this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 368);
             this.panel3.Name = "panel3";
@@ -433,32 +433,32 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
+        private Win.UI.TextBox txtCutRefEnd;
+        private Win.UI.TextBox txtCutRefStart;
+        private Win.UI.Label labelSize;
+        private Win.UI.Label labelCell;
         private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelBundleNo;
+        private Win.UI.Label labelPOID;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelCutRef;
         private Win.UI.Label label9;
-        private Win.UI.Button button1;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Button btnQuery;
+        private Win.UI.CheckBox checkExtendAllParts;
         private Win.UI.Label label10;
-        private Win.UI.TextBox textBox5;
-        private Win.UI.TextBox textBox6;
+        private Win.UI.TextBox txtBundleEnd;
+        private Win.UI.TextBox txtBundleStart;
         private Win.UI.Label label8;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox10;
-        private Win.UI.TextBox textBox9;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.Label label11;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Button button2;
-        private Win.UI.Button button3;
-        private Win.UI.Button button4;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.TextBox txtSPNoStart;
+        private Win.UI.TextBox txtCell;
+        private Win.UI.TextBox txtSize;
+        private Win.UI.TextBox txtPOID;
+        private Win.UI.Label labelSortBy;
+        private Win.UI.ComboBox comboSortBy;
+        private Win.UI.Button btnBundleCard;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnClose;
         private Win.UI.DateBox dateBox1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.Panel panel3;

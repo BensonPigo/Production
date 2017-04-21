@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textCellNo.ReadOnly = true;
+            txtCellNo.ReadOnly = true;
         }
     }
 }

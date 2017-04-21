@@ -23,15 +23,15 @@ namespace Sci.Production.Cutting
         public P04_Import()
         {
             InitializeComponent();
-            txtCell1.FactoryId = keyWord;
+            txtCutCell.FactoryId = keyWord;
         }
         protected override void OnFormLoaded()
         {
             DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref from cutplan where 1=0", out gridTable);
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridTable;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = gridTable;
+            Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("POID", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Cuttingid", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -39,7 +39,7 @@ namespace Sci.Production.Cutting
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
-            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
         private void Close_Click(object sender, EventArgs e)
@@ -49,14 +49,14 @@ namespace Sci.Production.Cutting
 
         private void Query_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
             }
             gridTable.Rows.Clear();  //開始查詢前先清空資料
-            string estcutdate = dateBox1.Text;
-            string cutcellid = txtCell1.Text;
+            string estcutdate = dateEstCutDate.Text;
+            string cutcellid = txtCutCell.Text;
             string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
             if (!MyUtility.Check.Empty(cutcellid))
             {
@@ -140,7 +140,7 @@ namespace Sci.Production.Cutting
 
                             if (!string.IsNullOrWhiteSpace(id))
                             {
-                                insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateBox1.Text, "New", loginID, dr["POId"]);
+                                insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"]);
                                 importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
                                 if (importay.Length > 0)
                                 {
@@ -162,7 +162,7 @@ namespace Sci.Production.Cutting
                                     //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
                                     string UpdateWorkorder = string.Format(@"update Workorder set CutplanID = '{0}' 
                                                                             where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'"
-                                                                            , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateBox1.Text);
+                                                                            , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateEstCutDate.Text);
 
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
                                     {

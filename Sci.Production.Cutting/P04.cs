@@ -137,7 +137,7 @@ namespace Sci.Production.Cutting
             @"Insert into MarkerReq
             (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
             values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid,dateBox1.Text, CurrentMaintain["mDivisionid"],
+            reqid,dateCuttingDate.Text, CurrentMaintain["mDivisionid"],
             CurrentMaintain["cutcellid"], CurrentMaintain["ID"], loginID);
 
             #region 表身
@@ -241,7 +241,7 @@ namespace Sci.Production.Cutting
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button2.Enabled = (CurrentMaintain["Status"].ToString() != "New");
+            this.btnSendMail.Enabled = (CurrentMaintain["Status"].ToString() != "New");
             this.detailgrid.AutoResizeColumns();
         }
         protected override void ClickUnconfirm()
@@ -380,7 +380,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
 
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
-                    objSheet.Cells[3, 2] = dateBox1.Text;
+                    objSheet.Cells[3, 2] = dateCuttingDate.Text;
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
                     objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);

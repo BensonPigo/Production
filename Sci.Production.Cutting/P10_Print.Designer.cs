@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
+            this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
+            this.radioBundleCard = new System.Windows.Forms.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,47 +52,47 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.checkBox1);
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.checkExtendAllParts);
+            this.radioPanel1.Controls.Add(this.radioBundleChecklist);
+            this.radioPanel1.Controls.Add(this.radioBundleCard);
             this.radioPanel1.Location = new System.Drawing.Point(12, 11);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(350, 100);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.radioPanel1_Paint);
             // 
-            // checkBox1
+            // checkExtendAllParts
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.Red;
-            this.checkBox1.Location = new System.Drawing.Point(210, 18);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(126, 21);
-            this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "Extend All Parts";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkExtendAllParts.AutoSize = true;
+            this.checkExtendAllParts.ForeColor = System.Drawing.Color.Red;
+            this.checkExtendAllParts.Location = new System.Drawing.Point(210, 18);
+            this.checkExtendAllParts.Name = "checkExtendAllParts";
+            this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
+            this.checkExtendAllParts.TabIndex = 1;
+            this.checkExtendAllParts.Text = "Extend All Parts";
+            this.checkExtendAllParts.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioBundleChecklist
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(28, 57);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(134, 21);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.Text = "Bundle Check list";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioBundleChecklist.AutoSize = true;
+            this.radioBundleChecklist.Location = new System.Drawing.Point(28, 57);
+            this.radioBundleChecklist.Name = "radioBundleChecklist";
+            this.radioBundleChecklist.Size = new System.Drawing.Size(134, 21);
+            this.radioBundleChecklist.TabIndex = 2;
+            this.radioBundleChecklist.Text = "Bundle Check list";
+            this.radioBundleChecklist.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // radioBundleCard
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(28, 17);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(131, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Bundle Card(A4)";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioBundleCard.AutoSize = true;
+            this.radioBundleCard.Checked = true;
+            this.radioBundleCard.Location = new System.Drawing.Point(28, 17);
+            this.radioBundleCard.Name = "radioBundleCard";
+            this.radioBundleCard.Size = new System.Drawing.Size(131, 21);
+            this.radioBundleCard.TabIndex = 0;
+            this.radioBundleCard.TabStop = true;
+            this.radioBundleCard.Text = "Bundle Card(A4)";
+            this.radioBundleCard.UseVisualStyleBackColor = true;
             // 
             // P10_Print
             // 
@@ -115,9 +115,9 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.CheckBox checkExtendAllParts;
+        private System.Windows.Forms.RadioButton radioBundleChecklist;
+        private System.Windows.Forms.RadioButton radioBundleCard;
 
     }
 }

@@ -27,18 +27,18 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            detailgrid.DataSource = gridbs;
+            gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
             setDetailGrid();
 
         }
         public void setDetailGrid()
         {
-            this.detailgrid.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             DataGridViewGeneratorTextColumnSettings col_cutreason = cellcutreason.GetGridCell("RC");
             DataGridViewGeneratorCheckBoxColumnSettings col_check = new DataGridViewGeneratorCheckBoxColumnSettings();
             #region set grid
-            Helper.Controls.Grid.Generator(this.detailgrid)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
                 .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -57,8 +57,8 @@ namespace Sci.Production.Cutting
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true);
-                this.detailgrid.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-                this.detailgrid.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
+                this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+                this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             col_estcutdate.CellValidating += (s, e) =>
@@ -67,7 +67,7 @@ namespace Sci.Production.Cutting
                 if (Convert.ToDateTime(e.FormattedValue) < DateTime.Now)
                 {
                     MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
                     dr["newestcutdate"] = "";
                     dr.EndEdit();
                 }
@@ -81,14 +81,14 @@ namespace Sci.Production.Cutting
 
         private void button_Query_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
-            string cutsp = textBox_Cutsp.Text;
-            string sp = textBox_sp.Text;
-            string seq = textBox_seq.Text;
-            string estcutdate = dateBox_estcutdate.Text;
-            string sewinginline = dateBox_sewinginline.Text;
-            string cutref = textBox_cutref.Text;
-            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateBox_estcutdate.Value))
+            gridDetail.ValidateControl();
+            string cutsp = txtCuttingSPNo.Text;
+            string sp = txtSPNo.Text;
+            string seq = txtSEQ.Text;
+            string estcutdate = dateEstCutDate.Text;
+            string sewinginline = dateSewingInline.Text;
+            string cutref = txtCutRefNo.Text;
+            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date>");
                 return;
@@ -134,12 +134,12 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'",cutsp);
             if (!MyUtility.Check.Empty(sp)) where = where + string.Format(" and OrderID='{0}'", sp);
             if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
-            if (!MyUtility.Check.Empty(dateBox_estcutdate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
+            if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
             if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate =''";
-            if (!MyUtility.Check.Empty(dateBox_sewinginline.Value)) where = where + string.Format(" and Sewinline='{0}'", sewinginline);
+            if (!MyUtility.Check.Empty(dateSewingInline.Value)) where = where + string.Format(" and Sewinline='{0}'", sewinginline);
             sql = sql + where;
             DualResult dResult = DBProxy.Current.Select(null, sql, out detailTb);
             if (detailTb == null || detailTb.Rows.Count == 0)
@@ -147,26 +147,26 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.ErrorBox("Data not found!!");
                 return ;
             }
-            detailgrid.DataSource = gridbs;
+            gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
-            this.detailgrid.AutoResizeColumns();
+            this.gridDetail.AutoResizeColumns();
         }
 
         private void dateBox_newestcutdate_Validating(object sender, CancelEventArgs e)
         {
-            if (dateBox_newestcutdate.Value != null && dateBox_newestcutdate.Value < DateTime.Now)
+            if (dateNewEstCutDate.Value != null && dateNewEstCutDate.Value < DateTime.Now)
             {
                 MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
-                dateBox_newestcutdate.Value = null;
+                dateNewEstCutDate.Value = null;
             }
         }
 
         private void button_update_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
+            gridDetail.ValidateControl();
             if (detailTb == null) return;
-            string estcutdate = dateBox_newestcutdate.Text;
-            string reason = txtcutReason1.TextBox1.Text;
+            string estcutdate = dateNewEstCutDate.Text;
+            string reason = txtcutReason.TextBox1.Text;
             foreach (DataRow dr in detailTb.Rows)
             {
                 if(dr["Sel"].ToString()=="1")
@@ -184,7 +184,7 @@ namespace Sci.Production.Cutting
 
         private void button_save_Click(object sender, EventArgs e)
         {
-            detailgrid.ValidateControl();
+            gridDetail.ValidateControl();
             string update = "";
             if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;

@@ -27,18 +27,18 @@ namespace Sci.Production.Cutting
             detDr = workorderDr;
             Poid = poid;
 
-            Cutref_ra.Checked = true;
-            textBox1.Text = detDr["CutRef"].ToString();
-            textBox2.Text = detDr["CutRef"].ToString();
+            radioByCutRefNo.Checked = true;
+            txtCutRefNoStart.Text = detDr["CutRef"].ToString();
+            txtCutRefNoEnd.Text = detDr["CutRef"].ToString();
             cr = detDr["CutRef"].ToString();
             cp = detDr["CutplanID"].ToString();
-            textBox1.Select();
+            txtCutRefNoStart.Select();
         }
 
         protected override bool ValidateInput()
         {
-            S1 = textBox1.Text;
-            S2 = textBox2.Text;
+            S1 = txtCutRefNoStart.Text;
+            S2 = txtCutRefNoEnd.Text;
 
             if (MyUtility.Check.Empty(S1) || MyUtility.Check.Empty(S2))
             {
@@ -50,9 +50,9 @@ namespace Sci.Production.Cutting
 
         private void Requ_ra_CheckedChanged(object sender, EventArgs e)
         {
-            textBox1.Text = Requ_ra.Checked ? cp : cr;
-            textBox2.Text = Requ_ra.Checked ? cp : cr;
-            label1.Text = Requ_ra.Checked ? "Cutplan ID" : "Cut RefNo";
+            txtCutRefNoStart.Text = radioByCutplanId.Checked ? cp : cr;
+            txtCutRefNoEnd.Text = radioByCutplanId.Checked ? cp : cr;
+            labelCutRefNo.Text = radioByCutplanId.Checked ? "Cutplan ID" : "Cut RefNo";
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
@@ -62,7 +62,7 @@ namespace Sci.Production.Cutting
             paras.Add(new SqlParameter("@Cutref2", S2));
             string byType;
 
-            if (Cutref_ra.Checked)  byType = "Cutref";
+            if (radioByCutRefNo.Checked)  byType = "Cutref";
             else byType = "Cutplanid";
 
             string workorder_cmd = string.Format("Select a.*,b.Description,b.width,dbo.MarkerLengthToYDS(MarkerLength) as yds from Workorder a WITH (NOLOCK) Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}'", detDr["ID"], byType);
@@ -85,7 +85,7 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName", byType), string.Format("Select distinct {0},MarkerName From #tmp ", byType), out MarkerTB); //整理MarkerName
             MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},FabricCombo,SCIRefno", byType), string.Format("Select distinct {0},a.FabricCombo,a.SCIRefno,b.Description,b.width  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", byType), out FabricComboTb); //整理FabricCombo     
 
-            if (Requ_ra.Checked)
+            if (radioByCutplanId.Checked)
             {
                 string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a WITH (NOLOCK) ,Issue_Detail b WITH (NOLOCK) , #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
                 MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricCombo     
@@ -104,7 +104,7 @@ namespace Sci.Production.Cutting
             }
 
             //this.ShowWaitMessage("Starting EXCEL...");
-            if (Cutref_ra.Checked) return ByCutrefExcel();
+            if (radioByCutRefNo.Checked) return ByCutrefExcel();
             else return ByRequestExcel();
             //return true;
         }

@@ -18,13 +18,13 @@ namespace Sci.Production.Cutting
         public P01_Date()
         {
             InitializeComponent();
-            dateBox1.Value = DateTime.Now.AddDays(45);
+            dateSewingInLineDateBefore.Value = DateTime.Now.AddDays(45);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             string sewdate;
-            sewdate = dateBox1.Text;
+            sewdate = dateSewingInLineDateBefore.Text;
             DualResult dresult;
             #region 先刪除不在SewingSchedule 內的Cutting 資料
             string sqlcmd = string.Format(@"Delete Cutting from Cutting join 

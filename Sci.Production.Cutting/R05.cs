@@ -23,22 +23,22 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);           
-            cmb_M.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);           
+            comboM.Text = Sci.Env.User.Keyword;
 
              DataTable factory;
              DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cmb_Factory, 1, factory);
-            cmb_Factory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {            
-            WorkOrder = cmb_M.Text;
-            factory = cmb_Factory.Text;
-            Est_CutDate1 = dateR_EstCutDate.Value1;
-            Est_CutDate2 = dateR_EstCutDate.Value2;
+            WorkOrder = comboM.Text;
+            factory = comboFactory.Text;
+            Est_CutDate1 = dateEstCutDate.Value1;
+            Est_CutDate2 = dateEstCutDate.Value2;
 
             //if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2))
             //{

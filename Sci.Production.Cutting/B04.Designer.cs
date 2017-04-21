@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBoxJunk = new Sci.Win.UI.CheckBox();
-            this.editBoxRemark = new Sci.Win.UI.EditBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txt_desc = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txt_ID = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.txtDescription = new Sci.Win.UI.TextBox();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.txtID = new Sci.Win.UI.TextBox();
+            this.labelID = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,15 +43,25 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(828, 400);
+            // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBoxJunk);
-            this.detailcont.Controls.Add(this.editBoxRemark);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.txt_desc);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.txt_ID);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.editRemark);
+            this.detailcont.Controls.Add(this.labelRemark);
+            this.detailcont.Controls.Add(this.txtDescription);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.txtID);
+            this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Size = new System.Drawing.Size(828, 362);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 362);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -74,75 +84,75 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // checkBoxJunk
+            // checkJunk
             // 
-            this.checkBoxJunk.AutoSize = true;
-            this.checkBoxJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBoxJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxJunk.Location = new System.Drawing.Point(233, 18);
-            this.checkBoxJunk.Name = "checkBoxJunk";
-            this.checkBoxJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkBoxJunk.TabIndex = 14;
-            this.checkBoxJunk.Text = "Junk";
-            this.checkBoxJunk.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(233, 18);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 14;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // editBoxRemark
+            // editRemark
             // 
-            this.editBoxRemark.BackColor = System.Drawing.Color.White;
-            this.editBoxRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBoxRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBoxRemark.Location = new System.Drawing.Point(116, 114);
-            this.editBoxRemark.Multiline = true;
-            this.editBoxRemark.Name = "editBoxRemark";
-            this.editBoxRemark.Size = new System.Drawing.Size(473, 70);
-            this.editBoxRemark.TabIndex = 13;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(116, 114);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(473, 70);
+            this.editRemark.TabIndex = 13;
             // 
-            // label3
+            // labelRemark
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(21, 114);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(88, 23);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(21, 114);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(88, 23);
+            this.labelRemark.TabIndex = 12;
+            this.labelRemark.Text = "Remark";
             // 
-            // txt_desc
+            // txtDescription
             // 
-            this.txt_desc.BackColor = System.Drawing.Color.White;
-            this.txt_desc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.txt_desc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_desc.Location = new System.Drawing.Point(116, 66);
-            this.txt_desc.Name = "txt_desc";
-            this.txt_desc.Size = new System.Drawing.Size(379, 23);
-            this.txt_desc.TabIndex = 11;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(116, 66);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(379, 23);
+            this.txtDescription.TabIndex = 11;
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(21, 66);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(21, 66);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(89, 23);
+            this.labelDescription.TabIndex = 10;
+            this.labelDescription.Text = "Description";
             // 
-            // txt_ID
+            // txtID
             // 
-            this.txt_ID.BackColor = System.Drawing.Color.White;
-            this.txt_ID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.txt_ID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txt_ID.Location = new System.Drawing.Point(116, 18);
-            this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(100, 23);
-            this.txt_ID.TabIndex = 9;
+            this.txtID.BackColor = System.Drawing.Color.White;
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID.Location = new System.Drawing.Point(116, 18);
+            this.txtID.Name = "txtID";
+            this.txtID.Size = new System.Drawing.Size(100, 23);
+            this.txtID.TabIndex = 9;
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(21, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 23);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(21, 18);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(88, 23);
+            this.labelID.TabIndex = 8;
+            this.labelID.Text = "ID";
             // 
             // B04
             // 
@@ -172,12 +182,12 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBoxJunk;
-        private Win.UI.EditBox editBoxRemark;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox txt_desc;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox txt_ID;
-        private Win.UI.Label label1;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.Label labelRemark;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.Label labelDescription;
+        private Win.UI.TextBox txtID;
+        private Win.UI.Label labelID;
     }
 }

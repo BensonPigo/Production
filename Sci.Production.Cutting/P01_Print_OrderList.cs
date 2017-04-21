@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
         
         private bool ToExcel()
         {
-            if (rdCheck_CuttingWorkOrder.Checked)
+            if (radioCuttingWorkOrder.Checked)
             {
                 #region rdCheck_CuttingWorkOrder
                 System.Data.DataTable[] dts;
@@ -85,7 +85,7 @@ namespace Sci.Production.Cutting
                 sxr.Save();
                 #endregion
             }
-            if (rdCheck_Cuttingschedule.Checked)
+            if (radioCuttingschedule.Checked)
             {
                 #region rdCheck_CuttingSchedule
                 System.Data.DataTable[] dts;
@@ -128,7 +128,7 @@ namespace Sci.Production.Cutting
                 sxr.Save();
                 #endregion
             }
-            if (rdCheck1.Checked)
+            if (radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
                 System.Data.DataTable[] dts;
@@ -201,7 +201,7 @@ namespace Sci.Production.Cutting
                 sxr.Save();
                 #endregion
             }
-            if (rdCheck2.Checked)
+            if (radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
                 System.Data.DataTable[] dts;
@@ -264,7 +264,7 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
-            if (rdCheck3.Checked)
+            if (radioColorQtyBDown.Checked)
             {
                 #region Color & Q'ty B'Down (PO Combo)
                 System.Data.DataTable rpt3;
@@ -306,7 +306,7 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
-            if (rdcheck_QtyBreakdown_PoCombbySPList.Checked)
+            if (radioQtyBreakdown_PoCombbySPList.Checked)
             {
                 #region rdcheck_QtyBreakdown_PoCombbySPList
                 System.Data.DataTable[] dts;
@@ -339,7 +339,7 @@ namespace Sci.Production.Cutting
                 sxr.Save();
                 #endregion
             }
-            if (rdCheck4.Checked)
+            if (radioEachConsVSOrderQtyBDown.Checked)
             {
                 #region Each cons. vs Order Q'ty B'Down (PO Combo)
                 System.Data.DataTable[] dts;
@@ -384,7 +384,7 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
-            if (rdCheck5.Checked)
+            if (radioMarkerList.Checked)
             {
                 #region Marker List
                 System.Data.DataTable[] dts;
@@ -464,7 +464,7 @@ namespace Sci.Production.Cutting
                 //SaveExcel(sxr, xltPath);
                 #endregion
             }
-            if (rdCheck6.Checked)
+            if (radioConsumptionCalculateByMarkerListConsPerPC.Checked)
             {
                 #region Consumption Calculate by Marker List Cons/Per pc
                 System.Data.DataTable[] dts;

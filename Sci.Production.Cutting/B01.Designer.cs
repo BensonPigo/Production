@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelShowSeq = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.checkDisplayonreport = new Sci.Win.UI.CheckBox();
             this.checkSelected = new Sci.Win.UI.CheckBox();
             this.checkProcess = new Sci.Win.UI.CheckBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelArtworkType = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.txtShowSeq = new Sci.Win.UI.TextBox();
             this.txtBcsDate = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtartworktype_fty1 = new Sci.Production.Class.txtartworktype_fty();
+            this.labelBcsDate = new Sci.Win.UI.Label();
+            this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,18 +54,18 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtartworktype_fty1);
-            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.txtartworktype_ftyArtworkType);
+            this.detailcont.Controls.Add(this.labelBcsDate);
             this.detailcont.Controls.Add(this.txtBcsDate);
             this.detailcont.Controls.Add(this.txtShowSeq);
             this.detailcont.Controls.Add(this.txtID);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.labelArtworkType);
             this.detailcont.Controls.Add(this.checkProcess);
             this.detailcont.Controls.Add(this.checkSelected);
             this.detailcont.Controls.Add(this.checkDisplayonreport);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelShowSeq);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(828, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -75,7 +75,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(828, 395);
             // 
             // tabs
             // 
@@ -95,23 +95,23 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(70, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(70, 57);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(89, 23);
+            this.labelID.TabIndex = 0;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelShowSeq
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(70, 167);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Show Seq";
+            this.labelShowSeq.Lines = 0;
+            this.labelShowSeq.Location = new System.Drawing.Point(70, 167);
+            this.labelShowSeq.Name = "labelShowSeq";
+            this.labelShowSeq.Size = new System.Drawing.Size(89, 23);
+            this.labelShowSeq.TabIndex = 1;
+            this.labelShowSeq.Text = "Show Seq";
             // 
             // checkJunk
             // 
@@ -161,14 +161,14 @@
             this.checkProcess.Text = "Process";
             this.checkProcess.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // labelArtworkType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(70, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 23);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Artwork Type";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(70, 112);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(89, 23);
+            this.labelArtworkType.TabIndex = 8;
+            this.labelArtworkType.Text = "Artwork Type";
             // 
             // txtID
             // 
@@ -176,7 +176,7 @@
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtID.IsSupportEditMode = false;
-            this.txtID.Location = new System.Drawing.Point(162, 55);
+            this.txtID.Location = new System.Drawing.Point(162, 57);
             this.txtID.Name = "txtID";
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(90, 23);
@@ -203,26 +203,26 @@
             this.txtBcsDate.Size = new System.Drawing.Size(66, 23);
             this.txtBcsDate.TabIndex = 3;
             // 
-            // label5
+            // labelBcsDate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(70, 221);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(89, 23);
-            this.label5.TabIndex = 16;
-            this.label5.Text = "BcsDate";
+            this.labelBcsDate.Lines = 0;
+            this.labelBcsDate.Location = new System.Drawing.Point(70, 221);
+            this.labelBcsDate.Name = "labelBcsDate";
+            this.labelBcsDate.Size = new System.Drawing.Size(89, 23);
+            this.labelBcsDate.TabIndex = 16;
+            this.labelBcsDate.Text = "BcsDate";
             // 
-            // txtartworktype_fty1
+            // txtartworktype_ftyArtworkType
             // 
-            this.txtartworktype_fty1.BackColor = System.Drawing.Color.White;
-            this.txtartworktype_fty1.cClassify = "";
-            this.txtartworktype_fty1.cSubprocess = "t";
-            this.txtartworktype_fty1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_fty1.Location = new System.Drawing.Point(162, 112);
-            this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_fty1.TabIndex = 1;
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.cClassify = "";
+            this.txtartworktype_ftyArtworkType.cSubprocess = "t";
+            this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
+            this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
             // B01
             // 
@@ -252,17 +252,17 @@
 
         #endregion
 
-        private Win.UI.Label label3;
+        private Win.UI.Label labelArtworkType;
         private Win.UI.CheckBox checkProcess;
         private Win.UI.CheckBox checkSelected;
         private Win.UI.CheckBox checkDisplayonreport;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelShowSeq;
+        private Win.UI.Label labelID;
         private Win.UI.TextBox txtShowSeq;
         private Win.UI.TextBox txtID;
-        private Win.UI.Label label5;
+        private Win.UI.Label labelBcsDate;
         private Win.UI.TextBox txtBcsDate;
-        private Class.txtartworktype_fty txtartworktype_fty1;
+        private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
     }
 }

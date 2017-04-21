@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayBoxID = new Sci.Win.UI.DisplayBox();
-            this.displayBoxCuttingLayer = new Sci.Win.UI.DisplayBox();
-            this.checkBoxJunk = new Sci.Win.UI.CheckBox();
-            this.displayBoxName = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelCuttingLayer = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.displayCuttingLayer = new Sci.Win.UI.DisplayBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.displayName = new Sci.Win.UI.DisplayBox();
+            this.labelName = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,13 +49,13 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayBoxName);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.checkBoxJunk);
-            this.detailcont.Controls.Add(this.displayBoxCuttingLayer);
-            this.detailcont.Controls.Add(this.displayBoxID);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.displayName);
+            this.detailcont.Controls.Add(this.labelName);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.displayCuttingLayer);
+            this.detailcont.Controls.Add(this.displayID);
+            this.detailcont.Controls.Add(this.labelCuttingLayer);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(828, 342);
             // 
             // detailbtm
@@ -65,7 +65,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 380);
+            this.browse.Size = new System.Drawing.Size(828, 380);
             // 
             // tabs
             // 
@@ -84,74 +84,74 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(70, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(70, 57);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(89, 23);
+            this.labelID.TabIndex = 0;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelCuttingLayer
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(70, 167);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Cutting Layer";
+            this.labelCuttingLayer.Lines = 0;
+            this.labelCuttingLayer.Location = new System.Drawing.Point(70, 167);
+            this.labelCuttingLayer.Name = "labelCuttingLayer";
+            this.labelCuttingLayer.Size = new System.Drawing.Size(89, 23);
+            this.labelCuttingLayer.TabIndex = 1;
+            this.labelCuttingLayer.Text = "Cutting Layer";
             // 
-            // displayBoxID
+            // displayID
             // 
-            this.displayBoxID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBoxID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxID.Location = new System.Drawing.Point(162, 57);
-            this.displayBoxID.Name = "displayBoxID";
-            this.displayBoxID.Size = new System.Drawing.Size(90, 23);
-            this.displayBoxID.TabIndex = 2;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(162, 57);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(90, 23);
+            this.displayID.TabIndex = 2;
             // 
-            // displayBoxCuttingLayer
+            // displayCuttingLayer
             // 
-            this.displayBoxCuttingLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxCuttingLayer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cuttinglayer", true));
-            this.displayBoxCuttingLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxCuttingLayer.Location = new System.Drawing.Point(162, 167);
-            this.displayBoxCuttingLayer.Name = "displayBoxCuttingLayer";
-            this.displayBoxCuttingLayer.Size = new System.Drawing.Size(53, 23);
-            this.displayBoxCuttingLayer.TabIndex = 3;
+            this.displayCuttingLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCuttingLayer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cuttinglayer", true));
+            this.displayCuttingLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCuttingLayer.Location = new System.Drawing.Point(162, 167);
+            this.displayCuttingLayer.Name = "displayCuttingLayer";
+            this.displayCuttingLayer.Size = new System.Drawing.Size(53, 23);
+            this.displayCuttingLayer.TabIndex = 3;
             // 
-            // checkBoxJunk
+            // checkJunk
             // 
-            this.checkBoxJunk.AutoSize = true;
-            this.checkBoxJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBoxJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxJunk.Location = new System.Drawing.Point(315, 59);
-            this.checkBoxJunk.Name = "checkBoxJunk";
-            this.checkBoxJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkBoxJunk.TabIndex = 4;
-            this.checkBoxJunk.Text = "Junk";
-            this.checkBoxJunk.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(315, 59);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 4;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // displayBoxName
+            // displayName
             // 
-            this.displayBoxName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
-            this.displayBoxName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxName.Location = new System.Drawing.Point(162, 112);
-            this.displayBoxName.Name = "displayBoxName";
-            this.displayBoxName.Size = new System.Drawing.Size(375, 23);
-            this.displayBoxName.TabIndex = 9;
+            this.displayName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
+            this.displayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayName.Location = new System.Drawing.Point(162, 112);
+            this.displayName.Name = "displayName";
+            this.displayName.Size = new System.Drawing.Size(375, 23);
+            this.displayName.TabIndex = 9;
             // 
-            // label3
+            // labelName
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(70, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 23);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Name";
+            this.labelName.Lines = 0;
+            this.labelName.Location = new System.Drawing.Point(70, 112);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(89, 23);
+            this.labelName.TabIndex = 8;
+            this.labelName.Text = "Name";
             // 
             // B03
             // 
@@ -181,12 +181,12 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBoxName;
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBoxJunk;
-        private Win.UI.DisplayBox displayBoxCuttingLayer;
-        private Win.UI.DisplayBox displayBoxID;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayName;
+        private Win.UI.Label labelName;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.DisplayBox displayCuttingLayer;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelCuttingLayer;
+        private Win.UI.Label labelID;
     }
 }

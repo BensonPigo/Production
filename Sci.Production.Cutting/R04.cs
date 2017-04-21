@@ -24,61 +24,61 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             DataTable WorkOrder;
             DBProxy.Current.Select(null, "select distinct ID from MDivision WITH (NOLOCK) ", out WorkOrder);
-            MyUtility.Tool.SetupCombox(cmb_M, 1, WorkOrder);
-            cmb_M.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
+            comboM.Text = Sci.Env.User.Keyword;
         }
         
         private void radiobtn1_ByM_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_ByM.Checked)
+            if (radioByM.Checked)
             {
-                dateR_EstCutDate.Control2.Enabled = true;
-                dateR_EstCutDate.IsRequired = true;
-                txt_CutCell1.Enabled = txt_CutCell2.Enabled = false;
-                txt_CutCell2.Text = "";
+                dateEstCutDate.Control2.Enabled = true;
+                dateEstCutDate.IsRequired = true;
+                txtCutCellStart.Enabled = txtCutCellEnd.Enabled = false;
+                txtCutCellEnd.Text = "";
             }
         }
 
         private void radioBtn2_ByCutCell_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtn_ByCutCell.Checked)
+            if (radioByCutCell.Checked)
             {
-                dateR_EstCutDate.Control2.Enabled = true;
-                dateR_EstCutDate.IsRequired = true;
-                txt_CutCell1.Enabled = txt_CutCell2.Enabled = true;
+                dateEstCutDate.Control2.Enabled = true;
+                dateEstCutDate.IsRequired = true;
+                txtCutCellStart.Enabled = txtCutCellEnd.Enabled = true;
             }
         }
 
         private void radioBtn3_ByDetail_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtn_ByDetail.Checked)
+            if (radioByDetail.Checked)
             {
-                dateR_EstCutDate.Control2.Enabled = false;
-                dateR_EstCutDate.Control2.Text = "";
-                dateR_EstCutDate.IsRequired = false;
-                txt_CutCell1.Enabled = txt_CutCell2.Enabled = true;
+                dateEstCutDate.Control2.Enabled = false;
+                dateEstCutDate.Control2.Text = "";
+                dateEstCutDate.IsRequired = false;
+                txtCutCellStart.Enabled = txtCutCellEnd.Enabled = true;
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            WorkOrder = cmb_M.Text;
-            Est_CutDate1 = dateR_EstCutDate.Value1;
-            Est_CutDate2 = dateR_EstCutDate.Value2;
+            WorkOrder = comboM.Text;
+            Est_CutDate1 = dateEstCutDate.Value1;
+            Est_CutDate2 = dateEstCutDate.Value2;
             //CutCell1 = txt_CutCell1.Text;
             //CutCell2 = txt_CutCell2.Text;
             int c1, c2;
             bool bc1, bc2;
-            bc1 = int.TryParse(txt_CutCell1.Text.Trim(), out c1);
+            bc1 = int.TryParse(txtCutCellStart.Text.Trim(), out c1);
             if (bc1) CutCell1 = c1.ToString("D2");
-            else CutCell1 = txt_CutCell1.Text.Trim();
+            else CutCell1 = txtCutCellStart.Text.Trim();
             //若CutCell2為空則=CutCell1
-            if (!MyUtility.Check.Empty(txt_CutCell2.Text.Trim()))
+            if (!MyUtility.Check.Empty(txtCutCellEnd.Text.Trim()))
             {
-                bc2 = int.TryParse(txt_CutCell2.Text.Trim(), out c2);
+                bc2 = int.TryParse(txtCutCellEnd.Text.Trim(), out c2);
                 if (bc2) CutCell2 = c2.ToString("D2");
-                else CutCell2 = txt_CutCell2.Text.Trim();
+                else CutCell2 = txtCutCellEnd.Text.Trim();
             }
             else
             {
@@ -100,7 +100,7 @@ namespace Sci.Production.Cutting
             StringBuilder sqlCmd = new StringBuilder();
 
             #region radiobtnByM
-            if (radiobtn_ByM.Checked)
+            if (radioByM.Checked)
             {
                 sqlCmd.Append(string.Format(@"
 create table #dateranges ([EstCutDate] [date])
@@ -197,7 +197,7 @@ drop table #tmpWO
             #endregion
 
             #region radioBtnByCutCell
-            if (radioBtn_ByCutCell.Checked)
+            if (radioByCutCell.Checked)
             {
                 sqlCmd.Append(string.Format(@"
 create table #dateranges ([EstCutDate] [date])
@@ -311,7 +311,7 @@ drop table #tmpWO
 #endregion
 
             #region radiobtn By Detail3
-            if (radioBtn_ByDetail.Checked)
+            if (radioByDetail.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -417,7 +417,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 return false;
             }
             #region radiobtn_ByM
-            if (radiobtn_ByM.Checked)
+            if (radioByM.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCSReportByM.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCSReportByM.xltx", 3, true, null, objApp);      // 將datatable copy to excel
@@ -428,7 +428,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
             }
             #endregion
 
-            if (radioBtn_ByCutCell.Checked)
+            if (radioByCutCell.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_CuttingBCSReportByCutCell.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_CuttingBCSReportByCutCell.xltx", 3, true, null, objApp);      // 將datatable copy to excel
@@ -438,7 +438,7 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             }
 
-            if (radioBtn_ByDetail.Checked)
+            if (radioByDetail.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCS Report ByDetail.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCS Report ByDetail.xltx", 2, true, null, objApp);// 將datatable copy to excel

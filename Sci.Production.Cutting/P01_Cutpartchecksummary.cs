@@ -24,7 +24,7 @@ namespace Sci.Production.Cutting
             cutid = cID;
             requery();
             gridSetup();
-            this.grid1.AutoResizeColumns();
+            this.gridCutpartchecksummary.AutoResizeColumns();
         }
         private void requery()
         {
@@ -98,25 +98,25 @@ namespace Sci.Production.Cutting
             }
 
             #endregion
-            grid1.DataSource = gridtb;
+            gridCutpartchecksummary.DataSource = gridtb;
         }
         private void gridSetup()
         {
-            grid1.RowPostPaint += (s, e) =>
+            gridCutpartchecksummary.RowPostPaint += (s, e) =>
             {
                 string art = "";
                 for (int i = 0; i <= e.RowIndex; i++)
                 {
-                    if (i == 0) art = grid1.Rows[i].Cells[1].Value.ToString();
-                    if (grid1.Rows[i].Cells[1].Value.ToString() != art)
+                    if (i == 0) art = gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString();
+                    if (gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString() != art)
                     {
-                        grid1.Rows[i - 1].DefaultCellStyle.BackColor = Color.Pink;
-                        art = grid1.Rows[i].Cells[1].Value.ToString();
+                        gridCutpartchecksummary.Rows[i - 1].DefaultCellStyle.BackColor = Color.Pink;
+                        art = gridCutpartchecksummary.Rows[i].Cells[1].Value.ToString();
                     }
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridCutpartchecksummary)
                 .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -128,13 +128,13 @@ namespace Sci.Production.Cutting
             {
                 Ict.Win.UI.DataGridViewNumericBoxColumn col_color;
 
-                Helper.Controls.Grid.Generator(grid1)
+                Helper.Controls.Grid.Generator(gridCutpartchecksummary)
                     .Numeric(fabcodetb.Rows[i]["PatternPanel"].ToString().Trim(), header: fabcodetb.Rows[i]["PatternPanel"].ToString(), width: Widths.AnsiChars(7)).Get(out col_color);
 
                 col_color.CellFormatting += (s, e) =>
                 {
                     if (e.RowIndex == -1) return;
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridCutpartchecksummary.GetDataRow(e.RowIndex);
 
                     if (MyUtility.Convert.GetDecimal(dr[e.ColumnIndex]) < MyUtility.Convert.GetDecimal(dr["Qty"]))
                     {                        

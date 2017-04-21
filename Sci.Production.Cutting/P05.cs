@@ -135,10 +135,10 @@ namespace Sci.Production.Cutting
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.button2.Enabled = (CurrentMaintain["Status"].ToString() != "New");
-            this.displayBox_Requestby.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
+            this.btnSendMail.Enabled = (CurrentMaintain["Status"].ToString() != "New");
+            this.displayRequestedBy.Text = PublicPrg.Prgs.GetAddOrEditBy(CurrentMaintain["AddName"]);
             this.label7.Text = CurrentMaintain["Status"].ToString();
-            if (!MyUtility.Check.Empty(CurrentMaintain["sendDate"])) displayBox_LastSendDate.Text = Convert.ToDateTime(CurrentMaintain["sendDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+            if (!MyUtility.Check.Empty(CurrentMaintain["sendDate"])) displayLastSendDate.Text = Convert.ToDateTime(CurrentMaintain["sendDate"]).ToString("yyyy/MM/dd HH:mm:ss");
         }
         protected override void ClickUnconfirm()
         {
@@ -228,31 +228,31 @@ namespace Sci.Production.Cutting
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToMaintain();
-            textBox1.ReadOnly = true;
+            txtCutplan.ReadOnly = true;
         }
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
 
             if (!this.EditMode) return;
-            if (textBox1.OldValue.ToString() == textBox1.Text) return;
-            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
+            if (txtCutplan.OldValue.ToString() == txtCutplan.Text) return;
+            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", txtCutplan.Text, keyWord);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
                 MyUtility.Msg.WarningBox("<Cutplan ID> data not found!");
-                textBox1.Text = "";
+                txtCutplan.Text = "";
                 return;
             }
             if (cutdr["markerreqid"].ToString() != "")
             {
                 MyUtility.Msg.WarningBox(string.Format("<Cutplan ID> already created Bulk Marker Request<{0}>", cutdr["markerreqid"]));
-                textBox1.Text = "";
+                txtCutplan.Text = "";
                 return;
             }
             if (cutdr["Status"].ToString() != "Confirmed")
             {
                 MyUtility.Msg.WarningBox("The Cutplan not yet confirm.");
-                textBox1.Text = "";
+                txtCutplan.Text = "";
                 return;
             }
             foreach (DataRow dr in this.DetailDatas)
@@ -265,16 +265,16 @@ namespace Sci.Production.Cutting
         private void textBox1_Validated(object sender, EventArgs e)
         {
             base.OnValidated(e);
-            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", textBox1.Text, keyWord);
+            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", txtCutplan.Text, keyWord);
             DataRow cutdr;
             if (MyUtility.Check.Seek(cmd, out cutdr, null))
             {
-                displayBox_Cell.Text = cutdr["Cutcellid"].ToString();
+                displayCutCell.Text = cutdr["Cutcellid"].ToString();
 
                 if (MyUtility.Check.Empty(cutdr["estcutdate"]))
-                    dateBox1.Text = "";
+                    dateCuttingDate.Text = "";
                 else
-                    dateBox1.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
+                    dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
 
                 string marker2sql = string.Format(
                 @"Select b.Orderid,b.MarkerName,sum(b.Layer) as layer,
@@ -300,7 +300,7 @@ namespace Sci.Production.Cutting
                 left join Orders o WITH (NOLOCK) on b.orderid=o.id
                 Where a.workorderukey = b.ukey and a.id = '{0}'
 			    Group by b.Orderid,b.MarkerName,b.MarkerNo,
-                    b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", textBox1.Text);
+                    b.fabricCombo,a.WorkOrderUkey,o.styleid,o.seasonid", txtCutplan.Text);
                 DataTable markerTb;
                 DataTable gridTb = ((DataTable)this.detailgridbs.DataSource);
                 DualResult dResult = DBProxy.Current.Select(null, marker2sql, out markerTb);

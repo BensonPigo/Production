@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.labelCellNo = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
-            this.textCellNo = new Sci.Win.UI.TextBox();
-            this.textDescription = new Sci.Win.UI.TextBox();
+            this.txtCellNo = new Sci.Win.UI.TextBox();
+            this.txtDescription = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,13 +49,13 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textDescription);
-            this.detailcont.Controls.Add(this.textCellNo);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.txtDescription);
+            this.detailcont.Controls.Add(this.txtCellNo);
+            this.detailcont.Controls.Add(this.labelCellNo);
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayM);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Size = new System.Drawing.Size(826, 392);
             this.detailcont.TabIndex = 0;
             // 
@@ -66,7 +66,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 430);
+            this.browse.Size = new System.Drawing.Size(826, 430);
             // 
             // tabs
             // 
@@ -86,44 +86,44 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(70, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(70, 57);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(78, 23);
+            this.labelM.TabIndex = 0;
+            this.labelM.Text = "M";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(70, 167);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(78, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(70, 167);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(78, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(315, 59);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(315, 59);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 3;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // labelCellNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(70, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(78, 23);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Cell No";
+            this.labelCellNo.Lines = 0;
+            this.labelCellNo.Location = new System.Drawing.Point(70, 112);
+            this.labelCellNo.Name = "labelCellNo";
+            this.labelCellNo.Size = new System.Drawing.Size(78, 23);
+            this.labelCellNo.TabIndex = 8;
+            this.labelCellNo.Text = "Cell No";
             // 
             // displayM
             // 
@@ -135,25 +135,25 @@
             this.displayM.Size = new System.Drawing.Size(64, 23);
             this.displayM.TabIndex = 0;
             // 
-            // textCellNo
+            // txtCellNo
             // 
-            this.textCellNo.BackColor = System.Drawing.Color.White;
-            this.textCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textCellNo.Location = new System.Drawing.Point(151, 112);
-            this.textCellNo.Name = "textCellNo";
-            this.textCellNo.Size = new System.Drawing.Size(43, 23);
-            this.textCellNo.TabIndex = 1;
+            this.txtCellNo.BackColor = System.Drawing.Color.White;
+            this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCellNo.Location = new System.Drawing.Point(151, 112);
+            this.txtCellNo.Name = "txtCellNo";
+            this.txtCellNo.Size = new System.Drawing.Size(43, 23);
+            this.txtCellNo.TabIndex = 1;
             // 
-            // textDescription
+            // txtDescription
             // 
-            this.textDescription.BackColor = System.Drawing.Color.White;
-            this.textDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.textDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textDescription.Location = new System.Drawing.Point(151, 167);
-            this.textDescription.Name = "textDescription";
-            this.textDescription.Size = new System.Drawing.Size(172, 23);
-            this.textDescription.TabIndex = 2;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(151, 167);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(172, 23);
+            this.txtDescription.TabIndex = 2;
             // 
             // B02
             // 
@@ -183,12 +183,12 @@
 
         #endregion
 
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textDescription;
-        private Win.UI.TextBox textCellNo;
+        private Win.UI.Label labelCellNo;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelM;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.TextBox txtCellNo;
         private Win.UI.DisplayBox displayM;
     }
 }
