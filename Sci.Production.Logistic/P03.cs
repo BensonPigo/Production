@@ -194,6 +194,13 @@ namespace Sci.Production.Logistic
             this.grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Please select data first!");
+                return;
+            }
+
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
