@@ -339,7 +339,9 @@ namespace Sci.Production.Warehouse
 , (select f.DescDetail from fabric f WITH (NOLOCK) where f.SCIRefno = p.scirefno) as Description 
 ,p.scirefno
 ,p.FabricType
+,pd.stockunit
 from dbo.Inventory p WITH (NOLOCK) 
+left join dbo.po_supp_detail pd WITH (NOLOCK) on p.poid=pd.id and p.seq1=pd.seq1 and p.seq2=pd.seq2 
 where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
@@ -355,7 +357,7 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                     CurrentDetailData["seq"] = x[0]["seq"];
                     CurrentDetailData["seq1"] = x[0]["seq1"];
                     CurrentDetailData["seq2"] = x[0]["seq2"];
-                    //CurrentDetailData["stockunit"] = x[0]["stockunit"];
+                    CurrentDetailData["stockunit"] = x[0]["stockunit"];
                     CurrentDetailData["Description"] = x[0]["Description"];
                     CurrentDetailData["fabrictype"] = x[0]["fabrictype"];
 
@@ -547,14 +549,15 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                 }
             };
 
-
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6))  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))  //3
+            .Text("roll", header: "Roll", width: Widths.AnsiChars(6)).Get(out cbb_Roll)  //2
+            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6)).Get(out cbb_Dyelot)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
@@ -565,6 +568,8 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
+            cbb_Roll.MaxLength = 8;
+            cbb_Dyelot.MaxLength = 4;
 
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
