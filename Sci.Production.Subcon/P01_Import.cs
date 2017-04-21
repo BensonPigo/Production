@@ -80,13 +80,17 @@ namespace Sci.Production.Subcon
                 string strSQLCmd = string.Format(@"
                 select 0 as Selected,ot.LocalSuppID
                 ,'' as id, q.id as orderid
-                ,sum(q.qty) poqty
+                ,sum(q.qty) OrderQty 
+                ,IssueQty.IssueQty 
+                ,sum(q.qty)-IssueQty.IssueQty poqty 
                 , oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
                 ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
                 , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
-                from orders o WITH (NOLOCK) inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+                from orders o WITH (NOLOCK) 
+                inner join order_qty q WITH (NOLOCK) on q.id = o.ID
                 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
                 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+                outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID ) IssueQty
                 where 1=1 ");
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
@@ -99,7 +103,7 @@ namespace Sci.Production.Subcon
                 if (!(dateRange3.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc";
+                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty";
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
@@ -120,26 +124,43 @@ namespace Sci.Production.Subcon
             ns.CellValidating += (s, e) =>
             {
                 DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
-                ddr["UnitPrice"] = (decimal)e.FormattedValue;
-                ddr["Price"] = (decimal)e.FormattedValue * (int)ddr["qtygarment"];
-                ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"] * (int)ddr["qtygarment"];
+                ddr["UnitPrice"] = Convert.ToDecimal(e.FormattedValue);
+                ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]);
+                ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToInt32(ddr["qtygarment"]);
             };
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {
                 DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
-                ddr["Price"] = (decimal)e.FormattedValue * (decimal)ddr["UnitPrice"];
-                ddr["Amount"] = (decimal)e.FormattedValue * (int)ddr["poqty"] * (decimal)ddr["UnitPrice"];
+                ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToDecimal(ddr["UnitPrice"]);
+                ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToDecimal(ddr["UnitPrice"]);
             };
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
+            ns3.CellValidating += (s, e) =>
+            {
+                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                Decimal SourcePoqty = Convert.ToDecimal(ddr["OrderQty"]) - Convert.ToDecimal(ddr["IssueQty"]);
+                if ((decimal)e.FormattedValue > SourcePoqty)
+                {
+                    MyUtility.Msg.WarningBox("Po Qty can't be more than [Order Qty]-[Issue Qty]");
+                    e.Cancel = true;
+                    return;
+                }
+                ddr["poqty"] = e.FormattedValue;
+                ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
+            };
+            this.grid1.Font = new Font("Arial", 10);
             this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid1.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("LocalSuppID", header: "Supplier", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Numeric("poqty", header: "PO QTY", iseditingreadonly: true)
+                .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true)
+                .Numeric("IssueQty", header: "Issue Qty", iseditingreadonly: true)
+                .Numeric("poqty", header: "Po Qty", iseditable: true, settings: ns3)
                 .Date("sewinline", header: "Sewinline", iseditingreadonly: true)
                 .Date("SciDelivery", header: "SciDelivery", iseditingreadonly: true)
                 .Text("artworkid", header: "Artwork", iseditingreadonly: true)      //5
@@ -157,6 +178,7 @@ namespace Sci.Production.Subcon
             //this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
             //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty/GMT
             this.grid1.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.grid1.Columns["poqty"].DefaultCellStyle.BackColor = Color.Pink;  //poqty
 
             this.grid1.Columns["Cost"].Visible = flag;
             this.grid1.Columns["UnitPrice"].Visible = flag;
