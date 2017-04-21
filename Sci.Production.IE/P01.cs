@@ -1022,17 +1022,22 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
 
         private void button9_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            List<DataRow> toDelete = new List<DataRow>();
+
+            foreach (DataRow dr in dt.Rows)
             {
-               if (dr.RowState != DataRowState.Deleted)
+              if (dr["Selected"].ToString() == "1")
               {
-                  if (dr["Selected"].ToString() == "1")
-                  {
-                      dr.Delete();
-                  }
-               }
+                  toDelete.Add(dr);
+              }  
             }
-         return;
+            foreach (DataRow dr in toDelete)
+            {
+              dr.Delete();
+            }
+            return;
         }
     }
 }
