@@ -550,6 +550,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
             result = RenewData();
             OnDetailEntered();
             EnsureToolbarExt();
+            SendMail();
 
             //SendMail
         }
