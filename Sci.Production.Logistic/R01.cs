@@ -32,7 +32,7 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange2.Value1))
             {
-                MyUtility.Msg.WarningBox("Buyer Delivery or SCI Delivery can't empty!!");
+                MyUtility.Msg.WarningBox("Buyer Delivery or SCI Delivery can't be empty!!");
                 return false;
             }
 

@@ -169,7 +169,8 @@ namespace Sci.Production.Thread
             .Numeric("stocknew", header: "New Cone \nin Stock", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             .Numeric("stockused", header: "Used Cone \nin Stock", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(6), integer_places: 5)
-            .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(6), integer_places: 5);
+            .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(6), integer_places: 5)
+            .Text("Remark", header: "Remarks", width: Widths.AnsiChars(30));
             #endregion
 
             this.detailgrid.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
