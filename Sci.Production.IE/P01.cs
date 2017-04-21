@@ -956,12 +956,15 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
                 index++;
-                if (dr["Selected"].ToString() == "1")
+                if (dr.RowState != DataRowState.Deleted)
                 {
-                    dr["Selected"] = 0;
-                    lastIndex = index;
-                    lastRow = dr;
-                    listDr.Add(dr);
+                    if (dr["Selected"].ToString() == "1")
+                    {
+                        dr["Selected"] = 0;
+                        lastIndex = index;
+                        lastRow = dr;
+                        listDr.Add(dr);
+                    }
                 }
             }
             detailgrid.ValidateControl();
@@ -1025,17 +1028,20 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             DataTable dt = (DataTable)detailgridbs.DataSource;
 
             List<DataRow> toDelete = new List<DataRow>();
-
+            
             foreach (DataRow dr in dt.Rows)
             {
-              if (dr["Selected"].ToString() == "1")
+              if (dr.RowState != DataRowState.Deleted)
               {
-                  toDelete.Add(dr);
-              }  
+                  if (dr["Selected"].ToString() == "1")
+                  {
+                      toDelete.Add(dr);
+                  }  
+              }
             }
             foreach (DataRow dr in toDelete)
             {
-              dr.Delete();
+                dr.Delete();
             }
             return;
         }
