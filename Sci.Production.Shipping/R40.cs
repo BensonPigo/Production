@@ -20,33 +20,33 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            this.checkBox1.Checked = true;
+            this.checkLiquidationDataOnly.Checked = true;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtContractNo.Text))
             {
                 MyUtility.Msg.WarningBox("Contract no. can't empty!!");
-                textBox1.Focus();
+                txtContractNo.Focus();
                 return false;
             }
 
-            if (!checkBox1.Checked)
+            if (!checkLiquidationDataOnly.Checked)
             {
-                if (MyUtility.Check.Empty(textBox4.Text))
+                if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
                 {
                     MyUtility.Msg.WarningBox("SP# start from can't empty!!");
-                    textBox4.Focus();
+                    txtSPNoStartFrom.Focus();
                     return false;
                 }
             }
-            contract = textBox1.Text;
-            hscode = textBox2.Text;
-            nlcode = textBox3.Text;
-            sp = textBox4.Text;
-            liguidationonly = checkBox1.Checked;
+            contract = txtContractNo.Text;
+            hscode = txtHSCode.Text;
+            nlcode = txtNLCode.Text;
+            sp = txtSPNoStartFrom.Text;
+            liguidationonly = checkLiquidationDataOnly.Checked;
 
             return base.ValidateInput();
         }
@@ -715,7 +715,7 @@ select * from #tmpScrapQty where Qty > 0 {0} {1} order by POID,Seq", MyUtility.C
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]","20,10,10",this.Text,false,",",headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();            
+            txtContractNo.Text = item.GetSelectedString();            
             
         }
 

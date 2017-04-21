@@ -26,19 +26,19 @@ namespace Sci.Production.Shipping
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            FCR_date1 = dateRange1.Value1;
-            FCR_date2 = dateRange1.Value2;
-            Inv_date1 = dateRange2.Value1;
-            Inv_date2 = dateRange2.Value2;
-            Pull_date1 = dateRange3.Value1;
-            Pull_date2 = dateRange3.Value2;
-            GB1 = textBox1.Text;
-            GB2 = textBox2.Text;
-            Buyer = txtbuyer1.Text;
-            Brand = txtbrand1.Text;
-            CustCD = txtcustcd1.Text;
-            Dest = txtcountry1.TextBox1.Text;
-            category = txtdropdownlist1.SelectedValue.ToString();
+            FCR_date1 = dateFCRDate.Value1;
+            FCR_date2 = dateFCRDate.Value2;
+            Inv_date1 = dateInvoiceDate.Value1;
+            Inv_date2 = dateInvoiceDate.Value2;
+            Pull_date1 = datePulloutDate.Value1;
+            Pull_date2 = datePulloutDate.Value2;
+            GB1 = txtGBNoStart.Text;
+            GB2 = txtGBNoEnd.Text;
+            Buyer = txtbuyer.Text;
+            Brand = txtbrand.Text;
+            CustCD = txtcustcd.Text;
+            Dest = txtcountryDestination.TextBox1.Text;
+            category = txtdropdownlistCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 

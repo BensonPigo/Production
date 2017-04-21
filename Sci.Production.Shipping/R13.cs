@@ -24,34 +24,34 @@ namespace Sci.Production.Shipping
             InitializeComponent();           
             DataTable ShipperID, factory;
             DBProxy.Current.Select(null, "select '' as ShipperID union all select ShipperID from FSRCpuCost WITH (NOLOCK) ", out ShipperID);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, ShipperID);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboShipper, 1, ShipperID);
+            comboShipper.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            dateRange1.Value1 = DateTime.Today;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            dateBuyerDelivery.Value1 = DateTime.Today;
             //comboBox2.SelectedIndex = -1;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery can't all empty!!");
                 return false;
             }
-            if(MyUtility.Check.Empty(txtdropdownlist1.Text))
+            if(MyUtility.Check.Empty(txtdropdownlistCategory.Text))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
             
-            buyerDlv1 = dateRange1.Value1;
-            buyerDlv2 = dateRange1.Value2;
-            brand = txtbrand1.Text;
-            Shipper = comboBox1.Text.ToString().Trim();
-            factory = comboBox2.Text;
-            category = txtdropdownlist1.SelectedValue.ToString();
+            buyerDlv1 = dateBuyerDelivery.Value1;
+            buyerDlv2 = dateBuyerDelivery.Value2;
+            brand = txtbrand.Text;
+            Shipper = comboShipper.Text.ToString().Trim();
+            factory = comboFactory.Text;
+            category = txtdropdownlistCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -177,7 +177,7 @@ Where o.LocalOrder = 0 ");
             objSheets.Cells[2, 5] = MyUtility.Convert.GetString(brand);
             objSheets.Cells[2, 7] = MyUtility.Convert.GetString(Shipper);
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(factory);
-            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(txtdropdownlist1.Text.ToString().Replace(category+"-",""));
+            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(txtdropdownlistCategory.Text.ToString().Replace(category+"-",""));
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);
             this.HideWaitMessage();

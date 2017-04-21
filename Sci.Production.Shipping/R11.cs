@@ -21,13 +21,13 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            radioButton1.Checked = true;
+            radioGarment.Checked = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            txtshipmode1.SelectedIndex = -1;
+            txtshipmode.SelectedIndex = -1;
         }
 
         //Forwarder
@@ -45,76 +45,76 @@ order by ID";
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selected = item.GetSelecteds();
-            this.textBox1.Text = item.GetSelectedString();
-            displayBox1.Value = MyUtility.Convert.GetString(selected[0]["Abb"]);
+            this.txtForwarder.Text = item.GetSelectedString();
+            displayForwarder.Value = MyUtility.Convert.GetString(selected[0]["Abb"]);
         }
 
         //Forwarder
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtForwarder.OldValue != txtForwarder.Text)
             {
-                if (!MyUtility.Check.Empty(textBox1.Text))
+                if (!MyUtility.Check.Empty(txtForwarder.Text))
                 {
                     DataRow inputData;
                     string Sql = string.Format(@"select * from (
 select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK)) a
-where a.ID = '{0}'", textBox1.Text);
+where a.ID = '{0}'", txtForwarder.Text);
                     if (!MyUtility.Check.Seek(Sql, out inputData))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", textBox1.Text));
-                        textBox1.Text = "";
-                        displayBox1.Value = "";
+                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", txtForwarder.Text));
+                        txtForwarder.Text = "";
+                        displayForwarder.Value = "";
                         e.Cancel = true;
                         return;
                     }
                     else
                     {
-                        textBox1.Text = textBox1.Text;
-                        displayBox1.Value = MyUtility.Convert.GetString(inputData["Abb"]);
+                        txtForwarder.Text = txtForwarder.Text;
+                        displayForwarder.Value = MyUtility.Convert.GetString(inputData["Abb"]);
                     }
                 }
                 else
                 {
-                    textBox1.Text = "";
-                    displayBox1.Value = "";
+                    txtForwarder.Text = "";
+                    displayForwarder.Value = "";
                 }
             }
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton1.Checked)
+            if (radioGarment.Checked)
             {
-                label2.Text = "Pullout Date";
-                label2.Size = new System.Drawing.Size(101, 23);
-                label2.Location = new System.Drawing.Point(13, 71);
-                txtbrand1.Enabled = true;
-                txtcustcd1.Enabled = true;
+                labelPulloutDate.Text = "Pullout Date";
+                labelPulloutDate.Size = new System.Drawing.Size(101, 23);
+                labelPulloutDate.Location = new System.Drawing.Point(13, 71);
+                txtbrand.Enabled = true;
+                txtcustcd.Enabled = true;
             }
             else
             {
-                label2.Text = "Arrive Port Date \r\n (Ship Date)";
-                label2.Size = new System.Drawing.Size(101, 36);
-                label2.Location = new System.Drawing.Point(13, 64);
-                txtbrand1.Enabled = false;
-                txtcustcd1.Enabled = false;
+                labelPulloutDate.Text = "Arrive Port Date \r\n (Ship Date)";
+                labelPulloutDate.Size = new System.Drawing.Size(101, 36);
+                labelPulloutDate.Location = new System.Drawing.Point(13, 64);
+                txtbrand.Enabled = false;
+                txtcustcd.Enabled = false;
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            brand = txtbrand1.Text;
-            custCD = txtcustcd1.Text;
-            dest = txtcountry1.TextBox1.Text;
-            shipMode = txtshipmode1.Text;
-            forwarder = textBox1.Text;
-            reportType = radioButton1.Checked ? 1 : 2;
+            date1 = datePulloutDate.Value1;
+            date2 = datePulloutDate.Value2;
+            brand = txtbrand.Text;
+            custCD = txtcustcd.Text;
+            dest = txtcountryDestination.TextBox1.Text;
+            shipMode = txtshipmode.Text;
+            forwarder = txtForwarder.Text;
+            reportType = radioGarment.Checked ? 1 : 2;
             return base.ValidateInput();
         }
 

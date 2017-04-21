@@ -21,15 +21,15 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Bulk,Sample,Bulk+Sample");
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox1.SelectedIndex = 2;
-            comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboCategory.SelectedIndex = 2;
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.SelectedIndex = -1;
         }
 
         // 驗證輸入條件
@@ -42,18 +42,18 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            if (comboBox1.SelectedIndex == -1)
+            if (comboCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
-                comboBox1.Focus();
+                comboCategory.Focus();
                 return false;
             }
 
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            category = comboBox1.SelectedIndex;
-            mDivision = comboBox2.Text;
-            factory = comboBox3.Text;
+            date1 = dateBuyerDelivery.Value1;
+            date2 = dateBuyerDelivery.Value2;
+            category = comboCategory.SelectedIndex;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
             return base.ValidateInput();
         }
 

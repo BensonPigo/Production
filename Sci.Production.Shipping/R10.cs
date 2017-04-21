@@ -21,54 +21,54 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            radioButton1.Checked = true;
-            radioButton3.Checked = true;
+            radioGarment.Checked = true;
+            radioExportFeeReport.Checked = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            txtshipmode1.SelectedIndex = -1;
+            txtshipmode.SelectedIndex = -1;
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton1.Checked)
+            if (radioGarment.Checked)
             {
-                label2.Text = "Pullout Date";
-                txtbrand1.Enabled = true;
-                txtcustcd1.Enabled = true;
-                radioButton4.Text = "Detail List by SP#";
-                radioButton5.Text = "Detail List by SP# by Fee Type";
+                labelPulloutDate.Text = "Pullout Date";
+                txtbrand.Enabled = true;
+                txtcustcd.Enabled = true;
+                radioDetailListbySPNo.Text = "Detail List by SP#";
+                radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
             }
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (radioRowMaterial.Checked)
             {
-                label2.Text = "Ship Date";
-                txtbrand1.Enabled = false;
-                txtcustcd1.Enabled = false;
-                radioButton4.Text = "Detail List by WK#";
-                radioButton5.Text = "Detail List by WK# by Fee Type";
+                labelPulloutDate.Text = "Ship Date";
+                txtbrand.Enabled = false;
+                txtcustcd.Enabled = false;
+                radioDetailListbySPNo.Text = "Detail List by WK#";
+                radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            apApvDate1 = dateRange2.Value1;
-            apApvDate2 = dateRange2.Value2;
-            brand = txtbrand1.Text;
-            custcd = txtcustcd1.Text;
-            dest = txtcountry1.TextBox1.Text;
-            shipmode = txtshipmode1.Text;
-            forwarder = txtsubcon1.TextBox1.Text;
-            reportContent = radioButton1.Checked ? 1 : 2;
-            reportType = radioButton3.Checked ? 1 : radioButton4.Checked ? 2 : 3;
+            date1 = datePulloutDate.Value1;
+            date2 = datePulloutDate.Value2;
+            apApvDate1 = dateAPApvDate.Value1;
+            apApvDate2 = dateAPApvDate.Value2;
+            brand = txtbrand.Text;
+            custcd = txtcustcd.Text;
+            dest = txtcountryDestination.TextBox1.Text;
+            shipmode = txtshipmode.Text;
+            forwarder = txtsubconForwarder.TextBox1.Text;
+            reportContent = radioGarment.Checked ? 1 : 2;
+            reportType = radioExportFeeReport.Checked ? 1 : radioDetailListbySPNo.Checked ? 2 : 3;
             return base.ValidateInput();
         }
 

@@ -21,36 +21,36 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            dateRange1.Value1 = new DateTime(DateTime.Now.Year, 1, 1); //預設帶入登入系統當年的第一天
-            dateRange1.Value2 = DateTime.Today;
-            dateRange2.Value2 = DateTime.Today;
+            dateDate.Value1 = new DateTime(DateTime.Now.Year, 1, 1); //預設帶入登入系統當年的第一天
+            dateDate.Value2 = DateTime.Today;
+            dateApvDate.Value2 = DateTime.Today;
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
 
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "M,B/L No.");
-            comboBox2.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboOrderby, 1, 1, "M,B/L No.");
+            comboOrderby.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2))
+            if (MyUtility.Check.Empty(dateDate.Value1) && MyUtility.Check.Empty(dateDate.Value2) && MyUtility.Check.Empty(dateApvDate.Value1) && MyUtility.Check.Empty(dateApvDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
-            mDivision = comboBox1.Text;
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            apvDate1 = dateRange2.Value1;
-            apvDate2 = dateRange2.Value2;
-            blno1 = textBox1.Text;
-            blno2 = textBox2.Text;
-            supplier = txtsubcon1.TextBox1.Text;
-            orderby = comboBox2.SelectedIndex;
+            mDivision = comboM.Text;
+            date1 = dateDate.Value1;
+            date2 = dateDate.Value2;
+            apvDate1 = dateApvDate.Value1;
+            apvDate2 = dateApvDate.Value2;
+            blno1 = txtBLNoStart.Text;
+            blno2 = txtBLNoEnd.Text;
+            supplier = txtSubconSupplier.TextBox1.Text;
+            orderby = comboOrderby.SelectedIndex;
 
             return base.ValidateInput();
         }

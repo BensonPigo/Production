@@ -21,27 +21,27 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            radioButton1.Checked = true;
+            radioListbyWKNo.Checked = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            txtshipmode1.SelectedIndex = -1;
+            txtshipmode.SelectedIndex = -1;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            arrivePortDate1 = dateRange1.Value1;
-            arrivePortDate2 = dateRange1.Value2;
-            doxRcvdDate1 = dateRange2.Value1;
-            doxRcvdDate2 = dateRange2.Value2;
-            apApvDate1 = dateRange3.Value1;
-            apApvDate2 = dateRange3.Value2;
-            shipMode = txtshipmode1.Text;
-            forwarder = textBox1.Text;
-            reportType = radioButton1.Checked ? 1 : 2;
+            arrivePortDate1 = dateArrivePortDate.Value1;
+            arrivePortDate2 = dateArrivePortDate.Value2;
+            doxRcvdDate1 = dateDoxRcvdDate.Value1;
+            doxRcvdDate2 = dateDoxRcvdDate.Value2;
+            apApvDate1 = dateAPApvDate.Value1;
+            apApvDate2 = dateAPApvDate.Value2;
+            shipMode = txtshipmode.Text;
+            forwarder = txtForwarder.Text;
+            reportType = radioListbyWKNo.Checked ? 1 : 2;
             return base.ValidateInput();
         }
 
@@ -405,40 +405,40 @@ order by ID";
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selected = item.GetSelecteds();
-            this.textBox1.Text = item.GetSelectedString();
+            this.txtForwarder.Text = item.GetSelectedString();
             displayBox1.Value = MyUtility.Convert.GetString(selected[0]["Abb"]);
         }
 
         //Forwarder
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtForwarder.OldValue != txtForwarder.Text)
             {
-                if (!MyUtility.Check.Empty(textBox1.Text))
+                if (!MyUtility.Check.Empty(txtForwarder.Text))
                 {
                     DataRow inputData;
                     string Sql = string.Format(@"select * from (
 select ID,Abb from LocalSupp WITH (NOLOCK) 
 union all
 select ID,AbbEN from Supp WITH (NOLOCK) ) a
-where a.ID = '{0}'", textBox1.Text);
+where a.ID = '{0}'", txtForwarder.Text);
                     if (!MyUtility.Check.Seek(Sql, out inputData))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", textBox1.Text));
-                        textBox1.Text = "";
+                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", txtForwarder.Text));
+                        txtForwarder.Text = "";
                         displayBox1.Value = "";
                         e.Cancel = true;
                         return;
                     }
                     else
                     {
-                        textBox1.Text = textBox1.Text;
+                        txtForwarder.Text = txtForwarder.Text;
                         displayBox1.Value = MyUtility.Convert.GetString(inputData["Abb"]);
                     }
                 }
                 else
                 {
-                    textBox1.Text = "";
+                    txtForwarder.Text = "";
                     displayBox1.Value = "";
                 }
             }

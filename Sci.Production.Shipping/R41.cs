@@ -20,8 +20,8 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",Import,Export,Adjust");
-            comboBox1.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboType, 1, 1, ",Import,Export,Adjust");
+            comboType.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -34,11 +34,11 @@ namespace Sci.Production.Shipping
             //    return false;
             //}
 
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            nlCode = textBox1.Text;
-            contractNo = textBox2.Text;
-            type = comboBox1.SelectedIndex == -1 || comboBox1.SelectedIndex == 0 ? "" : comboBox1.SelectedIndex == 1 ? "Import" : comboBox1.SelectedIndex == 2 ? "Export" : "Adjust";
+            date1 = dateDate.Value1;
+            date2 = dateDate.Value2;
+            nlCode = txtNLCode.Text;
+            contractNo = txtContractNo.Text;
+            type = comboType.SelectedIndex == -1 || comboType.SelectedIndex == 0 ? "" : comboType.SelectedIndex == 1 ? "Import" : comboType.SelectedIndex == 2 ? "Export" : "Adjust";
             return base.ValidateInput();
         }
 
@@ -192,7 +192,7 @@ order by v.CDate", sqlCondition);
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();            
+            txtContractNo.Text = item.GetSelectedString();            
             
         }
     }

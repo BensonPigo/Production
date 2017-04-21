@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labelContractNo = new Sci.Win.UI.Label();
+            this.labelHSCode = new Sci.Win.UI.Label();
+            this.labelNLCode = new Sci.Win.UI.Label();
+            this.labelSPNoStartFrom = new Sci.Win.UI.Label();
+            this.checkLiquidationDataOnly = new Sci.Win.UI.CheckBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.txtContractNo = new Sci.Win.UI.TextBox();
+            this.txtHSCode = new Sci.Win.UI.TextBox();
+            this.txtNLCode = new Sci.Win.UI.TextBox();
+            this.txtSPNoStartFrom = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -53,52 +53,52 @@
             // 
             this.close.Location = new System.Drawing.Point(375, 84);
             // 
-            // label1
+            // labelContractNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(23, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Contract no.";
+            this.labelContractNo.Lines = 0;
+            this.labelContractNo.Location = new System.Drawing.Point(23, 12);
+            this.labelContractNo.Name = "labelContractNo";
+            this.labelContractNo.Size = new System.Drawing.Size(93, 23);
+            this.labelContractNo.TabIndex = 94;
+            this.labelContractNo.Text = "Contract no.";
             // 
-            // label2
+            // labelHSCode
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(23, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "HS Code";
+            this.labelHSCode.Lines = 0;
+            this.labelHSCode.Location = new System.Drawing.Point(23, 48);
+            this.labelHSCode.Name = "labelHSCode";
+            this.labelHSCode.Size = new System.Drawing.Size(93, 23);
+            this.labelHSCode.TabIndex = 95;
+            this.labelHSCode.Text = "HS Code";
             // 
-            // label3
+            // labelNLCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(23, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "NL Code";
+            this.labelNLCode.Lines = 0;
+            this.labelNLCode.Location = new System.Drawing.Point(23, 84);
+            this.labelNLCode.Name = "labelNLCode";
+            this.labelNLCode.Size = new System.Drawing.Size(93, 23);
+            this.labelNLCode.TabIndex = 96;
+            this.labelNLCode.Text = "NL Code";
             // 
-            // label4
+            // labelSPNoStartFrom
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(23, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(93, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "SP# start from";
+            this.labelSPNoStartFrom.Lines = 0;
+            this.labelSPNoStartFrom.Location = new System.Drawing.Point(23, 120);
+            this.labelSPNoStartFrom.Name = "labelSPNoStartFrom";
+            this.labelSPNoStartFrom.Size = new System.Drawing.Size(93, 23);
+            this.labelSPNoStartFrom.TabIndex = 97;
+            this.labelSPNoStartFrom.Text = "SP# start from";
             // 
-            // checkBox1
+            // checkLiquidationDataOnly
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(23, 156);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(158, 21);
-            this.checkBox1.TabIndex = 98;
-            this.checkBox1.Text = "Liquidation data only";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkLiquidationDataOnly.AutoSize = true;
+            this.checkLiquidationDataOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkLiquidationDataOnly.Location = new System.Drawing.Point(23, 156);
+            this.checkLiquidationDataOnly.Name = "checkLiquidationDataOnly";
+            this.checkLiquidationDataOnly.Size = new System.Drawing.Size(158, 21);
+            this.checkLiquidationDataOnly.TabIndex = 98;
+            this.checkLiquidationDataOnly.Text = "Liquidation data only";
+            this.checkLiquidationDataOnly.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -114,42 +114,42 @@
             this.label5.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label5.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox1
+            // txtContractNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(120, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(150, 23);
-            this.textBox1.TabIndex = 100;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(120, 12);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(150, 23);
+            this.txtContractNo.TabIndex = 100;
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
-            // textBox2
+            // txtHSCode
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(120, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 101;
+            this.txtHSCode.BackColor = System.Drawing.Color.White;
+            this.txtHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtHSCode.Location = new System.Drawing.Point(120, 48);
+            this.txtHSCode.Name = "txtHSCode";
+            this.txtHSCode.Size = new System.Drawing.Size(80, 23);
+            this.txtHSCode.TabIndex = 101;
             // 
-            // textBox3
+            // txtNLCode
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(120, 84);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(60, 23);
-            this.textBox3.TabIndex = 102;
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(120, 84);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(60, 23);
+            this.txtNLCode.TabIndex = 102;
             // 
-            // textBox4
+            // txtSPNoStartFrom
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(120, 120);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(130, 23);
-            this.textBox4.TabIndex = 103;
+            this.txtSPNoStartFrom.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStartFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStartFrom.Location = new System.Drawing.Point(120, 120);
+            this.txtSPNoStartFrom.Name = "txtSPNoStartFrom";
+            this.txtSPNoStartFrom.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNoStartFrom.TabIndex = 103;
             // 
             // label6
             // 
@@ -169,32 +169,32 @@
             // 
             this.ClientSize = new System.Drawing.Size(467, 233);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtSPNoStartFrom);
+            this.Controls.Add(this.txtNLCode);
+            this.Controls.Add(this.txtHSCode);
+            this.Controls.Add(this.txtContractNo);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.checkLiquidationDataOnly);
+            this.Controls.Add(this.labelSPNoStartFrom);
+            this.Controls.Add(this.labelNLCode);
+            this.Controls.Add(this.labelHSCode);
+            this.Controls.Add(this.labelContractNo);
             this.IsSupportToPrint = false;
             this.Name = "R40";
             this.Text = "R40. Current Contract vs Factory Qty Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
+            this.Controls.SetChildIndex(this.labelContractNo, 0);
+            this.Controls.SetChildIndex(this.labelHSCode, 0);
+            this.Controls.SetChildIndex(this.labelNLCode, 0);
+            this.Controls.SetChildIndex(this.labelSPNoStartFrom, 0);
+            this.Controls.SetChildIndex(this.checkLiquidationDataOnly, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.textBox4, 0);
+            this.Controls.SetChildIndex(this.txtContractNo, 0);
+            this.Controls.SetChildIndex(this.txtHSCode, 0);
+            this.Controls.SetChildIndex(this.txtNLCode, 0);
+            this.Controls.SetChildIndex(this.txtSPNoStartFrom, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -203,16 +203,16 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Label labelContractNo;
+        private Win.UI.Label labelHSCode;
+        private Win.UI.Label labelNLCode;
+        private Win.UI.Label labelSPNoStartFrom;
+        private Win.UI.CheckBox checkLiquidationDataOnly;
         private Win.UI.Label label5;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox4;
+        private Win.UI.TextBox txtContractNo;
+        private Win.UI.TextBox txtHSCode;
+        private Win.UI.TextBox txtNLCode;
+        private Win.UI.TextBox txtSPNoStartFrom;
         private Win.UI.Label label6;
     }
 }

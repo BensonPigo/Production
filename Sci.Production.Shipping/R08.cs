@@ -24,36 +24,36 @@ namespace Sci.Production.Shipping
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            comboBox2.SelectedIndex = -1;
-            MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Bulk,Sample,Bulk+Sample");
-            comboBox3.SelectedIndex = 2;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.SelectedIndex = -1;
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
+            comboCategory.SelectedIndex = 2;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) && MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) && MyUtility.Check.Empty(txtbrand1.Text) && MyUtility.Check.Empty(txtcustcd1.Text))
+            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateCutOffDate.Value1) && MyUtility.Check.Empty(dateCutOffDate.Value2) && MyUtility.Check.Empty(txtbrand.Text) && MyUtility.Check.Empty(txtCustcd.Text))
             {
                 MyUtility.Msg.WarningBox("Buyer Delivery, SCI Delivery, Cut-Off Date, Brand, Cust CD can't all empty!!");
                 return false;
             }
             
-            buyerDlv1 = dateRange1.Value1;
-            buyerDlv2 = dateRange1.Value2;
-            sciDlv1 = dateRange2.Value1;
-            sciDlv2 = dateRange2.Value2;
-            cutoffDate1 = dateRange3.Value1;
-            cutoffDate2 = dateRange3.Value2;
-            brand = txtbrand1.Text;
-            custcd = txtcustcd1.Text;
-            mDivision = comboBox1.Text;
-            factory = comboBox2.Text;
-            category = comboBox3.SelectedIndex;
-            onlyirregular = checkBox1.Checked;
+            buyerDlv1 = dateBuyerDelivery.Value1;
+            buyerDlv2 = dateBuyerDelivery.Value2;
+            sciDlv1 = dateSCIDelivery.Value1;
+            sciDlv2 = dateSCIDelivery.Value2;
+            cutoffDate1 = dateCutOffDate.Value1;
+            cutoffDate2 = dateCutOffDate.Value2;
+            brand = txtbrand.Text;
+            custcd = txtCustcd.Text;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
+            category = comboCategory.SelectedIndex;
+            onlyirregular = checkOnlyPrintTheIrregularData.Checked;
             return base.ValidateInput();
         }
 

@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelNLCode = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelContractNo = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateRange();
+            this.txtNLCode = new Sci.Win.UI.TextBox();
+            this.txtContractNo = new Sci.Win.UI.TextBox();
+            this.comboType = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -50,105 +50,105 @@
             // 
             this.close.Location = new System.Drawing.Point(376, 84);
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(19, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(19, 12);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(80, 23);
+            this.labelDate.TabIndex = 94;
+            this.labelDate.Text = "Date";
             // 
-            // label2
+            // labelNLCode
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(19, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "NL Code";
+            this.labelNLCode.Lines = 0;
+            this.labelNLCode.Location = new System.Drawing.Point(19, 48);
+            this.labelNLCode.Name = "labelNLCode";
+            this.labelNLCode.Size = new System.Drawing.Size(80, 23);
+            this.labelNLCode.TabIndex = 95;
+            this.labelNLCode.Text = "NL Code";
             // 
-            // label3
+            // labelType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(19, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(19, 84);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(80, 23);
+            this.labelType.TabIndex = 96;
+            this.labelType.Text = "Type";
             // 
-            // label4
+            // labelContractNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(19, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Contract no.";
+            this.labelContractNo.Lines = 0;
+            this.labelContractNo.Location = new System.Drawing.Point(19, 120);
+            this.labelContractNo.Name = "labelContractNo";
+            this.labelContractNo.Size = new System.Drawing.Size(80, 23);
+            this.labelContractNo.TabIndex = 97;
+            this.labelContractNo.Text = "Contract no.";
             // 
-            // dateRange1
+            // dateDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(103, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(226, 23);
-            this.dateRange1.TabIndex = 98;
+            this.dateDate.IsRequired = false;
+            this.dateDate.Location = new System.Drawing.Point(103, 12);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(226, 23);
+            this.dateDate.TabIndex = 98;
             // 
-            // textBox1
+            // txtNLCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(103, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(70, 23);
-            this.textBox1.TabIndex = 99;
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(103, 48);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(70, 23);
+            this.txtNLCode.TabIndex = 99;
             // 
-            // textBox2
+            // txtContractNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(103, 120);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(150, 23);
-            this.textBox2.TabIndex = 100;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtContractNo.BackColor = System.Drawing.Color.White;
+            this.txtContractNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtContractNo.Location = new System.Drawing.Point(103, 120);
+            this.txtContractNo.Name = "txtContractNo";
+            this.txtContractNo.Size = new System.Drawing.Size(150, 23);
+            this.txtContractNo.TabIndex = 100;
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
-            // comboBox1
+            // comboType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(103, 83);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 101;
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(103, 83);
+            this.comboType.Name = "comboType";
+            this.comboType.Size = new System.Drawing.Size(100, 24);
+            this.comboType.TabIndex = 101;
             // 
             // R41
             // 
             this.ClientSize = new System.Drawing.Size(468, 183);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboType);
+            this.Controls.Add(this.txtContractNo);
+            this.Controls.Add(this.txtNLCode);
+            this.Controls.Add(this.dateDate);
+            this.Controls.Add(this.labelContractNo);
+            this.Controls.Add(this.labelType);
+            this.Controls.Add(this.labelNLCode);
+            this.Controls.Add(this.labelDate);
             this.IsSupportToPrint = false;
             this.Name = "R41";
             this.Text = "R41. NL Code Import/Export/Adjust detail list";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
+            this.Controls.SetChildIndex(this.labelDate, 0);
+            this.Controls.SetChildIndex(this.labelNLCode, 0);
+            this.Controls.SetChildIndex(this.labelType, 0);
+            this.Controls.SetChildIndex(this.labelContractNo, 0);
+            this.Controls.SetChildIndex(this.dateDate, 0);
+            this.Controls.SetChildIndex(this.txtNLCode, 0);
+            this.Controls.SetChildIndex(this.txtContractNo, 0);
+            this.Controls.SetChildIndex(this.comboType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -156,13 +156,13 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelNLCode;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelContractNo;
+        private Win.UI.DateRange dateDate;
+        private Win.UI.TextBox txtNLCode;
+        private Win.UI.TextBox txtContractNo;
+        private Win.UI.ComboBox comboType;
     }
 }

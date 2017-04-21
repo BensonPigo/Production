@@ -28,29 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
+            this.labelReportContent = new Sci.Win.UI.Label();
+            this.labelPulloutDate = new Sci.Win.UI.Label();
+            this.labelAPApvDate = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelCustCD = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.labelShipMode = new Sci.Win.UI.Label();
+            this.labelForwarder = new Sci.Win.UI.Label();
+            this.labelReportType = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.radioRowMaterial = new Sci.Win.UI.RadioButton();
+            this.radioGarment = new Sci.Win.UI.RadioButton();
+            this.datePulloutDate = new Sci.Win.UI.DateRange();
+            this.dateAPApvDate = new Sci.Win.UI.DateRange();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.txtsubconForwarder = new Sci.Production.Class.txtsubcon();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
-            this.radioButton5 = new Sci.Win.UI.RadioButton();
-            this.radioButton4 = new Sci.Win.UI.RadioButton();
-            this.radioButton3 = new Sci.Win.UI.RadioButton();
+            this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
+            this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
+            this.radioExportFeeReport = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -67,278 +67,278 @@
             // 
             this.close.Location = new System.Drawing.Point(433, 84);
             // 
-            // label1
+            // labelReportContent
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Report Content";
+            this.labelReportContent.Lines = 0;
+            this.labelReportContent.Location = new System.Drawing.Point(13, 12);
+            this.labelReportContent.Name = "labelReportContent";
+            this.labelReportContent.Size = new System.Drawing.Size(101, 23);
+            this.labelReportContent.TabIndex = 94;
+            this.labelReportContent.Text = "Report Content";
             // 
-            // label2
+            // labelPulloutDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 80);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Pullout Date";
+            this.labelPulloutDate.Lines = 0;
+            this.labelPulloutDate.Location = new System.Drawing.Point(13, 80);
+            this.labelPulloutDate.Name = "labelPulloutDate";
+            this.labelPulloutDate.Size = new System.Drawing.Size(101, 23);
+            this.labelPulloutDate.TabIndex = 95;
+            this.labelPulloutDate.Text = "Pullout Date";
             // 
-            // label3
+            // labelAPApvDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 116);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "AP Apv. Date";
+            this.labelAPApvDate.Lines = 0;
+            this.labelAPApvDate.Location = new System.Drawing.Point(13, 116);
+            this.labelAPApvDate.Name = "labelAPApvDate";
+            this.labelAPApvDate.Size = new System.Drawing.Size(101, 23);
+            this.labelAPApvDate.TabIndex = 96;
+            this.labelAPApvDate.Text = "AP Apv. Date";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 152);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 152);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(101, 23);
+            this.labelBrand.TabIndex = 97;
+            this.labelBrand.Text = "Brand";
             // 
-            // label5
+            // labelCustCD
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 189);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(101, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Cust CD";
+            this.labelCustCD.Lines = 0;
+            this.labelCustCD.Location = new System.Drawing.Point(13, 189);
+            this.labelCustCD.Name = "labelCustCD";
+            this.labelCustCD.Size = new System.Drawing.Size(101, 23);
+            this.labelCustCD.TabIndex = 98;
+            this.labelCustCD.Text = "Cust CD";
             // 
-            // label6
+            // labelDestination
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 225);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(13, 225);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(101, 23);
+            this.labelDestination.TabIndex = 99;
+            this.labelDestination.Text = "Destination";
             // 
-            // label7
+            // labelShipMode
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 261);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(101, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Ship Mode";
+            this.labelShipMode.Lines = 0;
+            this.labelShipMode.Location = new System.Drawing.Point(13, 261);
+            this.labelShipMode.Name = "labelShipMode";
+            this.labelShipMode.Size = new System.Drawing.Size(101, 23);
+            this.labelShipMode.TabIndex = 100;
+            this.labelShipMode.Text = "Ship Mode";
             // 
-            // label8
+            // labelForwarder
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(13, 297);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(101, 23);
-            this.label8.TabIndex = 101;
-            this.label8.Text = "Forwarder";
+            this.labelForwarder.Lines = 0;
+            this.labelForwarder.Location = new System.Drawing.Point(13, 297);
+            this.labelForwarder.Name = "labelForwarder";
+            this.labelForwarder.Size = new System.Drawing.Size(101, 23);
+            this.labelForwarder.TabIndex = 101;
+            this.labelForwarder.Text = "Forwarder";
             // 
-            // label9
+            // labelReportType
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 334);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(101, 23);
-            this.label9.TabIndex = 102;
-            this.label9.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(13, 334);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(101, 23);
+            this.labelReportType.TabIndex = 102;
+            this.labelReportType.Text = "Report Type";
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioRowMaterial);
+            this.radioPanel1.Controls.Add(this.radioGarment);
             this.radioPanel1.Location = new System.Drawing.Point(118, 10);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(114, 55);
             this.radioPanel1.TabIndex = 103;
             // 
-            // radioButton2
+            // radioRowMaterial
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(1, 29);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(107, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Row Material";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.radioRowMaterial.AutoSize = true;
+            this.radioRowMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioRowMaterial.Location = new System.Drawing.Point(1, 29);
+            this.radioRowMaterial.Name = "radioRowMaterial";
+            this.radioRowMaterial.Size = new System.Drawing.Size(107, 21);
+            this.radioRowMaterial.TabIndex = 1;
+            this.radioRowMaterial.TabStop = true;
+            this.radioRowMaterial.Text = "Row Material";
+            this.radioRowMaterial.UseVisualStyleBackColor = true;
+            this.radioRowMaterial.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
-            // radioButton1
+            // radioGarment
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(1, 1);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(81, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Garment";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioGarment.AutoSize = true;
+            this.radioGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioGarment.Location = new System.Drawing.Point(1, 1);
+            this.radioGarment.Name = "radioGarment";
+            this.radioGarment.Size = new System.Drawing.Size(81, 21);
+            this.radioGarment.TabIndex = 0;
+            this.radioGarment.TabStop = true;
+            this.radioGarment.Text = "Garment";
+            this.radioGarment.UseVisualStyleBackColor = true;
+            this.radioGarment.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
-            // dateRange1
+            // datePulloutDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(118, 80);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 104;
+            this.datePulloutDate.IsRequired = false;
+            this.datePulloutDate.Location = new System.Drawing.Point(118, 80);
+            this.datePulloutDate.Name = "datePulloutDate";
+            this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
+            this.datePulloutDate.TabIndex = 104;
             // 
-            // dateRange2
+            // dateAPApvDate
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(118, 116);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 105;
+            this.dateAPApvDate.IsRequired = false;
+            this.dateAPApvDate.Location = new System.Drawing.Point(118, 116);
+            this.dateAPApvDate.Name = "dateAPApvDate";
+            this.dateAPApvDate.Size = new System.Drawing.Size(280, 23);
+            this.dateAPApvDate.TabIndex = 105;
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(119, 152);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(81, 23);
-            this.txtbrand1.TabIndex = 106;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(119, 152);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(81, 23);
+            this.txtbrand.TabIndex = 106;
             // 
-            // txtcustcd1
+            // txtcustcd
             // 
-            this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
-            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd1.Location = new System.Drawing.Point(119, 189);
-            this.txtcustcd1.Name = "txtcustcd1";
-            this.txtcustcd1.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd1.TabIndex = 107;
+            this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = null;
+            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd.Location = new System.Drawing.Point(119, 189);
+            this.txtcustcd.Name = "txtcustcd";
+            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd.TabIndex = 107;
             // 
-            // txtcountry1
+            // txtcountryDestination
             // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(118, 225);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 108;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(118, 225);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 108;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
-            // txtshipmode1
+            // txtshipmode
             // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(118, 261);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(80, 24);
-            this.txtshipmode1.TabIndex = 109;
-            this.txtshipmode1.UseFunction = null;
+            this.txtshipmode.BackColor = System.Drawing.Color.White;
+            this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmode.FormattingEnabled = true;
+            this.txtshipmode.IsSupportUnselect = true;
+            this.txtshipmode.Location = new System.Drawing.Point(118, 261);
+            this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.Size = new System.Drawing.Size(80, 24);
+            this.txtshipmode.TabIndex = 109;
+            this.txtshipmode.UseFunction = null;
             // 
-            // txtsubcon1
+            // txtsubconForwarder
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = true;
-            this.txtsubcon1.Location = new System.Drawing.Point(119, 297);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 110;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconForwarder.DisplayBox1Binding = "";
+            this.txtsubconForwarder.IsIncludeJunk = true;
+            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 297);
+            this.txtsubconForwarder.Name = "txtsubconForwarder";
+            this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconForwarder.TabIndex = 110;
+            this.txtsubconForwarder.TextBox1Binding = "";
             // 
             // radioPanel2
             // 
-            this.radioPanel2.Controls.Add(this.radioButton5);
-            this.radioPanel2.Controls.Add(this.radioButton4);
-            this.radioPanel2.Controls.Add(this.radioButton3);
+            this.radioPanel2.Controls.Add(this.radioDetailListBySPNoByFeeType);
+            this.radioPanel2.Controls.Add(this.radioDetailListbySPNo);
+            this.radioPanel2.Controls.Add(this.radioExportFeeReport);
             this.radioPanel2.Location = new System.Drawing.Point(118, 332);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(232, 84);
             this.radioPanel2.TabIndex = 111;
             // 
-            // radioButton5
+            // radioDetailListBySPNoByFeeType
             // 
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton5.Location = new System.Drawing.Point(1, 57);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(220, 21);
-            this.radioButton5.TabIndex = 2;
-            this.radioButton5.TabStop = true;
-            this.radioButton5.Text = "Detail List by SP# by Fee Type";
-            this.radioButton5.UseVisualStyleBackColor = true;
+            this.radioDetailListBySPNoByFeeType.AutoSize = true;
+            this.radioDetailListBySPNoByFeeType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetailListBySPNoByFeeType.Location = new System.Drawing.Point(1, 57);
+            this.radioDetailListBySPNoByFeeType.Name = "radioDetailListBySPNoByFeeType";
+            this.radioDetailListBySPNoByFeeType.Size = new System.Drawing.Size(220, 21);
+            this.radioDetailListBySPNoByFeeType.TabIndex = 2;
+            this.radioDetailListBySPNoByFeeType.TabStop = true;
+            this.radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
+            this.radioDetailListBySPNoByFeeType.UseVisualStyleBackColor = true;
             // 
-            // radioButton4
+            // radioDetailListbySPNo
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton4.Location = new System.Drawing.Point(1, 29);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(137, 21);
-            this.radioButton4.TabIndex = 1;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "Detail List by SP#";
-            this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioDetailListbySPNo.AutoSize = true;
+            this.radioDetailListbySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetailListbySPNo.Location = new System.Drawing.Point(1, 29);
+            this.radioDetailListbySPNo.Name = "radioDetailListbySPNo";
+            this.radioDetailListbySPNo.Size = new System.Drawing.Size(137, 21);
+            this.radioDetailListbySPNo.TabIndex = 1;
+            this.radioDetailListbySPNo.TabStop = true;
+            this.radioDetailListbySPNo.Text = "Detail List by SP#";
+            this.radioDetailListbySPNo.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // radioExportFeeReport
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton3.Location = new System.Drawing.Point(1, 1);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(141, 21);
-            this.radioButton3.TabIndex = 0;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Export Fee Report";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioExportFeeReport.AutoSize = true;
+            this.radioExportFeeReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioExportFeeReport.Location = new System.Drawing.Point(1, 1);
+            this.radioExportFeeReport.Name = "radioExportFeeReport";
+            this.radioExportFeeReport.Size = new System.Drawing.Size(141, 21);
+            this.radioExportFeeReport.TabIndex = 0;
+            this.radioExportFeeReport.TabStop = true;
+            this.radioExportFeeReport.Text = "Export Fee Report";
+            this.radioExportFeeReport.UseVisualStyleBackColor = true;
             // 
             // R10
             // 
             this.ClientSize = new System.Drawing.Size(525, 451);
             this.Controls.Add(this.radioPanel2);
-            this.Controls.Add(this.txtsubcon1);
-            this.Controls.Add(this.txtshipmode1);
-            this.Controls.Add(this.txtcountry1);
-            this.Controls.Add(this.txtcustcd1);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.dateRange1);
+            this.Controls.Add(this.txtsubconForwarder);
+            this.Controls.Add(this.txtshipmode);
+            this.Controls.Add(this.txtcountryDestination);
+            this.Controls.Add(this.txtcustcd);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.dateAPApvDate);
+            this.Controls.Add(this.datePulloutDate);
             this.Controls.Add(this.radioPanel1);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelReportType);
+            this.Controls.Add(this.labelForwarder);
+            this.Controls.Add(this.labelShipMode);
+            this.Controls.Add(this.labelDestination);
+            this.Controls.Add(this.labelCustCD);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelAPApvDate);
+            this.Controls.Add(this.labelPulloutDate);
+            this.Controls.Add(this.labelReportContent);
             this.IsSupportToPrint = false;
             this.Name = "R10";
             this.Text = "R10. Share Expense Report - Export";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.labelReportContent, 0);
+            this.Controls.SetChildIndex(this.labelPulloutDate, 0);
+            this.Controls.SetChildIndex(this.labelAPApvDate, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelCustCD, 0);
+            this.Controls.SetChildIndex(this.labelDestination, 0);
+            this.Controls.SetChildIndex(this.labelShipMode, 0);
+            this.Controls.SetChildIndex(this.labelForwarder, 0);
+            this.Controls.SetChildIndex(this.labelReportType, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.txtcustcd1, 0);
-            this.Controls.SetChildIndex(this.txtcountry1, 0);
-            this.Controls.SetChildIndex(this.txtshipmode1, 0);
-            this.Controls.SetChildIndex(this.txtsubcon1, 0);
+            this.Controls.SetChildIndex(this.datePulloutDate, 0);
+            this.Controls.SetChildIndex(this.dateAPApvDate, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.txtcustcd, 0);
+            this.Controls.SetChildIndex(this.txtcountryDestination, 0);
+            this.Controls.SetChildIndex(this.txtshipmode, 0);
+            this.Controls.SetChildIndex(this.txtsubconForwarder, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
@@ -351,28 +351,28 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
+        private Win.UI.Label labelReportContent;
+        private Win.UI.Label labelPulloutDate;
+        private Win.UI.Label labelAPApvDate;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelCustCD;
+        private Win.UI.Label labelDestination;
+        private Win.UI.Label labelShipMode;
+        private Win.UI.Label labelForwarder;
+        private Win.UI.Label labelReportType;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.DateRange dateRange2;
-        private Class.txtbrand txtbrand1;
-        private Class.txtcustcd txtcustcd1;
-        private Class.txtcountry txtcountry1;
-        private Class.txtshipmode txtshipmode1;
-        private Class.txtsubcon txtsubcon1;
+        private Win.UI.RadioButton radioRowMaterial;
+        private Win.UI.RadioButton radioGarment;
+        private Win.UI.DateRange datePulloutDate;
+        private Win.UI.DateRange dateAPApvDate;
+        private Class.txtbrand txtbrand;
+        private Class.txtcustcd txtcustcd;
+        private Class.txtcountry txtcountryDestination;
+        private Class.txtshipmode txtshipmode;
+        private Class.txtsubcon txtsubconForwarder;
         private Win.UI.RadioPanel radioPanel2;
-        private Win.UI.RadioButton radioButton5;
-        private Win.UI.RadioButton radioButton4;
-        private Win.UI.RadioButton radioButton3;
+        private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
+        private Win.UI.RadioButton radioDetailListbySPNo;
+        private Win.UI.RadioButton radioExportFeeReport;
     }
 }

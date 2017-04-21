@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.labelShipper = new Sci.Win.UI.Label();
+            this.comboShipper = new Sci.Win.UI.ComboBox();
+            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -53,131 +53,131 @@
             // 
             this.close.Location = new System.Drawing.Point(434, 84);
             // 
-            // label1
+            // labelBuyerDelivery
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 12);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelBuyerDelivery.TabIndex = 94;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 48);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 48);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(95, 23);
+            this.labelBrand.TabIndex = 97;
+            this.labelBrand.Text = "Brand";
             // 
-            // label7
+            // labelFactory
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 123);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 123);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(95, 23);
+            this.labelFactory.TabIndex = 100;
+            this.labelFactory.Text = "Factory";
             // 
-            // label8
+            // labelCategory
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(13, 159);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(95, 23);
-            this.label8.TabIndex = 101;
-            this.label8.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(13, 159);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(95, 23);
+            this.labelCategory.TabIndex = 101;
+            this.labelCategory.Text = "Category";
             // 
-            // dateRange1
+            // dateBuyerDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(112, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 102;
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(112, 12);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 102;
             // 
-            // comboBox2
+            // comboFactory
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(112, 123);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(74, 24);
-            this.comboBox2.TabIndex = 108;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(112, 123);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(74, 24);
+            this.comboFactory.TabIndex = 108;
             // 
-            // label5
+            // labelShipper
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 84);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Shipper";
+            this.labelShipper.Lines = 0;
+            this.labelShipper.Location = new System.Drawing.Point(13, 84);
+            this.labelShipper.Name = "labelShipper";
+            this.labelShipper.Size = new System.Drawing.Size(95, 23);
+            this.labelShipper.TabIndex = 98;
+            this.labelShipper.Text = "Shipper";
             // 
-            // comboBox1
+            // comboShipper
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(112, 83);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(74, 24);
-            this.comboBox1.TabIndex = 112;
+            this.comboShipper.BackColor = System.Drawing.Color.White;
+            this.comboShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboShipper.FormattingEnabled = true;
+            this.comboShipper.IsSupportUnselect = true;
+            this.comboShipper.Location = new System.Drawing.Point(112, 83);
+            this.comboShipper.Name = "comboShipper";
+            this.comboShipper.Size = new System.Drawing.Size(74, 24);
+            this.comboShipper.TabIndex = 112;
             // 
-            // txtdropdownlist1
+            // txtdropdownlistCategory
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(112, 159);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(200, 24);
-            this.txtdropdownlist1.TabIndex = 111;
-            this.txtdropdownlist1.Type = "Fty_CMT_Forecast";
+            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistCategory.FormattingEnabled = true;
+            this.txtdropdownlistCategory.IsSupportUnselect = true;
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(112, 159);
+            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.Size = new System.Drawing.Size(200, 24);
+            this.txtdropdownlistCategory.TabIndex = 111;
+            this.txtdropdownlistCategory.Type = "Fty_CMT_Forecast";
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(112, 48);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand1.TabIndex = 105;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(112, 48);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 105;
             // 
             // R13
             // 
             this.ClientSize = new System.Drawing.Size(526, 225);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.txtdropdownlist1);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboShipper);
+            this.Controls.Add(this.txtdropdownlistCategory);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.dateBuyerDelivery);
+            this.Controls.Add(this.labelCategory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.labelShipper);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelBuyerDelivery);
             this.IsSupportToPrint = false;
             this.Name = "R13";
             this.Text = "R13. Factory CMT Forecast";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelShipper, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelCategory, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
+            this.Controls.SetChildIndex(this.comboShipper, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,15 +185,15 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.DateRange dateRange1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.ComboBox comboBox2;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.Label label5;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelCategory;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Class.txtbrand txtbrand;
+        private Win.UI.ComboBox comboFactory;
+        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Win.UI.Label labelShipper;
+        private Win.UI.ComboBox comboShipper;
     }
 }
