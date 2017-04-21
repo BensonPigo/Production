@@ -1378,7 +1378,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
                 {
                     if (MyUtility.Check.Seek(string.Format(@"
 select 
-	RD.RD_Count + ST.ST_Count + BB.BB_Count + TID.TID_Count as total
+	RD.RD_Count + ST.ST_Count + BB.BB_Count + TID.TID_Count + FtyInv.Fty_Count as total
 from(
     select COUNT(*) RD_Count 
     from dbo.Receiving_Detail RD WITH (NOLOCK) 
@@ -1405,7 +1405,13 @@ Outer Apply
     From dbo.TransferIn TI
     inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
     where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and Status = 'Confirmed'
-) TID", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]), out dr, null))
+) TID
+Outer Apply
+(
+    select count(*) Fty_Count 
+    From dbo.FtyInventory Fty
+    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}'
+) FtyInv", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]), out dr, null))
                     {
                         if (Convert.ToInt32(dr[0]) > 0)
                         {
