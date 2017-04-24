@@ -89,7 +89,7 @@ order by ld.Seq1,ld.Seq2", masterID);
                             dr["Description"] = selectData[0]["Description"];
 
                             DataTable WHdata;
-                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT InQty,OutQty FROM MDivisionPoDetail WITH (NOLOCK) WHERE POID = '{0}' AND Seq1 = '{1}' AND Seq2 = '{2}' AND MDivisionID = '{3}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out WHdata);
+                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Sci.Env.User.Keyword), out WHdata);
                             if (whdr)
                             {
                                 if (WHdata.Rows.Count > 0)
@@ -153,9 +153,10 @@ order by ld.Seq1,ld.Seq2", masterID);
                             e.Cancel = true;
                             return;
                         }
-                        string sqlCmd = string.Format(@"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(id,psd.seq1,psd.seq2,2,0) as Description 
+                        string sqlCmd = string.Format(@"select left(psd.seq1+' ',3)+psd.seq2 as Seq, psd.Refno,isnull(m.InQty,0) as InQty,isnull(m.OutQty,0) as OutQty,psd.seq1,psd.seq2, dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
                         from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
-                        left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2 and m.MDivisionID = '{3}'
+                        left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2
+                        inner join dbo.Factory F WITH (NOLOCK) on F.id=psd.factoryid and F.MDivisionID='{3}'
                         where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
                         MyUtility.Convert.GetString(CurrentMaintain["POID"]), inputString[0], inputString[1], Sci.Env.User.Keyword);
 
@@ -692,7 +693,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                                                     ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
                                                     ,isnull(m.LInvQty, 0) as LInvQty
                                                     from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2 and m.mdivisionid = '{1}'
+                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
+                                                    inner join dbo.Factory F WITH (NOLOCK) on F.id=p.factoryid and F.MDivisionID='{1}'
                                                     inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
                                                     inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
                                                     inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID

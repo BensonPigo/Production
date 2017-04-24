@@ -84,20 +84,25 @@ outer apply (
 )psd2
 outer apply (select MtlTypeID from Fabric  WITH (NOLOCK) where SCIRefno = psd.SCIRefno)f
 outer apply (
-	select inqty 
-	from MDivisionPoDetail WITH (NOLOCK) 
-	where MDivisionId = L.MDivisionID and POID = L.POID and Seq1 = LD.Seq1 and Seq2 = LD.Seq2
+	select m.inqty 
+	from MDivisionPoDetail m WITH (NOLOCK) 
+    inner join Orders o WITH (NOLOCK) on m.POID=o.ID  
+    inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup
+	where f.MDivisionId = L.MDivisionID and m.POID = L.POID and Seq1 = LD.Seq1 and Seq2 = LD.Seq2
 ) mpd
 outer apply (
 	select sum(InQty) inqty 
-	from PO_Supp_Detail psd3 INNER join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
+	from PO_Supp_Detail psd3 
+    INNER join MDivisionPoDetail m on m.Seq1 = psd3.SEQ1 and m.Seq2 = psd3.SEQ2
 	where psd3.ID = L.POID and psd3.OutputSeq1 = LD.Seq1 and psd3.OutputSeq2 = LD.SEQ2
 	and m.POID = L.POID  
 ) mpd2
 outer apply (
 	select inqty 
-	from MDivisionPoDetail WITH (NOLOCK) 
-	where MDivisionId = L.MDivisionID and POID = L.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2
+	from MDivisionPoDetail m WITH (NOLOCK) 
+    inner join Orders o WITH (NOLOCK) on m.POID=o.ID  
+    inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup
+	where f.MDivisionId = L.MDivisionID and m.POID = L.POID and Seq1 = PSD.OutputSeq1 and Seq2 = PSD.OutputSeq2
 )mpd7
 outer apply(select RateValue c1 from View_Unitrate WITH (NOLOCK) where FROM_U = psd.POUnit and TO_U = psd.StockUnit) c1
 outer apply(select RateValue c2 from View_Unitrate WITH (NOLOCK) where FROM_U = psd2.POUnit and TO_U = psd2.StockUnit) c2

@@ -1090,10 +1090,11 @@ where POID = @poid group by POID,b.spno";
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(CurrentMaintain["POID"]))))
                 {
-                    sqlCmd = string.Format(@"select ID
+                    sqlCmd = string.Format(@"select A.ID
                                             from PO_Supp_Detail A WITH (NOLOCK) 
-                                            left join MDivisionPoDetail B WITH (NOLOCK) on B.MDivisionID='{0}' and B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-                                            where ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)"
+                                            left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
+                                            inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
+                                            where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)"
                                             , CurrentMaintain["MDivisionID"], CurrentMaintain["POID"]);
                     if (MyUtility.Check.Seek(sqlCmd))
                     {
