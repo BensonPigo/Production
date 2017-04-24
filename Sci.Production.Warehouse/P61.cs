@@ -193,7 +193,7 @@ where LID.ID = @ID";
                         return;
                     }
                     transactionScope.Complete();
-                    _transactionscope.Dispose();
+                    transactionScope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 } catch (Exception e) {
                     transactionScope.Dispose();
@@ -286,7 +286,7 @@ where LID.ID = @ID";
                         return;
                     }
                     transactionScope.Complete();
-                    _transactionscope.Dispose();
+                    transactionScope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception e)
