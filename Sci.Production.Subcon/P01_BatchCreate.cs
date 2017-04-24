@@ -496,6 +496,7 @@ Order_TmsCost.ApvDate
 
                             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd)))
                             {
+                                _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                                 break;
                             }
@@ -590,17 +591,20 @@ Order_TmsCost.ApvDate
 
                             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd2.ToString())))
                             {
+                                _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Create failed, Pleaes re-try");
                                 break;
                             }
                             else
                             {
+                                _transactionscope.Complete();
+                                _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Complete!");
                             }
-                            _transactionscope.Complete();
                         }
                         catch (Exception ex)
                         {
+                            _transactionscope.Dispose();
                             result = new DualResult(false,"Commit transaction error.",ex);
                             ShowErr("Commit transaction error.", ex);
                             return;

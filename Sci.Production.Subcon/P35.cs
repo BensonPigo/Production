@@ -429,6 +429,7 @@ where lapd.id = '{0}'"
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
@@ -529,6 +530,7 @@ where lapd.id = '{0}'"
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)

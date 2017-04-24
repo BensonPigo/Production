@@ -95,6 +95,7 @@ namespace Sci.Production.Subcon
                                                                  , dr["patterncode"]);
                     if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt_out)))
                     {
+                        _transactionscope.Dispose();
                         ShowErr(sqlcmd, result);
                         return;
                     }
@@ -125,6 +126,7 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Save sucessful");
                     }
                     else

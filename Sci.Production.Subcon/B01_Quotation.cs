@@ -199,6 +199,7 @@ namespace Sci.Production.Subcon
                     if (result && result2)
                     {
                         _transactionscope.Complete();
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Approved successful");
                     }
                     else

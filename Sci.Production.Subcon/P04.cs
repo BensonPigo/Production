@@ -431,6 +431,7 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirm successful");
                 }
                 catch (Exception ex)
@@ -574,6 +575,7 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)

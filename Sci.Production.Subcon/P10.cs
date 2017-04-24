@@ -435,6 +435,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
@@ -528,6 +529,7 @@ namespace Sci.Production.Subcon
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnApprove successful");
                 }
                 catch (Exception ex)
