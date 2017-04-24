@@ -459,6 +459,7 @@ namespace Sci.Production.Logistic
                             if (result1 && detailAllSuccess)
                             {
                                 transactionScope.Complete();
+                                transactionScope.Dispose();
                                 dr["ID"] = newID;
                                 dr["ReceiveDate"] = this.dateBox1.Value;
                             }

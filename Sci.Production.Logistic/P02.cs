@@ -255,6 +255,7 @@ where a.Selected = 1", out selectData);
                     if (result1 && result2 && prgResult)
                     {
                         transactionScope.Complete();
+                        transactionScope.Dispose();
                         ControlButton4Text("Close");
                         MyUtility.Msg.InfoBox("Complete!!");
                     }
