@@ -232,6 +232,7 @@ and o.Junk = 0");
                         if (result)
                         {
                             transactionScope.Complete();
+                            transactionScope.Dispose();
                             MyUtility.Msg.InfoBox("Approve completed!");
                             foreach (DataRow currentRow in dr)
                             {
@@ -240,7 +241,7 @@ and o.Junk = 0");
                         }
                         else
                         {
-                            transactionScope.Dispose(); ;
+                            transactionScope.Dispose();
                             MyUtility.Msg.WarningBox("Approve failed, Pleaes re-try");
                             return;
                         }
