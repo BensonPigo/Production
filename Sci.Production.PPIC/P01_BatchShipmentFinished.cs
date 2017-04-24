@@ -222,6 +222,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
                     if (result)
                     {
                         transactionScope.Complete();
+                        transactionScope.Dispose();
                         haveupdate = true;
                         MyUtility.Msg.InfoBox("Update completed!");                      
                     }

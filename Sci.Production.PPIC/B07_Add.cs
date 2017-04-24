@@ -102,6 +102,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}');", currentRecord["ID"].ToString(), S
                         if (insertReturnResult)
                         {
                             transactionScope.Complete();
+                            transactionScope.Dispose();
                             DialogResult = System.Windows.Forms.DialogResult.OK;
                         }
                         else

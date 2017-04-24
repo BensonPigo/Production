@@ -322,7 +322,10 @@ namespace Sci.Production.PPIC
                 }
 
                 try { transactionscope.Complete(); }
-                catch (Exception ex) { return new DualResult(false, "Commit transaction error.", ex); }
+                catch (Exception ex) {
+                    transactionscope.Dispose();
+                    return new DualResult(false, "Commit transaction error.", ex); 
+                }
             }
 
             return Result.True;
