@@ -456,6 +456,7 @@ namespace Sci.Production.Tools
                             }
                         }
                         _transactionscope.Complete();
+                        _transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Update successful");
                     }
                     catch (Exception ex)
