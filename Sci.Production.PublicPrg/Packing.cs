@@ -1060,8 +1060,12 @@ order by pd.Seq", PackingListID);
                 return result;
             }
 
-            sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
-from PackingGuide_Detail pd WITH (NOLOCK) 
+            sqlCmd = string.Format(@"
+select  distinct pd.RefNo
+        , li.Description
+        , STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4) as Dimension
+        , li.CtnUnit
+from PackingList_Detail pd WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'", PackingListID);
