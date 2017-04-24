@@ -287,6 +287,7 @@
             this.txtBatchUpdateEstCutDate.Name = "txtBatchUpdateEstCutDate";
             this.txtBatchUpdateEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.txtBatchUpdateEstCutDate.TabIndex = 12;
+            this.txtBatchUpdateEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.txtBatchUpdateEstCutDate_Validating);
             // 
             // labelBatchUpdateEstCutDate
             // 

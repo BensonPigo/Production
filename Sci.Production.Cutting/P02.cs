@@ -263,7 +263,19 @@ namespace Sci.Production.Cutting
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-
+            DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            EstCutDate.CellValidating += (s, e) =>
+            {
+                if (!(MyUtility.Check.Empty(e.FormattedValue)))
+                {
+                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
+                    }
+                }
+            };    
             DataGridViewGeneratorNumericColumnSettings breakqty = new DataGridViewGeneratorNumericColumnSettings();
             breakqty.EditingMouseDoubleClick += (s, e) =>
             {
@@ -288,7 +300,7 @@ namespace Sci.Production.Cutting
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out col_seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
+                .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), settings: EstCutDate).Get(out col_estcutdate)
                 .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
                 .Text("Cutplanid", header: "Cutplan#", width: Widths.AnsiChars(13), iseditingreadonly: true)

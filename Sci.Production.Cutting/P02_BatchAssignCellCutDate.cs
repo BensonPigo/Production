@@ -79,6 +79,19 @@ namespace Sci.Production.Cutting
                 dr["Cutcellid"] = newvalue;
                 dr.EndEdit();
             };
+            DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            EstCutDate.CellValidating += (s, e) =>
+            {
+                if (!(MyUtility.Check.Empty(e.FormattedValue)))
+                {
+                    DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
+                    }
+                }
+            };
 
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -97,7 +110,7 @@ namespace Sci.Production.Cutting
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
              .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false)
+             .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: EstCutDate)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridBatchAssignCellEstCutDate.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -232,6 +245,18 @@ namespace Sci.Production.Cutting
                 }
             }   
             Close();
+        }
+
+        private void txtBatchUpdateEstCutDate_Validating(object sender, CancelEventArgs e)
+        {
+            if (!(MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value)))
+            {
+                if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(txtBatchUpdateEstCutDate.Value)) > 0)
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
+                }
+            }         
         }
     }
 }
