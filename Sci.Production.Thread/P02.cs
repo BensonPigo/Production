@@ -696,6 +696,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
@@ -730,6 +731,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)

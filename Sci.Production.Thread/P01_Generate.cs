@@ -208,6 +208,7 @@ namespace Sci.Production.Thread
                     {
                         if (!(upResult = DBProxy.Current.Execute(null, delesql.ToString())))
                         {
+                            _transactionscope.Dispose();
                             ShowErr(delesql.ToString(), upResult);
                             return;
                         }
@@ -220,6 +221,7 @@ namespace Sci.Production.Thread
                             //執行新增ThreadColorComb,並取回此筆IDENTITY存入dt
                             if (!(upResult = DBProxy.Current.Select(null, SqlList[i], out dt)))
                             {
+                                _transactionscope.Dispose();
                                 ShowErr(SqlList[i], upResult);
                                 return;
                             }
@@ -241,6 +243,7 @@ namespace Sci.Production.Thread
                         }
                         if (!(upResult = DBProxy.Current.Execute(null, sql2.ToString())))
                         {
+                            _transactionscope.Dispose();
                             ShowErr(sql2.ToString(), upResult);
                             return;
                         }
@@ -249,6 +252,7 @@ namespace Sci.Production.Thread
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

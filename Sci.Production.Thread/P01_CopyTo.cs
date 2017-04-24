@@ -109,6 +109,7 @@ namespace Sci.Production.Thread
                     {
                         if (!(upResult = DBProxy.Current.Execute(null, del3table.ToString())))
                         {
+                            _transactionscope.Dispose();
                             ShowErr(del3table.ToString(), upResult);
                             return;
                         }
@@ -118,6 +119,7 @@ namespace Sci.Production.Thread
                     {
                         if (!(upResult = DBProxy.Current.Select(null, threadColorCombList[i], out dt_newid)))//新增並取得id
                         {
+                            _transactionscope.Dispose();
                             ShowErr(threadColorCombList[i], upResult);
                             return;
                         }
@@ -131,6 +133,7 @@ namespace Sci.Production.Thread
                                                                 where t.id='{0}'", oid);
                             if (!(upResult = DBProxy.Current.Select(null, sqlTdetail, out Tdeatil)))
                             {
+                                _transactionscope.Dispose();
                                 ShowErr(sqlTdetail, upResult);
                                 return;
                             }
@@ -145,6 +148,7 @@ namespace Sci.Production.Thread
                                                     oid, Tdeatil.Rows[0]["ThreadLocationID"].ToString());
                                 if (!(ArticleResult = DBProxy.Current.Select(null, sqlArticle, out tbArticle)))//以原ID取得Article(多筆)
                                 {
+                                    _transactionscope.Dispose();
                                     ShowErr(sqlArticle, ArticleResult);
                                     return;
                                 }
@@ -170,6 +174,7 @@ namespace Sci.Production.Thread
                     //執行新增
                     if (!(upResult = DBProxy.Current.Execute(null, insertSql.ToString())))
                     {
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox(string.Format("Season <{0}> exists, can't copy!!!", txtseason1.Text));
                         return;
                     }                    
@@ -177,6 +182,7 @@ namespace Sci.Production.Thread
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

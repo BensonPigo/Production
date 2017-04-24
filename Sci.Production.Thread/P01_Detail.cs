@@ -369,6 +369,7 @@ namespace Sci.Production.Thread
                             result = DBProxy.Current.Execute(null, delSql.ToString());
                             if (!result)
                             {
+                                _transactionscope.Dispose();
                                 ShowErr(delSql.ToString(), result);
                                 return;
                             }
@@ -378,6 +379,7 @@ namespace Sci.Production.Thread
                             result = DBProxy.Current.Execute(null, updateSql.ToString());
                             if (!result)
                             {
+                                _transactionscope.Dispose();
                                 ShowErr(updateSql.ToString(), result);
                                 return;
                             }
@@ -388,6 +390,7 @@ namespace Sci.Production.Thread
                             result = DBProxy.Current.Execute(null, insertSql.ToString());
                             if (!result)
                             {
+                                _transactionscope.Dispose();
                                 ShowErr(insertSql.ToString(), result);
                                 return;
                             }
@@ -396,6 +399,7 @@ namespace Sci.Production.Thread
                     }
                     catch (Exception ex)
                     {
+                        _transactionscope.Dispose();
                         ShowErr("Commit transaction error.", ex);
                         return;
                     }
