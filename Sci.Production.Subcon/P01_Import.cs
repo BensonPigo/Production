@@ -127,6 +127,7 @@ namespace Sci.Production.Subcon
                 ddr["UnitPrice"] = Convert.ToDecimal(e.FormattedValue);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToInt32(ddr["qtygarment"]);
+                ddr.EndEdit(); 
             };
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
@@ -135,21 +136,25 @@ namespace Sci.Production.Subcon
                 DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
                 ddr["Price"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToDecimal(ddr["UnitPrice"]);
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["poqty"]) * Convert.ToDecimal(ddr["UnitPrice"]);
+                ddr.EndEdit(); 
             };
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
             ns3.CellValidating += (s, e) =>
             {
-                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(e.RowIndex);
+                //DataTable temp = (DataTable)listControlBindingSource1.DataSource;
+                //DataRow ddr = temp.Rows[e.RowIndex];
+                DataRow ddr = gridBatchImport.GetDataRow<DataRow>(listControlBindingSource1.Position);
                 Decimal SourcePoqty = Convert.ToDecimal(ddr["OrderQty"]) - Convert.ToDecimal(ddr["IssueQty"]);
                 if ((decimal)e.FormattedValue > SourcePoqty)
                 {
                     MyUtility.Msg.WarningBox("Po Qty can't be more than [Order Qty]-[Issue Qty]");
                     e.Cancel = true;
                     return;
-                }
-                ddr["poqty"] = e.FormattedValue;
+                }                
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
+                ddr["poqty"] = Convert.ToDecimal(e.FormattedValue);
+                ddr.EndEdit();                
             };
             this.gridBatchImport.Font = new Font("Arial", 9);
             this.gridBatchImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
