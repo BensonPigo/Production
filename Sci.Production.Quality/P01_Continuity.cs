@@ -395,6 +395,7 @@ namespace Sci.Production.Quality
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
@@ -447,6 +448,7 @@ namespace Sci.Production.Quality
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)

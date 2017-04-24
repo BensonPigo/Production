@@ -273,6 +273,7 @@ namespace Sci.Production.Quality
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)

@@ -354,6 +354,7 @@ order by a.seq1,a.seq2,a.Refno "
                     }
                   
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)

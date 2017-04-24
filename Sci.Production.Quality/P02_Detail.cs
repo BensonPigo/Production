@@ -205,6 +205,7 @@ namespace Sci.Production.Quality
                                     return;
                                 }
                                 _transactionscope.Complete();
+                                _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Successfully");
                                 this.Encode.Text = "Encode";
                                 this.save.Text = "Edit";
@@ -292,6 +293,7 @@ namespace Sci.Production.Quality
                                 return;
                             }
                             _transactionscope1.Complete();
+                            _transactionscope1.Dispose();
                             btn_status(this.textID.Text);
                             this.save.Text = "Edit";
                             this.Encode.Text = "Encode";
@@ -359,6 +361,7 @@ namespace Sci.Production.Quality
                             return;
                         }
                         _transactionscope.Complete();
+                        _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Successfully");
                         this.Encode.Text = "Amend";
                         this.save.Text = "Edit";

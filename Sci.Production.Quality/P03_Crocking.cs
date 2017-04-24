@@ -584,6 +584,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
                 }
                 catch (Exception ex)
