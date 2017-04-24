@@ -382,7 +382,7 @@ fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
 0.00 as Qty,
 rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'I' tostocktype ,t.FactoryID ToFactoryID
 ,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') fromlocation
-,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I')t for xml path('')), 1, 1, '') tolocation
+,stuff((select ',' + mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t for xml path('')), 1, 1, '') tolocation
 ,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID and fi.seq1 = t.Seq1 and fi.Seq2 = t.Seq2
