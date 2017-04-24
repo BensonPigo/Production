@@ -329,7 +329,13 @@ namespace Sci.Production.Warehouse
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     CurrentDetailData["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", CurrentDetailData["stocktype"].ToString());
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["location"].ToString().Split(',').Distinct().ToArray();

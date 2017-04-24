@@ -56,7 +56,12 @@ namespace Sci.Production.Warehouse
                 {
                     DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
                     currentRow["location"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}' and mdivisionid='{1}'", currentRow["stocktype"].ToString(), Sci.Env.User.Keyword);
+                    string sqlcmd = string.Format(@"
+SELECT  id 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}' 
+        and junk != '1'
+        and mdivisionid='{1}'", currentRow["stocktype"].ToString(), Sci.Env.User.Keyword);
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = currentRow["location"].ToString().Split(',').Distinct().ToArray();

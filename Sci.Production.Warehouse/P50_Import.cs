@@ -229,7 +229,12 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtLocation.ReadOnly == true) return;
-            string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}'", dr_master["stocktype"]);
+            string sql = string.Format(@"
+select  id
+        , Description 
+from    mtllocation WITH (NOLOCK) 
+where   junk != '1'
+        and stocktype='{0}'", dr_master["stocktype"]);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "10,20", this.txtLocation.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }

@@ -331,7 +331,15 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
             if (textBox4.Text.ToString() == "") return;
-            if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.MtlLocation WITH (NOLOCK) where StockType='I' and id = '{0}')", textBox4.Text), null))
+            if (!MyUtility.Check.Seek(string.Format(@"
+select 1 
+where exists(
+    select * 
+    from    dbo.MtlLocation WITH (NOLOCK) 
+    where   StockType='I' 
+            and id = '{0}'
+            and junk != '1'
+)", textBox4.Text), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
@@ -341,8 +349,12 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"select id,[Description] from dbo.MtlLocation WITH (NOLOCK) 
-                        where StockType='I'"), "10,40", textBox4.Text, "ID,Desc");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"
+select  id
+        , [Description] 
+from    dbo.MtlLocation WITH (NOLOCK) 
+where   StockType='I'
+        and junk != '1'"), "10,40", textBox4.Text, "ID,Desc");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             textBox4.Text = item.GetSelectedString();

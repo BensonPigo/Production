@@ -352,7 +352,12 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                         string[] strA = Regex.Split(newRow["location"].ToString(), ",");
                                         foreach (string i in strA.Distinct())
                                         {
-                                            if (!MyUtility.Check.Seek(string.Format(@"select * from dbo.mtllocation WITH (NOLOCK) where stocktype='{0}' and id='{1}'", newRow["stocktype"], i)))
+                                            if (!MyUtility.Check.Seek(string.Format(@"
+select * 
+from    dbo.mtllocation WITH (NOLOCK) 
+where   stocktype='{0}' 
+        and junk != '1'
+        and id='{1}'", newRow["stocktype"], i)))
                                             {
                                                 MyUtility.Msg.WarningBox(string.Format("Location ({3}) of SP#:{0}-Seq1:{1}-Seq2:{2} in stock ({4}) is not found!!"
                                                     , newRow["poid"], newRow["seq1"], newRow["seq2"], i, newRow["stocktype"]));

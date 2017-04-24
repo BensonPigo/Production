@@ -204,7 +204,13 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", dr_master["Stocktype"].ToString());
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", dr_master["Stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();

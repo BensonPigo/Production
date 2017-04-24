@@ -192,7 +192,13 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 {
                     DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
-                    string sqlcmd = string.Format(@"SELECT id,Description,StockType FROM DBO.MtlLocation WITH (NOLOCK) WHERE StockType='{0}'", dr["ToStocktype"].ToString());
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", dr["ToStocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = dr["ToLocation"].ToString().Split(',').Distinct().ToArray();
