@@ -283,6 +283,9 @@ where t.id= @ID";
                 return false;
             }
 
+            if (!checkRoll())
+                return false;
+
             //取單號
             if (this.IsDetailInserting)
             {
@@ -342,13 +345,14 @@ where t.id= @ID";
             .Text("topoid", header: "To" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //7
             .Text("toseq", header: "To" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //8
             .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6))  //9
-            .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //10
+            .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6))  //10
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //11
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))    //12
             .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype2)    //13
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["todyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
@@ -454,43 +458,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0)
             #endregion -- 檢查負數庫存 --
 
             #region -- 檢查目的Roll是否已存在資料 --
-
-            sqlcmd = string.Format(@"
-Select  d.ToPoid
-        ,d.ToSeq1
-        ,d.toseq2
-        ,d.ToRoll
-        ,d.ToDyelot
-        ,d.Qty
-        ,f.InQty
-from dbo.BorrowBack_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-    on d.ToPoid = f.PoId
-    and d.ToSeq1 = f.Seq1
-    and d.toseq2 = f.seq2
-    and d.ToStocktype = f.StockType
-    and d.ToRoll = f.Roll
-    and d.ToDyelot != f.dyelot
-where f.InQty > 0 and toroll !='' and toroll is not null and d.Id = '{0}'", CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                ShowErr(sqlcmd, result2);
+            if (!checkRoll())
                 return;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format("Seq#: {1}-{2} Roll#: {3} exist in SP#: {0} but dyelot is not {4}" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"],tmp["todyelot"]);
-                    }
-                    MyUtility.Msg.WarningBox(ids + Environment.NewLine + "Please change roll# !!", "Warning");
-                    return;
-                }
-            }
-
             #endregion
 
             #region -- 更新表頭狀態資料 --
@@ -1136,6 +1105,136 @@ Where a.id = '{0}'", masterID);
 
             }
             CurrentMaintain["BorrowId"] = textBox2.Text;
+        }
+
+        /// <summary>
+        /// 確認 SP# & Seq 是否已經有重複的 Roll
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool checkRoll()
+        {
+            //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
+            List<string> listMsg = new List<string>();
+            foreach (DataRow row in DetailDatas)
+            {
+                DataRow dr;
+                string sql = string.Format(@"
+select 
+	total = sum(total)
+	, Dyelot = Dyelot
+from(
+    select  total = COUNT(*) 
+            , Dyelot
+    from dbo.Receiving_Detail RD WITH (NOLOCK) 
+    inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
+    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and R.Status = 'Confirmed'
+	group by Dyelot
+
+	Union All
+	
+	select  total = COUNT(*)  
+			, Dyelot = ToDyelot
+	from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
+	inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
+	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and S.Status = 'Confirmed'
+	group by ToDyelot
+	
+	Union All
+	
+	select  total = COUNT('POID')  
+			, Dyelot = ToDyelot
+	from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
+	inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
+	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and B.ID != '{5}' and B.Status = 'Confirmed'
+	group by ToDyelot
+	
+	Union All
+	
+	select  total = count(*)   
+			, Dyelot
+	From dbo.TransferIn TI
+	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
+	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and Status = 'Confirmed'
+	group by Dyelot
+	
+	Union All
+	
+	select  total = count(*)  
+			, Dyelot
+	From dbo.FtyInventory Fty
+	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}'
+	group by Dyelot
+) x
+group by Dyelot", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"], row["toDyelot"], CurrentMaintain["id"]);
+
+                if (MyUtility.Check.Seek(sql, out dr, null))
+                {
+                    if (Convert.ToInt32(dr[0]) > 0)
+                    {
+                        listMsg.Add(string.Format(@"
+The Deylot of
+<ToSP#>:{0}, <ToSeq>:{1}, <ToRoll>:{2}
+already exists, system will update the Qty for original Deylot <{3}>
+", row["toPoid"], row["toSeq1"].ToString() + " " + row["toSeq2"].ToString(), row["toRoll"], dr[1].ToString().Trim()));
+                    }
+                }
+            }
+
+            if (listMsg.Count > 0)
+            {
+                DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
+                switch (Dr.ToString().ToUpper())
+                {
+                    case "OK":
+                        foreach (DataRow row in DetailDatas)
+                        {
+                            DataTable dt;
+                            string strSql = string.Format(@"
+select  Roll
+        , Dyelot
+from FtyInventory
+where   Poid = '{0}'
+        and Seq1 = '{1}'
+        and Seq2 = '{2}'
+        and Roll = '{3}'
+", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"]);
+                            DualResult result = DBProxy.Current.Select(null, strSql, out dt);
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox(result.Description);
+                            }
+
+                            if (dt != null && dt.Rows.Count > 0)
+                            {
+                                /**
+                                    * 如果在編輯模式下，直接改 Grid
+                                    * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
+                                    **/
+                                row["toRoll"] = dt.Rows[0]["Roll"];
+                                row["toDyelot"] = dt.Rows[0]["Dyelot"];
+
+                                if (this.EditMode != true)
+                                {
+                                    result = DBProxy.Current.Execute(null, string.Format(@"
+Update RD
+set RD.Roll = '{0}'
+    , RD.Dyelot = '{1}'
+From Receiving_Detail RD
+where RD.Ukey = '{2}'", dt.Rows[0]["toRoll"], dt.Rows[0]["toDyelot"], row["Ukey"]));
+
+                                    if (!result)
+                                    {
+                                        MyUtility.Msg.WarningBox(result.Description);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "CANCEL":
+                        return false;
+                }
+            }
+            return true;
         }
     }
 }

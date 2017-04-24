@@ -1131,6 +1131,10 @@ Where a.id = '{0}'", masterID);
                 this.textBox2.Text = item.GetSelectedString();
         }
 
+        /// <summary>
+        /// 確認 SP# & Seq 是否已經有重複的 Roll
+        /// </summary>
+        /// <returns>bool</returns>
         private bool checkRoll()
         {
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
@@ -1142,44 +1146,60 @@ Where a.id = '{0}'", masterID);
                 {
                     if (MyUtility.Check.Seek(string.Format(@"
 select 
-	RD.RD_Count + ST.ST_Count + BB.BB_Count + TID.TID_Count + FtyInv.Fty_Count as total
+	total = sum(total)
+	, Dyelot = Dyelot
 from(
-    select COUNT(*) RD_Count 
+    select  total = COUNT(*) 
+            , Dyelot
     from dbo.Receiving_Detail RD WITH (NOLOCK) 
     inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
     where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and R.Status = 'Confirmed'
-) RD
-OUTER APPLY
-(
-    select COUNT(*) ST_Count 
-    from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
-    inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
-    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and S.Status = 'Confirmed'
-) ST
-OUTER APPLY
-(
-    select COUNT('POID') BB_Count 
-    from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
-    inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
-    where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and B.Status = 'Confirmed'
-) BB
-Outer Apply
-(
-    select count(*) TID_Count 
-    From dbo.TransferIn TI
-    inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
-    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and TI.id !='{5}' and Status = 'Confirmed'
-) TID
-Outer Apply
-(
-    select count(*) Fty_Count 
-    From dbo.FtyInventory Fty
-    where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}'
-) FtyInv", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]), out dr, null))
+	group by Dyelot
+
+	Union All
+	
+	select  total = COUNT(*)  
+			, Dyelot = ToDyelot
+	from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
+	inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
+	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and S.Status = 'Confirmed'
+	group by ToDyelot
+	
+	Union All
+	
+	select  total = COUNT('POID')  
+			, Dyelot = ToDyelot
+	from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
+	inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
+	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and B.Status = 'Confirmed'
+	group by ToDyelot
+	
+	Union All
+	
+	select  total = count(*)   
+			, Dyelot
+	From dbo.TransferIn TI
+	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
+	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and TI.ID != '{5}' and Status = 'Confirmed'
+	group by Dyelot
+	
+	Union All
+	
+	select  total = count(*)  
+			, Dyelot
+	From dbo.FtyInventory Fty
+	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}'
+	group by Dyelot
+) x
+group by Dyelot", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]), out dr, null))
                     {
                         if (Convert.ToInt32(dr[0]) > 0)
                         {
-                            listMsg.Add(string.Format("<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Dyelot#>:{3}", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], row["Dyelot"]));
+                            listMsg.Add(string.Format(@"
+The Deylot of
+<SP#>:{0}, <Seq>:{1}, <Roll>:{2}
+already exists, system will update the Qty for original Deylot <{3}>
+", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], dr[1].ToString().Trim()));
                         }
                     }
                 }
@@ -1187,11 +1207,7 @@ Outer Apply
 
             if (listMsg.Count > 0)
             {
-                DialogResult Dr = MyUtility.Msg.QuestionBox(
-                    "The Deylot of\n\r"
-                    + listMsg.JoinToString("\n\r")
-                    + "\n\ralready exists, system will update the Qty for original Deylot<Deylot#>."
-                    , buttons: MessageBoxButtons.OKCancel);
+                DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
                 switch (Dr.ToString().ToUpper())
                 {
                     case "OK":
