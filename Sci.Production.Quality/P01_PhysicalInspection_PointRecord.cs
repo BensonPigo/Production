@@ -45,9 +45,9 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            grid1.DataSource = defRecord;
-            grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(grid1)
+            gridPhysicalInspection.DataSource = defRecord;
+            gridPhysicalInspection.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridPhysicalInspection)
             .Text("ID", header: "Code", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("DescriptionEN", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -57,7 +57,7 @@ namespace Sci.Production.Quality
 
         private void button1_Click(object sender, EventArgs e) //OK
         {
-            grid1.ValidateControl();
+            gridPhysicalInspection.ValidateControl();
             int totalPoint = MyUtility.Convert.GetInt(defRecord.Compute("Sum(Points)", ""));
             if (totalPoint > 20)
             {

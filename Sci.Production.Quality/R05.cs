@@ -58,12 +58,12 @@ namespace Sci.Production.Quality
         protected override bool ValidateInput()
         {
 
-            bool dateSciDelivery_Empty = !this.DateSCIDelivery.HasValue, comboCategory_Empty = this.comboCategory.Text.Empty(), comboMaterial_Empty = this.comboMaterialType.Text.Empty(),
+            bool dateSciDelivery_Empty = !this.dateSCIDelivery.HasValue, comboCategory_Empty = this.comboCategory.Text.Empty(), comboMaterial_Empty = this.comboMaterialType.Text.Empty(),
                  report_Empty = this.radioPanel.Value.Empty();
             if (dateSciDelivery_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please entry the 'SCI Delivery'");
-                DateSCIDelivery.Focus();
+                dateSCIDelivery.Focus();
                 return false;
             } if (comboCategory_Empty)
             {
@@ -76,8 +76,8 @@ namespace Sci.Production.Quality
                 comboMaterialType.Focus();
                 return false;
             }
-            DateSCIStart = DateSCIDelivery.Value1;
-            DateSCIEnd = DateSCIDelivery.Value2;
+            DateSCIStart = dateSCIDelivery.Value1;
+            DateSCIEnd = dateSCIDelivery.Value2;
             str_Category = comboCategory.Text;
             str_Material = comboMaterialType.Text;
             ReportType = radioPanel.Value.ToString();
@@ -89,12 +89,12 @@ namespace Sci.Production.Quality
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
-            if (!this.DateSCIDelivery.Value1.Empty())
+            if (!this.dateSCIDelivery.Value1.Empty())
             {
                 sqlOrderWheres.Add("SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
             }
-            if (!this.DateSCIDelivery.Value2.Empty())
+            if (!this.dateSCIDelivery.Value2.Empty())
             {
                 sqlOrderWheres.Add("SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));

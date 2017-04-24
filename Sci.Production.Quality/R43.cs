@@ -31,19 +31,19 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select("", cmd, out Year);
             Year.DefaultView.Sort = "M";
             
-            this.comboBox_year.DataSource = Year;
-            this.comboBox_year.ValueMember = "M";
-            this.comboBox_year.DisplayMember = "M";
+            this.comboyear.DataSource = Year;
+            this.comboyear.ValueMember = "M";
+            this.comboyear.DisplayMember = "M";
            
 
             DataTable Month = null;
             string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain WITH (NOLOCK) ");
             DBProxy.Current.Select("", scmd, out Month);
             Month.DefaultView.Sort = "md";
-            this.comboBox_month.DataSource = Month;
-            this.comboBox_month.ValueMember = "md";
-            this.comboBox_month.DisplayMember = "md";
-            this.comboBox_brand.SelectedIndex = 0;
+            this.comboMonth.DataSource = Month;
+            this.comboMonth.ValueMember = "md";
+            this.comboMonth.DisplayMember = "md";
+            this.combobrand.SelectedIndex = 0;
             print.Enabled = false;
           
         }
@@ -53,9 +53,9 @@ namespace Sci.Production.Quality
         DataTable dt;
         protected override bool ValidateInput()
         {
-            Brand = comboBox_brand.Text.ToString();
-            Year = comboBox_year.Text.ToString();
-            Month = comboBox_month.Text.ToString();
+            Brand = combobrand.Text.ToString();
+            Year = comboyear.Text.ToString();
+            Month = comboMonth.Text.ToString();
             return base.ValidateInput();
         }
 

@@ -43,73 +43,73 @@ namespace Sci.Production.Quality
         {
             #region Encode/Approve Enable
             button_enable();
-            encode_button.Text = MyUtility.Convert.GetBool(maindr["WeightEncode"]) ? "Amend" : "Encode";
-            approve_button.Text = maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
+            btnEncode.Text = MyUtility.Convert.GetBool(maindr["WeightEncode"]) ? "Amend" : "Encode";
+            btnApprove.Text = maindr["Status"].ToString() == "Approved" ? "Unapprove" : "Approve";
             #endregion
 
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["WeightEncode"]);
 
-            txtsupplier1.TextBox1.IsSupportEditMode = false;
-            txtsupplier1.TextBox1.ReadOnly = true;
-            txtuser1.TextBox1.IsSupportEditMode = false;
-            txtuser1.TextBox1.ReadOnly = true;
+            txtsupplier.TextBox1.IsSupportEditMode = false;
+            txtsupplier.TextBox1.ReadOnly = true;
+            txtuserApprover.TextBox1.IsSupportEditMode = false;
+            txtuserApprover.TextBox1.ReadOnly = true;
 
             string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
             {
-                brand_box.Text = order_dr["Brandid"].ToString();
-                style_box.Text = order_dr["Styleid"].ToString();
+                displayBrand.Text = order_dr["Brandid"].ToString();
+                displayStyle.Text = order_dr["Styleid"].ToString();
             }
             else
             {
-                brand_box.Text = "";
-                style_box.Text = "";
+                displayBrand.Text = "";
+                displayStyle.Text = "";
             }
             string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
             DataRow po_dr;
             if (MyUtility.Check.Seek(po_cmd, out po_dr))
             {
-                txtsupplier1.TextBox1.Text = po_dr["suppid"].ToString();
+                txtsupplier.TextBox1.Text = po_dr["suppid"].ToString();
 
             }
             else
             {
-                txtsupplier1.TextBox1.Text = "";
+                txtsupplier.TextBox1.Text = "";
             }
             string Receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
             DataRow rec_dr;
             if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
             {
-                brandrefno_box.Text = rec_dr["Refno"].ToString();
+                displayRefno.Text = rec_dr["Refno"].ToString();
             }
             else
             {
-                brandrefno_box.Text = "";
+                displayRefno.Text = "";
             }
             string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
             {                
-                color_box.Text = po_supp_detail_dr["colorid"].ToString();
+                displayColor.Text = po_supp_detail_dr["colorid"].ToString();
             }
             else
             {
-                color_box.Text = "";
+                displayColor.Text = "";
             }
 
-            scirefno_box.Text = maindr["SCIRefno"].ToString();               
-            approve_box.Text = maindr["ApproveDate"].ToString();
-            arriveqty_box.Text = maindr["arriveQty"].ToString();
-            arrwhdate_box.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
-            lastinspdate_box.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
-            refdesc_box.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            seq_box.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
-            sp_box.Text = maindr["POID"].ToString();
-            wk_box.Text = maindr["Exportid"].ToString();
-            checkBox1.Value = maindr["nonWeight"].ToString();
-            result_box.Text = maindr["Weight"].ToString();
-            txtuser1.TextBox1.Text = maindr["Approve"].ToString();
+            displaySCIRefno.Text = maindr["SCIRefno"].ToString();               
+            displayApprover.Text = maindr["ApproveDate"].ToString();
+            displayArriveQty.Text = maindr["arriveQty"].ToString();
+            dateArriveWHDate.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
+            dateLastInspectionDate.Value = MyUtility.Convert.GetDate(maindr["WeightDate"]);
+            displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+            displaySEQ.Text = maindr["Seq1"].ToString() + "-" + maindr["Seq2"].ToString();
+            displaySP.Text = maindr["POID"].ToString();
+            displayWKNo.Text = maindr["Exportid"].ToString();
+            checkNonWeightTest.Value = maindr["nonWeight"].ToString();
+            displayResult.Text = maindr["Weight"].ToString();
+            txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
             return base.OnRequery();
         }
 
@@ -300,7 +300,7 @@ namespace Sci.Production.Quality
         private void encode_button_Click(object sender, EventArgs e)
         {
             string updatesql ="";
-            if (MyUtility.Check.Empty(CurrentData) && encode_button.Text=="Encode")
+            if (MyUtility.Check.Empty(CurrentData) && btnEncode.Text=="Encode")
             {
                 MyUtility.Msg.WarningBox("Data not found! ");
                 return;
@@ -362,7 +362,7 @@ namespace Sci.Production.Quality
                 {
                     string mailto = dt_Leader.Rows[0]["email"].ToString();
 
-                    string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", wk_box.Text, sp_box.Text, seq_box.Text);
+                    string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
                     string content = "Please Approve and Check Fabric Inspection";
                     ToExcel(true);
                     var email = new MailTo(Sci.Env.User.MailAddress, mailto, "", subject, excelFile, content, true, true);
@@ -476,7 +476,7 @@ namespace Sci.Production.Quality
                 string mailto = dt_MC.Rows[0]["ToAddress"].ToString();
                 string mailCC = dt_MC.Rows[0]["CCAddress"].ToString();
 
-                string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", wk_box.Text, sp_box.Text, seq_box.Text);
+                string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
                 string content = "Please see attached file ,Fabric Inspection Report";
                 ToExcel(true);
                 var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailCC, subject, excelFile, content, true, true);
@@ -489,8 +489,8 @@ namespace Sci.Production.Quality
         private void button_enable()
         {
             if (maindr == null) return;
-            encode_button.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
-            this.button3.Enabled = !this.EditMode;
+            btnEncode.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
+            this.btnToExcel.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
             DataRow pass2_dr;
@@ -504,11 +504,11 @@ namespace Sci.Production.Quality
             }
             if (maindr["Result"].ToString() == "Pass")
             {
-                approve_button.Enabled = this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(maindr["Result"]);
+                btnApprove.Enabled = this.CanEdit && !this.EditMode && lApprove == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
             else
             {
-                approve_button.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
+                btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
         }
        
@@ -552,21 +552,21 @@ namespace Sci.Production.Quality
             objApp.Visible = false;
             MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_Weight_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Cells[2, 2] = sp_box.Text.ToString();
-            objSheets.Cells[2, 4] = seq_box.Text.ToString();
-            objSheets.Cells[2, 6] = color_box.Text.ToString();
-            objSheets.Cells[2, 8] = style_box.Text.ToString();
+            objSheets.Cells[2, 2] = displaySP.Text.ToString();
+            objSheets.Cells[2, 4] = displaySEQ.Text.ToString();
+            objSheets.Cells[2, 6] = displayColor.Text.ToString();
+            objSheets.Cells[2, 8] = displayStyle.Text.ToString();
             objSheets.Cells[2, 10] = SeasonID;
-            objSheets.Cells[3, 2] = scirefno_box.Text.ToString();
+            objSheets.Cells[3, 2] = displaySCIRefno.Text.ToString();
             objSheets.Cells[3, 4] = ContinuityEncode;
-            objSheets.Cells[3, 6] = result_box.Text.ToString();
-            objSheets.Cells[3, 8] = lastinspdate_box.Value;
-            objSheets.Cells[3, 10] = brand_box.Text.ToString();
-            objSheets.Cells[4, 2] = brandrefno_box.Text.ToString();
-            objSheets.Cells[4, 4] = arriveqty_box.Text.ToString();
-            objSheets.Cells[4, 6] = arrwhdate_box.Value;
-            objSheets.Cells[4, 8] = txtsupplier1.DisplayBox1.Text.ToString();
-            objSheets.Cells[4, 10] = wk_box.Text.ToString();
+            objSheets.Cells[3, 6] = displayResult.Text.ToString();
+            objSheets.Cells[3, 8] = dateLastInspectionDate.Value;
+            objSheets.Cells[3, 10] = displayBrand.Text.ToString();
+            objSheets.Cells[4, 2] = displayRefno.Text.ToString();
+            objSheets.Cells[4, 4] = displayArriveQty.Text.ToString();
+            objSheets.Cells[4, 6] = dateArriveWHDate.Value;
+            objSheets.Cells[4, 8] = txtsupplier.DisplayBox1.Text.ToString();
+            objSheets.Cells[4, 10] = displayWKNo.Text.ToString();
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高

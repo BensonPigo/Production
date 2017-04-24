@@ -29,22 +29,22 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
+            this.gridFabricInspection = new Sci.Win.UI.Grid();
+            this.labelRoll = new Sci.Win.UI.Label();
+            this.labelDyelot = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelSEQ1 = new Sci.Win.UI.Label();
+            this.labelActYdsInspected = new Sci.Win.UI.Label();
+            this.displayRoll = new Sci.Win.UI.DisplayBox();
+            this.displayDyelot = new Sci.Win.UI.DisplayBox();
+            this.displaySP = new Sci.Win.UI.DisplayBox();
+            this.displaySEQ1 = new Sci.Win.UI.DisplayBox();
+            this.labelSEQ2 = new Sci.Win.UI.Label();
+            this.displaySEQ2 = new Sci.Win.UI.DisplayBox();
+            this.displayActYdsInspected = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFabricInspection)).BeginInit();
             this.SuspendLayout();
             // 
             // btmcont
@@ -68,20 +68,20 @@
             // 
             this.right.Visible = false;
             // 
-            // grid1
+            // gridFabricInspection
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(10, 96);
-            this.grid1.Name = "grid1";
+            this.gridFabricInspection.AllowUserToAddRows = false;
+            this.gridFabricInspection.AllowUserToDeleteRows = false;
+            this.gridFabricInspection.AllowUserToResizeRows = false;
+            this.gridFabricInspection.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFabricInspection.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFabricInspection.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFabricInspection.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFabricInspection.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFabricInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFabricInspection.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFabricInspection.Location = new System.Drawing.Point(10, 96);
+            this.gridFabricInspection.Name = "gridFabricInspection";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -89,165 +89,165 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(695, 323);
-            this.grid1.TabIndex = 95;
-            this.grid1.TabStop = false;
+            this.gridFabricInspection.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridFabricInspection.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFabricInspection.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFabricInspection.RowTemplate.Height = 24;
+            this.gridFabricInspection.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFabricInspection.Size = new System.Drawing.Size(695, 323);
+            this.gridFabricInspection.TabIndex = 95;
+            this.gridFabricInspection.TabStop = false;
             // 
-            // label1
+            // labelRoll
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 96;
-            this.label1.Text = "Roll#";
+            this.labelRoll.Lines = 0;
+            this.labelRoll.Location = new System.Drawing.Point(9, 19);
+            this.labelRoll.Name = "labelRoll";
+            this.labelRoll.Size = new System.Drawing.Size(75, 23);
+            this.labelRoll.TabIndex = 96;
+            this.labelRoll.Text = "Roll#";
             // 
-            // label2
+            // labelDyelot
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 97;
-            this.label2.Text = "Dyelot";
+            this.labelDyelot.Lines = 0;
+            this.labelDyelot.Location = new System.Drawing.Point(9, 55);
+            this.labelDyelot.Name = "labelDyelot";
+            this.labelDyelot.Size = new System.Drawing.Size(75, 23);
+            this.labelDyelot.TabIndex = 97;
+            this.labelDyelot.Text = "Dyelot";
             // 
-            // label3
+            // labelSP
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(205, 19);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 98;
-            this.label3.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(205, 19);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(75, 23);
+            this.labelSP.TabIndex = 98;
+            this.labelSP.Text = "SP#";
             // 
-            // label4
+            // labelSEQ1
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(205, 55);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 23);
-            this.label4.TabIndex = 99;
-            this.label4.Text = "SEQ1";
+            this.labelSEQ1.Lines = 0;
+            this.labelSEQ1.Location = new System.Drawing.Point(205, 55);
+            this.labelSEQ1.Name = "labelSEQ1";
+            this.labelSEQ1.Size = new System.Drawing.Size(49, 23);
+            this.labelSEQ1.TabIndex = 99;
+            this.labelSEQ1.Text = "SEQ1";
             // 
-            // label5
+            // labelActYdsInspected
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(431, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(124, 23);
-            this.label5.TabIndex = 100;
-            this.label5.Text = "Act. Yds Inspected";
+            this.labelActYdsInspected.Lines = 0;
+            this.labelActYdsInspected.Location = new System.Drawing.Point(431, 19);
+            this.labelActYdsInspected.Name = "labelActYdsInspected";
+            this.labelActYdsInspected.Size = new System.Drawing.Size(124, 23);
+            this.labelActYdsInspected.TabIndex = 100;
+            this.labelActYdsInspected.Text = "Act. Yds Inspected";
             // 
-            // displayBox1
+            // displayRoll
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "roll", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(87, 19);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 101;
+            this.displayRoll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRoll.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "roll", true));
+            this.displayRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRoll.Location = new System.Drawing.Point(87, 19);
+            this.displayRoll.Name = "displayRoll";
+            this.displayRoll.Size = new System.Drawing.Size(100, 23);
+            this.displayRoll.TabIndex = 101;
             // 
-            // displayBox2
+            // displayDyelot
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "dyelot", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(87, 55);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 102;
+            this.displayDyelot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDyelot.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "dyelot", true));
+            this.displayDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDyelot.Location = new System.Drawing.Point(87, 55);
+            this.displayDyelot.Name = "displayDyelot";
+            this.displayDyelot.Size = new System.Drawing.Size(100, 23);
+            this.displayDyelot.TabIndex = 102;
             // 
-            // displayBox3
+            // displaySP
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "poid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(283, 19);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(136, 23);
-            this.displayBox3.TabIndex = 103;
+            this.displaySP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "poid", true));
+            this.displaySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySP.Location = new System.Drawing.Point(283, 19);
+            this.displaySP.Name = "displaySP";
+            this.displaySP.Size = new System.Drawing.Size(136, 23);
+            this.displaySP.TabIndex = 103;
             // 
-            // displayBox4
+            // displaySEQ1
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seq1", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(257, 55);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(56, 23);
-            this.displayBox4.TabIndex = 104;
+            this.displaySEQ1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySEQ1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seq1", true));
+            this.displaySEQ1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySEQ1.Location = new System.Drawing.Point(257, 55);
+            this.displaySEQ1.Name = "displaySEQ1";
+            this.displaySEQ1.Size = new System.Drawing.Size(56, 23);
+            this.displaySEQ1.TabIndex = 104;
             // 
-            // label6
+            // labelSEQ2
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(319, 55);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(52, 23);
-            this.label6.TabIndex = 105;
-            this.label6.Text = "SEQ2";
+            this.labelSEQ2.Lines = 0;
+            this.labelSEQ2.Location = new System.Drawing.Point(319, 55);
+            this.labelSEQ2.Name = "labelSEQ2";
+            this.labelSEQ2.Size = new System.Drawing.Size(52, 23);
+            this.labelSEQ2.TabIndex = 105;
+            this.labelSEQ2.Text = "SEQ2";
             // 
-            // displayBox5
+            // displaySEQ2
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seq2", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(374, 55);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(45, 23);
-            this.displayBox5.TabIndex = 106;
+            this.displaySEQ2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySEQ2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seq2", true));
+            this.displaySEQ2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySEQ2.Location = new System.Drawing.Point(374, 55);
+            this.displaySEQ2.Name = "displaySEQ2";
+            this.displaySEQ2.Size = new System.Drawing.Size(45, 23);
+            this.displaySEQ2.TabIndex = 106;
             // 
-            // displayBox6
+            // displayActYdsInspected
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actualyds", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(558, 19);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(97, 23);
-            this.displayBox6.TabIndex = 107;
+            this.displayActYdsInspected.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayActYdsInspected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actualyds", true));
+            this.displayActYdsInspected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayActYdsInspected.Location = new System.Drawing.Point(558, 19);
+            this.displayActYdsInspected.Name = "displayActYdsInspected";
+            this.displayActYdsInspected.Size = new System.Drawing.Size(97, 23);
+            this.displayActYdsInspected.TabIndex = 107;
             // 
             // P01_PhysicalInspection_Defect
             // 
             this.ClientSize = new System.Drawing.Size(715, 473);
-            this.Controls.Add(this.displayBox6);
-            this.Controls.Add(this.displayBox5);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.displayBox4);
-            this.Controls.Add(this.displayBox3);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.displayBox1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.displayActYdsInspected);
+            this.Controls.Add(this.displaySEQ2);
+            this.Controls.Add(this.labelSEQ2);
+            this.Controls.Add(this.displaySEQ1);
+            this.Controls.Add(this.displaySP);
+            this.Controls.Add(this.displayDyelot);
+            this.Controls.Add(this.displayRoll);
+            this.Controls.Add(this.labelActYdsInspected);
+            this.Controls.Add(this.labelSEQ1);
+            this.Controls.Add(this.labelSP);
+            this.Controls.Add(this.labelDyelot);
+            this.Controls.Add(this.labelRoll);
+            this.Controls.Add(this.gridFabricInspection);
             this.Name = "P01_PhysicalInspection_Defect";
             this.Text = "Fabric Inspection - Point Record";
             this.WorkAlias = "Fir_Physical";
             this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.displayBox1, 0);
-            this.Controls.SetChildIndex(this.displayBox2, 0);
-            this.Controls.SetChildIndex(this.displayBox3, 0);
-            this.Controls.SetChildIndex(this.displayBox4, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.displayBox5, 0);
-            this.Controls.SetChildIndex(this.displayBox6, 0);
+            this.Controls.SetChildIndex(this.gridFabricInspection, 0);
+            this.Controls.SetChildIndex(this.labelRoll, 0);
+            this.Controls.SetChildIndex(this.labelDyelot, 0);
+            this.Controls.SetChildIndex(this.labelSP, 0);
+            this.Controls.SetChildIndex(this.labelSEQ1, 0);
+            this.Controls.SetChildIndex(this.labelActYdsInspected, 0);
+            this.Controls.SetChildIndex(this.displayRoll, 0);
+            this.Controls.SetChildIndex(this.displayDyelot, 0);
+            this.Controls.SetChildIndex(this.displaySP, 0);
+            this.Controls.SetChildIndex(this.displaySEQ1, 0);
+            this.Controls.SetChildIndex(this.labelSEQ2, 0);
+            this.Controls.SetChildIndex(this.displaySEQ2, 0);
+            this.Controls.SetChildIndex(this.displayActYdsInspected, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFabricInspection)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -255,18 +255,18 @@
 
         #endregion
 
-        private Win.UI.Grid grid1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.Label label6;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox6;
+        private Win.UI.Grid gridFabricInspection;
+        private Win.UI.Label labelRoll;
+        private Win.UI.Label labelDyelot;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelSEQ1;
+        private Win.UI.Label labelActYdsInspected;
+        private Win.UI.DisplayBox displayRoll;
+        private Win.UI.DisplayBox displayDyelot;
+        private Win.UI.DisplayBox displaySP;
+        private Win.UI.DisplayBox displaySEQ1;
+        private Win.UI.Label labelSEQ2;
+        private Win.UI.DisplayBox displaySEQ2;
+        private Win.UI.DisplayBox displayActYdsInspected;
     }
 }

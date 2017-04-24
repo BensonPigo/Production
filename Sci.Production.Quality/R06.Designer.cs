@@ -31,14 +31,14 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtRefNo = new Sci.Win.UI.TextBox();
+            this.txtRef = new Sci.Win.UI.TextBox();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.DateArriveWH = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelRef = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.dateArriveWHDate = new Sci.Win.UI.DateRange();
+            this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,14 +46,14 @@
             // 
             this.panel1.Controls.Add(this.txtseason);
             this.panel1.Controls.Add(this.txtbrand);
-            this.panel1.Controls.Add(this.txtRefNo);
+            this.panel1.Controls.Add(this.txtRef);
             this.panel1.Controls.Add(this.txtsupplier);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.DateArriveWH);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.labelSeason);
+            this.panel1.Controls.Add(this.labelBrand);
+            this.panel1.Controls.Add(this.labelRef);
+            this.panel1.Controls.Add(this.labelSupplier);
+            this.panel1.Controls.Add(this.dateArriveWHDate);
+            this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Location = new System.Drawing.Point(29, 24);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(477, 242);
@@ -78,14 +78,14 @@
             this.txtbrand.Size = new System.Drawing.Size(94, 23);
             this.txtbrand.TabIndex = 24;
             // 
-            // txtRefNo
+            // txtRef
             // 
-            this.txtRefNo.BackColor = System.Drawing.Color.White;
-            this.txtRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefNo.Location = new System.Drawing.Point(141, 100);
-            this.txtRefNo.Name = "txtRefNo";
-            this.txtRefNo.Size = new System.Drawing.Size(257, 23);
-            this.txtRefNo.TabIndex = 23;
+            this.txtRef.BackColor = System.Drawing.Color.White;
+            this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRef.Location = new System.Drawing.Point(141, 100);
+            this.txtRef.Name = "txtRef";
+            this.txtRef.Size = new System.Drawing.Size(257, 23);
+            this.txtRef.TabIndex = 23;
             // 
             // txtsupplier
             // 
@@ -96,58 +96,58 @@
             this.txtsupplier.TabIndex = 22;
             this.txtsupplier.TextBox1Binding = "";
             // 
-            // label5
+            // labelSeason
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 186);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(113, 23);
-            this.label5.TabIndex = 21;
-            this.label5.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(16, 186);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(113, 23);
+            this.labelSeason.TabIndex = 21;
+            this.labelSeason.Text = "Season";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 141);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(113, 23);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(16, 141);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(113, 23);
+            this.labelBrand.TabIndex = 20;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelRef
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 100);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 23);
-            this.label3.TabIndex = 19;
-            this.label3.Text = "Ref#";
+            this.labelRef.Lines = 0;
+            this.labelRef.Location = new System.Drawing.Point(16, 100);
+            this.labelRef.Name = "labelRef";
+            this.labelRef.Size = new System.Drawing.Size(113, 23);
+            this.labelRef.TabIndex = 19;
+            this.labelRef.Text = "Ref#";
             // 
-            // label1
+            // labelSupplier
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 60);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(113, 23);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(16, 60);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(113, 23);
+            this.labelSupplier.TabIndex = 18;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // DateArriveWH
+            // dateArriveWHDate
             // 
-            this.DateArriveWH.IsRequired = false;
-            this.DateArriveWH.Location = new System.Drawing.Point(141, 23);
-            this.DateArriveWH.Name = "DateArriveWH";
-            this.DateArriveWH.Size = new System.Drawing.Size(280, 23);
-            this.DateArriveWH.TabIndex = 17;
+            this.dateArriveWHDate.IsRequired = false;
+            this.dateArriveWHDate.Location = new System.Drawing.Point(141, 23);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
+            this.dateArriveWHDate.TabIndex = 17;
             // 
-            // label2
+            // labelArriveWHDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(16, 23);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(113, 23);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "Arrive W/H Date";
+            this.labelArriveWHDate.Lines = 0;
+            this.labelArriveWHDate.Location = new System.Drawing.Point(16, 23);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.Size = new System.Drawing.Size(113, 23);
+            this.labelArriveWHDate.TabIndex = 16;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
             // R06
             // 
@@ -169,15 +169,15 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.DateRange DateArriveWH;
-        private Win.UI.Label label2;
+        private Win.UI.DateRange dateArriveWHDate;
+        private Win.UI.Label labelArriveWHDate;
         private Class.txtseason txtseason;
         private Class.txtbrand txtbrand;
-        private Win.UI.TextBox txtRefNo;
+        private Win.UI.TextBox txtRef;
         private Class.txtsupplier txtsupplier;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelRef;
+        private Win.UI.Label labelSupplier;
     }
 }

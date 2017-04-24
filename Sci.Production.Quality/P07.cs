@@ -43,9 +43,9 @@ namespace Sci.Production.Quality
             Result_RowSource.Add("Oven Test", "Oven Test");
             Result_RowSource.Add("Wash Test", "Wash Test");
             Result_RowSource.Add("Both Test", "Both Test");
-            comboBox1.DataSource = new BindingSource(Result_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboOvenWashBoth.DataSource = new BindingSource(Result_RowSource, null);
+            comboOvenWashBoth.ValueMember = "Key";
+            comboOvenWashBoth.DisplayMember = "Value";
         }
 
         //refresh
@@ -61,29 +61,29 @@ namespace Sci.Production.Quality
                                             where a.id='{0}'", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(sql_cmd, out dr))
             {
-                this.sp_text.Text = dr["id"].ToString();
-                this.style_text.Text = dr["StyleID"].ToString();
-                this.season_text.Text = dr["SeasonID"].ToString();
-                this.brand_text.Text = dr["BrandID"].ToString();
-                this.remark_text.Text = dr["AIRLaboratoryRemark"].ToString();
-                this.complete_text.Text = dr["Complete"].ToString();
+                this.displaySP.Text = dr["id"].ToString();
+                this.displayStyle.Text = dr["StyleID"].ToString();
+                this.displaySeason.Text = dr["SeasonID"].ToString();
+                this.displayBrand.Text = dr["BrandID"].ToString();
+                this.editRemark.Text = dr["AIRLaboratoryRemark"].ToString();
+                this.displayMtlCmplt.Text = dr["Complete"].ToString();
 
                 //[Earliest Est. Cutting Date]
-                if (dr["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
-                else Cutting_text.Value = Convert.ToDateTime(dr["CutInLine"]);
+                if (dr["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
+                else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(dr["CutInLine"]);
 
                 //[Earliest SCI Del]
-                if (dr["MinSciDelivery"] == DBNull.Value) Earliest_text.Text = "";
-                else Earliest_text.Value = Convert.ToDateTime(dr["MinSciDelivery"]);
+                if (dr["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
+                else dateEarliestSCIDel.Value = Convert.ToDateTime(dr["MinSciDelivery"]);
 
                 //[Target Lead time]
                 DateTime? targT = null;
                 if (!MyUtility.Check.Empty(dr["CutInLine"]) && !MyUtility.Check.Empty(dr["MinSciDelivery"]))
                     targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(dr["CutInLine"], dr["MinSciDelivery"]);
                 if (targT != null)
-                    Target_text.Value = targT;
+                    dateTargetLeadtime.Value = targT;
                 else
-                    Target_text.Text = "";
+                    dateTargetLeadtime.Text = "";
 
             }
 
@@ -98,16 +98,16 @@ namespace Sci.Production.Quality
                 if (articleAry.Length > 0)
                 {
                     inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
-                    Article_text.Text = inspnum + "%";
+                    displayofInspection.Text = inspnum + "%";
                 }
                 else
                 {
-                    Article_text.Text = "";
+                    displayofInspection.Text = "";
                 }
             }
             else
             {
-                Article_text.Text = "";
+                displayofInspection.Text = "";
             }
 
             DateTime? CompDate,OvenDate,WashDate; 
@@ -123,14 +123,14 @@ namespace Sci.Production.Quality
 	            {
                     CompDate = OvenDate;
 	            }
-                compl_text.Text = CompDate == null ? "" : ((DateTime)CompDate).ToShortDateString(); 
+                dateCompletionDate.Text = CompDate == null ? "" : ((DateTime)CompDate).ToShortDateString(); 
                 ////CompDate = DateTime.Compare((DateTime)articleDT.Compute("Max(OvenDate)", ""),(DateTime)articleDT.Compute("Max(WashDate)", "")) > 0 ? (DateTime)articleDT.Compute("Max(OvenDate)", "") : (DateTime)articleDT.Compute("Max(WashDate)", "") ;                              
           
                 //compl_text.Value = CompDate;
             }
             else
             {
-                compl_text.Text = "";
+                dateCompletionDate.Text = "";
             }
             #endregion
 
@@ -172,7 +172,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -181,7 +181,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -190,7 +190,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -199,7 +199,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -208,7 +208,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -218,7 +218,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                // this.RenewData();
@@ -227,7 +227,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -236,7 +236,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -245,7 +245,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -254,7 +254,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+                var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 //this.RenewData();
@@ -319,7 +319,7 @@ namespace Sci.Production.Quality
             string currentseq1 = this.CurrentDetailData["SEQ1"].ToString();
             string currentseq2 = this.CurrentDetailData["SEQ2"].ToString();
 
-            Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.sp_text.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
+            Sci.Production.Quality.P07_Oven callOvenDetailForm=new P07_Oven(true,this.CurrentDetailData["ID"].ToString(),this.displaySP.Text,this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString() , dr);
             
             callOvenDetailForm.ShowDialog(this);
             callOvenDetailForm.Dispose();
@@ -345,7 +345,7 @@ namespace Sci.Production.Quality
         {
             var dr = this.CurrentDetailData;
             if (dr == null) return;
-            Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.sp_text.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
+            Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
             callWasHDetailForm.ShowDialog(this);
             callWasHDetailForm.Dispose();
             this.RenewData();
@@ -402,20 +402,20 @@ namespace Sci.Production.Quality
         {
             int Count = DetailDatas.Count;
             if (Count == 0) return;
-            if (MyUtility.Check.Empty(txtWK.Text) && MyUtility.Check.Empty(txtSEQ.Text)) return;
+            if (MyUtility.Check.Empty(txtLocateforWK.Text) && MyUtility.Check.Empty(txtSEQ.Text)) return;
 
             int index;
-            if (txtWK.Text != OLDtxtWK || txtSEQ.Text != OLDtxtSEQ)
+            if (txtLocateforWK.Text != OLDtxtWK || txtSEQ.Text != OLDtxtSEQ)
             {
-                OLDtxtWK = txtWK.Text;
+                OLDtxtWK = txtLocateforWK.Text;
                 OLDtxtSEQ = txtSEQ.Text;
 
                 dtDetail = (DataTable)detailgridbs.DataSource;
 
-                if (!MyUtility.Check.Empty(txtWK.Text) && !MyUtility.Check.Empty(txtSEQ.Text))
-                    sql = string.Format(@"ExportID like '%{0}%' and SEQ like '%{1}%'", txtWK.Text.Trim() , txtSEQ.Text.Trim());
-                else if (!MyUtility.Check.Empty(txtWK.Text))
-                    sql = string.Format(@"ExportID like '%{0}%'", txtWK.Text.Trim());
+                if (!MyUtility.Check.Empty(txtLocateforWK.Text) && !MyUtility.Check.Empty(txtSEQ.Text))
+                    sql = string.Format(@"ExportID like '%{0}%' and SEQ like '%{1}%'", txtLocateforWK.Text.Trim() , txtSEQ.Text.Trim());
+                else if (!MyUtility.Check.Empty(txtLocateforWK.Text))
+                    sql = string.Format(@"ExportID like '%{0}%'", txtLocateforWK.Text.Trim());
                 else if (!MyUtility.Check.Empty(txtSEQ.Text))
                     sql = string.Format(@"SEQ like '%{0}%'", txtSEQ.Text.Trim());
 
@@ -439,13 +439,13 @@ namespace Sci.Production.Quality
         private void btnBatchUpdate_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;           
-            if (MyUtility.Check.Empty(comboBox1.SelectedValue2))
+            if (MyUtility.Check.Empty(comboOvenWashBoth.SelectedValue2))
             {
                 MyUtility.Msg.WarningBox("< ComboBox > can not be empty!");
                 return;
             }
 
-            if (comboBox1.SelectedValue2.ToString() == "Oven Test")
+            if (comboOvenWashBoth.SelectedValue2.ToString() == "Oven Test")
             {
                 sql = string.Format("update AIR_Laboratory set NonOven=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
                 result = DBProxy.Current.Execute(null,sql);
@@ -457,7 +457,7 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            else if (comboBox1.SelectedValue2.ToString() == "Wash Test")
+            else if (comboOvenWashBoth.SelectedValue2.ToString() == "Wash Test")
             {
                 sql = string.Format("update AIR_Laboratory set NonWash=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
                 result = DBProxy.Current.Execute(null, sql);
@@ -469,7 +469,7 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            else if (comboBox1.SelectedValue2.ToString() == "Both Test")
+            else if (comboOvenWashBoth.SelectedValue2.ToString() == "Both Test")
             {
                 sql = string.Format("update AIR_Laboratory set NonOven=1 , NonWash=1 where POID='{0}'", CurrentMaintain["ID"].ToString().Trim());
                 result = DBProxy.Current.Execute(null, sql);

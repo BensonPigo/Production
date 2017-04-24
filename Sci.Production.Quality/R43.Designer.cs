@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.comboBox_month = new Sci.Win.UI.ComboBox();
-            this.comboBox_year = new Sci.Win.UI.ComboBox();
-            this.comboBox_brand = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.comboMonth = new Sci.Win.UI.ComboBox();
+            this.comboyear = new Sci.Win.UI.ComboBox();
+            this.combobrand = new Sci.Win.UI.ComboBox();
+            this.labelMonth = new Sci.Win.UI.Label();
+            this.labelYear = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,79 +53,79 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.comboBox_month);
-            this.radioPanel1.Controls.Add(this.comboBox_year);
-            this.radioPanel1.Controls.Add(this.comboBox_brand);
-            this.radioPanel1.Controls.Add(this.label3);
-            this.radioPanel1.Controls.Add(this.label2);
-            this.radioPanel1.Controls.Add(this.label1);
+            this.radioPanel1.Controls.Add(this.comboMonth);
+            this.radioPanel1.Controls.Add(this.comboyear);
+            this.radioPanel1.Controls.Add(this.combobrand);
+            this.radioPanel1.Controls.Add(this.labelMonth);
+            this.radioPanel1.Controls.Add(this.labelYear);
+            this.radioPanel1.Controls.Add(this.labelBrand);
             this.radioPanel1.Location = new System.Drawing.Point(26, 12);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(289, 202);
             this.radioPanel1.TabIndex = 94;
             // 
-            // comboBox_month
+            // comboMonth
             // 
-            this.comboBox_month.BackColor = System.Drawing.Color.White;
-            this.comboBox_month.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_month.FormattingEnabled = true;
-            this.comboBox_month.IsSupportUnselect = true;
-            this.comboBox_month.Location = new System.Drawing.Point(88, 144);
-            this.comboBox_month.Name = "comboBox_month";
-            this.comboBox_month.Size = new System.Drawing.Size(121, 24);
-            this.comboBox_month.TabIndex = 2;
+            this.comboMonth.BackColor = System.Drawing.Color.White;
+            this.comboMonth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMonth.FormattingEnabled = true;
+            this.comboMonth.IsSupportUnselect = true;
+            this.comboMonth.Location = new System.Drawing.Point(88, 144);
+            this.comboMonth.Name = "comboMonth";
+            this.comboMonth.Size = new System.Drawing.Size(121, 24);
+            this.comboMonth.TabIndex = 2;
             // 
-            // comboBox_year
+            // comboyear
             // 
-            this.comboBox_year.BackColor = System.Drawing.Color.White;
-            this.comboBox_year.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_year.FormattingEnabled = true;
-            this.comboBox_year.IsSupportUnselect = true;
-            this.comboBox_year.Location = new System.Drawing.Point(88, 87);
-            this.comboBox_year.Name = "comboBox_year";
-            this.comboBox_year.Size = new System.Drawing.Size(121, 24);
-            this.comboBox_year.TabIndex = 1;
+            this.comboyear.BackColor = System.Drawing.Color.White;
+            this.comboyear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboyear.FormattingEnabled = true;
+            this.comboyear.IsSupportUnselect = true;
+            this.comboyear.Location = new System.Drawing.Point(88, 87);
+            this.comboyear.Name = "comboyear";
+            this.comboyear.Size = new System.Drawing.Size(121, 24);
+            this.comboyear.TabIndex = 1;
             // 
-            // comboBox_brand
+            // combobrand
             // 
-            this.comboBox_brand.BackColor = System.Drawing.Color.White;
-            this.comboBox_brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_brand.FormattingEnabled = true;
-            this.comboBox_brand.IsSupportUnselect = true;
-            this.comboBox_brand.Items.AddRange(new object[] {
+            this.combobrand.BackColor = System.Drawing.Color.White;
+            this.combobrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combobrand.FormattingEnabled = true;
+            this.combobrand.IsSupportUnselect = true;
+            this.combobrand.Items.AddRange(new object[] {
             "ADIDAS",
             "REEBOK"});
-            this.comboBox_brand.Location = new System.Drawing.Point(88, 32);
-            this.comboBox_brand.Name = "comboBox_brand";
-            this.comboBox_brand.Size = new System.Drawing.Size(121, 24);
-            this.comboBox_brand.TabIndex = 0;
+            this.combobrand.Location = new System.Drawing.Point(88, 32);
+            this.combobrand.Name = "combobrand";
+            this.combobrand.Size = new System.Drawing.Size(121, 24);
+            this.combobrand.TabIndex = 0;
             // 
-            // label3
+            // labelMonth
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(22, 145);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(49, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Month";
+            this.labelMonth.Lines = 0;
+            this.labelMonth.Location = new System.Drawing.Point(22, 145);
+            this.labelMonth.Name = "labelMonth";
+            this.labelMonth.Size = new System.Drawing.Size(49, 23);
+            this.labelMonth.TabIndex = 2;
+            this.labelMonth.Text = "Month";
             // 
-            // label2
+            // labelYear
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(22, 88);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Year";
+            this.labelYear.Lines = 0;
+            this.labelYear.Location = new System.Drawing.Point(22, 88);
+            this.labelYear.Name = "labelYear";
+            this.labelYear.Size = new System.Drawing.Size(49, 23);
+            this.labelYear.TabIndex = 1;
+            this.labelYear.Text = "Year";
             // 
-            // label1
+            // labelBrand
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(22, 33);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(49, 23);
+            this.labelBrand.TabIndex = 0;
+            this.labelBrand.Text = "Brand";
             // 
             // R43
             // 
@@ -146,11 +146,11 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.ComboBox comboBox_month;
-        private Win.UI.ComboBox comboBox_year;
-        private Win.UI.ComboBox comboBox_brand;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboMonth;
+        private Win.UI.ComboBox comboyear;
+        private Win.UI.ComboBox combobrand;
+        private Win.UI.Label labelMonth;
+        private Win.UI.Label labelYear;
+        private Win.UI.Label labelBrand;
     }
 }

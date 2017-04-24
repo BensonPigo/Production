@@ -29,7 +29,7 @@ namespace Sci.Production.Quality
 
         private void radiobtn_PerLine_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_PerLine.Checked)
+            if (radioPerLine.Checked)
             {
                 txtDefectCode.Text = txtDefectType.Text = "";
                 txtDefectCode.Enabled = txtDefectType.Enabled = false;
@@ -38,7 +38,7 @@ namespace Sci.Production.Quality
 
         private void radiobtn_PerCell_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_PerCell.Checked)
+            if (radioPerCell.Checked)
             {
                 txtDefectCode.Text = txtDefectType.Text = "";
                 txtDefectCode.Enabled = txtDefectType.Enabled = false;
@@ -47,7 +47,7 @@ namespace Sci.Production.Quality
 
         private void radiobtn_AllData_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_AllData.Checked)
+            if (radioAllData.Checked)
             {
                 txtDefectCode.Text = txtDefectType.Text = "";
                 txtDefectCode.Enabled = txtDefectType.Enabled = false;
@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
 
         private void radioBtn_Detail_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtn_Detail.Checked)
+            if (radioDetail.Checked)
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
         
         private void radioBtn_SummybySP_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioBtn_SummybySP.Checked)
+            if (radioSummybySP.Checked)
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
@@ -72,7 +72,7 @@ namespace Sci.Production.Quality
 
         private void radiobtn_SummybyStyle_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_SummybyStyle.Checked)
+            if (radioSummybyStyle.Checked)
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
@@ -80,7 +80,7 @@ namespace Sci.Production.Quality
 
         private void radiobtn_SummybyDateandStyle_CheckedChanged(object sender, EventArgs e)
         {
-            if (radiobtn_SummybyDateandStyle.Checked)
+            if (radioSummybyDateandStyle.Checked)
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
@@ -117,7 +117,7 @@ namespace Sci.Production.Quality
             }
 
             #region radiobtn_PerLine
-            if (radiobtn_PerLine.Checked)
+            if (radioPerLine.Checked)
             {
 
                 string sqlWhere="";
@@ -228,7 +228,7 @@ EXEC sp_executesql @sql
             #endregion
 
             #region radiobtn_PerCell
-            if (radiobtn_PerCell.Checked)
+            if (radioPerCell.Checked)
             {
                 string sqlWhere = "";
                 List<string> sqlList = new List<string>();
@@ -343,7 +343,7 @@ EXEC sp_executesql @sql
             #endregion
 
             #region radiobtn_AllData
-            if (radiobtn_AllData.Checked)
+            if (radioAllData.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -412,7 +412,7 @@ Order by [Factory], [CDate], [OrderID]
             #endregion            
 
             #region radioBtn_Detail
-            if (radioBtn_Detail.Checked)
+            if (radioDetail.Checked)
             {
                 sqlCmd.Append(@"
 select
@@ -503,7 +503,7 @@ Order by [Factory], [CDate], [OrderID], [Defaect Kind], [Defaect code]
             #endregion
 
             #region radioBtn_SummybySP
-            if (radioBtn_SummybySP.Checked)
+            if (radioSummybySP.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -611,7 +611,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyStyle
-            if (radiobtn_SummybyStyle.Checked)
+            if (radioSummybyStyle.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -718,7 +718,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyDateandStyle
-            if (radiobtn_SummybyDateandStyle.Checked)
+            if (radioSummybyDateandStyle.Checked)
             {
                 sqlCmd.Append(@"
 IF OBJECT_ID('tempdb.dbo.#tmpall', 'U') IS NOT NULL
@@ -849,7 +849,7 @@ drop table #tmpall
             }
 
             #region radiobtn_PerLine
-            if (radiobtn_PerLine.Checked)
+            if (radioPerLine.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerLine.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerLine.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -864,7 +864,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_PerCell
-            if (radiobtn_PerCell.Checked)
+            if (radioPerCell.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_PerCell.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_PerCell.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -879,7 +879,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_AllData
-            if (radiobtn_AllData.Checked)
+            if (radioAllData.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_AllData.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_AllData.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -901,7 +901,7 @@ drop table #tmpall
             #endregion
 
             #region radioBtn_Detail
-            if (radioBtn_Detail.Checked)
+            if (radioDetail.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_Detail.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_Detail.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -912,7 +912,7 @@ drop table #tmpall
             #endregion
 
             #region radioBtn_SummybySP
-            if (radioBtn_SummybySP.Checked)
+            if (radioSummybySP.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybySP.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybySP.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -923,7 +923,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyStyle
-            if (radiobtn_SummybyStyle.Checked)
+            if (radioSummybyStyle.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyStyle.xltx"); //預先開啟excel app
                  MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel
@@ -934,7 +934,7 @@ drop table #tmpall
             #endregion
 
             #region radiobtn_SummybyDateandStyle
-            if (radiobtn_SummybyDateandStyle.Checked)
+            if (radioSummybyDateandStyle.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R20_SummarybyDateaAndStyle.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(printData, "", "Quality_R20_SummarybyDateaAndStyle.xltx", 1, true, null, objApp);// 將datatable copy to excel

@@ -28,30 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelCompletionDate = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelTargetLeadtime = new Sci.Win.UI.Label();
+            this.labelEarliestSCIDel = new Sci.Win.UI.Label();
+            this.labelEarliestEstCuttingDate = new Sci.Win.UI.Label();
+            this.labelArticleofInspection = new Sci.Win.UI.Label();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             this.createNewTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editThisRecordsDetailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteThisRecordsDetailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sp_text = new Sci.Win.UI.DisplayBox();
-            this.brand_text = new Sci.Win.UI.DisplayBox();
-            this.style_text = new Sci.Win.UI.DisplayBox();
-            this.season_text = new Sci.Win.UI.DisplayBox();
-            this.Article_text = new Sci.Win.UI.DisplayBox();
-            this.Cutting_text = new Sci.Win.UI.DateBox();
-            this.Earliest_text = new Sci.Win.UI.DateBox();
-            this.Target_text = new Sci.Win.UI.DateBox();
-            this.compl_text = new Sci.Win.UI.DateBox();
-            this.remark_text = new Sci.Win.UI.EditBox();
+            this.displaySP = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayArticleofInspection = new Sci.Win.UI.DisplayBox();
+            this.dateEarliestEstCuttingDate = new Sci.Win.UI.DateBox();
+            this.dateEarliestSCIDel = new Sci.Win.UI.DateBox();
+            this.dateTargetLeadtime = new Sci.Win.UI.DateBox();
+            this.dateCompletionDate = new Sci.Win.UI.DateBox();
+            this.editRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,48 +69,48 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.remark_text);
-            this.masterpanel.Controls.Add(this.Article_text);
-            this.masterpanel.Controls.Add(this.season_text);
-            this.masterpanel.Controls.Add(this.style_text);
-            this.masterpanel.Controls.Add(this.brand_text);
-            this.masterpanel.Controls.Add(this.sp_text);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.compl_text);
-            this.masterpanel.Controls.Add(this.Target_text);
-            this.masterpanel.Controls.Add(this.Earliest_text);
-            this.masterpanel.Controls.Add(this.Cutting_text);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.displayArticleofInspection);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySP);
+            this.masterpanel.Controls.Add(this.labelArticleofInspection);
+            this.masterpanel.Controls.Add(this.labelEarliestEstCuttingDate);
+            this.masterpanel.Controls.Add(this.labelEarliestSCIDel);
+            this.masterpanel.Controls.Add(this.labelTargetLeadtime);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelCompletionDate);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelSP);
+            this.masterpanel.Controls.Add(this.dateCompletionDate);
+            this.masterpanel.Controls.Add(this.dateTargetLeadtime);
+            this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
+            this.masterpanel.Controls.Add(this.dateEarliestEstCuttingDate);
             this.masterpanel.Size = new System.Drawing.Size(904, 147);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Target_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.compl_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.sp_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.brand_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.season_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Article_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.remark_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateTargetLeadtime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCompletionDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCompletionDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTargetLeadtime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEarliestSCIDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEarliestEstCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelArticleofInspection, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayArticleofInspection, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             // 
             // detailpanel
             // 
@@ -131,15 +131,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(904, 519);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(898, 473);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(898, 40);
             // 
             // detail
             // 
@@ -175,95 +175,95 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(29, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(29, 16);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(60, 23);
+            this.labelSP.TabIndex = 1;
+            this.labelSP.Text = "SP#";
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(29, 105);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(60, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(29, 105);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(60, 23);
+            this.labelSeason.TabIndex = 2;
+            this.labelSeason.Text = "Season";
             // 
-            // label3
+            // labelStyle
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(29, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(29, 76);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(60, 23);
+            this.labelStyle.TabIndex = 3;
+            this.labelStyle.Text = "Style";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(29, 46);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Brand ";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(29, 46);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(60, 23);
+            this.labelBrand.TabIndex = 4;
+            this.labelBrand.Text = "Brand ";
             // 
-            // label5
+            // labelCompletionDate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(246, 107);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(163, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Completion Date";
+            this.labelCompletionDate.Lines = 0;
+            this.labelCompletionDate.Location = new System.Drawing.Point(246, 107);
+            this.labelCompletionDate.Name = "labelCompletionDate";
+            this.labelCompletionDate.Size = new System.Drawing.Size(163, 23);
+            this.labelCompletionDate.TabIndex = 5;
+            this.labelCompletionDate.Text = "Completion Date";
             // 
-            // label6
+            // labelRemark
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(550, 45);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(150, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(550, 45);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(150, 23);
+            this.labelRemark.TabIndex = 6;
+            this.labelRemark.Text = "Remark";
             // 
-            // label7
+            // labelTargetLeadtime
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(246, 78);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(163, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Target Lead time";
+            this.labelTargetLeadtime.Lines = 0;
+            this.labelTargetLeadtime.Location = new System.Drawing.Point(246, 78);
+            this.labelTargetLeadtime.Name = "labelTargetLeadtime";
+            this.labelTargetLeadtime.Size = new System.Drawing.Size(163, 23);
+            this.labelTargetLeadtime.TabIndex = 7;
+            this.labelTargetLeadtime.Text = "Target Lead time";
             // 
-            // label8
+            // labelEarliestSCIDel
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(246, 46);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(163, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Earliest SCI Del";
+            this.labelEarliestSCIDel.Lines = 0;
+            this.labelEarliestSCIDel.Location = new System.Drawing.Point(246, 46);
+            this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
+            this.labelEarliestSCIDel.Size = new System.Drawing.Size(163, 23);
+            this.labelEarliestSCIDel.TabIndex = 8;
+            this.labelEarliestSCIDel.Text = "Earliest SCI Del";
             // 
-            // label9
+            // labelEarliestEstCuttingDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(246, 16);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(165, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Earliest Est. Cutting Date";
+            this.labelEarliestEstCuttingDate.Lines = 0;
+            this.labelEarliestEstCuttingDate.Location = new System.Drawing.Point(246, 16);
+            this.labelEarliestEstCuttingDate.Name = "labelEarliestEstCuttingDate";
+            this.labelEarliestEstCuttingDate.Size = new System.Drawing.Size(165, 23);
+            this.labelEarliestEstCuttingDate.TabIndex = 9;
+            this.labelEarliestEstCuttingDate.Text = "Earliest Est. Cutting Date";
             // 
-            // label10
+            // labelArticleofInspection
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(550, 18);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(150, 23);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Article % of Inspection";
+            this.labelArticleofInspection.Lines = 0;
+            this.labelArticleofInspection.Location = new System.Drawing.Point(550, 18);
+            this.labelArticleofInspection.Name = "labelArticleofInspection";
+            this.labelArticleofInspection.Size = new System.Drawing.Size(150, 23);
+            this.labelArticleofInspection.TabIndex = 10;
+            this.labelArticleofInspection.Text = "Article % of Inspection";
             // 
             // contextMenuStrip1
             // 
@@ -292,103 +292,103 @@
             this.deleteThisRecordsDetailToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.deleteThisRecordsDetailToolStripMenuItem.Text = "Delete this Record\'s detail";
             // 
-            // sp_text
+            // displaySP
             // 
-            this.sp_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.sp_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.sp_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sp_text.Location = new System.Drawing.Point(92, 18);
-            this.sp_text.Name = "sp_text";
-            this.sp_text.Size = new System.Drawing.Size(133, 21);
-            this.sp_text.TabIndex = 33;
+            this.displaySP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySP.Location = new System.Drawing.Point(92, 18);
+            this.displaySP.Name = "displaySP";
+            this.displaySP.Size = new System.Drawing.Size(133, 21);
+            this.displaySP.TabIndex = 33;
             // 
-            // brand_text
+            // displayBrand
             // 
-            this.brand_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.brand_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.brand_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_text.Location = new System.Drawing.Point(92, 46);
-            this.brand_text.Name = "brand_text";
-            this.brand_text.Size = new System.Drawing.Size(133, 21);
-            this.brand_text.TabIndex = 34;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(92, 46);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(133, 21);
+            this.displayBrand.TabIndex = 34;
             // 
-            // style_text
+            // displayStyle
             // 
-            this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.style_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_text.Location = new System.Drawing.Point(92, 78);
-            this.style_text.Name = "style_text";
-            this.style_text.Size = new System.Drawing.Size(133, 21);
-            this.style_text.TabIndex = 35;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(92, 78);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(133, 21);
+            this.displayStyle.TabIndex = 35;
             // 
-            // season_text
+            // displaySeason
             // 
-            this.season_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.season_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.season_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_text.Location = new System.Drawing.Point(92, 107);
-            this.season_text.Name = "season_text";
-            this.season_text.Size = new System.Drawing.Size(133, 21);
-            this.season_text.TabIndex = 36;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(92, 107);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(133, 21);
+            this.displaySeason.TabIndex = 36;
             // 
-            // Article_text
+            // displayArticleofInspection
             // 
-            this.Article_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Article_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Article_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Article_text.Location = new System.Drawing.Point(703, 20);
-            this.Article_text.Name = "Article_text";
-            this.Article_text.Size = new System.Drawing.Size(157, 21);
-            this.Article_text.TabIndex = 37;
+            this.displayArticleofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArticleofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayArticleofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayArticleofInspection.Location = new System.Drawing.Point(703, 20);
+            this.displayArticleofInspection.Name = "displayArticleofInspection";
+            this.displayArticleofInspection.Size = new System.Drawing.Size(157, 21);
+            this.displayArticleofInspection.TabIndex = 37;
             // 
-            // Cutting_text
+            // dateEarliestEstCuttingDate
             // 
-            this.Cutting_text.IsSupportEditMode = false;
-            this.Cutting_text.Location = new System.Drawing.Point(412, 16);
-            this.Cutting_text.Name = "Cutting_text";
-            this.Cutting_text.ReadOnly = true;
-            this.Cutting_text.Size = new System.Drawing.Size(120, 23);
-            this.Cutting_text.TabIndex = 65;
+            this.dateEarliestEstCuttingDate.IsSupportEditMode = false;
+            this.dateEarliestEstCuttingDate.Location = new System.Drawing.Point(412, 16);
+            this.dateEarliestEstCuttingDate.Name = "dateEarliestEstCuttingDate";
+            this.dateEarliestEstCuttingDate.ReadOnly = true;
+            this.dateEarliestEstCuttingDate.Size = new System.Drawing.Size(120, 23);
+            this.dateEarliestEstCuttingDate.TabIndex = 65;
             // 
-            // Earliest_text
+            // dateEarliestSCIDel
             // 
-            this.Earliest_text.IsSupportEditMode = false;
-            this.Earliest_text.Location = new System.Drawing.Point(412, 46);
-            this.Earliest_text.Name = "Earliest_text";
-            this.Earliest_text.ReadOnly = true;
-            this.Earliest_text.Size = new System.Drawing.Size(120, 23);
-            this.Earliest_text.TabIndex = 66;
+            this.dateEarliestSCIDel.IsSupportEditMode = false;
+            this.dateEarliestSCIDel.Location = new System.Drawing.Point(412, 46);
+            this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
+            this.dateEarliestSCIDel.ReadOnly = true;
+            this.dateEarliestSCIDel.Size = new System.Drawing.Size(120, 23);
+            this.dateEarliestSCIDel.TabIndex = 66;
             // 
-            // Target_text
+            // dateTargetLeadtime
             // 
-            this.Target_text.IsSupportEditMode = false;
-            this.Target_text.Location = new System.Drawing.Point(412, 78);
-            this.Target_text.Name = "Target_text";
-            this.Target_text.ReadOnly = true;
-            this.Target_text.Size = new System.Drawing.Size(120, 23);
-            this.Target_text.TabIndex = 67;
+            this.dateTargetLeadtime.IsSupportEditMode = false;
+            this.dateTargetLeadtime.Location = new System.Drawing.Point(412, 78);
+            this.dateTargetLeadtime.Name = "dateTargetLeadtime";
+            this.dateTargetLeadtime.ReadOnly = true;
+            this.dateTargetLeadtime.Size = new System.Drawing.Size(120, 23);
+            this.dateTargetLeadtime.TabIndex = 67;
             // 
-            // compl_text
+            // dateCompletionDate
             // 
-            this.compl_text.IsSupportEditMode = false;
-            this.compl_text.Location = new System.Drawing.Point(412, 105);
-            this.compl_text.Name = "compl_text";
-            this.compl_text.ReadOnly = true;
-            this.compl_text.Size = new System.Drawing.Size(120, 23);
-            this.compl_text.TabIndex = 68;
+            this.dateCompletionDate.IsSupportEditMode = false;
+            this.dateCompletionDate.Location = new System.Drawing.Point(412, 105);
+            this.dateCompletionDate.Name = "dateCompletionDate";
+            this.dateCompletionDate.ReadOnly = true;
+            this.dateCompletionDate.Size = new System.Drawing.Size(120, 23);
+            this.dateCompletionDate.TabIndex = 68;
             // 
-            // remark_text
+            // editRemark
             // 
-            this.remark_text.BackColor = System.Drawing.Color.White;
-            this.remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenLaboratoryRemark", true));
-            this.remark_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_text.Location = new System.Drawing.Point(703, 44);
-            this.remark_text.Multiline = true;
-            this.remark_text.Name = "remark_text";
-            this.remark_text.Size = new System.Drawing.Size(157, 90);
-            this.remark_text.TabIndex = 69;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OvenLaboratoryRemark", true));
+            this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(703, 44);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(157, 90);
+            this.editRemark.TabIndex = 69;
             // 
             // P05
             // 
@@ -431,29 +431,29 @@
 
         #endregion
 
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelArticleofInspection;
+        private Win.UI.Label labelEarliestEstCuttingDate;
+        private Win.UI.Label labelEarliestSCIDel;
+        private Win.UI.Label labelTargetLeadtime;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelCompletionDate;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelSP;
         private Win.UI.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem createNewTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editThisRecordsDetailToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteThisRecordsDetailToolStripMenuItem;
-        private Win.UI.DisplayBox sp_text;
-        private Win.UI.DisplayBox Article_text;
-        private Win.UI.DisplayBox season_text;
-        private Win.UI.DisplayBox style_text;
-        private Win.UI.DisplayBox brand_text;
-        private Win.UI.DateBox compl_text;
-        private Win.UI.DateBox Target_text;
-        private Win.UI.DateBox Earliest_text;
-        private Win.UI.DateBox Cutting_text;
-        private Win.UI.EditBox remark_text;
+        private Win.UI.DisplayBox displaySP;
+        private Win.UI.DisplayBox displayArticleofInspection;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DateBox dateCompletionDate;
+        private Win.UI.DateBox dateTargetLeadtime;
+        private Win.UI.DateBox dateEarliestSCIDel;
+        private Win.UI.DateBox dateEarliestEstCuttingDate;
+        private Win.UI.EditBox editRemark;
     }
 }

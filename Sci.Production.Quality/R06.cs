@@ -27,19 +27,19 @@ namespace Sci.Production.Quality
         {
            
             lis = new List<SqlParameter>();
-            bool DateArr_empty = !DateArriveWH.HasValue, Supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRefNo.Text.Empty(),brand_empty = !this.txtbrand.Text.Empty(),
+            bool DateArr_empty = !dateArriveWHDate.HasValue, Supplier_empty = !this.txtsupplier.Text.Empty(), refno_empty = !this.txtRef.Text.Empty(),brand_empty = !this.txtbrand.Text.Empty(),
                  season_empty = !txtseason.Text.Empty();
             if (DateArr_empty)
             {
                 MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
 
-                DateArriveWH.Focus();
+                dateArriveWHDate.Focus();
                 return false;
             }
-            DateArrStart = DateArriveWH.Value1;
-            DateArrEnd = DateArriveWH.Value2;
+            DateArrStart = dateArriveWHDate.Value1;
+            DateArrEnd = dateArriveWHDate.Value2;
             brand = txtbrand.Text;
-            refno = txtRefNo.Text.ToString();
+            refno = txtRef.Text.ToString();
             season = txtseason.Text;
             Supp = txtsupplier.TextBox1.Text;
             lis = new List<SqlParameter>();
@@ -49,12 +49,12 @@ namespace Sci.Production.Quality
             List<string> RWheres = new List<string>();
             #region --組WHERE--
 
-           if (!this.DateArriveWH.Value1.Empty())
+           if (!this.dateArriveWHDate.Value1.Empty())
            {
                RWheres.Add("r.WhseArrival >= @DateArrStart");
                lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
            }
-           if (!this.DateArriveWH.Value2.Empty())
+           if (!this.dateArriveWHDate.Value2.Empty())
            {
                RWheres.Add("r.WhseArrival <= @DateArrEnd");
                lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));

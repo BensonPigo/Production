@@ -33,8 +33,8 @@
             this.radioPerDateFactory = new Sci.Win.UI.RadioButton();
             this.radioPerBrand = new Sci.Win.UI.RadioButton();
             this.dateAuditDate = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelFormat = new Sci.Win.UI.Label();
+            this.labelAuditDate = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,8 +58,8 @@
             this.panel1.Controls.Add(this.radioPerDateFactory);
             this.panel1.Controls.Add(this.radioPerBrand);
             this.panel1.Controls.Add(this.dateAuditDate);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelFormat);
+            this.panel1.Controls.Add(this.labelAuditDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 148);
@@ -111,23 +111,23 @@
             this.dateAuditDate.Size = new System.Drawing.Size(280, 23);
             this.dateAuditDate.TabIndex = 2;
             // 
-            // label2
+            // labelFormat
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(17, 59);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Format";
+            this.labelFormat.Lines = 0;
+            this.labelFormat.Location = new System.Drawing.Point(17, 59);
+            this.labelFormat.Name = "labelFormat";
+            this.labelFormat.Size = new System.Drawing.Size(75, 23);
+            this.labelFormat.TabIndex = 1;
+            this.labelFormat.Text = "Format";
             // 
-            // label1
+            // labelAuditDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(17, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Audit Date";
+            this.labelAuditDate.Lines = 0;
+            this.labelAuditDate.Location = new System.Drawing.Point(17, 17);
+            this.labelAuditDate.Name = "labelAuditDate";
+            this.labelAuditDate.Size = new System.Drawing.Size(75, 23);
+            this.labelAuditDate.TabIndex = 0;
+            this.labelAuditDate.Text = "Audit Date";
             // 
             // label9
             // 
@@ -164,8 +164,8 @@
         private Win.UI.RadioButton radioPerDateFactory;
         private Win.UI.RadioButton radioPerBrand;
         private Win.UI.DateRange dateAuditDate;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelFormat;
+        private Win.UI.Label labelAuditDate;
         private Win.UI.Label label9;
     }
 }

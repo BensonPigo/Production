@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtLevel = new Sci.Win.UI.TextBox();
+            this.labelLevel = new Sci.Win.UI.Label();
+            this.labelRateRange = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.labelMaterialType = new Sci.Win.UI.Label();
+            this.txtRateRangeStart = new Sci.Win.UI.TextBox();
+            this.txtRateRangeEnd = new Sci.Win.UI.TextBox();
+            this.comboMaterialType = new Sci.Win.UI.ComboBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -55,15 +55,15 @@
             // 
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.labConfirm);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.comboMaterialType);
+            this.detailcont.Controls.Add(this.txtRateRangeEnd);
+            this.detailcont.Controls.Add(this.txtRateRangeStart);
+            this.detailcont.Controls.Add(this.labelMaterialType);
             this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.labelRateRange);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.txtLevel);
+            this.detailcont.Controls.Add(this.labelLevel);
             this.detailcont.Size = new System.Drawing.Size(828, 357);
             // 
             // detailbtm
@@ -72,7 +72,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(686, 395);
+            this.browse.Size = new System.Drawing.Size(828, 395);
             // 
             // tabs
             // 
@@ -91,45 +91,45 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(272, 47);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 23;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(272, 47);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 23;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtLevel
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(151, 45);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 4;
+            this.txtLevel.BackColor = System.Drawing.Color.White;
+            this.txtLevel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtLevel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLevel.Location = new System.Drawing.Point(151, 45);
+            this.txtLevel.Name = "txtLevel";
+            this.txtLevel.Size = new System.Drawing.Size(100, 23);
+            this.txtLevel.TabIndex = 4;
             // 
-            // label1
+            // labelLevel
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(52, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(96, 23);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Level ";
+            this.labelLevel.Lines = 0;
+            this.labelLevel.Location = new System.Drawing.Point(52, 45);
+            this.labelLevel.Name = "labelLevel";
+            this.labelLevel.Size = new System.Drawing.Size(96, 23);
+            this.labelLevel.TabIndex = 21;
+            this.labelLevel.Text = "Level ";
             // 
-            // label2
+            // labelRateRange
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(52, 78);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(96, 23);
-            this.label2.TabIndex = 24;
-            this.label2.Text = "Rate Range";
+            this.labelRateRange.Lines = 0;
+            this.labelRateRange.Location = new System.Drawing.Point(52, 78);
+            this.labelRateRange.Name = "labelRateRange";
+            this.labelRateRange.Size = new System.Drawing.Size(96, 23);
+            this.labelRateRange.TabIndex = 24;
+            this.labelRateRange.Text = "Rate Range";
             // 
             // label3
             // 
@@ -141,46 +141,46 @@
             this.label3.TabIndex = 25;
             this.label3.Text = "%";
             // 
-            // label5
+            // labelMaterialType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(52, 112);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(96, 23);
-            this.label5.TabIndex = 27;
-            this.label5.Text = "Material Type";
+            this.labelMaterialType.Lines = 0;
+            this.labelMaterialType.Location = new System.Drawing.Point(52, 112);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(96, 23);
+            this.labelMaterialType.TabIndex = 27;
+            this.labelMaterialType.Text = "Material Type";
             // 
-            // textBox2
+            // txtRateRangeStart
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range1", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(151, 78);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 5;
+            this.txtRateRangeStart.BackColor = System.Drawing.Color.White;
+            this.txtRateRangeStart.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range1", true));
+            this.txtRateRangeStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRateRangeStart.Location = new System.Drawing.Point(151, 78);
+            this.txtRateRangeStart.Name = "txtRateRangeStart";
+            this.txtRateRangeStart.Size = new System.Drawing.Size(100, 23);
+            this.txtRateRangeStart.TabIndex = 5;
             // 
-            // textBox3
+            // txtRateRangeEnd
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range2", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(303, 78);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(121, 23);
-            this.textBox3.TabIndex = 6;
+            this.txtRateRangeEnd.BackColor = System.Drawing.Color.White;
+            this.txtRateRangeEnd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Range2", true));
+            this.txtRateRangeEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRateRangeEnd.Location = new System.Drawing.Point(303, 78);
+            this.txtRateRangeEnd.Name = "txtRateRangeEnd";
+            this.txtRateRangeEnd.Size = new System.Drawing.Size(121, 23);
+            this.txtRateRangeEnd.TabIndex = 6;
             // 
-            // comboBox1
+            // comboMaterialType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "type", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(151, 112);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(178, 24);
-            this.comboBox1.TabIndex = 7;
+            this.comboMaterialType.BackColor = System.Drawing.Color.White;
+            this.comboMaterialType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "type", true));
+            this.comboMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMaterialType.FormattingEnabled = true;
+            this.comboMaterialType.IsSupportUnselect = true;
+            this.comboMaterialType.Location = new System.Drawing.Point(151, 112);
+            this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.Size = new System.Drawing.Size(178, 24);
+            this.comboMaterialType.TabIndex = 7;
             // 
             // labConfirm
             // 
@@ -231,15 +231,15 @@
 
         #endregion
 
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label5;
+        private Win.UI.ComboBox comboMaterialType;
+        private Win.UI.TextBox txtRateRangeEnd;
+        private Win.UI.TextBox txtRateRangeStart;
+        private Win.UI.Label labelMaterialType;
         private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelRateRange;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.TextBox txtLevel;
+        private Win.UI.Label labelLevel;
         private Win.UI.Label label4;
         private System.Windows.Forms.Label labConfirm;
     }

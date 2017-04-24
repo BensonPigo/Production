@@ -28,37 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ToExcel = new Sci.Win.UI.Button();
-            this.Description_box = new Sci.Win.UI.EditBox();
-            this.label14 = new Sci.Win.UI.Label();
-            this.Supptext = new Sci.Production.Class.txtsupplier();
-            this.LIDate = new Sci.Win.UI.DateBox();
-            this.Arrdate = new Sci.Win.UI.DateBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.encode_button = new Sci.Win.UI.Button();
-            this.ResultText = new Sci.Win.UI.TextBox();
-            this.AQtytext = new Sci.Win.UI.TextBox();
-            this.Colortext = new Sci.Win.UI.TextBox();
-            this.BRnotext = new Sci.Win.UI.TextBox();
-            this.SRnotext = new Sci.Win.UI.TextBox();
-            this.SEQtext = new Sci.Win.UI.TextBox();
-            this.Brandtext = new Sci.Win.UI.TextBox();
-            this.Styletext = new Sci.Win.UI.TextBox();
-            this.Wknotext = new Sci.Win.UI.TextBox();
-            this.sptext = new Sci.Win.UI.TextBox();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.editDescription = new Sci.Win.UI.EditBox();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.txtsupplierSupp = new Sci.Production.Class.txtsupplier();
+            this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
+            this.dateArriveWHDate = new Sci.Win.UI.DateBox();
+            this.checkNA = new Sci.Win.UI.CheckBox();
+            this.btnEncode = new Sci.Win.UI.Button();
+            this.txtResult = new Sci.Win.UI.TextBox();
+            this.txtArriveQty = new Sci.Win.UI.TextBox();
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.txtBrandRefno = new Sci.Win.UI.TextBox();
+            this.txtSCIRefno = new Sci.Win.UI.TextBox();
+            this.txtSEQ = new Sci.Win.UI.TextBox();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtWkno = new Sci.Win.UI.TextBox();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelResult = new Sci.Win.UI.Label();
+            this.labelLastInspectionDate = new Sci.Win.UI.Label();
+            this.labelArriveWHDate = new Sci.Win.UI.Label();
+            this.labelArriveQty = new Sci.Win.UI.Label();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.labelBrandRefno = new Sci.Win.UI.Label();
+            this.labelSCIRefno = new Sci.Win.UI.Label();
+            this.labelSupp = new Sci.Win.UI.Label();
+            this.labelSEQ = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelWkno = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -66,7 +66,7 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.ToExcel);
+            this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 545);
             this.btmcont.Size = new System.Drawing.Size(974, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
@@ -74,7 +74,7 @@
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
-            this.btmcont.Controls.SetChildIndex(this.ToExcel, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             // 
             // gridcont
             // 
@@ -89,348 +89,348 @@
             // 
             this.save.Location = new System.Drawing.Point(804, 5);
             // 
-            // ToExcel
+            // btnToExcel
             // 
-            this.ToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.ToExcel.Location = new System.Drawing.Point(718, 5);
-            this.ToExcel.Name = "ToExcel";
-            this.ToExcel.Size = new System.Drawing.Size(80, 30);
-            this.ToExcel.TabIndex = 95;
-            this.ToExcel.Text = "ToExcel";
-            this.ToExcel.UseVisualStyleBackColor = true;
-            this.ToExcel.Click += new System.EventHandler(this.ToExcel_Click);
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnToExcel.Location = new System.Drawing.Point(718, 5);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 95;
+            this.btnToExcel.Text = "ToExcel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.ToExcel_Click);
             // 
-            // Description_box
+            // editDescription
             // 
-            this.Description_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Description_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Description_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Description_box.Location = new System.Drawing.Point(553, 67);
-            this.Description_box.Multiline = true;
-            this.Description_box.Name = "Description_box";
-            this.Description_box.ReadOnly = true;
-            this.Description_box.Size = new System.Drawing.Size(320, 54);
-            this.Description_box.TabIndex = 218;
+            this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescription.Location = new System.Drawing.Point(553, 67);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.ReadOnly = true;
+            this.editDescription.Size = new System.Drawing.Size(320, 54);
+            this.editDescription.TabIndex = 218;
             // 
-            // label14
+            // labelDescription
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(475, 67);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 25);
-            this.label14.TabIndex = 217;
-            this.label14.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(475, 67);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 25);
+            this.labelDescription.TabIndex = 217;
+            this.labelDescription.Text = "Description";
             // 
-            // Supptext
+            // txtsupplierSupp
             // 
-            this.Supptext.DisplayBox1Binding = "";
-            this.Supptext.Location = new System.Drawing.Point(276, 38);
-            this.Supptext.Name = "Supptext";
-            this.Supptext.Size = new System.Drawing.Size(145, 23);
-            this.Supptext.TabIndex = 216;
-            this.Supptext.TextBox1Binding = "";
+            this.txtsupplierSupp.DisplayBox1Binding = "";
+            this.txtsupplierSupp.Location = new System.Drawing.Point(276, 38);
+            this.txtsupplierSupp.Name = "txtsupplierSupp";
+            this.txtsupplierSupp.Size = new System.Drawing.Size(145, 23);
+            this.txtsupplierSupp.TabIndex = 216;
+            this.txtsupplierSupp.TextBox1Binding = "";
             // 
-            // LIDate
+            // dateLastInspectionDate
             // 
-            this.LIDate.IsSupportEditMode = false;
-            this.LIDate.Location = new System.Drawing.Point(825, 38);
-            this.LIDate.Name = "LIDate";
-            this.LIDate.ReadOnly = true;
-            this.LIDate.Size = new System.Drawing.Size(130, 23);
-            this.LIDate.TabIndex = 215;
+            this.dateLastInspectionDate.IsSupportEditMode = false;
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(825, 38);
+            this.dateLastInspectionDate.Name = "dateLastInspectionDate";
+            this.dateLastInspectionDate.ReadOnly = true;
+            this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
+            this.dateLastInspectionDate.TabIndex = 215;
             // 
-            // Arrdate
+            // dateArriveWHDate
             // 
-            this.Arrdate.IsSupportEditMode = false;
-            this.Arrdate.Location = new System.Drawing.Point(825, 9);
-            this.Arrdate.Name = "Arrdate";
-            this.Arrdate.ReadOnly = true;
-            this.Arrdate.Size = new System.Drawing.Size(130, 23);
-            this.Arrdate.TabIndex = 214;
+            this.dateArriveWHDate.IsSupportEditMode = false;
+            this.dateArriveWHDate.Location = new System.Drawing.Point(825, 9);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.ReadOnly = true;
+            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.TabIndex = 214;
             // 
-            // checkBox1
+            // checkNA
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(916, 67);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(50, 21);
-            this.checkBox1.TabIndex = 213;
-            this.checkBox1.Text = "N/A";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkNA.AutoSize = true;
+            this.checkNA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkNA.IsSupportEditMode = false;
+            this.checkNA.Location = new System.Drawing.Point(916, 67);
+            this.checkNA.Name = "checkNA";
+            this.checkNA.ReadOnly = true;
+            this.checkNA.Size = new System.Drawing.Size(50, 21);
+            this.checkNA.TabIndex = 213;
+            this.checkNA.Text = "N/A";
+            this.checkNA.UseVisualStyleBackColor = true;
             // 
-            // encode_button
+            // btnEncode
             // 
-            this.encode_button.Location = new System.Drawing.Point(886, 89);
-            this.encode_button.Name = "encode_button";
-            this.encode_button.Size = new System.Drawing.Size(80, 30);
-            this.encode_button.TabIndex = 212;
-            this.encode_button.Text = "Encode";
-            this.encode_button.UseVisualStyleBackColor = true;
-            this.encode_button.Click += new System.EventHandler(this.encode_button_Click);
+            this.btnEncode.Location = new System.Drawing.Point(886, 89);
+            this.btnEncode.Name = "btnEncode";
+            this.btnEncode.Size = new System.Drawing.Size(80, 30);
+            this.btnEncode.TabIndex = 212;
+            this.btnEncode.Text = "Encode";
+            this.btnEncode.UseVisualStyleBackColor = true;
+            this.btnEncode.Click += new System.EventHandler(this.encode_button_Click);
             // 
-            // ResultText
+            // txtResult
             // 
-            this.ResultText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.ResultText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ResultText.IsSupportEditMode = false;
-            this.ResultText.Location = new System.Drawing.Point(553, 38);
-            this.ResultText.Name = "ResultText";
-            this.ResultText.ReadOnly = true;
-            this.ResultText.Size = new System.Drawing.Size(110, 23);
-            this.ResultText.TabIndex = 211;
+            this.txtResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtResult.IsSupportEditMode = false;
+            this.txtResult.Location = new System.Drawing.Point(553, 38);
+            this.txtResult.Name = "txtResult";
+            this.txtResult.ReadOnly = true;
+            this.txtResult.Size = new System.Drawing.Size(110, 23);
+            this.txtResult.TabIndex = 211;
             // 
-            // AQtytext
+            // txtArriveQty
             // 
-            this.AQtytext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.AQtytext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.AQtytext.IsSupportEditMode = false;
-            this.AQtytext.Location = new System.Drawing.Point(552, 9);
-            this.AQtytext.Name = "AQtytext";
-            this.AQtytext.ReadOnly = true;
-            this.AQtytext.Size = new System.Drawing.Size(111, 23);
-            this.AQtytext.TabIndex = 210;
+            this.txtArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtArriveQty.IsSupportEditMode = false;
+            this.txtArriveQty.Location = new System.Drawing.Point(552, 9);
+            this.txtArriveQty.Name = "txtArriveQty";
+            this.txtArriveQty.ReadOnly = true;
+            this.txtArriveQty.Size = new System.Drawing.Size(111, 23);
+            this.txtArriveQty.TabIndex = 210;
             // 
-            // Colortext
+            // txtColor
             // 
-            this.Colortext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Colortext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Colortext.IsSupportEditMode = false;
-            this.Colortext.Location = new System.Drawing.Point(362, 9);
-            this.Colortext.Name = "Colortext";
-            this.Colortext.ReadOnly = true;
-            this.Colortext.Size = new System.Drawing.Size(102, 23);
-            this.Colortext.TabIndex = 209;
+            this.txtColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtColor.IsSupportEditMode = false;
+            this.txtColor.Location = new System.Drawing.Point(362, 9);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.ReadOnly = true;
+            this.txtColor.Size = new System.Drawing.Size(102, 23);
+            this.txtColor.TabIndex = 209;
             // 
-            // BRnotext
+            // txtBrandRefno
             // 
-            this.BRnotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.BRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.BRnotext.IsSupportEditMode = false;
-            this.BRnotext.Location = new System.Drawing.Point(277, 96);
-            this.BRnotext.Name = "BRnotext";
-            this.BRnotext.ReadOnly = true;
-            this.BRnotext.Size = new System.Drawing.Size(187, 23);
-            this.BRnotext.TabIndex = 208;
+            this.txtBrandRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBrandRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBrandRefno.IsSupportEditMode = false;
+            this.txtBrandRefno.Location = new System.Drawing.Point(277, 96);
+            this.txtBrandRefno.Name = "txtBrandRefno";
+            this.txtBrandRefno.ReadOnly = true;
+            this.txtBrandRefno.Size = new System.Drawing.Size(187, 23);
+            this.txtBrandRefno.TabIndex = 208;
             // 
-            // SRnotext
+            // txtSCIRefno
             // 
-            this.SRnotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.SRnotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.SRnotext.IsSupportEditMode = false;
-            this.SRnotext.Location = new System.Drawing.Point(276, 67);
-            this.SRnotext.Name = "SRnotext";
-            this.SRnotext.ReadOnly = true;
-            this.SRnotext.Size = new System.Drawing.Size(188, 23);
-            this.SRnotext.TabIndex = 207;
+            this.txtSCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSCIRefno.IsSupportEditMode = false;
+            this.txtSCIRefno.Location = new System.Drawing.Point(276, 67);
+            this.txtSCIRefno.Name = "txtSCIRefno";
+            this.txtSCIRefno.ReadOnly = true;
+            this.txtSCIRefno.Size = new System.Drawing.Size(188, 23);
+            this.txtSCIRefno.TabIndex = 207;
             // 
-            // SEQtext
+            // txtSEQ
             // 
-            this.SEQtext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.SEQtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.SEQtext.IsSupportEditMode = false;
-            this.SEQtext.Location = new System.Drawing.Point(241, 9);
-            this.SEQtext.Name = "SEQtext";
-            this.SEQtext.ReadOnly = true;
-            this.SEQtext.Size = new System.Drawing.Size(60, 23);
-            this.SEQtext.TabIndex = 206;
+            this.txtSEQ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSEQ.IsSupportEditMode = false;
+            this.txtSEQ.Location = new System.Drawing.Point(241, 9);
+            this.txtSEQ.Name = "txtSEQ";
+            this.txtSEQ.ReadOnly = true;
+            this.txtSEQ.Size = new System.Drawing.Size(60, 23);
+            this.txtSEQ.TabIndex = 206;
             // 
-            // Brandtext
+            // txtBrand
             // 
-            this.Brandtext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Brandtext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Brandtext.IsSupportEditMode = false;
-            this.Brandtext.Location = new System.Drawing.Point(61, 96);
-            this.Brandtext.Name = "Brandtext";
-            this.Brandtext.ReadOnly = true;
-            this.Brandtext.Size = new System.Drawing.Size(115, 23);
-            this.Brandtext.TabIndex = 205;
+            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBrand.IsSupportEditMode = false;
+            this.txtBrand.Location = new System.Drawing.Point(61, 96);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.ReadOnly = true;
+            this.txtBrand.Size = new System.Drawing.Size(115, 23);
+            this.txtBrand.TabIndex = 205;
             // 
-            // Styletext
+            // txtStyle
             // 
-            this.Styletext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Styletext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Styletext.IsSupportEditMode = false;
-            this.Styletext.Location = new System.Drawing.Point(61, 67);
-            this.Styletext.Name = "Styletext";
-            this.Styletext.ReadOnly = true;
-            this.Styletext.Size = new System.Drawing.Size(115, 23);
-            this.Styletext.TabIndex = 204;
+            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyle.IsSupportEditMode = false;
+            this.txtStyle.Location = new System.Drawing.Point(61, 67);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.ReadOnly = true;
+            this.txtStyle.Size = new System.Drawing.Size(115, 23);
+            this.txtStyle.TabIndex = 204;
             // 
-            // Wknotext
+            // txtWkno
             // 
-            this.Wknotext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Wknotext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Wknotext.IsSupportEditMode = false;
-            this.Wknotext.Location = new System.Drawing.Point(61, 38);
-            this.Wknotext.Name = "Wknotext";
-            this.Wknotext.ReadOnly = true;
-            this.Wknotext.Size = new System.Drawing.Size(115, 23);
-            this.Wknotext.TabIndex = 203;
+            this.txtWkno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWkno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtWkno.IsSupportEditMode = false;
+            this.txtWkno.Location = new System.Drawing.Point(61, 38);
+            this.txtWkno.Name = "txtWkno";
+            this.txtWkno.ReadOnly = true;
+            this.txtWkno.Size = new System.Drawing.Size(115, 23);
+            this.txtWkno.TabIndex = 203;
             // 
-            // sptext
+            // txtSP
             // 
-            this.sptext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.sptext.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sptext.IsSupportEditMode = false;
-            this.sptext.Location = new System.Drawing.Point(61, 9);
-            this.sptext.Name = "sptext";
-            this.sptext.ReadOnly = true;
-            this.sptext.Size = new System.Drawing.Size(115, 23);
-            this.sptext.TabIndex = 202;
+            this.txtSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSP.IsSupportEditMode = false;
+            this.txtSP.Location = new System.Drawing.Point(61, 9);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.ReadOnly = true;
+            this.txtSP.Size = new System.Drawing.Size(115, 23);
+            this.txtSP.TabIndex = 202;
             // 
-            // label13
+            // labelResult
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(475, 38);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 23);
-            this.label13.TabIndex = 201;
-            this.label13.Text = "Result";
+            this.labelResult.Lines = 0;
+            this.labelResult.Location = new System.Drawing.Point(475, 38);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(75, 23);
+            this.labelResult.TabIndex = 201;
+            this.labelResult.Text = "Result";
             // 
-            // label12
+            // labelLastInspectionDate
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(678, 38);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(144, 23);
-            this.label12.TabIndex = 200;
-            this.label12.Text = "Last Inspection Date ";
+            this.labelLastInspectionDate.Lines = 0;
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(678, 38);
+            this.labelLastInspectionDate.Name = "labelLastInspectionDate";
+            this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
+            this.labelLastInspectionDate.TabIndex = 200;
+            this.labelLastInspectionDate.Text = "Last Inspection Date ";
             // 
-            // label11
+            // labelArriveWHDate
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(678, 9);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(144, 23);
-            this.label11.TabIndex = 199;
-            this.label11.Text = "Arrive W/H Date";
+            this.labelArriveWHDate.Lines = 0;
+            this.labelArriveWHDate.Location = new System.Drawing.Point(678, 9);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
+            this.labelArriveWHDate.TabIndex = 199;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
-            // label10
+            // labelArriveQty
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(475, 9);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
-            this.label10.TabIndex = 198;
-            this.label10.Text = "Arrive Qty";
+            this.labelArriveQty.Lines = 0;
+            this.labelArriveQty.Location = new System.Drawing.Point(475, 9);
+            this.labelArriveQty.Name = "labelArriveQty";
+            this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
+            this.labelArriveQty.TabIndex = 198;
+            this.labelArriveQty.Text = "Arrive Qty";
             // 
-            // label9
+            // labelColor
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(312, 9);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(47, 23);
-            this.label9.TabIndex = 197;
-            this.label9.Text = "Color";
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(312, 9);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(47, 23);
+            this.labelColor.TabIndex = 197;
+            this.labelColor.Text = "Color";
             // 
-            // label8
+            // labelBrandRefno
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(187, 96);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(86, 25);
-            this.label8.TabIndex = 196;
-            this.label8.Text = "Brand Refno";
+            this.labelBrandRefno.Lines = 0;
+            this.labelBrandRefno.Location = new System.Drawing.Point(187, 96);
+            this.labelBrandRefno.Name = "labelBrandRefno";
+            this.labelBrandRefno.Size = new System.Drawing.Size(86, 25);
+            this.labelBrandRefno.TabIndex = 196;
+            this.labelBrandRefno.Text = "Brand Refno";
             // 
-            // label7
+            // labelSCIRefno
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(187, 67);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 23);
-            this.label7.TabIndex = 195;
-            this.label7.Text = "SCI Refno";
+            this.labelSCIRefno.Lines = 0;
+            this.labelSCIRefno.Location = new System.Drawing.Point(187, 67);
+            this.labelSCIRefno.Name = "labelSCIRefno";
+            this.labelSCIRefno.Size = new System.Drawing.Size(86, 23);
+            this.labelSCIRefno.TabIndex = 195;
+            this.labelSCIRefno.Text = "SCI Refno";
             // 
-            // label6
+            // labelSupp
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(187, 38);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 23);
-            this.label6.TabIndex = 194;
-            this.label6.Text = "Supp";
+            this.labelSupp.Lines = 0;
+            this.labelSupp.Location = new System.Drawing.Point(187, 38);
+            this.labelSupp.Name = "labelSupp";
+            this.labelSupp.Size = new System.Drawing.Size(86, 23);
+            this.labelSupp.TabIndex = 194;
+            this.labelSupp.Text = "Supp";
             // 
-            // label5
+            // labelSEQ
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(187, 9);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(51, 23);
-            this.label5.TabIndex = 193;
-            this.label5.Text = "SEQ#";
+            this.labelSEQ.Lines = 0;
+            this.labelSEQ.Location = new System.Drawing.Point(187, 9);
+            this.labelSEQ.Name = "labelSEQ";
+            this.labelSEQ.Size = new System.Drawing.Size(51, 23);
+            this.labelSEQ.TabIndex = 193;
+            this.labelSEQ.Text = "SEQ#";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(12, 96);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(46, 23);
-            this.label4.TabIndex = 192;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(12, 96);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(46, 23);
+            this.labelBrand.TabIndex = 192;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelStyle
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(12, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(46, 23);
-            this.label3.TabIndex = 191;
-            this.label3.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(12, 68);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(46, 23);
+            this.labelStyle.TabIndex = 191;
+            this.labelStyle.Text = "Style#";
             // 
-            // label2
+            // labelWkno
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(12, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(46, 23);
-            this.label2.TabIndex = 190;
-            this.label2.Text = "Wkno";
+            this.labelWkno.Lines = 0;
+            this.labelWkno.Location = new System.Drawing.Point(12, 38);
+            this.labelWkno.Name = "labelWkno";
+            this.labelWkno.Size = new System.Drawing.Size(46, 23);
+            this.labelWkno.TabIndex = 190;
+            this.labelWkno.Text = "Wkno";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 23);
-            this.label1.TabIndex = 189;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(12, 9);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(46, 23);
+            this.labelSP.TabIndex = 189;
+            this.labelSP.Text = "SP#";
             // 
             // P03_Wash
             // 
             this.ClientSize = new System.Drawing.Size(974, 585);
-            this.Controls.Add(this.Description_box);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.Supptext);
-            this.Controls.Add(this.LIDate);
-            this.Controls.Add(this.Arrdate);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.encode_button);
-            this.Controls.Add(this.ResultText);
-            this.Controls.Add(this.AQtytext);
-            this.Controls.Add(this.Colortext);
-            this.Controls.Add(this.BRnotext);
-            this.Controls.Add(this.SRnotext);
-            this.Controls.Add(this.SEQtext);
-            this.Controls.Add(this.Brandtext);
-            this.Controls.Add(this.Styletext);
-            this.Controls.Add(this.Wknotext);
-            this.Controls.Add(this.sptext);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.editDescription);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.txtsupplierSupp);
+            this.Controls.Add(this.dateLastInspectionDate);
+            this.Controls.Add(this.dateArriveWHDate);
+            this.Controls.Add(this.checkNA);
+            this.Controls.Add(this.btnEncode);
+            this.Controls.Add(this.txtResult);
+            this.Controls.Add(this.txtArriveQty);
+            this.Controls.Add(this.txtColor);
+            this.Controls.Add(this.txtBrandRefno);
+            this.Controls.Add(this.txtSCIRefno);
+            this.Controls.Add(this.txtSEQ);
+            this.Controls.Add(this.txtBrand);
+            this.Controls.Add(this.txtStyle);
+            this.Controls.Add(this.txtWkno);
+            this.Controls.Add(this.txtSP);
+            this.Controls.Add(this.labelResult);
+            this.Controls.Add(this.labelLastInspectionDate);
+            this.Controls.Add(this.labelArriveWHDate);
+            this.Controls.Add(this.labelArriveQty);
+            this.Controls.Add(this.labelColor);
+            this.Controls.Add(this.labelBrandRefno);
+            this.Controls.Add(this.labelSCIRefno);
+            this.Controls.Add(this.labelSupp);
+            this.Controls.Add(this.labelSEQ);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelStyle);
+            this.Controls.Add(this.labelWkno);
+            this.Controls.Add(this.labelSP);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P03_Wash";
@@ -438,36 +438,36 @@
             this.WorkAlias = "FIR_Laboratory_Wash";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.label13, 0);
-            this.Controls.SetChildIndex(this.sptext, 0);
-            this.Controls.SetChildIndex(this.Wknotext, 0);
-            this.Controls.SetChildIndex(this.Styletext, 0);
-            this.Controls.SetChildIndex(this.Brandtext, 0);
-            this.Controls.SetChildIndex(this.SEQtext, 0);
-            this.Controls.SetChildIndex(this.SRnotext, 0);
-            this.Controls.SetChildIndex(this.BRnotext, 0);
-            this.Controls.SetChildIndex(this.Colortext, 0);
-            this.Controls.SetChildIndex(this.AQtytext, 0);
-            this.Controls.SetChildIndex(this.ResultText, 0);
-            this.Controls.SetChildIndex(this.encode_button, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.Arrdate, 0);
-            this.Controls.SetChildIndex(this.LIDate, 0);
-            this.Controls.SetChildIndex(this.Supptext, 0);
-            this.Controls.SetChildIndex(this.label14, 0);
-            this.Controls.SetChildIndex(this.Description_box, 0);
+            this.Controls.SetChildIndex(this.labelSP, 0);
+            this.Controls.SetChildIndex(this.labelWkno, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelSEQ, 0);
+            this.Controls.SetChildIndex(this.labelSupp, 0);
+            this.Controls.SetChildIndex(this.labelSCIRefno, 0);
+            this.Controls.SetChildIndex(this.labelBrandRefno, 0);
+            this.Controls.SetChildIndex(this.labelColor, 0);
+            this.Controls.SetChildIndex(this.labelArriveQty, 0);
+            this.Controls.SetChildIndex(this.labelArriveWHDate, 0);
+            this.Controls.SetChildIndex(this.labelLastInspectionDate, 0);
+            this.Controls.SetChildIndex(this.labelResult, 0);
+            this.Controls.SetChildIndex(this.txtSP, 0);
+            this.Controls.SetChildIndex(this.txtWkno, 0);
+            this.Controls.SetChildIndex(this.txtStyle, 0);
+            this.Controls.SetChildIndex(this.txtBrand, 0);
+            this.Controls.SetChildIndex(this.txtSEQ, 0);
+            this.Controls.SetChildIndex(this.txtSCIRefno, 0);
+            this.Controls.SetChildIndex(this.txtBrandRefno, 0);
+            this.Controls.SetChildIndex(this.txtColor, 0);
+            this.Controls.SetChildIndex(this.txtArriveQty, 0);
+            this.Controls.SetChildIndex(this.txtResult, 0);
+            this.Controls.SetChildIndex(this.btnEncode, 0);
+            this.Controls.SetChildIndex(this.checkNA, 0);
+            this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
+            this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
+            this.Controls.SetChildIndex(this.txtsupplierSupp, 0);
+            this.Controls.SetChildIndex(this.labelDescription, 0);
+            this.Controls.SetChildIndex(this.editDescription, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -478,37 +478,37 @@
 
         #endregion
 
-        private Win.UI.Button ToExcel;
-        private Win.UI.EditBox Description_box;
-        private Win.UI.Label label14;
-        private Class.txtsupplier Supptext;
-        private Win.UI.DateBox LIDate;
-        private Win.UI.DateBox Arrdate;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button encode_button;
-        private Win.UI.TextBox ResultText;
-        private Win.UI.TextBox AQtytext;
-        private Win.UI.TextBox Colortext;
-        private Win.UI.TextBox BRnotext;
-        private Win.UI.TextBox SRnotext;
-        private Win.UI.TextBox SEQtext;
-        private Win.UI.TextBox Brandtext;
-        private Win.UI.TextBox Styletext;
-        private Win.UI.TextBox Wknotext;
-        private Win.UI.TextBox sptext;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.EditBox editDescription;
+        private Win.UI.Label labelDescription;
+        private Class.txtsupplier txtsupplierSupp;
+        private Win.UI.DateBox dateLastInspectionDate;
+        private Win.UI.DateBox dateArriveWHDate;
+        private Win.UI.CheckBox checkNA;
+        private Win.UI.Button btnEncode;
+        private Win.UI.TextBox txtResult;
+        private Win.UI.TextBox txtArriveQty;
+        private Win.UI.TextBox txtColor;
+        private Win.UI.TextBox txtBrandRefno;
+        private Win.UI.TextBox txtSCIRefno;
+        private Win.UI.TextBox txtSEQ;
+        private Win.UI.TextBox txtBrand;
+        private Win.UI.TextBox txtStyle;
+        private Win.UI.TextBox txtWkno;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelResult;
+        private Win.UI.Label labelLastInspectionDate;
+        private Win.UI.Label labelArriveWHDate;
+        private Win.UI.Label labelArriveQty;
+        private Win.UI.Label labelColor;
+        private Win.UI.Label labelBrandRefno;
+        private Win.UI.Label labelSCIRefno;
+        private Win.UI.Label labelSupp;
+        private Win.UI.Label labelSEQ;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelWkno;
+        private Win.UI.Label labelSP;
 
     }
 }

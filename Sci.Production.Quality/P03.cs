@@ -53,41 +53,41 @@ namespace Sci.Production.Quality
              {
                  if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value)
                  {
-                     scidelivery_box.Text = "";
+                     dateEarliestSCIDel.Text = "";
                  }
                  else
                  {
-                     scidelivery_box.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                     dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
                  }
              }
              else
              {
-                 scidelivery_box.Text = "";
+                 dateEarliestSCIDel.Text = "";
              }
              //找出Cutinline and MinSciDelivery 比較早的日期
              DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
              if (targT != null)
              {
-                 leadtime_box.Text = ((DateTime)targT).ToShortDateString();
+                 dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
              }
              else
              {
-                 leadtime_box.Text = "";
+                 dateTargetLeadTime.Text = "";
              }
-             style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
-             season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
-             brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+             displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+             displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+             displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
              if (MyUtility.Check.Empty(queryDr))
              {
-                 estcutdate_box.Value = null;
+                 dateEarliestEstCutDate.Value = null;
              }
              else
              {
-                 if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-                 else estcutdate_box.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);                     
+                 if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
+                 else dateEarliestEstCutDate.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);                     
              }
 
-             mtl_box.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
+             displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
              decimal detailRowCount = DetailDatas.Count;
              string inspnum = "0";
              DataTable detailTb = (DataTable)detailgridbs.DataSource;
@@ -104,7 +104,7 @@ namespace Sci.Production.Quality
                      }
                  }
              }
-             insp_box.Text = inspnum;
+             displayofInspection.Text = inspnum;
 
              DateTime completedate;
              if (inspnum == "100")
@@ -123,15 +123,15 @@ where POID='{0}'
                  DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
                  if (MyUtility.Check.Empty(dtMaxDate.Rows[0]["MaxDate"]))
                  {
-                     Complete_box.Text = "";              
+                     dateCompletionDate.Text = "";              
                  }
                  else
                  {
                      completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
-                     Complete_box.Text = completedate.ToString("yyyy/MM/dd");
+                     dateCompletionDate.Text = completedate.ToString("yyyy/MM/dd");
                  }
              }
-             else this.Complete_box.Text = "";
+             else this.dateCompletionDate.Text = "";
          }
        
         //表身額外的資料來源
@@ -393,9 +393,9 @@ order by a.seq1,a.seq2,a.Refno "
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆
-            string wk = wk_box.Text;
-            string seq1 = seq1_box.Text;
-            string seq2 = seq2_box.Text;
+            string wk = txtLocateforWK.Text;
+            string seq1 = txtSEQ1.Text;
+            string seq2 = txtSEQ2.Text;
             string find = "";
             string find_new = "";
 

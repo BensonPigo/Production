@@ -65,28 +65,28 @@ namespace Sci.Production.Quality
         }
         protected override bool ValidateInput()
         {
-            bool date_Arrive_Empty = !this.dateArrive.HasValue, date_SCI_Empty = !this.dateDelivery.HasValue, date_Sewing_Empty = !this.dateSewing.HasValue, date_Est_Empty = !this.dateCutting.HasValue,
-               textBox_SP_Empty = this.txtSPnoStart.Text.Empty(), textBox_SP2_Empty = this.txtSPnoEnd.Text.Empty(), txtSEA_Empty = this.txtseason.Text.Empty()
+            bool date_Arrive_Empty = !this.dateArriveWHDate.HasValue, date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
+               textBox_SP_Empty = this.txtSPStart.Text.Empty(), textBox_SP2_Empty = this.txtSPEnd.Text.Empty(), txtSEA_Empty = this.txtseason.Text.Empty()
           , txtBrand_Empty = this.txtbrand.Text.Empty(), txtRef_Empty = this.txtRefno.Text.Empty(), Cate_comboBox_Empty = this.comboCategory.Text.Empty(), Supp_Empty = !this.txtsupplier.Text.Empty()
           , MaterialType_Empty = !this.comboMaterialType.Text.Empty(), Factory_Empty = !this.comboFactory.Text.Empty();
             if (date_Arrive_Empty && date_SCI_Empty && date_Sewing_Empty && date_Est_Empty && textBox_SP_Empty && textBox_SP2_Empty)
             {
                 MyUtility.Msg.ErrorBox("Please select 'Arrive W/H Date' or 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'SP#'  at least one field entry");
 
-                dateArrive.Focus();
+                dateArriveWHDate.Focus();
 
                 return false;
             }
-            DateArrStart = dateArrive.Value1;
-            DateArrEnd = dateArrive.Value2;
-            DateSCIStart = dateDelivery.Value1;
-            DateSCIEnd = dateDelivery.Value2;
-            DateSewStart = dateSewing.Value1;
-            DateSewEnd = dateSewing.Value2;
-            DateEstStart = dateCutting.Value1;
-            DateEstEnd = dateCutting.Value2;
-            spStrat = txtSPnoStart.Text.ToString();
-            spEnd = txtSPnoStart.Text.ToString();
+            DateArrStart = dateArriveWHDate.Value1;
+            DateArrEnd = dateArriveWHDate.Value2;
+            DateSCIStart = dateSCIDelivery.Value1;
+            DateSCIEnd = dateSCIDelivery.Value2;
+            DateSewStart = dateSewingInLineDate.Value1;
+            DateSewEnd = dateSewingInLineDate.Value2;
+            DateEstStart = dateEstCuttingDate.Value1;
+            DateEstEnd = dateEstCuttingDate.Value2;
+            spStrat = txtSPStart.Text.ToString();
+            spEnd = txtSPStart.Text.ToString();
             Season = txtseason.Text;
             Brand = txtbrand.Text;
             RefNo = txtRefno.Text.ToString();
@@ -100,47 +100,47 @@ namespace Sci.Production.Quality
             List<string> RWheres = new List<string>();
             List<string> OWheres = new List<string>();
             #region --組WHERE--
-            if (!this.dateArrive.Value1.Empty())
+            if (!this.dateArriveWHDate.Value1.Empty())
             {
                 RWheres.Add("R.WhseArrival >= @ArrDate1");
                 lis.Add(new SqlParameter("@ArrDate1", DateArrStart));
             }
-            if (!this.dateArrive.Value2.Empty())
+            if (!this.dateArriveWHDate.Value2.Empty())
             {
                 RWheres.Add("R.WhseArrival <= @ArrDate2");
                 lis.Add(new SqlParameter("@ArrDate2", DateArrEnd));
             }
-            if (!this.dateDelivery.Value1.Empty())
+            if (!this.dateSCIDelivery.Value1.Empty())
             {
                 OWheres.Add("O.SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
             }
-            if (!this.dateDelivery.Value2.Empty())
+            if (!this.dateSCIDelivery.Value2.Empty())
             {
                 OWheres.Add("O.SciDelivery <= @SCIDate2");
                 lis.Add(new SqlParameter("@SCIDate2", DateSCIEnd));
             }
-            if (!this.dateSewing.Value1.Empty())
+            if (!this.dateSewingInLineDate.Value1.Empty())
             {
                 OWheres.Add("O.SewInLine >= @SewDate1");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
             }
-            if (!this.dateSewing.Value2.Empty())
+            if (!this.dateSewingInLineDate.Value2.Empty())
             {
                 OWheres.Add("O.SewInLine <= @SewDate2");
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
             }
-            if (!this.dateCutting.Value1.Empty())
+            if (!this.dateEstCuttingDate.Value1.Empty())
             {
                 OWheres.Add("O.CutInLine >= @Est1");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
             }
-            if (!this.dateCutting.Value2.Empty())
+            if (!this.dateEstCuttingDate.Value2.Empty())
             {
                 OWheres.Add("O.CutInLine <= @Est2");
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
             }
-            if (!this.txtSPnoStart.Text.Empty())
+            if (!this.txtSPStart.Text.Empty())
             {
                 OWheres.Add("O.Id between @sp1 and @sp2");
                 lis.Add(new SqlParameter("@sp1", spStrat));

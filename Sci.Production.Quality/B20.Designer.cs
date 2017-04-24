@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.labelDefectType = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtDefectType = new Sci.Win.UI.TextBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +47,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.editDescription);
+            this.detailcont.Controls.Add(this.txtDefectType);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.labelDefectType);
+            this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Size = new System.Drawing.Size(826, 357);
             // 
             // detailbtm
@@ -60,7 +60,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(683, 395);
+            this.browse.Size = new System.Drawing.Size(826, 395);
             // 
             // tabs
             // 
@@ -79,56 +79,56 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelDefectType
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(70, 51);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Defect Type";
+            this.labelDefectType.Lines = 0;
+            this.labelDefectType.Location = new System.Drawing.Point(70, 51);
+            this.labelDefectType.Name = "labelDefectType";
+            this.labelDefectType.Size = new System.Drawing.Size(85, 23);
+            this.labelDefectType.TabIndex = 4;
+            this.labelDefectType.Text = "Defect Type";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(70, 86);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(70, 86);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(85, 23);
+            this.labelDescription.TabIndex = 5;
+            this.labelDescription.Text = "Description";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(351, 53);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(351, 53);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 2;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtDefectType
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(158, 51);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(132, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtDefectType.BackColor = System.Drawing.Color.White;
+            this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectType.Location = new System.Drawing.Point(158, 51);
+            this.txtDefectType.Name = "txtDefectType";
+            this.txtDefectType.Size = new System.Drawing.Size(132, 23);
+            this.txtDefectType.TabIndex = 0;
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(158, 86);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(250, 64);
-            this.editBox1.TabIndex = 1;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(158, 86);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(250, 64);
+            this.editDescription.TabIndex = 1;
             // 
             // B20
             // 
@@ -158,11 +158,11 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.TextBox txtDefectType;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.Label labelDefectType;
+        private Win.UI.Label labelDescription;
+        private Win.UI.EditBox editDescription;
 
     }
 }

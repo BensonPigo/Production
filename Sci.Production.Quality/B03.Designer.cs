@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtScaleCode = new Sci.Win.UI.TextBox();
+            this.labelScaleCode = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,9 +45,9 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.txtScaleCode);
+            this.detailcont.Controls.Add(this.labelScaleCode);
             this.detailcont.Size = new System.Drawing.Size(833, 357);
             // 
             // detailbtm
@@ -56,7 +56,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(833, 395);
             // 
             // tabs
             // 
@@ -75,36 +75,36 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(308, 54);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 20;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(308, 54);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 20;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtScaleCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(156, 54);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(132, 23);
-            this.textBox1.TabIndex = 19;
+            this.txtScaleCode.BackColor = System.Drawing.Color.White;
+            this.txtScaleCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtScaleCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtScaleCode.Location = new System.Drawing.Point(156, 54);
+            this.txtScaleCode.Name = "txtScaleCode";
+            this.txtScaleCode.Size = new System.Drawing.Size(132, 23);
+            this.txtScaleCode.TabIndex = 19;
             // 
-            // label1
+            // labelScaleCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(70, 54);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 23);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Scale Code";
+            this.labelScaleCode.Lines = 0;
+            this.labelScaleCode.Location = new System.Drawing.Point(70, 54);
+            this.labelScaleCode.Name = "labelScaleCode";
+            this.labelScaleCode.Size = new System.Drawing.Size(83, 23);
+            this.labelScaleCode.TabIndex = 18;
+            this.labelScaleCode.Text = "Scale Code";
             // 
             // B03
             // 
@@ -134,8 +134,8 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.TextBox txtScaleCode;
+        private Win.UI.Label labelScaleCode;
     }
 }

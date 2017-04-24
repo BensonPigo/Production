@@ -32,15 +32,15 @@ namespace Sci.Production.Quality
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            sp1 = textSP1.Text;
-            sp2 = textSP2.Text;
+            sp1 = txtSPStart.Text;
+            sp2 = txtSPEnd.Text;
             Buyerdelivery1 = dateBuyerdelivery.Value1;
             Buyerdelivery2 = dateBuyerdelivery.Value2;
             InspectionDate1 = dateInspectionDate.Value1;
             InspectionDate2 = dateInspectionDate.Value2;
-            Style = textStyle.Text;
-            Season = textSeason.Text;
-            Brand = textBrand.Text;
+            Style = txtStyle.Text;
+            Season = txtSeason.Text;
+            Brand = txtBrand.Text;
             Factory = comboFactory.Text;
             Inspected = comboInspected.Text;
 

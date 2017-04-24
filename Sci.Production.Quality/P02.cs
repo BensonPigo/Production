@@ -180,41 +180,41 @@ namespace Sci.Production.Quality
             {
                 if (sciTb.Rows[0]["MinSciDelivery"]==DBNull.Value)
                 {
-                    scidelivery_box.Text = "";
+                    dateEarliestSCIDel.Text = "";
                 }
                 else
                 {
-                    scidelivery_box.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                    dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
                 }
             }
             else
             {
-                scidelivery_box.Text = "";
+                dateEarliestSCIDel.Text = "";
             }
             //找出Cutinline and MinSciDelivery 比較早的日期
             DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
             if (targT!=null)
             {
-                leadtime_box.Text = ((DateTime)targT).ToShortDateString();
+                dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
             }
             else
             {
-                leadtime_box.Text = "";
+                dateTargetLeadTime.Text = "";
             }
-            style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
-            season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
-            brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+            displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+            displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+            displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
             if (MyUtility.Check.Empty(queryDr))
             {
-                estcutdate_box.Text = "";
+                dateEarliestEstCutDate.Text = "";
             }
             else
             {
-                if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-                else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+                if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
+                else dateEarliestEstCutDate.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
             }
            
-            mtl_box.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
+            displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable detailTb = (DataTable)detailgridbs.DataSource;
@@ -240,16 +240,16 @@ namespace Sci.Production.Quality
                 }
             }
 
-            insp_box.Text = inspnum;
+            displayofInspection.Text = inspnum;
             DateTime completedate;
             if (inspnum == "100")
             {
                 completedate = ((DateTime)detailTb.Compute("Max(InspDate)", ""));
                
 
-                Complete_box.Text = completedate.ToShortDateString();
+                dateCompletionDate.Text = completedate.ToShortDateString();
             }
-            else Complete_box.Text = "";
+            else dateCompletionDate.Text = "";
             //this.grid.AutoResizeColumns();
 
         }
@@ -257,7 +257,7 @@ namespace Sci.Production.Quality
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
             //string save_po_cmd = string.Format("update po set AirRemark = '{0}' where id = '{1}';", CurrentMaintain["AiRemark"], CurrentMaintain["ID"]);
-            string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", remark_box.Text.ToString(), CurrentMaintain["ID"]);
+            string save_po_cmd = string.Format("update po set AIRRemark = '{0}' where id = '{1}';", editRemark.Text.ToString(), CurrentMaintain["ID"]);
 
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -296,9 +296,9 @@ namespace Sci.Production.Quality
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆
-            string wk = wk_box.Text;
-            string seq1 = seq1_box.Text;
-            string seq2 = seq2_box.Text;
+            string wk = txtLocateforWK.Text;
+            string seq1 = txtSEQ1.Text;
+            string seq2 = txtSEQ2.Text;
             string find = "";
             string find_new = "";
 
@@ -423,9 +423,9 @@ namespace Sci.Production.Quality
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆
-            string wk = wk_box.Text;
-            string seq1 = seq1_box.Text;
-            string seq2 = seq2_box.Text;
+            string wk = txtLocateforWK.Text;
+            string seq1 = txtSEQ1.Text;
+            string seq2 = txtSEQ2.Text;
             string find_new = "";
 
             if (!MyUtility.Check.Empty(wk))

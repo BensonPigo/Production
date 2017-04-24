@@ -26,34 +26,34 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "FTYGroup";
-            MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
-            comboBox1.Text = Sci.Env.User.Factory;
-            this.S_radioButton.Checked = true;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            this.radioSummary.Checked = true;
 
         }
         // 驗證輸入條件 必須要有
         protected override bool ValidateInput()
         {
-            if (S_radioButton.Checked==false && d_radioButton.Checked==false)
+            if (radioSummary.Checked==false && radiobyDetail.Checked==false)
             {
                 MyUtility.Msg.InfoBox("<Format> you have to choice one!  ");
                 return false;
             }
-            id1 = textBox1.Text;
-            id2 = textBox2.Text;
-            cdate1 = dateBox1.Value;
-            cdate2 = dateBox2.Value;
-            bdate1 = dateBox3.Value;
-            bdate2 = dateBox4.Value;
-            factory = comboBox1.Text;
-            brand = textBox7.Text;
+            id1 = txtSPStart.Text;
+            id2 = txtSPEnd.Text;
+            cdate1 = dateAuditDateStart.Value;
+            cdate2 = dateAuditDateEnd.Value;
+            bdate1 = dateBuyerDeliveryStart.Value;
+            bdate2 = dateBuyerDeliveryEnd.Value;
+            factory = comboFactory.Text;
+            brand = txtBrand.Text;
             return base.ValidateInput();
         }
         // 非同步資料 必須要有
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd_Summary = new StringBuilder();
-            if (S_radioButton.Checked)
+            if (radioSummary.Checked)
             {
                 #region 組撈Summary Data SQL
                 sqlCmd_Summary.Append(
@@ -240,7 +240,7 @@ where a.Status = 'Confirmed'");
         protected override bool OnToExcel(Win.ReportDefinition report)
         {   
             this.ShowWaitMessage("Starting Excel");
-            if (S_radioButton.Checked)
+            if (radioSummary.Checked)
             {
                 // 顯示筆數於PrintForm上Count欄位
                 SetCount(SummaryData.Rows.Count);
@@ -261,7 +261,7 @@ where a.Status = 'Confirmed'");
                 if (excel != null) Marshal.FinalReleaseComObject(excel);
                 
             }
-            if (d_radioButton.Checked)
+            if (radiobyDetail.Checked)
             {
                 // 顯示筆數於PrintForm上Count欄位
                 SetCount(DetailData.Rows.Count);

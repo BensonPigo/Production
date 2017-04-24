@@ -283,34 +283,34 @@ namespace Sci.Production.Quality
             }
             if (sciTb.Rows.Count > 0)
             {
-                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) scidelivery_box.Text = "";
-                else scidelivery_box.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
+                else dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
             }
             else
             {
-                scidelivery_box.Text = "";
-                estcutdate_box.Text = "";
+                dateEarliestSCIDel.Text = "";
+                dateEarliestEstCutDate.Text = "";
             }
             DateTime? targT;
             if (MyUtility.Check.Empty(queryDr))
             {
                 targT = null;
-                estcutdate_box.Text = "";
+                dateEarliestEstCutDate.Text = "";
             }
             else
             {
                  targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
-                if (queryDr["cutinline"] == DBNull.Value) estcutdate_box.Text = "";
-                 else estcutdate_box.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
+                if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
+                 else dateEarliestEstCutDate.Text = Convert.ToDateTime(queryDr["cutinline"]).ToShortDateString();
             }
            
-            if (targT != null) leadtime_box.Text = ((DateTime)targT).ToShortDateString();
-            else leadtime_box.Text = "";
-            style_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
-            season_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
-            brand_box.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+            if (targT != null) dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
+            else dateTargetLeadTime.Text = "";
+            displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+            displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+            displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
                
-            mtl_box.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
+            displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "1" ? "Y" : "";
             decimal detailRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable detailTb = (DataTable)detailgridbs.DataSource;
@@ -326,7 +326,7 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            insp_box.Text = inspnum;
+            displayofInspection.Text = inspnum;
             DateTime? completedate ,Physicalcompletedate , Weightcompletedate , ShadeBondcompletedate , Continuitycompletedate ;
             if (inspnum == "100")
             {
@@ -341,16 +341,16 @@ namespace Sci.Production.Quality
                 if (MyUtility.Math.DateMinus(completedate, ShadeBondcompletedate).TotalSeconds < 0) completedate = ShadeBondcompletedate;
                 if (MyUtility.Math.DateMinus(completedate, Continuitycompletedate).TotalSeconds < 0) completedate = Continuitycompletedate;
                              
-                Complete_box.Text = completedate ==null ? "": ((DateTime)completedate).ToShortDateString(); ;
+                dateCompletionDate.Text = completedate ==null ? "": ((DateTime)completedate).ToShortDateString(); ;
             }
-            else Complete_box.Text = "";
+            else dateCompletionDate.Text = "";
 
             #region Box 顏色
-            ava_box.BackColor = Color.MistyRose;
-            ph_box.BackColor = Color.LemonChiffon;
-            we_box.BackColor = Color.LightCyan;
-            sh_box.BackColor = Color.LightGreen;
-            co_box.BackColor = Color.AntiqueWhite;
+            displayavailablemodified.BackColor = Color.MistyRose;
+            displayPhysicalInsp.BackColor = Color.LemonChiffon;
+            displayWeightTest.BackColor = Color.LightCyan;
+            displayShadeBond.BackColor = Color.LightGreen;
+            displayContinuity.BackColor = Color.AntiqueWhite;
             #endregion
             this.detailgrid.AutoResizeColumns();
         }
@@ -358,7 +358,7 @@ namespace Sci.Production.Quality
         protected override DualResult ClickSave()
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
-            string save_po_cmd = string.Format("update po set FIRRemark = '{0}' where id = '{1}';", remark_box.Text.ToString(), CurrentMaintain["ID"]);
+            string save_po_cmd = string.Format("update po set FIRRemark = '{0}' where id = '{1}';", editRemark.Text.ToString(), CurrentMaintain["ID"]);
             
             foreach (DataRow dr in DetailDatas)
             {
@@ -425,9 +425,9 @@ namespace Sci.Production.Quality
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆
-            string wk = wk_box.Text;
-            string seq1 = seq1_box.Text;
-            string seq2 = seq2_box.Text;
+            string wk = txtLocateforWK.Text;
+            string seq1 = txtSEQ1.Text;
+            string seq2 = txtSEQ2.Text;
             string find_new ="";
            
             if (!MyUtility.Check.Empty(wk) )

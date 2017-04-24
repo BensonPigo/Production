@@ -32,11 +32,11 @@ namespace Sci.Production.Quality
                             (y1,y2,y3)) as years");
             DBProxy.Current.Select("", cmd, out Year);
             Year.DefaultView.Sort = "M";
-            this.combo_Year.DataSource = Year;
-            this.combo_Year.ValueMember = "M";
-            this.combo_Year.DisplayMember = "M";
+            this.comboYear.DataSource = Year;
+            this.comboYear.ValueMember = "M";
+            this.comboYear.DisplayMember = "M";
 
-            this.combo_Brand.SelectedIndex = 0;
+            this.comboBrand.SelectedIndex = 0;
             print.Enabled = false;
         }
         string Brand;
@@ -74,8 +74,8 @@ namespace Sci.Production.Quality
 
         protected override bool ValidateInput()
         {
-            Brand = combo_Brand.Text.ToString();
-            Year = combo_Year.Text.ToString();
+            Brand = comboBrand.Text.ToString();
+            Year = comboYear.Text.ToString();
             return base.ValidateInput();
         }
 

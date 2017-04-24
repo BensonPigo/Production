@@ -93,7 +93,7 @@ namespace Sci.Production.Quality
             }
 
             #endregion
-            grid1.DataSource = gridTb;
+            gridFabricInspection.DataSource = gridTb;
 
         }
         protected override void OnFormLoaded()
@@ -112,7 +112,7 @@ namespace Sci.Production.Quality
             {
                 if (!this.EditMode) return;
                 
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds1"])) return;
                 var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"1");
                 frm.ShowDialog(this);
@@ -120,7 +120,7 @@ namespace Sci.Production.Quality
             DefectsCell2.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode) return;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds2"])) return;
                 var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"2");
                 frm.ShowDialog(this);
@@ -128,12 +128,12 @@ namespace Sci.Production.Quality
             DefectsCell3.CellMouseDoubleClick += (s, e) =>
             {
                 if (!this.EditMode) return;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridFabricInspection.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["yds3"])) return;
                 var frm = new Sci.Production.Quality.P01_PhysicalInspection_PointRecord(dr,"3");
                 frm.ShowDialog(this);
             };
-             Helper.Controls.Grid.Generator(grid1)
+             Helper.Controls.Grid.Generator(gridFabricInspection)
                  .Text("yds1", header: "Yds", width: Widths.AnsiChars(7),iseditingreadonly: true)
                  .Text("def1", header: "Defects", width: Widths.AnsiChars(15), settings: DefectsCell1)
                  .Text("yds2", header: "Yds", width: Widths.AnsiChars(8),iseditingreadonly: true)

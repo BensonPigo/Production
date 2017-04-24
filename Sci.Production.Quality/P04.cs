@@ -37,43 +37,43 @@ namespace Sci.Production.Quality
             DualResult result;
             string cmd = "select * from dbo.GetSCI(@poid,'')";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@poid", this.First_sp_Text.Text));
+            spam.Add(new SqlParameter("@poid", this.displayFirstSP.Text));
             if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
             {
                 if (dt.Rows.Count > 0)
                 {
-                    if (dt.Rows[0]["MinSciDelivery"] == DBNull.Value) Early_SCI_Text.Text = "";
-                    else Early_SCI_Text.Value = Convert.ToDateTime(dt.Rows[0]["MinSciDelivery"]);
+                    if (dt.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDlv.Text = "";
+                    else dateEarliestSCIDlv.Value = Convert.ToDateTime(dt.Rows[0]["MinSciDelivery"]);
 
-                    if (dt.Rows[0]["MinBuyerDelivery"] == DBNull.Value) Early_Buyer_Text.Text = "";
-                    else Early_Buyer_Text.Value = Convert.ToDateTime(dt.Rows[0]["MinBuyerDelivery"]);
+                    if (dt.Rows[0]["MinBuyerDelivery"] == DBNull.Value) dateEarliestBuyerDlv.Text = "";
+                    else dateEarliestBuyerDlv.Value = Convert.ToDateTime(dt.Rows[0]["MinBuyerDelivery"]);
                 }
             }
             if (CurrentMaintain["Result"].ToString()=="P")
             {
-                 Last_Result_Text.Text = "Pass";
+                 txtLastResult.Text = "Pass";
             }
             else
             {
-                Last_Result_Text.Text = "Fail";
+                txtLastResult.Text = "Fail";
             }
            
             
             //[Last Test Date]
-            if (CurrentMaintain["date"] == DBNull.Value) Last_Date_Text.Text = "";
-            else Last_Date_Text.Value = Convert.ToDateTime(CurrentMaintain["date"]);
+            if (CurrentMaintain["date"] == DBNull.Value) dateLastTestDate.Text = "";
+            else dateLastTestDate.Value = Convert.ToDateTime(CurrentMaintain["date"]);
 
             //[Earliest Inline]
-            if (CurrentMaintain["SewingInline"] == DBNull.Value) Early_inline_Text.Text = "";
-            else Early_inline_Text.Value = Convert.ToDateTime(CurrentMaintain["SewingInline"]);
+            if (CurrentMaintain["SewingInline"] == DBNull.Value) dateEarliestInline.Text = "";
+            else dateEarliestInline.Value = Convert.ToDateTime(CurrentMaintain["SewingInline"]);
 
             //[Earliest Offline]
-            if (CurrentMaintain["SewingOffLine"] == DBNull.Value) Early_off_Text.Text = "";
-            else Early_off_Text.Value = Convert.ToDateTime(CurrentMaintain["SewingOffLine"]);
+            if (CurrentMaintain["SewingOffLine"] == DBNull.Value) dateEarliestOffline.Text = "";
+            else dateEarliestOffline.Value = Convert.ToDateTime(CurrentMaintain["SewingOffLine"]);
 
             //[DeadLine]
-            if (CurrentMaintain["Deadline"] == DBNull.Value) DeadLine_Text.Text = "";
-            else DeadLine_Text.Value = Convert.ToDateTime(CurrentMaintain["Deadline"]);
+            if (CurrentMaintain["Deadline"] == DBNull.Value) dateDeadLine.Text = "";
+            else dateDeadLine.Value = Convert.ToDateTime(CurrentMaintain["Deadline"]);
 
             DataTable datas = (DataTable)detailgridbs.DataSource;
         }
@@ -427,7 +427,7 @@ namespace Sci.Production.Quality
         //Edit 前檢查
         protected override bool ClickSaveBefore()
         {
-            if (this.SP_Text.Text=="" || MyUtility.Check.Empty(this.SP_Text.Text))
+            if (this.txtSP.Text=="" || MyUtility.Check.Empty(this.txtSP.Text))
             {
                 MyUtility.Msg.WarningBox("SP# cannot be empty !! ");
                 return false;
@@ -494,14 +494,14 @@ namespace Sci.Production.Quality
 left join GarmentTest b WITH (NOLOCK) on a.ID=b.OrderID and a.StyleID=b.StyleID and a.SeasonID=b.SeasonID and a.BrandID=b.BrandID and a.FactoryID=b.MDivisionid
 left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a.id=@orderID";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@orderID", this.SP_Text.Text));
+            spam.Add(new SqlParameter("@orderID", this.txtSP.Text));
             if (result = DBProxy.Current.Select(null, cmd, spam, out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.InfoBox("The OrderID is not verify");
-                    SP_Text.Text = "";
-                    this.SP_Text.Focus();
+                    txtSP.Text = "";
+                    this.txtSP.Focus();
                     return;
                 }
             }
@@ -517,8 +517,8 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
               
             string mailto = "";
             string mailcc = "";
-            string subject = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text;
-            string content = "Garment Test - Style #:" + style_text.Text + ", Season :" + Season_Text.Text + " had been sent, please receive and confirm";
+            string subject = "Garment Test - Style #:" + displayStyle.Text + ", Season :" + displaySeason.Text;
+            string content = "Garment Test - Style #:" + displayStyle.Text + ", Season :" + displaySeason.Text + " had been sent, please receive and confirm";
             var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailcc, subject, null, content.ToString(), false, true);
             email.ShowDialog(this);            
           

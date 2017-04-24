@@ -30,20 +30,20 @@
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.label2 = new Sci.Win.UI.Label();
-            this.radiobtn_byfactory = new Sci.Win.UI.RadioButton();
-            this.radiobtn_byYear = new Sci.Win.UI.RadioButton();
-            this.comboBox_brand = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.radiobyfactory = new Sci.Win.UI.RadioButton();
+            this.radiobyYear = new Sci.Win.UI.RadioButton();
+            this.comboBrand = new Sci.Win.UI.ComboBox();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioPanel1
             // 
             this.radioPanel1.Controls.Add(this.label2);
-            this.radioPanel1.Controls.Add(this.radiobtn_byfactory);
-            this.radioPanel1.Controls.Add(this.radiobtn_byYear);
-            this.radioPanel1.Controls.Add(this.comboBox_brand);
-            this.radioPanel1.Controls.Add(this.label1);
+            this.radioPanel1.Controls.Add(this.radiobyfactory);
+            this.radioPanel1.Controls.Add(this.radiobyYear);
+            this.radioPanel1.Controls.Add(this.comboBrand);
+            this.radioPanel1.Controls.Add(this.labelBrand);
             this.radioPanel1.Location = new System.Drawing.Point(25, 25);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(406, 217);
@@ -59,54 +59,54 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "*This report always include 3 years data (include this year)";
             // 
-            // radiobtn_byfactory
+            // radiobyfactory
             // 
-            this.radiobtn_byfactory.AutoSize = true;
-            this.radiobtn_byfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_byfactory.Location = new System.Drawing.Point(22, 123);
-            this.radiobtn_byfactory.Name = "radiobtn_byfactory";
-            this.radiobtn_byfactory.Size = new System.Drawing.Size(93, 21);
-            this.radiobtn_byfactory.TabIndex = 3;
-            this.radiobtn_byfactory.TabStop = true;
-            this.radiobtn_byfactory.Text = "By Factory";
-            this.radiobtn_byfactory.UseVisualStyleBackColor = true;
+            this.radiobyfactory.AutoSize = true;
+            this.radiobyfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobyfactory.Location = new System.Drawing.Point(22, 123);
+            this.radiobyfactory.Name = "radiobyfactory";
+            this.radiobyfactory.Size = new System.Drawing.Size(93, 21);
+            this.radiobyfactory.TabIndex = 3;
+            this.radiobyfactory.TabStop = true;
+            this.radiobyfactory.Text = "By Factory";
+            this.radiobyfactory.UseVisualStyleBackColor = true;
             // 
-            // radiobtn_byYear
+            // radiobyYear
             // 
-            this.radiobtn_byYear.AutoSize = true;
-            this.radiobtn_byYear.Checked = true;
-            this.radiobtn_byYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_byYear.Location = new System.Drawing.Point(22, 79);
-            this.radiobtn_byYear.Name = "radiobtn_byYear";
-            this.radiobtn_byYear.Size = new System.Drawing.Size(76, 21);
-            this.radiobtn_byYear.TabIndex = 2;
-            this.radiobtn_byYear.TabStop = true;
-            this.radiobtn_byYear.Text = "By Year";
-            this.radiobtn_byYear.UseVisualStyleBackColor = true;
-            this.radiobtn_byYear.Value = "By Year";
+            this.radiobyYear.AutoSize = true;
+            this.radiobyYear.Checked = true;
+            this.radiobyYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobyYear.Location = new System.Drawing.Point(22, 79);
+            this.radiobyYear.Name = "radiobyYear";
+            this.radiobyYear.Size = new System.Drawing.Size(76, 21);
+            this.radiobyYear.TabIndex = 2;
+            this.radiobyYear.TabStop = true;
+            this.radiobyYear.Text = "By Year";
+            this.radiobyYear.UseVisualStyleBackColor = true;
+            this.radiobyYear.Value = "By Year";
             // 
-            // comboBox_brand
+            // comboBrand
             // 
-            this.comboBox_brand.BackColor = System.Drawing.Color.White;
-            this.comboBox_brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox_brand.FormattingEnabled = true;
-            this.comboBox_brand.IsSupportUnselect = true;
-            this.comboBox_brand.Items.AddRange(new object[] {
+            this.comboBrand.BackColor = System.Drawing.Color.White;
+            this.comboBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBrand.FormattingEnabled = true;
+            this.comboBrand.IsSupportUnselect = true;
+            this.comboBrand.Items.AddRange(new object[] {
             "ADIDAS",
             "REEBOK"});
-            this.comboBox_brand.Location = new System.Drawing.Point(81, 19);
-            this.comboBox_brand.Name = "comboBox_brand";
-            this.comboBox_brand.Size = new System.Drawing.Size(121, 24);
-            this.comboBox_brand.TabIndex = 1;
+            this.comboBrand.Location = new System.Drawing.Point(81, 19);
+            this.comboBrand.Name = "comboBrand";
+            this.comboBrand.Size = new System.Drawing.Size(121, 24);
+            this.comboBrand.TabIndex = 1;
             // 
-            // label1
+            // labelBrand
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Brand:";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(22, 19);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(56, 23);
+            this.labelBrand.TabIndex = 0;
+            this.labelBrand.Text = "Brand:";
             // 
             // R40
             // 
@@ -129,9 +129,9 @@
 
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.Label label2;
-        private Win.UI.RadioButton radiobtn_byfactory;
-        private Win.UI.RadioButton radiobtn_byYear;
-        private Win.UI.ComboBox comboBox_brand;
-        private Win.UI.Label label1;
+        private Win.UI.RadioButton radiobyfactory;
+        private Win.UI.RadioButton radiobyYear;
+        private Win.UI.ComboBox comboBrand;
+        private Win.UI.Label labelBrand;
     }
 }

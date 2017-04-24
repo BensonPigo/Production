@@ -82,11 +82,11 @@ namespace Sci.Production.Quality
                                 where A.ID={0}", CurrentMaintain["ID"].ToString().Trim());
             if (MyUtility.Check.Seek(sql, out dr))
             {
-                this.DisplayStyle.Text = dr["StyleID"].ToString().Trim();
-                this.DisplayCell.Text = dr["SewingCell"].ToString().Trim();
-                this.DisplayDest.Text = dr["Dest"].ToString().Trim();
-                this.NumCPU.Text = MyUtility.Convert.GetDecimal(dr["CPU"]).ToString().Trim();
-                this.NumRFT.Text = dr["RFT_percentage"].ToString().Trim();
+                this.displayStyle.Text = dr["StyleID"].ToString().Trim();
+                this.displayCell.Text = dr["SewingCell"].ToString().Trim();
+                this.displayDestination.Text = dr["Dest"].ToString().Trim();
+                this.txtCPU.Text = MyUtility.Convert.GetDecimal(dr["CPU"]).ToString().Trim();
+                this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
           
@@ -282,7 +282,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("< Date >  can't be empty!", "Warning");
-                CDate.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
@@ -357,7 +357,7 @@ namespace Sci.Production.Quality
           
             DataTable dt;
             string sql = string.Format(@"select * from rft WITH (NOLOCK) where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
-  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", txtSP.Text,((DateTime)CDate.Value).ToShortDateString(), txtLine.Text, DisplayFactory.Text, comboShift.SelectedValue, comboTeam.Text);
+  and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", txtSP.Text,((DateTime)dateDate.Value).ToShortDateString(), txtLine.Text, displayFactory.Text, comboShift.SelectedValue, comboTeam.Text);
             DBProxy.Current.Select(null, sql, out dt);
             if (dt.Rows.Count > 0 && isNew)// 如果是新增,才判斷ＳＰ＃是否存在
             {
@@ -380,11 +380,11 @@ namespace Sci.Production.Quality
             string sqlcmd = string.Format(@"select sewingcell from Sewingline WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
-                this.DisplayCell.Text = dr["sewingcell"].ToString();
+                this.displayCell.Text = dr["sewingcell"].ToString();
             }
             else
             {
-                this.DisplayCell.Text = "";
+                this.displayCell.Text = "";
             }
             //this.DisplayCell.Text= 
         }
@@ -443,10 +443,10 @@ namespace Sci.Production.Quality
         protected override bool ClickNew()
         {
             
-            this.DisplayStyle.Text = "";
-            this.DisplayDest.Text = "";
-            this.NumRFT.Text="";
-            this.NumCPU.Text = "";
+            this.displayStyle.Text = "";
+            this.displayDestination.Text = "";
+            this.txtRFT.Text="";
+            this.txtCPU.Text = "";
             this.isNew = true;
             return base.ClickNew();
         }
@@ -463,9 +463,9 @@ namespace Sci.Production.Quality
             {
                 if (dt.Rows.Count>0)
                 {
-                    DisplayStyle.Text = dt.Rows[0]["styleid"].ToString();
-                    DisplayDest.Text = dt.Rows[0]["dest"].ToString();
-                    NumCPU.Text = dt.Rows[0]["cpu"].ToString();
+                    displayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                    displayDestination.Text = dt.Rows[0]["dest"].ToString();
+                    txtCPU.Text = dt.Rows[0]["cpu"].ToString();
                 }
                
             }

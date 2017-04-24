@@ -18,26 +18,26 @@ namespace Sci.Production.Quality
       
        protected override void ClickNewAfter()
        {
-           this.txtID.ReadOnly = false;
-           this.txtDesc.ReadOnly = false;
-           this.chkJunk.ReadOnly = false;
+           this.txtAreaCode.ReadOnly = false;
+           this.editDescription.ReadOnly = false;
+           this.checkJunk.ReadOnly = false;
            base.ClickNewAfter();
        }
        protected override bool ClickEditBefore()
        {
-           this.txtID.ReadOnly = true;
-           this.txtDesc.ReadOnly = false;
+           this.txtAreaCode.ReadOnly = true;
+           this.editDescription.ReadOnly = false;
            return base.ClickEditBefore();
            
        }
        protected override void ClickUndo()
        {
-           this.txtID.ReadOnly = true;
+           this.txtAreaCode.ReadOnly = true;
            base.ClickUndo();
        }
        protected override bool ClickSaveBefore()
        {
-           if (MyUtility.Check.Empty(this.txtID.Text))
+           if (MyUtility.Check.Empty(this.txtAreaCode.Text))
            {
                MyUtility.Msg.WarningBox("<Area Code> cannot be empty! ");
                return false;
@@ -46,7 +46,7 @@ namespace Sci.Production.Quality
        }
        protected override Ict.DualResult ClickSave()
        {
-           this.txtID.ReadOnly = true;
+           this.txtAreaCode.ReadOnly = true;
            
            return base.ClickSave();
        }

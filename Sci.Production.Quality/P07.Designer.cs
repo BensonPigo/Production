@@ -28,35 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Article_text = new Sci.Win.UI.DisplayBox();
-            this.season_text = new Sci.Win.UI.DisplayBox();
-            this.style_text = new Sci.Win.UI.DisplayBox();
-            this.brand_text = new Sci.Win.UI.DisplayBox();
-            this.sp_text = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.compl_text = new Sci.Win.UI.DateBox();
-            this.Target_text = new Sci.Win.UI.DateBox();
-            this.Earliest_text = new Sci.Win.UI.DateBox();
-            this.Cutting_text = new Sci.Win.UI.DateBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.complete_text = new Sci.Win.UI.DisplayBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.txtWK = new Sci.Win.UI.TextBox();
+            this.displayofInspection = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displaySP = new Sci.Win.UI.DisplayBox();
+            this.labelofInspection = new Sci.Win.UI.Label();
+            this.labelEarliestEstCuttingDate = new Sci.Win.UI.Label();
+            this.labelEarliestSCIDel = new Sci.Win.UI.Label();
+            this.labelTargetLeadtime = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelCompletionDate = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.dateCompletionDate = new Sci.Win.UI.DateBox();
+            this.dateTargetLeadtime = new Sci.Win.UI.DateBox();
+            this.dateEarliestSCIDel = new Sci.Win.UI.DateBox();
+            this.dateEarliestEstCuttingDate = new Sci.Win.UI.DateBox();
+            this.labelMtlCmplt = new Sci.Win.UI.Label();
+            this.displayMtlCmplt = new Sci.Win.UI.DisplayBox();
+            this.labelLocateforWK = new Sci.Win.UI.Label();
+            this.txtLocateforWK = new Sci.Win.UI.TextBox();
             this.txtSEQ = new Sci.Win.UI.TextBox();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelSEQ = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.btnBatchUpdate = new Sci.Win.UI.Button();
-            this.remark_text = new Sci.Win.UI.EditBox();
+            this.comboOvenWashBoth = new Sci.Win.UI.ComboBox();
+            this.btnBatchUpdateNA = new Sci.Win.UI.Button();
+            this.editRemark = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,66 +73,66 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.remark_text);
-            this.masterpanel.Controls.Add(this.btnBatchUpdate);
-            this.masterpanel.Controls.Add(this.comboBox1);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.btnBatchUpdateNA);
+            this.masterpanel.Controls.Add(this.comboOvenWashBoth);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtSEQ);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.txtWK);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.complete_text);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.Article_text);
-            this.masterpanel.Controls.Add(this.season_text);
-            this.masterpanel.Controls.Add(this.style_text);
-            this.masterpanel.Controls.Add(this.brand_text);
-            this.masterpanel.Controls.Add(this.sp_text);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.compl_text);
-            this.masterpanel.Controls.Add(this.Target_text);
-            this.masterpanel.Controls.Add(this.Earliest_text);
-            this.masterpanel.Controls.Add(this.Cutting_text);
+            this.masterpanel.Controls.Add(this.labelSEQ);
+            this.masterpanel.Controls.Add(this.txtLocateforWK);
+            this.masterpanel.Controls.Add(this.labelLocateforWK);
+            this.masterpanel.Controls.Add(this.displayMtlCmplt);
+            this.masterpanel.Controls.Add(this.labelMtlCmplt);
+            this.masterpanel.Controls.Add(this.displayofInspection);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySP);
+            this.masterpanel.Controls.Add(this.labelofInspection);
+            this.masterpanel.Controls.Add(this.labelEarliestEstCuttingDate);
+            this.masterpanel.Controls.Add(this.labelEarliestSCIDel);
+            this.masterpanel.Controls.Add(this.labelTargetLeadtime);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelCompletionDate);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelSP);
+            this.masterpanel.Controls.Add(this.dateCompletionDate);
+            this.masterpanel.Controls.Add(this.dateTargetLeadtime);
+            this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
+            this.masterpanel.Controls.Add(this.dateEarliestEstCuttingDate);
             this.masterpanel.Size = new System.Drawing.Size(921, 203);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Cutting_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Earliest_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Target_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.compl_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.sp_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.brand_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.style_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.season_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Article_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.complete_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtWK, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateTargetLeadtime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCompletionDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCompletionDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTargetLeadtime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEarliestSCIDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEarliestEstCuttingDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelofInspection, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayofInspection, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelMtlCmplt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayMtlCmplt, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLocateforWK, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocateforWK, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSEQ, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnBatchUpdate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.remark_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboOvenWashBoth, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchUpdateNA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             // 
             // detailpanel
             // 
@@ -154,15 +154,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(921, 519);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(915, 473);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(915, 40);
             // 
             // detail
             // 
@@ -179,7 +179,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(853, 519);
+            this.browse.Size = new System.Drawing.Size(921, 519);
             // 
             // tabs
             // 
@@ -198,219 +198,219 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(429, 13);
             // 
-            // Article_text
+            // displayofInspection
             // 
-            this.Article_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Article_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Article_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Article_text.Location = new System.Drawing.Point(673, 9);
-            this.Article_text.Name = "Article_text";
-            this.Article_text.Size = new System.Drawing.Size(140, 21);
-            this.Article_text.TabIndex = 104;
+            this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayofInspection.Location = new System.Drawing.Point(673, 9);
+            this.displayofInspection.Name = "displayofInspection";
+            this.displayofInspection.Size = new System.Drawing.Size(140, 21);
+            this.displayofInspection.TabIndex = 104;
             // 
-            // season_text
+            // displaySeason
             // 
-            this.season_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.season_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.season_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.season_text.Location = new System.Drawing.Point(72, 63);
-            this.season_text.Name = "season_text";
-            this.season_text.Size = new System.Drawing.Size(138, 21);
-            this.season_text.TabIndex = 103;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(72, 63);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(138, 21);
+            this.displaySeason.TabIndex = 103;
             // 
-            // style_text
+            // displayStyle
             // 
-            this.style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.style_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_text.Location = new System.Drawing.Point(72, 36);
-            this.style_text.Name = "style_text";
-            this.style_text.Size = new System.Drawing.Size(138, 21);
-            this.style_text.TabIndex = 102;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(72, 36);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(138, 21);
+            this.displayStyle.TabIndex = 102;
             // 
-            // brand_text
+            // displayBrand
             // 
-            this.brand_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.brand_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.brand_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_text.Location = new System.Drawing.Point(72, 90);
-            this.brand_text.Name = "brand_text";
-            this.brand_text.Size = new System.Drawing.Size(138, 21);
-            this.brand_text.TabIndex = 101;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(72, 90);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(138, 21);
+            this.displayBrand.TabIndex = 101;
             // 
-            // sp_text
+            // displaySP
             // 
-            this.sp_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.sp_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.sp_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sp_text.Location = new System.Drawing.Point(72, 9);
-            this.sp_text.Name = "sp_text";
-            this.sp_text.Size = new System.Drawing.Size(138, 21);
-            this.sp_text.TabIndex = 100;
+            this.displaySP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySP.Location = new System.Drawing.Point(72, 9);
+            this.displaySP.Name = "displaySP";
+            this.displaySP.Size = new System.Drawing.Size(138, 21);
+            this.displaySP.TabIndex = 100;
             // 
-            // label10
+            // labelofInspection
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(560, 7);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(110, 23);
-            this.label10.TabIndex = 98;
-            this.label10.Text = "% of Inspection";
+            this.labelofInspection.Lines = 0;
+            this.labelofInspection.Location = new System.Drawing.Point(560, 7);
+            this.labelofInspection.Name = "labelofInspection";
+            this.labelofInspection.Size = new System.Drawing.Size(110, 23);
+            this.labelofInspection.TabIndex = 98;
+            this.labelofInspection.Text = "% of Inspection";
             // 
-            // label9
+            // labelEarliestEstCuttingDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(227, 7);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(165, 23);
-            this.label9.TabIndex = 97;
-            this.label9.Text = "Earliest Est. Cutting Date";
+            this.labelEarliestEstCuttingDate.Lines = 0;
+            this.labelEarliestEstCuttingDate.Location = new System.Drawing.Point(227, 7);
+            this.labelEarliestEstCuttingDate.Name = "labelEarliestEstCuttingDate";
+            this.labelEarliestEstCuttingDate.Size = new System.Drawing.Size(165, 23);
+            this.labelEarliestEstCuttingDate.TabIndex = 97;
+            this.labelEarliestEstCuttingDate.Text = "Earliest Est. Cutting Date";
             // 
-            // label8
+            // labelEarliestSCIDel
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(227, 34);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(165, 23);
-            this.label8.TabIndex = 96;
-            this.label8.Text = "Earliest SCI Del";
+            this.labelEarliestSCIDel.Lines = 0;
+            this.labelEarliestSCIDel.Location = new System.Drawing.Point(227, 34);
+            this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
+            this.labelEarliestSCIDel.Size = new System.Drawing.Size(165, 23);
+            this.labelEarliestSCIDel.TabIndex = 96;
+            this.labelEarliestSCIDel.Text = "Earliest SCI Del";
             // 
-            // label7
+            // labelTargetLeadtime
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(227, 61);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(165, 23);
-            this.label7.TabIndex = 95;
-            this.label7.Text = "Target Lead time";
+            this.labelTargetLeadtime.Lines = 0;
+            this.labelTargetLeadtime.Location = new System.Drawing.Point(227, 61);
+            this.labelTargetLeadtime.Name = "labelTargetLeadtime";
+            this.labelTargetLeadtime.Size = new System.Drawing.Size(165, 23);
+            this.labelTargetLeadtime.TabIndex = 95;
+            this.labelTargetLeadtime.Text = "Target Lead time";
             // 
-            // label6
+            // labelRemark
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(560, 61);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(110, 23);
-            this.label6.TabIndex = 94;
-            this.label6.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(560, 61);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(110, 23);
+            this.labelRemark.TabIndex = 94;
+            this.labelRemark.Text = "Remark";
             // 
-            // label5
+            // labelCompletionDate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(227, 88);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(165, 23);
-            this.label5.TabIndex = 93;
-            this.label5.Text = "Completion Date";
+            this.labelCompletionDate.Lines = 0;
+            this.labelCompletionDate.Location = new System.Drawing.Point(227, 88);
+            this.labelCompletionDate.Name = "labelCompletionDate";
+            this.labelCompletionDate.Size = new System.Drawing.Size(165, 23);
+            this.labelCompletionDate.TabIndex = 93;
+            this.labelCompletionDate.Text = "Completion Date";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 90);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 23);
-            this.label4.TabIndex = 92;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(9, 90);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(60, 23);
+            this.labelBrand.TabIndex = 92;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelStyle
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 34);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 23);
-            this.label3.TabIndex = 91;
-            this.label3.Text = "Style ";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(9, 34);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(60, 23);
+            this.labelStyle.TabIndex = 91;
+            this.labelStyle.Text = "Style ";
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 61);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(60, 23);
-            this.label2.TabIndex = 90;
-            this.label2.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(9, 61);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(60, 23);
+            this.labelSeason.TabIndex = 90;
+            this.labelSeason.Text = "Season";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 89;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(9, 7);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(60, 23);
+            this.labelSP.TabIndex = 89;
+            this.labelSP.Text = "SP#";
             // 
-            // compl_text
+            // dateCompletionDate
             // 
-            this.compl_text.IsSupportEditMode = false;
-            this.compl_text.Location = new System.Drawing.Point(395, 88);
-            this.compl_text.Name = "compl_text";
-            this.compl_text.ReadOnly = true;
-            this.compl_text.Size = new System.Drawing.Size(138, 23);
-            this.compl_text.TabIndex = 108;
+            this.dateCompletionDate.IsSupportEditMode = false;
+            this.dateCompletionDate.Location = new System.Drawing.Point(395, 88);
+            this.dateCompletionDate.Name = "dateCompletionDate";
+            this.dateCompletionDate.ReadOnly = true;
+            this.dateCompletionDate.Size = new System.Drawing.Size(138, 23);
+            this.dateCompletionDate.TabIndex = 108;
             // 
-            // Target_text
+            // dateTargetLeadtime
             // 
-            this.Target_text.IsSupportEditMode = false;
-            this.Target_text.Location = new System.Drawing.Point(395, 59);
-            this.Target_text.Name = "Target_text";
-            this.Target_text.ReadOnly = true;
-            this.Target_text.Size = new System.Drawing.Size(138, 23);
-            this.Target_text.TabIndex = 107;
+            this.dateTargetLeadtime.IsSupportEditMode = false;
+            this.dateTargetLeadtime.Location = new System.Drawing.Point(395, 59);
+            this.dateTargetLeadtime.Name = "dateTargetLeadtime";
+            this.dateTargetLeadtime.ReadOnly = true;
+            this.dateTargetLeadtime.Size = new System.Drawing.Size(138, 23);
+            this.dateTargetLeadtime.TabIndex = 107;
             // 
-            // Earliest_text
+            // dateEarliestSCIDel
             // 
-            this.Earliest_text.IsSupportEditMode = false;
-            this.Earliest_text.Location = new System.Drawing.Point(395, 34);
-            this.Earliest_text.Name = "Earliest_text";
-            this.Earliest_text.ReadOnly = true;
-            this.Earliest_text.Size = new System.Drawing.Size(140, 23);
-            this.Earliest_text.TabIndex = 106;
+            this.dateEarliestSCIDel.IsSupportEditMode = false;
+            this.dateEarliestSCIDel.Location = new System.Drawing.Point(395, 34);
+            this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
+            this.dateEarliestSCIDel.ReadOnly = true;
+            this.dateEarliestSCIDel.Size = new System.Drawing.Size(140, 23);
+            this.dateEarliestSCIDel.TabIndex = 106;
             // 
-            // Cutting_text
+            // dateEarliestEstCuttingDate
             // 
-            this.Cutting_text.IsSupportEditMode = false;
-            this.Cutting_text.Location = new System.Drawing.Point(395, 7);
-            this.Cutting_text.Name = "Cutting_text";
-            this.Cutting_text.ReadOnly = true;
-            this.Cutting_text.Size = new System.Drawing.Size(140, 23);
-            this.Cutting_text.TabIndex = 105;
+            this.dateEarliestEstCuttingDate.IsSupportEditMode = false;
+            this.dateEarliestEstCuttingDate.Location = new System.Drawing.Point(395, 7);
+            this.dateEarliestEstCuttingDate.Name = "dateEarliestEstCuttingDate";
+            this.dateEarliestEstCuttingDate.ReadOnly = true;
+            this.dateEarliestEstCuttingDate.Size = new System.Drawing.Size(140, 23);
+            this.dateEarliestEstCuttingDate.TabIndex = 105;
             // 
-            // label11
+            // labelMtlCmplt
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(560, 34);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(110, 23);
-            this.label11.TabIndex = 109;
-            this.label11.Text = "Mtl Cmplt(SP)";
+            this.labelMtlCmplt.Lines = 0;
+            this.labelMtlCmplt.Location = new System.Drawing.Point(560, 34);
+            this.labelMtlCmplt.Name = "labelMtlCmplt";
+            this.labelMtlCmplt.Size = new System.Drawing.Size(110, 23);
+            this.labelMtlCmplt.TabIndex = 109;
+            this.labelMtlCmplt.Text = "Mtl Cmplt(SP)";
             // 
-            // complete_text
+            // displayMtlCmplt
             // 
-            this.complete_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.complete_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.complete_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.complete_text.Location = new System.Drawing.Point(673, 36);
-            this.complete_text.Name = "complete_text";
-            this.complete_text.Size = new System.Drawing.Size(140, 21);
-            this.complete_text.TabIndex = 110;
+            this.displayMtlCmplt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMtlCmplt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayMtlCmplt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMtlCmplt.Location = new System.Drawing.Point(673, 36);
+            this.displayMtlCmplt.Name = "displayMtlCmplt";
+            this.displayMtlCmplt.Size = new System.Drawing.Size(140, 21);
+            this.displayMtlCmplt.TabIndex = 110;
             // 
-            // label12
+            // labelLocateforWK
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(9, 132);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(100, 23);
-            this.label12.TabIndex = 111;
-            this.label12.Text = "Locate for WK#";
+            this.labelLocateforWK.Lines = 0;
+            this.labelLocateforWK.Location = new System.Drawing.Point(9, 132);
+            this.labelLocateforWK.Name = "labelLocateforWK";
+            this.labelLocateforWK.Size = new System.Drawing.Size(100, 23);
+            this.labelLocateforWK.TabIndex = 111;
+            this.labelLocateforWK.Text = "Locate for WK#";
             // 
-            // txtWK
+            // txtLocateforWK
             // 
-            this.txtWK.BackColor = System.Drawing.Color.White;
-            this.txtWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWK.IsSupportEditMode = false;
-            this.txtWK.Location = new System.Drawing.Point(112, 132);
-            this.txtWK.Name = "txtWK";
-            this.txtWK.Size = new System.Drawing.Size(120, 23);
-            this.txtWK.TabIndex = 112;
+            this.txtLocateforWK.BackColor = System.Drawing.Color.White;
+            this.txtLocateforWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateforWK.IsSupportEditMode = false;
+            this.txtLocateforWK.Location = new System.Drawing.Point(112, 132);
+            this.txtLocateforWK.Name = "txtLocateforWK";
+            this.txtLocateforWK.Size = new System.Drawing.Size(120, 23);
+            this.txtLocateforWK.TabIndex = 112;
             // 
             // txtSEQ
             // 
@@ -422,14 +422,14 @@
             this.txtSEQ.Size = new System.Drawing.Size(60, 23);
             this.txtSEQ.TabIndex = 114;
             // 
-            // label13
+            // labelSEQ
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(253, 132);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(40, 23);
-            this.label13.TabIndex = 113;
-            this.label13.Text = "SEQ#";
+            this.labelSEQ.Lines = 0;
+            this.labelSEQ.Location = new System.Drawing.Point(253, 132);
+            this.labelSEQ.Name = "labelSEQ";
+            this.labelSEQ.Size = new System.Drawing.Size(40, 23);
+            this.labelSEQ.TabIndex = 113;
+            this.labelSEQ.Text = "SEQ#";
             // 
             // btnFind
             // 
@@ -442,41 +442,41 @@
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
-            // comboBox1
+            // comboOvenWashBoth
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(9, 163);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(120, 24);
-            this.comboBox1.TabIndex = 116;
+            this.comboOvenWashBoth.BackColor = System.Drawing.Color.White;
+            this.comboOvenWashBoth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOvenWashBoth.FormattingEnabled = true;
+            this.comboOvenWashBoth.IsSupportUnselect = true;
+            this.comboOvenWashBoth.Location = new System.Drawing.Point(9, 163);
+            this.comboOvenWashBoth.Name = "comboOvenWashBoth";
+            this.comboOvenWashBoth.Size = new System.Drawing.Size(120, 24);
+            this.comboOvenWashBoth.TabIndex = 116;
             // 
-            // btnBatchUpdate
+            // btnBatchUpdateNA
             // 
-            this.btnBatchUpdate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnBatchUpdate.Enabled = false;
-            this.btnBatchUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBatchUpdate.Location = new System.Drawing.Point(130, 162);
-            this.btnBatchUpdate.Name = "btnBatchUpdate";
-            this.btnBatchUpdate.Size = new System.Drawing.Size(150, 25);
-            this.btnBatchUpdate.TabIndex = 117;
-            this.btnBatchUpdate.Text = "Batch update N/A";
-            this.btnBatchUpdate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdate.Click += new System.EventHandler(this.btnBatchUpdate_Click);
+            this.btnBatchUpdateNA.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBatchUpdateNA.Enabled = false;
+            this.btnBatchUpdateNA.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBatchUpdateNA.Location = new System.Drawing.Point(130, 162);
+            this.btnBatchUpdateNA.Name = "btnBatchUpdateNA";
+            this.btnBatchUpdateNA.Size = new System.Drawing.Size(150, 25);
+            this.btnBatchUpdateNA.TabIndex = 117;
+            this.btnBatchUpdateNA.Text = "Batch update N/A";
+            this.btnBatchUpdateNA.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateNA.Click += new System.EventHandler(this.btnBatchUpdate_Click);
             // 
-            // remark_text
+            // editRemark
             // 
-            this.remark_text.BackColor = System.Drawing.Color.White;
-            this.remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AirLaboratoryRemark", true));
-            this.remark_text.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.remark_text.Location = new System.Drawing.Point(673, 63);
-            this.remark_text.Multiline = true;
-            this.remark_text.Name = "remark_text";
-            this.remark_text.Size = new System.Drawing.Size(157, 90);
-            this.remark_text.TabIndex = 118;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AirLaboratoryRemark", true));
+            this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(673, 63);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(157, 90);
+            this.editRemark.TabIndex = 118;
             // 
             // P07
             // 
@@ -516,34 +516,34 @@
 
         #endregion
 
-        private Win.UI.DisplayBox complete_text;
-        private Win.UI.Label label11;
-        private Win.UI.DisplayBox Article_text;
-        private Win.UI.DisplayBox season_text;
-        private Win.UI.DisplayBox style_text;
-        private Win.UI.DisplayBox brand_text;
-        private Win.UI.DisplayBox sp_text;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DateBox compl_text;
-        private Win.UI.DateBox Target_text;
-        private Win.UI.DateBox Earliest_text;
-        private Win.UI.DateBox Cutting_text;
+        private Win.UI.DisplayBox displayMtlCmplt;
+        private Win.UI.Label labelMtlCmplt;
+        private Win.UI.DisplayBox displayofInspection;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displaySP;
+        private Win.UI.Label labelofInspection;
+        private Win.UI.Label labelEarliestEstCuttingDate;
+        private Win.UI.Label labelEarliestSCIDel;
+        private Win.UI.Label labelTargetLeadtime;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelCompletionDate;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelSP;
+        private Win.UI.DateBox dateCompletionDate;
+        private Win.UI.DateBox dateTargetLeadtime;
+        private Win.UI.DateBox dateEarliestSCIDel;
+        private Win.UI.DateBox dateEarliestEstCuttingDate;
         private Win.UI.TextBox txtSEQ;
-        private Win.UI.Label label13;
-        private Win.UI.TextBox txtWK;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelSEQ;
+        private Win.UI.TextBox txtLocateforWK;
+        private Win.UI.Label labelLocateforWK;
         private Win.UI.Button btnFind;
-        private Win.UI.Button btnBatchUpdate;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.EditBox remark_text;
+        private Win.UI.Button btnBatchUpdateNA;
+        private Win.UI.ComboBox comboOvenWashBoth;
+        private Win.UI.EditBox editRemark;
     }
 }

@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.labelDefectcode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelDefectType = new Sci.Win.UI.Label();
+            this.txtDefectcode = new Sci.Win.UI.TextBox();
+            this.txtDefectType = new Sci.Win.UI.TextBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,12 +48,12 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.editDescription);
+            this.detailcont.Controls.Add(this.txtDefectType);
+            this.detailcont.Controls.Add(this.txtDefectcode);
+            this.detailcont.Controls.Add(this.labelDefectcode);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Size = new System.Drawing.Size(831, 357);
             // 
             // detailbtm
@@ -62,7 +62,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(687, 395);
+            this.browse.Size = new System.Drawing.Size(831, 395);
             // 
             // tabs
             // 
@@ -81,65 +81,65 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelDefectcode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(58, 66);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Defect code";
+            this.labelDefectcode.Lines = 0;
+            this.labelDefectcode.Location = new System.Drawing.Point(58, 66);
+            this.labelDefectcode.Name = "labelDefectcode";
+            this.labelDefectcode.Size = new System.Drawing.Size(89, 23);
+            this.labelDefectcode.TabIndex = 2;
+            this.labelDefectcode.Text = "Defect code";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(58, 132);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(58, 132);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(89, 23);
+            this.labelDescription.TabIndex = 3;
+            this.labelDescription.Text = "Description";
             // 
-            // label3
+            // labelDefectType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(58, 99);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Defect Type";
+            this.labelDefectType.Lines = 0;
+            this.labelDefectType.Location = new System.Drawing.Point(58, 99);
+            this.labelDefectType.Name = "labelDefectType";
+            this.labelDefectType.Size = new System.Drawing.Size(89, 23);
+            this.labelDefectType.TabIndex = 4;
+            this.labelDefectType.Text = "Defect Type";
             // 
-            // textBox1
+            // txtDefectcode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(150, 66);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(135, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtDefectcode.BackColor = System.Drawing.Color.White;
+            this.txtDefectcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtDefectcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDefectcode.Location = new System.Drawing.Point(150, 66);
+            this.txtDefectcode.Name = "txtDefectcode";
+            this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
+            this.txtDefectcode.TabIndex = 0;
+            this.txtDefectcode.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // textBox3
+            // txtDefectType
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox3.Location = new System.Drawing.Point(150, 99);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
-            this.textBox3.TabIndex = 1;
+            this.txtDefectType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
+            this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDefectType.Location = new System.Drawing.Point(150, 99);
+            this.txtDefectType.Name = "txtDefectType";
+            this.txtDefectType.ReadOnly = true;
+            this.txtDefectType.Size = new System.Drawing.Size(100, 23);
+            this.txtDefectType.TabIndex = 1;
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(150, 132);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(460, 94);
-            this.editBox1.TabIndex = 2;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(150, 132);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(460, 94);
+            this.editDescription.TabIndex = 2;
             // 
             // B21
             // 
@@ -170,11 +170,11 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Label labelDefectcode;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelDefectType;
+        private Win.UI.TextBox txtDefectType;
+        private Win.UI.TextBox txtDefectcode;
+        private Win.UI.EditBox editDescription;
     }
 }

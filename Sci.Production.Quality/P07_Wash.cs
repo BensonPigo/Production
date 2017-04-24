@@ -59,7 +59,7 @@ namespace Sci.Production.Quality
             #endregion
 
             #region [btnEncode]
-            this.btnSave.Enabled = false;
+            this.btnEdit.Enabled = false;
             save.Visible = false;
             if (EDIT)
             {
@@ -72,13 +72,13 @@ namespace Sci.Production.Quality
                 {
                     btnEncode.Text = "Encode";
                     btnEncode.Enabled = true;
-                    this.btnSave.Enabled = true;
+                    this.btnEdit.Enabled = true;
                 }
             }
             else
             {
                 undo.Visible = false;
-                this.btnSave.Visible = false;
+                this.btnEdit.Visible = false;
                 btnClose.Visible = true;
 
             }
@@ -99,15 +99,15 @@ namespace Sci.Production.Quality
                                     where A.id={0} and A.POID='{1}' and A.SEQ1='{2}' and A.SEQ2='{3}'", ID, PoID, SEQ1, SEQ2);
             if (MyUtility.Check.Seek(sql, out DR))
             {
-                sp_text.Text = maindr["SEQ1"] + "-" + maindr["SEQ2"];
-                WKNO_text.Text = DR["ExportId"].ToString().Trim();
-                Qty_text.Value = Convert.ToDecimal(DR["ArriveQty"]);
-                Unit_text.Text = DR["StockUnit"].ToString().Trim();
-                Size_text.Text = DR["SizeSpec"].ToString().Trim();
-                SciRefno.Text = DR["SCIRefno"].ToString().Trim();
-                BrandRefno_text.Text = DR["Refno"].ToString().Trim();
-                Supplier_text.Text = DR["supplier"].ToString().Trim();
-                Color_text.Text = DR["ColorID"].ToString().Trim();
+                displaySP.Text = maindr["SEQ1"] + "-" + maindr["SEQ2"];
+                displayWKNO.Text = DR["ExportId"].ToString().Trim();
+                numActiveQty.Value = Convert.ToDecimal(DR["ArriveQty"]);
+                displayUnit.Text = DR["StockUnit"].ToString().Trim();
+                displaySize.Text = DR["SizeSpec"].ToString().Trim();
+                displaySCIRefno.Text = DR["SCIRefno"].ToString().Trim();
+                displayRefno.Text = DR["Refno"].ToString().Trim();
+                displaySupplier.Text = DR["supplier"].ToString().Trim();
+                displayColor.Text = DR["ColorID"].ToString().Trim();
             }
 
             comboResult.SelectedValue2 = maindr["Wash"].ToString().Trim();
@@ -151,12 +151,12 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("[Result] can not be empty !!");
                     return;
                 }
-                if (MyUtility.Check.Empty(WashDate.Value))
+                if (MyUtility.Check.Empty(dateInspectDate.Value))
                 {
                     MyUtility.Msg.WarningBox("[Inspect Date] can not be empty !!");
                     return;
                 }
-                if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+                if (MyUtility.Check.Empty(txtuserLabTech.TextBox1.Text))
                 {
                     MyUtility.Msg.WarningBox("[Lab Tech] can not be empty !!");
                     return;
@@ -191,7 +191,7 @@ namespace Sci.Production.Quality
                 #endregion
 
                 btnEncode.Text = "Amend";
-                this.btnSave.Enabled = false;
+                this.btnEdit.Enabled = false;
 
             }
             else if (btnEncode.Text == "Amend")
@@ -205,7 +205,7 @@ namespace Sci.Production.Quality
 
                 btnEncode.Text = "Encode";
                 //btnEncode.Enabled = false;
-                this.btnSave.Enabled = true;
+                this.btnEdit.Enabled = true;
             }
         }
         //20161105 改變寫法
@@ -252,14 +252,14 @@ namespace Sci.Production.Quality
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (btnSave.Text == "Edit")
+            if (btnEdit.Text == "Edit")
             {
                 txtScale.Enabled = true;
                 comboResult.Enabled = true;
                 txtRemark.Enabled = true;
-                txtuser1.Enabled = true;
-                WashDate.Enabled = true;
-                this.btnSave.Text = "Save";
+                txtuserLabTech.Enabled = true;
+                dateInspectDate.Enabled = true;
+                this.btnEdit.Text = "Save";
                 this.btnEncode.Enabled = false;
                 this.btnClose.Visible = false;
                 this.undo.Visible = true;
@@ -267,19 +267,19 @@ namespace Sci.Production.Quality
             }
             else
             {
-                if (MyUtility.Check.Empty(txtuser1.TextBox1.Text))
+                if (MyUtility.Check.Empty(txtuserLabTech.TextBox1.Text))
                 {
                     CurrentData["WashInspector"] = Sci.Env.User.UserID;
                 }
-                if (MyUtility.Check.Empty(WashDate.Value))
+                if (MyUtility.Check.Empty(dateInspectDate.Value))
                 {
                     CurrentData["WashDate"] = DateTime.Now;
                 }
                 txtScale.Enabled = false;
                 comboResult.Enabled = false;
                 txtRemark.Enabled = false;
-                txtuser1.Enabled = false;
-                WashDate.Enabled = false;
+                txtuserLabTech.Enabled = false;
+                dateInspectDate.Enabled = false;
                 this.btnClose.Visible = true;
                 this.undo.Visible = false;
                 string sqlcmd = string.Format(@"update AIR_Laboratory
@@ -289,9 +289,9 @@ WashRemark='{5}',
 WashInspector='{6}',
 WashDate='{7}'
 where POID='{0}' and seq1='{1}' and SEQ2='{2}'",
-PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuser1.TextBox1.Text, ((DateTime)this.WashDate.Value).ToShortDateString());
+PoID, SEQ1, SEQ2, txtScale.Text, this.comboResult.Text, txtRemark.Text, txtuserLabTech.TextBox1.Text, ((DateTime)this.dateInspectDate.Value).ToShortDateString());
                 DBProxy.Current.Execute(null, sqlcmd);
-                this.btnSave.Text = "Edit";
+                this.btnEdit.Text = "Edit";
                 this.btnEncode.Enabled = true;
             }
         }

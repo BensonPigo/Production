@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
                 //this.EditMode = true;
                 this.OnUIConvertToMaintain();                
             }
-            this.ToExcel.Enabled = !this.EditMode;
+            this.btnToExcel.Enabled = !this.EditMode;
         }
 
         protected override void OnEditModeChanged()
@@ -70,8 +70,8 @@ namespace Sci.Production.Quality
             base.OnEditModeChanged();
             if (isSee)
             {
-                this.ToExcel.Enabled =  !this.EditMode;
-                this.encode_btn.Enabled = canEdit && !this.EditMode;
+                this.btnToExcel.Enabled =  !this.EditMode;
+                this.btnEncode.Enabled = canEdit && !this.EditMode;
             }
             
         }
@@ -82,9 +82,9 @@ namespace Sci.Production.Quality
             Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
             Result_RowSource.Add("Pass", "Pass");
             Result_RowSource.Add("Fail", "Fail");
-            comboBox1.DataSource = new BindingSource(Result_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            comboResult.ValueMember = "Key";
+            comboResult.DisplayMember = "Value";
             #region 表頭設定
                 
             Ict.DualResult dResult;
@@ -96,34 +96,34 @@ namespace Sci.Production.Quality
             {
                 if (dtOven.Rows.Count > 0)
                 {                    
-                    this.testno.Text = dtOven.Rows[0]["testno"].ToString();
-                    this.poid.Text = dtOven.Rows[0]["POID"].ToString();
-                    this.inspdate.Value = Convert.ToDateTime(dtOven.Rows[0]["Inspdate"]);
-                    this.article.Text = dtOven.Rows[0]["article"].ToString();
-                    this.txtuser1.TextBox1Binding = dtOven.Rows[0]["inspector"].ToString();
-                    this.remark.Text = dtOven.Rows[0]["Remark"].ToString();
-                    comboBox1.SelectedValue = dtOven.Rows[0]["Result"].ToString();
+                    this.txtNoofTest.Text = dtOven.Rows[0]["testno"].ToString();
+                    this.txtSP.Text = dtOven.Rows[0]["POID"].ToString();
+                    this.dateTestDate.Value = Convert.ToDateTime(dtOven.Rows[0]["Inspdate"]);
+                    this.txtArticle.Text = dtOven.Rows[0]["article"].ToString();
+                    this.txtuserInspector.TextBox1Binding = dtOven.Rows[0]["inspector"].ToString();
+                    this.txtRemark.Text = dtOven.Rows[0]["Remark"].ToString();
+                    comboResult.SelectedValue = dtOven.Rows[0]["Result"].ToString();
                     if (dtOven.Rows[0]["Status"].ToString()=="New" || dtOven.Rows[0]["Status"].ToString()=="")
                     {
-                        this.encode_btn.Text="Encode";
+                        this.btnEncode.Text="Encode";
                         this.save.Enabled = true;
                     }
                     else
                     {
-                        this.encode_btn.Text = "Amend";
+                        this.btnEncode.Text = "Amend";
                         this.save.Enabled = false;
                     }
                        
                 }
                 else
                 {
-                    this.testno.Text = "";
-                    this.poid.Text = PoID;
-                    this.inspdate.Value = null;
-                    this.article.Text = "";
-                    this.txtuser1.TextBox1Binding = loginID;
-                    this.remark.Text = "";
-                    this.comboBox1.SelectedValue = "";
+                    this.txtNoofTest.Text = "";
+                    this.txtSP.Text = PoID;
+                    this.dateTestDate.Value = null;
+                    this.txtArticle.Text = "";
+                    this.txtuserInspector.TextBox1Binding = loginID;
+                    this.txtRemark.Text = "";
+                    this.comboResult.SelectedValue = "";
                 }
             }           
           
@@ -697,18 +697,18 @@ and a.seq1=@seq1";
         }
         protected override bool OnSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.article.Text))
+            if (MyUtility.Check.Empty(this.txtArticle.Text))
             {
                 MyUtility.Msg.InfoBox("<Article> cannot be empty!!");
-                this.article.Select();
+                this.txtArticle.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.txtuser1.TextBox1.Text))
+            if (MyUtility.Check.Empty(this.txtuserInspector.TextBox1.Text))
             {
                 MyUtility.Msg.InfoBox("<Inspector> cannot be empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(this.inspdate.Value))
+            if (MyUtility.Check.Empty(this.dateTestDate.Value))
             {
                 MyUtility.Msg.InfoBox("<Test Date> cannot be empty!!");
                 return false;
@@ -769,9 +769,9 @@ SET IDENTITY_INSERT oven off";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
-                        spamAddNew.Add(new SqlParameter("@article", this.article.Text));
+                        spamAddNew.Add(new SqlParameter("@article", this.txtArticle.Text));
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
-                        spamAddNew.Add(new SqlParameter("@remark", this.remark.Text));
+                        spamAddNew.Add(new SqlParameter("@remark", this.txtRemark.Text));
                         spamAddNew.Add(new SqlParameter("@testNO", testno + 1));
                         upResult= DBProxy.Current.Execute(null, insCmd,spamAddNew);
                     }                
@@ -782,10 +782,10 @@ SET IDENTITY_INSERT oven off";
                                        where id=@id";
                     List<SqlParameter> spamEdit = new List<SqlParameter>();
                     spamEdit.Add(new SqlParameter("@id", ID));//New ID
-                    spamEdit.Add(new SqlParameter("@insDate", this.inspdate.Value));
-                    spamEdit.Add(new SqlParameter("@article", this.article.Text));
+                    spamEdit.Add(new SqlParameter("@insDate", this.dateTestDate.Value));
+                    spamEdit.Add(new SqlParameter("@article", this.txtArticle.Text));
                     spamEdit.Add(new SqlParameter("@insor", loginID));
-                    spamEdit.Add(new SqlParameter("@remark", this.remark.Text));
+                    spamEdit.Add(new SqlParameter("@remark", this.txtRemark.Text));
                     spamEdit.Add(new SqlParameter("@EditName", loginID));
                     spamEdit.Add(new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
                     upResult= DBProxy.Current.Execute(null, editCmd,spamEdit);
@@ -881,13 +881,13 @@ SET IDENTITY_INSERT oven off";
                 {
                     return;                  
                 }
-                this.article.Text = item.GetSelectedString();
+                this.txtArticle.Text = item.GetSelectedString();
             }
         }
 
         private void article_Validating(object sender, CancelEventArgs e)
         {
-            if (!this.EditMode || this.article.Text.Empty()) { return; }
+            if (!this.EditMode || this.txtArticle.Text.Empty()) { return; }
             DualResult dresult;
             DataTable dt;
             string cmd = @"select distinct oq.article 
@@ -897,14 +897,14 @@ SET IDENTITY_INSERT oven off";
                     and oq.article=@art";
             List<SqlParameter> spm = new List<SqlParameter>();
             spm.Add(new SqlParameter("@poid", PoID));
-            spm.Add(new SqlParameter("@art", article.Text));
+            spm.Add(new SqlParameter("@art", txtArticle.Text));
             if (dresult = DBProxy.Current.Select(null, cmd, spm, out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
                     MyUtility.Msg.InfoBox("Article doesn't exist in orders");
-                    article.Text = "";
-                    article.Select();
+                    txtArticle.Text = "";
+                    txtArticle.Select();
                     e.Cancel = true;
                     return;
 
@@ -922,7 +922,7 @@ SET IDENTITY_INSERT oven off";
             DataTable dt =(DataTable)gridbs.DataSource;            
             bool result = true;
 
-            if (this.encode_btn.Text == "Encode")
+            if (this.btnEncode.Text == "Encode")
             {
                 if (dt.Rows.Count <= 0)
 	            {
@@ -1027,15 +1027,15 @@ SET IDENTITY_INSERT oven off";
             if (excel == null) return;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[1, 2] = this.poid.Text.ToString();
+            worksheet.Cells[1, 2] = this.txtSP.Text.ToString();
             worksheet.Cells[1, 4] = StyleID;
             worksheet.Cells[1, 6] = dtPo.Rows[0]["SeasonID"].ToString();
             worksheet.Cells[1, 8] = SeasonID;
-            worksheet.Cells[1, 10] = this.testno.Text.ToString();
+            worksheet.Cells[1, 10] = this.txtNoofTest.Text.ToString();
             worksheet.Cells[2, 2] = status;
-            worksheet.Cells[2, 4] = this.comboBox1.Text;
-            worksheet.Cells[2, 6] = this.inspdate.Text;
-            worksheet.Cells[2, 8] = this.txtuser1.TextBox1.Text.ToString();
+            worksheet.Cells[2, 4] = this.comboResult.Text;
+            worksheet.Cells[2, 6] = this.dateTestDate.Text;
+            worksheet.Cells[2, 8] = this.txtuserInspector.TextBox1.Text.ToString();
             worksheet.Cells[2, 10] = BrandID;
 
             int StartRow = 4;

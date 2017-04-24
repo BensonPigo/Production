@@ -38,9 +38,9 @@ namespace Sci.Production.Quality
                 Ict.DualResult tResult;
                 if (tResult = DBProxy.Current.Select(null, "select distinct team  from Cfa WITH (NOLOCK) ", out dtTeam))
                 {
-                    this.Team_combo.DataSource = dtTeam;
-                    this.Team_combo.DisplayMember = "Team";
-                    this.Team_combo.ValueMember = "Team";
+                    this.comboTeam.DataSource = dtTeam;
+                    this.comboTeam.DisplayMember = "Team";
+                    this.comboTeam.ValueMember = "Team";
                 }
                 else { ShowErr(tResult); }
 
@@ -51,16 +51,16 @@ namespace Sci.Production.Quality
                 Stage_RowSource.Add("R", "Re-Stagger");
                 Stage_RowSource.Add("F", "Final");                              
                 Stage_RowSource.Add("B", "Buyer");
-                InspectStage_combo.DataSource = new BindingSource(Stage_RowSource, null);
-                InspectStage_combo.ValueMember = "Key";
-                InspectStage_combo.DisplayMember = "Value";
+                comboInspectionStage.DataSource = new BindingSource(Stage_RowSource, null);
+                comboInspectionStage.ValueMember = "Key";
+                comboInspectionStage.DisplayMember = "Value";
 
                 Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
                 Result_RowSource.Add("P", "Pass");
                 Result_RowSource.Add("F", "Fail");
-                Result_combo.DataSource = new BindingSource(Result_RowSource, null);
-                Result_combo.ValueMember = "Key";
-                Result_combo.DisplayMember = "Value";
+                comboResult.DataSource = new BindingSource(Result_RowSource, null);
+                comboResult.ValueMember = "Key";
+                comboResult.DisplayMember = "Value";
                 #endregion
 
         }
@@ -81,11 +81,11 @@ namespace Sci.Production.Quality
             {
                 //this.Audit_Date.Text = Convert.ToDateTime(dr["cDate"]).ToShortDateString();
                 //this.SP_text.Text = dr["orderID"].ToString();
-                this.Style_text.Text = dr["StyleID"].ToString();
-                this.Des_text.Text = dr["dest"].ToString();
+                this.txtStyle.Text = dr["StyleID"].ToString();
+                this.txtDestination.Text = dr["dest"].ToString();
                 //this.Factory_text.Text = dr["FactoryID"].ToString();
-                this.PO_text.Text = dr["custPONo"].ToString();
-                this.orderQty_text.Text = dr["qty"].ToString();
+                this.txtPO.Text = dr["custPONo"].ToString();
+                this.numOrderQty.Text = dr["qty"].ToString();
                 //this.InspectQty_text.Text = dr["InspectQty"].ToString();
                 //this.DefectsQty_text.Text = dr["DefectQty"].ToString();
                 //this.Line_text.Text = dr["SewingLineID"].ToString();
@@ -93,26 +93,26 @@ namespace Sci.Production.Quality
                 //this.CFA1_text.Text = dr["CFA"].ToString();
                 //this.Remark_text.Text = dr["Remark"].ToString();                
                
-                if (MyUtility.Check.Empty(this.InspectQty_text.Text) || Convert.ToInt32(this.InspectQty_text.Text)==0)
+                if (MyUtility.Check.Empty(this.numInspectQty.Text) || Convert.ToInt32(this.numInspectQty.Text)==0)
                 {
-                    this.InspectQty_text.Text = "0";
+                    this.numInspectQty.Text = "0";
                     
                 }
                 else
                 {
-                    decimal sqrValue = MyUtility.Convert.GetDecimal(Convert.ToDouble(this.DefectsQty_text.Text) / Convert.ToDouble(this.InspectQty_text.Text));
+                    decimal sqrValue = MyUtility.Convert.GetDecimal(Convert.ToDouble(this.numDefectsQty.Text) / Convert.ToDouble(this.numInspectQty.Text));
                     //四捨五入到第3位
-                    SQR_text.Text = Math.Round(Convert.ToDouble(sqrValue), 3).ToString();
+                    numSQR.Text = Math.Round(Convert.ToDouble(sqrValue), 3).ToString();
                 }
                 
             }          
             else
             {
-                this.Audit_Date.Text = "";         this.SP_text.Text = "";              this.Style_text.Text ="";
-                this.Des_text.Text = "";           this.Factory_text.Text = "";         this.PO_text.Text = "";
-                this.orderQty_text.Text = "0";      this.InspectQty_text.Text = "0";      this.DefectsQty_text.Text = "0";
-                this.Line_text.Text = "";          this.Garment_text.Text = "";         this.CFA1_text.Text = "";
-                this.SQR_text.Text = "0";   this.Remark_text.Text = "";
+                this.dateAuditDate.Text = "";         this.txtSP.Text = "";              this.txtStyle.Text ="";
+                this.txtDestination.Text = "";           this.txtFactory.Text = "";         this.txtPO.Text = "";
+                this.numOrderQty.Text = "0";      this.numInspectQty.Text = "0";      this.numDefectsQty.Text = "0";
+                this.txtsewingline.Text = "";          this.numGarmentOutput.Text = "";         this.txtuserCFA.Text = "";
+                this.numSQR.Text = "0";   this.txtRemark.Text = "";
             }            
             DataRow drStatus;
 
@@ -357,7 +357,7 @@ where a.ID='{0}'",
             DataTable dt;
             string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
+            spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
 
                 DualResult dResult;
@@ -373,7 +373,7 @@ where a.ID='{0}'",
                     spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
                     spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
                     spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
-                    spamO.Add(new SqlParameter("@id", this.SP_text.Text));
+                    spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                     DBProxy.Current.Execute(null, updOrders, spamO);
                     this.RenewData();
 
@@ -390,7 +390,7 @@ where a.ID='{0}'",
             DataTable dt;
             string cmd = "select * from cfa WITH (NOLOCK) where orderid=@orderid order by cDate desc";
             List<SqlParameter> spam = new List<SqlParameter>();
-            spam.Add(new SqlParameter("@orderid", this.SP_text.Text));
+            spam.Add(new SqlParameter("@orderid", this.txtSP.Text));
             DBProxy.Current.Select(null, cmd, spam, out dt);
 
             List<SqlParameter> spamAmend = new List<SqlParameter>();
@@ -405,7 +405,7 @@ where a.ID='{0}'",
                 spamO.Add(new SqlParameter("@insdate", Convert.ToDateTime(dt.Rows[0]["cDate"]).ToShortDateString()));
                 spamO.Add(new SqlParameter("@result", dt.Rows[0]["Result"]));
                 spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
-                spamO.Add(new SqlParameter("@id", this.SP_text.Text));
+                spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                 DBProxy.Current.Execute(null, updOrders, spamO);
                 this.RenewData();
             }
@@ -424,46 +424,46 @@ where a.ID='{0}'",
             afterDT.Merge(gridDT, true);
             afterDT.AcceptChanges();
 
-            if (MyUtility.Check.Empty(this.Audit_Date.Text))
+            if (MyUtility.Check.Empty(this.dateAuditDate.Text))
             {
                 MyUtility.Msg.WarningBox("<Audit Date> cannot be empty", "Warning");
-                this.Audit_Date.Select();
+                this.dateAuditDate.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.SP_text.Text))
+            if (MyUtility.Check.Empty(this.txtSP.Text))
             {
                 MyUtility.Msg.WarningBox("<SP#> cannot be empty", "Warning");
-                this.SP_text.Select();
+                this.txtSP.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.Line_text.Text))
+            if (MyUtility.Check.Empty(this.txtsewingline.Text))
             {
                 MyUtility.Msg.WarningBox("<Line#> cannot be empty", "Warning");
-                this.Line_text.Select();
+                this.txtsewingline.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.txtdropdownlist1.Text))
+            if (MyUtility.Check.Empty(this.txtdropdownlistShift.Text))
             {
                 MyUtility.Msg.WarningBox("<Shift> cannot be empty", "Warning");
-                this.txtdropdownlist1.Select();
+                this.txtdropdownlistShift.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.Team_combo.Text))
+            if (MyUtility.Check.Empty(this.comboTeam.Text))
             {
                 MyUtility.Msg.WarningBox("<Team> cannot be empty", "Warning");
-                this.Team_combo.Select();
+                this.comboTeam.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.InspectStage_combo.Text))
+            if (MyUtility.Check.Empty(this.comboInspectionStage.Text))
             {
                 MyUtility.Msg.WarningBox("<InspectStage> cannot be empty", "Warning");
-                this.InspectStage_combo.Select();
+                this.comboInspectionStage.Select();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.Result_combo.Text))
+            if (MyUtility.Check.Empty(this.comboResult.Text))
             {
                 MyUtility.Msg.WarningBox("<Result> cannot be empty", "Warning");
-                this.Result_combo.Select();
+                this.comboResult.Select();
                 return false;
             }
             foreach (DataRow dr in afterDT.Rows)
@@ -507,7 +507,7 @@ where a.ID='{0}'",
             //取單號
             if (this.IsDetailInserting)
             {
-                 tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"CA", "CFA",(DateTime)Convert.ToDateTime(this.Audit_Date.Text));
+                 tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword+"CA", "CFA",(DateTime)Convert.ToDateTime(this.dateAuditDate.Text));
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -523,7 +523,7 @@ where a.ID='{0}'",
                 qty += Convert.ToInt32(row["Qty"]);
             }        
             CurrentMaintain["DefectQty"] = qty.ToString();
-            InQty = Convert.ToInt32(this.InspectQty_text.Text);
+            InQty = Convert.ToInt32(this.numInspectQty.Text);
             if (qty > InQty)
             {
                 MyUtility.Msg.WarningBox("<Defects Qty> cannot more than <Inspect Qty>", "Warning");
@@ -619,28 +619,28 @@ where a.ID='{0}'",
         private void InspectStage_combo_SelectedIndexChanged(object sender, EventArgs e)
         {
            
-            switch (InspectStage_combo.Text)
+            switch (comboInspectionStage.Text)
             {
                 case "Comments/Roving":
-                    this.txtStageInfo.Text = "Still in the line/no complete carton";
+                    this.txtInspectionStage.Text = "Still in the line/no complete carton";
                         break;
                 case "Change Over":
-                        this.txtStageInfo.Text = "0~10% complete cartons";
+                        this.txtInspectionStage.Text = "0~10% complete cartons";
                         break;
                 case "Stagger":
-                        this.txtStageInfo.Text = "11~79% complete cartons";
+                        this.txtInspectionStage.Text = "11~79% complete cartons";
                         break;
                 case "Re-Stagger":
-                        this.txtStageInfo.Text = "Re-inspection";
+                        this.txtInspectionStage.Text = "Re-inspection";
                         break;
                 case "Final":
-                        this.txtStageInfo.Text = "80~100% complete cartons";
+                        this.txtInspectionStage.Text = "80~100% complete cartons";
                     break;
                 case "Buyer":
-                    this.txtStageInfo.Text = "Buyer inspector, third party inspection, CFA";
+                    this.txtInspectionStage.Text = "Buyer inspector, third party inspection, CFA";
                     break;
                 case "":
-                     this.txtStageInfo.Text = "";
+                     this.txtInspectionStage.Text = "";
                     break;
                                 
             }
@@ -648,66 +648,66 @@ where a.ID='{0}'",
 
         private void SP_text_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.SP_text.Text))
+            if (MyUtility.Check.Empty(this.txtSP.Text))
             {
-                this.SP_text.Select();
+                this.txtSP.Select();
                 return;
             }
             DataTable dt;
             DualResult result;
             string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
-where a.ID='{0}'", SP_text.Text);
+where a.ID='{0}'", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
                 if (dt.Rows.Count>0)
                 {
-                    this.Style_text.Text = dt.Rows[0]["StyleID"].ToString();
-                    this.Des_text.Text = dt.Rows[0]["Dest"].ToString();
-                    this.Factory_text.Text = dt.Rows[0]["FactoryID"].ToString();
-                    this.PO_text.Text = dt.Rows[0]["CustPONo"].ToString();
-                    this.orderQty_text.Text = dt.Rows[0]["Qty"].ToString();
+                    this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
+                    this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
+                    this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
+                    this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
+                    this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                 }
             }
         }   
 
         private void Garment_text_TextChanged(object sender, EventArgs e)
         {
-            this.Garment_text.MaxLength = 3;
+            this.numGarmentOutput.MaxLength = 3;
         }
 
         private void SP_text_Validating(object sender, CancelEventArgs e)
         {
-           if (MyUtility.Check.Empty(this.SP_text.Text))
+           if (MyUtility.Check.Empty(this.txtSP.Text))
                 {
-                this.SP_text.Text = "";
-                this.Style_text.Text = "";
-                this.Des_text.Text = "";
-                this.Factory_text.Text = "";
-                this.PO_text.Text = "";
-                this.orderQty_text.Text = "0";  
-                this.SQR_text.Text = "0";
+                this.txtSP.Text = "";
+                this.txtStyle.Text = "";
+                this.txtDestination.Text = "";
+                this.txtFactory.Text = "";
+                this.txtPO.Text = "";
+                this.numOrderQty.Text = "0";  
+                this.numSQR.Text = "0";
                     return;
             }
             DataTable dt;   
             DualResult result;
             string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
-where a.ID='{0}'", SP_text.Text);
+where a.ID='{0}'", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
                 if (dt.Rows.Count==0)
                 {
                     MyUtility.Msg.WarningBox("<SP#> Data is not found! ");
-                    this.SP_text.Text = "";
-                    this.Style_text.Text = "";
-                    this.Des_text.Text = "";
-                    this.Factory_text.Text = "";
-                    this.PO_text.Text = ""; 
-                    this.orderQty_text.Text = "0";
-                    this.SQR_text.Text = "0";
-                    this.SP_text.Focus();
-                    this.SP_text.Select();      
+                    this.txtSP.Text = "";
+                    this.txtStyle.Text = "";
+                    this.txtDestination.Text = "";
+                    this.txtFactory.Text = "";
+                    this.txtPO.Text = ""; 
+                    this.numOrderQty.Text = "0";
+                    this.numSQR.Text = "0";
+                    this.txtSP.Focus();
+                    this.txtSP.Select();      
                     return;
                 }
             }          

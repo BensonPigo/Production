@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtID = new Sci.Win.UI.TextBox();
-            this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.txtDesc = new Sci.Win.UI.EditBox();
+            this.labelAreaCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.txtAreaCode = new Sci.Win.UI.TextBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +47,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtDesc);
-            this.detailcont.Controls.Add(this.chkJunk);
-            this.detailcont.Controls.Add(this.txtID);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.editDescription);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.txtAreaCode);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelAreaCode);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
@@ -60,7 +60,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(677, 395);
+            this.browse.Size = new System.Drawing.Size(829, 395);
             // 
             // tabs
             // 
@@ -79,59 +79,59 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelAreaCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(44, 50);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Area Code";
+            this.labelAreaCode.Lines = 0;
+            this.labelAreaCode.Location = new System.Drawing.Point(44, 50);
+            this.labelAreaCode.Name = "labelAreaCode";
+            this.labelAreaCode.Size = new System.Drawing.Size(89, 23);
+            this.labelAreaCode.TabIndex = 0;
+            this.labelAreaCode.Text = "Area Code";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(44, 81);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(44, 81);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(89, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // txtID
+            // txtAreaCode
             // 
-            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtID.IsSupportEditMode = false;
-            this.txtID.Location = new System.Drawing.Point(138, 50);
-            this.txtID.Name = "txtID";
-            this.txtID.ReadOnly = true;
-            this.txtID.Size = new System.Drawing.Size(98, 23);
-            this.txtID.TabIndex = 0;
+            this.txtAreaCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtAreaCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtAreaCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtAreaCode.IsSupportEditMode = false;
+            this.txtAreaCode.Location = new System.Drawing.Point(138, 50);
+            this.txtAreaCode.Name = "txtAreaCode";
+            this.txtAreaCode.ReadOnly = true;
+            this.txtAreaCode.Size = new System.Drawing.Size(98, 23);
+            this.txtAreaCode.TabIndex = 0;
             // 
-            // chkJunk
+            // checkJunk
             // 
-            this.chkJunk.AutoSize = true;
-            this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkJunk.Location = new System.Drawing.Point(257, 52);
-            this.chkJunk.Name = "chkJunk";
-            this.chkJunk.Size = new System.Drawing.Size(57, 21);
-            this.chkJunk.TabIndex = 1;
-            this.chkJunk.Text = "Junk";
-            this.chkJunk.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(257, 52);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 1;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtDesc
+            // editDescription
             // 
-            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDesc.Location = new System.Drawing.Point(139, 81);
-            this.txtDesc.Multiline = true;
-            this.txtDesc.Name = "txtDesc";
-            this.txtDesc.ReadOnly = true;
-            this.txtDesc.Size = new System.Drawing.Size(250, 121);
-            this.txtDesc.TabIndex = 3;
+            this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescription.Location = new System.Drawing.Point(139, 81);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.ReadOnly = true;
+            this.editDescription.Size = new System.Drawing.Size(250, 121);
+            this.editDescription.TabIndex = 3;
             // 
             // B06
             // 
@@ -161,10 +161,10 @@
 
         #endregion
 
-        private Win.UI.TextBox txtID;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.CheckBox chkJunk;
-        private Win.UI.EditBox txtDesc;
+        private Win.UI.TextBox txtAreaCode;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelAreaCode;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.EditBox editDescription;
     }
 }

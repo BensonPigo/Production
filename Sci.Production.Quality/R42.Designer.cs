@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.combo_Year = new Sci.Win.UI.ComboBox();
-            this.radiobtn_print_detail = new Sci.Win.UI.RadioButton();
-            this.radiobtn_pill_snagg_detail = new Sci.Win.UI.RadioButton();
-            this.combo_Brand = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.comboYear = new Sci.Win.UI.ComboBox();
+            this.radioPrintDetail = new Sci.Win.UI.RadioButton();
+            this.radioPillAndSnaggDetail = new Sci.Win.UI.RadioButton();
+            this.comboBrand = new Sci.Win.UI.ComboBox();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.labelYear = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,96 +45,96 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.combo_Year);
-            this.radioPanel1.Controls.Add(this.radiobtn_print_detail);
-            this.radioPanel1.Controls.Add(this.radiobtn_pill_snagg_detail);
-            this.radioPanel1.Controls.Add(this.combo_Brand);
-            this.radioPanel1.Controls.Add(this.label3);
-            this.radioPanel1.Controls.Add(this.label1);
-            this.radioPanel1.Controls.Add(this.label2);
+            this.radioPanel1.Controls.Add(this.comboYear);
+            this.radioPanel1.Controls.Add(this.radioPrintDetail);
+            this.radioPanel1.Controls.Add(this.radioPillAndSnaggDetail);
+            this.radioPanel1.Controls.Add(this.comboBrand);
+            this.radioPanel1.Controls.Add(this.labelReportType);
+            this.radioPanel1.Controls.Add(this.labelYear);
+            this.radioPanel1.Controls.Add(this.labelBrand);
             this.radioPanel1.Location = new System.Drawing.Point(28, 29);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(459, 207);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Pilling and Snagging Detail ";
             // 
-            // combo_Year
+            // comboYear
             // 
-            this.combo_Year.BackColor = System.Drawing.Color.White;
-            this.combo_Year.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combo_Year.FormattingEnabled = true;
-            this.combo_Year.IsSupportUnselect = true;
-            this.combo_Year.Location = new System.Drawing.Point(81, 75);
-            this.combo_Year.Name = "combo_Year";
-            this.combo_Year.Size = new System.Drawing.Size(121, 24);
-            this.combo_Year.TabIndex = 1;
+            this.comboYear.BackColor = System.Drawing.Color.White;
+            this.comboYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboYear.FormattingEnabled = true;
+            this.comboYear.IsSupportUnselect = true;
+            this.comboYear.Location = new System.Drawing.Point(81, 75);
+            this.comboYear.Name = "comboYear";
+            this.comboYear.Size = new System.Drawing.Size(121, 24);
+            this.comboYear.TabIndex = 1;
             // 
-            // radiobtn_print_detail
+            // radioPrintDetail
             // 
-            this.radiobtn_print_detail.AutoSize = true;
-            this.radiobtn_print_detail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_print_detail.Location = new System.Drawing.Point(124, 174);
-            this.radiobtn_print_detail.Name = "radiobtn_print_detail";
-            this.radiobtn_print_detail.Size = new System.Drawing.Size(114, 21);
-            this.radiobtn_print_detail.TabIndex = 3;
-            this.radiobtn_print_detail.TabStop = true;
-            this.radiobtn_print_detail.Text = "Printing Detail";
-            this.radiobtn_print_detail.UseVisualStyleBackColor = true;
+            this.radioPrintDetail.AutoSize = true;
+            this.radioPrintDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPrintDetail.Location = new System.Drawing.Point(124, 174);
+            this.radioPrintDetail.Name = "radioPrintDetail";
+            this.radioPrintDetail.Size = new System.Drawing.Size(114, 21);
+            this.radioPrintDetail.TabIndex = 3;
+            this.radioPrintDetail.TabStop = true;
+            this.radioPrintDetail.Text = "Printing Detail";
+            this.radioPrintDetail.UseVisualStyleBackColor = true;
             // 
-            // radiobtn_pill_snagg_detail
+            // radioPillAndSnaggDetail
             // 
-            this.radiobtn_pill_snagg_detail.AutoSize = true;
-            this.radiobtn_pill_snagg_detail.Checked = true;
-            this.radiobtn_pill_snagg_detail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobtn_pill_snagg_detail.Location = new System.Drawing.Point(124, 136);
-            this.radiobtn_pill_snagg_detail.Name = "radiobtn_pill_snagg_detail";
-            this.radiobtn_pill_snagg_detail.Size = new System.Drawing.Size(199, 21);
-            this.radiobtn_pill_snagg_detail.TabIndex = 2;
-            this.radiobtn_pill_snagg_detail.TabStop = true;
-            this.radiobtn_pill_snagg_detail.Text = "Pilling and Snagging Detail ";
-            this.radiobtn_pill_snagg_detail.UseVisualStyleBackColor = true;
-            this.radiobtn_pill_snagg_detail.Value = "Pilling and Snagging Detail ";
+            this.radioPillAndSnaggDetail.AutoSize = true;
+            this.radioPillAndSnaggDetail.Checked = true;
+            this.radioPillAndSnaggDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPillAndSnaggDetail.Location = new System.Drawing.Point(124, 136);
+            this.radioPillAndSnaggDetail.Name = "radioPillAndSnaggDetail";
+            this.radioPillAndSnaggDetail.Size = new System.Drawing.Size(199, 21);
+            this.radioPillAndSnaggDetail.TabIndex = 2;
+            this.radioPillAndSnaggDetail.TabStop = true;
+            this.radioPillAndSnaggDetail.Text = "Pilling and Snagging Detail ";
+            this.radioPillAndSnaggDetail.UseVisualStyleBackColor = true;
+            this.radioPillAndSnaggDetail.Value = "Pilling and Snagging Detail ";
             // 
-            // combo_Brand
+            // comboBrand
             // 
-            this.combo_Brand.BackColor = System.Drawing.Color.White;
-            this.combo_Brand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.combo_Brand.FormattingEnabled = true;
-            this.combo_Brand.IsSupportUnselect = true;
-            this.combo_Brand.Items.AddRange(new object[] {
+            this.comboBrand.BackColor = System.Drawing.Color.White;
+            this.comboBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBrand.FormattingEnabled = true;
+            this.comboBrand.IsSupportUnselect = true;
+            this.comboBrand.Items.AddRange(new object[] {
             "ADIDAS",
             "REEBOK"});
-            this.combo_Brand.Location = new System.Drawing.Point(81, 26);
-            this.combo_Brand.Name = "combo_Brand";
-            this.combo_Brand.Size = new System.Drawing.Size(121, 24);
-            this.combo_Brand.TabIndex = 0;
+            this.comboBrand.Location = new System.Drawing.Point(81, 26);
+            this.comboBrand.Name = "comboBrand";
+            this.comboBrand.Size = new System.Drawing.Size(121, 24);
+            this.comboBrand.TabIndex = 0;
             // 
-            // label3
+            // labelReportType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(28, 136);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(28, 136);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(90, 23);
+            this.labelReportType.TabIndex = 2;
+            this.labelReportType.Text = "Report Type";
             // 
-            // label1
+            // labelYear
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(28, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Year";
+            this.labelYear.Lines = 0;
+            this.labelYear.Location = new System.Drawing.Point(28, 75);
+            this.labelYear.Name = "labelYear";
+            this.labelYear.Size = new System.Drawing.Size(50, 23);
+            this.labelYear.TabIndex = 1;
+            this.labelYear.Text = "Year";
             // 
-            // label2
+            // labelBrand
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(28, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 23);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(28, 26);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(50, 23);
+            this.labelBrand.TabIndex = 0;
+            this.labelBrand.Text = "Brand";
             // 
             // R42
             // 
@@ -158,12 +158,12 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
-        private Win.UI.ComboBox combo_Brand;
-        private Win.UI.RadioButton radiobtn_pill_snagg_detail;
-        private Win.UI.ComboBox combo_Year;
-        private Win.UI.RadioButton radiobtn_print_detail;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelReportType;
+        private Win.UI.Label labelYear;
+        private Win.UI.ComboBox comboBrand;
+        private Win.UI.RadioButton radioPillAndSnaggDetail;
+        private Win.UI.ComboBox comboYear;
+        private Win.UI.RadioButton radioPrintDetail;
     }
 }

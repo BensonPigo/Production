@@ -31,13 +31,13 @@
             this.radioPanel = new Sci.Win.UI.RadioPanel();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelReportType = new Sci.Win.UI.Label();
             this.comboMaterialType = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelMaterialType = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Win.UI.ComboBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.DateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,13 +49,13 @@
             // 
             this.radioPanel.Controls.Add(this.radioDetail);
             this.radioPanel.Controls.Add(this.radioSummary);
-            this.radioPanel.Controls.Add(this.label2);
+            this.radioPanel.Controls.Add(this.labelReportType);
             this.radioPanel.Controls.Add(this.comboMaterialType);
-            this.radioPanel.Controls.Add(this.label1);
+            this.radioPanel.Controls.Add(this.labelMaterialType);
             this.radioPanel.Controls.Add(this.comboCategory);
-            this.radioPanel.Controls.Add(this.label10);
-            this.radioPanel.Controls.Add(this.DateSCIDelivery);
-            this.radioPanel.Controls.Add(this.label3);
+            this.radioPanel.Controls.Add(this.labelCategory);
+            this.radioPanel.Controls.Add(this.dateSCIDelivery);
+            this.radioPanel.Controls.Add(this.labelSCIDelivery);
             this.radioPanel.Location = new System.Drawing.Point(30, 24);
             this.radioPanel.Name = "radioPanel";
             this.radioPanel.Size = new System.Drawing.Size(440, 217);
@@ -85,14 +85,14 @@
             this.radioSummary.Text = "Summary";
             this.radioSummary.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // labelReportType
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(29, 146);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 104;
-            this.label2.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(29, 146);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(93, 23);
+            this.labelReportType.TabIndex = 104;
+            this.labelReportType.Text = "Report Type";
             // 
             // comboMaterialType
             // 
@@ -105,14 +105,14 @@
             this.comboMaterialType.Size = new System.Drawing.Size(125, 24);
             this.comboMaterialType.TabIndex = 103;
             // 
-            // label1
+            // labelMaterialType
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(29, 104);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 102;
-            this.label1.Text = "Material Type";
+            this.labelMaterialType.Lines = 0;
+            this.labelMaterialType.Location = new System.Drawing.Point(29, 104);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(93, 23);
+            this.labelMaterialType.TabIndex = 102;
+            this.labelMaterialType.Text = "Material Type";
             // 
             // comboCategory
             // 
@@ -125,31 +125,31 @@
             this.comboCategory.Size = new System.Drawing.Size(125, 24);
             this.comboCategory.TabIndex = 101;
             // 
-            // label10
+            // labelCategory
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(29, 64);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(93, 23);
-            this.label10.TabIndex = 100;
-            this.label10.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(29, 64);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(93, 23);
+            this.labelCategory.TabIndex = 100;
+            this.labelCategory.Text = "Category";
             // 
-            // DateSCIDelivery
+            // dateSCIDelivery
             // 
-            this.DateSCIDelivery.IsRequired = false;
-            this.DateSCIDelivery.Location = new System.Drawing.Point(128, 24);
-            this.DateSCIDelivery.Name = "DateSCIDelivery";
-            this.DateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.DateSCIDelivery.TabIndex = 99;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(128, 24);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 99;
             // 
-            // label3
+            // labelSCIDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(29, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 23);
-            this.label3.TabIndex = 98;
-            this.label3.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(29, 24);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(93, 23);
+            this.labelSCIDelivery.TabIndex = 98;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // R05
             // 
@@ -173,13 +173,13 @@
         private Win.UI.RadioPanel radioPanel;
         private Win.UI.RadioButton radioDetail;
         private Win.UI.RadioButton radioSummary;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelReportType;
         private Win.UI.ComboBox comboMaterialType;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelMaterialType;
         private Win.UI.ComboBox comboCategory;
-        private Win.UI.Label label10;
-        private Win.UI.DateRange DateSCIDelivery;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelCategory;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelSCIDelivery;
 
     }
 }

@@ -23,9 +23,9 @@ namespace Sci.Production.Quality
             Dictionary<String,String> combobox1_RowSource = new Dictionary<string,string>();
             combobox1_RowSource.Add("F", "Fabric");
             combobox1_RowSource.Add("A", "Accessories");
-            comboBox1.DataSource = new BindingSource(combobox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboMaterialType.DataSource = new BindingSource(combobox1_RowSource, null);
+            comboMaterialType.ValueMember = "Key";
+            comboMaterialType.DisplayMember = "Value";
         }
         protected override void ClickEditAfter()
         {
@@ -38,25 +38,25 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Level > can not be empty!");
-                this.textBox1.Focus();
+                this.txtLevel.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Range1"]) && CurrentMaintain["ID"].ToString()!="A")
             {
                 MyUtility.Msg.WarningBox("< Lower Rate Range > can not be empty!");
-                this.textBox2.Focus();
+                this.txtRateRangeStart.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Range2"]))
             {
                 MyUtility.Msg.WarningBox("< Higher Rate Range > can not be empty!");
-                this.textBox3.Focus();
+                this.txtRateRangeEnd.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("< Material Type > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboMaterialType.Focus();
                 return false;
             }
 

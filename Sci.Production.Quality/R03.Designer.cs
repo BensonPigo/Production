@@ -32,18 +32,18 @@
             this.txtSeason = new Sci.Production.Class.txtseason();
             this.txtBrand = new Sci.Production.Class.txtbrand();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Win.UI.ComboBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.DateEstCutting = new Sci.Win.UI.DateRange();
-            this.DateSewInLine = new Sci.Win.UI.DateRange();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.dateEstCuttingDate = new Sci.Win.UI.DateRange();
+            this.dateSewingInLineDate = new Sci.Win.UI.DateRange();
             this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.DateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelEstCuttingDate = new Sci.Win.UI.Label();
+            this.labelSewingInLineDate = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,18 +64,18 @@
             this.panel1.Controls.Add(this.txtSeason);
             this.panel1.Controls.Add(this.txtBrand);
             this.panel1.Controls.Add(this.comboFactory);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelFactory);
             this.panel1.Controls.Add(this.comboCategory);
-            this.panel1.Controls.Add(this.label10);
-            this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.DateEstCutting);
-            this.panel1.Controls.Add(this.DateSewInLine);
+            this.panel1.Controls.Add(this.labelCategory);
+            this.panel1.Controls.Add(this.labelBrand);
+            this.panel1.Controls.Add(this.labelSeason);
+            this.panel1.Controls.Add(this.dateEstCuttingDate);
+            this.panel1.Controls.Add(this.dateSewingInLineDate);
             this.panel1.Controls.Add(this.dateRange4);
-            this.panel1.Controls.Add(this.DateSCIDelivery);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.dateSCIDelivery);
+            this.panel1.Controls.Add(this.labelEstCuttingDate);
+            this.panel1.Controls.Add(this.labelSewingInLineDate);
+            this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Location = new System.Drawing.Point(33, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(447, 294);
@@ -111,14 +111,14 @@
             this.comboFactory.Size = new System.Drawing.Size(125, 24);
             this.comboFactory.TabIndex = 47;
             // 
-            // label1
+            // labelFactory
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 243);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 23);
-            this.label1.TabIndex = 46;
-            this.label1.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(12, 243);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(127, 23);
+            this.labelFactory.TabIndex = 46;
+            this.labelFactory.Text = "Factory";
             // 
             // comboCategory
             // 
@@ -131,48 +131,48 @@
             this.comboCategory.Size = new System.Drawing.Size(125, 24);
             this.comboCategory.TabIndex = 45;
             // 
-            // label10
+            // labelCategory
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(12, 202);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(127, 23);
-            this.label10.TabIndex = 44;
-            this.label10.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(12, 202);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(127, 23);
+            this.labelCategory.TabIndex = 44;
+            this.labelCategory.Text = "Category";
             // 
-            // label8
+            // labelBrand
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(12, 163);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(127, 23);
-            this.label8.TabIndex = 41;
-            this.label8.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(12, 163);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(127, 23);
+            this.labelBrand.TabIndex = 41;
+            this.labelBrand.Text = "Brand";
             // 
-            // label7
+            // labelSeason
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(12, 121);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(127, 23);
-            this.label7.TabIndex = 40;
-            this.label7.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(12, 121);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(127, 23);
+            this.labelSeason.TabIndex = 40;
+            this.labelSeason.Text = "Season";
             // 
-            // DateEstCutting
+            // dateEstCuttingDate
             // 
-            this.DateEstCutting.IsRequired = false;
-            this.DateEstCutting.Location = new System.Drawing.Point(142, 85);
-            this.DateEstCutting.Name = "DateEstCutting";
-            this.DateEstCutting.Size = new System.Drawing.Size(280, 23);
-            this.DateEstCutting.TabIndex = 39;
+            this.dateEstCuttingDate.IsRequired = false;
+            this.dateEstCuttingDate.Location = new System.Drawing.Point(142, 85);
+            this.dateEstCuttingDate.Name = "dateEstCuttingDate";
+            this.dateEstCuttingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstCuttingDate.TabIndex = 39;
             // 
-            // DateSewInLine
+            // dateSewingInLineDate
             // 
-            this.DateSewInLine.IsRequired = false;
-            this.DateSewInLine.Location = new System.Drawing.Point(142, 47);
-            this.DateSewInLine.Name = "DateSewInLine";
-            this.DateSewInLine.Size = new System.Drawing.Size(280, 23);
-            this.DateSewInLine.TabIndex = 38;
+            this.dateSewingInLineDate.IsRequired = false;
+            this.dateSewingInLineDate.Location = new System.Drawing.Point(142, 47);
+            this.dateSewingInLineDate.Name = "dateSewingInLineDate";
+            this.dateSewingInLineDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingInLineDate.TabIndex = 38;
             // 
             // dateRange4
             // 
@@ -181,40 +181,40 @@
             this.dateRange4.Size = new System.Drawing.Size(8, 23);
             this.dateRange4.TabIndex = 37;
             // 
-            // DateSCIDelivery
+            // dateSCIDelivery
             // 
-            this.DateSCIDelivery.IsRequired = false;
-            this.DateSCIDelivery.Location = new System.Drawing.Point(142, 10);
-            this.DateSCIDelivery.Name = "DateSCIDelivery";
-            this.DateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.DateSCIDelivery.TabIndex = 36;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(142, 10);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 36;
             // 
-            // label5
+            // labelEstCuttingDate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(12, 85);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(127, 23);
-            this.label5.TabIndex = 35;
-            this.label5.Text = "Est. Cutting Date";
+            this.labelEstCuttingDate.Lines = 0;
+            this.labelEstCuttingDate.Location = new System.Drawing.Point(12, 85);
+            this.labelEstCuttingDate.Name = "labelEstCuttingDate";
+            this.labelEstCuttingDate.Size = new System.Drawing.Size(127, 23);
+            this.labelEstCuttingDate.TabIndex = 35;
+            this.labelEstCuttingDate.Text = "Est. Cutting Date";
             // 
-            // label4
+            // labelSewingInLineDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(12, 47);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(127, 23);
-            this.label4.TabIndex = 34;
-            this.label4.Text = "Sewing in-line Date";
+            this.labelSewingInLineDate.Lines = 0;
+            this.labelSewingInLineDate.Location = new System.Drawing.Point(12, 47);
+            this.labelSewingInLineDate.Name = "labelSewingInLineDate";
+            this.labelSewingInLineDate.Size = new System.Drawing.Size(127, 23);
+            this.labelSewingInLineDate.TabIndex = 34;
+            this.labelSewingInLineDate.Text = "Sewing in-line Date";
             // 
-            // label3
+            // labelSCIDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(12, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 23);
-            this.label3.TabIndex = 33;
-            this.label3.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(12, 10);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(127, 23);
+            this.labelSCIDelivery.TabIndex = 33;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // R03
             // 
@@ -236,18 +236,18 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.DateRange DateEstCutting;
-        private Win.UI.DateRange DateSewInLine;
+        private Win.UI.DateRange dateEstCuttingDate;
+        private Win.UI.DateRange dateSewingInLineDate;
         private Win.UI.DateRange dateRange4;
-        private Win.UI.DateRange DateSCIDelivery;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label1;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelEstCuttingDate;
+        private Win.UI.Label labelSewingInLineDate;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelFactory;
         private Win.UI.ComboBox comboCategory;
-        private Win.UI.Label label10;
+        private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFactory;
         private Class.txtbrand txtBrand;
         private Class.txtseason txtSeason;

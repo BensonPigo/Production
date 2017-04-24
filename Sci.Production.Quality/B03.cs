@@ -31,7 +31,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Scale Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtScaleCode.Focus();
                 return false;
             }
 

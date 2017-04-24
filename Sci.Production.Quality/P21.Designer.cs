@@ -28,45 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.SP_text = new Sci.Win.UI.TextBox();
-            this.Style_text = new Sci.Win.UI.TextBox();
-            this.Des_text = new Sci.Win.UI.TextBox();
-            this.Factory_text = new Sci.Win.UI.TextBox();
-            this.Remark_text = new Sci.Win.UI.TextBox();
-            this.PO_text = new Sci.Win.UI.TextBox();
-            this.InspectStage_combo = new Sci.Win.UI.ComboBox();
-            this.Result_combo = new Sci.Win.UI.ComboBox();
-            this.Audit_Date = new Sci.Win.UI.DateBox();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.labelAuditDate = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelSQR = new Sci.Win.UI.Label();
+            this.labelPO = new Sci.Win.UI.Label();
+            this.labelOrderQty = new Sci.Win.UI.Label();
+            this.labelInspectQty = new Sci.Win.UI.Label();
+            this.labelDefectsQty = new Sci.Win.UI.Label();
+            this.labelLine = new Sci.Win.UI.Label();
+            this.labelTeam = new Sci.Win.UI.Label();
+            this.labelGarmentOutput = new Sci.Win.UI.Label();
+            this.labelInspectionStage = new Sci.Win.UI.Label();
+            this.labelCFA = new Sci.Win.UI.Label();
+            this.labelShift = new Sci.Win.UI.Label();
+            this.labelResult = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtDestination = new Sci.Win.UI.TextBox();
+            this.txtFactory = new Sci.Win.UI.TextBox();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.txtPO = new Sci.Win.UI.TextBox();
+            this.comboInspectionStage = new Sci.Win.UI.ComboBox();
+            this.comboResult = new Sci.Win.UI.ComboBox();
+            this.dateAuditDate = new Sci.Win.UI.DateBox();
             this.label19 = new Sci.Win.UI.Label();
-            this.Team_combo = new Sci.Win.UI.ComboBox();
-            this.txtStageInfo = new Sci.Win.UI.TextBox();
-            this.Garment_text = new Sci.Win.UI.NumericBox();
-            this.InspectQty_text = new Sci.Win.UI.NumericBox();
-            this.DefectsQty_text = new Sci.Win.UI.NumericBox();
-            this.SQR_text = new Sci.Win.UI.NumericBox();
-            this.orderQty_text = new Sci.Win.UI.NumericBox();
+            this.comboTeam = new Sci.Win.UI.ComboBox();
+            this.txtInspectionStage = new Sci.Win.UI.TextBox();
+            this.numGarmentOutput = new Sci.Win.UI.NumericBox();
+            this.numInspectQty = new Sci.Win.UI.NumericBox();
+            this.numDefectsQty = new Sci.Win.UI.NumericBox();
+            this.numSQR = new Sci.Win.UI.NumericBox();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.labConfirm = new System.Windows.Forms.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.Line_text = new Sci.Production.Class.txtsewingline();
-            this.CFA1_text = new Sci.Production.Class.txtuser();
+            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
+            this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.txtuserCFA = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -84,84 +84,84 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.labConfirm);
-            this.masterpanel.Controls.Add(this.orderQty_text);
-            this.masterpanel.Controls.Add(this.SQR_text);
-            this.masterpanel.Controls.Add(this.DefectsQty_text);
-            this.masterpanel.Controls.Add(this.InspectQty_text);
-            this.masterpanel.Controls.Add(this.Garment_text);
-            this.masterpanel.Controls.Add(this.txtStageInfo);
-            this.masterpanel.Controls.Add(this.Team_combo);
-            this.masterpanel.Controls.Add(this.txtdropdownlist1);
+            this.masterpanel.Controls.Add(this.numOrderQty);
+            this.masterpanel.Controls.Add(this.numSQR);
+            this.masterpanel.Controls.Add(this.numDefectsQty);
+            this.masterpanel.Controls.Add(this.numInspectQty);
+            this.masterpanel.Controls.Add(this.numGarmentOutput);
+            this.masterpanel.Controls.Add(this.txtInspectionStage);
+            this.masterpanel.Controls.Add(this.comboTeam);
+            this.masterpanel.Controls.Add(this.txtdropdownlistShift);
             this.masterpanel.Controls.Add(this.label19);
-            this.masterpanel.Controls.Add(this.Line_text);
-            this.masterpanel.Controls.Add(this.CFA1_text);
-            this.masterpanel.Controls.Add(this.Result_combo);
-            this.masterpanel.Controls.Add(this.InspectStage_combo);
-            this.masterpanel.Controls.Add(this.PO_text);
-            this.masterpanel.Controls.Add(this.Remark_text);
-            this.masterpanel.Controls.Add(this.Factory_text);
-            this.masterpanel.Controls.Add(this.Des_text);
-            this.masterpanel.Controls.Add(this.Style_text);
-            this.masterpanel.Controls.Add(this.SP_text);
-            this.masterpanel.Controls.Add(this.label18);
-            this.masterpanel.Controls.Add(this.label17);
-            this.masterpanel.Controls.Add(this.label16);
-            this.masterpanel.Controls.Add(this.label15);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.Audit_Date);
+            this.masterpanel.Controls.Add(this.txtsewingline);
+            this.masterpanel.Controls.Add(this.txtuserCFA);
+            this.masterpanel.Controls.Add(this.comboResult);
+            this.masterpanel.Controls.Add(this.comboInspectionStage);
+            this.masterpanel.Controls.Add(this.txtPO);
+            this.masterpanel.Controls.Add(this.txtRemark);
+            this.masterpanel.Controls.Add(this.txtFactory);
+            this.masterpanel.Controls.Add(this.txtDestination);
+            this.masterpanel.Controls.Add(this.txtStyle);
+            this.masterpanel.Controls.Add(this.txtSP);
+            this.masterpanel.Controls.Add(this.labelResult);
+            this.masterpanel.Controls.Add(this.labelShift);
+            this.masterpanel.Controls.Add(this.labelCFA);
+            this.masterpanel.Controls.Add(this.labelInspectionStage);
+            this.masterpanel.Controls.Add(this.labelGarmentOutput);
+            this.masterpanel.Controls.Add(this.labelTeam);
+            this.masterpanel.Controls.Add(this.labelLine);
+            this.masterpanel.Controls.Add(this.labelDefectsQty);
+            this.masterpanel.Controls.Add(this.labelInspectQty);
+            this.masterpanel.Controls.Add(this.labelOrderQty);
+            this.masterpanel.Controls.Add(this.labelPO);
+            this.masterpanel.Controls.Add(this.labelSQR);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelSP);
+            this.masterpanel.Controls.Add(this.labelAuditDate);
+            this.masterpanel.Controls.Add(this.labelDestination);
+            this.masterpanel.Controls.Add(this.dateAuditDate);
             this.masterpanel.Size = new System.Drawing.Size(1037, 217);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Audit_Date, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label18, 0);
-            this.masterpanel.Controls.SetChildIndex(this.SP_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Style_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Des_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Factory_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Remark_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.PO_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.InspectStage_combo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Result_combo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.CFA1_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Line_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateAuditDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelAuditDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSQR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOrderQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInspectQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDefectsQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTeam, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelGarmentOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInspectionStage, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCFA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelResult, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtDestination, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPO, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboInspectionStage, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboResult, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserCFA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.label19, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtdropdownlist1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Team_combo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtStageInfo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.Garment_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.InspectQty_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DefectsQty_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.SQR_text, 0);
-            this.masterpanel.Controls.SetChildIndex(this.orderQty_text, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtdropdownlistShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtInspectionStage, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numGarmentOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numInspectQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numDefectsQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numSQR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             // 
             // detailpanel
@@ -183,15 +183,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1037, 588);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1031, 542);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1031, 40);
             // 
             // detail
             // 
@@ -227,267 +227,267 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(458, 13);
             // 
-            // label1
+            // labelDestination
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(20, 98);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Destination ";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(20, 98);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(82, 23);
+            this.labelDestination.TabIndex = 1;
+            this.labelDestination.Text = "Destination ";
             // 
-            // label2
+            // labelAuditDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(20, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Audit Date";
+            this.labelAuditDate.Lines = 0;
+            this.labelAuditDate.Location = new System.Drawing.Point(20, 13);
+            this.labelAuditDate.Name = "labelAuditDate";
+            this.labelAuditDate.Size = new System.Drawing.Size(82, 23);
+            this.labelAuditDate.TabIndex = 2;
+            this.labelAuditDate.Text = "Audit Date";
             // 
-            // label3
+            // labelSP
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(20, 41);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "SP# ";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(20, 41);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(82, 23);
+            this.labelSP.TabIndex = 3;
+            this.labelSP.Text = "SP# ";
             // 
-            // label4
+            // labelStyle
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(20, 70);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Style ";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(20, 70);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(82, 23);
+            this.labelStyle.TabIndex = 4;
+            this.labelStyle.Text = "Style ";
             // 
-            // label5
+            // labelFactory
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(20, 126);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(82, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Factory ";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(20, 126);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(82, 23);
+            this.labelFactory.TabIndex = 5;
+            this.labelFactory.Text = "Factory ";
             // 
-            // label6
+            // labelRemark
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(20, 182);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(82, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Remark ";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(20, 182);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(82, 23);
+            this.labelRemark.TabIndex = 6;
+            this.labelRemark.Text = "Remark ";
             // 
-            // label7
+            // labelSQR
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(20, 154);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(82, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "SQR ";
+            this.labelSQR.Lines = 0;
+            this.labelSQR.Location = new System.Drawing.Point(20, 154);
+            this.labelSQR.Name = "labelSQR";
+            this.labelSQR.Size = new System.Drawing.Size(82, 23);
+            this.labelSQR.TabIndex = 7;
+            this.labelSQR.Text = "SQR ";
             // 
-            // label8
+            // labelPO
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(269, 13);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(90, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "PO# ";
+            this.labelPO.Lines = 0;
+            this.labelPO.Location = new System.Drawing.Point(269, 13);
+            this.labelPO.Name = "labelPO";
+            this.labelPO.Size = new System.Drawing.Size(90, 23);
+            this.labelPO.TabIndex = 8;
+            this.labelPO.Text = "PO# ";
             // 
-            // label9
+            // labelOrderQty
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(269, 41);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(90, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Order Q\'ty ";
+            this.labelOrderQty.Lines = 0;
+            this.labelOrderQty.Location = new System.Drawing.Point(269, 41);
+            this.labelOrderQty.Name = "labelOrderQty";
+            this.labelOrderQty.Size = new System.Drawing.Size(90, 23);
+            this.labelOrderQty.TabIndex = 9;
+            this.labelOrderQty.Text = "Order Q\'ty ";
             // 
-            // label10
+            // labelInspectQty
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(269, 70);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(90, 23);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Inspect Q\'ty ";
+            this.labelInspectQty.Lines = 0;
+            this.labelInspectQty.Location = new System.Drawing.Point(269, 70);
+            this.labelInspectQty.Name = "labelInspectQty";
+            this.labelInspectQty.Size = new System.Drawing.Size(90, 23);
+            this.labelInspectQty.TabIndex = 10;
+            this.labelInspectQty.Text = "Inspect Q\'ty ";
             // 
-            // label11
+            // labelDefectsQty
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(269, 98);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(90, 23);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "Defects Qty ";
+            this.labelDefectsQty.Lines = 0;
+            this.labelDefectsQty.Location = new System.Drawing.Point(269, 98);
+            this.labelDefectsQty.Name = "labelDefectsQty";
+            this.labelDefectsQty.Size = new System.Drawing.Size(90, 23);
+            this.labelDefectsQty.TabIndex = 11;
+            this.labelDefectsQty.Text = "Defects Qty ";
             // 
-            // label12
+            // labelLine
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(269, 126);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(90, 23);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Line# ";
+            this.labelLine.Lines = 0;
+            this.labelLine.Location = new System.Drawing.Point(269, 126);
+            this.labelLine.Name = "labelLine";
+            this.labelLine.Size = new System.Drawing.Size(90, 23);
+            this.labelLine.TabIndex = 12;
+            this.labelLine.Text = "Line# ";
             // 
-            // label13
+            // labelTeam
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(269, 154);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(90, 23);
-            this.label13.TabIndex = 13;
-            this.label13.Text = "Team ";
+            this.labelTeam.Lines = 0;
+            this.labelTeam.Location = new System.Drawing.Point(269, 154);
+            this.labelTeam.Name = "labelTeam";
+            this.labelTeam.Size = new System.Drawing.Size(90, 23);
+            this.labelTeam.TabIndex = 13;
+            this.labelTeam.Text = "Team ";
             // 
-            // label14
+            // labelGarmentOutput
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(519, 13);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(112, 23);
-            this.label14.TabIndex = 14;
-            this.label14.Text = "Garment Output ";
+            this.labelGarmentOutput.Lines = 0;
+            this.labelGarmentOutput.Location = new System.Drawing.Point(519, 13);
+            this.labelGarmentOutput.Name = "labelGarmentOutput";
+            this.labelGarmentOutput.Size = new System.Drawing.Size(112, 23);
+            this.labelGarmentOutput.TabIndex = 14;
+            this.labelGarmentOutput.Text = "Garment Output ";
             // 
-            // label15
+            // labelInspectionStage
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(519, 43);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(112, 23);
-            this.label15.TabIndex = 15;
-            this.label15.Text = "Inspection Stage";
+            this.labelInspectionStage.Lines = 0;
+            this.labelInspectionStage.Location = new System.Drawing.Point(519, 43);
+            this.labelInspectionStage.Name = "labelInspectionStage";
+            this.labelInspectionStage.Size = new System.Drawing.Size(112, 23);
+            this.labelInspectionStage.TabIndex = 15;
+            this.labelInspectionStage.Text = "Inspection Stage";
             // 
-            // label16
+            // labelCFA
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(519, 72);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(112, 23);
-            this.label16.TabIndex = 16;
-            this.label16.Text = "CFA ";
+            this.labelCFA.Lines = 0;
+            this.labelCFA.Location = new System.Drawing.Point(519, 72);
+            this.labelCFA.Name = "labelCFA";
+            this.labelCFA.Size = new System.Drawing.Size(112, 23);
+            this.labelCFA.TabIndex = 16;
+            this.labelCFA.Text = "CFA ";
             // 
-            // label17
+            // labelShift
             // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(519, 99);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(112, 23);
-            this.label17.TabIndex = 17;
-            this.label17.Text = "Shift ";
+            this.labelShift.Lines = 0;
+            this.labelShift.Location = new System.Drawing.Point(519, 99);
+            this.labelShift.Name = "labelShift";
+            this.labelShift.Size = new System.Drawing.Size(112, 23);
+            this.labelShift.TabIndex = 17;
+            this.labelShift.Text = "Shift ";
             // 
-            // label18
+            // labelResult
             // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(519, 131);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(112, 23);
-            this.label18.TabIndex = 18;
-            this.label18.Text = "Result ";
+            this.labelResult.Lines = 0;
+            this.labelResult.Location = new System.Drawing.Point(519, 131);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(112, 23);
+            this.labelResult.TabIndex = 18;
+            this.labelResult.Text = "Result ";
             // 
-            // SP_text
+            // txtSP
             // 
-            this.SP_text.BackColor = System.Drawing.Color.White;
-            this.SP_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
-            this.SP_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SP_text.Location = new System.Drawing.Point(105, 41);
-            this.SP_text.Name = "SP_text";
-            this.SP_text.Size = new System.Drawing.Size(141, 23);
-            this.SP_text.TabIndex = 2;
-            this.SP_text.Validating += new System.ComponentModel.CancelEventHandler(this.SP_text_Validating);
-            this.SP_text.Validated += new System.EventHandler(this.SP_text_Validated);
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(105, 41);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(141, 23);
+            this.txtSP.TabIndex = 2;
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.SP_text_Validating);
+            this.txtSP.Validated += new System.EventHandler(this.SP_text_Validated);
             // 
-            // Style_text
+            // txtStyle
             // 
-            this.Style_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Style_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Style_text.IsSupportEditMode = false;
-            this.Style_text.Location = new System.Drawing.Point(105, 70);
-            this.Style_text.Name = "Style_text";
-            this.Style_text.ReadOnly = true;
-            this.Style_text.Size = new System.Drawing.Size(141, 23);
-            this.Style_text.TabIndex = 21;
+            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyle.IsSupportEditMode = false;
+            this.txtStyle.Location = new System.Drawing.Point(105, 70);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.ReadOnly = true;
+            this.txtStyle.Size = new System.Drawing.Size(141, 23);
+            this.txtStyle.TabIndex = 21;
             // 
-            // Des_text
+            // txtDestination
             // 
-            this.Des_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Des_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Des_text.IsSupportEditMode = false;
-            this.Des_text.Location = new System.Drawing.Point(105, 98);
-            this.Des_text.Name = "Des_text";
-            this.Des_text.ReadOnly = true;
-            this.Des_text.Size = new System.Drawing.Size(141, 23);
-            this.Des_text.TabIndex = 22;
+            this.txtDestination.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDestination.IsSupportEditMode = false;
+            this.txtDestination.Location = new System.Drawing.Point(105, 98);
+            this.txtDestination.Name = "txtDestination";
+            this.txtDestination.ReadOnly = true;
+            this.txtDestination.Size = new System.Drawing.Size(141, 23);
+            this.txtDestination.TabIndex = 22;
             // 
-            // Factory_text
+            // txtFactory
             // 
-            this.Factory_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.Factory_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.Factory_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.Factory_text.IsSupportEditMode = false;
-            this.Factory_text.Location = new System.Drawing.Point(105, 126);
-            this.Factory_text.Name = "Factory_text";
-            this.Factory_text.ReadOnly = true;
-            this.Factory_text.Size = new System.Drawing.Size(141, 23);
-            this.Factory_text.TabIndex = 23;
+            this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFactory.IsSupportEditMode = false;
+            this.txtFactory.Location = new System.Drawing.Point(105, 126);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.ReadOnly = true;
+            this.txtFactory.Size = new System.Drawing.Size(141, 23);
+            this.txtFactory.TabIndex = 23;
             // 
-            // Remark_text
+            // txtRemark
             // 
-            this.Remark_text.BackColor = System.Drawing.Color.White;
-            this.Remark_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.Remark_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Remark_text.Location = new System.Drawing.Point(105, 182);
-            this.Remark_text.Name = "Remark_text";
-            this.Remark_text.Size = new System.Drawing.Size(645, 23);
-            this.Remark_text.TabIndex = 11;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(105, 182);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(645, 23);
+            this.txtRemark.TabIndex = 11;
             // 
-            // PO_text
+            // txtPO
             // 
-            this.PO_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.PO_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.PO_text.IsSupportEditMode = false;
-            this.PO_text.Location = new System.Drawing.Point(362, 13);
-            this.PO_text.Name = "PO_text";
-            this.PO_text.ReadOnly = true;
-            this.PO_text.Size = new System.Drawing.Size(144, 23);
-            this.PO_text.TabIndex = 26;
+            this.txtPO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPO.IsSupportEditMode = false;
+            this.txtPO.Location = new System.Drawing.Point(362, 13);
+            this.txtPO.Name = "txtPO";
+            this.txtPO.ReadOnly = true;
+            this.txtPO.Size = new System.Drawing.Size(144, 23);
+            this.txtPO.TabIndex = 26;
             // 
-            // InspectStage_combo
+            // comboInspectionStage
             // 
-            this.InspectStage_combo.BackColor = System.Drawing.Color.White;
-            this.InspectStage_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "stage", true));
-            this.InspectStage_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.InspectStage_combo.FormattingEnabled = true;
-            this.InspectStage_combo.IsSupportUnselect = true;
-            this.InspectStage_combo.Location = new System.Drawing.Point(634, 38);
-            this.InspectStage_combo.Name = "InspectStage_combo";
-            this.InspectStage_combo.Size = new System.Drawing.Size(121, 24);
-            this.InspectStage_combo.TabIndex = 5;
-            this.InspectStage_combo.SelectedIndexChanged += new System.EventHandler(this.InspectStage_combo_SelectedIndexChanged);
+            this.comboInspectionStage.BackColor = System.Drawing.Color.White;
+            this.comboInspectionStage.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "stage", true));
+            this.comboInspectionStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboInspectionStage.FormattingEnabled = true;
+            this.comboInspectionStage.IsSupportUnselect = true;
+            this.comboInspectionStage.Location = new System.Drawing.Point(634, 38);
+            this.comboInspectionStage.Name = "comboInspectionStage";
+            this.comboInspectionStage.Size = new System.Drawing.Size(121, 24);
+            this.comboInspectionStage.TabIndex = 5;
+            this.comboInspectionStage.SelectedIndexChanged += new System.EventHandler(this.InspectStage_combo_SelectedIndexChanged);
             // 
-            // Result_combo
+            // comboResult
             // 
-            this.Result_combo.BackColor = System.Drawing.Color.White;
-            this.Result_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Result", true));
-            this.Result_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Result_combo.FormattingEnabled = true;
-            this.Result_combo.IsSupportUnselect = true;
-            this.Result_combo.Location = new System.Drawing.Point(634, 131);
-            this.Result_combo.Name = "Result_combo";
-            this.Result_combo.Size = new System.Drawing.Size(121, 24);
-            this.Result_combo.TabIndex = 10;
+            this.comboResult.BackColor = System.Drawing.Color.White;
+            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Result", true));
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Location = new System.Drawing.Point(634, 131);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.Size = new System.Drawing.Size(121, 24);
+            this.comboResult.TabIndex = 10;
             // 
-            // Audit_Date
+            // dateAuditDate
             // 
-            this.Audit_Date.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cDate", true));
-            this.Audit_Date.Location = new System.Drawing.Point(105, 10);
-            this.Audit_Date.Name = "Audit_Date";
-            this.Audit_Date.Size = new System.Drawing.Size(141, 23);
-            this.Audit_Date.TabIndex = 1;
+            this.dateAuditDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cDate", true));
+            this.dateAuditDate.Location = new System.Drawing.Point(105, 10);
+            this.dateAuditDate.Name = "dateAuditDate";
+            this.dateAuditDate.Size = new System.Drawing.Size(141, 23);
+            this.dateAuditDate.TabIndex = 1;
             // 
             // label19
             // 
@@ -498,160 +498,160 @@
             this.label19.TabIndex = 15;
             this.label19.Text = "%";
             // 
-            // Team_combo
+            // comboTeam
             // 
-            this.Team_combo.BackColor = System.Drawing.Color.White;
-            this.Team_combo.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "team", true));
-            this.Team_combo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Team_combo.FormattingEnabled = true;
-            this.Team_combo.IsSupportUnselect = true;
-            this.Team_combo.Location = new System.Drawing.Point(362, 156);
-            this.Team_combo.Name = "Team_combo";
-            this.Team_combo.Size = new System.Drawing.Size(121, 24);
-            this.Team_combo.TabIndex = 9;
+            this.comboTeam.BackColor = System.Drawing.Color.White;
+            this.comboTeam.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "team", true));
+            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTeam.FormattingEnabled = true;
+            this.comboTeam.IsSupportUnselect = true;
+            this.comboTeam.Location = new System.Drawing.Point(362, 156);
+            this.comboTeam.Name = "comboTeam";
+            this.comboTeam.Size = new System.Drawing.Size(121, 24);
+            this.comboTeam.TabIndex = 9;
             // 
-            // txtStageInfo
+            // txtInspectionStage
             // 
-            this.txtStageInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtStageInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtStageInfo.IsSupportEditMode = false;
-            this.txtStageInfo.Location = new System.Drawing.Point(758, 38);
-            this.txtStageInfo.Name = "txtStageInfo";
-            this.txtStageInfo.ReadOnly = true;
-            this.txtStageInfo.Size = new System.Drawing.Size(260, 23);
-            this.txtStageInfo.TabIndex = 12;
+            this.txtInspectionStage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtInspectionStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtInspectionStage.IsSupportEditMode = false;
+            this.txtInspectionStage.Location = new System.Drawing.Point(758, 38);
+            this.txtInspectionStage.Name = "txtInspectionStage";
+            this.txtInspectionStage.ReadOnly = true;
+            this.txtInspectionStage.Size = new System.Drawing.Size(260, 23);
+            this.txtInspectionStage.TabIndex = 12;
             // 
-            // Garment_text
+            // numGarmentOutput
             // 
-            this.Garment_text.BackColor = System.Drawing.Color.White;
-            this.Garment_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentOutput", true));
-            this.Garment_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Garment_text.Location = new System.Drawing.Point(634, 13);
-            this.Garment_text.Maximum = new decimal(new int[] {
+            this.numGarmentOutput.BackColor = System.Drawing.Color.White;
+            this.numGarmentOutput.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentOutput", true));
+            this.numGarmentOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numGarmentOutput.Location = new System.Drawing.Point(634, 13);
+            this.numGarmentOutput.Maximum = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.Garment_text.Name = "Garment_text";
-            this.Garment_text.NullValue = new decimal(new int[] {
+            this.numGarmentOutput.Name = "numGarmentOutput";
+            this.numGarmentOutput.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.Garment_text.Size = new System.Drawing.Size(121, 23);
-            this.Garment_text.TabIndex = 3;
-            this.Garment_text.Value = new decimal(new int[] {
+            this.numGarmentOutput.Size = new System.Drawing.Size(121, 23);
+            this.numGarmentOutput.TabIndex = 3;
+            this.numGarmentOutput.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.Garment_text.TextChanged += new System.EventHandler(this.Garment_text_TextChanged);
+            this.numGarmentOutput.TextChanged += new System.EventHandler(this.Garment_text_TextChanged);
             // 
-            // InspectQty_text
+            // numInspectQty
             // 
-            this.InspectQty_text.BackColor = System.Drawing.Color.White;
-            this.InspectQty_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "inspectqty", true));
-            this.InspectQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.InspectQty_text.Location = new System.Drawing.Point(362, 70);
-            this.InspectQty_text.Maximum = new decimal(new int[] {
+            this.numInspectQty.BackColor = System.Drawing.Color.White;
+            this.numInspectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "inspectqty", true));
+            this.numInspectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInspectQty.Location = new System.Drawing.Point(362, 70);
+            this.numInspectQty.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.InspectQty_text.Name = "InspectQty_text";
-            this.InspectQty_text.NullValue = new decimal(new int[] {
+            this.numInspectQty.Name = "numInspectQty";
+            this.numInspectQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.InspectQty_text.Size = new System.Drawing.Size(144, 23);
-            this.InspectQty_text.TabIndex = 4;
-            this.InspectQty_text.Value = new decimal(new int[] {
+            this.numInspectQty.Size = new System.Drawing.Size(144, 23);
+            this.numInspectQty.TabIndex = 4;
+            this.numInspectQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // DefectsQty_text
+            // numDefectsQty
             // 
-            this.DefectsQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DefectsQty_text.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
-            this.DefectsQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DefectsQty_text.IsSupportEditMode = false;
-            this.DefectsQty_text.Location = new System.Drawing.Point(362, 97);
-            this.DefectsQty_text.Maximum = new decimal(new int[] {
+            this.numDefectsQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDefectsQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
+            this.numDefectsQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDefectsQty.IsSupportEditMode = false;
+            this.numDefectsQty.Location = new System.Drawing.Point(362, 97);
+            this.numDefectsQty.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
-            this.DefectsQty_text.Name = "DefectsQty_text";
-            this.DefectsQty_text.NullValue = new decimal(new int[] {
+            this.numDefectsQty.Name = "numDefectsQty";
+            this.numDefectsQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.DefectsQty_text.ReadOnly = true;
-            this.DefectsQty_text.Size = new System.Drawing.Size(144, 23);
-            this.DefectsQty_text.TabIndex = 45;
-            this.DefectsQty_text.Value = new decimal(new int[] {
+            this.numDefectsQty.ReadOnly = true;
+            this.numDefectsQty.Size = new System.Drawing.Size(144, 23);
+            this.numDefectsQty.TabIndex = 45;
+            this.numDefectsQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // SQR_text
+            // numSQR
             // 
-            this.SQR_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.SQR_text.DecimalPlaces = 3;
-            this.SQR_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.SQR_text.IsSupportEditMode = false;
-            this.SQR_text.Location = new System.Drawing.Point(105, 154);
-            this.SQR_text.Maximum = new decimal(new int[] {
+            this.numSQR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSQR.DecimalPlaces = 3;
+            this.numSQR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSQR.IsSupportEditMode = false;
+            this.numSQR.Location = new System.Drawing.Point(105, 154);
+            this.numSQR.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
-            this.SQR_text.Minimum = new decimal(new int[] {
+            this.numSQR.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             196608});
-            this.SQR_text.Name = "SQR_text";
-            this.SQR_text.NullValue = new decimal(new int[] {
+            this.numSQR.Name = "numSQR";
+            this.numSQR.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.SQR_text.ReadOnly = true;
-            this.SQR_text.Size = new System.Drawing.Size(141, 23);
-            this.SQR_text.TabIndex = 46;
-            this.SQR_text.Value = new decimal(new int[] {
+            this.numSQR.ReadOnly = true;
+            this.numSQR.Size = new System.Drawing.Size(141, 23);
+            this.numSQR.TabIndex = 46;
+            this.numSQR.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // orderQty_text
+            // numOrderQty
             // 
-            this.orderQty_text.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.orderQty_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.orderQty_text.IsSupportEditMode = false;
-            this.orderQty_text.Location = new System.Drawing.Point(362, 41);
-            this.orderQty_text.Maximum = new decimal(new int[] {
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(362, 41);
+            this.numOrderQty.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
-            this.orderQty_text.Name = "orderQty_text";
-            this.orderQty_text.NullValue = new decimal(new int[] {
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.orderQty_text.ReadOnly = true;
-            this.orderQty_text.Size = new System.Drawing.Size(141, 23);
-            this.orderQty_text.TabIndex = 47;
-            this.orderQty_text.Value = new decimal(new int[] {
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(141, 23);
+            this.numOrderQty.TabIndex = 47;
+            this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -664,43 +664,42 @@
             this.labConfirm.ForeColor = System.Drawing.Color.Red;
             this.labConfirm.Location = new System.Drawing.Point(821, 4);
             this.labConfirm.Name = "labConfirm";
-            this.labConfirm.Size = new System.Drawing.Size(108, 31);
+            this.labConfirm.Size = new System.Drawing.Size(0, 31);
             this.labConfirm.TabIndex = 4;
-            this.labConfirm.Text = "";
             // 
-            // txtdropdownlist1
+            // txtdropdownlistShift
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(634, 98);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 8;
-            this.txtdropdownlist1.Type = "SewingOutput_Shift";
+            this.txtdropdownlistShift.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistShift.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Shift", true));
+            this.txtdropdownlistShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistShift.FormattingEnabled = true;
+            this.txtdropdownlistShift.IsSupportUnselect = true;
+            this.txtdropdownlistShift.Location = new System.Drawing.Point(634, 98);
+            this.txtdropdownlistShift.Name = "txtdropdownlistShift";
+            this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlistShift.TabIndex = 8;
+            this.txtdropdownlistShift.Type = "SewingOutput_Shift";
             // 
-            // Line_text
+            // txtsewingline
             // 
-            this.Line_text.BackColor = System.Drawing.Color.White;
-            this.Line_text.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
-            this.Line_text.factoryobjectName = this.Factory_text;
-            this.Line_text.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Line_text.Location = new System.Drawing.Point(362, 126);
-            this.Line_text.Name = "Line_text";
-            this.Line_text.Size = new System.Drawing.Size(77, 23);
-            this.Line_text.TabIndex = 7;
+            this.txtsewingline.BackColor = System.Drawing.Color.White;
+            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "sewinglineID", true));
+            this.txtsewingline.factoryobjectName = this.txtFactory;
+            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline.Location = new System.Drawing.Point(362, 126);
+            this.txtsewingline.Name = "txtsewingline";
+            this.txtsewingline.Size = new System.Drawing.Size(77, 23);
+            this.txtsewingline.TabIndex = 7;
             // 
-            // CFA1_text
+            // txtuserCFA
             // 
-            this.CFA1_text.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "cfa", true));
-            this.CFA1_text.DisplayBox1Binding = "";
-            this.CFA1_text.Location = new System.Drawing.Point(634, 72);
-            this.CFA1_text.Name = "CFA1_text";
-            this.CFA1_text.Size = new System.Drawing.Size(265, 23);
-            this.CFA1_text.TabIndex = 6;
-            this.CFA1_text.TextBox1Binding = "";
+            this.txtuserCFA.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "cfa", true));
+            this.txtuserCFA.DisplayBox1Binding = "";
+            this.txtuserCFA.Location = new System.Drawing.Point(634, 72);
+            this.txtuserCFA.Name = "txtuserCFA";
+            this.txtuserCFA.Size = new System.Drawing.Size(265, 23);
+            this.txtuserCFA.TabIndex = 6;
+            this.txtuserCFA.TextBox1Binding = "";
             // 
             // P21
             // 
@@ -736,44 +735,44 @@
 
         #endregion
 
-        private Win.UI.ComboBox Result_combo;
-        private Win.UI.ComboBox InspectStage_combo;
-        private Win.UI.TextBox PO_text;
-        private Win.UI.TextBox Remark_text;
-        private Win.UI.TextBox Factory_text;
-        private Win.UI.TextBox Des_text;
-        private Win.UI.TextBox Style_text;
-        private Win.UI.TextBox SP_text;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DateBox Audit_Date;
-        private Class.txtuser CFA1_text;
-        private Class.txtsewingline Line_text;
+        private Win.UI.ComboBox comboResult;
+        private Win.UI.ComboBox comboInspectionStage;
+        private Win.UI.TextBox txtPO;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.TextBox txtFactory;
+        private Win.UI.TextBox txtDestination;
+        private Win.UI.TextBox txtStyle;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelResult;
+        private Win.UI.Label labelShift;
+        private Win.UI.Label labelCFA;
+        private Win.UI.Label labelInspectionStage;
+        private Win.UI.Label labelGarmentOutput;
+        private Win.UI.Label labelTeam;
+        private Win.UI.Label labelLine;
+        private Win.UI.Label labelDefectsQty;
+        private Win.UI.Label labelInspectQty;
+        private Win.UI.Label labelOrderQty;
+        private Win.UI.Label labelPO;
+        private Win.UI.Label labelSQR;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelAuditDate;
+        private Win.UI.Label labelDestination;
+        private Win.UI.DateBox dateAuditDate;
+        private Class.txtuser txtuserCFA;
+        private Class.txtsewingline txtsewingline;
         private Win.UI.Label label19;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.ComboBox Team_combo;
-        private Win.UI.TextBox txtStageInfo;
-        private Win.UI.NumericBox Garment_text;
-        private Win.UI.NumericBox InspectQty_text;
-        private Win.UI.NumericBox SQR_text;
-        private Win.UI.NumericBox DefectsQty_text;
-        private Win.UI.NumericBox orderQty_text;
+        private Class.txtdropdownlist txtdropdownlistShift;
+        private Win.UI.ComboBox comboTeam;
+        private Win.UI.TextBox txtInspectionStage;
+        private Win.UI.NumericBox numGarmentOutput;
+        private Win.UI.NumericBox numInspectQty;
+        private Win.UI.NumericBox numSQR;
+        private Win.UI.NumericBox numDefectsQty;
+        private Win.UI.NumericBox numOrderQty;
         private System.Windows.Forms.Label labConfirm;
     }
 }

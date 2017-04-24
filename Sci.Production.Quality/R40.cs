@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             print.Enabled = false;
-            this.comboBox_brand.SelectedIndex = 0;
+            this.comboBrand.SelectedIndex = 0;
         }
         string Brand;
         string Year;
@@ -38,9 +38,9 @@ namespace Sci.Production.Quality
 
         protected override bool ValidateInput()
         {
-            Brand = comboBox_brand.SelectedItem.ToString();
-            Year = radiobtn_byYear.Checked.ToString();
-            Factory = radiobtn_byfactory.Checked.ToString();
+            Brand = comboBrand.SelectedItem.ToString();
+            Year = radiobyYear.Checked.ToString();
+            Factory = radiobyfactory.Checked.ToString();
 
             return true;
         }
@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
             alltemp_All = null;
 
 
-            if (radiobtn_byYear.Checked == true)
+            if (radiobyYear.Checked == true)
             {
                 #region By Year
                 string sqlcmd = string.Format(@"
@@ -466,7 +466,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
         string stringyear4;
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (radiobtn_byYear.Checked == true)
+            if (radiobyYear.Checked == true)
             {
                 #region By Year               
 
@@ -509,7 +509,7 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 #endregion
 
             }
-            else if (radiobtn_byfactory.Checked == true)
+            else if (radiobyfactory.Checked == true)
             {
                 #region By Factory
 

@@ -23,7 +23,7 @@ namespace Sci.Production.Quality
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;         
+            this.txtCode.ReadOnly = true;         
         }
 
         protected override bool ClickSaveBefore()
@@ -32,13 +32,13 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;      
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.editBox1.Focus();
+                this.editDescription.Focus();
                 return false;
             }
 

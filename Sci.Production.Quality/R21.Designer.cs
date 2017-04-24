@@ -28,25 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelAuditDate = new Sci.Win.UI.Label();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelFormat = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.S_radioButton = new Sci.Win.UI.RadioButton();
+            this.txtSPStart = new Sci.Win.UI.TextBox();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.d_radioButton = new Sci.Win.UI.RadioButton();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.radiobyDetail = new Sci.Win.UI.RadioButton();
+            this.dateBuyerDeliveryEnd = new Sci.Win.UI.DateBox();
+            this.dateBuyerDeliveryStart = new Sci.Win.UI.DateBox();
+            this.dateAuditDateEnd = new Sci.Win.UI.DateBox();
+            this.dateAuditDateStart = new Sci.Win.UI.DateBox();
             this.label11 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
@@ -70,59 +70,59 @@
             this.close.Location = new System.Drawing.Point(439, 93);
             this.close.Size = new System.Drawing.Size(112, 30);
             // 
-            // label2
+            // labelSP
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(27, 37);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "SP# ";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(27, 37);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(102, 23);
+            this.labelSP.TabIndex = 95;
+            this.labelSP.Text = "SP# ";
             // 
-            // label3
+            // labelAuditDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Audit Date ";
+            this.labelAuditDate.Lines = 0;
+            this.labelAuditDate.Location = new System.Drawing.Point(27, 73);
+            this.labelAuditDate.Name = "labelAuditDate";
+            this.labelAuditDate.Size = new System.Drawing.Size(102, 23);
+            this.labelAuditDate.TabIndex = 96;
+            this.labelAuditDate.Text = "Audit Date ";
             // 
-            // label4
+            // labelBuyerDelivery
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 111);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Buyer Delivery ";
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(27, 111);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
+            this.labelBuyerDelivery.TabIndex = 97;
+            this.labelBuyerDelivery.Text = "Buyer Delivery ";
             // 
-            // label5
+            // labelFactory
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 152);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Factory ";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(27, 152);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(102, 23);
+            this.labelFactory.TabIndex = 98;
+            this.labelFactory.Text = "Factory ";
             // 
-            // label6
+            // labelBrand
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 191);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Brand ";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(27, 191);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(102, 23);
+            this.labelBrand.TabIndex = 99;
+            this.labelBrand.Text = "Brand ";
             // 
-            // label7
+            // labelFormat
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 229);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(102, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Format ";
+            this.labelFormat.Lines = 0;
+            this.labelFormat.Location = new System.Drawing.Point(27, 229);
+            this.labelFormat.Name = "labelFormat";
+            this.labelFormat.Size = new System.Drawing.Size(102, 23);
+            this.labelFormat.TabIndex = 100;
+            this.labelFormat.Text = "Format ";
             // 
             // label8
             // 
@@ -133,66 +133,66 @@
             this.label8.TabIndex = 101;
             this.label8.Text = "Paper Size : A4";
             // 
-            // textBox1
+            // txtSPStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(147, 37);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtSPStart.BackColor = System.Drawing.Color.White;
+            this.txtSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPStart.Location = new System.Drawing.Point(147, 37);
+            this.txtSPStart.Name = "txtSPStart";
+            this.txtSPStart.Size = new System.Drawing.Size(100, 23);
+            this.txtSPStart.TabIndex = 0;
             // 
-            // textBox2
+            // txtSPEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(279, 37);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(279, 37);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtSPEnd.TabIndex = 1;
             // 
-            // comboBox1
+            // comboFactory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(135, 130);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(135, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(135, 130);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(135, 24);
+            this.comboFactory.TabIndex = 5;
             // 
-            // textBox7
+            // txtBrand
             // 
-            this.textBox7.BackColor = System.Drawing.Color.White;
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox7.Location = new System.Drawing.Point(147, 191);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 23);
-            this.textBox7.TabIndex = 4;
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(147, 191);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(100, 23);
+            this.txtBrand.TabIndex = 4;
             // 
-            // S_radioButton
+            // radioSummary
             // 
-            this.S_radioButton.AutoSize = true;
-            this.S_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.S_radioButton.Location = new System.Drawing.Point(5, 7);
-            this.S_radioButton.Name = "S_radioButton";
-            this.S_radioButton.Size = new System.Drawing.Size(85, 21);
-            this.S_radioButton.TabIndex = 5;
-            this.S_radioButton.TabStop = true;
-            this.S_radioButton.Text = "Summary";
-            this.S_radioButton.UseVisualStyleBackColor = true;
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(5, 7);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 5;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
             // 
             // radioGroup1
             // 
             this.radioGroup1.Controls.Add(this.radioPanel1);
-            this.radioGroup1.Controls.Add(this.dateBox4);
-            this.radioGroup1.Controls.Add(this.dateBox3);
-            this.radioGroup1.Controls.Add(this.dateBox2);
-            this.radioGroup1.Controls.Add(this.dateBox1);
+            this.radioGroup1.Controls.Add(this.dateBuyerDeliveryEnd);
+            this.radioGroup1.Controls.Add(this.dateBuyerDeliveryStart);
+            this.radioGroup1.Controls.Add(this.dateAuditDateEnd);
+            this.radioGroup1.Controls.Add(this.dateAuditDateStart);
             this.radioGroup1.Controls.Add(this.label11);
             this.radioGroup1.Controls.Add(this.label10);
-            this.radioGroup1.Controls.Add(this.comboBox1);
+            this.radioGroup1.Controls.Add(this.comboFactory);
             this.radioGroup1.Controls.Add(this.label9);
             this.radioGroup1.Location = new System.Drawing.Point(12, 21);
             this.radioGroup1.Name = "radioGroup1";
@@ -202,52 +202,52 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.S_radioButton);
-            this.radioPanel1.Controls.Add(this.d_radioButton);
+            this.radioPanel1.Controls.Add(this.radioSummary);
+            this.radioPanel1.Controls.Add(this.radiobyDetail);
             this.radioPanel1.Location = new System.Drawing.Point(135, 199);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(111, 68);
             this.radioPanel1.TabIndex = 117;
             // 
-            // d_radioButton
+            // radiobyDetail
             // 
-            this.d_radioButton.AutoSize = true;
-            this.d_radioButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.d_radioButton.Location = new System.Drawing.Point(5, 35);
-            this.d_radioButton.Name = "d_radioButton";
-            this.d_radioButton.Size = new System.Drawing.Size(81, 21);
-            this.d_radioButton.TabIndex = 5;
-            this.d_radioButton.TabStop = true;
-            this.d_radioButton.Text = "by Detail";
-            this.d_radioButton.UseVisualStyleBackColor = true;
+            this.radiobyDetail.AutoSize = true;
+            this.radiobyDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobyDetail.Location = new System.Drawing.Point(5, 35);
+            this.radiobyDetail.Name = "radiobyDetail";
+            this.radiobyDetail.Size = new System.Drawing.Size(81, 21);
+            this.radiobyDetail.TabIndex = 5;
+            this.radiobyDetail.TabStop = true;
+            this.radiobyDetail.Text = "by Detail";
+            this.radiobyDetail.UseVisualStyleBackColor = true;
             // 
-            // dateBox4
+            // dateBuyerDeliveryEnd
             // 
-            this.dateBox4.Location = new System.Drawing.Point(267, 93);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.Size = new System.Drawing.Size(103, 23);
-            this.dateBox4.TabIndex = 4;
+            this.dateBuyerDeliveryEnd.Location = new System.Drawing.Point(267, 93);
+            this.dateBuyerDeliveryEnd.Name = "dateBuyerDeliveryEnd";
+            this.dateBuyerDeliveryEnd.Size = new System.Drawing.Size(103, 23);
+            this.dateBuyerDeliveryEnd.TabIndex = 4;
             // 
-            // dateBox3
+            // dateBuyerDeliveryStart
             // 
-            this.dateBox3.Location = new System.Drawing.Point(135, 93);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(103, 23);
-            this.dateBox3.TabIndex = 3;
+            this.dateBuyerDeliveryStart.Location = new System.Drawing.Point(135, 93);
+            this.dateBuyerDeliveryStart.Name = "dateBuyerDeliveryStart";
+            this.dateBuyerDeliveryStart.Size = new System.Drawing.Size(103, 23);
+            this.dateBuyerDeliveryStart.TabIndex = 3;
             // 
-            // dateBox2
+            // dateAuditDateEnd
             // 
-            this.dateBox2.Location = new System.Drawing.Point(267, 52);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(103, 23);
-            this.dateBox2.TabIndex = 2;
+            this.dateAuditDateEnd.Location = new System.Drawing.Point(267, 52);
+            this.dateAuditDateEnd.Name = "dateAuditDateEnd";
+            this.dateAuditDateEnd.Size = new System.Drawing.Size(103, 23);
+            this.dateAuditDateEnd.TabIndex = 2;
             // 
-            // dateBox1
+            // dateAuditDateStart
             // 
-            this.dateBox1.Location = new System.Drawing.Point(135, 52);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(103, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateAuditDateStart.Location = new System.Drawing.Point(135, 52);
+            this.dateAuditDateStart.Name = "dateAuditDateStart";
+            this.dateAuditDateStart.Size = new System.Drawing.Size(103, 23);
+            this.dateAuditDateStart.TabIndex = 1;
             // 
             // label11
             // 
@@ -294,33 +294,33 @@
             // R21
             // 
             this.ClientSize = new System.Drawing.Size(563, 357);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtBrand);
+            this.Controls.Add(this.txtSPEnd);
+            this.Controls.Add(this.txtSPStart);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.labelFormat);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.labelBuyerDelivery);
+            this.Controls.Add(this.labelAuditDate);
+            this.Controls.Add(this.labelSP);
             this.Controls.Add(this.radioGroup1);
             this.Name = "R21";
             this.Text = "R21 .CFA Inline Report";
             this.Controls.SetChildIndex(this.radioGroup1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.labelSP, 0);
+            this.Controls.SetChildIndex(this.labelAuditDate, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelFormat, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
+            this.Controls.SetChildIndex(this.txtSPStart, 0);
+            this.Controls.SetChildIndex(this.txtSPEnd, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.textBox7, 0);
+            this.Controls.SetChildIndex(this.txtBrand, 0);
             this.radioGroup1.ResumeLayout(false);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
@@ -331,27 +331,27 @@
 
         #endregion
 
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelAuditDate;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelFormat;
         private Win.UI.Label label8;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.RadioButton S_radioButton;
+        private Win.UI.TextBox txtSPStart;
+        private Win.UI.TextBox txtSPEnd;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.TextBox txtBrand;
+        private Win.UI.RadioButton radioSummary;
         private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton d_radioButton;
+        private Win.UI.RadioButton radiobyDetail;
         private Win.UI.Label label11;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
-        private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.DateBox dateBuyerDeliveryEnd;
+        private Win.UI.DateBox dateBuyerDeliveryStart;
+        private Win.UI.DateBox dateAuditDateEnd;
+        private Win.UI.DateBox dateAuditDateStart;
         private Win.UI.RadioPanel radioPanel1;
     }
 }

@@ -34,11 +34,11 @@ namespace Sci.Production.Quality
                             (y1,y2,y3)) as years");
             DBProxy.Current.Select("", cmd, out Year);
             Year.DefaultView.Sort = "M";
-            this.combo_Year.DataSource = Year;
-            this.combo_Year.ValueMember = "M";
-            this.combo_Year.DisplayMember = "M";
+            this.comboYear.DataSource = Year;
+            this.comboYear.ValueMember = "M";
+            this.comboYear.DisplayMember = "M";
 
-            this.combo_Brand.SelectedIndex = 0;
+            this.comboBrand.SelectedIndex = 0;
             print.Enabled = false;
         }
         string Brand; 
@@ -57,10 +57,10 @@ namespace Sci.Production.Quality
         Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
         protected override bool ValidateInput()
         {
-            Brand = combo_Brand.Text.ToString();
-            Year = combo_Year.Text.ToString();
-            Report_Type1 = radiobtn_pill_snagg_detail.Checked.ToString();
-            Report_Type2 = radiobtn_print_detail.Checked.ToString();
+            Brand = comboBrand.Text.ToString();
+            Year = comboYear.Text.ToString();
+            Report_Type1 = radioPillAndSnaggDetail.Checked.ToString();
+            Report_Type2 = radioPrintDetail.Checked.ToString();
             return base.ValidateInput();
         }
 
@@ -84,7 +84,7 @@ namespace Sci.Production.Quality
                     sqlWheres.Add("year(a.StartDate)=" + Year);
                 }
 
-                if (radiobtn_pill_snagg_detail.Checked == true)
+                if (radioPillAndSnaggDetail.Checked == true)
                 {
                     rt = "and 1=1 and b.DefectMainID='33' and b.DefectSubID='A'";
                 }

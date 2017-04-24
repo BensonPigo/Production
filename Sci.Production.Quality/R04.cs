@@ -51,13 +51,13 @@ namespace Sci.Production.Quality
         protected override bool ValidateInput()
         {
             lis = new List<SqlParameter>();
-            bool DateReceived_empty = !DateReceivedSample.HasValue, DateArr_empty = !DateArriveWH.HasValue, Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(),comboM_Empty=this.comboM.Text.Empty(),
+            bool DateReceived_empty = !dateReceivedSampleDate.HasValue, DateArr_empty = !dateArriveWHDate.HasValue, Cate_comboBox_Empty = this.comboCategory.Text.Empty(), comboFactory_Empty = this.comboFactory.Text.Empty(),comboM_Empty=this.comboM.Text.Empty(),
                 checkOuter_empty = checkOutstandingOnly.Checked.Empty();
             if (DateReceived_empty && DateArr_empty)
             {
                 MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
 
-                DateReceivedSample.Focus();
+                dateReceivedSampleDate.Focus();
                 return false;
             }
             if (checkOutstandingOnly.Checked == true)
@@ -71,10 +71,10 @@ namespace Sci.Production.Quality
 
             string sqlWhere = ""; string sqlRec = ""; string sqlArr = ""; string sqlOutStanding = ""; string sqlFactorys = "";
 
-            DateRecStart = DateReceivedSample.Value1;
-            DateRecEnd = DateReceivedSample.Value2;
-            DateArrStart = DateArriveWH.Value1;
-            DateArrEnd = DateArriveWH.Value2;
+            DateRecStart = dateReceivedSampleDate.Value1;
+            DateRecEnd = dateReceivedSampleDate.Value2;
+            DateArrStart = dateArriveWHDate.Value1;
+            DateArrEnd = dateArriveWHDate.Value2;
             Category = comboCategory.Text;
             factory = comboFactory.Text;
             M = comboM.Text;
@@ -83,22 +83,22 @@ namespace Sci.Production.Quality
             List<string> sqlArrDate = new List<string>();
             List<string> sqlFactory = new List<string>();     
             #region --組WHERE--
-            if (!this.DateReceivedSample.Value1.Empty())
+            if (!this.dateReceivedSampleDate.Value1.Empty())
             {
                 sqlRecDate.Add("ReceiveSampleDate >= @DateRecStart");
                 lis.Add(new SqlParameter("@DateRecStart", DateRecStart));
             }
-            if (!this.DateReceivedSample.Value2.Empty())
+            if (!this.dateReceivedSampleDate.Value2.Empty())
             {
                 sqlRecDate.Add("ReceiveSampleDate <= @DateRecEnd");
                 lis.Add(new SqlParameter("@DateRecEnd", DateRecEnd));
             }
-            if (!this.DateArriveWH.Value1.Empty())
+            if (!this.dateArriveWHDate.Value1.Empty())
             {
                 sqlArrDate.Add("WhseArrival >= @DateArrStart");
                 lis.Add(new SqlParameter("@DateArrStart", DateArrStart));
             }
-            if (!this.DateArriveWH.Value2.Empty())
+            if (!this.dateArriveWHDate.Value2.Empty())
             {
                 sqlArrDate.Add("WhseArrival <= @DateArrEnd");
                 lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));

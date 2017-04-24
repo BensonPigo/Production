@@ -51,24 +51,24 @@ namespace Sci.Production.Quality
 
             if (MyUtility.Check.Seek(sql_cmd, spam, out dr))
             {
-                this.sp_text.Text = dr["id"].ToString();
-                this.style_text.Text = dr["StyleID"].ToString();                
-                this.season_text.Text = dr["SeasonID"].ToString();
-                this.brand_text.Text = dr["BrandID"].ToString();
-                this.remark_text.Text = dr["OvenLaboratoryRemark"].ToString();
+                this.displaySP.Text = dr["id"].ToString();
+                this.displayStyle.Text = dr["StyleID"].ToString();                
+                this.displaySeason.Text = dr["SeasonID"].ToString();
+                this.displayBrand.Text = dr["BrandID"].ToString();
+                this.editRemark.Text = dr["OvenLaboratoryRemark"].ToString();
             }
 
             if (MyUtility.Check.Seek(string.Format("select min(a.CutInLine) as CutInLine from Orders a WITH (NOLOCK) where a.POID='{0}'", CurrentMaintain["id"].ToString()), out drEarly))
             {
-                if (drEarly["CutInLine"] == DBNull.Value) Cutting_text.Text = "";
-                else Cutting_text.Value = Convert.ToDateTime(drEarly["CutInLine"]);
+                if (drEarly["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
+                else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(drEarly["CutInLine"]);
             }
             if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')",CurrentMaintain["id"].ToString()),out drSci))
             {
                 if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
                 {
-                    if (drSci["MinSciDelivery"] == DBNull.Value) Earliest_text.Text = "";
-                    else Earliest_text.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
+                    if (drSci["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
+                    else dateEarliestSCIDel.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
                 }
             }
 
@@ -79,11 +79,11 @@ namespace Sci.Production.Quality
             }
             if (targT != null)
             {
-                Target_text.Value = targT;
+                dateTargetLeadtime.Value = targT;
             }
             else
             {
-                Target_text.Text = "";
+                dateTargetLeadtime.Text = "";
             }
             decimal dRowCount = DetailDatas.Count;
             string inspnum = "0";
@@ -95,16 +95,16 @@ namespace Sci.Production.Quality
                 if (articleAry.Length > 0)
                 {
                     inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
-                    Article_text.Text = inspnum + "%";
+                    displayArticleofInspection.Text = inspnum + "%";
                 }
                 else
                 {
-                    Article_text.Text = "";
+                    displayArticleofInspection.Text = "";
                 }
             }
             else
             {
-                Article_text.Text = "";
+                displayArticleofInspection.Text = "";
             }
 
 
@@ -112,11 +112,11 @@ namespace Sci.Production.Quality
             if (inspnum == "100")
             {
                 CompDate = ((DateTime)articleDT.Compute("Max(Inspdate)", ""));
-                compl_text.Value = CompDate;
+                dateCompletionDate.Value = CompDate;
             }
             else
             {
-                compl_text.Text = "";
+                dateCompletionDate.Text = "";
             }
 
             //判斷Grid有無資料 , 沒資料就傳true並關閉 ContextMenu edit & delete
@@ -141,7 +141,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr,this.sp_text.Text);
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr,this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -153,7 +153,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -165,7 +165,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -177,7 +177,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -189,7 +189,7 @@ namespace Sci.Production.Quality
                 {
                     return;
                 }
-                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.sp_text.Text);
+                var frm = new Sci.Production.Quality.P05_Detail(false, this.CurrentDetailData["ID"].ToString(), null, null, dr, this.displaySP.Text);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -228,7 +228,7 @@ namespace Sci.Production.Quality
                int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
                 ID = ID + 1;
                       
-            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.sp_text.Text);
+            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.displaySP.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
@@ -238,10 +238,10 @@ namespace Sci.Production.Quality
         private void EditThisDetail()
         {
             string currentID = this.CurrentDetailData["ID"].ToString();
-            string spno = this.sp_text.Text;
+            string spno = this.displaySP.Text;
             var dr = this.CurrentDetailData; if (null == dr) return;
             string id = CurrentDetailData["ID"].ToString();
-            var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr,sp_text.Text);
+            var frm = new Sci.Production.Quality.P05_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr,displaySP.Text);
             frm.ShowDialog(this);
             frm.Dispose();
             contextMenuStrip();
@@ -306,7 +306,7 @@ namespace Sci.Production.Quality
             }
             else // oven 有東西
             {
-                DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where POID='{0}'", sp_text.Text.ToString()), out dtCheckDelete);
+                DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where POID='{0}'", displaySP.Text.ToString()), out dtCheckDelete);
                 DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where id='{0}'", CurrentDetailData["ID"].ToString()), out dtCheck);
                 if (dtCheckDelete.Rows.Count <= 0)
                 {

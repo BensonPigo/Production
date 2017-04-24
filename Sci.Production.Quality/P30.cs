@@ -73,7 +73,7 @@ namespace Sci.Production.Quality
                     return;
                 }
                 string sqlcmd = string.Format(@" select colorid from po_supp_detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A' and colorid is not null and b.id='{0}' group by colorid"
-                    , textBox1.Text.ToString());
+                    , txtSP.Text.ToString());
                 SelectItem item = new SelectItem(sqlcmd, "30", dr["ColorID"].ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
@@ -109,7 +109,7 @@ namespace Sci.Production.Quality
                 string sqlcmd1 = string.Format(@"select distinct refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK)  where a.id=b.POID and a.fabrictype='A'
                 and a.Scirefno is not null 
                 and b.id='{0}' group by a.refno"
-                    ,textBox1.Text.ToString());
+                    ,txtSP.Text.ToString());
                 SelectItem item1 = new SelectItem(sqlcmd1, "30", dr1["Item"].ToString());
                 DialogResult result1 = item1.ShowDialog();
                 if (result1 == DialogResult.Cancel) { return; }
@@ -149,7 +149,7 @@ namespace Sci.Production.Quality
                 string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK) where a.id=b.POID and a.fabrictype='A'
                 and a.Scirefno is not null 
                 and b.id='{0}' and a.refno='{1}'"
-                   , textBox1.Text.ToString(),e.FormattedValue);
+                   , txtSP.Text.ToString(),e.FormattedValue);
 
                 if (MyUtility.Check.Seek(sqlcmd,out dr1))
                 {
@@ -190,7 +190,7 @@ select  colorid
 from  po_supp_detail a WITH (NOLOCK) 
       , Orders b  WITH (NOLOCK) 
 where a.id=b.POID and a.fabrictype='A' 
-    and colorid is not null  and b.id='{0}' and a.colorid='{1}'", textBox1.Text.ToString(), e.FormattedValue);
+    and colorid is not null  and b.id='{0}' and a.colorid='{1}'", txtSP.Text.ToString(), e.FormattedValue);
                 if (MyUtility.Check.Seek(sqlcmd,out dr1))
                 {
                     dr["Colorid"] = e.FormattedValue;
@@ -232,30 +232,30 @@ where a.id=b.POID and a.fabrictype='A'
         {
             
             #region 設定表頭欄位只能Readonly        
-                this.textBox1.ReadOnly = true;
-                this.textBox2.ReadOnly = true;
-                this.textBox3.ReadOnly = true;
-                this.textBox4.ReadOnly = true;
-                this.textBox5.ReadOnly = true;
-                this.textBox6.ReadOnly = true;
-                this.textBox7.ReadOnly = true;
-                this.textBox8.ReadOnly = true;
-                this.textBox9.TextBox1.ReadOnly = true;
-                this.textBox11.ReadOnly = true;
-                this.textBox12.ReadOnly = true;
-                this.textBox13.ReadOnly = true;
-                this.textBox14.ReadOnly = true;
-                this.textBox15.ReadOnly = true;
-                this.comboBox1.ReadOnly = true;
-                this.checkBox1.ReadOnly = true;
-                this.checkBox2.ReadOnly = true;
-                this.checkBox3.ReadOnly = true;
+                this.txtSP.ReadOnly = true;
+                this.txtBrand.ReadOnly = true;
+                this.txtStyle.ReadOnly = true;
+                this.txtSeason.ReadOnly = true;
+                this.txtProject.ReadOnly = true;
+                this.numOrderQty.ReadOnly = true;
+                this.txtOrderQty.ReadOnly = true;
+                this.dateMDFinished.ReadOnly = true;
+                this.txtuserMCHandle.TextBox1.ReadOnly = true;
+                this.dateSewingInline.ReadOnly = true;
+                this.dateSewingOffline.ReadOnly = true;
+                this.dateBuyerDelivery.ReadOnly = true;
+                this.dateSDPDate.ReadOnly = true;
+                this.dateRMTLETA.ReadOnly = true;
+                this.comboCategory.ReadOnly = true;
+                this.checkLocalOrder.ReadOnly = true;
+                this.checkPullForwardOrder.ReadOnly = true;
+                this.checkCancelledOrder.ReadOnly = true;
 
             #endregion
             DataRow row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
             if (MyUtility.Check.Empty(row))
             {
-                string id = this.textBox1.Text;
+                string id = this.txtSP.Text;
 
                 
                 DataTable detailDt = (DataTable)this.detailgridbs.DataSource;
@@ -347,9 +347,9 @@ where a.id=b.POID and a.fabrictype='A'
             Ict.DualResult cbResult;
             if (cbResult = DBProxy.Current.Select(null, " select ID,Name from DropDownList WITH (NOLOCK) where type='category'", out dtCategory))
             {
-                this.comboBox1.DataSource = dtCategory;
-                this.comboBox1.DisplayMember = "Name";
-                this.comboBox1.ValueMember = "ID";
+                this.comboCategory.DataSource = dtCategory;
+                this.comboCategory.DisplayMember = "Name";
+                this.comboCategory.ValueMember = "ID";
             }
             else 
             {
@@ -396,12 +396,12 @@ where a.id=b.POID and a.fabrictype='A'
         private void button_enable()
         {
             DataTable dt;
-            string cmd = string.Format("select MDClose from orders where id='{0}' ", textBox1.Text);
+            string cmd = string.Format("select MDClose from orders where id='{0}' ", txtSP.Text);
             DBProxy.Current.Select(null, cmd, out dt);
             if (dt.Rows.Count>0)
             {
                 this.btnFinished.Text = MyUtility.Check.Empty(dt.Rows[0]["MDClose"]) ? "Finished" : "Back to Master List";
-                this.textBox8.Value = MyUtility.Convert.GetDate(dt.Rows[0]["MDClose"]);
+                this.dateMDFinished.Value = MyUtility.Convert.GetDate(dt.Rows[0]["MDClose"]);
             }
             btnFinished.Enabled = !this.EditMode;
             
@@ -423,7 +423,7 @@ where a.id=b.POID and a.fabrictype='A'
                  {
                      string sqlCmdUpdate = "update orders  set MDClose= CONVERT(VARCHAR(20), GETDATE(), 120)  where id=@MdID";
                      List<SqlParameter> spam = new List<SqlParameter>();
-                     spam.Add(new SqlParameter("@MdID", textBox1.Text));
+                     spam.Add(new SqlParameter("@MdID", txtSP.Text));
                      DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate, spam);
                      if (!result) { return; }
                  }
@@ -440,7 +440,7 @@ where a.id=b.POID and a.fabrictype='A'
                       string sqlCmdUpdate = "update orders  set MDClose= Null  where id=@MdID";
                     
                     List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@MdID", this.textBox1.Text));
+                    spam.Add(new SqlParameter("@MdID", this.txtSP.Text));
                     DualResult result = DBProxy.Current.Execute("Production", sqlCmdUpdate,spam);
                     
                     if (!result) { return; }
@@ -455,7 +455,7 @@ where a.id=b.POID and a.fabrictype='A'
             int rowindex = 0;
             for (int i = 0; i < CurrentDataRow.Table.Rows.Count; i++)
             {                
-                if (CurrentDataRow.Table.Rows[i]["id"].ToString() == this.textBox1.Text)
+                if (CurrentDataRow.Table.Rows[i]["id"].ToString() == this.txtSP.Text)
                 {
                     rowindex = i;
                     break;
@@ -476,13 +476,13 @@ where a.id=b.POID and a.fabrictype='A'
 
         private void button20_Click(object sender, EventArgs e)
         {
-            Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(this.textBox1.Text));
+            Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
 
         private void button21_Click(object sender, EventArgs e)
         {
-            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.textBox1.Text));
+            Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
 

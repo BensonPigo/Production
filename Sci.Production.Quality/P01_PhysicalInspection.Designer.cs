@@ -28,41 +28,41 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.brand_box = new Sci.Win.UI.DisplayBox();
-            this.style_box = new Sci.Win.UI.DisplayBox();
-            this.sp_box = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.wk_box = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.seq_box = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.scirefno_box = new Sci.Win.UI.DisplayBox();
-            this.refdesc_box = new Sci.Win.UI.DisplayBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.brandrefno_box = new Sci.Win.UI.DisplayBox();
-            this.color_box = new Sci.Win.UI.DisplayBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.arriveqty_box = new Sci.Win.UI.DisplayBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.approve_button = new Sci.Win.UI.Button();
-            this.encode_button = new Sci.Win.UI.Button();
-            this.label14 = new Sci.Win.UI.Label();
-            this.approve_box = new Sci.Win.UI.DisplayBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
-            this.result_box = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displaySP = new Sci.Win.UI.DisplayBox();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.displayWKNo = new Sci.Win.UI.DisplayBox();
+            this.labelWKNo = new Sci.Win.UI.Label();
+            this.displaySEQ = new Sci.Win.UI.DisplayBox();
+            this.labelSEQ = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelBrandRefno = new Sci.Win.UI.Label();
+            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
+            this.displaySCIRefno1 = new Sci.Win.UI.DisplayBox();
+            this.labelSCIRefno = new Sci.Win.UI.Label();
+            this.displayBrandRefno = new Sci.Win.UI.DisplayBox();
+            this.displayColor = new Sci.Win.UI.DisplayBox();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.labelArriveQty = new Sci.Win.UI.Label();
+            this.displayArriveQty = new Sci.Win.UI.DisplayBox();
+            this.labelArriveWHDate = new Sci.Win.UI.Label();
+            this.labelLastInspectionDate = new Sci.Win.UI.Label();
+            this.labelResult = new Sci.Win.UI.Label();
+            this.checkNonInspection = new Sci.Win.UI.CheckBox();
+            this.btnApprove = new Sci.Win.UI.Button();
+            this.btnEncode = new Sci.Win.UI.Button();
+            this.labelApprover = new Sci.Win.UI.Label();
+            this.displayApprover = new Sci.Win.UI.DisplayBox();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.txtuserApprover = new Sci.Production.Class.txtuser();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.displayResult = new Sci.Win.UI.DisplayBox();
             this.textID = new Sci.Win.UI.TextBox();
-            this.lastinspdate_box = new Sci.Win.UI.DateBox();
-            this.arrwhdate_box = new Sci.Win.UI.DateBox();
+            this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
+            this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -70,7 +70,7 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button3);
+            this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1096, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
@@ -78,7 +78,7 @@
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
-            this.btmcont.Controls.SetChildIndex(this.button3, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             // 
             // gridcont
             // 
@@ -93,326 +93,326 @@
             // 
             this.save.Location = new System.Drawing.Point(926, 5);
             // 
-            // brand_box
+            // displayBrand
             // 
-            this.brand_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.brand_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.brand_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brand_box.Location = new System.Drawing.Point(83, 102);
-            this.brand_box.Name = "brand_box";
-            this.brand_box.Size = new System.Drawing.Size(78, 21);
-            this.brand_box.TabIndex = 103;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(83, 102);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(78, 21);
+            this.displayBrand.TabIndex = 103;
             // 
-            // style_box
+            // displayStyle
             // 
-            this.style_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.style_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.style_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.style_box.Location = new System.Drawing.Point(83, 72);
-            this.style_box.Name = "style_box";
-            this.style_box.Size = new System.Drawing.Size(120, 21);
-            this.style_box.TabIndex = 102;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(83, 72);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(120, 21);
+            this.displayStyle.TabIndex = 102;
             // 
-            // sp_box
+            // displaySP
             // 
-            this.sp_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.sp_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.sp_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.sp_box.Location = new System.Drawing.Point(83, 12);
-            this.sp_box.Name = "sp_box";
-            this.sp_box.Size = new System.Drawing.Size(108, 21);
-            this.sp_box.TabIndex = 101;
+            this.displaySP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySP.Location = new System.Drawing.Point(83, 12);
+            this.displaySP.Name = "displaySP";
+            this.displaySP.Size = new System.Drawing.Size(108, 21);
+            this.displaySP.TabIndex = 101;
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(15, 101);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 23);
-            this.label4.TabIndex = 100;
-            this.label4.Text = "Brand";
+            this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(15, 101);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(61, 23);
+            this.labelBrand.TabIndex = 100;
+            this.labelBrand.Text = "Brand";
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(15, 71);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 23);
-            this.label2.TabIndex = 99;
-            this.label2.Text = "Style";
+            this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(15, 71);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(61, 23);
+            this.labelStyle.TabIndex = 99;
+            this.labelStyle.Text = "Style";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(15, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "SP#";
+            this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(15, 11);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(61, 23);
+            this.labelSP.TabIndex = 98;
+            this.labelSP.Text = "SP#";
             // 
-            // wk_box
+            // displayWKNo
             // 
-            this.wk_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.wk_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.wk_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.wk_box.Location = new System.Drawing.Point(83, 42);
-            this.wk_box.Name = "wk_box";
-            this.wk_box.Size = new System.Drawing.Size(120, 21);
-            this.wk_box.TabIndex = 105;
+            this.displayWKNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayWKNo.Location = new System.Drawing.Point(83, 42);
+            this.displayWKNo.Name = "displayWKNo";
+            this.displayWKNo.Size = new System.Drawing.Size(120, 21);
+            this.displayWKNo.TabIndex = 105;
             // 
-            // label3
+            // labelWKNo
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(15, 41);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 23);
-            this.label3.TabIndex = 104;
-            this.label3.Text = "WKNo";
+            this.labelWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelWKNo.Lines = 0;
+            this.labelWKNo.Location = new System.Drawing.Point(15, 41);
+            this.labelWKNo.Name = "labelWKNo";
+            this.labelWKNo.Size = new System.Drawing.Size(61, 23);
+            this.labelWKNo.TabIndex = 104;
+            this.labelWKNo.Text = "WKNo";
             // 
-            // seq_box
+            // displaySEQ
             // 
-            this.seq_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.seq_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.seq_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.seq_box.Location = new System.Drawing.Point(295, 12);
-            this.seq_box.Name = "seq_box";
-            this.seq_box.Size = new System.Drawing.Size(55, 21);
-            this.seq_box.TabIndex = 107;
+            this.displaySEQ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySEQ.Location = new System.Drawing.Point(295, 12);
+            this.displaySEQ.Name = "displaySEQ";
+            this.displaySEQ.Size = new System.Drawing.Size(55, 21);
+            this.displaySEQ.TabIndex = 107;
             // 
-            // label5
+            // labelSEQ
             // 
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(217, 11);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 106;
-            this.label5.Text = "SEQ";
+            this.labelSEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelSEQ.Lines = 0;
+            this.labelSEQ.Location = new System.Drawing.Point(217, 11);
+            this.labelSEQ.Name = "labelSEQ";
+            this.labelSEQ.Size = new System.Drawing.Size(75, 23);
+            this.labelSEQ.TabIndex = 106;
+            this.labelSEQ.Text = "SEQ";
             // 
-            // label6
+            // labelSupplier
             // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(217, 41);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 108;
-            this.label6.Text = "Supplier";
+            this.labelSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(217, 41);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(75, 23);
+            this.labelSupplier.TabIndex = 108;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label7
+            // labelBrandRefno
             // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(217, 71);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 110;
-            this.label7.Text = "Brand Refno";
+            this.labelBrandRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelBrandRefno.Lines = 0;
+            this.labelBrandRefno.Location = new System.Drawing.Point(217, 71);
+            this.labelBrandRefno.Name = "labelBrandRefno";
+            this.labelBrandRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelBrandRefno.TabIndex = 110;
+            this.labelBrandRefno.Text = "Brand Refno";
             // 
-            // scirefno_box
+            // displaySCIRefno
             // 
-            this.scirefno_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.scirefno_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.scirefno_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.scirefno_box.Location = new System.Drawing.Point(295, 102);
-            this.scirefno_box.Name = "scirefno_box";
-            this.scirefno_box.Size = new System.Drawing.Size(186, 21);
-            this.scirefno_box.TabIndex = 111;
+            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Location = new System.Drawing.Point(295, 102);
+            this.displaySCIRefno.Name = "displaySCIRefno";
+            this.displaySCIRefno.Size = new System.Drawing.Size(186, 21);
+            this.displaySCIRefno.TabIndex = 111;
             // 
-            // refdesc_box
+            // displaySCIRefno1
             // 
-            this.refdesc_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.refdesc_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.refdesc_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.refdesc_box.Location = new System.Drawing.Point(484, 101);
-            this.refdesc_box.Name = "refdesc_box";
-            this.refdesc_box.Size = new System.Drawing.Size(293, 21);
-            this.refdesc_box.TabIndex = 112;
+            this.displaySCIRefno1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displaySCIRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno1.Location = new System.Drawing.Point(484, 101);
+            this.displaySCIRefno1.Name = "displaySCIRefno1";
+            this.displaySCIRefno1.Size = new System.Drawing.Size(293, 21);
+            this.displaySCIRefno1.TabIndex = 112;
             // 
-            // label8
+            // labelSCIRefno
             // 
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(217, 101);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 113;
-            this.label8.Text = "SCI Refno";
+            this.labelSCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelSCIRefno.Lines = 0;
+            this.labelSCIRefno.Location = new System.Drawing.Point(217, 101);
+            this.labelSCIRefno.Name = "labelSCIRefno";
+            this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelSCIRefno.TabIndex = 113;
+            this.labelSCIRefno.Text = "SCI Refno";
             // 
-            // brandrefno_box
+            // displayBrandRefno
             // 
-            this.brandrefno_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.brandrefno_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.brandrefno_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.brandrefno_box.Location = new System.Drawing.Point(295, 71);
-            this.brandrefno_box.Name = "brandrefno_box";
-            this.brandrefno_box.Size = new System.Drawing.Size(147, 21);
-            this.brandrefno_box.TabIndex = 114;
+            this.displayBrandRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrandRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBrandRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrandRefno.Location = new System.Drawing.Point(295, 71);
+            this.displayBrandRefno.Name = "displayBrandRefno";
+            this.displayBrandRefno.Size = new System.Drawing.Size(147, 21);
+            this.displayBrandRefno.TabIndex = 114;
             // 
-            // color_box
+            // displayColor
             // 
-            this.color_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.color_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.color_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.color_box.Location = new System.Drawing.Point(541, 12);
-            this.color_box.Name = "color_box";
-            this.color_box.Size = new System.Drawing.Size(101, 21);
-            this.color_box.TabIndex = 115;
+            this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColor.Location = new System.Drawing.Point(541, 12);
+            this.displayColor.Name = "displayColor";
+            this.displayColor.Size = new System.Drawing.Size(101, 21);
+            this.displayColor.TabIndex = 115;
             // 
-            // label9
+            // labelColor
             // 
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(463, 11);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 116;
-            this.label9.Text = "Color";
+            this.labelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(463, 11);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(75, 23);
+            this.labelColor.TabIndex = 116;
+            this.labelColor.Text = "Color";
             // 
-            // label10
+            // labelArriveQty
             // 
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(463, 41);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
-            this.label10.TabIndex = 117;
-            this.label10.Text = "Arrive Qty";
+            this.labelArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelArriveQty.Lines = 0;
+            this.labelArriveQty.Location = new System.Drawing.Point(463, 41);
+            this.labelArriveQty.Name = "labelArriveQty";
+            this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
+            this.labelArriveQty.TabIndex = 117;
+            this.labelArriveQty.Text = "Arrive Qty";
             // 
-            // arriveqty_box
+            // displayArriveQty
             // 
-            this.arriveqty_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.arriveqty_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.arriveqty_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.arriveqty_box.Location = new System.Drawing.Point(541, 42);
-            this.arriveqty_box.Name = "arriveqty_box";
-            this.arriveqty_box.Size = new System.Drawing.Size(101, 21);
-            this.arriveqty_box.TabIndex = 118;
+            this.displayArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayArriveQty.Location = new System.Drawing.Point(541, 42);
+            this.displayArriveQty.Name = "displayArriveQty";
+            this.displayArriveQty.Size = new System.Drawing.Size(101, 21);
+            this.displayArriveQty.TabIndex = 118;
             // 
-            // label11
+            // labelArriveWHDate
             // 
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(657, 11);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(123, 23);
-            this.label11.TabIndex = 120;
-            this.label11.Text = "Arrive W/H Date";
+            this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelArriveWHDate.Lines = 0;
+            this.labelArriveWHDate.Location = new System.Drawing.Point(657, 11);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.Size = new System.Drawing.Size(123, 23);
+            this.labelArriveWHDate.TabIndex = 120;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
-            // label12
+            // labelLastInspectionDate
             // 
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(657, 41);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(123, 23);
-            this.label12.TabIndex = 121;
-            this.label12.Text = "Last Inspection Date";
+            this.labelLastInspectionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelLastInspectionDate.Lines = 0;
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(657, 41);
+            this.labelLastInspectionDate.Name = "labelLastInspectionDate";
+            this.labelLastInspectionDate.Size = new System.Drawing.Size(123, 23);
+            this.labelLastInspectionDate.TabIndex = 121;
+            this.labelLastInspectionDate.Text = "Last Inspection Date";
             // 
-            // label13
+            // labelResult
             // 
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(463, 71);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 23);
-            this.label13.TabIndex = 124;
-            this.label13.Text = "Result";
+            this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelResult.Lines = 0;
+            this.labelResult.Location = new System.Drawing.Point(463, 71);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(75, 23);
+            this.labelResult.TabIndex = 124;
+            this.labelResult.Text = "Result";
             // 
-            // checkBox1
+            // checkNonInspection
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(752, 69);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(121, 21);
-            this.checkBox1.TabIndex = 126;
-            this.checkBox1.Text = "Non Inspection";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkNonInspection.AutoSize = true;
+            this.checkNonInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkNonInspection.IsSupportEditMode = false;
+            this.checkNonInspection.Location = new System.Drawing.Point(752, 69);
+            this.checkNonInspection.Name = "checkNonInspection";
+            this.checkNonInspection.ReadOnly = true;
+            this.checkNonInspection.Size = new System.Drawing.Size(121, 21);
+            this.checkNonInspection.TabIndex = 126;
+            this.checkNonInspection.Text = "Non Inspection";
+            this.checkNonInspection.UseVisualStyleBackColor = true;
             // 
-            // approve_button
+            // btnApprove
             // 
-            this.approve_button.Location = new System.Drawing.Point(783, 129);
-            this.approve_button.Name = "approve_button";
-            this.approve_button.Size = new System.Drawing.Size(90, 30);
-            this.approve_button.TabIndex = 127;
-            this.approve_button.Text = "Approve";
-            this.approve_button.UseVisualStyleBackColor = true;
-            this.approve_button.Click += new System.EventHandler(this.approve_button_Click);
+            this.btnApprove.Location = new System.Drawing.Point(783, 129);
+            this.btnApprove.Name = "btnApprove";
+            this.btnApprove.Size = new System.Drawing.Size(90, 30);
+            this.btnApprove.TabIndex = 127;
+            this.btnApprove.Text = "Approve";
+            this.btnApprove.UseVisualStyleBackColor = true;
+            this.btnApprove.Click += new System.EventHandler(this.approve_button_Click);
             // 
-            // encode_button
+            // btnEncode
             // 
-            this.encode_button.Location = new System.Drawing.Point(783, 93);
-            this.encode_button.Name = "encode_button";
-            this.encode_button.Size = new System.Drawing.Size(90, 30);
-            this.encode_button.TabIndex = 128;
-            this.encode_button.Text = "Encode";
-            this.encode_button.UseVisualStyleBackColor = true;
-            this.encode_button.Click += new System.EventHandler(this.encode_button_Click);
+            this.btnEncode.Location = new System.Drawing.Point(783, 93);
+            this.btnEncode.Name = "btnEncode";
+            this.btnEncode.Size = new System.Drawing.Size(90, 30);
+            this.btnEncode.TabIndex = 128;
+            this.btnEncode.Text = "Encode";
+            this.btnEncode.UseVisualStyleBackColor = true;
+            this.btnEncode.Click += new System.EventHandler(this.encode_button_Click);
             // 
-            // label14
+            // labelApprover
             // 
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(15, 129);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(61, 23);
-            this.label14.TabIndex = 129;
-            this.label14.Text = "Approver";
+            this.labelApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelApprover.Lines = 0;
+            this.labelApprover.Location = new System.Drawing.Point(15, 129);
+            this.labelApprover.Name = "labelApprover";
+            this.labelApprover.Size = new System.Drawing.Size(61, 23);
+            this.labelApprover.TabIndex = 129;
+            this.labelApprover.Text = "Approver";
             // 
-            // approve_box
+            // displayApprover
             // 
-            this.approve_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.approve_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.approve_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.approve_box.Location = new System.Drawing.Point(391, 130);
-            this.approve_box.Name = "approve_box";
-            this.approve_box.Size = new System.Drawing.Size(197, 21);
-            this.approve_box.TabIndex = 130;
+            this.displayApprover.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayApprover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayApprover.Location = new System.Drawing.Point(391, 130);
+            this.displayApprover.Name = "displayApprover";
+            this.displayApprover.Size = new System.Drawing.Size(197, 21);
+            this.displayApprover.TabIndex = 130;
             // 
-            // button3
+            // btnToExcel
             // 
-            this.button3.Location = new System.Drawing.Point(627, 5);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 132;
-            this.button3.Text = "To Excel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Location = new System.Drawing.Point(627, 5);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(90, 30);
+            this.btnToExcel.TabIndex = 132;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // txtuser1
+            // txtuserApprover
             // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(83, 129);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(305, 23);
-            this.txtuser1.TabIndex = 131;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtuserApprover.DisplayBox1Binding = "";
+            this.txtuserApprover.Location = new System.Drawing.Point(83, 129);
+            this.txtuserApprover.Name = "txtuserApprover";
+            this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
+            this.txtuserApprover.TabIndex = 131;
+            this.txtuserApprover.TextBox1Binding = "";
             // 
-            // txtsupplier1
+            // txtsupplier
             // 
-            this.txtsupplier1.DisplayBox1Binding = "";
-            this.txtsupplier1.Location = new System.Drawing.Point(295, 41);
-            this.txtsupplier1.Name = "txtsupplier1";
-            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 109;
-            this.txtsupplier1.TextBox1Binding = "";
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(295, 41);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 109;
+            this.txtsupplier.TextBox1Binding = "";
             // 
-            // result_box
+            // displayResult
             // 
-            this.result_box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.result_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.result_box.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.result_box.Location = new System.Drawing.Point(541, 72);
-            this.result_box.Name = "result_box";
-            this.result_box.Size = new System.Drawing.Size(101, 21);
-            this.result_box.TabIndex = 132;
+            this.displayResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayResult.Location = new System.Drawing.Point(541, 72);
+            this.displayResult.Name = "displayResult";
+            this.displayResult.Size = new System.Drawing.Size(101, 21);
+            this.displayResult.TabIndex = 132;
             // 
             // textID
             // 
@@ -425,59 +425,59 @@
             this.textID.TabIndex = 1;
             this.textID.Visible = false;
             // 
-            // lastinspdate_box
+            // dateLastInspectionDate
             // 
-            this.lastinspdate_box.Location = new System.Drawing.Point(783, 42);
-            this.lastinspdate_box.Name = "lastinspdate_box";
-            this.lastinspdate_box.ReadOnly = true;
-            this.lastinspdate_box.Size = new System.Drawing.Size(130, 23);
-            this.lastinspdate_box.TabIndex = 138;
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(783, 42);
+            this.dateLastInspectionDate.Name = "dateLastInspectionDate";
+            this.dateLastInspectionDate.ReadOnly = true;
+            this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
+            this.dateLastInspectionDate.TabIndex = 138;
             // 
-            // arrwhdate_box
+            // dateArriveWHDate
             // 
-            this.arrwhdate_box.Location = new System.Drawing.Point(783, 13);
-            this.arrwhdate_box.Name = "arrwhdate_box";
-            this.arrwhdate_box.ReadOnly = true;
-            this.arrwhdate_box.Size = new System.Drawing.Size(130, 23);
-            this.arrwhdate_box.TabIndex = 139;
+            this.dateArriveWHDate.Location = new System.Drawing.Point(783, 13);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.ReadOnly = true;
+            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.TabIndex = 139;
             // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1096, 733);
-            this.Controls.Add(this.arrwhdate_box);
-            this.Controls.Add(this.lastinspdate_box);
+            this.Controls.Add(this.dateArriveWHDate);
+            this.Controls.Add(this.dateLastInspectionDate);
             this.Controls.Add(this.textID);
-            this.Controls.Add(this.result_box);
-            this.Controls.Add(this.txtuser1);
-            this.Controls.Add(this.approve_box);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.encode_button);
-            this.Controls.Add(this.approve_button);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.arriveqty_box);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.color_box);
-            this.Controls.Add(this.brandrefno_box);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.refdesc_box);
-            this.Controls.Add(this.scirefno_box);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.txtsupplier1);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.seq_box);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.wk_box);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.brand_box);
-            this.Controls.Add(this.style_box);
-            this.Controls.Add(this.sp_box);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.displayResult);
+            this.Controls.Add(this.txtuserApprover);
+            this.Controls.Add(this.displayApprover);
+            this.Controls.Add(this.labelApprover);
+            this.Controls.Add(this.btnEncode);
+            this.Controls.Add(this.btnApprove);
+            this.Controls.Add(this.checkNonInspection);
+            this.Controls.Add(this.labelResult);
+            this.Controls.Add(this.labelLastInspectionDate);
+            this.Controls.Add(this.labelArriveWHDate);
+            this.Controls.Add(this.displayArriveQty);
+            this.Controls.Add(this.labelArriveQty);
+            this.Controls.Add(this.labelColor);
+            this.Controls.Add(this.displayColor);
+            this.Controls.Add(this.displayBrandRefno);
+            this.Controls.Add(this.labelSCIRefno);
+            this.Controls.Add(this.displaySCIRefno1);
+            this.Controls.Add(this.displaySCIRefno);
+            this.Controls.Add(this.labelBrandRefno);
+            this.Controls.Add(this.txtsupplier);
+            this.Controls.Add(this.labelSupplier);
+            this.Controls.Add(this.displaySEQ);
+            this.Controls.Add(this.labelSEQ);
+            this.Controls.Add(this.displayWKNo);
+            this.Controls.Add(this.labelWKNo);
+            this.Controls.Add(this.displayBrand);
+            this.Controls.Add(this.displayStyle);
+            this.Controls.Add(this.displaySP);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelStyle);
+            this.Controls.Add(this.labelSP);
             this.DefaultOrder = "Roll,Dyelot";
             this.EditMode = true;
             this.GridPopUp = false;
@@ -486,42 +486,42 @@
             this.Name = "P01_PhysicalInspection";
             this.Text = "Physical Inspection";
             this.WorkAlias = "Fir_Physical";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.sp_box, 0);
-            this.Controls.SetChildIndex(this.style_box, 0);
-            this.Controls.SetChildIndex(this.brand_box, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.wk_box, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.seq_box, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.txtsupplier1, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.scirefno_box, 0);
-            this.Controls.SetChildIndex(this.refdesc_box, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.brandrefno_box, 0);
-            this.Controls.SetChildIndex(this.color_box, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
-            this.Controls.SetChildIndex(this.arriveqty_box, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
+            this.Controls.SetChildIndex(this.labelSP, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.displaySP, 0);
+            this.Controls.SetChildIndex(this.displayStyle, 0);
+            this.Controls.SetChildIndex(this.displayBrand, 0);
+            this.Controls.SetChildIndex(this.labelWKNo, 0);
+            this.Controls.SetChildIndex(this.displayWKNo, 0);
+            this.Controls.SetChildIndex(this.labelSEQ, 0);
+            this.Controls.SetChildIndex(this.displaySEQ, 0);
+            this.Controls.SetChildIndex(this.labelSupplier, 0);
+            this.Controls.SetChildIndex(this.txtsupplier, 0);
+            this.Controls.SetChildIndex(this.labelBrandRefno, 0);
+            this.Controls.SetChildIndex(this.displaySCIRefno, 0);
+            this.Controls.SetChildIndex(this.displaySCIRefno1, 0);
+            this.Controls.SetChildIndex(this.labelSCIRefno, 0);
+            this.Controls.SetChildIndex(this.displayBrandRefno, 0);
+            this.Controls.SetChildIndex(this.displayColor, 0);
+            this.Controls.SetChildIndex(this.labelColor, 0);
+            this.Controls.SetChildIndex(this.labelArriveQty, 0);
+            this.Controls.SetChildIndex(this.displayArriveQty, 0);
+            this.Controls.SetChildIndex(this.labelArriveWHDate, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.label13, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.approve_button, 0);
-            this.Controls.SetChildIndex(this.encode_button, 0);
-            this.Controls.SetChildIndex(this.label14, 0);
-            this.Controls.SetChildIndex(this.approve_box, 0);
-            this.Controls.SetChildIndex(this.txtuser1, 0);
-            this.Controls.SetChildIndex(this.result_box, 0);
+            this.Controls.SetChildIndex(this.labelLastInspectionDate, 0);
+            this.Controls.SetChildIndex(this.labelResult, 0);
+            this.Controls.SetChildIndex(this.checkNonInspection, 0);
+            this.Controls.SetChildIndex(this.btnApprove, 0);
+            this.Controls.SetChildIndex(this.btnEncode, 0);
+            this.Controls.SetChildIndex(this.labelApprover, 0);
+            this.Controls.SetChildIndex(this.displayApprover, 0);
+            this.Controls.SetChildIndex(this.txtuserApprover, 0);
+            this.Controls.SetChildIndex(this.displayResult, 0);
             this.Controls.SetChildIndex(this.textID, 0);
-            this.Controls.SetChildIndex(this.lastinspdate_box, 0);
-            this.Controls.SetChildIndex(this.arrwhdate_box, 0);
+            this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
+            this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -532,40 +532,40 @@
 
         #endregion
 
-        private Win.UI.DisplayBox brand_box;
-        private Win.UI.DisplayBox style_box;
-        private Win.UI.DisplayBox sp_box;
-        private Win.UI.Label label4;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox wk_box;
-        private Win.UI.Label label3;
-        private Win.UI.DisplayBox seq_box;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Class.txtsupplier txtsupplier1;
-        private Win.UI.Label label7;
-        private Win.UI.DisplayBox scirefno_box;
-        private Win.UI.DisplayBox refdesc_box;
-        private Win.UI.Label label8;
-        private Win.UI.DisplayBox brandrefno_box;
-        private Win.UI.DisplayBox color_box;
-        private Win.UI.Label label9;
-        private Win.UI.Label label10;
-        private Win.UI.DisplayBox arriveqty_box;
-        private Win.UI.Label label11;
-        private Win.UI.Label label12;
-        private Win.UI.Button button3;
-        private Win.UI.Label label13;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button approve_button;
-        private Win.UI.Button encode_button;
-        private Win.UI.Label label14;
-        private Win.UI.DisplayBox approve_box;
-        private Class.txtuser txtuser1;
-        private Win.UI.DisplayBox result_box;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.DisplayBox displaySP;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSP;
+        private Win.UI.DisplayBox displayWKNo;
+        private Win.UI.Label labelWKNo;
+        private Win.UI.DisplayBox displaySEQ;
+        private Win.UI.Label labelSEQ;
+        private Win.UI.Label labelSupplier;
+        private Class.txtsupplier txtsupplier;
+        private Win.UI.Label labelBrandRefno;
+        private Win.UI.DisplayBox displaySCIRefno;
+        private Win.UI.DisplayBox displaySCIRefno1;
+        private Win.UI.Label labelSCIRefno;
+        private Win.UI.DisplayBox displayBrandRefno;
+        private Win.UI.DisplayBox displayColor;
+        private Win.UI.Label labelColor;
+        private Win.UI.Label labelArriveQty;
+        private Win.UI.DisplayBox displayArriveQty;
+        private Win.UI.Label labelArriveWHDate;
+        private Win.UI.Label labelLastInspectionDate;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Label labelResult;
+        private Win.UI.CheckBox checkNonInspection;
+        private Win.UI.Button btnApprove;
+        private Win.UI.Button btnEncode;
+        private Win.UI.Label labelApprover;
+        private Win.UI.DisplayBox displayApprover;
+        private Class.txtuser txtuserApprover;
+        private Win.UI.DisplayBox displayResult;
         private Win.UI.TextBox textID;
-        private Win.UI.DateBox lastinspdate_box;
-        private Win.UI.DateBox arrwhdate_box;
+        private Win.UI.DateBox dateLastInspectionDate;
+        private Win.UI.DateBox dateArriveWHDate;
     }
 }

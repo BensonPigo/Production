@@ -23,14 +23,14 @@ namespace Sci.Production.Quality
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtDefectType.ReadOnly = true;
         }
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtDefectType.Text))
             {
                 MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
-                this.textBox1.Focus();
+                this.txtDefectType.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

@@ -29,34 +29,34 @@
         private void InitializeComponent()
         {
             this.txtSP = new Sci.Win.UI.TextBox();
-            this.lbDate = new Sci.Win.UI.Label();
-            this.CDate = new Sci.Win.UI.DateBox();
-            this.lbSP = new Sci.Win.UI.Label();
-            this.lbStyle = new Sci.Win.UI.Label();
-            this.lbLine = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelLine = new Sci.Win.UI.Label();
             this.txtLine = new Sci.Win.UI.TextBox();
-            this.DisplayCell = new Sci.Win.UI.DisplayBox();
-            this.lbCell = new Sci.Win.UI.Label();
+            this.displayCell = new Sci.Win.UI.DisplayBox();
+            this.labelCell = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.lbRemark = new Sci.Win.UI.Label();
-            this.lbShift = new Sci.Win.UI.Label();
-            this.lbInspected = new Sci.Win.UI.Label();
-            this.lbRejected = new Sci.Win.UI.Label();
-            this.lbDefectQty = new Sci.Win.UI.Label();
-            this.lbDestination = new Sci.Win.UI.Label();
-            this.NumInspected = new Sci.Win.UI.NumericBox();
-            this.NumRejected = new Sci.Win.UI.NumericBox();
-            this.NumDefect = new Sci.Win.UI.NumericBox();
-            this.lbTeam = new Sci.Win.UI.Label();
-            this.lbCPU = new Sci.Win.UI.Label();
-            this.lbRFT = new Sci.Win.UI.Label();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.DisplayFactory = new Sci.Win.UI.DisplayBox();
-            this.DisplayStyle = new Sci.Win.UI.DisplayBox();
-            this.DisplayDest = new Sci.Win.UI.DisplayBox();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelShift = new Sci.Win.UI.Label();
+            this.labelQtyInspected = new Sci.Win.UI.Label();
+            this.labelQtyRejected = new Sci.Win.UI.Label();
+            this.labelTtlDefectQty = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.numQtyInspected = new Sci.Win.UI.NumericBox();
+            this.numQtyRejected = new Sci.Win.UI.NumericBox();
+            this.numTtlDefectQty = new Sci.Win.UI.NumericBox();
+            this.labelTeam = new Sci.Win.UI.Label();
+            this.labelCPU = new Sci.Win.UI.Label();
+            this.labelRFT = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displayDestination = new Sci.Win.UI.DisplayBox();
             this.comboTeam = new Sci.Win.UI.ComboBox();
-            this.NumCPU = new Sci.Win.UI.TextBox();
-            this.NumRFT = new Sci.Win.UI.TextBox();
+            this.txtCPU = new Sci.Win.UI.TextBox();
+            this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.comboShift = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -76,68 +76,68 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.labConfirm);
-            this.masterpanel.Controls.Add(this.NumRFT);
-            this.masterpanel.Controls.Add(this.NumCPU);
+            this.masterpanel.Controls.Add(this.txtRFT);
+            this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.comboShift);
-            this.masterpanel.Controls.Add(this.DisplayDest);
-            this.masterpanel.Controls.Add(this.DisplayFactory);
-            this.masterpanel.Controls.Add(this.lbFactory);
-            this.masterpanel.Controls.Add(this.lbRFT);
-            this.masterpanel.Controls.Add(this.lbCPU);
-            this.masterpanel.Controls.Add(this.lbTeam);
-            this.masterpanel.Controls.Add(this.NumDefect);
-            this.masterpanel.Controls.Add(this.NumRejected);
-            this.masterpanel.Controls.Add(this.NumInspected);
-            this.masterpanel.Controls.Add(this.lbDestination);
-            this.masterpanel.Controls.Add(this.lbDefectQty);
-            this.masterpanel.Controls.Add(this.lbRejected);
-            this.masterpanel.Controls.Add(this.lbInspected);
-            this.masterpanel.Controls.Add(this.lbShift);
+            this.masterpanel.Controls.Add(this.displayDestination);
+            this.masterpanel.Controls.Add(this.displayFactory);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelRFT);
+            this.masterpanel.Controls.Add(this.labelCPU);
+            this.masterpanel.Controls.Add(this.labelTeam);
+            this.masterpanel.Controls.Add(this.numTtlDefectQty);
+            this.masterpanel.Controls.Add(this.numQtyRejected);
+            this.masterpanel.Controls.Add(this.numQtyInspected);
+            this.masterpanel.Controls.Add(this.labelDestination);
+            this.masterpanel.Controls.Add(this.labelTtlDefectQty);
+            this.masterpanel.Controls.Add(this.labelQtyRejected);
+            this.masterpanel.Controls.Add(this.labelQtyInspected);
+            this.masterpanel.Controls.Add(this.labelShift);
             this.masterpanel.Controls.Add(this.txtRemark);
-            this.masterpanel.Controls.Add(this.lbRemark);
-            this.masterpanel.Controls.Add(this.DisplayCell);
-            this.masterpanel.Controls.Add(this.lbCell);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.displayCell);
+            this.masterpanel.Controls.Add(this.labelCell);
             this.masterpanel.Controls.Add(this.txtLine);
-            this.masterpanel.Controls.Add(this.lbLine);
-            this.masterpanel.Controls.Add(this.DisplayStyle);
-            this.masterpanel.Controls.Add(this.lbStyle);
-            this.masterpanel.Controls.Add(this.lbSP);
+            this.masterpanel.Controls.Add(this.labelLine);
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelSP);
             this.masterpanel.Controls.Add(this.txtSP);
-            this.masterpanel.Controls.Add(this.lbDate);
-            this.masterpanel.Controls.Add(this.CDate);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(912, 170);
-            this.masterpanel.Controls.SetChildIndex(this.CDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbSP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DisplayStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbCell, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DisplayCell, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbShift, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbInspected, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbRejected, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbDefectQty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbDestination, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumInspected, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumRejected, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumDefect, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbTeam, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbCPU, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbRFT, 0);
-            this.masterpanel.Controls.SetChildIndex(this.lbFactory, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DisplayFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelQtyInspected, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelQtyRejected, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTtlDefectQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numQtyInspected, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numQtyRejected, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTtlDefectQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTeam, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRFT, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.DisplayDest, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumCPU, 0);
-            this.masterpanel.Controls.SetChildIndex(this.NumRFT, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             // 
             // detailpanel
@@ -159,15 +159,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(912, 400);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(906, 354);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(906, 40);
             // 
             // detail
             // 
@@ -184,7 +184,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(876, 400);
+            this.browse.Size = new System.Drawing.Size(912, 400);
             // 
             // tabs
             // 
@@ -215,49 +215,49 @@
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
             // 
-            // lbDate
+            // labelDate
             // 
-            this.lbDate.Lines = 0;
-            this.lbDate.Location = new System.Drawing.Point(14, 6);
-            this.lbDate.Name = "lbDate";
-            this.lbDate.Size = new System.Drawing.Size(50, 23);
-            this.lbDate.TabIndex = 100;
-            this.lbDate.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(14, 6);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(50, 23);
+            this.labelDate.TabIndex = 100;
+            this.labelDate.Text = "Date";
             // 
-            // CDate
+            // dateDate
             // 
-            this.CDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
-            this.CDate.Location = new System.Drawing.Point(66, 6);
-            this.CDate.Name = "CDate";
-            this.CDate.Size = new System.Drawing.Size(120, 23);
-            this.CDate.TabIndex = 0;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
+            this.dateDate.Location = new System.Drawing.Point(66, 6);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(120, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // lbSP
+            // labelSP
             // 
-            this.lbSP.Lines = 0;
-            this.lbSP.Location = new System.Drawing.Point(14, 33);
-            this.lbSP.Name = "lbSP";
-            this.lbSP.Size = new System.Drawing.Size(50, 23);
-            this.lbSP.TabIndex = 110;
-            this.lbSP.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(14, 33);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(50, 23);
+            this.labelSP.TabIndex = 110;
+            this.labelSP.Text = "SP#";
             // 
-            // lbStyle
+            // labelStyle
             // 
-            this.lbStyle.Lines = 0;
-            this.lbStyle.Location = new System.Drawing.Point(14, 60);
-            this.lbStyle.Name = "lbStyle";
-            this.lbStyle.Size = new System.Drawing.Size(50, 23);
-            this.lbStyle.TabIndex = 111;
-            this.lbStyle.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(14, 60);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(50, 23);
+            this.labelStyle.TabIndex = 111;
+            this.labelStyle.Text = "Style";
             // 
-            // lbLine
+            // labelLine
             // 
-            this.lbLine.Lines = 0;
-            this.lbLine.Location = new System.Drawing.Point(14, 87);
-            this.lbLine.Name = "lbLine";
-            this.lbLine.Size = new System.Drawing.Size(50, 23);
-            this.lbLine.TabIndex = 113;
-            this.lbLine.Text = "Line#";
+            this.labelLine.Lines = 0;
+            this.labelLine.Location = new System.Drawing.Point(14, 87);
+            this.labelLine.Name = "labelLine";
+            this.labelLine.Size = new System.Drawing.Size(50, 23);
+            this.labelLine.TabIndex = 113;
+            this.labelLine.Text = "Line#";
             // 
             // txtLine
             // 
@@ -271,24 +271,24 @@
             this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
-            // DisplayCell
+            // displayCell
             // 
-            this.DisplayCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DisplayCell.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.DisplayCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisplayCell.Location = new System.Drawing.Point(66, 116);
-            this.DisplayCell.Name = "DisplayCell";
-            this.DisplayCell.Size = new System.Drawing.Size(118, 21);
-            this.DisplayCell.TabIndex = 4;
+            this.displayCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCell.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCell.Location = new System.Drawing.Point(66, 116);
+            this.displayCell.Name = "displayCell";
+            this.displayCell.Size = new System.Drawing.Size(118, 21);
+            this.displayCell.TabIndex = 4;
             // 
-            // lbCell
+            // labelCell
             // 
-            this.lbCell.Lines = 0;
-            this.lbCell.Location = new System.Drawing.Point(14, 114);
-            this.lbCell.Name = "lbCell";
-            this.lbCell.Size = new System.Drawing.Size(50, 23);
-            this.lbCell.TabIndex = 115;
-            this.lbCell.Text = "Cell#";
+            this.labelCell.Lines = 0;
+            this.labelCell.Location = new System.Drawing.Point(14, 114);
+            this.labelCell.Name = "labelCell";
+            this.labelCell.Size = new System.Drawing.Size(50, 23);
+            this.labelCell.TabIndex = 115;
+            this.labelCell.Text = "Cell#";
             // 
             // txtRemark
             // 
@@ -300,188 +300,188 @@
             this.txtRemark.Size = new System.Drawing.Size(521, 23);
             this.txtRemark.TabIndex = 7;
             // 
-            // lbRemark
+            // labelRemark
             // 
-            this.lbRemark.Lines = 0;
-            this.lbRemark.Location = new System.Drawing.Point(14, 140);
-            this.lbRemark.Name = "lbRemark";
-            this.lbRemark.Size = new System.Drawing.Size(60, 23);
-            this.lbRemark.TabIndex = 117;
-            this.lbRemark.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(14, 140);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(60, 23);
+            this.labelRemark.TabIndex = 117;
+            this.labelRemark.Text = "Remark";
             // 
-            // lbShift
+            // labelShift
             // 
-            this.lbShift.Lines = 0;
-            this.lbShift.Location = new System.Drawing.Point(243, 6);
-            this.lbShift.Name = "lbShift";
-            this.lbShift.Size = new System.Drawing.Size(50, 23);
-            this.lbShift.TabIndex = 119;
-            this.lbShift.Text = "Shift";
+            this.labelShift.Lines = 0;
+            this.labelShift.Location = new System.Drawing.Point(243, 6);
+            this.labelShift.Name = "labelShift";
+            this.labelShift.Size = new System.Drawing.Size(50, 23);
+            this.labelShift.TabIndex = 119;
+            this.labelShift.Text = "Shift";
             // 
-            // lbInspected
+            // labelQtyInspected
             // 
-            this.lbInspected.Lines = 0;
-            this.lbInspected.Location = new System.Drawing.Point(243, 33);
-            this.lbInspected.Name = "lbInspected";
-            this.lbInspected.Size = new System.Drawing.Size(100, 23);
-            this.lbInspected.TabIndex = 121;
-            this.lbInspected.Text = "Qty Inspected";
+            this.labelQtyInspected.Lines = 0;
+            this.labelQtyInspected.Location = new System.Drawing.Point(243, 33);
+            this.labelQtyInspected.Name = "labelQtyInspected";
+            this.labelQtyInspected.Size = new System.Drawing.Size(100, 23);
+            this.labelQtyInspected.TabIndex = 121;
+            this.labelQtyInspected.Text = "Qty Inspected";
             // 
-            // lbRejected
+            // labelQtyRejected
             // 
-            this.lbRejected.Lines = 0;
-            this.lbRejected.Location = new System.Drawing.Point(243, 60);
-            this.lbRejected.Name = "lbRejected";
-            this.lbRejected.Size = new System.Drawing.Size(100, 23);
-            this.lbRejected.TabIndex = 122;
-            this.lbRejected.Text = "Qty Rejected";
+            this.labelQtyRejected.Lines = 0;
+            this.labelQtyRejected.Location = new System.Drawing.Point(243, 60);
+            this.labelQtyRejected.Name = "labelQtyRejected";
+            this.labelQtyRejected.Size = new System.Drawing.Size(100, 23);
+            this.labelQtyRejected.TabIndex = 122;
+            this.labelQtyRejected.Text = "Qty Rejected";
             // 
-            // lbDefectQty
+            // labelTtlDefectQty
             // 
-            this.lbDefectQty.Lines = 0;
-            this.lbDefectQty.Location = new System.Drawing.Point(243, 87);
-            this.lbDefectQty.Name = "lbDefectQty";
-            this.lbDefectQty.Size = new System.Drawing.Size(100, 23);
-            this.lbDefectQty.TabIndex = 123;
-            this.lbDefectQty.Text = "Ttl Defect Qty";
+            this.labelTtlDefectQty.Lines = 0;
+            this.labelTtlDefectQty.Location = new System.Drawing.Point(243, 87);
+            this.labelTtlDefectQty.Name = "labelTtlDefectQty";
+            this.labelTtlDefectQty.Size = new System.Drawing.Size(100, 23);
+            this.labelTtlDefectQty.TabIndex = 123;
+            this.labelTtlDefectQty.Text = "Ttl Defect Qty";
             // 
-            // lbDestination
+            // labelDestination
             // 
-            this.lbDestination.Lines = 0;
-            this.lbDestination.Location = new System.Drawing.Point(243, 114);
-            this.lbDestination.Name = "lbDestination";
-            this.lbDestination.Size = new System.Drawing.Size(100, 23);
-            this.lbDestination.TabIndex = 124;
-            this.lbDestination.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(243, 114);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(100, 23);
+            this.labelDestination.TabIndex = 124;
+            this.labelDestination.Text = "Destination";
             // 
-            // NumInspected
+            // numQtyInspected
             // 
-            this.NumInspected.BackColor = System.Drawing.Color.White;
-            this.NumInspected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspectQty", true));
-            this.NumInspected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.NumInspected.Location = new System.Drawing.Point(346, 33);
-            this.NumInspected.Name = "NumInspected";
-            this.NumInspected.NullValue = new decimal(new int[] {
+            this.numQtyInspected.BackColor = System.Drawing.Color.White;
+            this.numQtyInspected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspectQty", true));
+            this.numQtyInspected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQtyInspected.Location = new System.Drawing.Point(346, 33);
+            this.numQtyInspected.Name = "numQtyInspected";
+            this.numQtyInspected.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.NumInspected.Size = new System.Drawing.Size(100, 23);
-            this.NumInspected.TabIndex = 5;
-            this.NumInspected.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // NumRejected
-            // 
-            this.NumRejected.BackColor = System.Drawing.Color.White;
-            this.NumRejected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RejectQty", true));
-            this.NumRejected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.NumRejected.Location = new System.Drawing.Point(346, 60);
-            this.NumRejected.Name = "NumRejected";
-            this.NumRejected.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.NumRejected.Size = new System.Drawing.Size(100, 23);
-            this.NumRejected.TabIndex = 6;
-            this.NumRejected.Value = new decimal(new int[] {
+            this.numQtyInspected.Size = new System.Drawing.Size(100, 23);
+            this.numQtyInspected.TabIndex = 5;
+            this.numQtyInspected.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // NumDefect
+            // numQtyRejected
             // 
-            this.NumDefect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.NumDefect.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
-            this.NumDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.NumDefect.IsSupportEditMode = false;
-            this.NumDefect.Location = new System.Drawing.Point(346, 87);
-            this.NumDefect.Name = "NumDefect";
-            this.NumDefect.NullValue = new decimal(new int[] {
+            this.numQtyRejected.BackColor = System.Drawing.Color.White;
+            this.numQtyRejected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RejectQty", true));
+            this.numQtyRejected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numQtyRejected.Location = new System.Drawing.Point(346, 60);
+            this.numQtyRejected.Name = "numQtyRejected";
+            this.numQtyRejected.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.NumDefect.ReadOnly = true;
-            this.NumDefect.Size = new System.Drawing.Size(100, 23);
-            this.NumDefect.TabIndex = 9;
-            this.NumDefect.Value = new decimal(new int[] {
+            this.numQtyRejected.Size = new System.Drawing.Size(100, 23);
+            this.numQtyRejected.TabIndex = 6;
+            this.numQtyRejected.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // lbTeam
+            // numTtlDefectQty
             // 
-            this.lbTeam.Lines = 0;
-            this.lbTeam.Location = new System.Drawing.Point(513, 7);
-            this.lbTeam.Name = "lbTeam";
-            this.lbTeam.Size = new System.Drawing.Size(60, 23);
-            this.lbTeam.TabIndex = 129;
-            this.lbTeam.Text = "Team";
+            this.numTtlDefectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlDefectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
+            this.numTtlDefectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTtlDefectQty.IsSupportEditMode = false;
+            this.numTtlDefectQty.Location = new System.Drawing.Point(346, 87);
+            this.numTtlDefectQty.Name = "numTtlDefectQty";
+            this.numTtlDefectQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTtlDefectQty.ReadOnly = true;
+            this.numTtlDefectQty.Size = new System.Drawing.Size(100, 23);
+            this.numTtlDefectQty.TabIndex = 9;
+            this.numTtlDefectQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // lbCPU
+            // labelTeam
             // 
-            this.lbCPU.Lines = 0;
-            this.lbCPU.Location = new System.Drawing.Point(513, 33);
-            this.lbCPU.Name = "lbCPU";
-            this.lbCPU.Size = new System.Drawing.Size(60, 23);
-            this.lbCPU.TabIndex = 131;
-            this.lbCPU.Text = "CPU";
+            this.labelTeam.Lines = 0;
+            this.labelTeam.Location = new System.Drawing.Point(513, 7);
+            this.labelTeam.Name = "labelTeam";
+            this.labelTeam.Size = new System.Drawing.Size(60, 23);
+            this.labelTeam.TabIndex = 129;
+            this.labelTeam.Text = "Team";
             // 
-            // lbRFT
+            // labelCPU
             // 
-            this.lbRFT.Lines = 0;
-            this.lbRFT.Location = new System.Drawing.Point(513, 60);
-            this.lbRFT.Name = "lbRFT";
-            this.lbRFT.Size = new System.Drawing.Size(60, 23);
-            this.lbRFT.TabIndex = 133;
-            this.lbRFT.Text = "RFT(%)";
+            this.labelCPU.Lines = 0;
+            this.labelCPU.Location = new System.Drawing.Point(513, 33);
+            this.labelCPU.Name = "labelCPU";
+            this.labelCPU.Size = new System.Drawing.Size(60, 23);
+            this.labelCPU.TabIndex = 131;
+            this.labelCPU.Text = "CPU";
             // 
-            // lbFactory
+            // labelRFT
             // 
-            this.lbFactory.Lines = 0;
-            this.lbFactory.Location = new System.Drawing.Point(513, 87);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(60, 23);
-            this.lbFactory.TabIndex = 135;
-            this.lbFactory.Text = "Factory";
+            this.labelRFT.Lines = 0;
+            this.labelRFT.Location = new System.Drawing.Point(513, 60);
+            this.labelRFT.Name = "labelRFT";
+            this.labelRFT.Size = new System.Drawing.Size(60, 23);
+            this.labelRFT.TabIndex = 133;
+            this.labelRFT.Text = "RFT(%)";
             // 
-            // DisplayFactory
+            // labelFactory
             // 
-            this.DisplayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DisplayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.DisplayFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.DisplayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisplayFactory.Location = new System.Drawing.Point(576, 87);
-            this.DisplayFactory.Name = "DisplayFactory";
-            this.DisplayFactory.Size = new System.Drawing.Size(121, 21);
-            this.DisplayFactory.TabIndex = 14;
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(513, 87);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(60, 23);
+            this.labelFactory.TabIndex = 135;
+            this.labelFactory.Text = "Factory";
             // 
-            // DisplayStyle
+            // displayFactory
             // 
-            this.DisplayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DisplayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.DisplayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisplayStyle.Location = new System.Drawing.Point(66, 62);
-            this.DisplayStyle.Name = "DisplayStyle";
-            this.DisplayStyle.Size = new System.Drawing.Size(118, 21);
-            this.DisplayStyle.TabIndex = 2;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(576, 87);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(121, 21);
+            this.displayFactory.TabIndex = 14;
             // 
-            // DisplayDest
+            // displayStyle
             // 
-            this.DisplayDest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.DisplayDest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.DisplayDest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.DisplayDest.Location = new System.Drawing.Point(346, 116);
-            this.DisplayDest.Name = "DisplayDest";
-            this.DisplayDest.Size = new System.Drawing.Size(252, 21);
-            this.DisplayDest.TabIndex = 10;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(66, 62);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(118, 21);
+            this.displayStyle.TabIndex = 2;
+            // 
+            // displayDestination
+            // 
+            this.displayDestination.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDestination.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDestination.Location = new System.Drawing.Point(346, 116);
+            this.displayDestination.Name = "displayDestination";
+            this.displayDestination.Size = new System.Drawing.Size(252, 21);
+            this.displayDestination.TabIndex = 10;
             // 
             // comboTeam
             // 
@@ -495,27 +495,27 @@
             this.comboTeam.Size = new System.Drawing.Size(121, 24);
             this.comboTeam.TabIndex = 2;
             // 
-            // NumCPU
+            // txtCPU
             // 
-            this.NumCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.NumCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.NumCPU.IsSupportEditMode = false;
-            this.NumCPU.Location = new System.Drawing.Point(576, 33);
-            this.NumCPU.Name = "NumCPU";
-            this.NumCPU.ReadOnly = true;
-            this.NumCPU.Size = new System.Drawing.Size(121, 23);
-            this.NumCPU.TabIndex = 136;
+            this.txtCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCPU.IsSupportEditMode = false;
+            this.txtCPU.Location = new System.Drawing.Point(576, 33);
+            this.txtCPU.Name = "txtCPU";
+            this.txtCPU.ReadOnly = true;
+            this.txtCPU.Size = new System.Drawing.Size(121, 23);
+            this.txtCPU.TabIndex = 136;
             // 
-            // NumRFT
+            // txtRFT
             // 
-            this.NumRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.NumRFT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.NumRFT.IsSupportEditMode = false;
-            this.NumRFT.Location = new System.Drawing.Point(576, 60);
-            this.NumRFT.Name = "NumRFT";
-            this.NumRFT.ReadOnly = true;
-            this.NumRFT.Size = new System.Drawing.Size(121, 23);
-            this.NumRFT.TabIndex = 137;
+            this.txtRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtRFT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtRFT.IsSupportEditMode = false;
+            this.txtRFT.Location = new System.Drawing.Point(576, 60);
+            this.txtRFT.Name = "txtRFT";
+            this.txtRFT.ReadOnly = true;
+            this.txtRFT.Size = new System.Drawing.Size(121, 23);
+            this.txtRFT.TabIndex = 137;
             // 
             // labConfirm
             // 
@@ -525,9 +525,8 @@
             this.labConfirm.ForeColor = System.Drawing.Color.Red;
             this.labConfirm.Location = new System.Drawing.Point(724, 13);
             this.labConfirm.Name = "labConfirm";
-            this.labConfirm.Size = new System.Drawing.Size(85, 29);
+            this.labConfirm.Size = new System.Drawing.Size(0, 29);
             this.labConfirm.TabIndex = 138;
-            this.labConfirm.Text = "";
             // 
             // comboShift
             // 
@@ -584,35 +583,35 @@
         #endregion
 
         private Win.UI.TextBox txtSP;
-        private Win.UI.Label lbDate;
-        private Win.UI.DateBox CDate;
-        private Win.UI.Label lbSP;
-        private Win.UI.Label lbStyle;
-        private Win.UI.Label lbLine;
+        private Win.UI.Label labelDate;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelLine;
         private Win.UI.TextBox txtLine;
         private Win.UI.TextBox txtRemark;
-        private Win.UI.Label lbRemark;
-        private Win.UI.DisplayBox DisplayCell;
-        private Win.UI.Label lbCell;
-        private Win.UI.Label lbShift;
-        private Win.UI.Label lbInspected;
-        private Win.UI.Label lbDestination;
-        private Win.UI.Label lbDefectQty;
-        private Win.UI.Label lbRejected;
-        private Win.UI.NumericBox NumDefect;
-        private Win.UI.NumericBox NumRejected;
-        private Win.UI.NumericBox NumInspected;
-        private Win.UI.Label lbTeam;
-        private Win.UI.DisplayBox DisplayFactory;
-        private Win.UI.Label lbFactory;
-        private Win.UI.Label lbRFT;
-        private Win.UI.Label lbCPU;
-        private Win.UI.DisplayBox DisplayDest;
-        private Win.UI.DisplayBox DisplayStyle;
+        private Win.UI.Label labelRemark;
+        private Win.UI.DisplayBox displayCell;
+        private Win.UI.Label labelCell;
+        private Win.UI.Label labelShift;
+        private Win.UI.Label labelQtyInspected;
+        private Win.UI.Label labelDestination;
+        private Win.UI.Label labelTtlDefectQty;
+        private Win.UI.Label labelQtyRejected;
+        private Win.UI.NumericBox numTtlDefectQty;
+        private Win.UI.NumericBox numQtyRejected;
+        private Win.UI.NumericBox numQtyInspected;
+        private Win.UI.Label labelTeam;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelRFT;
+        private Win.UI.Label labelCPU;
+        private Win.UI.DisplayBox displayDestination;
+        private Win.UI.DisplayBox displayStyle;
         private Class.txtdropdownlist comboShift;
         private Win.UI.ComboBox comboTeam;
-        private Win.UI.TextBox NumCPU;
-        private Win.UI.TextBox NumRFT;
+        private Win.UI.TextBox txtCPU;
+        private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
     }
 }

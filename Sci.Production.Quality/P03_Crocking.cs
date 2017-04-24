@@ -42,7 +42,7 @@ namespace Sci.Production.Quality
             mainDBQuery();
             #region Encode Enable
             button_enable();
-            encode_button.Text = MyUtility.Convert.GetBool(maindr["CrockingEncode"]) ? "Amend" : "Encode";
+            btnEncode.Text = MyUtility.Convert.GetBool(maindr["CrockingEncode"]) ? "Amend" : "Encode";
 
             #endregion
             //表頭 資料設定
@@ -68,26 +68,26 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             DataRow fir_dr;
             if (MyUtility.Check.Seek(fir_cmd, out fir_dr))
             {
-                sptext.Text = fir_dr["Poid"].ToString();
-                SEQtext.Text = fir_dr["SEQ"].ToString();
-                AQtytext.Text = fir_dr["ArriveQty"].ToString();
-                Wknotext.Text = fir_dr["exportid"].ToString();
-                Arrdate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
-                Styletext.Text = fir_dr["styleid"].ToString();
-                Brandtext.Text = fir_dr["Brandid"].ToString();
-                Supptext.TextBox1.Text = fir_dr["SuppID"].ToString();
-                SRnotext.Text = fir_dr["Scirefno"].ToString();
-                BRnotext.Text = fir_dr["Refno"].ToString();
-                Colortext.Text = fir_dr["colorid"].ToString();
-                LIDate.Value = MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
-                ResultText.Text = fir_dr["Crocking"].ToString();
-                checkBox1.Value = fir_dr["nonCrocking"].ToString();
-                Description_box.Text = fir_dr["DescDetail"].ToString();
+                txtSP.Text = fir_dr["Poid"].ToString();
+                txtSEQ.Text = fir_dr["SEQ"].ToString();
+                txtArriveQty.Text = fir_dr["ArriveQty"].ToString();
+                txtWkno.Text = fir_dr["exportid"].ToString();
+                dateArriveWHDate.Value = MyUtility.Convert.GetDate(fir_dr["WhseArrival"]);
+                txtStyle.Text = fir_dr["styleid"].ToString();
+                txtBrand.Text = fir_dr["Brandid"].ToString();
+                txtsupplierSupp.TextBox1.Text = fir_dr["SuppID"].ToString();
+                txtSCIRefno.Text = fir_dr["Scirefno"].ToString();
+                txtBrandRefno.Text = fir_dr["Refno"].ToString();
+                txtColor.Text = fir_dr["colorid"].ToString();
+                dateLastInspectionDate.Value = MyUtility.Convert.GetDate(fir_dr["CrockingDate"]);
+                txtResult.Text = fir_dr["Crocking"].ToString();
+                checkNA.Value = fir_dr["nonCrocking"].ToString();
+                editDescription.Text = fir_dr["DescDetail"].ToString();
             }
             else
             {
-                sptext.Text = ""; SEQtext.Text = ""; AQtytext.Text = ""; Wknotext.Text = ""; Arrdate.Text = ""; Styletext.Text = ""; Brandtext.Text = "";
-                Supptext.Text = ""; SRnotext.Text = ""; BRnotext.Text = ""; Colortext.Text = ""; Description_box.Text = "";
+                txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
+                txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
             }
 
 
@@ -611,9 +611,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         private void button_enable()
         {
             if (maindr == null) return;
-            encode_button.Enabled = this.CanEdit && !this.EditMode;
-            this.ToExcelBtn.Enabled = !this.EditMode;
-            this.Supptext.TextBox1.ReadOnly = true;
+            btnEncode.Enabled = this.CanEdit && !this.EditMode;
+            this.btnToExcel.Enabled = !this.EditMode;
+            this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
         private void ToExcelBtn_Click(object sender, EventArgs e)
@@ -647,21 +647,21 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();
             MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: "Quality_P03_Crocking_Test", headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表      
-            excel.Cells[2, 2] = sptext.Text.ToString();
-            excel.Cells[2, 4] = SEQtext.Text.ToString();
-            excel.Cells[2, 6] = Colortext.Text.ToString();
-            excel.Cells[2, 8] = Styletext.Text.ToString();
+            excel.Cells[2, 2] = txtSP.Text.ToString();
+            excel.Cells[2, 4] = txtSEQ.Text.ToString();
+            excel.Cells[2, 6] = txtColor.Text.ToString();
+            excel.Cells[2, 8] = txtStyle.Text.ToString();
             excel.Cells[2, 10] = SeasonID;
-            excel.Cells[3, 2] = SRnotext.Text.ToString();
-            excel.Cells[3, 4] = Wknotext.Text.ToString();
-            excel.Cells[3, 6] = ResultText.Text.ToString();
-            excel.Cells[3, 8] = LIDate.Value;
-            excel.Cells[3, 10] = Brandtext.Text.ToString();
-            excel.Cells[4, 2] = BRnotext.Text.ToString();
-            excel.Cells[4, 4] = AQtytext.Text.ToString();
-            excel.Cells[4, 6] = Arrdate.Value;
-            excel.Cells[4, 8] = Supptext.DisplayBox1.Text.ToString();
-            excel.Cells[4, 10] = checkBox1.Value.ToString();
+            excel.Cells[3, 2] = txtSCIRefno.Text.ToString();
+            excel.Cells[3, 4] = txtWkno.Text.ToString();
+            excel.Cells[3, 6] = txtResult.Text.ToString();
+            excel.Cells[3, 8] = dateLastInspectionDate.Value;
+            excel.Cells[3, 10] = txtBrand.Text.ToString();
+            excel.Cells[4, 2] = txtBrandRefno.Text.ToString();
+            excel.Cells[4, 4] = txtArriveQty.Text.ToString();
+            excel.Cells[4, 6] = dateArriveWHDate.Value;
+            excel.Cells[4, 8] = txtsupplierSupp.DisplayBox1.Text.ToString();
+            excel.Cells[4, 10] = checkNA.Value.ToString();
 
             excel.Cells.EntireColumn.AutoFit();    //自動欄寬
             excel.Cells.EntireRow.AutoFit();       ////自動欄高
