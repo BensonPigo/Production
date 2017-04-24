@@ -2061,7 +2061,9 @@ order by id,article,sizecode"
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), "");
+            DataRow dr;
+            MyUtility.Check.Seek(string.Format("select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"]), out dr);
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
         //PatternPanel
