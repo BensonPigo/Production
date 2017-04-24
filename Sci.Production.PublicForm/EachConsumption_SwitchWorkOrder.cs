@@ -113,6 +113,7 @@ namespace Sci.Production.PublicForm
                     }
                     
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Switch successful");
                 }
                 catch (Exception ex)
