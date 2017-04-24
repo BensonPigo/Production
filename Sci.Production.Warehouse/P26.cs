@@ -365,6 +365,7 @@ namespace Sci.Production.Warehouse
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)

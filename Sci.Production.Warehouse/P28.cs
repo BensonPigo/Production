@@ -541,21 +541,23 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
                 {
                     if (!(result = Sci.Data.DBProxy.Current.Execute(null, insertMaster.ToString())))
                     {
-                        MyUtility.Msg.WarningBox("Create failed");
                         _transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Create failed");
                         return;
                     }
                     if (!(result = Sci.Data.DBProxy.Current.Execute(null, insertDetail.ToString())))
                     {
-                        MyUtility.Msg.WarningBox("Create failed");
                         _transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Create failed");
                         return; ;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox(string.Format("Trans. ID {0} be created!!",tmpId),"Complete!");
                 }
                 catch(Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }

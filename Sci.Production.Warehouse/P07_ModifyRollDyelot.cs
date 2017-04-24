@@ -288,6 +288,7 @@ where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' 
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Commit successful");
                 }
                 catch (Exception ex)

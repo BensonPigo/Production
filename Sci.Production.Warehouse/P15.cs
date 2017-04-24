@@ -393,10 +393,12 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                         return;
                     }
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {
+                    _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
                     return;
                 }
@@ -564,6 +566,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)

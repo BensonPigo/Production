@@ -228,6 +228,7 @@ namespace Sci.Production.Warehouse
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Sent successful");
                 }
                 catch (Exception ex)
@@ -290,6 +291,7 @@ namespace Sci.Production.Warehouse
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Recall successful");
                 }
                 catch (Exception ex)

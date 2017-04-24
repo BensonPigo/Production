@@ -809,11 +809,13 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");                    
                 }
             }
             catch (Exception ex)
             {
+                _transactionscope.Dispose();
                 ShowErr("Commit transaction error.", ex);
             }
             #endregion               
@@ -1020,6 +1022,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)

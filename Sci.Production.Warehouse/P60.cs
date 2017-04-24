@@ -324,6 +324,7 @@ when not matched then
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -461,6 +462,7 @@ when not matched then
                     }
 
                     _transactionscope.Complete();
+                    _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
