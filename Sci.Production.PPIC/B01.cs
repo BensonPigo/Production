@@ -14,7 +14,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "L,Lacking,R,Replacement");
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "L,Lacking,R,Replacement");
         }
     }
 }

@@ -23,36 +23,36 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
-            comboBox2.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboPrintType, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
+            comboPrintType.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
 
-            mDivision = comboBox1.Text;
-            sciDate1 = dateRange1.Value1;
-            sciDate2 = dateRange1.Value2;
-            prodiveDate1 = dateRange2.Value1;
-            prodiveDate2 = dateRange2.Value2;
-            rcvDate1 = dateRange3.Value1;
-            rcvDate2 = dateRange3.Value2;
-            brand = txtbrand1.Text;
-            style = txtstyle1.Text;
-            season = txtseason1.Text;
-            mr = txttpeuser_canedit1.TextBox1.Text;
-            smr = txttpeuser_canedit2.TextBox1.Text;
-            pohandle = txttpeuser_canedit3.TextBox1.Text;
-            posmr = txttpeuser_canedit4.TextBox1.Text;
-            printType = comboBox2.SelectedIndex;
+            mDivision = comboM.Text;
+            sciDate1 = dateSCIDelivery.Value1;
+            sciDate2 = dateSCIDelivery.Value2;
+            prodiveDate1 = dateProvideDate.Value1;
+            prodiveDate2 = dateProvideDate.Value2;
+            rcvDate1 = dateFtyMRRcvDate.Value1;
+            rcvDate2 = dateFtyMRRcvDate.Value2;
+            brand = txtbrand.Text;
+            style = txtstyle.Text;
+            season = txtseason.Text;
+            mr = txttpeuser_caneditMR.TextBox1.Text;
+            smr = txttpeuser_caneditSMR.TextBox1.Text;
+            pohandle = txttpeuser_caneditPOHandle.TextBox1.Text;
+            posmr = txttpeuser_caneditPOSMR.TextBox1.Text;
+            printType = comboPrintType.SelectedIndex;
 
             return base.ValidateInput();
         }

@@ -34,30 +34,30 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnRecompute = new Sci.Win.UI.Button();
+            this.comboSortby = new Sci.Win.UI.ComboBox();
+            this.labelSortby = new Sci.Win.UI.Label();
+            this.comboCTN = new Sci.Win.UI.ComboBox();
+            this.labelCTN = new Sci.Win.UI.Label();
+            this.comboPackingListID = new Sci.Win.UI.ComboBox();
+            this.labelPackingListID = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridTransactionDetali = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridLastStatus = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTransactionDetali)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLastStatus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,92 +79,92 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.comboBox3);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.comboBox2);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnRecompute);
+            this.panel3.Controls.Add(this.comboSortby);
+            this.panel3.Controls.Add(this.labelSortby);
+            this.panel3.Controls.Add(this.comboCTN);
+            this.panel3.Controls.Add(this.labelCTN);
+            this.panel3.Controls.Add(this.comboPackingListID);
+            this.panel3.Controls.Add(this.labelPackingListID);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(780, 54);
             this.panel3.TabIndex = 0;
             // 
-            // button1
+            // btnRecompute
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(645, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(133, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Recompute";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnRecompute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRecompute.Location = new System.Drawing.Point(645, 10);
+            this.btnRecompute.Name = "btnRecompute";
+            this.btnRecompute.Size = new System.Drawing.Size(133, 30);
+            this.btnRecompute.TabIndex = 3;
+            this.btnRecompute.Text = "Recompute";
+            this.btnRecompute.UseVisualStyleBackColor = true;
+            this.btnRecompute.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox3
+            // comboSortby
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(495, 13);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(118, 24);
-            this.comboBox3.TabIndex = 2;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.comboSortby.BackColor = System.Drawing.Color.White;
+            this.comboSortby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortby.FormattingEnabled = true;
+            this.comboSortby.IsSupportUnselect = true;
+            this.comboSortby.Location = new System.Drawing.Point(495, 13);
+            this.comboSortby.Name = "comboSortby";
+            this.comboSortby.Size = new System.Drawing.Size(118, 24);
+            this.comboSortby.TabIndex = 2;
+            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
-            // label3
+            // labelSortby
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(441, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Sort by";
+            this.labelSortby.Lines = 0;
+            this.labelSortby.Location = new System.Drawing.Point(441, 13);
+            this.labelSortby.Name = "labelSortby";
+            this.labelSortby.Size = new System.Drawing.Size(50, 23);
+            this.labelSortby.TabIndex = 4;
+            this.labelSortby.Text = "Sort by";
             // 
-            // comboBox2
+            // comboCTN
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(327, 13);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(69, 24);
-            this.comboBox2.TabIndex = 1;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboCTN.BackColor = System.Drawing.Color.White;
+            this.comboCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCTN.FormattingEnabled = true;
+            this.comboCTN.IsSupportUnselect = true;
+            this.comboCTN.Location = new System.Drawing.Point(327, 13);
+            this.comboCTN.Name = "comboCTN";
+            this.comboCTN.Size = new System.Drawing.Size(69, 24);
+            this.comboCTN.TabIndex = 1;
+            this.comboCTN.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
-            // label2
+            // labelCTN
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(281, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(42, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "CTN#";
+            this.labelCTN.Lines = 0;
+            this.labelCTN.Location = new System.Drawing.Point(281, 13);
+            this.labelCTN.Name = "labelCTN";
+            this.labelCTN.Size = new System.Drawing.Size(42, 23);
+            this.labelCTN.TabIndex = 2;
+            this.labelCTN.Text = "CTN#";
             // 
-            // comboBox1
+            // comboPackingListID
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(108, 13);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(139, 24);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboPackingListID.BackColor = System.Drawing.Color.White;
+            this.comboPackingListID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPackingListID.FormattingEnabled = true;
+            this.comboPackingListID.IsSupportUnselect = true;
+            this.comboPackingListID.Location = new System.Drawing.Point(108, 13);
+            this.comboPackingListID.Name = "comboPackingListID";
+            this.comboPackingListID.Size = new System.Drawing.Size(139, 24);
+            this.comboPackingListID.TabIndex = 0;
+            this.comboPackingListID.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label1
+            // labelPackingListID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(7, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Packing List ID";
+            this.labelPackingListID.Lines = 0;
+            this.labelPackingListID.Location = new System.Drawing.Point(7, 13);
+            this.labelPackingListID.Name = "labelPackingListID";
+            this.labelPackingListID.Size = new System.Drawing.Size(97, 23);
+            this.labelPackingListID.TabIndex = 0;
+            this.labelPackingListID.Text = "Packing List ID";
             // 
             // panel4
             // 
@@ -197,7 +197,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.grid1);
+            this.tabPage1.Controls.Add(this.gridTransactionDetali);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -205,22 +205,22 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Transaction Detail";
             // 
-            // grid1
+            // gridTransactionDetali
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(3, 3);
-            this.grid1.Name = "grid1";
+            this.gridTransactionDetali.AllowUserToAddRows = false;
+            this.gridTransactionDetali.AllowUserToDeleteRows = false;
+            this.gridTransactionDetali.AllowUserToResizeRows = false;
+            this.gridTransactionDetali.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridTransactionDetali.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridTransactionDetali.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridTransactionDetali.DataSource = this.listControlBindingSource1;
+            this.gridTransactionDetali.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridTransactionDetali.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridTransactionDetali.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridTransactionDetali.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridTransactionDetali.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridTransactionDetali.Location = new System.Drawing.Point(3, 3);
+            this.gridTransactionDetali.Name = "gridTransactionDetali";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -228,41 +228,41 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(766, 366);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridTransactionDetali.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridTransactionDetali.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridTransactionDetali.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridTransactionDetali.RowTemplate.Height = 24;
+            this.gridTransactionDetali.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTransactionDetali.Size = new System.Drawing.Size(766, 366);
+            this.gridTransactionDetali.TabIndex = 0;
+            this.gridTransactionDetali.TabStop = false;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.grid2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Controls.Add(this.gridLastStatus);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(772, 375);
+            this.tabPage2.Size = new System.Drawing.Size(772, 372);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "CTN# Last Status";
             // 
-            // grid2
+            // gridLastStatus
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(3, 3);
-            this.grid2.Name = "grid2";
+            this.gridLastStatus.AllowUserToAddRows = false;
+            this.gridLastStatus.AllowUserToDeleteRows = false;
+            this.gridLastStatus.AllowUserToResizeRows = false;
+            this.gridLastStatus.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridLastStatus.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridLastStatus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLastStatus.DataSource = this.listControlBindingSource2;
+            this.gridLastStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridLastStatus.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridLastStatus.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridLastStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridLastStatus.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridLastStatus.Location = new System.Drawing.Point(3, 3);
+            this.gridLastStatus.Name = "gridLastStatus";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -270,14 +270,14 @@
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(766, 369);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridLastStatus.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridLastStatus.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridLastStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridLastStatus.RowTemplate.Height = 24;
+            this.gridLastStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLastStatus.Size = new System.Drawing.Size(766, 366);
+            this.gridLastStatus.TabIndex = 0;
+            this.gridLastStatus.TabStop = false;
             // 
             // P01_CTNStatus
             // 
@@ -295,10 +295,10 @@
             this.panel5.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTransactionDetali)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLastStatus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
@@ -309,21 +309,21 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Button button1;
-        private Win.UI.ComboBox comboBox3;
-        private Win.UI.Label label3;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.Label label2;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnRecompute;
+        private Win.UI.ComboBox comboSortby;
+        private Win.UI.Label labelSortby;
+        private Win.UI.ComboBox comboCTN;
+        private Win.UI.Label labelCTN;
+        private Win.UI.ComboBox comboPackingListID;
+        private Win.UI.Label labelPackingListID;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
         private Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridTransactionDetali;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.TabPage tabPage2;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridLastStatus;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
     }
 }

@@ -24,26 +24,26 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Fabric,Accessory,");
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboType, 1, 1, "Fabric,Accessory,");
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.SelectedIndex = 0;
-            comboBox3.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboM.Text = Sci.Env.User.Keyword;
+            comboType.SelectedIndex = 0;
+            comboFactory.Text = Sci.Env.User.Factory;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            _cdate1 = dateRange1.Value1;
-            _cdate2 = dateRange1.Value2;
-            _apvdate1 = dateRange2.Value1;
-            _apvdate2 = dateRange2.Value2;
-            _mDivision = comboBox1.Text;
-            _type = comboBox2.SelectedIndex == -1 || comboBox2.SelectedIndex == 2 ? "" : comboBox2.SelectedIndex == 0 ? "F":"A";
-            _factory = comboBox3.Text;
-            _typedesc = comboBox2.Text;
+            _cdate1 = dateCreateDate.Value1;
+            _cdate2 = dateCreateDate.Value2;
+            _apvdate1 = dateApvDate.Value1;
+            _apvdate2 = dateApvDate.Value2;
+            _mDivision = comboM.Text;
+            _type = comboType.SelectedIndex == -1 || comboType.SelectedIndex == 2 ? "" : comboType.SelectedIndex == 0 ? "F":"A";
+            _factory = comboFactory.Text;
+            _typedesc = comboType.Text;
             return base.ValidateInput();
         }
 

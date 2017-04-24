@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.labelTTLTMS = new Sci.Win.UI.Label();
+            this.numTTLTMS = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -37,35 +37,53 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.numericBox1);
-            this.btmcont.Controls.Add(this.label1);
+            this.btmcont.Controls.Add(this.numTTLTMS);
+            this.btmcont.Controls.Add(this.labelTTLTMS);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.label1, 0);
-            this.btmcont.Controls.SetChildIndex(this.numericBox1, 0);
+            this.btmcont.Controls.SetChildIndex(this.labelTTLTMS, 0);
+            this.btmcont.Controls.SetChildIndex(this.numTTLTMS, 0);
             // 
-            // label1
+            // append
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(312, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 23);
-            this.label1.TabIndex = 95;
-            this.label1.Text = "TTL TMS";
+            this.append.Location = new System.Drawing.Point(170, 5);
             // 
-            // numericBox1
+            // delete
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(378, 12);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 96;
+            this.delete.Location = new System.Drawing.Point(10, 5);
+            // 
+            // labelTTLTMS
+            // 
+            this.labelTTLTMS.Lines = 0;
+            this.labelTTLTMS.Location = new System.Drawing.Point(312, 12);
+            this.labelTTLTMS.Name = "labelTTLTMS";
+            this.labelTTLTMS.Size = new System.Drawing.Size(62, 23);
+            this.labelTTLTMS.TabIndex = 95;
+            this.labelTTLTMS.Text = "TTL TMS";
+            // 
+            // numTTLTMS
+            // 
+            this.numTTLTMS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTLTMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTLTMS.IsSupportEditMode = false;
+            this.numTTLTMS.Location = new System.Drawing.Point(378, 12);
+            this.numTTLTMS.Name = "numTTLTMS";
+            this.numTTLTMS.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTLTMS.ReadOnly = true;
+            this.numTTLTMS.Size = new System.Drawing.Size(100, 23);
+            this.numTTLTMS.TabIndex = 96;
+            this.numTTLTMS.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P01_TMSAndCost
             // 
@@ -88,7 +106,7 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label1;
+        private Win.UI.NumericBox numTTLTMS;
+        private Win.UI.Label labelTTLTMS;
     }
 }

@@ -28,83 +28,83 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateRange();
+            this.labelHours = new Sci.Win.UI.Label();
+            this.numHours = new Sci.Win.UI.NumericBox();
+            this.checkIncludeSaturday = new Sci.Win.UI.CheckBox();
             this.label3 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(18, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 23);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(18, 14);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(48, 23);
+            this.labelDate.TabIndex = 5;
+            this.labelDate.Text = "Date";
             // 
-            // dateRange1
+            // dateDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(69, 14);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateDate.IsRequired = false;
+            this.dateDate.Location = new System.Drawing.Point(69, 14);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // label2
+            // labelHours
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(18, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(48, 23);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Hours";
+            this.labelHours.Lines = 0;
+            this.labelHours.Location = new System.Drawing.Point(18, 50);
+            this.labelHours.Name = "labelHours";
+            this.labelHours.Size = new System.Drawing.Size(48, 23);
+            this.labelHours.TabIndex = 6;
+            this.labelHours.Text = "Hours";
             // 
-            // numericBox1
+            // numHours
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DecimalPlaces = 1;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(69, 50);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numHours.BackColor = System.Drawing.Color.White;
+            this.numHours.DecimalPlaces = 1;
+            this.numHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numHours.Location = new System.Drawing.Point(69, 50);
+            this.numHours.Maximum = new decimal(new int[] {
             999,
             0,
             0,
             65536});
-            this.numericBox1.MaxLength = 4;
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numHours.MaxLength = 4;
+            this.numHours.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numHours.Name = "numHours";
+            this.numHours.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(46, 23);
-            this.numericBox1.TabIndex = 1;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numHours.Size = new System.Drawing.Size(46, 23);
+            this.numHours.TabIndex = 1;
+            this.numHours.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // checkBox1
+            // checkIncludeSaturday
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(18, 85);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(133, 21);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "Include Saturday";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkIncludeSaturday.AutoSize = true;
+            this.checkIncludeSaturday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIncludeSaturday.Location = new System.Drawing.Point(18, 85);
+            this.checkIncludeSaturday.Name = "checkIncludeSaturday";
+            this.checkIncludeSaturday.Size = new System.Drawing.Size(133, 21);
+            this.checkIncludeSaturday.TabIndex = 2;
+            this.checkIncludeSaturday.Text = "Include Saturday";
+            this.checkIncludeSaturday.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -118,41 +118,41 @@
             this.label3.TextStyle.BorderColor = System.Drawing.Color.Blue;
             this.label3.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(178, 144);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnOK.Location = new System.Drawing.Point(178, 144);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 3;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(264, 144);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(264, 144);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // B07_Add
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnOK;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(360, 187);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.checkIncludeSaturday);
+            this.Controls.Add(this.numHours);
+            this.Controls.Add(this.labelHours);
+            this.Controls.Add(this.dateDate);
+            this.Controls.Add(this.labelDate);
             this.DefaultControl = "dateRange1";
             this.Name = "B07_Add";
             this.Text = "Add";
@@ -163,13 +163,13 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Label labelDate;
+        private Win.UI.DateRange dateDate;
+        private Win.UI.Label labelHours;
+        private Win.UI.NumericBox numHours;
+        private Win.UI.CheckBox checkIncludeSaturday;
         private Win.UI.Label label3;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
     }
 }

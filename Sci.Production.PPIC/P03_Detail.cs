@@ -14,8 +14,8 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
 
-            txtuser2.TextBox1.ReadOnly = true;
-            txtuser2.TextBox1.IsSupportEditMode = false;
+            txtuserFtyModifier.TextBox1.ReadOnly = true;
+            txtuserFtyModifier.TextBox1.IsSupportEditMode = false;
         }
 
         protected override void OnAttached(DataRow data)
@@ -23,14 +23,14 @@ namespace Sci.Production.PPIC
             base.OnAttached(data);
 
             if (!MyUtility.Check.Empty(CurrentData["MRLastDate"]))
-                this.display_MRLastUpdate.Text = Convert.ToDateTime(CurrentData["MRLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayMRLastUpdate.Text = Convert.ToDateTime(CurrentData["MRLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
             else
-                this.display_MRLastUpdate.Text = "";
+                this.displayMRLastUpdate.Text = "";
 
             if (!MyUtility.Check.Empty(CurrentData["FtyLastDate"]))
-                this.display_FtyLastDate.Text = Convert.ToDateTime(CurrentData["FtyLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayFtyLastDate.Text = Convert.ToDateTime(CurrentData["FtyLastDate"]).ToString("yyyy/MM/dd HH:mm:ss");
             else
-                this.display_FtyLastDate.Text = "";
+                this.displayFtyLastDate.Text = "";
 
         } 
     }

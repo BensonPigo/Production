@@ -26,18 +26,18 @@ namespace Sci.Production.PPIC
             string masterStyleUKey = null;
             if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle WITH (NOLOCK) where MasterStyleUkey = {0}", styleUkey), out StyleSimilarData))
             {
-                displayBox1.Value = StyleSimilarData["MasterBrandID"].ToString();
-                displayBox2.Value = StyleSimilarData["MasterStyleID"].ToString();
-                displayBox3.Value = StyleSimilarData["MasterSeasonID"].ToString();
+                displayBrand.Value = StyleSimilarData["MasterBrandID"].ToString();
+                displayMasterStyle.Value = StyleSimilarData["MasterStyleID"].ToString();
+                displaySeason.Value = StyleSimilarData["MasterSeasonID"].ToString();
                 masterStyleUKey = StyleSimilarData["MasterStyleUkey"].ToString();
             }
             else
             {
                 if (MyUtility.Check.Seek(string.Format("select MasterBrandID,MasterStyleID,MasterSeasonID,MasterStyleUkey from Style_SimilarStyle WITH (NOLOCK) where ChildrenStyleUkey = {0}", styleUkey), out StyleSimilarData))
                 {
-                    displayBox1.Value = StyleSimilarData["MasterBrandID"].ToString();
-                    displayBox2.Value = StyleSimilarData["MasterStyleID"].ToString();
-                    displayBox3.Value = StyleSimilarData["MasterSeasonID"].ToString();
+                    displayBrand.Value = StyleSimilarData["MasterBrandID"].ToString();
+                    displayMasterStyle.Value = StyleSimilarData["MasterStyleID"].ToString();
+                    displaySeason.Value = StyleSimilarData["MasterSeasonID"].ToString();
                     masterStyleUKey = StyleSimilarData["MasterStyleUkey"].ToString();
                 }
             }
@@ -56,9 +56,9 @@ namespace Sci.Production.PPIC
             listControlBindingSource1.DataSource = selectDataTable;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridChildrenStyle.IsEditingReadOnly = true;
+            this.gridChildrenStyle.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridChildrenStyle)
                  .Text("ChildrenStyleID", header: "Children Style", width: Widths.AnsiChars(15))
                  .Text("ChildrenBrandID", header: "Brand", width: Widths.AnsiChars(8))
                  .Text("CreateBy", header: "Create by", width: Widths.AnsiChars(30))

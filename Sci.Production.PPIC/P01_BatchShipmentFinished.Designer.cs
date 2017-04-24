@@ -33,23 +33,23 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtBuyer = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelBuyer = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnUpdate = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridBatchShipmentFinished = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchShipmentFinished)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,144 +71,144 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.textBox2);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.txtBuyer);
+            this.panel3.Controls.Add(this.txtStyle);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.dateBuyerDelivery);
+            this.panel3.Controls.Add(this.labelBuyerDelivery);
+            this.panel3.Controls.Add(this.labelBuyer);
+            this.panel3.Controls.Add(this.labelStyle);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(838, 49);
             this.panel3.TabIndex = 0;
             // 
-            // textBox2
+            // txtBuyer
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(253, 13);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(66, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox2.Validated += new System.EventHandler(this.textBox2_Validated);
+            this.txtBuyer.BackColor = System.Drawing.Color.White;
+            this.txtBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBuyer.Location = new System.Drawing.Point(253, 13);
+            this.txtBuyer.Name = "txtBuyer";
+            this.txtBuyer.Size = new System.Drawing.Size(66, 23);
+            this.txtBuyer.TabIndex = 1;
+            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtBuyer.Validated += new System.EventHandler(this.textBox2_Validated);
             // 
-            // textBox1
+            // txtStyle
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(55, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(55, 13);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.Size = new System.Drawing.Size(130, 23);
+            this.txtStyle.TabIndex = 0;
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtStyle.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // button1
+            // btnToExcel
             // 
-            this.button1.Location = new System.Drawing.Point(736, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(96, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "To Excel";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.Location = new System.Drawing.Point(736, 9);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(96, 30);
+            this.btnToExcel.TabIndex = 3;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
             // 
-            // dateRange1
+            // dateBuyerDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(438, 13);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 2;
-            this.dateRange1.Validated += new System.EventHandler(this.dateRange1_Validated);
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(438, 13);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 2;
+            this.dateBuyerDelivery.Validated += new System.EventHandler(this.dateRange1_Validated);
             // 
-            // label3
+            // labelBuyerDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(340, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(94, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(340, 13);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(94, 23);
+            this.labelBuyerDelivery.TabIndex = 4;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
-            // label2
+            // labelBuyer
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(206, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(43, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Buyer";
+            this.labelBuyer.Lines = 0;
+            this.labelBuyer.Location = new System.Drawing.Point(206, 13);
+            this.labelBuyer.Name = "labelBuyer";
+            this.labelBuyer.Size = new System.Drawing.Size(43, 23);
+            this.labelBuyer.TabIndex = 2;
+            this.labelBuyer.Text = "Buyer";
             // 
-            // label1
+            // labelStyle
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(7, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(44, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(7, 13);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(44, 23);
+            this.labelStyle.TabIndex = 0;
+            this.labelStyle.Text = "Style#";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnUpdate);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 382);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(838, 45);
             this.panel4.TabIndex = 1;
             // 
-            // button3
+            // btnClose
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Location = new System.Drawing.Point(744, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Close";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(744, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnUpdate
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(645, 7);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Update";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdate.Location = new System.Drawing.Point(645, 7);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(80, 30);
+            this.btnUpdate.TabIndex = 0;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridBatchShipmentFinished);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 49);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(838, 333);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridBatchShipmentFinished
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridBatchShipmentFinished.AllowUserToAddRows = false;
+            this.gridBatchShipmentFinished.AllowUserToDeleteRows = false;
+            this.gridBatchShipmentFinished.AllowUserToResizeRows = false;
+            this.gridBatchShipmentFinished.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBatchShipmentFinished.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBatchShipmentFinished.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchShipmentFinished.DataSource = this.listControlBindingSource1;
+            this.gridBatchShipmentFinished.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBatchShipmentFinished.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBatchShipmentFinished.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBatchShipmentFinished.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBatchShipmentFinished.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBatchShipmentFinished.Location = new System.Drawing.Point(0, 0);
+            this.gridBatchShipmentFinished.Name = "gridBatchShipmentFinished";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -216,18 +216,18 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(838, 333);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridBatchShipmentFinished.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridBatchShipmentFinished.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBatchShipmentFinished.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBatchShipmentFinished.RowTemplate.Height = 24;
+            this.gridBatchShipmentFinished.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchShipmentFinished.Size = new System.Drawing.Size(838, 333);
+            this.gridBatchShipmentFinished.TabIndex = 0;
+            this.gridBatchShipmentFinished.TabStop = false;
             // 
             // P01_BatchShipmentFinished
             // 
-            this.CancelButton = this.button3;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(858, 427);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -241,7 +241,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchShipmentFinished)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -252,18 +252,18 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelStyle;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridBatchShipmentFinished;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelBuyer;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnUpdate;
+        private Win.UI.TextBox txtBuyer;
+        private Win.UI.TextBox txtStyle;
     }
 }

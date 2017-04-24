@@ -65,9 +65,9 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             listControlBindingSource1.DataSource = GridData;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchShipmentFinished.IsEditingReadOnly = false;
+            this.gridBatchShipmentFinished.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBatchShipmentFinished)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -80,23 +80,23 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         {
             StringBuilder stringFilter = new StringBuilder();
             stringFilter.Append("1=1");
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtStyle.Text))
             {
-                stringFilter.Append(string.Format(" and StyleID = '{0}'", textBox1.Text));
+                stringFilter.Append(string.Format(" and StyleID = '{0}'", txtStyle.Text));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtBuyer.Text))
             {
-                stringFilter.Append(string.Format(" and BuyerID = '{0}'", textBox2.Text));
-            }
-
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
-            {
-                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", dateRange1.Value1));
+                stringFilter.Append(string.Format(" and BuyerID = '{0}'", txtBuyer.Text));
             }
 
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
-                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", dateRange1.Value2));
+                stringFilter.Append(string.Format(" and BuyerDelivery >= '{0}'", dateBuyerDelivery.Value1));
+            }
+
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
+            {
+                stringFilter.Append(string.Format(" and BuyerDelivery <= '{0}'", dateBuyerDelivery.Value2));
             }
 
             ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = stringFilter.ToString();
@@ -110,7 +110,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,8,35,10@760,500", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtStyle.Text = item.GetSelectedString();
             setFilter();
         }
 
@@ -122,26 +122,26 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
+            txtBuyer.Text = item.GetSelectedString();
             setFilter();
         }
 
         //Style#
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtStyle.OldValue != txtStyle.Text)
             {
-                if (textBox1.Text != "")
+                if (txtStyle.Text != "")
                 {
-                    if (textBox1.Text.IndexOf("'") != -1)
+                    if (txtStyle.Text.IndexOf("'") != -1)
                     {
-                        textBox1.Text = "";
+                        txtStyle.Text = "";
                         MyUtility.Msg.WarningBox("Input errror!!");
                         return;
                     }
-                    if (!MyUtility.Check.Seek(string.Format("select ID from Style WITH (NOLOCK) where Junk = 0 and ID = '{0}'", textBox1.Text)))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Style WITH (NOLOCK) where Junk = 0 and ID = '{0}'", txtStyle.Text)))
                     {
-                        textBox1.Text = "";
+                        txtStyle.Text = "";
                         MyUtility.Msg.WarningBox("Style not found!!");
                         return;
                     }
@@ -153,19 +153,19 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         //Buyer
         private void textBox2_Validated(object sender, EventArgs e)
         {
-            if (textBox2.OldValue != textBox2.Text)
+            if (txtBuyer.OldValue != txtBuyer.Text)
             {
-                if (textBox2.Text != "")
+                if (txtBuyer.Text != "")
                 {
-                    if (textBox2.Text.IndexOf("'") != -1)
+                    if (txtBuyer.Text.IndexOf("'") != -1)
                     {
-                        textBox2.Text = "";
+                        txtBuyer.Text = "";
                         MyUtility.Msg.WarningBox("Input errror!!");
                         return;
                     }
-                    if (!MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where Junk = 0 and ID = '{0}'", textBox2.Text)))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where Junk = 0 and ID = '{0}'", txtBuyer.Text)))
                     {
-                        textBox2.Text = "";
+                        txtBuyer.Text = "";
                         MyUtility.Msg.WarningBox("Brand not found!!");
                         return;
                     }
@@ -177,11 +177,11 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         //Buyer Delivery
         private void dateRange1_Validated(object sender, EventArgs e)
         {
-            if (dateRange1.Value1 != dateRange1.OldValue1)
+            if (dateBuyerDelivery.Value1 != dateBuyerDelivery.OldValue1)
             {
                 setFilter();
             }
-            if (dateRange1.Value2 != dateRange1.OldValue2)
+            if (dateBuyerDelivery.Value2 != dateBuyerDelivery.OldValue2)
             {
                 setFilter();
             }
@@ -190,8 +190,8 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         //update
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
-            this.grid1.EndEdit();
+            this.gridBatchShipmentFinished.ValidateControl();
+            this.gridBatchShipmentFinished.EndEdit();
             listControlBindingSource1.EndEdit();
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] dr = detailData.Select("Selected = 1");

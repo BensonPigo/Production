@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.chkAdditional = new Sci.Win.UI.CheckBox();
-            this.radioButton_ByCustCD = new Sci.Win.UI.RadioButton();
-            this.radioButton_MNotice = new Sci.Win.UI.RadioButton();
+            this.checkAdditionally = new Sci.Win.UI.CheckBox();
+            this.radioByOrderCombo = new Sci.Win.UI.RadioButton();
+            this.radioMNotice = new Sci.Win.UI.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,51 +41,51 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.chkAdditional);
-            this.groupBox1.Controls.Add(this.radioButton_ByCustCD);
-            this.groupBox1.Controls.Add(this.radioButton_MNotice);
+            this.groupBox1.Controls.Add(this.checkAdditionally);
+            this.groupBox1.Controls.Add(this.radioByOrderCombo);
+            this.groupBox1.Controls.Add(this.radioMNotice);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(495, 154);
             this.groupBox1.TabIndex = 96;
             this.groupBox1.TabStop = false;
             // 
-            // chkAdditional
+            // checkAdditionally
             // 
-            this.chkAdditional.AutoSize = true;
-            this.chkAdditional.Checked = true;
-            this.chkAdditional.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAdditional.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAdditional.Location = new System.Drawing.Point(18, 107);
-            this.chkAdditional.Name = "chkAdditional";
-            this.chkAdditional.Size = new System.Drawing.Size(321, 21);
-            this.chkAdditional.TabIndex = 8;
-            this.chkAdditional.Text = "Additionally print [Size Spec] with \"z\" beginning";
-            this.chkAdditional.UseVisualStyleBackColor = true;
+            this.checkAdditionally.AutoSize = true;
+            this.checkAdditionally.Checked = true;
+            this.checkAdditionally.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAdditionally.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkAdditionally.Location = new System.Drawing.Point(18, 107);
+            this.checkAdditionally.Name = "checkAdditionally";
+            this.checkAdditionally.Size = new System.Drawing.Size(321, 21);
+            this.checkAdditionally.TabIndex = 8;
+            this.checkAdditionally.Text = "Additionally print [Size Spec] with \"z\" beginning";
+            this.checkAdditionally.UseVisualStyleBackColor = true;
             // 
-            // radioButton_ByCustCD
+            // radioByOrderCombo
             // 
-            this.radioButton_ByCustCD.AutoSize = true;
-            this.radioButton_ByCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton_ByCustCD.Location = new System.Drawing.Point(18, 63);
-            this.radioButton_ByCustCD.Name = "radioButton_ByCustCD";
-            this.radioButton_ByCustCD.Size = new System.Drawing.Size(247, 21);
-            this.radioButton_ByCustCD.TabIndex = 7;
-            this.radioButton_ByCustCD.Text = "M/Notice (Combo by OrderCombo )";
-            this.radioButton_ByCustCD.UseVisualStyleBackColor = true;
+            this.radioByOrderCombo.AutoSize = true;
+            this.radioByOrderCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByOrderCombo.Location = new System.Drawing.Point(18, 63);
+            this.radioByOrderCombo.Name = "radioByOrderCombo";
+            this.radioByOrderCombo.Size = new System.Drawing.Size(247, 21);
+            this.radioByOrderCombo.TabIndex = 7;
+            this.radioByOrderCombo.Text = "M/Notice (Combo by OrderCombo )";
+            this.radioByOrderCombo.UseVisualStyleBackColor = true;
             // 
-            // radioButton_MNotice
+            // radioMNotice
             // 
-            this.radioButton_MNotice.AutoSize = true;
-            this.radioButton_MNotice.Checked = true;
-            this.radioButton_MNotice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton_MNotice.Location = new System.Drawing.Point(18, 22);
-            this.radioButton_MNotice.Name = "radioButton_MNotice";
-            this.radioButton_MNotice.Size = new System.Drawing.Size(81, 21);
-            this.radioButton_MNotice.TabIndex = 6;
-            this.radioButton_MNotice.TabStop = true;
-            this.radioButton_MNotice.Text = "M/Notice";
-            this.radioButton_MNotice.UseVisualStyleBackColor = true;
+            this.radioMNotice.AutoSize = true;
+            this.radioMNotice.Checked = true;
+            this.radioMNotice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioMNotice.Location = new System.Drawing.Point(18, 22);
+            this.radioMNotice.Name = "radioMNotice";
+            this.radioMNotice.Size = new System.Drawing.Size(81, 21);
+            this.radioMNotice.TabIndex = 6;
+            this.radioMNotice.TabStop = true;
+            this.radioMNotice.Text = "M/Notice";
+            this.radioMNotice.UseVisualStyleBackColor = true;
             // 
             // P01_MNoticePrint
             // 
@@ -107,9 +107,9 @@
         #endregion
 
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.CheckBox chkAdditional;
-        private Win.UI.RadioButton radioButton_ByCustCD;
-        private Win.UI.RadioButton radioButton_MNotice;
+        private Win.UI.CheckBox checkAdditionally;
+        private Win.UI.RadioButton radioByOrderCombo;
+        private Win.UI.RadioButton radioMNotice;
 
 
     }

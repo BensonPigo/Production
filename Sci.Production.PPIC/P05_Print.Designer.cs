@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.labelReadydate = new Sci.Win.UI.Label();
+            this.dateReadydate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -47,29 +47,29 @@
             this.close.Location = new System.Drawing.Point(401, 84);
             this.close.TabIndex = 3;
             // 
-            // label1
+            // labelReadydate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(23, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Ready date";
+            this.labelReadydate.Lines = 0;
+            this.labelReadydate.Location = new System.Drawing.Point(23, 48);
+            this.labelReadydate.Name = "labelReadydate";
+            this.labelReadydate.Size = new System.Drawing.Size(75, 23);
+            this.labelReadydate.TabIndex = 94;
+            this.labelReadydate.Text = "Ready date";
             // 
-            // dateRange1
+            // dateReadydate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.IsSupportEditMode = false;
-            this.dateRange1.Location = new System.Drawing.Point(102, 48);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateReadydate.IsRequired = false;
+            this.dateReadydate.IsSupportEditMode = false;
+            this.dateReadydate.Location = new System.Drawing.Point(102, 48);
+            this.dateReadydate.Name = "dateReadydate";
+            this.dateReadydate.Size = new System.Drawing.Size(280, 23);
+            this.dateReadydate.TabIndex = 0;
             // 
             // P05_Print
             // 
             this.ClientSize = new System.Drawing.Size(493, 149);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateReadydate);
+            this.Controls.Add(this.labelReadydate);
             this.DefaultControl = "dateRange1";
             this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
@@ -78,8 +78,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.labelReadydate, 0);
+            this.Controls.SetChildIndex(this.dateReadydate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -87,7 +87,7 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.Label labelReadydate;
+        private Win.UI.DateRange dateReadydate;
     }
 }

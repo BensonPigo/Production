@@ -26,11 +26,11 @@ namespace Sci.Production.PPIC
             //EditMode = false;
             InitializeComponent();
             //自動帶出3個月後的最後一天
-            dateBox1.Value = (DateTime.Today.AddMonths(4)).AddDays(1 - (DateTime.Today.AddMonths(4)).Day - 1);
+            dateUptoSCIDelivery.Value = (DateTime.Today.AddMonths(4)).AddDays(1 - (DateTime.Today.AddMonths(4)).Day - 1);
             if (!EditMode)
             {
-                button3.Visible = false;
-                button4.Text = "Quit";
+                btnSaveAndQuit.Visible = false;
+                btnQuitWithoutSave.Text = "Quit";
             }
         }
 
@@ -41,7 +41,7 @@ namespace Sci.Production.PPIC
             {
                 if (EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridProductionSchedule.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["ReadyDate"]))
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
@@ -82,7 +82,7 @@ namespace Sci.Production.PPIC
             {
                 if (EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridProductionSchedule.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["EstPulloutDate"]))
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
@@ -133,10 +133,10 @@ namespace Sci.Production.PPIC
             };
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = !EditMode;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridProductionSchedule.IsEditingReadOnly = !EditMode;
+            this.gridProductionSchedule.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridProductionSchedule)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
@@ -159,30 +159,30 @@ namespace Sci.Production.PPIC
                 .Date("SCIDelivery", header: "SCI Del", iseditingreadonly: true)
                 .Text("ProdRemark", header: "Remark", width: Widths.AnsiChars(20));
 
-            grid1.Columns["Inconsistent"].DefaultCellStyle.ForeColor = Color.Red;
+            gridProductionSchedule.Columns["Inconsistent"].DefaultCellStyle.ForeColor = Color.Red;
             if (EditMode)
             {
-                grid1.Columns["ReadyDate"].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns["EstPulloutDate"].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns["ProdRemark"].DefaultCellStyle.ForeColor = Color.Red;
-                grid1.Columns["ReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
-                grid1.Columns["EstPulloutDate"].DefaultCellStyle.BackColor = Color.Pink;
-                grid1.Columns["ProdRemark"].DefaultCellStyle.BackColor = Color.Pink;
+                gridProductionSchedule.Columns["ReadyDate"].DefaultCellStyle.ForeColor = Color.Red;
+                gridProductionSchedule.Columns["EstPulloutDate"].DefaultCellStyle.ForeColor = Color.Red;
+                gridProductionSchedule.Columns["ProdRemark"].DefaultCellStyle.ForeColor = Color.Red;
+                gridProductionSchedule.Columns["ReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
+                gridProductionSchedule.Columns["EstPulloutDate"].DefaultCellStyle.BackColor = Color.Pink;
+                gridProductionSchedule.Columns["ProdRemark"].DefaultCellStyle.BackColor = Color.Pink;
             }
 
-            grid1.RowPostPaint += (s, e) =>
+            gridProductionSchedule.RowPostPaint += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                DataRow dr = gridProductionSchedule.GetDataRow(e.RowIndex);
+                if (gridProductionSchedule.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
                 int i = e.RowIndex;
                 if (dr["MTLDelay"].ToString() == "Y")
                 {
-                    grid1.Rows[i].Cells["ID"].Style.BackColor = Color.FromArgb(255, 255, 128);
+                    gridProductionSchedule.Rows[i].Cells["ID"].Style.BackColor = Color.FromArgb(255, 255, 128);
                 }
             };
             
-            grid1.CellToolTipTextNeeded += (s, e) =>
+            gridProductionSchedule.CellToolTipTextNeeded += (s, e) =>
                 {
                     if (e.ColumnIndex == 7)
                     {
@@ -222,9 +222,9 @@ as
  and oq.Qty > 0
  and o.FtyGroup = '{0}'
  and o.Finished = 0 ", Sci.Env.User.Factory));
-            if (!MyUtility.Check.Empty(dateBox1.Value))
+            if (!MyUtility.Check.Empty(dateUptoSCIDelivery.Value))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateBox1.Value).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateUptoSCIDelivery.Value).ToString("d")));
             }
             sqlCmd.Append(@")
 select *,
@@ -243,10 +243,10 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
                 MyUtility.Msg.ErrorBox("Query fail!\r\n"+result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
-            dateBox1.ReadOnly = true;
-            button1.Enabled = false;
-            button5.Enabled = true;
-            this.grid1.AutoResizeColumns();
+            dateUptoSCIDelivery.ReadOnly = true;
+            btnQuery.Enabled = false;
+            btnToExcel.Enabled = true;
+            this.gridProductionSchedule.AutoResizeColumns();
         }
 
         //Quit or Quit without Save
@@ -259,7 +259,7 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
         private void button2_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("ID", textBox1.Text.ToString());
+            int index = listControlBindingSource1.Find("ID", txtLocateforSP.Text.ToString());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -272,7 +272,7 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
                 IList<string> updateCmds = new List<string>();
-                this.grid1.ValidateControl();
+                this.gridProductionSchedule.ValidateControl();
                 listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)

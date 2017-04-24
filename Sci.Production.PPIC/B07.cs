@@ -30,27 +30,27 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            button1.Enabled = CurrentMaintain == null ? false : true;
+            btnBatchEdit.Enabled = CurrentMaintain == null ? false : true;
             if (!IsSupportNew)
             {
-                button1.Visible = false;
+                btnBatchEdit.Visible = false;
             }
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.displayBox2.Text = MyUtility.Check.Empty(CurrentMaintain["Date"])?"": Convert.ToDateTime(CurrentMaintain["Date"]).ToString("dddd");
-            this.button1.ForeColor = Color.Blue;
-            button1.Enabled = CurrentMaintain == null ? false : true;
+            this.displayDay.Text = MyUtility.Check.Empty(CurrentMaintain["Date"])?"": Convert.ToDateTime(CurrentMaintain["Date"]).ToString("dddd");
+            this.btnBatchEdit.ForeColor = Color.Blue;
+            btnBatchEdit.Enabled = CurrentMaintain == null ? false : true;
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.dateBox1.ReadOnly = true;
-            this.txtsewingline1.ReadOnly = true;
-            this.txtsewingline1.ReadOnly = false;
+            this.dateDate.ReadOnly = true;
+            this.txtSewingLine.ReadOnly = true;
+            this.txtSewingLine.ReadOnly = false;
         }
 
         protected override bool ClickNewBefore()
@@ -67,13 +67,13 @@ namespace Sci.Production.PPIC
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            this.txtsewingline1.ReadOnly = true;
+            this.txtSewingLine.ReadOnly = true;
         }
 
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            this.txtsewingline1.ReadOnly = true;
+            this.txtSewingLine.ReadOnly = true;
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.labelName = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.displayName = new Sci.Win.UI.DisplayBox();
+            this.editDescription = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -48,16 +48,16 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.editDescription);
+            this.masterpanel.Controls.Add(this.displayName);
+            this.masterpanel.Controls.Add(this.labelDescription);
+            this.masterpanel.Controls.Add(this.labelName);
             this.masterpanel.Size = new System.Drawing.Size(912, 100);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editDescription, 0);
             // 
             // detailpanel
             // 
@@ -103,7 +103,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(757, 387);
+            this.browse.Size = new System.Drawing.Size(912, 387);
             // 
             // tabs
             // 
@@ -123,44 +123,44 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelName
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(11, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Name";
+            this.labelName.Lines = 0;
+            this.labelName.Location = new System.Drawing.Point(11, 13);
+            this.labelName.Name = "labelName";
+            this.labelName.Size = new System.Drawing.Size(75, 23);
+            this.labelName.TabIndex = 1;
+            this.labelName.Text = "Name";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(11, 40);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(11, 40);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 2;
+            this.labelDescription.Text = "Description";
             // 
-            // displayBox1
+            // displayName
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(90, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(320, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
+            this.displayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayName.Location = new System.Drawing.Point(90, 13);
+            this.displayName.Name = "displayName";
+            this.displayName.Size = new System.Drawing.Size(320, 23);
+            this.displayName.TabIndex = 0;
             // 
-            // editBox1
+            // editDescription
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(90, 40);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(320, 50);
-            this.editBox1.TabIndex = 1;
+            this.editDescription.BackColor = System.Drawing.Color.White;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescription.Location = new System.Drawing.Point(90, 40);
+            this.editDescription.Multiline = true;
+            this.editDescription.Name = "editDescription";
+            this.editDescription.Size = new System.Drawing.Size(320, 50);
+            this.editDescription.TabIndex = 1;
             // 
             // B08
             // 
@@ -202,9 +202,9 @@
 
         #endregion
 
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.EditBox editDescription;
+        private Win.UI.DisplayBox displayName;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelName;
     }
 }

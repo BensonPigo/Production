@@ -28,66 +28,66 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, @"select '' as Zone,'' as Fty union all
 select distinct f.Zone,f.Zone+' - '+(select CONCAT(ID,'/') from Factory WITH (NOLOCK) where Zone = f.Zone for XML path('')) as Fty
 from Factory f WITH (NOLOCK) where Zone <> ''", out zone);
-            MyUtility.Tool.SetupCombox(comboBox1, 2, zone);
+            MyUtility.Tool.SetupCombox(comboZone, 2, zone);
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out subprocess);
-            MyUtility.Tool.SetupCombox(comboBox4, 1, subprocess);
+            MyUtility.Tool.SetupCombox(comboSubProcess, 1, subprocess);
 
-            comboBox1.SelectedIndex = 0;
-            comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.Text = Sci.Env.User.Factory;
-            comboBox4.SelectedIndex = 0;
-            checkBox6.Checked = true;
+            comboZone.SelectedIndex = 0;
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.Text = Sci.Env.User.Factory;
+            comboSubProcess.SelectedIndex = 0;
+            checkBulk.Checked = true;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
-                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
-                MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
-                MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange4.Value2) &&
-                MyUtility.Check.Empty(dateRange5.Value1) && MyUtility.Check.Empty(dateRange5.Value2) &&
-                MyUtility.Check.Empty(dateRange6.Value1) && MyUtility.Check.Empty(dateRange6.Value2))
+            if (MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) &&
+                MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) &&
+                MyUtility.Check.Empty(dateCutOffDate.Value1) && MyUtility.Check.Empty(dateCutOffDate.Value2) &&
+                MyUtility.Check.Empty(dateCustRQSDate.Value1) && MyUtility.Check.Empty(dateCustRQSDate.Value2) &&
+                MyUtility.Check.Empty(datePlanDate.Value1) && MyUtility.Check.Empty(datePlanDate.Value2) &&
+                MyUtility.Check.Empty(dateOrderCfmDate.Value1) && MyUtility.Check.Empty(dateOrderCfmDate.Value2))
             {
                 MyUtility.Msg.WarningBox("All date can't empty!!");
-                dateRange1.TextBox1.Focus();
+                dateBuyerDelivery.TextBox1.Focus();
                 return false;
             }
 
-            buyerDlv1 = dateRange1.Value1;
-            buyerDlv2 = dateRange1.Value2;
-            sciDlv1 = dateRange2.Value1;
-            sciDlv2 = dateRange2.Value2;
-            cutoff1 = dateRange3.Value1;
-            cutoff2 = dateRange3.Value2;
-            custRQS1 = dateRange4.Value1;
-            custRQS2 = dateRange4.Value2;
-            planDate1 = dateRange5.Value1;
-            planDate2 = dateRange5.Value2;
-            orderCfm1 = dateRange6.Value1;
-            orderCfm2 = dateRange6.Value2;
-            style = txtstyle1.Text.Trim();
-            season = txtseason1.Text.Trim();
-            brand = txtbrand1.Text.Trim();
-            custcd = txtcustcd1.Text.Trim();
+            buyerDlv1 = dateBuyerDelivery.Value1;
+            buyerDlv2 = dateBuyerDelivery.Value2;
+            sciDlv1 = dateSCIDelivery.Value1;
+            sciDlv2 = dateSCIDelivery.Value2;
+            cutoff1 = dateCutOffDate.Value1;
+            cutoff2 = dateCutOffDate.Value2;
+            custRQS1 = dateCustRQSDate.Value1;
+            custRQS2 = dateCustRQSDate.Value2;
+            planDate1 = datePlanDate.Value1;
+            planDate2 = datePlanDate.Value2;
+            orderCfm1 = dateOrderCfmDate.Value1;
+            orderCfm2 = dateOrderCfmDate.Value2;
+            style = txtstyle.Text.Trim();
+            season = txtseason.Text.Trim();
+            brand = txtbrand.Text.Trim();
+            custcd = txtcustcd.Text.Trim();
 
-            zone = MyUtility.Convert.GetString(comboBox1.SelectedValue);
-            mDivision = comboBox2.Text;
-            factory = comboBox3.Text;
-            bulk = checkBox6.Checked;
-            sample = checkBox7.Checked;
-            material = checkBox8.Checked;
-            forecast = checkBox9.Checked;
-            subProcess = comboBox4.Text;
-            hisOrder = checkBox1.Checked;
-            artwork = checkBox2.Checked;
-            pap = checkBox3.Checked;
-            seperate = checkBox4.Checked;
-            poCombo = checkBox5.Checked;
+            zone = MyUtility.Convert.GetString(comboZone.SelectedValue);
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
+            bulk = checkBulk.Checked;
+            sample = checkSample.Checked;
+            material = checkMaterial.Checked;
+            forecast = checkForecast.Checked;
+            subProcess = comboSubProcess.Text;
+            hisOrder = checkIncludeHistoryOrder.Checked;
+            artwork = checkIncludeArtworkdata.Checked;
+            pap = checkIncludeArtworkdataKindIsPAP.Checked;
+            seperate = checkQtyBDownByShipmode.Checked;
+            poCombo = checkListPOCombo.Checked;
 
             return base.ValidateInput();
         }

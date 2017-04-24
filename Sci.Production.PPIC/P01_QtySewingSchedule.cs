@@ -55,9 +55,9 @@ order by ArticleSeq,SizeCoseSeq", orderID);
             Ict.Win.UI.DataGridViewNumericBoxColumn col_o;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridSewingSchedule.IsEditingReadOnly = true;
+            this.gridSewingSchedule.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridSewingSchedule)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Order Q'ty", width: Widths.AnsiChars(6))

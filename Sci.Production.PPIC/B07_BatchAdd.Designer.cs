@@ -28,141 +28,141 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelLine = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelWeekDay = new Sci.Win.UI.Label();
+            this.labelHours = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateRange();
+            this.comboWeekDay = new Sci.Win.UI.ComboBox();
+            this.numHours = new Sci.Win.UI.NumericBox();
+            this.checkItsAHoliday = new Sci.Win.UI.CheckBox();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.txtLineNoStart = new Sci.Win.UI.TextBox();
+            this.txtLineNoEnd = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
-            // label1
+            // labelLine
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Line#";
+            this.labelLine.Lines = 0;
+            this.labelLine.Location = new System.Drawing.Point(13, 13);
+            this.labelLine.Name = "labelLine";
+            this.labelLine.Size = new System.Drawing.Size(70, 23);
+            this.labelLine.TabIndex = 0;
+            this.labelLine.Text = "Line#";
             // 
-            // label2
+            // labelDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 45);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(13, 45);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(70, 23);
+            this.labelDate.TabIndex = 1;
+            this.labelDate.Text = "Date";
             // 
-            // label3
+            // labelWeekDay
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 78);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(70, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Week day";
+            this.labelWeekDay.Lines = 0;
+            this.labelWeekDay.Location = new System.Drawing.Point(13, 78);
+            this.labelWeekDay.Name = "labelWeekDay";
+            this.labelWeekDay.Size = new System.Drawing.Size(70, 23);
+            this.labelWeekDay.TabIndex = 2;
+            this.labelWeekDay.Text = "Week day";
             // 
-            // label4
+            // labelHours
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 111);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Hours";
+            this.labelHours.Lines = 0;
+            this.labelHours.Location = new System.Drawing.Point(13, 111);
+            this.labelHours.Name = "labelHours";
+            this.labelHours.Size = new System.Drawing.Size(70, 23);
+            this.labelHours.TabIndex = 3;
+            this.labelHours.Text = "Hours";
             // 
-            // dateRange1
+            // dateDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(87, 45);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 2;
+            this.dateDate.IsRequired = false;
+            this.dateDate.Location = new System.Drawing.Point(87, 45);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDate.TabIndex = 2;
             // 
-            // comboBox1
+            // comboWeekDay
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(87, 78);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(144, 24);
-            this.comboBox1.TabIndex = 3;
+            this.comboWeekDay.BackColor = System.Drawing.Color.White;
+            this.comboWeekDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboWeekDay.FormattingEnabled = true;
+            this.comboWeekDay.IsSupportUnselect = true;
+            this.comboWeekDay.Location = new System.Drawing.Point(87, 78);
+            this.comboWeekDay.Name = "comboWeekDay";
+            this.comboWeekDay.Size = new System.Drawing.Size(144, 24);
+            this.comboWeekDay.TabIndex = 3;
             // 
-            // numericBox1
+            // numHours
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DecimalPlaces = 1;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(87, 111);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numHours.BackColor = System.Drawing.Color.White;
+            this.numHours.DecimalPlaces = 1;
+            this.numHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numHours.Location = new System.Drawing.Point(87, 111);
+            this.numHours.Maximum = new decimal(new int[] {
             999,
             0,
             0,
             65536});
-            this.numericBox1.MaxLength = 4;
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numHours.MaxLength = 4;
+            this.numHours.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numHours.Name = "numHours";
+            this.numHours.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(46, 23);
-            this.numericBox1.TabIndex = 4;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numHours.Size = new System.Drawing.Size(46, 23);
+            this.numHours.TabIndex = 4;
+            this.numHours.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // checkBox1
+            // checkItsAHoliday
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(13, 147);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(105, 21);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "It\'s a holiday";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkItsAHoliday.AutoSize = true;
+            this.checkItsAHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkItsAHoliday.IsSupportEditMode = false;
+            this.checkItsAHoliday.Location = new System.Drawing.Point(13, 147);
+            this.checkItsAHoliday.Name = "checkItsAHoliday";
+            this.checkItsAHoliday.Size = new System.Drawing.Size(105, 21);
+            this.checkItsAHoliday.TabIndex = 5;
+            this.checkItsAHoliday.Text = "It\'s a holiday";
+            this.checkItsAHoliday.UseVisualStyleBackColor = true;
+            this.checkItsAHoliday.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(196, 164);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnOK.Location = new System.Drawing.Point(196, 164);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 6;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(283, 164);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(283, 164);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 7;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -176,48 +176,48 @@
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label5.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textBox1
+            // txtLineNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(87, 13);
-            this.textBox1.MaxLength = 2;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLineNoStart.BackColor = System.Drawing.Color.White;
+            this.txtLineNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLineNoStart.Location = new System.Drawing.Point(87, 13);
+            this.txtLineNoStart.MaxLength = 2;
+            this.txtLineNoStart.Name = "txtLineNoStart";
+            this.txtLineNoStart.Size = new System.Drawing.Size(40, 23);
+            this.txtLineNoStart.TabIndex = 0;
+            this.txtLineNoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtLineNoStart.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtLineNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(148, 13);
-            this.textBox2.MaxLength = 2;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(40, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLineNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtLineNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLineNoEnd.Location = new System.Drawing.Point(148, 13);
+            this.txtLineNoEnd.MaxLength = 2;
+            this.txtLineNoEnd.Name = "txtLineNoEnd";
+            this.txtLineNoEnd.Size = new System.Drawing.Size(40, 23);
+            this.txtLineNoEnd.TabIndex = 1;
+            this.txtLineNoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtLineNoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // B07_BatchAdd
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnOK;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(377, 204);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtLineNoEnd);
+            this.Controls.Add(this.txtLineNoStart);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.checkItsAHoliday);
+            this.Controls.Add(this.numHours);
+            this.Controls.Add(this.comboWeekDay);
+            this.Controls.Add(this.dateDate);
+            this.Controls.Add(this.labelHours);
+            this.Controls.Add(this.labelWeekDay);
+            this.Controls.Add(this.labelDate);
+            this.Controls.Add(this.labelLine);
             this.DefaultControl = "textBox1";
             this.Name = "B07_BatchAdd";
             this.Text = " Batch Edit/Add";
@@ -228,18 +228,18 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelLine;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelWeekDay;
+        private Win.UI.Label labelHours;
+        private Win.UI.DateRange dateDate;
+        private Win.UI.ComboBox comboWeekDay;
+        private Win.UI.NumericBox numHours;
+        private Win.UI.CheckBox checkItsAHoliday;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
         private Win.UI.Label label5;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtLineNoStart;
+        private Win.UI.TextBox txtLineNoEnd;
     }
 }

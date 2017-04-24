@@ -26,7 +26,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            displayBox3.Value = Sci.Env.User.Factory;
+            displayFactory.Value = Sci.Env.User.Factory;
         }
 
         protected override void OnFormLoaded()
@@ -180,13 +180,13 @@ namespace Sci.Production.PPIC
         //SMR
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox3.Text = PopUpTPEUser(textBox3.Text);
+            txtSMR.Text = PopUpTPEUser(txtSMR.Text);
         }
 
         //MR
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox4.Text = PopUpTPEUser(textBox4.Text);
+            txtMR.Text = PopUpTPEUser(txtMR.Text);
         }
 
         private string PopUpTPEUser(string userID)
@@ -201,27 +201,27 @@ namespace Sci.Production.PPIC
         //SMR
         private void textBox3_Validating(object sender, CancelEventArgs e)
         {
-            string textBox3Value = textBox3.Text;
+            string textBox3Value = txtSMR.Text;
             if (textBox3Value!="")
             {
                 if (TPEUserValidating(textBox3Value))
                 {
-                    textBox3.Text = textBox3Value;
-                    displayBox1.Value = GetUserName(textBox3.Text);
+                    txtSMR.Text = textBox3Value;
+                    displaySMR.Value = GetUserName(txtSMR.Text);
                 }
                 else
                 {
                     MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox3Value));
-                    textBox3.Text = "";
-                    displayBox1.Value = "";
+                    txtSMR.Text = "";
+                    displaySMR.Value = "";
                     e.Cancel = true;
                     return;
                 }
             }
             if (textBox3Value == "")
             {
-                textBox3.Text = "";
-                displayBox1.Value = "";
+                txtSMR.Text = "";
+                displaySMR.Value = "";
              
             }
         }
@@ -260,7 +260,7 @@ namespace Sci.Production.PPIC
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
                 MyUtility.Msg.WarningBox("SP#  and SCI Delivery can't empty!!");
                 return;
@@ -286,37 +286,37 @@ as
  where o.Finished = 0
  and o.IsForecast = 0
  and o.FtyGroup = '{0}'", Sci.Env.User.Factory));
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtSPStart.Text))
             {
-                sqlCmd.Append(string.Format(" and o.ID >= '{0}'", textBox1.Text));
+                sqlCmd.Append(string.Format(" and o.ID >= '{0}'", txtSPStart.Text));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtSPEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and o.ID <= '{0}'", textBox2.Text));
+                sqlCmd.Append(string.Format(" and o.ID <= '{0}'", txtSPEnd.Text));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(txtstyle1.Text))
+            if (!MyUtility.Check.Empty(txtstyle.Text))
             {
-                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", txtstyle1.Text));
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", txtstyle.Text));
             }
-            if (!MyUtility.Check.Empty(txtbrand1.Text))
+            if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", txtbrand1.Text));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", txtbrand.Text));
             }
-            if (!MyUtility.Check.Empty(textBox3.Text))
+            if (!MyUtility.Check.Empty(txtSMR.Text))
             {
-                sqlCmd.Append(string.Format(" and o.SMR = '{0}'", textBox3.Text));
+                sqlCmd.Append(string.Format(" and o.SMR = '{0}'", txtSMR.Text));
             }
-            if (!MyUtility.Check.Empty(textBox4.Text))
+            if (!MyUtility.Check.Empty(txtMR.Text))
             {
-                sqlCmd.Append(string.Format(" and o.MRHandle = '{0}'", textBox4.Text));
+                sqlCmd.Append(string.Format(" and o.MRHandle = '{0}'", txtMR.Text));
             }
             sqlCmd.Append(@")
 select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLine,SUBSTRING(tmpArtworkType,1, LEN(tmpArtworkType)-1) as ArtworkType from tmpData order by SCIDelivery");
@@ -612,27 +612,27 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
             //MR
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            string textBox4Value = textBox4.Text;
+            string textBox4Value = txtMR.Text;
             if (textBox4Value != "")
             {
                 if (TPEUserValidating(textBox4Value))
                 {
-                    textBox4.Text = textBox4Value;
-                    displayBox2.Value = GetUserName(textBox4.Text);
+                    txtMR.Text = textBox4Value;
+                    displayMR.Value = GetUserName(txtMR.Text);
                 }
                 else
                 {
                     MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox4Value));
-                    textBox4.Text = "";
-                    displayBox2.Value = "";
+                    txtMR.Text = "";
+                    displayMR.Value = "";
                     e.Cancel = true;
                     return;
                 }
             }
             if (textBox4Value == "")
             {
-                textBox4.Text = "";
-                displayBox2.Value = "";
+                txtMR.Text = "";
+                displayMR.Value = "";
              
             }
         }

@@ -25,7 +25,7 @@ namespace Sci.Production.PPIC
             if (useAPS.ToUpper() == "FALSE")
             {
                 MyUtility.Msg.WarningBox("Not yet use the APS, so can't use this function!!");
-                button1.Enabled = false;
+                btnDownload.Enabled = false;
             }
         }
 

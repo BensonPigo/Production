@@ -20,31 +20,31 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Fabric,Accessory");
-            comboBox1.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboReportType, 1, 1, "Fabric,Accessory");
+            comboReportType.SelectedIndex = 0;
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
-            comboBox2.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox3.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateApvDate.Value1))
             {
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
-            _apvDate1 = dateRange1.Value1;
-            _apvDate2 = dateRange1.Value2;
-            _reportType = comboBox1.Text == "Fabric" ? "F" : comboBox1.Text == "Accessory" ? "A" : "";
-            _mDivision = comboBox2.Text;
-            _factory = comboBox3.Text;
-            _reportTypeName = comboBox1.Text;
+            _apvDate1 = dateApvDate.Value1;
+            _apvDate2 = dateApvDate.Value2;
+            _reportType = comboReportType.Text == "Fabric" ? "F" : comboReportType.Text == "Accessory" ? "A" : "";
+            _mDivision = comboM.Text;
+            _factory = comboFactory.Text;
+            _reportTypeName = comboReportType.Text;
 
             return base.ValidateInput();
         }

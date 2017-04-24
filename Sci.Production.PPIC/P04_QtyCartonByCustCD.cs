@@ -45,9 +45,9 @@ where s.StyleUkey = {0}", styleUkey);
             listControlBindingSource1.DataSource = selectDataTable;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCustCD.IsEditingReadOnly = true;
+            this.gridCustCD.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCustCD)
                  .Text("ContinentName", header: "Continent", width: Widths.AnsiChars(15))
                  .Text("CountryID", header: "Country Id", width: Widths.AnsiChars(2))
                  .Text("Alias", header: "Country", width: Widths.AnsiChars(10))

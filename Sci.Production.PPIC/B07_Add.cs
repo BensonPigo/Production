@@ -21,19 +21,19 @@ namespace Sci.Production.PPIC
         private void button1_Click(object sender, EventArgs e)
         {
             //檢查Date, Hours不可為空值
-            if (MyUtility.Check.Empty(this.dateRange1.Value1))
+            if (MyUtility.Check.Empty(this.dateDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.dateRange1.Value2))
+            if (MyUtility.Check.Empty(this.dateDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.numericBox1.Value))
+            if (MyUtility.Check.Empty(this.numHours.Value))
             {
                 MyUtility.Msg.WarningBox("< Hours > can not be empty!");
                 return;
@@ -58,15 +58,15 @@ namespace Sci.Production.PPIC
             }
 
             //組出要新增的資料
-            DateTime startDate = Convert.ToDateTime(this.dateRange1.Text1);
+            DateTime startDate = Convert.ToDateTime(this.dateDate.Text1);
             bool doInsert;
             IList<string> insertCmds = new List<string>();
-            while (startDate <= Convert.ToDateTime(this.dateRange1.Text2))
+            while (startDate <= Convert.ToDateTime(this.dateDate.Text2))
             {
                 doInsert = true;
                 if ((int)startDate.DayOfWeek != 0)
                 {
-                    if (this.checkBox1.Value == "False" && (int)startDate.DayOfWeek == 6)
+                    if (this.checkIncludeSaturday.Value == "False" && (int)startDate.DayOfWeek == 6)
                     {
                         doInsert = false;
                     }
@@ -81,7 +81,7 @@ namespace Sci.Production.PPIC
                               if (!MyUtility.Check.Seek(sqlCommand, null))
                                {
                                    insertCmds.Add(string.Format(@"Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,AddName,AddDate) 
-Values('{0}','{1}','{2}','{3}','{4}','{5}');", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"),this.numericBox1.Text.ToString(),Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+Values('{0}','{1}','{2}','{3}','{4}','{5}');", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"),this.numHours.Text.ToString(),Sci.Env.User.UserID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
                                 }
                             }
                         }

@@ -55,17 +55,17 @@ isnull((select SUM(c.Qty)
             string.Format("o.ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"])));
             DataTable summaryQty;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out summaryQty);
-            dateBox1.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
-            numericBox1.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
+            dateLastSewingOutputDate.Value = MyUtility.Convert.GetDate(summaryQty.Rows[0]["LastSewingDate"]);
+            numSewingOrderQty.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
             //numericBox2.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["SewingQty"]);
             //numericBox3.Value = MyUtility.Convert.GetInt(summaryQty.Rows[0]["CutQty"]);
-            numericBox4.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
+            numOrderQty.Value = MyUtility.Convert.GetInt(masterData["Qty"]);
 
             sewingqty.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]), "S", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
@@ -75,7 +75,7 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]), "T", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
@@ -85,7 +85,7 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]), "B", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
@@ -95,7 +95,7 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]), "I", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
@@ -105,16 +105,16 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridSewingOutput.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]), "O", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridSewingOutput.IsEditingReadOnly = true;
+            this.gridSewingOutput.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridSewingOutput)
                  .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                  .Numeric("Qty", header: "Order Q'ty", width: Widths.AnsiChars(6))
@@ -125,10 +125,10 @@ isnull((select SUM(c.Qty)
                  .Numeric("O", header: "Outer", width: Widths.AnsiChars(6), settings: o);
 
             #region 控制Column是否可被看見
-            grid1.Columns[4].Visible = false;
-            grid1.Columns[5].Visible = false;
-            grid1.Columns[6].Visible = false;
-            grid1.Columns[7].Visible = false;
+            gridSewingOutput.Columns[4].Visible = false;
+            gridSewingOutput.Columns[5].Visible = false;
+            gridSewingOutput.Columns[6].Visible = false;
+            gridSewingOutput.Columns[7].Visible = false;
             if (MyUtility.Convert.GetString(masterData["StyleUnit"]) == "SETS")
             {
                 sqlCmd = string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(masterData["StyleUKey"]));
@@ -140,43 +140,43 @@ isnull((select SUM(c.Qty)
                     {
                         if (MyUtility.Convert.GetString(dr["Location"]) == "T")
                         {
-                            grid1.Columns[4].Visible = true;
+                            gridSewingOutput.Columns[4].Visible = true;
                         }
                         if (MyUtility.Convert.GetString(dr["Location"]) == "B")
                         {
-                            grid1.Columns[5].Visible = true;
+                            gridSewingOutput.Columns[5].Visible = true;
                         }
                         if (MyUtility.Convert.GetString(dr["Location"]) == "I")
                         {
-                            grid1.Columns[6].Visible = true;
+                            gridSewingOutput.Columns[6].Visible = true;
                         }
                         if (MyUtility.Convert.GetString(dr["Location"]) == "O")
                         {
-                            grid1.Columns[7].Visible = true;
+                            gridSewingOutput.Columns[7].Visible = true;
                         }
                     }
                 }
             }
             #endregion
 
-            for (int j = 0; j < this.grid1.ColumnCount; j++)
+            for (int j = 0; j < this.gridSewingOutput.ColumnCount; j++)
             {
-                this.grid1.Columns[j].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridSewingOutput.Columns[j].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
             //當Article變動時，幣一筆不一樣的資料背景顏色要改變
-            grid1.RowsAdded += (s, e) =>
+            gridSewingOutput.RowsAdded += (s, e) =>
             {
                 DataTable dtData = (DataTable)listControlBindingSource1.DataSource;
                 for (int j = 0; j < e.RowCount; j++)
                 {
                     if (!MyUtility.Check.Empty(dtData.Rows[j]["LastArticle"]) && dtData.Rows[j]["LastArticle"].ToString() != dtData.Rows[j]["Article"].ToString())
                     {
-                        grid1.Rows[j].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+                        gridSewingOutput.Rows[j].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
                     }
                     else
                     {
-                        grid1.Rows[j].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
+                        gridSewingOutput.Rows[j].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
                     }
                 }
             };
@@ -186,24 +186,24 @@ isnull((select SUM(c.Qty)
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridCutting.GetDataRow<DataRow>(e.RowIndex);
                     Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(cuttingWorkType, cuttingWorkType == "1" ? MyUtility.Convert.GetString(masterData["CuttingSP"]) : MyUtility.Convert.GetString(masterData["ID"]), "C", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]));
                     callNextForm.ShowDialog(this);
                 }
             };
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridCutting.IsEditingReadOnly = true;
+            this.gridCutting.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridCutting)
                  .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                  .Numeric("Qty", header: "Order Q'ty", width: Widths.AnsiChars(6))
                  .Numeric("CutQty", header: "Cutting Q'ty", width: Widths.AnsiChars(6), settings: cuttingqty);
 
-            for (int j = 0; j < this.grid2.ColumnCount; j++)
+            for (int j = 0; j < this.gridCutting.ColumnCount; j++)
             {
-                this.grid2.Columns[j].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridCutting.Columns[j].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
             //撈Sewing Data
@@ -252,8 +252,8 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
             result = DBProxy.Current.Select(null, sqlCmd, out CuttingData);
 
             //bug fix:0000294: PPIC_P01_ProductionOutput
-            numericBox2.Value = MyUtility.Convert.GetInt(SewingData.Compute("sum(SewQty)", ""));  //Sewing Q'ty
-            numericBox3.Value = MyUtility.Convert.GetDecimal(CuttingData.Compute("sum(CutQty)", ""));  //Cutting Q'ty
+            numSewingQty.Value = MyUtility.Convert.GetInt(SewingData.Compute("sum(SewQty)", ""));  //Sewing Q'ty
+            numCuttingQty.Value = MyUtility.Convert.GetDecimal(CuttingData.Compute("sum(CutQty)", ""));  //Cutting Q'ty
 
             listControlBindingSource1.DataSource = SewingData;
             listControlBindingSource2.DataSource = CuttingData;

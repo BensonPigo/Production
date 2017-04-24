@@ -39,14 +39,14 @@
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel6 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridQtyBDownByGarmentExport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel7 = new Sci.Win.UI.Panel();
-            this.numericBox5 = new Sci.Win.UI.NumericBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.numAdjQty = new Sci.Win.UI.NumericBox();
+            this.numPulloutQty = new Sci.Win.UI.NumericBox();
+            this.numBookingQty = new Sci.Win.UI.NumericBox();
+            this.numPackingQty = new Sci.Win.UI.NumericBox();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -54,17 +54,17 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridPackingListBookingPulloutDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBDownByGarmentExport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel7.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPackingListBookingPulloutDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -133,29 +133,29 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.grid1);
+            this.panel6.Controls.Add(this.gridQtyBDownByGarmentExport);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(645, 287);
             this.panel6.TabIndex = 1;
             // 
-            // grid1
+            // gridQtyBDownByGarmentExport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridQtyBDownByGarmentExport.AllowUserToAddRows = false;
+            this.gridQtyBDownByGarmentExport.AllowUserToDeleteRows = false;
+            this.gridQtyBDownByGarmentExport.AllowUserToResizeRows = false;
+            this.gridQtyBDownByGarmentExport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBDownByGarmentExport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBDownByGarmentExport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBDownByGarmentExport.DataSource = this.listControlBindingSource1;
+            this.gridQtyBDownByGarmentExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridQtyBDownByGarmentExport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBDownByGarmentExport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBDownByGarmentExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBDownByGarmentExport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBDownByGarmentExport.Location = new System.Drawing.Point(0, 0);
+            this.gridQtyBDownByGarmentExport.Name = "gridQtyBDownByGarmentExport";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -163,22 +163,22 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(645, 287);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridQtyBDownByGarmentExport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridQtyBDownByGarmentExport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBDownByGarmentExport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBDownByGarmentExport.RowTemplate.Height = 24;
+            this.gridQtyBDownByGarmentExport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBDownByGarmentExport.Size = new System.Drawing.Size(645, 287);
+            this.gridQtyBDownByGarmentExport.TabIndex = 0;
+            this.gridQtyBDownByGarmentExport.TabStop = false;
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.numericBox5);
-            this.panel7.Controls.Add(this.numericBox4);
-            this.panel7.Controls.Add(this.numericBox3);
-            this.panel7.Controls.Add(this.numericBox2);
-            this.panel7.Controls.Add(this.numericBox1);
+            this.panel7.Controls.Add(this.numAdjQty);
+            this.panel7.Controls.Add(this.numPulloutQty);
+            this.panel7.Controls.Add(this.numBookingQty);
+            this.panel7.Controls.Add(this.numPackingQty);
+            this.panel7.Controls.Add(this.numOrderQty);
             this.panel7.Controls.Add(this.label6);
             this.panel7.Controls.Add(this.label5);
             this.panel7.Controls.Add(this.label4);
@@ -191,106 +191,106 @@
             this.panel7.Size = new System.Drawing.Size(645, 63);
             this.panel7.TabIndex = 2;
             // 
-            // numericBox5
+            // numAdjQty
             // 
-            this.numericBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox5.IsSupportEditMode = false;
-            this.numericBox5.Location = new System.Drawing.Point(554, 38);
-            this.numericBox5.Name = "numericBox5";
-            this.numericBox5.NullValue = new decimal(new int[] {
+            this.numAdjQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numAdjQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numAdjQty.IsSupportEditMode = false;
+            this.numAdjQty.Location = new System.Drawing.Point(554, 38);
+            this.numAdjQty.Name = "numAdjQty";
+            this.numAdjQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox5.ReadOnly = true;
-            this.numericBox5.Size = new System.Drawing.Size(80, 23);
-            this.numericBox5.TabIndex = 10;
-            this.numericBox5.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(448, 38);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(80, 23);
-            this.numericBox4.TabIndex = 9;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numAdjQty.ReadOnly = true;
+            this.numAdjQty.Size = new System.Drawing.Size(80, 23);
+            this.numAdjQty.TabIndex = 10;
+            this.numAdjQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox3
+            // numPulloutQty
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(342, 38);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numPulloutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPulloutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPulloutQty.IsSupportEditMode = false;
+            this.numPulloutQty.Location = new System.Drawing.Point(448, 38);
+            this.numPulloutQty.Name = "numPulloutQty";
+            this.numPulloutQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(80, 23);
-            this.numericBox3.TabIndex = 8;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(236, 38);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(80, 23);
-            this.numericBox2.TabIndex = 7;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numPulloutQty.ReadOnly = true;
+            this.numPulloutQty.Size = new System.Drawing.Size(80, 23);
+            this.numPulloutQty.TabIndex = 9;
+            this.numPulloutQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox1
+            // numBookingQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(130, 38);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numBookingQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBookingQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBookingQty.IsSupportEditMode = false;
+            this.numBookingQty.Location = new System.Drawing.Point(342, 38);
+            this.numBookingQty.Name = "numBookingQty";
+            this.numBookingQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(80, 23);
-            this.numericBox1.TabIndex = 6;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numBookingQty.ReadOnly = true;
+            this.numBookingQty.Size = new System.Drawing.Size(80, 23);
+            this.numBookingQty.TabIndex = 8;
+            this.numBookingQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numPackingQty
+            // 
+            this.numPackingQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPackingQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPackingQty.IsSupportEditMode = false;
+            this.numPackingQty.Location = new System.Drawing.Point(236, 38);
+            this.numPackingQty.Name = "numPackingQty";
+            this.numPackingQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numPackingQty.ReadOnly = true;
+            this.numPackingQty.Size = new System.Drawing.Size(80, 23);
+            this.numPackingQty.TabIndex = 7;
+            this.numPackingQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numOrderQty
+            // 
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(130, 38);
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(80, 23);
+            this.numOrderQty.TabIndex = 6;
+            this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -388,7 +388,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.grid2);
+            this.tabPage2.Controls.Add(this.gridPackingListBookingPulloutDetail);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -396,22 +396,22 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Packing List / Booking / Pullout Detail";
             // 
-            // grid2
+            // gridPackingListBookingPulloutDetail
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(3, 3);
-            this.grid2.Name = "grid2";
+            this.gridPackingListBookingPulloutDetail.AllowUserToAddRows = false;
+            this.gridPackingListBookingPulloutDetail.AllowUserToDeleteRows = false;
+            this.gridPackingListBookingPulloutDetail.AllowUserToResizeRows = false;
+            this.gridPackingListBookingPulloutDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPackingListBookingPulloutDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPackingListBookingPulloutDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPackingListBookingPulloutDetail.DataSource = this.listControlBindingSource2;
+            this.gridPackingListBookingPulloutDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPackingListBookingPulloutDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPackingListBookingPulloutDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPackingListBookingPulloutDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPackingListBookingPulloutDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPackingListBookingPulloutDetail.Location = new System.Drawing.Point(3, 3);
+            this.gridPackingListBookingPulloutDetail.Name = "gridPackingListBookingPulloutDetail";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -419,14 +419,14 @@
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(645, 350);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridPackingListBookingPulloutDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridPackingListBookingPulloutDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPackingListBookingPulloutDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPackingListBookingPulloutDetail.RowTemplate.Height = 24;
+            this.gridPackingListBookingPulloutDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPackingListBookingPulloutDetail.Size = new System.Drawing.Size(645, 350);
+            this.gridPackingListBookingPulloutDetail.TabIndex = 0;
+            this.gridPackingListBookingPulloutDetail.TabStop = false;
             // 
             // P01_GMTExport
             // 
@@ -443,12 +443,12 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBDownByGarmentExport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPackingListBookingPulloutDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
@@ -465,14 +465,14 @@
         private System.Windows.Forms.TabPage tabPage1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.TabPage tabPage2;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridPackingListBookingPulloutDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Panel panel7;
-        private Win.UI.NumericBox numericBox5;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.NumericBox numAdjQty;
+        private Win.UI.NumericBox numPulloutQty;
+        private Win.UI.NumericBox numBookingQty;
+        private Win.UI.NumericBox numPackingQty;
+        private Win.UI.NumericBox numOrderQty;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
@@ -480,6 +480,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Panel panel6;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridQtyBDownByGarmentExport;
     }
 }

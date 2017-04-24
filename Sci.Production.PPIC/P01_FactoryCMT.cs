@@ -40,9 +40,9 @@ order by ot.Seq", orderData["ID"].ToString());
                 MyUtility.Msg.ErrorBox("Query order tmscost data fail!!" + result.ToString());
             }
             listControlBindingSource1.DataSource = GridData;
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridFactoryCMT.IsEditingReadOnly = true;
+            this.gridFactoryCMT.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridFactoryCMT)
                 .Text("Seq", header: "Seq#", width: Widths.AnsiChars(4))
                 .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6))
@@ -51,12 +51,12 @@ order by ot.Seq", orderData["ID"].ToString());
                 .Numeric("Price", header: "Price", decimal_places: 3, width: Widths.AnsiChars(6))
                 .Text("ttlTMS", header: "Ttl TMS", width: Widths.AnsiChars(1));
 
-            numericBox1.Value = MyUtility.Convert.GetDecimal(orderData["CPU"]);
+            numCPU.Value = MyUtility.Convert.GetDecimal(orderData["CPU"]);
 
             #region [CPU cost]計算
             if (MyUtility.Check.Empty(orderData["OrigBuyerDelivery"]))
             {
-                numericBox2.Value = 0;
+                numCPUCost.Value = 0;
             }
             else
             {
@@ -68,20 +68,20 @@ order by ot.Seq", orderData["ID"].ToString());
                     and fsd.ShipperID = fd.ShipperID
                     and '{2}' between fd.BeginDate and fd.EndDate"
                     , orderData["BrandID"].ToString(), orderData["FactoryID"].ToString(), Convert.ToDateTime(orderData["OrigBuyerDelivery"]).ToString("d"));
-                numericBox2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
+                numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
             }
             #endregion
 
-            numericBox3.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
+            numSubProcess.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'A'"));
             if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory WITH (NOLOCK) where ID = '{0}'", orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
             {
-                numericBox4.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'P'"));
+                numLocalPurchase.Value = MyUtility.Convert.GetDecimal(GridData.Compute("sum(Price)", "Classify = 'P'"));
             }
             else
             {
-                numericBox4.Value = 0;
+                numLocalPurchase.Value = 0;
             }
-            numericBox5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((numericBox1.Value * numericBox2.Value) + numericBox3.Value + numericBox4.Value), 2);
+            numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((numCPU.Value * numCPUCost.Value) + numSubProcess.Value + numLocalPurchase.Value), 2);
         }
     }
 }

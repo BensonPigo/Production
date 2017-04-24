@@ -37,9 +37,9 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCuttingDailyOutput.IsEditingReadOnly = true;
+            this.gridCuttingDailyOutput.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCuttingDailyOutput)
                  .Date("CDate", header: "Date", width: Widths.AnsiChars(12))
                  .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6))
                  .Text("PatternPanel", header: "Fabric Comb", width: Widths.AnsiChars(2))
@@ -47,11 +47,11 @@ namespace Sci.Production.PPIC
                  .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3))
                  .Numeric("CutQty", header: "Q'ty", width: Widths.AnsiChars(6))
                  .Text("Status", header: "Status", width: Widths.AnsiChars(8));
-            grid1.Columns[1].Visible = type != "A";
-            grid1.Columns[2].Visible = type != "A";
-            grid1.Columns[3].Visible = type != "A";
-            grid1.Columns[4].Visible = type != "A";
-            grid1.Columns[6].Visible = type != "A";
+            gridCuttingDailyOutput.Columns[1].Visible = type != "A";
+            gridCuttingDailyOutput.Columns[2].Visible = type != "A";
+            gridCuttingDailyOutput.Columns[3].Visible = type != "A";
+            gridCuttingDailyOutput.Columns[4].Visible = type != "A";
+            gridCuttingDailyOutput.Columns[6].Visible = type != "A";
 
             string sqlCmd;
             if (type == "A")

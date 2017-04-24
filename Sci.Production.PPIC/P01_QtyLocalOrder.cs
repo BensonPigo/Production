@@ -29,20 +29,20 @@ namespace Sci.Production.PPIC
 
 
             // 按鈕對應的事件方法.
-            button1.Click += app_col_Click;
-            button2.Click += app_row_Click;
-            button3.Click += ins_col_Click;
-            button4.Click += ins_row_Click;
-            button5.Click += del_col_Click;
-            button6.Click += del_row_Click;
-            button7.Click += edit_Click;
-            button8.Click += close_Click;
+            btnVerticalAdd.Click += app_col_Click;
+            btnHorizontalAdd.Click += app_row_Click;
+            btnVerticalInsert.Click += ins_col_Click;
+            btnHorizontalInsert.Click += ins_row_Click;
+            btnVerticalDelete.Click += del_col_Click;
+            btnHorizontalDelete.Click += del_row_Click;
+            btnEdit.Click += edit_Click;
+            btnClose.Click += close_Click;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            _matrix = new MatrixHelper(this, grid1, listControlBindingSource1); // 建立 Matrix 物件
+            _matrix = new MatrixHelper(this, gridLocalOrder, listControlBindingSource1); // 建立 Matrix 物件
             _matrix.XMap.Name = "SizeCode";  // 對應到第三表格的 X 欄位名稱
             _matrix.YMap.Name = "Article";  // 對應到第三表格的 Y 欄位名稱
 
@@ -56,17 +56,17 @@ namespace Sci.Production.PPIC
                 .AddYColDef("Article", header: "Colorway", width: Widths.UnicodeChars(8))
                 ;
             #region Grid控制
-            grid1.EditingControlShowing += (s, e) =>
+            gridLocalOrder.EditingControlShowing += (s, e) =>
                 {
                     //Total欄位不可以被修改
-                    if (grid1.CurrentCellAddress.X == 0)
+                    if (gridLocalOrder.CurrentCellAddress.X == 0)
                     {
                         e.Control.Enabled = false;
                     }
                     //限制欄位只能輸入數值
                     if (EditMode == true)
                     {
-                        if (grid1.CurrentCellAddress.Y >= 1 && grid1.CurrentCellAddress.X >= 2)
+                        if (gridLocalOrder.CurrentCellAddress.Y >= 1 && gridLocalOrder.CurrentCellAddress.X >= 2)
                         {
                             ((Ict.Win.UI.TextBox)e.Control).InputRestrict = Ict.Win.UI.TextBoxInputsRestrict.Digit;
                         }
@@ -74,7 +74,7 @@ namespace Sci.Production.PPIC
                 };
 
             //Total欄位值顯是為黑色
-            grid1.CellFormatting += (s, e) =>
+            gridLocalOrder.CellFormatting += (s, e) =>
                 {
                     if (e.ColumnIndex == 0)
                     {
@@ -83,13 +83,13 @@ namespace Sci.Production.PPIC
                 };
             
             //值修改後要加總回Total
-            grid1.CellValueChanged += (s, e) =>
+            gridLocalOrder.CellValueChanged += (s, e) =>
                 {
-                    DataRow dr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = gridLocalOrder.GetDataRow<DataRow>(e.RowIndex);
                     int sum = 0;
                     if (e.RowIndex >= 1)
                     {
-                        foreach (DataGridViewColumn dg in grid1.Columns)
+                        foreach (DataGridViewColumn dg in gridLocalOrder.Columns)
                         {
                             if (!_matrix.IsGridYColumn(dg.DisplayIndex))
                             {
@@ -98,7 +98,7 @@ namespace Sci.Production.PPIC
                         }
                         dr[0] = sum;
 
-                        grid1.InvalidateRow(e.RowIndex);
+                        gridLocalOrder.InvalidateRow(e.RowIndex);
                     }
                 };
             #endregion
@@ -145,23 +145,23 @@ namespace Sci.Production.PPIC
         {
             if (EditMode)
             {
-                button7.Text = "Save";
-                button8.Text = "Undo";
+                btnEdit.Text = "Save";
+                btnClose.Text = "Undo";
             }
             else
             {
-                button7.Text = "Edit";
-                button8.Text = "Close";
+                btnEdit.Text = "Edit";
+                btnClose.Text = "Close";
             }
             if (!editable)
             {
-                button1.Visible = false;
-                button2.Visible = false;
-                button3.Visible = false;
-                button4.Visible = false;
-                button5.Visible = false;
-                button6.Visible = false;
-                button7.Visible = false;
+                btnVerticalAdd.Visible = false;
+                btnHorizontalAdd.Visible = false;
+                btnVerticalInsert.Visible = false;
+                btnHorizontalInsert.Visible = false;
+                btnVerticalDelete.Visible = false;
+                btnHorizontalDelete.Visible = false;
+                btnEdit.Visible = false;
             }
 
         }
@@ -381,7 +381,7 @@ namespace Sci.Production.PPIC
 
         void app_col_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.XAppend()))
             {
@@ -391,7 +391,7 @@ namespace Sci.Production.PPIC
 
         void app_row_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.YAppend()))
             {
@@ -401,7 +401,7 @@ namespace Sci.Production.PPIC
 
         void ins_col_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.XInsert()))
             {
@@ -411,7 +411,7 @@ namespace Sci.Production.PPIC
 
         void ins_row_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.YInsert()))
             {
@@ -421,7 +421,7 @@ namespace Sci.Production.PPIC
 
         void del_col_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.XDelete()))
             {
@@ -431,7 +431,7 @@ namespace Sci.Production.PPIC
 
         void del_row_Click(object sender, EventArgs e)
         {
-            grid1.EndEdit();
+            gridLocalOrder.EndEdit();
             DualResult result;
             if (!(result = _matrix.YDelete()))
             {

@@ -22,40 +22,40 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
 
-            MyUtility.Tool.SetupCombox(comboBox1,1, 1, "Fabric,Accessory");
+            MyUtility.Tool.SetupCombox(comboReportType,1, 1, "Fabric,Accessory");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox1.SelectedIndex = 0;
-            comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboReportType.SelectedIndex = 0;
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.Text = Sci.Env.User.Factory;
 
-            dateRange1.Value1 = DateTime.Today.AddDays(-1);
-            dateRange1.Value2 = DateTime.Today.AddDays(-1);
+            dateApvDate.Value1 = DateTime.Today.AddDays(-1);
+            dateApvDate.Value2 = DateTime.Today.AddDays(-1);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (comboBox1.SelectedIndex == -1)
+            if (comboReportType.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Report Type can't empty!!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateApvDate.Value1))
             {
                 MyUtility.Msg.WarningBox("Apv. Date can't empty!!");
                 return false;
             }
             
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            reportType = comboBox1.SelectedIndex;
-            mDivision = comboBox2.Text;
-            factory = comboBox3.Text;
+            date1 = dateApvDate.Value1;
+            date2 = dateApvDate.Value2;
+            reportType = comboReportType.SelectedIndex;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
 
             return base.ValidateInput();
         }

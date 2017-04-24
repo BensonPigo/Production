@@ -23,8 +23,8 @@ namespace Sci.Production.PPIC
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            readyDate1 = MyUtility.Check.Empty(dateRange1.Value1) ? "" : Convert.ToDateTime(dateRange1.Value1).ToString("d");
-            readyDate2 = MyUtility.Check.Empty(dateRange1.Value2) ? "" : Convert.ToDateTime(dateRange1.Value2).ToString("d");
+            readyDate1 = MyUtility.Check.Empty(dateReadydate.Value1) ? "" : Convert.ToDateTime(dateReadydate.Value1).ToString("d");
+            readyDate2 = MyUtility.Check.Empty(dateReadydate.Value2) ? "" : Convert.ToDateTime(dateReadydate.Value2).ToString("d");
 
             return base.ValidateInput();
         }

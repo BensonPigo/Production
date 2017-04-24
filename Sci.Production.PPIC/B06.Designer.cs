@@ -28,17 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelLine = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelCellNo = new Sci.Win.UI.Label();
+            this.labelNoOfSewers = new Sci.Win.UI.Label();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.txtLine = new Sci.Win.UI.TextBox();
+            this.txtDescription = new Sci.Win.UI.TextBox();
+            this.numNoOfSewers = new Sci.Win.UI.NumericBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtCellNo = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,17 +53,17 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtCell1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtCellNo);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.numNoOfSewers);
+            this.detailcont.Controls.Add(this.txtDescription);
+            this.detailcont.Controls.Add(this.txtLine);
+            this.detailcont.Controls.Add(this.displayFactory);
+            this.detailcont.Controls.Add(this.labelNoOfSewers);
+            this.detailcont.Controls.Add(this.labelCellNo);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelLine);
+            this.detailcont.Controls.Add(this.labelFactory);
             this.detailcont.Size = new System.Drawing.Size(832, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -74,7 +74,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(679, 395);
+            this.browse.Size = new System.Drawing.Size(832, 395);
             // 
             // tabs
             // 
@@ -94,124 +94,124 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelFactory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(27, 23);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(27, 23);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(80, 23);
+            this.labelFactory.TabIndex = 0;
+            this.labelFactory.Text = "Factory";
             // 
-            // label4
+            // labelLine
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(27, 61);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Line#";
+            this.labelLine.Lines = 0;
+            this.labelLine.Location = new System.Drawing.Point(27, 61);
+            this.labelLine.Name = "labelLine";
+            this.labelLine.Size = new System.Drawing.Size(80, 23);
+            this.labelLine.TabIndex = 1;
+            this.labelLine.Text = "Line#";
             // 
-            // label5
+            // labelDescription
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(27, 99);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(27, 99);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(80, 23);
+            this.labelDescription.TabIndex = 2;
+            this.labelDescription.Text = "Description";
             // 
-            // label6
+            // labelCellNo
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(27, 137);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(80, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Cell No.";
+            this.labelCellNo.Lines = 0;
+            this.labelCellNo.Location = new System.Drawing.Point(27, 137);
+            this.labelCellNo.Name = "labelCellNo";
+            this.labelCellNo.Size = new System.Drawing.Size(80, 23);
+            this.labelCellNo.TabIndex = 3;
+            this.labelCellNo.Text = "Cell No.";
             // 
-            // label7
+            // labelNoOfSewers
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(27, 175);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "# of Sewers";
+            this.labelNoOfSewers.Lines = 0;
+            this.labelNoOfSewers.Location = new System.Drawing.Point(27, 175);
+            this.labelNoOfSewers.Name = "labelNoOfSewers";
+            this.labelNoOfSewers.Size = new System.Drawing.Size(80, 23);
+            this.labelNoOfSewers.TabIndex = 4;
+            this.labelNoOfSewers.Text = "# of Sewers";
             // 
-            // displayBox1
+            // displayFactory
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(112, 23);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(69, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(112, 23);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(69, 23);
+            this.displayFactory.TabIndex = 0;
             // 
-            // textBox1
+            // txtLine
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(112, 61);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(40, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(112, 61);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(40, 23);
+            this.txtLine.TabIndex = 1;
+            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtDescription
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(112, 99);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(474, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(112, 99);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(474, 23);
+            this.txtDescription.TabIndex = 2;
             // 
-            // numericBox1
+            // numNoOfSewers
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sewer", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(112, 175);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numNoOfSewers.BackColor = System.Drawing.Color.White;
+            this.numNoOfSewers.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sewer", true));
+            this.numNoOfSewers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numNoOfSewers.Location = new System.Drawing.Point(112, 175);
+            this.numNoOfSewers.Name = "numNoOfSewers";
+            this.numNoOfSewers.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(40, 23);
-            this.numericBox1.TabIndex = 4;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numNoOfSewers.Size = new System.Drawing.Size(40, 23);
+            this.numNoOfSewers.TabIndex = 4;
+            this.numNoOfSewers.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(313, 23);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(313, 23);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 5;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtCell1
+            // txtCellNo
             // 
-            this.txtCell1.BackColor = System.Drawing.Color.White;
-            this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
-            this.txtCell1.FactoryId = "displayBox1";
-            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(112, 137);
-            this.txtCell1.Name = "txtCell1";
-            this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 3;
+            this.txtCellNo.BackColor = System.Drawing.Color.White;
+            this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
+            this.txtCellNo.FactoryId = "displayBox1";
+            this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCellNo.Location = new System.Drawing.Point(112, 137);
+            this.txtCellNo.Name = "txtCellNo";
+            this.txtCellNo.Size = new System.Drawing.Size(30, 23);
+            this.txtCellNo.TabIndex = 3;
             // 
             // B06
             // 
@@ -239,16 +239,16 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox1;
-        private Class.txtCell txtCell1;
+        private Win.UI.NumericBox numNoOfSewers;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.TextBox txtLine;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelNoOfSewers;
+        private Win.UI.Label labelCellNo;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelLine;
+        private Win.UI.Label labelFactory;
+        private Win.UI.CheckBox checkJunk;
+        private Class.txtCell txtCellNo;
     }
 }

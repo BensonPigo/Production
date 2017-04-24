@@ -23,33 +23,33 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.Text = Sci.Env.User.Factory;
-            numericUpDown1.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
-            numericUpDown2.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.Text = Sci.Env.User.Factory;
+            numericUpDownYear.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
+            numericUpDownMonth.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
 
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(numericUpDown1.Value))
+            if (MyUtility.Check.Empty(numericUpDownYear.Value))
             {
                 MyUtility.Msg.WarningBox("Year can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(numericUpDown2.Value))
+            if (MyUtility.Check.Empty(numericUpDownMonth.Value))
             {
                 MyUtility.Msg.WarningBox("Month can't empty!!");
                 return false;
             }
-            _year = (int)numericUpDown1.Value;
-            _month = (int)numericUpDown2.Value;
-            _mDivision = comboBox1.Text;
-            _factory = comboBox2.Text;
+            _year = (int)numericUpDownYear.Value;
+            _month = (int)numericUpDownMonth.Value;
+            _mDivision = comboM.Text;
+            _factory = comboFactory.Text;
             _startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(_year), MyUtility.Convert.GetString(_month)));
 
             return base.ValidateInput();

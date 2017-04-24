@@ -20,10 +20,10 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' and FabricType = 'A'";
-            txtuser2.TextBox1.ReadOnly = true;
-            txtuser2.TextBox1.IsSupportEditMode = false;
+            txtuserApprove.TextBox1.ReadOnly = true;
+            txtuserApprove.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
-            displayBox5.ReadOnly = true;
+            displayIssueLackDate.ReadOnly = true;
             
         }
 
@@ -45,8 +45,8 @@ order by ld.Seq1,ld.Seq2", masterID);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "L,Lacking,R,Replacement");
-            MyUtility.Tool.SetupCombox(comboBox2, 2, 1, "D,Day,N,Night,O,Subcon-Out");
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "L,Lacking,R,Replacement");
+            MyUtility.Tool.SetupCombox(comboShift, 2, 1, "D,Day,N,Night,O,Subcon-Out");
         }
 
         protected override void OnDetailGridSetup()
@@ -352,31 +352,31 @@ order by ld.Seq1,ld.Seq2", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("Type can't empty");
-                comboBox1.Focus();
+                comboType.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shift"]))
             {
                 MyUtility.Msg.WarningBox("Shift can't empty");
-                comboBox2.Focus();
+                comboShift.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("SP# can't empty");
-                textBox2.Focus();
+                txtSPNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("Sewing Line can't empty");
-                txtsewingline1.Focus();
+                txtSewingLine.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ApplyName"]))
             {
                 MyUtility.Msg.WarningBox("Handle can't empty");
-                txtuser1.TextBox1.Focus();
+                txtuserHandle.TextBox1.Focus();
                 return false;
             }
             #endregion
@@ -436,7 +436,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return false;
             }
             StringBuilder msg = new StringBuilder();
-            if (comboBox1.Text != "Lacking")
+            if (comboType.Text != "Lacking")
             {
                 foreach (DataRow dr in ExceedData.Rows)
                 {
@@ -499,8 +499,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
             worksheet.Cells[5, 4] = MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "D" ? "Day" : MyUtility.Convert.GetString(CurrentMaintain["Shift"]) == "N" ? "Night" : "Subcon-Out";
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(CurrentMaintain["SewingLineID"]);
 
-            worksheet.Cells[4, 6] = txtuser1.TextBox1.Text + " " + txtuser1.DisplayBox1.Text;
-            worksheet.Cells[5, 6] = txtuser2.TextBox1.Text + " " + txtuser2.DisplayBox1.Text;
+            worksheet.Cells[4, 6] = txtuserHandle.TextBox1.Text + " " + txtuserHandle.DisplayBox1.Text;
+            worksheet.Cells[5, 6] = txtuserApprove.TextBox1.Text + " " + txtuserApprove.DisplayBox1.Text;
             worksheet.Cells[6, 6] = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString("d");
 
             int intRowsStart = 10;
@@ -547,7 +547,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             if (EditMode)
             {
-                if (comboBox1.OldValue != comboBox1.SelectedValue && detailgridbs.DataSource != null)
+                if (comboType.OldValue != comboType.SelectedValue && detailgridbs.DataSource != null)
                 {
                     foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
                     {
@@ -563,12 +563,12 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         {
             if (EditMode)
             {
-                if (textBox2.OldValue != textBox2.Text)
+                if (txtSPNo.OldValue != txtSPNo.Text)
                 {
-                    if (!MyUtility.Check.Empty(textBox2.Text))
+                    if (!MyUtility.Check.Empty(txtSPNo.Text))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox2.Text);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -580,7 +580,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderPOID);
                         if (result && OrderPOID.Rows.Count > 0)
                         {
-                            CurrentMaintain["OrderID"] = textBox2.Text;
+                            CurrentMaintain["OrderID"] = txtSPNo.Text;
                             CurrentMaintain["POID"] = OrderPOID.Rows[0]["POID"];
                             CurrentMaintain["FactoryID"] = OrderPOID.Rows[0]["FtyGroup"];
                         }
@@ -686,10 +686,10 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["IssueLackDT"]))
             {
-                this.displayBox5.Text = Convert.ToDateTime(this.CurrentMaintain["IssueLackDT"]).ToString("yyyy/MM/dd HH:mm:ss");
+                this.displayIssueLackDate.Text = Convert.ToDateTime(this.CurrentMaintain["IssueLackDT"]).ToString("yyyy/MM/dd HH:mm:ss");
             }
             else
-            this.displayBox5.Text = "";
+            this.displayIssueLackDate.Text = "";
         }
         #region -- SelePoItem --
         public static string selePoItemSqlCmd = @"select  p.id,

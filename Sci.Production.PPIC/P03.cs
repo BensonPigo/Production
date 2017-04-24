@@ -49,7 +49,7 @@ namespace Sci.Production.PPIC
             ftyRemark.CharacterCasing = CharacterCasing.Normal;
             rcvDate.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.gridProductionKitsConfirm.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && (Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddDays(180) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-180)))
                 {
                     MyUtility.Msg.WarningBox("< FTY MR Rcv date > is invalid, it exceeds +/-180 days!!");
@@ -59,9 +59,9 @@ namespace Sci.Production.PPIC
                 }
             };
          
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridProductionKitsConfirm.DataSource = listControlBindingSource1;
+            gridProductionKitsConfirm.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridProductionKitsConfirm)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -79,14 +79,14 @@ namespace Sci.Production.PPIC
                 .Text("POHandleName", header: "PO Handle", width: Widths.AnsiChars(38), iseditingreadonly: true)
                 .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(38), iseditingreadonly: true);
 
-            this.grid1.Columns["ReceiveDate"].DefaultCellStyle.BackColor = Color.LightYellow;
-            this.grid1.Columns["FtyRemark"].DefaultCellStyle.BackColor = Color.LightYellow;
+            this.gridProductionKitsConfirm.Columns["ReceiveDate"].DefaultCellStyle.BackColor = Color.LightYellow;
+            this.gridProductionKitsConfirm.Columns["FtyRemark"].DefaultCellStyle.BackColor = Color.LightYellow;
         }
 
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridProductionKitsConfirm.ValidateControl();
             listControlBindingSource1.EndEdit();
             f = comboFactory.SelectedValue.ToString();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
@@ -112,21 +112,21 @@ namespace Sci.Production.PPIC
             }
              query = 1;
             QueryData();
-            this.grid1.AutoResizeColumn(0);
-            this.grid1.AutoResizeColumn(1);
-            this.grid1.AutoResizeColumn(2);
-            this.grid1.AutoResizeColumn(4);
-            this.grid1.AutoResizeColumn(5);
-            this.grid1.AutoResizeColumn(6);
-            this.grid1.AutoResizeColumn(7);
-            this.grid1.AutoResizeColumn(8);
-            this.grid1.AutoResizeColumn(9);
-            this.grid1.AutoResizeColumn(10);
-            this.grid1.AutoResizeColumn(11);
-            this.grid1.AutoResizeColumn(12);
-            this.grid1.AutoResizeColumn(13);
-            this.grid1.AutoResizeColumn(14);
-            this.grid1.AutoResizeColumn(15);
+            this.gridProductionKitsConfirm.AutoResizeColumn(0);
+            this.gridProductionKitsConfirm.AutoResizeColumn(1);
+            this.gridProductionKitsConfirm.AutoResizeColumn(2);
+            this.gridProductionKitsConfirm.AutoResizeColumn(4);
+            this.gridProductionKitsConfirm.AutoResizeColumn(5);
+            this.gridProductionKitsConfirm.AutoResizeColumn(6);
+            this.gridProductionKitsConfirm.AutoResizeColumn(7);
+            this.gridProductionKitsConfirm.AutoResizeColumn(8);
+            this.gridProductionKitsConfirm.AutoResizeColumn(9);
+            this.gridProductionKitsConfirm.AutoResizeColumn(10);
+            this.gridProductionKitsConfirm.AutoResizeColumn(11);
+            this.gridProductionKitsConfirm.AutoResizeColumn(12);
+            this.gridProductionKitsConfirm.AutoResizeColumn(13);
+            this.gridProductionKitsConfirm.AutoResizeColumn(14);
+            this.gridProductionKitsConfirm.AutoResizeColumn(15);
         }
 
         private void QueryData()
@@ -145,19 +145,19 @@ left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is null
 and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
             
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtStyleNo.Text))
             {
-               sqlCmd.Append(string.Format(" and s.ID = '{0}'",textBox1.Text));   
+               sqlCmd.Append(string.Format(" and s.ID = '{0}'",txtStyleNo.Text));   
             }
 
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtSeason.Text))
             {
-               sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", textBox2.Text));
+               sqlCmd.Append(string.Format(" and s.SeasonID = '{0}'", txtSeason.Text));
             }
 
-            if (!MyUtility.Check.Empty(dateBox1.Value))
+            if (!MyUtility.Check.Empty(dateSendDate.Value))
             {
-               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateBox1.Value).ToString("d")));               
+               sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'",Convert.ToDateTime(dateSendDate.Value).ToString("d")));               
             }
          
             if (query == 1)
@@ -193,13 +193,13 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
         {
            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
-                if (MyUtility.Check.Empty(dateBox2.Value))
+                if (MyUtility.Check.Empty(dateFactoryReceiveDate.Value))
                 {
                     dr["ReceiveDate"] = DBNull.Value;
                 }
                 else
                 {
-                    dr["ReceiveDate"] = dateBox2.Value;
+                    dr["ReceiveDate"] = dateFactoryReceiveDate.Value;
                 }
             }
         }
@@ -213,7 +213,7 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
         private bool SaveData()
         {
             IList<string> updateCmds = new List<string>();
-            this.grid1.ValidateControl();
+            this.gridProductionKitsConfirm.ValidateControl();
             listControlBindingSource1.EndEdit();
             StringBuilder cmds = new StringBuilder();
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
@@ -253,9 +253,9 @@ and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
         //View Detail
         private void button5_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridProductionKitsConfirm.ValidateControl();
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
-            DoForm.Set(false, ((DataTable)listControlBindingSource1.DataSource).ToList(), grid1.GetDataRow(grid1.GetSelectedRowIndex())); DoForm.ShowDialog(this);
+            DoForm.Set(false, ((DataTable)listControlBindingSource1.DataSource).ToList(), gridProductionKitsConfirm.GetDataRow(gridProductionKitsConfirm.GetSelectedRowIndex())); DoForm.ShowDialog(this);
         }
     }
 }

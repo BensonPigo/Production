@@ -33,21 +33,21 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.dateUpdatedDate = new Sci.Win.UI.DateBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelUpdatedDate = new Sci.Win.UI.Label();
             this.dateLastDate = new Sci.Win.UI.DateBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelLastDate = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnExcel = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridUpdateOrder = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridUpdateOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,11 +70,11 @@
             // panel3
             // 
             this.panel3.Controls.Add(this.comboFactory);
-            this.panel3.Controls.Add(this.label3);
+            this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Controls.Add(this.dateUpdatedDate);
-            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.labelUpdatedDate);
             this.panel3.Controls.Add(this.dateLastDate);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.labelLastDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
@@ -93,14 +93,14 @@
             this.comboFactory.TabIndex = 2;
             this.comboFactory.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
-            // label3
+            // labelFactory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(680, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(680, 10);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(55, 23);
+            this.labelFactory.TabIndex = 4;
+            this.labelFactory.Text = "Factory";
             // 
             // dateUpdatedDate
             // 
@@ -110,14 +110,14 @@
             this.dateUpdatedDate.TabIndex = 1;
             this.dateUpdatedDate.ValueChanged += new System.EventHandler(this.dateBox2_ValueChanged);
             // 
-            // label2
+            // labelUpdatedDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(331, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(90, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Updated Date";
+            this.labelUpdatedDate.Lines = 0;
+            this.labelUpdatedDate.Location = new System.Drawing.Point(331, 10);
+            this.labelUpdatedDate.Name = "labelUpdatedDate";
+            this.labelUpdatedDate.Size = new System.Drawing.Size(90, 23);
+            this.labelUpdatedDate.TabIndex = 2;
+            this.labelUpdatedDate.Text = "Updated Date";
             // 
             // dateLastDate
             // 
@@ -128,14 +128,14 @@
             this.dateLastDate.Size = new System.Drawing.Size(110, 23);
             this.dateLastDate.TabIndex = 0;
             // 
-            // label1
+            // labelLastDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(8, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Last Date";
+            this.labelLastDate.Lines = 0;
+            this.labelLastDate.Location = new System.Drawing.Point(8, 10);
+            this.labelLastDate.Name = "labelLastDate";
+            this.labelLastDate.Size = new System.Drawing.Size(64, 23);
+            this.labelLastDate.TabIndex = 0;
+            this.labelLastDate.Text = "Last Date";
             // 
             // panel4
             // 
@@ -172,36 +172,36 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridUpdateOrder);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 40);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(906, 404);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridUpdateOrder
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(906, 404);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridUpdateOrder.AllowUserToAddRows = false;
+            this.gridUpdateOrder.AllowUserToDeleteRows = false;
+            this.gridUpdateOrder.AllowUserToResizeRows = false;
+            this.gridUpdateOrder.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridUpdateOrder.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridUpdateOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridUpdateOrder.DataSource = this.listControlBindingSource1;
+            this.gridUpdateOrder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridUpdateOrder.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridUpdateOrder.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridUpdateOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridUpdateOrder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridUpdateOrder.Location = new System.Drawing.Point(0, 0);
+            this.gridUpdateOrder.Name = "gridUpdateOrder";
+            this.gridUpdateOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridUpdateOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridUpdateOrder.RowTemplate.Height = 24;
+            this.gridUpdateOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridUpdateOrder.Size = new System.Drawing.Size(906, 404);
+            this.gridUpdateOrder.TabIndex = 0;
+            this.gridUpdateOrder.TabStop = false;
             // 
             // P02
             // 
@@ -225,7 +225,7 @@
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridUpdateOrder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -237,16 +237,16 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.ComboBox comboFactory;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelFactory;
         private Win.UI.DateBox dateUpdatedDate;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelUpdatedDate;
         private Win.UI.DateBox dateLastDate;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelLastDate;
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnExcel;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridUpdateOrder;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

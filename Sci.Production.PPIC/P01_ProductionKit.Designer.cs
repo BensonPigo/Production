@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.labelMR = new Sci.Win.UI.Label();
+            this.comboMR = new Sci.Win.UI.ComboBox();
+            this.labelSMR = new Sci.Win.UI.Label();
+            this.comboSMR = new Sci.Win.UI.ComboBox();
+            this.checkMRnotSendYet = new Sci.Win.UI.CheckBox();
+            this.checkFactorynotReceived = new Sci.Win.UI.CheckBox();
             this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -89,97 +89,97 @@
             this.save.Size = new System.Drawing.Size(80, 34);
             this.save.TabIndex = 4;
             // 
-            // label1
+            // labelFactory
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(15, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(15, 11);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(51, 23);
+            this.labelFactory.TabIndex = 98;
+            this.labelFactory.Text = "Factory";
             // 
-            // comboBox1
+            // comboFactory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(70, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(57, 24);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(70, 11);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(57, 24);
+            this.comboFactory.TabIndex = 0;
+            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label2
+            // labelMR
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(195, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "MR";
+            this.labelMR.Lines = 0;
+            this.labelMR.Location = new System.Drawing.Point(195, 11);
+            this.labelMR.Name = "labelMR";
+            this.labelMR.Size = new System.Drawing.Size(29, 23);
+            this.labelMR.TabIndex = 100;
+            this.labelMR.Text = "MR";
             // 
-            // comboBox2
+            // comboMR
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(228, 11);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(80, 24);
-            this.comboBox2.TabIndex = 1;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboMR.BackColor = System.Drawing.Color.White;
+            this.comboMR.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMR.FormattingEnabled = true;
+            this.comboMR.IsSupportUnselect = true;
+            this.comboMR.Location = new System.Drawing.Point(228, 11);
+            this.comboMR.Name = "comboMR";
+            this.comboMR.Size = new System.Drawing.Size(80, 24);
+            this.comboMR.TabIndex = 1;
+            this.comboMR.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
-            // label3
+            // labelSMR
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(380, 11);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(37, 23);
-            this.label3.TabIndex = 102;
-            this.label3.Text = "SMR";
+            this.labelSMR.Lines = 0;
+            this.labelSMR.Location = new System.Drawing.Point(380, 11);
+            this.labelSMR.Name = "labelSMR";
+            this.labelSMR.Size = new System.Drawing.Size(37, 23);
+            this.labelSMR.TabIndex = 102;
+            this.labelSMR.Text = "SMR";
             // 
-            // comboBox3
+            // comboSMR
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(421, 11);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(80, 24);
-            this.comboBox3.TabIndex = 2;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.comboSMR.BackColor = System.Drawing.Color.White;
+            this.comboSMR.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSMR.FormattingEnabled = true;
+            this.comboSMR.IsSupportUnselect = true;
+            this.comboSMR.Location = new System.Drawing.Point(421, 11);
+            this.comboSMR.Name = "comboSMR";
+            this.comboSMR.Size = new System.Drawing.Size(80, 24);
+            this.comboSMR.TabIndex = 2;
+            this.comboSMR.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
-            // checkBox1
+            // checkMRnotSendYet
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(550, 11);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(130, 21);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "MR not send yet";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkMRnotSendYet.AutoSize = true;
+            this.checkMRnotSendYet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkMRnotSendYet.IsSupportEditMode = false;
+            this.checkMRnotSendYet.Location = new System.Drawing.Point(550, 11);
+            this.checkMRnotSendYet.Name = "checkMRnotSendYet";
+            this.checkMRnotSendYet.Size = new System.Drawing.Size(130, 21);
+            this.checkMRnotSendYet.TabIndex = 3;
+            this.checkMRnotSendYet.Text = "MR not send yet";
+            this.checkMRnotSendYet.UseVisualStyleBackColor = true;
+            this.checkMRnotSendYet.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // checkBox2
+            // checkFactorynotReceived
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(702, 11);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(156, 21);
-            this.checkBox2.TabIndex = 4;
-            this.checkBox2.Text = "Factory not received";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkFactorynotReceived.AutoSize = true;
+            this.checkFactorynotReceived.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkFactorynotReceived.IsSupportEditMode = false;
+            this.checkFactorynotReceived.Location = new System.Drawing.Point(702, 11);
+            this.checkFactorynotReceived.Name = "checkFactorynotReceived";
+            this.checkFactorynotReceived.Size = new System.Drawing.Size(156, 21);
+            this.checkFactorynotReceived.TabIndex = 4;
+            this.checkFactorynotReceived.Text = "Factory not received";
+            this.checkFactorynotReceived.UseVisualStyleBackColor = true;
+            this.checkFactorynotReceived.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // button1
             // 
@@ -196,14 +196,14 @@
             // P01_ProductionKit
             // 
             this.ClientSize = new System.Drawing.Size(908, 497);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.checkFactorynotReceived);
+            this.Controls.Add(this.checkMRnotSendYet);
+            this.Controls.Add(this.comboSMR);
+            this.Controls.Add(this.labelSMR);
+            this.Controls.Add(this.comboMR);
+            this.Controls.Add(this.labelMR);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.labelFactory);
             this.DefaultControl = "comboBox1";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.KeyField1 = "StyleUkey";
@@ -212,14 +212,14 @@
             this.WorkAlias = "Style_ProductionKits";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.comboBox3, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.checkBox2, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.labelMR, 0);
+            this.Controls.SetChildIndex(this.comboMR, 0);
+            this.Controls.SetChildIndex(this.labelSMR, 0);
+            this.Controls.SetChildIndex(this.comboSMR, 0);
+            this.Controls.SetChildIndex(this.checkMRnotSendYet, 0);
+            this.Controls.SetChildIndex(this.checkFactorynotReceived, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -231,13 +231,13 @@
         #endregion
 
         private Win.UI.Button button1;
-        private Win.UI.Label label1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label2;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.Label label3;
-        private Win.UI.ComboBox comboBox3;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.CheckBox checkBox2;
+        private Win.UI.Label labelFactory;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.Label labelMR;
+        private Win.UI.ComboBox comboMR;
+        private Win.UI.Label labelSMR;
+        private Win.UI.ComboBox comboSMR;
+        private Win.UI.CheckBox checkMRnotSendYet;
+        private Win.UI.CheckBox checkFactorynotReceived;
     }
 }

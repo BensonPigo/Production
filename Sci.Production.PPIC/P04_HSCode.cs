@@ -40,9 +40,9 @@ order by sh.Continent,sh.CountryID,sh.Article", styleUkey);
             listControlBindingSource1.DataSource = selectDataTable;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridHSCode.IsEditingReadOnly = true;
+            this.gridHSCode.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridHSCode)
                  .Text("Continent", header: "Continent", width: Widths.AnsiChars(2))
                  .Text("Country", header: "Country", width: Widths.AnsiChars(15))
                  .Text("Article", header: "Article", width: Widths.AnsiChars(8))

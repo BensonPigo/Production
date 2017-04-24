@@ -49,16 +49,16 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
             
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.RowHeadersVisible = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridUpdateOrder.IsEditingReadOnly = true;
+            this.gridUpdateOrder.RowHeadersVisible = true;
+            this.gridUpdateOrder.DataSource = listControlBindingSource1;
+            this.gridUpdateOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 
             //當欄位值為0時，顯示空白
             oriqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             newqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridUpdateOrder)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14))
                 .Text("OriginalStyleID", header: "Style", width: Widths.AnsiChars(14))
@@ -82,20 +82,20 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 .Text("NewSMnorder", header: "S/M.Notice", width: Widths.AnsiChars(1))
                 .Text("MnorderApv2", header: "VAS/SHAS", width: Widths.AnsiChars(1));
             //因為資料會有變色，所以按Grid Header不可以做排序
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
+            for (int i = 0; i < this.gridUpdateOrder.ColumnCount; i++)
             {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridUpdateOrder.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            grid1.RowsAdded += (s, e) =>
+            gridUpdateOrder.RowsAdded += (s, e) =>
             {
                 DataTable dtData = (DataTable)listControlBindingSource1.DataSource;
                 for (int i = 0; i < e.RowCount; i++)
                 {
                     if ((dtData.Rows[i]["OriginalQty"].ToString() != dtData.Rows[i]["NewQty"].ToString() && dtData.Rows[i]["NewQty"].ToString() == "0") || dtData.Rows[i]["JunkOrder"].ToString() == "V" || dtData.Rows[i]["DeleteOrder"].ToString() == "V")
                     {
-                        grid1.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                        grid1.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                        gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
+                        gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                     }
                 }
             };
@@ -139,7 +139,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                 dateLastDate.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
             }
 
-            this.grid1.AutoResizeColumns();
+            this.gridUpdateOrder.AutoResizeColumns();
         }
 
         //Close

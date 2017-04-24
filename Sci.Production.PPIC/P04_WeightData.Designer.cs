@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnCopySeason = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -36,7 +36,7 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Controls.Add(this.btnCopySeason);
             this.btmcont.Location = new System.Drawing.Point(0, 323);
             this.btmcont.Size = new System.Drawing.Size(635, 44);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -44,7 +44,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnCopySeason, 0);
             // 
             // gridcont
             // 
@@ -74,16 +74,16 @@
             this.save.Location = new System.Drawing.Point(465, 5);
             this.save.Size = new System.Drawing.Size(80, 34);
             // 
-            // button1
+            // btnCopySeason
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(272, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(111, 30);
-            this.button1.TabIndex = 95;
-            this.button1.Text = "Copy Season";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnCopySeason.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCopySeason.Location = new System.Drawing.Point(272, 8);
+            this.btnCopySeason.Name = "btnCopySeason";
+            this.btnCopySeason.Size = new System.Drawing.Size(111, 30);
+            this.btnCopySeason.TabIndex = 95;
+            this.btnCopySeason.Text = "Copy Season";
+            this.btnCopySeason.UseVisualStyleBackColor = true;
+            this.btnCopySeason.Click += new System.EventHandler(this.button1_Click);
             // 
             // P04_WeightData
             // 
@@ -106,6 +106,6 @@
 
         #endregion
 
-        private Win.UI.Button button1;
+        private Win.UI.Button btnCopySeason;
     }
 }

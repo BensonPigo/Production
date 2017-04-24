@@ -28,18 +28,18 @@ namespace Sci.Production.PPIC
             comboBox1_RowSource.Add("5", "Friday");
             comboBox1_RowSource.Add("6", "Saturday");
             comboBox1_RowSource.Add("0", "Sunday");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboWeekDay.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboWeekDay.ValueMember = "Key";
+            comboWeekDay.DisplayMember = "Value";
 
             //填預設值
-            this.textBox1.Text = this.motherData["SewingLineID"].ToString();
-            this.textBox2.Text = this.motherData["SewingLineID"].ToString();
-            this.dateRange1.Text1 = Convert.ToDateTime(this.motherData["Date"]).ToString("d");
-            this.dateRange1.Text2 = Convert.ToDateTime(this.motherData["Date"]).ToString("d");
-            this.comboBox1.SelectedValue = "7";
-            this.numericBox1.Text = this.motherData["Hours"].ToString();
-            this.checkBox1.Checked = false;
+            this.txtLineNoStart.Text = this.motherData["SewingLineID"].ToString();
+            this.txtLineNoEnd.Text = this.motherData["SewingLineID"].ToString();
+            this.dateDate.Text1 = Convert.ToDateTime(this.motherData["Date"]).ToString("d");
+            this.dateDate.Text2 = Convert.ToDateTime(this.motherData["Date"]).ToString("d");
+            this.comboWeekDay.SelectedValue = "7";
+            this.numHours.Text = this.motherData["Hours"].ToString();
+            this.checkItsAHoliday.Checked = false;
         }
 
         //Line#按右鍵開窗
@@ -90,13 +90,13 @@ namespace Sci.Production.PPIC
         private void button1_Click(object sender, EventArgs e)
         {
             //檢查Date不可為空值
-            if (MyUtility.Check.Empty(this.dateRange1.Value1))
+            if (MyUtility.Check.Empty(this.dateDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.dateRange1.Value2))
+            if (MyUtility.Check.Empty(this.dateDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
                 return;
@@ -104,7 +104,7 @@ namespace Sci.Production.PPIC
 
             //先將屬於登入的工廠的SewingLine資料給撈出來
             DataTable sewingLine;
-            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Sci.Env.User.Factory + "' and ID >= '" + this.textBox1.Text + "' and ID <= '" + this.textBox2.Text + "' order by ID";
+            string sqlCommand = "select ID from SewingLine WITH (NOLOCK) where FactoryID = '" + Sci.Env.User.Factory + "' and ID >= '" + this.txtLineNoStart.Text + "' and ID <= '" + this.txtLineNoEnd.Text + "' order by ID";
             DualResult returnResult = DBProxy.Current.Select(null, sqlCommand, out sewingLine);
             if (!returnResult)
             {
@@ -113,13 +113,13 @@ namespace Sci.Production.PPIC
             }
 
             //組出要新增的資料
-            DateTime startDate = Convert.ToDateTime(this.dateRange1.Text1);
+            DateTime startDate = Convert.ToDateTime(this.dateDate.Text1);
             bool doInsert;
             IList<string> insertCmds = new List<string>();
-            while (startDate <= Convert.ToDateTime(this.dateRange1.Text2))
+            while (startDate <= Convert.ToDateTime(this.dateDate.Text2))
             {
                 doInsert = true;
-                switch ((string)this.comboBox1.SelectedValue)
+                switch ((string)this.comboWeekDay.SelectedValue)
                 {
                     case "0":
                         if ((int)startDate.DayOfWeek != 0)
@@ -184,11 +184,11 @@ namespace Sci.Production.PPIC
                             if (!MyUtility.Check.Seek(sqlCommand, null))
                             {
                                 insertCmds.Add(string.Format(@"Insert into WorkHour (SewingLineID,FactoryID,Date,Hours,Holiday,AddName,AddDate)
-Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"), this.numericBox1.Text.ToString(), this.checkBox1.Checked, Sci.Env.User.UserID));
+Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());", currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d"), this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Sci.Env.User.UserID));
                             }
                             else
                             {
-                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numericBox1.Text.ToString(), this.checkBox1.Checked, Sci.Env.User.UserID, currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d")));
+                                insertCmds.Add(string.Format("Update WorkHour set Hours = '{0}', Holiday = '{1}', EditName = '{2}', EditDate = GETDATE() where SewingLineID = '{3}' and FactoryID = '{4}' and Date = '{5}';", this.numHours.Text.ToString(), this.checkItsAHoliday.Checked, Sci.Env.User.UserID, currentRecord["ID"].ToString(), Sci.Env.User.Factory, startDate.ToString("d")));
                             }
                         }
                     }
@@ -231,14 +231,14 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());", currentRecord["ID"].ToS
         //It's a holiday
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkItsAHoliday.Checked)
             {
-                numericBox1.Value = 0;
-                numericBox1.ReadOnly = true;
+                numHours.Value = 0;
+                numHours.ReadOnly = true;
             }
             else
             {
-                numericBox1.ReadOnly = false;
+                numHours.ReadOnly = false;
             }
         }
     }

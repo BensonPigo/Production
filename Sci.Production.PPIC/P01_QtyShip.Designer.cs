@@ -38,7 +38,7 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel8 = new Sci.Win.UI.Panel();
             this.panel10 = new Sci.Win.UI.Panel();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridQtyBreakDownbyArticleSizeDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel9 = new Sci.Win.UI.Panel();
             this.label1 = new Sci.Win.UI.Label();
@@ -47,17 +47,17 @@
             this.rbQty = new System.Windows.Forms.RadioButton();
             this.button1 = new Sci.Win.UI.Button();
             this.panel6 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridQtyBreakDownByShipmode = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDownbyArticleSizeDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel9.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDownByShipmode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,30 +116,30 @@
             // 
             // panel10
             // 
-            this.panel10.Controls.Add(this.grid2);
+            this.panel10.Controls.Add(this.gridQtyBreakDownbyArticleSizeDetail);
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(0, 35);
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(815, 241);
             this.panel10.TabIndex = 1;
             // 
-            // grid2
+            // gridQtyBreakDownbyArticleSizeDetail
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToOrderColumns = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 0);
-            this.grid2.Name = "grid2";
+            this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToAddRows = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToDeleteRows = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToOrderColumns = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.AllowUserToResizeRows = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBreakDownbyArticleSizeDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBreakDownbyArticleSizeDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBreakDownbyArticleSizeDetail.DataSource = this.listControlBindingSource2;
+            this.gridQtyBreakDownbyArticleSizeDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridQtyBreakDownbyArticleSizeDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBreakDownbyArticleSizeDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBreakDownbyArticleSizeDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBreakDownbyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBreakDownbyArticleSizeDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridQtyBreakDownbyArticleSizeDetail.Name = "gridQtyBreakDownbyArticleSizeDetail";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -147,14 +147,14 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(815, 241);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
+            this.gridQtyBreakDownbyArticleSizeDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBreakDownbyArticleSizeDetail.Size = new System.Drawing.Size(815, 241);
+            this.gridQtyBreakDownbyArticleSizeDetail.TabIndex = 0;
+            this.gridQtyBreakDownbyArticleSizeDetail.TabStop = false;
             // 
             // panel9
             // 
@@ -230,30 +230,30 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.grid1);
+            this.panel6.Controls.Add(this.gridQtyBreakDownByShipmode);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(815, 135);
             this.panel6.TabIndex = 0;
             // 
-            // grid1
+            // gridQtyBreakDownByShipmode
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToOrderColumns = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridQtyBreakDownByShipmode.AllowUserToAddRows = false;
+            this.gridQtyBreakDownByShipmode.AllowUserToDeleteRows = false;
+            this.gridQtyBreakDownByShipmode.AllowUserToOrderColumns = false;
+            this.gridQtyBreakDownByShipmode.AllowUserToResizeRows = false;
+            this.gridQtyBreakDownByShipmode.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBreakDownByShipmode.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBreakDownByShipmode.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBreakDownByShipmode.DataSource = this.listControlBindingSource1;
+            this.gridQtyBreakDownByShipmode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridQtyBreakDownByShipmode.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBreakDownByShipmode.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBreakDownByShipmode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBreakDownByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBreakDownByShipmode.Location = new System.Drawing.Point(0, 0);
+            this.gridQtyBreakDownByShipmode.Name = "gridQtyBreakDownByShipmode";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -261,14 +261,14 @@
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(815, 135);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
+            this.gridQtyBreakDownByShipmode.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBreakDownByShipmode.Size = new System.Drawing.Size(815, 135);
+            this.gridQtyBreakDownByShipmode.TabIndex = 0;
+            this.gridQtyBreakDownByShipmode.TabStop = false;
             // 
             // P01_QtyShip
             // 
@@ -284,13 +284,13 @@
             this.panel5.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
             this.panel10.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDownbyArticleSizeDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel9.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
             this.panel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDownByShipmode)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -305,14 +305,14 @@
         private Win.UI.Panel panel5;
         private Win.UI.Panel panel8;
         private Win.UI.Panel panel10;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridQtyBreakDownbyArticleSizeDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Panel panel9;
         private Win.UI.Label label1;
         private Win.UI.Panel panel7;
         private Win.UI.Button button1;
         private Win.UI.Panel panel6;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridQtyBreakDownByShipmode;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.RadioButton rbOriQty;
         private System.Windows.Forms.RadioButton rbQty;

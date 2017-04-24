@@ -55,7 +55,7 @@ namespace Sci.Production.PPIC
         protected override bool ToExcel()
         {
             this.ShowWaitMessage("Data processing, please wait ...");
-            if (radioButton_MNotice.Checked == true)
+            if (radioMNotice.Checked == true)
             {
                 string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.MNOrder WITH (NOLOCK) where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
 
@@ -77,7 +77,7 @@ namespace Sci.Production.PPIC
                 sxr.dicDatas.Add(sxr._v + "POID", poid);
 
                 System.Data.DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", chkAdditional.Checked), new SqlParameter("@fullsize", 1) }, out dts);
+                DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out dts);
 
                 sxrc.xltRptTable xltTbl = new sxrc.xltRptTable(dts[0], 1, 0, false, 18, 2);
                 for (int i = 3; i <= 18; i++)
@@ -108,7 +108,7 @@ namespace Sci.Production.PPIC
                     string ID = dt.Rows[i]["ID"].ToString();
                     string idxStr = i.ToString();
 
-                    res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", chkAdditional.Checked) }, out dts);
+                    res = DBProxy.Current.SelectSP("", "PPIC_Report02", new List<SqlParameter> { new SqlParameter("@ID", ID), new SqlParameter("@WithZ", checkAdditionally.Checked) }, out dts);
 
                     sxr.dicDatas.Add(sxr._v + "Now" + idxStr, DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SP" + idxStr, ID);
@@ -165,7 +165,7 @@ namespace Sci.Production.PPIC
                     DataRow drvar = GetTitleDataByCustCD(poid, OrderComboID);
 
                     System.Data.DataTable[] dts;
-                    DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", OrderComboID), new SqlParameter("@WithZ", chkAdditional.Checked), new SqlParameter("@ByType", 1) }, out dts);
+                    DualResult res = DBProxy.Current.SelectSP("", "PPIC_Report04", new List<SqlParameter> { new SqlParameter("@ID", OrderComboID), new SqlParameter("@WithZ", checkAdditionally.Checked), new SqlParameter("@ByType", 1) }, out dts);
 
                     if (drvar == null | !res)
                     {
@@ -332,8 +332,8 @@ where POID = @poid group by POID,b.spno";
 
         void rd_CheckedChanged(object sender, EventArgs e)
         {
-            chkAdditional.Visible = false;
-            chkAdditional.Visible = radioButton_MNotice.Checked || radioButton_ByCustCD.Checked;
+            checkAdditionally.Visible = false;
+            checkAdditionally.Visible = radioMNotice.Checked || radioByOrderCombo.Checked;
         }
     }
 }

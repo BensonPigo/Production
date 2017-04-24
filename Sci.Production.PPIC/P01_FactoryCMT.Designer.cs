@@ -34,16 +34,16 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.numericBox5 = new Sci.Win.UI.NumericBox();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.numStdFtyCMP = new Sci.Win.UI.NumericBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
+            this.numLocalPurchase = new Sci.Win.UI.NumericBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.numSubProcess = new Sci.Win.UI.NumericBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.numCPUCost = new Sci.Win.UI.NumericBox();
             this.label7 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.numCPU = new Sci.Win.UI.NumericBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -51,11 +51,11 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridFactoryCMT = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFactoryCMT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -85,16 +85,16 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button1);
-            this.panel4.Controls.Add(this.numericBox5);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.numStdFtyCMP);
             this.panel4.Controls.Add(this.label10);
-            this.panel4.Controls.Add(this.numericBox4);
+            this.panel4.Controls.Add(this.numLocalPurchase);
             this.panel4.Controls.Add(this.label9);
-            this.panel4.Controls.Add(this.numericBox3);
+            this.panel4.Controls.Add(this.numSubProcess);
             this.panel4.Controls.Add(this.label8);
-            this.panel4.Controls.Add(this.numericBox2);
+            this.panel4.Controls.Add(this.numCPUCost);
             this.panel4.Controls.Add(this.label7);
-            this.panel4.Controls.Add(this.numericBox1);
+            this.panel4.Controls.Add(this.numCPU);
             this.panel4.Controls.Add(this.label6);
             this.panel4.Controls.Add(this.label5);
             this.panel4.Controls.Add(this.label4);
@@ -107,34 +107,34 @@
             this.panel4.Size = new System.Drawing.Size(752, 77);
             this.panel4.TabIndex = 3;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(671, 28);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(671, 28);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // numericBox5
+            // numStdFtyCMP
             // 
-            this.numericBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox5.DecimalPlaces = 2;
-            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox5.IsSupportEditMode = false;
-            this.numericBox5.Location = new System.Drawing.Point(516, 46);
-            this.numericBox5.Name = "numericBox5";
-            this.numericBox5.NullValue = new decimal(new int[] {
+            this.numStdFtyCMP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numStdFtyCMP.DecimalPlaces = 2;
+            this.numStdFtyCMP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numStdFtyCMP.IsSupportEditMode = false;
+            this.numStdFtyCMP.Location = new System.Drawing.Point(516, 46);
+            this.numStdFtyCMP.Name = "numStdFtyCMP";
+            this.numStdFtyCMP.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox5.ReadOnly = true;
-            this.numericBox5.Size = new System.Drawing.Size(100, 23);
-            this.numericBox5.TabIndex = 14;
-            this.numericBox5.Value = new decimal(new int[] {
+            this.numStdFtyCMP.ReadOnly = true;
+            this.numStdFtyCMP.Size = new System.Drawing.Size(100, 23);
+            this.numStdFtyCMP.TabIndex = 14;
+            this.numStdFtyCMP.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -154,23 +154,23 @@
             this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label10.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // numericBox4
+            // numLocalPurchase
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DecimalPlaces = 3;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(392, 46);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numLocalPurchase.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numLocalPurchase.DecimalPlaces = 3;
+            this.numLocalPurchase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numLocalPurchase.IsSupportEditMode = false;
+            this.numLocalPurchase.Location = new System.Drawing.Point(392, 46);
+            this.numLocalPurchase.Name = "numLocalPurchase";
+            this.numLocalPurchase.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(76, 23);
-            this.numericBox4.TabIndex = 12;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numLocalPurchase.ReadOnly = true;
+            this.numLocalPurchase.Size = new System.Drawing.Size(76, 23);
+            this.numLocalPurchase.TabIndex = 12;
+            this.numLocalPurchase.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -190,23 +190,23 @@
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // numericBox3
+            // numSubProcess
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DecimalPlaces = 3;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(283, 46);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numSubProcess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSubProcess.DecimalPlaces = 3;
+            this.numSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSubProcess.IsSupportEditMode = false;
+            this.numSubProcess.Location = new System.Drawing.Point(283, 46);
+            this.numSubProcess.Name = "numSubProcess";
+            this.numSubProcess.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(76, 23);
-            this.numericBox3.TabIndex = 10;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numSubProcess.ReadOnly = true;
+            this.numSubProcess.Size = new System.Drawing.Size(76, 23);
+            this.numSubProcess.TabIndex = 10;
+            this.numSubProcess.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -226,23 +226,23 @@
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // numericBox2
+            // numCPUCost
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DecimalPlaces = 3;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(190, 46);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numCPUCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCPUCost.DecimalPlaces = 3;
+            this.numCPUCost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCPUCost.IsSupportEditMode = false;
+            this.numCPUCost.Location = new System.Drawing.Point(190, 46);
+            this.numCPUCost.Name = "numCPUCost";
+            this.numCPUCost.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(60, 23);
-            this.numericBox2.TabIndex = 8;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numCPUCost.ReadOnly = true;
+            this.numCPUCost.Size = new System.Drawing.Size(60, 23);
+            this.numCPUCost.TabIndex = 8;
+            this.numCPUCost.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -263,23 +263,23 @@
             this.label7.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label7.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // numericBox1
+            // numCPU
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DecimalPlaces = 3;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(103, 46);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCPU.DecimalPlaces = 3;
+            this.numCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCPU.IsSupportEditMode = false;
+            this.numCPU.Location = new System.Drawing.Point(103, 46);
+            this.numCPU.Name = "numCPU";
+            this.numCPU.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(60, 23);
-            this.numericBox1.TabIndex = 6;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numCPU.ReadOnly = true;
+            this.numCPU.Size = new System.Drawing.Size(60, 23);
+            this.numCPU.TabIndex = 6;
+            this.numCPU.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -371,29 +371,29 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridFactoryCMT);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 10);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(752, 276);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridFactoryCMT
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridFactoryCMT.AllowUserToAddRows = false;
+            this.gridFactoryCMT.AllowUserToDeleteRows = false;
+            this.gridFactoryCMT.AllowUserToResizeRows = false;
+            this.gridFactoryCMT.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFactoryCMT.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFactoryCMT.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFactoryCMT.DataSource = this.listControlBindingSource1;
+            this.gridFactoryCMT.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFactoryCMT.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFactoryCMT.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFactoryCMT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFactoryCMT.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFactoryCMT.Location = new System.Drawing.Point(0, 0);
+            this.gridFactoryCMT.Name = "gridFactoryCMT";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -401,18 +401,18 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(752, 276);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridFactoryCMT.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridFactoryCMT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFactoryCMT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFactoryCMT.RowTemplate.Height = 24;
+            this.gridFactoryCMT.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFactoryCMT.Size = new System.Drawing.Size(752, 276);
+            this.gridFactoryCMT.TabIndex = 0;
+            this.gridFactoryCMT.TabStop = false;
             // 
             // P01_FactoryCMT
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(772, 363);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -425,7 +425,7 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFactoryCMT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -437,15 +437,15 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
-        private Win.UI.NumericBox numericBox5;
+        private Win.UI.NumericBox numStdFtyCMP;
         private Win.UI.Label label10;
-        private Win.UI.NumericBox numericBox4;
+        private Win.UI.NumericBox numLocalPurchase;
         private Win.UI.Label label9;
-        private Win.UI.NumericBox numericBox3;
+        private Win.UI.NumericBox numSubProcess;
         private Win.UI.Label label8;
-        private Win.UI.NumericBox numericBox2;
+        private Win.UI.NumericBox numCPUCost;
         private Win.UI.Label label7;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.NumericBox numCPU;
         private Win.UI.Label label6;
         private Win.UI.Label label5;
         private Win.UI.Label label4;
@@ -453,8 +453,8 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridFactoryCMT;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
     }
 }

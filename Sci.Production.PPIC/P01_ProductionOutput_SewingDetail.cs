@@ -35,9 +35,9 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridSewingDailyOutput.IsEditingReadOnly = true;
+            this.gridSewingDailyOutput.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridSewingDailyOutput)
                  .Date("OutputDate", header: "Date", width: Widths.AnsiChars(12))
                  .Text("SewingLineID", header: "Line#", width: Widths.AnsiChars(5))
                  .Text("ComboType", header: "*", width: Widths.AnsiChars(2))

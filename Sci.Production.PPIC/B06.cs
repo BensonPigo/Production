@@ -35,7 +35,7 @@ namespace Sci.Production.PPIC
 
             InitializeComponent();
             this.DefaultFilter = "FactoryID = '" + Sci.Env.User.Factory + "'";
-            txtCell1.FactoryId = Sci.Env.User.Factory;
+            txtCellNo.FactoryId = Sci.Env.User.Factory;
         }
 
         protected override void ClickNewAfter()
@@ -47,7 +47,7 @@ namespace Sci.Production.PPIC
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtLine.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -55,14 +55,14 @@ namespace Sci.Production.PPIC
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Line# > can not be empty!");
-                this.textBox1.Focus();
+                this.txtLine.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.textBox2.Focus();
+                this.txtDescription.Focus();
                 return false;
             }
    
@@ -72,12 +72,12 @@ namespace Sci.Production.PPIC
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             //當輸入的值只有一個位元且介於0~9時，自動在此值前面補數字’0’
-            if (!string.IsNullOrWhiteSpace(this.textBox1.Text) && this.textBox1.Text.Trim().Length == 1)
+            if (!string.IsNullOrWhiteSpace(this.txtLine.Text) && this.txtLine.Text.Trim().Length == 1)
             {
-                char idValue = Convert.ToChar(this.textBox1.Text.Trim().Substring(0, 1));
+                char idValue = Convert.ToChar(this.txtLine.Text.Trim().Substring(0, 1));
                 if (Convert.ToInt32(idValue) >= 48 && Convert.ToInt32(idValue) <= 57)
                 {
-                    CurrentMaintain["ID"] = "0" + this.textBox1.Text.Trim();
+                    CurrentMaintain["ID"] = "0" + this.txtLine.Text.Trim();
                 }
             }
         }

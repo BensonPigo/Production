@@ -95,9 +95,9 @@ order by ID", masterData["POID"].ToString(), masterData["ID"].ToString());
             listControlBindingSource1.DataSource = MTLImport;
             //設定Grid的顯示欄位
            
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = true;
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(20))
                 .Text("Id", header: "Working No.", width: Widths.AnsiChars(15))
                 .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))

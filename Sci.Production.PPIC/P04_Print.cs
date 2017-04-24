@@ -23,11 +23,11 @@ namespace Sci.Production.PPIC
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            style1 = txtstyle1.Text;
-            style2 = txtstyle2.Text;
-            brand = txtbrand1.Text;
-            season = txtseason1.Text;
-            localMR = txtuser1.TextBox1.Text;
+            style1 = txtstyleStart.Text;
+            style2 = txtstyleEnd.Text;
+            brand = txtbrand.Text;
+            season = txtseason.Text;
+            localMR = txtuserLocalMR.TextBox1.Text;
 
             return base.ValidateInput();
         }

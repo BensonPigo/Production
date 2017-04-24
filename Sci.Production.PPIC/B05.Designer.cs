@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelCPU = new Sci.Win.UI.Label();
+            this.labelSMV = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.numCPU = new Sci.Win.UI.NumericBox();
+            this.numSMV = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,14 +50,14 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.numSMV);
+            this.detailcont.Controls.Add(this.numCPU);
+            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.displayID);
+            this.detailcont.Controls.Add(this.labelSMV);
+            this.detailcont.Controls.Add(this.labelCPU);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(834, 357);
             this.detailcont.TabIndex = 1;
             // 
@@ -67,7 +67,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(682, 395);
+            this.browse.Size = new System.Drawing.Size(834, 395);
             // 
             // tabs
             // 
@@ -88,99 +88,99 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(31, 40);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(31, 40);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 4;
+            this.labelID.Text = "ID";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(31, 80);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(31, 80);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 5;
+            this.labelDescription.Text = "Description";
             // 
-            // label5
+            // labelCPU
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(31, 120);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "CPU";
+            this.labelCPU.Lines = 0;
+            this.labelCPU.Location = new System.Drawing.Point(31, 120);
+            this.labelCPU.Name = "labelCPU";
+            this.labelCPU.Size = new System.Drawing.Size(75, 23);
+            this.labelCPU.TabIndex = 6;
+            this.labelCPU.Text = "CPU";
             // 
-            // label6
+            // labelSMV
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(31, 160);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "SMV";
+            this.labelSMV.Lines = 0;
+            this.labelSMV.Location = new System.Drawing.Point(31, 160);
+            this.labelSMV.Name = "labelSMV";
+            this.labelSMV.Size = new System.Drawing.Size(75, 23);
+            this.labelSMV.TabIndex = 7;
+            this.labelSMV.Text = "SMV";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(110, 40);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(110, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(110, 40);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(110, 23);
+            this.displayID.TabIndex = 0;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(110, 80);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(380, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(110, 80);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(380, 23);
+            this.displayDescription.TabIndex = 1;
             // 
-            // numericBox1
+            // numCPU
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CPU", true));
-            this.numericBox1.DecimalPlaces = 3;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(110, 120);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numCPU.BackColor = System.Drawing.Color.White;
+            this.numCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CPU", true));
+            this.numCPU.DecimalPlaces = 3;
+            this.numCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCPU.Location = new System.Drawing.Point(110, 120);
+            this.numCPU.Name = "numCPU";
+            this.numCPU.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(60, 23);
-            this.numericBox1.TabIndex = 2;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numCPU.Size = new System.Drawing.Size(60, 23);
+            this.numCPU.TabIndex = 2;
+            this.numCPU.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numSMV
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMV", true));
-            this.numericBox2.DecimalPlaces = 4;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(110, 160);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numSMV.BackColor = System.Drawing.Color.White;
+            this.numSMV.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMV", true));
+            this.numSMV.DecimalPlaces = 4;
+            this.numSMV.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSMV.Location = new System.Drawing.Point(110, 160);
+            this.numSMV.Name = "numSMV";
+            this.numSMV.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(60, 23);
-            this.numericBox2.TabIndex = 3;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numSMV.Size = new System.Drawing.Size(60, 23);
+            this.numSMV.TabIndex = 3;
+            this.numSMV.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -213,13 +213,13 @@
 
         #endregion
 
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label labelSMV;
+        private Win.UI.Label labelCPU;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelID;
+        private Win.UI.NumericBox numSMV;
+        private Win.UI.NumericBox numCPU;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayID;
     }
 }

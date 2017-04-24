@@ -25,9 +25,9 @@ namespace Sci.Production.PPIC
             poID = POID;
             poCombo = POCombo;
             Text = Text + " (" + orderID + ")";
-            displayBox1.Value = poCombo;
-            displayBox2.Value = poCombo;
-            displayBox3.Value = poCombo;
+            displaySPPOCombination.Value = poCombo;
+            displayColorwayPOCombination.Value = poCombo;
+            displayDeliveryPOCombination.Value = poCombo;
         }
 
         protected override void OnFormLoaded()
@@ -40,9 +40,9 @@ namespace Sci.Production.PPIC
             StringBuilder pivot = new StringBuilder();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            var gen = Helper.Controls.Grid.Generator(this.grid1);
+            this.gridQtyBDown.IsEditingReadOnly = true;
+            this.gridQtyBDown.DataSource = listControlBindingSource1;
+            var gen = Helper.Controls.Grid.Generator(this.gridQtyBDown);
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
@@ -54,9 +54,9 @@ namespace Sci.Production.PPIC
                 }
             }
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            gen = Helper.Controls.Grid.Generator(this.grid2);
+            this.gridCombBySPNo.IsEditingReadOnly = true;
+            this.gridCombBySPNo.DataSource = listControlBindingSource2;
+            gen = Helper.Controls.Grid.Generator(this.gridCombBySPNo);
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
@@ -68,9 +68,9 @@ namespace Sci.Production.PPIC
                 }
             }
             //設定Grid3的顯示欄位
-            this.grid3.IsEditingReadOnly = true;
-            this.grid3.DataSource = listControlBindingSource3;
-            gen = Helper.Controls.Grid.Generator(this.grid3);
+            this.gridColorway.IsEditingReadOnly = true;
+            this.gridColorway.DataSource = listControlBindingSource3;
+            gen = Helper.Controls.Grid.Generator(this.gridColorway);
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
@@ -81,9 +81,9 @@ namespace Sci.Production.PPIC
                 }
             }
             //設定Grid4的顯示欄位
-            this.grid4.IsEditingReadOnly = true;
-            this.grid4.DataSource = listControlBindingSource4;
-            gen = Helper.Controls.Grid.Generator(this.grid4);
+            this.gridDelivery.IsEditingReadOnly = true;
+            this.gridDelivery.DataSource = listControlBindingSource4;
+            gen = Helper.Controls.Grid.Generator(this.gridDelivery);
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "date", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(10));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
@@ -96,10 +96,10 @@ namespace Sci.Production.PPIC
             }
 
             //凍結欄位
-            grid1.Columns[1].Frozen = true;
-            grid2.Columns[2].Frozen = true;
-            grid3.Columns[1].Frozen = true;
-            grid4.Columns[2].Frozen = true;
+            gridQtyBDown.Columns[1].Frozen = true;
+            gridCombBySPNo.Columns[2].Frozen = true;
+            gridColorway.Columns[1].Frozen = true;
+            gridDelivery.Columns[2].Frozen = true;
 
             #region 撈Grid1資料
             sqlCmd = string.Format(@"with tmpData
@@ -409,14 +409,14 @@ namespace Sci.Production.PPIC
 
         private void rarioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (rbQty.Checked)
+            if (radioQty.Checked)
             {
                 listControlBindingSource1.DataSource = grid1Data;
                 listControlBindingSource2.DataSource = grid2Data;
                 listControlBindingSource3.DataSource = grid3Data;
                 listControlBindingSource4.DataSource = grid4Data;
             }
-            else if (rbOriQty.Checked)
+            else if (radioOriQty.Checked)
             {
                 listControlBindingSource1.DataSource = grid1Data_OriQty;
                 listControlBindingSource2.DataSource = grid2Data_OriQty;

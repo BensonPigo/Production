@@ -28,38 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textSP = new Sci.Win.UI.TextBox();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtuser2 = new Sci.Production.Class.txtuser();
-            this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelPOSMR = new Sci.Win.UI.Label();
+            this.labelPOHandle = new Sci.Win.UI.Label();
+            this.labelPreparedby = new Sci.Win.UI.Label();
+            this.labelPPICFactorymgr = new Sci.Win.UI.Label();
+            this.labelConfirmby = new Sci.Win.UI.Label();
+            this.labelTPELastEditDate = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.txttpeuserPOSMR = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserPOHandle = new Sci.Production.Class.txttpeuser();
+            this.txtuserPreparedby = new Sci.Production.Class.txtuser();
+            this.txtuserPPICFactorymgr = new Sci.Production.Class.txtuser();
+            this.txttpeuserConfirmby = new Sci.Production.Class.txttpeuser();
+            this.displayTPELastEditDate = new Sci.Win.UI.DisplayBox();
+            this.labelCDate = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.dateCDate = new Sci.Win.UI.DateBox();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.labelStyleNo = new Sci.Win.UI.Label();
+            this.labelPCSMR = new Sci.Win.UI.Label();
+            this.labelPCHandle = new Sci.Win.UI.Label();
+            this.displayStyleNo = new Sci.Win.UI.DisplayBox();
+            this.txttpeuserPCSMR = new Sci.Production.Class.txttpeuser();
+            this.txttpeuserPCHandle = new Sci.Production.Class.txttpeuser();
+            this.displayPreparedby = new Sci.Win.UI.DisplayBox();
+            this.displayPPICFactorymgr = new Sci.Win.UI.DisplayBox();
+            this.displayConfirmby = new Sci.Win.UI.DisplayBox();
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnMailto = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,72 +76,72 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.btnMailto);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.displayBox7);
-            this.masterpanel.Controls.Add(this.displayBox6);
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.txttpeuser5);
-            this.masterpanel.Controls.Add(this.txttpeuser4);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.dateBox1);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.txttpeuser3);
-            this.masterpanel.Controls.Add(this.txtuser2);
-            this.masterpanel.Controls.Add(this.txtuser1);
-            this.masterpanel.Controls.Add(this.txttpeuser2);
-            this.masterpanel.Controls.Add(this.txttpeuser1);
-            this.masterpanel.Controls.Add(this.textSP);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.displayConfirmby);
+            this.masterpanel.Controls.Add(this.displayPPICFactorymgr);
+            this.masterpanel.Controls.Add(this.displayPreparedby);
+            this.masterpanel.Controls.Add(this.txttpeuserPCHandle);
+            this.masterpanel.Controls.Add(this.txttpeuserPCSMR);
+            this.masterpanel.Controls.Add(this.displayStyleNo);
+            this.masterpanel.Controls.Add(this.labelPCHandle);
+            this.masterpanel.Controls.Add(this.labelPCSMR);
+            this.masterpanel.Controls.Add(this.labelStyleNo);
+            this.masterpanel.Controls.Add(this.displayFactory);
+            this.masterpanel.Controls.Add(this.dateCDate);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelCDate);
+            this.masterpanel.Controls.Add(this.displayTPELastEditDate);
+            this.masterpanel.Controls.Add(this.txttpeuserConfirmby);
+            this.masterpanel.Controls.Add(this.txtuserPPICFactorymgr);
+            this.masterpanel.Controls.Add(this.txtuserPreparedby);
+            this.masterpanel.Controls.Add(this.txttpeuserPOHandle);
+            this.masterpanel.Controls.Add(this.txttpeuserPOSMR);
+            this.masterpanel.Controls.Add(this.txtSPNo);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelTPELastEditDate);
+            this.masterpanel.Controls.Add(this.labelConfirmby);
+            this.masterpanel.Controls.Add(this.labelPPICFactorymgr);
+            this.masterpanel.Controls.Add(this.labelPreparedby);
+            this.masterpanel.Controls.Add(this.labelPOHandle);
+            this.masterpanel.Controls.Add(this.labelPOSMR);
+            this.masterpanel.Controls.Add(this.labelSPNo);
+            this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Size = new System.Drawing.Size(917, 222);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textSP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtuser2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPOSMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPOHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPreparedby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPPICFactorymgr, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelConfirmby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTPELastEditDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserPOSMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserPOHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserPreparedby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserPPICFactorymgr, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserConfirmby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayTPELastEditDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPCSMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPCHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyleNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserPCSMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserPCHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPreparedby, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPPICFactorymgr, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayConfirmby, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMailto, 0);
             // 
             // detailpanel
             // 
@@ -189,7 +189,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(818, 490);
+            this.browse.Size = new System.Drawing.Size(917, 490);
             // 
             // tabs
             // 
@@ -209,276 +209,276 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(5, 4);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(115, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(115, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "SP No.";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(5, 31);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(115, 23);
+            this.labelSPNo.TabIndex = 2;
+            this.labelSPNo.Text = "SP No.";
             // 
-            // label3
+            // labelPOSMR
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(5, 58);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(115, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "PO SMR";
+            this.labelPOSMR.Lines = 0;
+            this.labelPOSMR.Location = new System.Drawing.Point(5, 58);
+            this.labelPOSMR.Name = "labelPOSMR";
+            this.labelPOSMR.Size = new System.Drawing.Size(115, 23);
+            this.labelPOSMR.TabIndex = 3;
+            this.labelPOSMR.Text = "PO SMR";
             // 
-            // label4
+            // labelPOHandle
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(5, 85);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(115, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "PO Handle";
+            this.labelPOHandle.Lines = 0;
+            this.labelPOHandle.Location = new System.Drawing.Point(5, 85);
+            this.labelPOHandle.Name = "labelPOHandle";
+            this.labelPOHandle.Size = new System.Drawing.Size(115, 23);
+            this.labelPOHandle.TabIndex = 4;
+            this.labelPOHandle.Text = "PO Handle";
             // 
-            // label5
+            // labelPreparedby
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(5, 112);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(115, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Prepared by";
+            this.labelPreparedby.Lines = 0;
+            this.labelPreparedby.Location = new System.Drawing.Point(5, 112);
+            this.labelPreparedby.Name = "labelPreparedby";
+            this.labelPreparedby.Size = new System.Drawing.Size(115, 23);
+            this.labelPreparedby.TabIndex = 5;
+            this.labelPreparedby.Text = "Prepared by";
             // 
-            // label6
+            // labelPPICFactorymgr
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(5, 139);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(115, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "PPIC/Factory mgr";
+            this.labelPPICFactorymgr.Lines = 0;
+            this.labelPPICFactorymgr.Location = new System.Drawing.Point(5, 139);
+            this.labelPPICFactorymgr.Name = "labelPPICFactorymgr";
+            this.labelPPICFactorymgr.Size = new System.Drawing.Size(115, 23);
+            this.labelPPICFactorymgr.TabIndex = 6;
+            this.labelPPICFactorymgr.Text = "PPIC/Factory mgr";
             // 
-            // label7
+            // labelConfirmby
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(5, 166);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(115, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Confirm by";
+            this.labelConfirmby.Lines = 0;
+            this.labelConfirmby.Location = new System.Drawing.Point(5, 166);
+            this.labelConfirmby.Name = "labelConfirmby";
+            this.labelConfirmby.Size = new System.Drawing.Size(115, 23);
+            this.labelConfirmby.TabIndex = 7;
+            this.labelConfirmby.Text = "Confirm by";
             // 
-            // label8
+            // labelTPELastEditDate
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(5, 193);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(115, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "TPE last edit date";
+            this.labelTPELastEditDate.Lines = 0;
+            this.labelTPELastEditDate.Location = new System.Drawing.Point(5, 193);
+            this.labelTPELastEditDate.Name = "labelTPELastEditDate";
+            this.labelTPELastEditDate.Size = new System.Drawing.Size(115, 23);
+            this.labelTPELastEditDate.TabIndex = 8;
+            this.labelTPELastEditDate.Text = "TPE last edit date";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(124, 4);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(124, 4);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 0;
             // 
-            // textSP
+            // txtSPNo
             // 
-            this.textSP.BackColor = System.Drawing.Color.White;
-            this.textSP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "POID", true));
-            this.textSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSP.Location = new System.Drawing.Point(124, 31);
-            this.textSP.Name = "textSP";
-            this.textSP.Size = new System.Drawing.Size(120, 23);
-            this.textSP.TabIndex = 0;
-            this.textSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textSP.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "POID", true));
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(124, 31);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(120, 23);
+            this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // txttpeuser1
+            // txttpeuserPOSMR
             // 
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(124, 58);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 6;
+            this.txttpeuserPOSMR.DisplayBox1Binding = "";
+            this.txttpeuserPOSMR.DisplayBox2Binding = "";
+            this.txttpeuserPOSMR.Location = new System.Drawing.Point(124, 58);
+            this.txttpeuserPOSMR.Name = "txttpeuserPOSMR";
+            this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPOSMR.TabIndex = 6;
             // 
-            // txttpeuser2
+            // txttpeuserPOHandle
             // 
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(124, 85);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 8;
+            this.txttpeuserPOHandle.DisplayBox1Binding = "";
+            this.txttpeuserPOHandle.DisplayBox2Binding = "";
+            this.txttpeuserPOHandle.Location = new System.Drawing.Point(124, 85);
+            this.txttpeuserPOHandle.Name = "txttpeuserPOHandle";
+            this.txttpeuserPOHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPOHandle.TabIndex = 8;
             // 
-            // txtuser1
+            // txtuserPreparedby
             // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(124, 112);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 1;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtuserPreparedby.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
+            this.txtuserPreparedby.DisplayBox1Binding = "";
+            this.txtuserPreparedby.Location = new System.Drawing.Point(124, 112);
+            this.txtuserPreparedby.Name = "txtuserPreparedby";
+            this.txtuserPreparedby.Size = new System.Drawing.Size(302, 23);
+            this.txtuserPreparedby.TabIndex = 1;
+            this.txtuserPreparedby.TextBox1Binding = "";
             // 
-            // txtuser2
+            // txtuserPPICFactorymgr
             // 
-            this.txtuser2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
-            this.txtuser2.DisplayBox1Binding = "";
-            this.txtuser2.Location = new System.Drawing.Point(124, 139);
-            this.txtuser2.Name = "txtuser2";
-            this.txtuser2.Size = new System.Drawing.Size(302, 23);
-            this.txtuser2.TabIndex = 2;
-            this.txtuser2.TextBox1Binding = "";
+            this.txtuserPPICFactorymgr.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
+            this.txtuserPPICFactorymgr.DisplayBox1Binding = "";
+            this.txtuserPPICFactorymgr.Location = new System.Drawing.Point(124, 139);
+            this.txtuserPPICFactorymgr.Name = "txtuserPPICFactorymgr";
+            this.txtuserPPICFactorymgr.Size = new System.Drawing.Size(302, 23);
+            this.txtuserPPICFactorymgr.TabIndex = 2;
+            this.txtuserPPICFactorymgr.TextBox1Binding = "";
             // 
-            // txttpeuser3
+            // txttpeuserConfirmby
             // 
-            this.txttpeuser3.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "TPECFMName", true));
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(124, 166);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 15;
+            this.txttpeuserConfirmby.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "TPECFMName", true));
+            this.txttpeuserConfirmby.DisplayBox1Binding = "";
+            this.txttpeuserConfirmby.DisplayBox2Binding = "";
+            this.txttpeuserConfirmby.Location = new System.Drawing.Point(124, 166);
+            this.txttpeuserConfirmby.Name = "txttpeuserConfirmby";
+            this.txttpeuserConfirmby.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserConfirmby.TabIndex = 15;
             // 
-            // displayBox2
+            // displayTPELastEditDate
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(124, 193);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(140, 23);
-            this.displayBox2.TabIndex = 17;
+            this.displayTPELastEditDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTPELastEditDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTPELastEditDate.Location = new System.Drawing.Point(124, 193);
+            this.displayTPELastEditDate.Name = "displayTPELastEditDate";
+            this.displayTPELastEditDate.Size = new System.Drawing.Size(140, 23);
+            this.displayTPELastEditDate.TabIndex = 17;
             // 
-            // label9
+            // labelCDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(258, 4);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(53, 23);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "CDate";
+            this.labelCDate.Lines = 0;
+            this.labelCDate.Location = new System.Drawing.Point(258, 4);
+            this.labelCDate.Name = "labelCDate";
+            this.labelCDate.Size = new System.Drawing.Size(53, 23);
+            this.labelCDate.TabIndex = 17;
+            this.labelCDate.Text = "CDate";
             // 
-            // label10
+            // labelFactory
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(258, 31);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(53, 23);
-            this.label10.TabIndex = 18;
-            this.label10.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(258, 31);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(53, 23);
+            this.labelFactory.TabIndex = 18;
+            this.labelFactory.Text = "Factory";
             // 
-            // dateBox1
+            // dateCDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(315, 4);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 1;
-            this.dateBox1.TabStop = false;
+            this.dateCDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
+            this.dateCDate.IsSupportEditMode = false;
+            this.dateCDate.Location = new System.Drawing.Point(315, 4);
+            this.dateCDate.Name = "dateCDate";
+            this.dateCDate.ReadOnly = true;
+            this.dateCDate.Size = new System.Drawing.Size(110, 23);
+            this.dateCDate.TabIndex = 1;
+            this.dateCDate.TabStop = false;
             // 
-            // displayBox3
+            // displayFactory
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(315, 31);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(73, 23);
-            this.displayBox3.TabIndex = 3;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(315, 31);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(73, 23);
+            this.displayFactory.TabIndex = 3;
             // 
-            // label11
+            // labelStyleNo
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(429, 32);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(71, 23);
-            this.label11.TabIndex = 21;
-            this.label11.Text = "Style No.";
+            this.labelStyleNo.Lines = 0;
+            this.labelStyleNo.Location = new System.Drawing.Point(429, 32);
+            this.labelStyleNo.Name = "labelStyleNo";
+            this.labelStyleNo.Size = new System.Drawing.Size(71, 23);
+            this.labelStyleNo.TabIndex = 21;
+            this.labelStyleNo.Text = "Style No.";
             // 
-            // label12
+            // labelPCSMR
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(429, 59);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(71, 23);
-            this.label12.TabIndex = 22;
-            this.label12.Text = "PC SMR";
+            this.labelPCSMR.Lines = 0;
+            this.labelPCSMR.Location = new System.Drawing.Point(429, 59);
+            this.labelPCSMR.Name = "labelPCSMR";
+            this.labelPCSMR.Size = new System.Drawing.Size(71, 23);
+            this.labelPCSMR.TabIndex = 22;
+            this.labelPCSMR.Text = "PC SMR";
             // 
-            // label13
+            // labelPCHandle
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(429, 86);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(71, 23);
-            this.label13.TabIndex = 23;
-            this.label13.Text = "PC Handle";
+            this.labelPCHandle.Lines = 0;
+            this.labelPCHandle.Location = new System.Drawing.Point(429, 86);
+            this.labelPCHandle.Name = "labelPCHandle";
+            this.labelPCHandle.Size = new System.Drawing.Size(71, 23);
+            this.labelPCHandle.TabIndex = 23;
+            this.labelPCHandle.Text = "PC Handle";
             // 
-            // displayBox4
+            // displayStyleNo
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(504, 32);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(165, 23);
-            this.displayBox4.TabIndex = 4;
+            this.displayStyleNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.Location = new System.Drawing.Point(504, 32);
+            this.displayStyleNo.Name = "displayStyleNo";
+            this.displayStyleNo.Size = new System.Drawing.Size(165, 23);
+            this.displayStyleNo.TabIndex = 4;
             // 
-            // txttpeuser4
+            // txttpeuserPCSMR
             // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(504, 59);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
+            this.txttpeuserPCSMR.DisplayBox1Binding = "";
+            this.txttpeuserPCSMR.DisplayBox2Binding = "";
+            this.txttpeuserPCSMR.Location = new System.Drawing.Point(504, 59);
+            this.txttpeuserPCSMR.Name = "txttpeuserPCSMR";
+            this.txttpeuserPCSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPCSMR.TabIndex = 7;
             // 
-            // txttpeuser5
+            // txttpeuserPCHandle
             // 
-            this.txttpeuser5.DisplayBox1Binding = "";
-            this.txttpeuser5.DisplayBox2Binding = "";
-            this.txttpeuser5.Location = new System.Drawing.Point(504, 86);
-            this.txttpeuser5.Name = "txttpeuser5";
-            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 9;
+            this.txttpeuserPCHandle.DisplayBox1Binding = "";
+            this.txttpeuserPCHandle.DisplayBox2Binding = "";
+            this.txttpeuserPCHandle.Location = new System.Drawing.Point(504, 86);
+            this.txttpeuserPCHandle.Name = "txttpeuserPCHandle";
+            this.txttpeuserPCHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPCHandle.TabIndex = 9;
             // 
-            // displayBox5
+            // displayPreparedby
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(428, 112);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(140, 23);
-            this.displayBox5.TabIndex = 11;
+            this.displayPreparedby.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPreparedby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPreparedby.Location = new System.Drawing.Point(428, 112);
+            this.displayPreparedby.Name = "displayPreparedby";
+            this.displayPreparedby.Size = new System.Drawing.Size(140, 23);
+            this.displayPreparedby.TabIndex = 11;
             // 
-            // displayBox6
+            // displayPPICFactorymgr
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(428, 139);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(140, 23);
-            this.displayBox6.TabIndex = 14;
+            this.displayPPICFactorymgr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPPICFactorymgr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPPICFactorymgr.Location = new System.Drawing.Point(428, 139);
+            this.displayPPICFactorymgr.Name = "displayPPICFactorymgr";
+            this.displayPPICFactorymgr.Size = new System.Drawing.Size(140, 23);
+            this.displayPPICFactorymgr.TabIndex = 14;
             // 
-            // displayBox7
+            // displayConfirmby
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(428, 166);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(140, 23);
-            this.displayBox7.TabIndex = 16;
+            this.displayConfirmby.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConfirmby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConfirmby.Location = new System.Drawing.Point(428, 166);
+            this.displayConfirmby.Name = "displayConfirmby";
+            this.displayConfirmby.Size = new System.Drawing.Size(140, 23);
+            this.displayConfirmby.TabIndex = 16;
             // 
             // label14
             // 
@@ -509,15 +509,15 @@
             this.label15.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label15.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
-            // button1
+            // btnMailto
             // 
-            this.button1.Location = new System.Drawing.Point(726, 115);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Mail to";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnMailto.Location = new System.Drawing.Point(726, 115);
+            this.btnMailto.Name = "btnMailto";
+            this.btnMailto.Size = new System.Drawing.Size(80, 30);
+            this.btnMailto.TabIndex = 3;
+            this.btnMailto.Text = "Mail to";
+            this.btnMailto.UseVisualStyleBackColor = true;
+            this.btnMailto.Click += new System.EventHandler(this.button1_Click);
             // 
             // P09
             // 
@@ -566,37 +566,37 @@
 
         #endregion
 
-        private Win.UI.Button button1;
+        private Win.UI.Button btnMailto;
         private Win.UI.Label label15;
         private Win.UI.Label label14;
-        private Win.UI.DisplayBox displayBox7;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.DisplayBox displayBox5;
-        private Class.txttpeuser txttpeuser5;
-        private Class.txttpeuser txttpeuser4;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.DisplayBox displayBox2;
-        private Class.txttpeuser txttpeuser3;
-        private Class.txtuser txtuser2;
-        private Class.txtuser txtuser1;
-        private Class.txttpeuser txttpeuser2;
-        private Class.txttpeuser txttpeuser1;
-        private Win.UI.TextBox textSP;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayConfirmby;
+        private Win.UI.DisplayBox displayPPICFactorymgr;
+        private Win.UI.DisplayBox displayPreparedby;
+        private Class.txttpeuser txttpeuserPCHandle;
+        private Class.txttpeuser txttpeuserPCSMR;
+        private Win.UI.DisplayBox displayStyleNo;
+        private Win.UI.Label labelPCHandle;
+        private Win.UI.Label labelPCSMR;
+        private Win.UI.Label labelStyleNo;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.DateBox dateCDate;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelCDate;
+        private Win.UI.DisplayBox displayTPELastEditDate;
+        private Class.txttpeuser txttpeuserConfirmby;
+        private Class.txtuser txtuserPPICFactorymgr;
+        private Class.txtuser txtuserPreparedby;
+        private Class.txttpeuser txttpeuserPOHandle;
+        private Class.txttpeuser txttpeuserPOSMR;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelTPELastEditDate;
+        private Win.UI.Label labelConfirmby;
+        private Win.UI.Label labelPPICFactorymgr;
+        private Win.UI.Label labelPreparedby;
+        private Win.UI.Label labelPOHandle;
+        private Win.UI.Label labelPOSMR;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelID;
     }
 }

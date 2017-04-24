@@ -23,30 +23,30 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboM.Text = Sci.Env.User.Keyword;
             
          //   comboBox2.SelectedIndex = 0;
-            comboBox2.Text = Sci.Env.User.Factory;
+            comboFactory.Text = Sci.Env.User.Factory;
         }
 
         //Sewing Line
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox1.Text = SelectSewingLine(textBox1.Text);
+            txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
         }
 
         //Sewing Line
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox2.Text = SelectSewingLine(textBox2.Text);
+            txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
         }
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox2.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}  ", MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboFactory.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
@@ -63,17 +63,17 @@ namespace Sci.Production.PPIC
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            mDivision = comboBox1.Text;
-            factory = comboBox2.Text;
-            line1 = textBox1.Text;
-            line2 = textBox2.Text;
-            inline = dateBox1.Value;
-            offline = dateBox2.Value;
-            buyerDelivery1 = dateRange1.Value1;
-            buyerDelivery2 = dateRange1.Value2;
-            sciDelivery1 = dateRange2.Value1;
-            sciDelivery2 = dateRange2.Value2;
-            brand = txtbrand1.Text;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
+            line1 = txtSewingLineStart.Text;
+            line2 = txtSewingLineEnd.Text;
+            inline = dateInlineAfter.Value;
+            offline = dateOfflineBefore.Value;
+            buyerDelivery1 = dateBuyerDelivery.Value1;
+            buyerDelivery2 = dateBuyerDelivery.Value2;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
+            brand = txtbrand.Text;
 
             return base.ValidateInput();
         }
@@ -214,20 +214,20 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBox1.Text = "";
-            textBox2.Text = "";
+            txtSewingLineStart.Text = "";
+            txtSewingLineEnd.Text = "";
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.Text == textBox1.OldValue) return;
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (txtSewingLineStart.Text == txtSewingLineStart.OldValue) return;
+            if (!MyUtility.Check.Empty(txtSewingLineStart.Text))
             {
-                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", textBox1.Text, MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboBox2.Text)); 
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineStart.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text)); 
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", textBox1.Text));
-                    textBox1.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineStart.Text));
+                    txtSewingLineStart.Text = "";
                     return;
                 }
             }
@@ -235,14 +235,14 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox2.Text == textBox2.OldValue) return;
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (txtSewingLineEnd.Text == txtSewingLineEnd.OldValue) return;
+            if (!MyUtility.Check.Empty(txtSewingLineEnd.Text))
             {
-                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", textBox2.Text, MyUtility.Check.Empty(comboBox2.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboBox2.Text));
+                string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineEnd.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text));
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", textBox2.Text));
-                    textBox2.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineEnd.Text));
+                    txtSewingLineEnd.Text = "";
                     return;
                 }
             }

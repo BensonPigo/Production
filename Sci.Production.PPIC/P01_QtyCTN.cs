@@ -29,9 +29,9 @@ namespace Sci.Production.PPIC
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out headerData);
             StringBuilder pivot = new StringBuilder();
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            var gen = Helper.Controls.Grid.Generator(this.grid1);
+            this.gridBreakDownperPavckingMethod.IsEditingReadOnly = true;
+            this.gridBreakDownperPavckingMethod.DataSource = listControlBindingSource1;
+            var gen = Helper.Controls.Grid.Generator(this.gridBreakDownperPavckingMethod);
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
@@ -42,7 +42,7 @@ namespace Sci.Production.PPIC
                 }
             }
             //凍結欄位
-            grid1.Columns[0].Frozen = true;
+            gridBreakDownperPavckingMethod.Columns[0].Frozen = true;
 
             //撈Grid資料
             sqlCmd = string.Format(@"with tmpData

@@ -61,27 +61,27 @@ order by rd.Seq1,rd.Seq2", masterID);
         {
             base.OnDetailEntered();
 
-            button1.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
+            btnMailto.Enabled = !EditMode && CurrentMaintain != null && MyUtility.Convert.GetString(CurrentMaintain["Status"]) != "Junked" && !MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? true : false;
             label15.Visible = MyUtility.Convert.GetString(CurrentMaintain["Status"]) == "Junked";
-            displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
-            displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayBox6.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
-            displayBox2.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
+            displayPreparedby.Value = MyUtility.Check.Empty(CurrentMaintain["ApplyDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApplyDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            displayPPICFactorymgr.Value = MyUtility.Check.Empty(CurrentMaintain["ApvDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            displayConfirmby.Value = MyUtility.Check.Empty(CurrentMaintain["TPECFMDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPECFMDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat));
+            displayTPELasteditDate.Value = MyUtility.Check.Empty(CurrentMaintain["TPEEditDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             DataRow POData;
             if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
             {
-                txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
-                txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
-                txttpeuser5.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
+                txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
             }
             else
             {
-                txttpeuser1.DisplayBox1Binding = "";
-                txttpeuser2.DisplayBox1Binding = "";
-                txttpeuser4.DisplayBox1Binding = "";
-                txttpeuser5.DisplayBox1Binding = "";
+                txttpeuserPOSMR.DisplayBox1Binding = "";
+                txttpeuserPOHandle.DisplayBox1Binding = "";
+                txttpeuserPCSMR.DisplayBox1Binding = "";
+                txttpeuserPCHandle.DisplayBox1Binding = "";
             }
         }
 
@@ -165,21 +165,21 @@ order by rd.Seq1,rd.Seq2", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
             {
                 MyUtility.Msg.WarningBox("SP No. can't empty");
-                textSP.Focus();
+                txtSPNo.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ApplyName"]))
             {
                 MyUtility.Msg.WarningBox("Prepared by can't empty");
-                txtuser1.TextBox1.Focus();
+                txtuserPreparedby.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ApvName"]))
             {
                 MyUtility.Msg.WarningBox("PPIC/Factory mgr can't empty");
-                txtuser2.TextBox1.Focus();
+                txtuserPPICFactorymgr.TextBox1.Focus();
                 return false;
             }
 
@@ -268,7 +268,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                 }
             }
 
-            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", this.txttpeuser5.DisplayBox1Binding));
+            string attention = MyUtility.GetValue.Lookup(string.Format("select Name from TPEPass1 WITH (NOLOCK) where ID = '{0}'", this.txttpeuserPCHandle.DisplayBox1Binding));
             string apply = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApplyName"])));
             string approve = MyUtility.GetValue.Lookup(string.Format("select Name from Pass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ApvName"])));
             string style = MyUtility.GetValue.Lookup(string.Format("select top 1 StyleID from Orders WITH (NOLOCK) where POID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])));
@@ -351,10 +351,10 @@ order by rd.Seq1,rd.Seq2", masterID);
         {
             if (EditMode)
             {
-                if (!MyUtility.Check.Empty(textSP.Text) && textSP.OldValue != textSP.Text)
+                if (!MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
                 {
                     //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", textSP.Text);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSPNo.Text);
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -381,7 +381,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                     }
                     else
                     {
-                        CurrentMaintain["POID"] = textSP.Text;
+                        CurrentMaintain["POID"] = txtSPNo.Text;
                         CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"];
                     }
                 }
@@ -392,7 +392,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         private void textBox1_Validated(object sender, EventArgs e)
         {
             
-            if (EditMode && !MyUtility.Check.Empty(textSP.Text) && textSP.OldValue != textSP.Text)
+            if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
             {
                 //清空表身Grid資料
                 foreach (DataRow dr in DetailDatas)
@@ -410,7 +410,7 @@ left join PO_Supp_Detail psd WITH (NOLOCK) on f.POID = psd.ID and f.Seq1 = psd.S
 left join Receiving r WITH (NOLOCK) on f.ReceivingID = r.Id
 left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 where f.POID = '{0}' and f.Result = 'F'
-group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", textSP.Text);
+group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POID,f.Seq1,f.Seq2,2,0),psd.ColorID,r.InvNo,iif(e.Eta is null,r.ETA,e.ETA),isnull(r.ExportId,'')", txtSPNo.Text);
                 DataTable FIRData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out FIRData);
                 if (!result)
@@ -426,21 +426,21 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
                         ((DataTable)detailgridbs.DataSource).ImportRow(dr);
                     }
                 }
-                displayBox4.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
+                displayStyleNo.Value = MyUtility.GetValue.Lookup("StyleID", MyUtility.Convert.GetString(CurrentMaintain["POID"]), "Orders", "ID");
                 DataRow POData;
                 if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"])), out POData))
                 {
-                    txttpeuser1.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                    txttpeuser2.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
-                    txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
-                    txttpeuser5.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
+                    txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                    txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                    txttpeuserPCSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCSMR"]);
+                    txttpeuserPCHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["PCHandle"]);
                 }
                 else
                 {
-                    txttpeuser1.DisplayBox1Binding = "";
-                    txttpeuser2.DisplayBox1Binding = "";
-                    txttpeuser4.DisplayBox1Binding = "";
-                    txttpeuser5.DisplayBox1Binding = "";
+                    txttpeuserPOSMR.DisplayBox1Binding = "";
+                    txttpeuserPOHandle.DisplayBox1Binding = "";
+                    txttpeuserPCSMR.DisplayBox1Binding = "";
+                    txttpeuserPCHandle.DisplayBox1Binding = "";
                 }
             }
         }

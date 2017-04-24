@@ -23,16 +23,16 @@ namespace Sci.Production.PPIC
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2))
+            if (MyUtility.Check.Empty(dateDelivery.Value1) && MyUtility.Check.Empty(dateDelivery.Value2) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
                 MyUtility.Msg.WarningBox("Delivery can't empty!!");
                 return false;
             }
-            delDate1 = MyUtility.Check.Empty(dateRange1.Value1) ? "" : Convert.ToDateTime(dateRange1.Value1).ToString("d");
-            delDate2 = MyUtility.Check.Empty(dateRange1.Value2) ? "" : Convert.ToDateTime(dateRange1.Value2).ToString("d");
-            sciDate1 = MyUtility.Check.Empty(dateRange2.Value1) ? "" : Convert.ToDateTime(dateRange2.Value1).ToString("d");
-            sciDate2 = MyUtility.Check.Empty(dateRange2.Value2) ? "" : Convert.ToDateTime(dateRange2.Value2).ToString("d");
-            brand = txtbrand1.Text;
+            delDate1 = MyUtility.Check.Empty(dateDelivery.Value1) ? "" : Convert.ToDateTime(dateDelivery.Value1).ToString("d");
+            delDate2 = MyUtility.Check.Empty(dateDelivery.Value2) ? "" : Convert.ToDateTime(dateDelivery.Value2).ToString("d");
+            sciDate1 = MyUtility.Check.Empty(dateSCIDelivery.Value1) ? "" : Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d");
+            sciDate2 = MyUtility.Check.Empty(dateSCIDelivery.Value2) ? "" : Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d");
+            brand = txtbrand.Text;
             return base.ValidateInput();
         }
 

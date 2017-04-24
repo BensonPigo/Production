@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelOrderType = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.comboOrderType = new Sci.Win.UI.ComboBox();
+            this.checkExcludedReplacementItem = new Sci.Win.UI.CheckBox();
+            this.checkPOMaterialCompletion = new Sci.Win.UI.CheckBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -55,120 +55,120 @@
             this.close.Location = new System.Drawing.Point(424, 84);
             this.close.TabIndex = 8;
             // 
-            // label1
+            // labelSCIDelivery
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 12);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(84, 23);
+            this.labelSCIDelivery.TabIndex = 94;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label2
+            // labelM
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 48);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(84, 23);
+            this.labelM.TabIndex = 95;
+            this.labelM.Text = "M";
             // 
-            // label3
+            // labelOrderType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 119);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(84, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Order Type";
+            this.labelOrderType.Lines = 0;
+            this.labelOrderType.Location = new System.Drawing.Point(13, 119);
+            this.labelOrderType.Name = "labelOrderType";
+            this.labelOrderType.Size = new System.Drawing.Size(84, 23);
+            this.labelOrderType.TabIndex = 96;
+            this.labelOrderType.Text = "Order Type";
             // 
-            // dateRange1
+            // dateSCIDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(102, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(102, 12);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 0;
             // 
-            // comboBox1
+            // comboM
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(102, 47);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(80, 24);
-            this.comboBox1.TabIndex = 1;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(102, 47);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(80, 24);
+            this.comboM.TabIndex = 1;
             // 
-            // comboBox2
+            // comboOrderType
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(102, 119);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(110, 24);
-            this.comboBox2.TabIndex = 3;
+            this.comboOrderType.BackColor = System.Drawing.Color.White;
+            this.comboOrderType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOrderType.FormattingEnabled = true;
+            this.comboOrderType.IsSupportUnselect = true;
+            this.comboOrderType.Location = new System.Drawing.Point(102, 119);
+            this.comboOrderType.Name = "comboOrderType";
+            this.comboOrderType.Size = new System.Drawing.Size(110, 24);
+            this.comboOrderType.TabIndex = 3;
             // 
-            // checkBox1
+            // checkExcludedReplacementItem
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(13, 158);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(201, 21);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Excluded Replacement Item";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkExcludedReplacementItem.AutoSize = true;
+            this.checkExcludedReplacementItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExcludedReplacementItem.Location = new System.Drawing.Point(13, 158);
+            this.checkExcludedReplacementItem.Name = "checkExcludedReplacementItem";
+            this.checkExcludedReplacementItem.Size = new System.Drawing.Size(201, 21);
+            this.checkExcludedReplacementItem.TabIndex = 4;
+            this.checkExcludedReplacementItem.Text = "Excluded Replacement Item";
+            this.checkExcludedReplacementItem.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // checkPOMaterialCompletion
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Checked = true;
-            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(13, 186);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(183, 21);
-            this.checkBox2.TabIndex = 5;
-            this.checkBox2.Text = "PO# Material Completion";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkPOMaterialCompletion.AutoSize = true;
+            this.checkPOMaterialCompletion.Checked = true;
+            this.checkPOMaterialCompletion.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkPOMaterialCompletion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkPOMaterialCompletion.Location = new System.Drawing.Point(13, 186);
+            this.checkPOMaterialCompletion.Name = "checkPOMaterialCompletion";
+            this.checkPOMaterialCompletion.Size = new System.Drawing.Size(183, 21);
+            this.checkPOMaterialCompletion.TabIndex = 5;
+            this.checkPOMaterialCompletion.Text = "PO# Material Completion";
+            this.checkPOMaterialCompletion.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // labelFactory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 84);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(84, 23);
-            this.label4.TabIndex = 111;
-            this.label4.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 84);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(84, 23);
+            this.labelFactory.TabIndex = 111;
+            this.labelFactory.Text = "Factory";
             // 
-            // comboBox3
+            // comboFactory
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(102, 84);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(80, 24);
-            this.comboBox3.TabIndex = 2;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(102, 84);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 2;
             // 
             // R06
             // 
             this.ClientSize = new System.Drawing.Size(516, 243);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.checkPOMaterialCompletion);
+            this.Controls.Add(this.checkExcludedReplacementItem);
+            this.Controls.Add(this.comboOrderType);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.labelOrderType);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelSCIDelivery);
             this.DefaultControl = "dateRange1";
             this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
@@ -177,16 +177,16 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.checkBox2, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.comboBox3, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelOrderType, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboOrderType, 0);
+            this.Controls.SetChildIndex(this.checkExcludedReplacementItem, 0);
+            this.Controls.SetChildIndex(this.checkPOMaterialCompletion, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,15 +194,15 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.Label label4;
-        private Win.UI.ComboBox comboBox3;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelOrderType;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.ComboBox comboOrderType;
+        private Win.UI.CheckBox checkExcludedReplacementItem;
+        private Win.UI.CheckBox checkPOMaterialCompletion;
+        private Win.UI.Label labelFactory;
+        private Win.UI.ComboBox comboFactory;
     }
 }

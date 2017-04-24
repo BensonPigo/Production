@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             //Exp P/out date預設帶出下個月的最後一天
-            dateBox1.Value = (DateTime.Today.AddMonths(2)).AddDays(1 - (DateTime.Today.AddMonths(2)).Day - 1);
+            dateExpPoutDate.Value = (DateTime.Today.AddMonths(2)).AddDays(1 - (DateTime.Today.AddMonths(2)).Day - 1);
         }
 
         protected override void OnFormLoaded()
@@ -32,7 +32,7 @@ namespace Sci.Production.PPIC
             cutoffDate.CellValidating += (s, e) =>
             {
 
-                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.gridShipmentSchedule.GetDataRow<DataRow>(e.RowIndex);
                 if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["SDPDate"]))
                 {
                     if (!MyUtility.Check.Empty(e.FormattedValue))
@@ -49,13 +49,13 @@ namespace Sci.Production.PPIC
             };
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridShipmentSchedule.IsEditingReadOnly = false;
+            this.gridShipmentSchedule.DataSource = listControlBindingSource1;
 
             //當欄位值為0時，顯示空白
             clogctn.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridShipmentSchedule)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SewLine", header: "Sewing Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -89,10 +89,10 @@ namespace Sci.Production.PPIC
                 .Numeric("CBM", header: "Ttl CBM", decimal_places: 3, iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Bin Location", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
-            grid1.Columns["SDPDate"].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns["ShipRemark"].DefaultCellStyle.ForeColor = Color.Red;
-            grid1.Columns["SDPDate"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["ShipRemark"].DefaultCellStyle.BackColor = Color.Pink;
+            gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.ForeColor = Color.Red;
+            gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.ForeColor = Color.Red;
+            gridShipmentSchedule.Columns["SDPDate"].DefaultCellStyle.BackColor = Color.Pink;
+            gridShipmentSchedule.Columns["ShipRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Query
@@ -100,16 +100,16 @@ namespace Sci.Production.PPIC
         {
             #region 檢核
             DualResult result;
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateExpPoutDate.Value))
             {
                 MyUtility.Msg.WarningBox("Exp P/out Date can't be empty!");
-                dateBox1.Focus();
+                dateExpPoutDate.Focus();
                 return;
             }
-            if (MyUtility.Check.Empty(txtdropdownlist1.SelectedValue))
+            if (MyUtility.Check.Empty(txtdropdownlistCategory.SelectedValue))
             {
                 MyUtility.Msg.WarningBox("Category can't be empty!");
-                txtdropdownlist1.Focus();
+                txtdropdownlistCategory.Focus();
                 return;
             }
             #endregion
@@ -204,14 +204,14 @@ namespace Sci.Production.PPIC
             and o.Finished = 0
             and o.Qty > 0
             and (oq.EstPulloutDate <= '{1}' or oq.EstPulloutDate is null or iif(o.PulloutDate is null, dateadd(day,4,o.SewOffLine) , o.PulloutDate) <= '{1}') ",
-            Sci.Env.User.Keyword, Convert.ToDateTime(dateBox1.Value).ToString("d")));
-            if (txtdropdownlist1.SelectedValue.ToString() == "BS")
+            Sci.Env.User.Keyword, Convert.ToDateTime(dateExpPoutDate.Value).ToString("d")));
+            if (txtdropdownlistCategory.SelectedValue.ToString() == "BS")
             {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
             }
             else
             {
-                sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlist1.SelectedValue));
+                sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlistCategory.SelectedValue));
             }
             # endregion
 
@@ -223,7 +223,7 @@ namespace Sci.Production.PPIC
                 }
             }
             listControlBindingSource1.DataSource = gridData;
-            this.grid1.AutoResizeColumns(); //先註解，會很慢
+            this.gridShipmentSchedule.AutoResizeColumns(); //先註解，會很慢
             this.HideWaitMessage();
         }
 
@@ -231,7 +231,7 @@ namespace Sci.Production.PPIC
         private void button5_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("ID", textBox1.Text.ToString());
+            int index = listControlBindingSource1.Find("ID", txtLocateForSP.Text.ToString());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -250,7 +250,7 @@ namespace Sci.Production.PPIC
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
                 IList<string> updateCmds = new List<string>();
-                this.grid1.ValidateControl();
+                this.gridShipmentSchedule.ValidateControl();
                 listControlBindingSource1.EndEdit();
                 StringBuilder allSP = new StringBuilder();
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)

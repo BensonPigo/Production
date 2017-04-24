@@ -33,9 +33,9 @@ namespace Sci.Production.PPIC
             listControlBindingSource1.DataSource = GridData;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCuttingCombo.IsEditingReadOnly = true;
+            this.gridCuttingCombo.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCuttingCombo)
                 .Text("CuttingSP", header: "Cutting SP#", width: Widths.AnsiChars(15))
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15));
         }

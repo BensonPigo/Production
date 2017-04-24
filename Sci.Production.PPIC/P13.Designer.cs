@@ -32,29 +32,29 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.displayMR = new Sci.Win.UI.DisplayBox();
+            this.txtMR = new Sci.Win.UI.TextBox();
+            this.displaySMR = new Sci.Win.UI.DisplayBox();
+            this.txtSMR = new Sci.Win.UI.TextBox();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelMR = new Sci.Win.UI.Label();
+            this.labelSMR = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
             this.label4 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
+            this.txtSPStart = new Sci.Win.UI.TextBox();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -83,157 +83,157 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.displayBox3);
-            this.panel3.Controls.Add(this.label8);
-            this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.displayBox2);
-            this.panel3.Controls.Add(this.textBox4);
-            this.panel3.Controls.Add(this.displayBox1);
-            this.panel3.Controls.Add(this.textBox3);
-            this.panel3.Controls.Add(this.txtbrand1);
-            this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.txtstyle1);
+            this.panel3.Controls.Add(this.displayFactory);
+            this.panel3.Controls.Add(this.labelFactory);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.displayMR);
+            this.panel3.Controls.Add(this.txtMR);
+            this.panel3.Controls.Add(this.displaySMR);
+            this.panel3.Controls.Add(this.txtSMR);
+            this.panel3.Controls.Add(this.txtbrand);
+            this.panel3.Controls.Add(this.labelMR);
+            this.panel3.Controls.Add(this.labelSMR);
+            this.panel3.Controls.Add(this.labelBrand);
+            this.panel3.Controls.Add(this.txtstyle);
             this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.textBox2);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.txtSPEnd);
+            this.panel3.Controls.Add(this.txtSPStart);
+            this.panel3.Controls.Add(this.dateSCIDelivery);
+            this.panel3.Controls.Add(this.labelSCIDelivery);
+            this.panel3.Controls.Add(this.labelStyle);
+            this.panel3.Controls.Add(this.labelSP);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(837, 86);
             this.panel3.TabIndex = 0;
             // 
-            // displayBox3
+            // displayFactory
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(621, 4);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(86, 23);
-            this.displayBox3.TabIndex = 3;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(621, 4);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(86, 23);
+            this.displayFactory.TabIndex = 3;
             // 
-            // label8
+            // labelFactory
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(565, 4);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(52, 23);
-            this.label8.TabIndex = 18;
-            this.label8.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(565, 4);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(52, 23);
+            this.labelFactory.TabIndex = 18;
+            this.labelFactory.Text = "Factory";
             // 
-            // button2
+            // btnToExcel
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(738, 46);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(92, 30);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(738, 46);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(92, 30);
+            this.btnToExcel.TabIndex = 11;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(738, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(92, 30);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(738, 10);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(92, 30);
+            this.btnQuery.TabIndex = 10;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // displayBox2
+            // displayMR
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(539, 58);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(168, 23);
-            this.displayBox2.TabIndex = 9;
+            this.displayMR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMR.Location = new System.Drawing.Point(539, 58);
+            this.displayMR.Name = "displayMR";
+            this.displayMR.Size = new System.Drawing.Size(168, 23);
+            this.displayMR.TabIndex = 9;
             // 
-            // textBox4
+            // txtMR
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(447, 58);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(90, 23);
-            this.textBox4.TabIndex = 8;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
-            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.txtMR.BackColor = System.Drawing.Color.White;
+            this.txtMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMR.Location = new System.Drawing.Point(447, 58);
+            this.txtMR.Name = "txtMR";
+            this.txtMR.Size = new System.Drawing.Size(90, 23);
+            this.txtMR.TabIndex = 8;
+            this.txtMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.txtMR.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
-            // displayBox1
+            // displaySMR
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(539, 31);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(168, 23);
-            this.displayBox1.TabIndex = 6;
+            this.displaySMR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySMR.Location = new System.Drawing.Point(539, 31);
+            this.displaySMR.Name = "displaySMR";
+            this.displaySMR.Size = new System.Drawing.Size(168, 23);
+            this.displaySMR.TabIndex = 6;
             // 
-            // textBox3
+            // txtSMR
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(447, 31);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(90, 23);
-            this.textBox3.TabIndex = 5;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtSMR.BackColor = System.Drawing.Color.White;
+            this.txtSMR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSMR.Location = new System.Drawing.Point(447, 31);
+            this.txtSMR.Name = "txtSMR";
+            this.txtSMR.Size = new System.Drawing.Size(90, 23);
+            this.txtSMR.TabIndex = 5;
+            this.txtSMR.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtSMR.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(447, 4);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 2;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(447, 4);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 2;
             // 
-            // label7
+            // labelMR
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(399, 58);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(44, 23);
-            this.label7.TabIndex = 10;
-            this.label7.Text = "MR";
+            this.labelMR.Lines = 0;
+            this.labelMR.Location = new System.Drawing.Point(399, 58);
+            this.labelMR.Name = "labelMR";
+            this.labelMR.Size = new System.Drawing.Size(44, 23);
+            this.labelMR.TabIndex = 10;
+            this.labelMR.Text = "MR";
             // 
-            // label6
+            // labelSMR
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(399, 31);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(44, 23);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "SMR";
+            this.labelSMR.Lines = 0;
+            this.labelSMR.Location = new System.Drawing.Point(399, 31);
+            this.labelSMR.Name = "labelSMR";
+            this.labelSMR.Size = new System.Drawing.Size(44, 23);
+            this.labelSMR.TabIndex = 9;
+            this.labelSMR.Text = "SMR";
             // 
-            // label5
+            // labelBrand
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(399, 4);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 23);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(399, 4);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(44, 23);
+            this.labelBrand.TabIndex = 8;
+            this.labelBrand.Text = "Brand";
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(91, 31);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 4;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(91, 31);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 4;
             // 
             // label4
             // 
@@ -249,90 +249,90 @@
             this.label4.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label4.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox2
+            // txtSPEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(233, 4);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(233, 4);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(120, 23);
+            this.txtSPEnd.TabIndex = 1;
             // 
-            // textBox1
+            // txtSPStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(91, 4);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtSPStart.BackColor = System.Drawing.Color.White;
+            this.txtSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPStart.Location = new System.Drawing.Point(91, 4);
+            this.txtSPStart.Name = "txtSPStart";
+            this.txtSPStart.Size = new System.Drawing.Size(120, 23);
+            this.txtSPStart.TabIndex = 0;
             // 
-            // dateRange1
+            // dateSCIDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(91, 58);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(276, 23);
-            this.dateRange1.TabIndex = 7;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(91, 58);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(276, 23);
+            this.dateSCIDelivery.TabIndex = 7;
             // 
-            // label3
+            // labelSCIDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 58);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(4, 58);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(83, 23);
+            this.labelSCIDelivery.TabIndex = 2;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(4, 31);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(4, 31);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(83, 23);
+            this.labelStyle.TabIndex = 1;
+            this.labelStyle.Text = "Style";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(4, 4);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(83, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnSave);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 428);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(837, 44);
             this.panel4.TabIndex = 1;
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(741, 7);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 1;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(741, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button3
+            // btnSave
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(655, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(655, 7);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 0;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel5
             // 
@@ -400,29 +400,29 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.Label label8;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox textBox3;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Class.txtstyle txtstyle1;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnQuery;
+        private Win.UI.DisplayBox displayMR;
+        private Win.UI.TextBox txtMR;
+        private Win.UI.DisplayBox displaySMR;
+        private Win.UI.TextBox txtSMR;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelMR;
+        private Win.UI.Label labelSMR;
+        private Win.UI.Label labelBrand;
+        private Class.txtstyle txtstyle;
         private Win.UI.Label label4;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSPEnd;
+        private Win.UI.TextBox txtSPStart;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSP;
         private Win.UI.Panel panel4;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
         private Win.UI.Panel panel5;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;

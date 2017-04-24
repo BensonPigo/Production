@@ -27,19 +27,19 @@ namespace Sci.Production.PPIC
             DataTable FactoryData, MRData, SMRData;
             string sqlcmd = string.Format("select FactoryID,left(FactoryID+'        ',8) + cast(Count(FactoryID) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by FactoryID", KeyValue1);
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out FactoryData);
-            MyUtility.Tool.SetupCombox(comboBox1, 2, FactoryData);
+            MyUtility.Tool.SetupCombox(comboFactory, 2, FactoryData);
 
             sqlcmd = string.Format("select MRHandle,left(MRHandle+'          ',10) + cast(Count(MRHandle) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by MRHandle", KeyValue1);
             result = DBProxy.Current.Select(null, sqlcmd, out MRData);
-            MyUtility.Tool.SetupCombox(comboBox2, 2, MRData);
+            MyUtility.Tool.SetupCombox(comboMR, 2, MRData);
 
             sqlcmd = string.Format("select SMR,left(SMR+'          ',10) + cast(Count(SMR) as varchar(3)) from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0} group by SMR", KeyValue1);
             result = DBProxy.Current.Select(null, sqlcmd, out SMRData);
-            MyUtility.Tool.SetupCombox(comboBox3, 2, SMRData);
+            MyUtility.Tool.SetupCombox(comboSMR, 2, SMRData);
 
-            comboBox1.SelectedValue = "";
-            comboBox2.SelectedValue = "";
-            comboBox3.SelectedValue = "";
+            comboFactory.SelectedValue = "";
+            comboMR.SelectedValue = "";
+            comboSMR.SelectedValue = "";
         }
 
         protected override DualResult OnRequery()
@@ -135,25 +135,25 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
         {
             dataFilter = "";
             StringBuilder filter = new StringBuilder();
-            if (!MyUtility.Check.Empty(comboBox1.SelectedValue))
+            if (!MyUtility.Check.Empty(comboFactory.SelectedValue))
             {
-                filter.Append(string.Format(" FactoryID = '{0}' and", comboBox1.SelectedValue.ToString()));
+                filter.Append(string.Format(" FactoryID = '{0}' and", comboFactory.SelectedValue.ToString()));
             }
-            if (!MyUtility.Check.Empty(comboBox2.SelectedValue))
+            if (!MyUtility.Check.Empty(comboMR.SelectedValue))
             {
-                filter.Append(string.Format(" MRHandle = '{0}' and", comboBox2.SelectedValue.ToString()));
+                filter.Append(string.Format(" MRHandle = '{0}' and", comboMR.SelectedValue.ToString()));
             }
-            if (!MyUtility.Check.Empty(comboBox3.SelectedValue))
+            if (!MyUtility.Check.Empty(comboSMR.SelectedValue))
             {
-                filter.Append(string.Format(" SMR = '{0}' and", comboBox3.SelectedValue.ToString()));
+                filter.Append(string.Format(" SMR = '{0}' and", comboSMR.SelectedValue.ToString()));
             }
 
-            if (checkBox1.Checked)
+            if (checkMRnotSendYet.Checked)
             {
                 filter.Append(" SendDate is null and");
             }
 
-            if (checkBox2.Checked)
+            if (checkFactorynotReceived.Checked)
             {
                 filter.Append(" SendDate is not null and ReceiveDate is null and");
             }

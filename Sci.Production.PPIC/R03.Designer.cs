@@ -28,44 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.dateRange5 = new Sci.Win.UI.DateRange();
-            this.dateRange6 = new Sci.Win.UI.DateRange();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.comboBox4 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.checkBox5 = new Sci.Win.UI.CheckBox();
-            this.checkBox6 = new Sci.Win.UI.CheckBox();
-            this.checkBox7 = new Sci.Win.UI.CheckBox();
-            this.checkBox8 = new Sci.Win.UI.CheckBox();
-            this.checkBox9 = new Sci.Win.UI.CheckBox();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.txtcustcd1 = new Sci.Production.Class.txtcustcd();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelCutOffDate = new Sci.Win.UI.Label();
+            this.labelCustRQSDate = new Sci.Win.UI.Label();
+            this.labelPlanDate = new Sci.Win.UI.Label();
+            this.labelOrderCfmDate = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelCustCD = new Sci.Win.UI.Label();
+            this.labelZone = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelSubProcess = new Sci.Win.UI.Label();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.dateCutOffDate = new Sci.Win.UI.DateRange();
+            this.dateCustRQSDate = new Sci.Win.UI.DateRange();
+            this.datePlanDate = new Sci.Win.UI.DateRange();
+            this.dateOrderCfmDate = new Sci.Win.UI.DateRange();
+            this.comboZone = new Sci.Win.UI.ComboBox();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboSubProcess = new Sci.Win.UI.ComboBox();
+            this.checkIncludeHistoryOrder = new Sci.Win.UI.CheckBox();
+            this.checkIncludeArtworkdata = new Sci.Win.UI.CheckBox();
+            this.checkIncludeArtworkdataKindIsPAP = new Sci.Win.UI.CheckBox();
+            this.checkQtyBDownByShipmode = new Sci.Win.UI.CheckBox();
+            this.checkListPOCombo = new Sci.Win.UI.CheckBox();
+            this.checkBulk = new Sci.Win.UI.CheckBox();
+            this.checkSample = new Sci.Win.UI.CheckBox();
+            this.checkMaterial = new Sci.Win.UI.CheckBox();
+            this.checkForecast = new Sci.Win.UI.CheckBox();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtcustcd = new Sci.Production.Class.txtcustcd();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -83,412 +83,412 @@
             this.close.Location = new System.Drawing.Point(386, 84);
             this.close.TabIndex = 26;
             // 
-            // label1
-            // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Buyer Delivery";
-            // 
-            // label2
-            // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "SCI Delivery";
-            // 
-            // label3
-            // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Cut-Off Date";
-            // 
-            // label4
-            // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 95);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Cust RQS Date";
-            // 
-            // label5
-            // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 123);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Plan Date";
-            // 
-            // label6
-            // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 151);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Order Cfm Date";
-            // 
-            // label7
-            // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 179);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(102, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Style";
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(13, 207);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(102, 23);
-            this.label8.TabIndex = 101;
-            this.label8.Text = "Season";
-            // 
-            // label9
-            // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 235);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(102, 23);
-            this.label9.TabIndex = 102;
-            this.label9.Text = "Brand";
-            // 
-            // label10
-            // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(13, 263);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(102, 23);
-            this.label10.TabIndex = 103;
-            this.label10.Text = "Cust CD";
-            // 
-            // label11
-            // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(13, 291);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(102, 23);
-            this.label11.TabIndex = 104;
-            this.label11.Text = "Zone";
-            // 
-            // label12
-            // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(13, 319);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(102, 23);
-            this.label12.TabIndex = 105;
-            this.label12.Text = "M";
-            // 
-            // label13
-            // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(13, 347);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(102, 23);
-            this.label13.TabIndex = 106;
-            this.label13.Text = "Factory";
-            // 
-            // label14
-            // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(13, 375);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(102, 23);
-            this.label14.TabIndex = 107;
-            this.label14.Text = "Category";
-            // 
-            // label15
-            // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(13, 403);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(102, 23);
-            this.label15.TabIndex = 108;
-            this.label15.Text = "Sub Process";
-            // 
-            // dateRange1
-            // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(119, 11);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(227, 23);
-            this.dateRange1.TabIndex = 1;
-            // 
-            // dateRange2
-            // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(119, 39);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(227, 23);
-            this.dateRange2.TabIndex = 2;
-            // 
-            // dateRange3
-            // 
-            this.dateRange3.IsRequired = false;
-            this.dateRange3.Location = new System.Drawing.Point(119, 67);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(227, 23);
-            this.dateRange3.TabIndex = 3;
-            // 
-            // dateRange4
-            // 
-            this.dateRange4.IsRequired = false;
-            this.dateRange4.Location = new System.Drawing.Point(119, 95);
-            this.dateRange4.Name = "dateRange4";
-            this.dateRange4.Size = new System.Drawing.Size(227, 23);
-            this.dateRange4.TabIndex = 4;
-            // 
-            // dateRange5
-            // 
-            this.dateRange5.IsRequired = false;
-            this.dateRange5.Location = new System.Drawing.Point(119, 123);
-            this.dateRange5.Name = "dateRange5";
-            this.dateRange5.Size = new System.Drawing.Size(227, 23);
-            this.dateRange5.TabIndex = 5;
-            // 
-            // dateRange6
-            // 
-            this.dateRange6.IsRequired = false;
-            this.dateRange6.Location = new System.Drawing.Point(119, 151);
-            this.dateRange6.Name = "dateRange6";
-            this.dateRange6.Size = new System.Drawing.Size(227, 23);
-            this.dateRange6.TabIndex = 6;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(119, 290);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(227, 24);
-            this.comboBox1.TabIndex = 11;
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(119, 318);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(66, 24);
-            this.comboBox2.TabIndex = 12;
-            // 
-            // comboBox3
-            // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(119, 346);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(66, 24);
-            this.comboBox3.TabIndex = 13;
-            // 
-            // comboBox4
-            // 
-            this.comboBox4.BackColor = System.Drawing.Color.White;
-            this.comboBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.IsSupportUnselect = true;
-            this.comboBox4.Location = new System.Drawing.Point(119, 402);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(165, 24);
-            this.comboBox4.TabIndex = 18;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(13, 430);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(161, 21);
-            this.checkBox1.TabIndex = 19;
-            this.checkBox1.Text = "Include History Order";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(13, 458);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(155, 21);
-            this.checkBox2.TabIndex = 20;
-            this.checkBox2.Text = "Include Artwork data";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(13, 486);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(252, 21);
-            this.checkBox3.TabIndex = 21;
-            this.checkBox3.Text = "Include Artwork data -- Kind is \'PAP\'";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(13, 514);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(286, 21);
-            this.checkBox4.TabIndex = 22;
-            this.checkBox4.Text = "Seperate by < Qty b\'down by shipmode >";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox5.Location = new System.Drawing.Point(13, 542);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(121, 21);
-            this.checkBox5.TabIndex = 23;
-            this.checkBox5.Text = "List PO Combo";
-            this.checkBox5.UseVisualStyleBackColor = true;
-            // 
-            // checkBox6
-            // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox6.Location = new System.Drawing.Point(119, 375);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(54, 21);
-            this.checkBox6.TabIndex = 14;
-            this.checkBox6.Text = "Bulk";
-            this.checkBox6.UseVisualStyleBackColor = true;
-            // 
-            // checkBox7
-            // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox7.Location = new System.Drawing.Point(180, 375);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(74, 21);
-            this.checkBox7.TabIndex = 15;
-            this.checkBox7.Text = "Sample";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            // 
-            // checkBox8
-            // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox8.Location = new System.Drawing.Point(260, 375);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(77, 21);
-            this.checkBox8.TabIndex = 16;
-            this.checkBox8.Text = "Material";
-            this.checkBox8.UseVisualStyleBackColor = true;
-            // 
-            // checkBox9
-            // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox9.Location = new System.Drawing.Point(344, 375);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(82, 21);
-            this.checkBox9.TabIndex = 17;
-            this.checkBox9.Text = "Forecast";
-            this.checkBox9.UseVisualStyleBackColor = true;
-            // 
-            // txtstyle1
-            // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(119, 178);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(186, 23);
-            this.txtstyle1.TabIndex = 7;
-            // 
-            // txtseason1
-            // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(119, 207);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(98, 23);
-            this.txtseason1.TabIndex = 8;
-            // 
-            // txtcustcd1
-            // 
-            this.txtcustcd1.BackColor = System.Drawing.Color.White;
-            this.txtcustcd1.BrandObjectName = null;
-            this.txtcustcd1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd1.Location = new System.Drawing.Point(119, 261);
-            this.txtcustcd1.Name = "txtcustcd1";
-            this.txtcustcd1.Size = new System.Drawing.Size(186, 23);
-            this.txtcustcd1.TabIndex = 10;
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(119, 235);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand1.TabIndex = 9;
+            // labelBuyerDelivery
+            // 
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 11);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
+            this.labelBuyerDelivery.TabIndex = 94;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
+            // 
+            // labelSCIDelivery
+            // 
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 39);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(102, 23);
+            this.labelSCIDelivery.TabIndex = 95;
+            this.labelSCIDelivery.Text = "SCI Delivery";
+            // 
+            // labelCutOffDate
+            // 
+            this.labelCutOffDate.Lines = 0;
+            this.labelCutOffDate.Location = new System.Drawing.Point(13, 67);
+            this.labelCutOffDate.Name = "labelCutOffDate";
+            this.labelCutOffDate.Size = new System.Drawing.Size(102, 23);
+            this.labelCutOffDate.TabIndex = 96;
+            this.labelCutOffDate.Text = "Cut-Off Date";
+            // 
+            // labelCustRQSDate
+            // 
+            this.labelCustRQSDate.Lines = 0;
+            this.labelCustRQSDate.Location = new System.Drawing.Point(13, 95);
+            this.labelCustRQSDate.Name = "labelCustRQSDate";
+            this.labelCustRQSDate.Size = new System.Drawing.Size(102, 23);
+            this.labelCustRQSDate.TabIndex = 97;
+            this.labelCustRQSDate.Text = "Cust RQS Date";
+            // 
+            // labelPlanDate
+            // 
+            this.labelPlanDate.Lines = 0;
+            this.labelPlanDate.Location = new System.Drawing.Point(13, 123);
+            this.labelPlanDate.Name = "labelPlanDate";
+            this.labelPlanDate.Size = new System.Drawing.Size(102, 23);
+            this.labelPlanDate.TabIndex = 98;
+            this.labelPlanDate.Text = "Plan Date";
+            // 
+            // labelOrderCfmDate
+            // 
+            this.labelOrderCfmDate.Lines = 0;
+            this.labelOrderCfmDate.Location = new System.Drawing.Point(13, 151);
+            this.labelOrderCfmDate.Name = "labelOrderCfmDate";
+            this.labelOrderCfmDate.Size = new System.Drawing.Size(102, 23);
+            this.labelOrderCfmDate.TabIndex = 99;
+            this.labelOrderCfmDate.Text = "Order Cfm Date";
+            // 
+            // labelStyle
+            // 
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(13, 179);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(102, 23);
+            this.labelStyle.TabIndex = 100;
+            this.labelStyle.Text = "Style";
+            // 
+            // labelSeason
+            // 
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(13, 207);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(102, 23);
+            this.labelSeason.TabIndex = 101;
+            this.labelSeason.Text = "Season";
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 235);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(102, 23);
+            this.labelBrand.TabIndex = 102;
+            this.labelBrand.Text = "Brand";
+            // 
+            // labelCustCD
+            // 
+            this.labelCustCD.Lines = 0;
+            this.labelCustCD.Location = new System.Drawing.Point(13, 263);
+            this.labelCustCD.Name = "labelCustCD";
+            this.labelCustCD.Size = new System.Drawing.Size(102, 23);
+            this.labelCustCD.TabIndex = 103;
+            this.labelCustCD.Text = "Cust CD";
+            // 
+            // labelZone
+            // 
+            this.labelZone.Lines = 0;
+            this.labelZone.Location = new System.Drawing.Point(13, 291);
+            this.labelZone.Name = "labelZone";
+            this.labelZone.Size = new System.Drawing.Size(102, 23);
+            this.labelZone.TabIndex = 104;
+            this.labelZone.Text = "Zone";
+            // 
+            // labelM
+            // 
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 319);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(102, 23);
+            this.labelM.TabIndex = 105;
+            this.labelM.Text = "M";
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 347);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(102, 23);
+            this.labelFactory.TabIndex = 106;
+            this.labelFactory.Text = "Factory";
+            // 
+            // labelCategory
+            // 
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(13, 375);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(102, 23);
+            this.labelCategory.TabIndex = 107;
+            this.labelCategory.Text = "Category";
+            // 
+            // labelSubProcess
+            // 
+            this.labelSubProcess.Lines = 0;
+            this.labelSubProcess.Location = new System.Drawing.Point(13, 403);
+            this.labelSubProcess.Name = "labelSubProcess";
+            this.labelSubProcess.Size = new System.Drawing.Size(102, 23);
+            this.labelSubProcess.TabIndex = 108;
+            this.labelSubProcess.Text = "Sub Process";
+            // 
+            // dateBuyerDelivery
+            // 
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(119, 11);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(227, 23);
+            this.dateBuyerDelivery.TabIndex = 1;
+            // 
+            // dateSCIDelivery
+            // 
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(119, 39);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(227, 23);
+            this.dateSCIDelivery.TabIndex = 2;
+            // 
+            // dateCutOffDate
+            // 
+            this.dateCutOffDate.IsRequired = false;
+            this.dateCutOffDate.Location = new System.Drawing.Point(119, 67);
+            this.dateCutOffDate.Name = "dateCutOffDate";
+            this.dateCutOffDate.Size = new System.Drawing.Size(227, 23);
+            this.dateCutOffDate.TabIndex = 3;
+            // 
+            // dateCustRQSDate
+            // 
+            this.dateCustRQSDate.IsRequired = false;
+            this.dateCustRQSDate.Location = new System.Drawing.Point(119, 95);
+            this.dateCustRQSDate.Name = "dateCustRQSDate";
+            this.dateCustRQSDate.Size = new System.Drawing.Size(227, 23);
+            this.dateCustRQSDate.TabIndex = 4;
+            // 
+            // datePlanDate
+            // 
+            this.datePlanDate.IsRequired = false;
+            this.datePlanDate.Location = new System.Drawing.Point(119, 123);
+            this.datePlanDate.Name = "datePlanDate";
+            this.datePlanDate.Size = new System.Drawing.Size(227, 23);
+            this.datePlanDate.TabIndex = 5;
+            // 
+            // dateOrderCfmDate
+            // 
+            this.dateOrderCfmDate.IsRequired = false;
+            this.dateOrderCfmDate.Location = new System.Drawing.Point(119, 151);
+            this.dateOrderCfmDate.Name = "dateOrderCfmDate";
+            this.dateOrderCfmDate.Size = new System.Drawing.Size(227, 23);
+            this.dateOrderCfmDate.TabIndex = 6;
+            // 
+            // comboZone
+            // 
+            this.comboZone.BackColor = System.Drawing.Color.White;
+            this.comboZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboZone.FormattingEnabled = true;
+            this.comboZone.IsSupportUnselect = true;
+            this.comboZone.Location = new System.Drawing.Point(119, 290);
+            this.comboZone.Name = "comboZone";
+            this.comboZone.Size = new System.Drawing.Size(227, 24);
+            this.comboZone.TabIndex = 11;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(119, 318);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 12;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(119, 346);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(66, 24);
+            this.comboFactory.TabIndex = 13;
+            // 
+            // comboSubProcess
+            // 
+            this.comboSubProcess.BackColor = System.Drawing.Color.White;
+            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubProcess.FormattingEnabled = true;
+            this.comboSubProcess.IsSupportUnselect = true;
+            this.comboSubProcess.Location = new System.Drawing.Point(119, 402);
+            this.comboSubProcess.Name = "comboSubProcess";
+            this.comboSubProcess.Size = new System.Drawing.Size(165, 24);
+            this.comboSubProcess.TabIndex = 18;
+            // 
+            // checkIncludeHistoryOrder
+            // 
+            this.checkIncludeHistoryOrder.AutoSize = true;
+            this.checkIncludeHistoryOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIncludeHistoryOrder.Location = new System.Drawing.Point(13, 430);
+            this.checkIncludeHistoryOrder.Name = "checkIncludeHistoryOrder";
+            this.checkIncludeHistoryOrder.Size = new System.Drawing.Size(161, 21);
+            this.checkIncludeHistoryOrder.TabIndex = 19;
+            this.checkIncludeHistoryOrder.Text = "Include History Order";
+            this.checkIncludeHistoryOrder.UseVisualStyleBackColor = true;
+            // 
+            // checkIncludeArtworkdata
+            // 
+            this.checkIncludeArtworkdata.AutoSize = true;
+            this.checkIncludeArtworkdata.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIncludeArtworkdata.Location = new System.Drawing.Point(13, 458);
+            this.checkIncludeArtworkdata.Name = "checkIncludeArtworkdata";
+            this.checkIncludeArtworkdata.Size = new System.Drawing.Size(155, 21);
+            this.checkIncludeArtworkdata.TabIndex = 20;
+            this.checkIncludeArtworkdata.Text = "Include Artwork data";
+            this.checkIncludeArtworkdata.UseVisualStyleBackColor = true;
+            // 
+            // checkIncludeArtworkdataKindIsPAP
+            // 
+            this.checkIncludeArtworkdataKindIsPAP.AutoSize = true;
+            this.checkIncludeArtworkdataKindIsPAP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkIncludeArtworkdataKindIsPAP.Location = new System.Drawing.Point(13, 486);
+            this.checkIncludeArtworkdataKindIsPAP.Name = "checkIncludeArtworkdataKindIsPAP";
+            this.checkIncludeArtworkdataKindIsPAP.Size = new System.Drawing.Size(252, 21);
+            this.checkIncludeArtworkdataKindIsPAP.TabIndex = 21;
+            this.checkIncludeArtworkdataKindIsPAP.Text = "Include Artwork data -- Kind is \'PAP\'";
+            this.checkIncludeArtworkdataKindIsPAP.UseVisualStyleBackColor = true;
+            // 
+            // checkQtyBDownByShipmode
+            // 
+            this.checkQtyBDownByShipmode.AutoSize = true;
+            this.checkQtyBDownByShipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkQtyBDownByShipmode.Location = new System.Drawing.Point(13, 514);
+            this.checkQtyBDownByShipmode.Name = "checkQtyBDownByShipmode";
+            this.checkQtyBDownByShipmode.Size = new System.Drawing.Size(286, 21);
+            this.checkQtyBDownByShipmode.TabIndex = 22;
+            this.checkQtyBDownByShipmode.Text = "Seperate by < Qty b\'down by shipmode >";
+            this.checkQtyBDownByShipmode.UseVisualStyleBackColor = true;
+            // 
+            // checkListPOCombo
+            // 
+            this.checkListPOCombo.AutoSize = true;
+            this.checkListPOCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkListPOCombo.Location = new System.Drawing.Point(13, 542);
+            this.checkListPOCombo.Name = "checkListPOCombo";
+            this.checkListPOCombo.Size = new System.Drawing.Size(121, 21);
+            this.checkListPOCombo.TabIndex = 23;
+            this.checkListPOCombo.Text = "List PO Combo";
+            this.checkListPOCombo.UseVisualStyleBackColor = true;
+            // 
+            // checkBulk
+            // 
+            this.checkBulk.AutoSize = true;
+            this.checkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBulk.Location = new System.Drawing.Point(119, 375);
+            this.checkBulk.Name = "checkBulk";
+            this.checkBulk.Size = new System.Drawing.Size(54, 21);
+            this.checkBulk.TabIndex = 14;
+            this.checkBulk.Text = "Bulk";
+            this.checkBulk.UseVisualStyleBackColor = true;
+            // 
+            // checkSample
+            // 
+            this.checkSample.AutoSize = true;
+            this.checkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSample.Location = new System.Drawing.Point(180, 375);
+            this.checkSample.Name = "checkSample";
+            this.checkSample.Size = new System.Drawing.Size(74, 21);
+            this.checkSample.TabIndex = 15;
+            this.checkSample.Text = "Sample";
+            this.checkSample.UseVisualStyleBackColor = true;
+            // 
+            // checkMaterial
+            // 
+            this.checkMaterial.AutoSize = true;
+            this.checkMaterial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkMaterial.Location = new System.Drawing.Point(260, 375);
+            this.checkMaterial.Name = "checkMaterial";
+            this.checkMaterial.Size = new System.Drawing.Size(77, 21);
+            this.checkMaterial.TabIndex = 16;
+            this.checkMaterial.Text = "Material";
+            this.checkMaterial.UseVisualStyleBackColor = true;
+            // 
+            // checkForecast
+            // 
+            this.checkForecast.AutoSize = true;
+            this.checkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkForecast.Location = new System.Drawing.Point(344, 375);
+            this.checkForecast.Name = "checkForecast";
+            this.checkForecast.Size = new System.Drawing.Size(82, 21);
+            this.checkForecast.TabIndex = 17;
+            this.checkForecast.Text = "Forecast";
+            this.checkForecast.UseVisualStyleBackColor = true;
+            // 
+            // txtstyle
+            // 
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(119, 178);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(186, 23);
+            this.txtstyle.TabIndex = 7;
+            // 
+            // txtseason
+            // 
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(119, 207);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(98, 23);
+            this.txtseason.TabIndex = 8;
+            // 
+            // txtcustcd
+            // 
+            this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = null;
+            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd.Location = new System.Drawing.Point(119, 261);
+            this.txtcustcd.Name = "txtcustcd";
+            this.txtcustcd.Size = new System.Drawing.Size(186, 23);
+            this.txtcustcd.TabIndex = 10;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(119, 235);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand.TabIndex = 9;
             // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(478, 590);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.txtcustcd1);
-            this.Controls.Add(this.txtseason1);
-            this.Controls.Add(this.txtstyle1);
-            this.Controls.Add(this.checkBox9);
-            this.Controls.Add(this.checkBox8);
-            this.Controls.Add(this.checkBox7);
-            this.Controls.Add(this.checkBox6);
-            this.Controls.Add(this.checkBox5);
-            this.Controls.Add(this.checkBox4);
-            this.Controls.Add(this.checkBox3);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.comboBox4);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange6);
-            this.Controls.Add(this.dateRange5);
-            this.Controls.Add(this.dateRange4);
-            this.Controls.Add(this.dateRange3);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.txtcustcd);
+            this.Controls.Add(this.txtseason);
+            this.Controls.Add(this.txtstyle);
+            this.Controls.Add(this.checkForecast);
+            this.Controls.Add(this.checkMaterial);
+            this.Controls.Add(this.checkSample);
+            this.Controls.Add(this.checkBulk);
+            this.Controls.Add(this.checkListPOCombo);
+            this.Controls.Add(this.checkQtyBDownByShipmode);
+            this.Controls.Add(this.checkIncludeArtworkdataKindIsPAP);
+            this.Controls.Add(this.checkIncludeArtworkdata);
+            this.Controls.Add(this.checkIncludeHistoryOrder);
+            this.Controls.Add(this.comboSubProcess);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.comboZone);
+            this.Controls.Add(this.dateOrderCfmDate);
+            this.Controls.Add(this.datePlanDate);
+            this.Controls.Add(this.dateCustRQSDate);
+            this.Controls.Add(this.dateCutOffDate);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.dateBuyerDelivery);
+            this.Controls.Add(this.labelSubProcess);
+            this.Controls.Add(this.labelCategory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelZone);
+            this.Controls.Add(this.labelCustCD);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelSeason);
+            this.Controls.Add(this.labelStyle);
+            this.Controls.Add(this.labelOrderCfmDate);
+            this.Controls.Add(this.labelPlanDate);
+            this.Controls.Add(this.labelCustRQSDate);
+            this.Controls.Add(this.labelCutOffDate);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.labelBuyerDelivery);
             this.DefaultControl = "dateRange1";
             this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
@@ -497,44 +497,44 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.label10, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.label13, 0);
-            this.Controls.SetChildIndex(this.label14, 0);
-            this.Controls.SetChildIndex(this.label15, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.dateRange3, 0);
-            this.Controls.SetChildIndex(this.dateRange4, 0);
-            this.Controls.SetChildIndex(this.dateRange5, 0);
-            this.Controls.SetChildIndex(this.dateRange6, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.comboBox3, 0);
-            this.Controls.SetChildIndex(this.comboBox4, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.checkBox2, 0);
-            this.Controls.SetChildIndex(this.checkBox3, 0);
-            this.Controls.SetChildIndex(this.checkBox4, 0);
-            this.Controls.SetChildIndex(this.checkBox5, 0);
-            this.Controls.SetChildIndex(this.checkBox6, 0);
-            this.Controls.SetChildIndex(this.checkBox7, 0);
-            this.Controls.SetChildIndex(this.checkBox8, 0);
-            this.Controls.SetChildIndex(this.checkBox9, 0);
-            this.Controls.SetChildIndex(this.txtstyle1, 0);
-            this.Controls.SetChildIndex(this.txtseason1, 0);
-            this.Controls.SetChildIndex(this.txtcustcd1, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.labelCutOffDate, 0);
+            this.Controls.SetChildIndex(this.labelCustRQSDate, 0);
+            this.Controls.SetChildIndex(this.labelPlanDate, 0);
+            this.Controls.SetChildIndex(this.labelOrderCfmDate, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
+            this.Controls.SetChildIndex(this.labelSeason, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelCustCD, 0);
+            this.Controls.SetChildIndex(this.labelZone, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelCategory, 0);
+            this.Controls.SetChildIndex(this.labelSubProcess, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.dateCutOffDate, 0);
+            this.Controls.SetChildIndex(this.dateCustRQSDate, 0);
+            this.Controls.SetChildIndex(this.datePlanDate, 0);
+            this.Controls.SetChildIndex(this.dateOrderCfmDate, 0);
+            this.Controls.SetChildIndex(this.comboZone, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.comboSubProcess, 0);
+            this.Controls.SetChildIndex(this.checkIncludeHistoryOrder, 0);
+            this.Controls.SetChildIndex(this.checkIncludeArtworkdata, 0);
+            this.Controls.SetChildIndex(this.checkIncludeArtworkdataKindIsPAP, 0);
+            this.Controls.SetChildIndex(this.checkQtyBDownByShipmode, 0);
+            this.Controls.SetChildIndex(this.checkListPOCombo, 0);
+            this.Controls.SetChildIndex(this.checkBulk, 0);
+            this.Controls.SetChildIndex(this.checkSample, 0);
+            this.Controls.SetChildIndex(this.checkMaterial, 0);
+            this.Controls.SetChildIndex(this.checkForecast, 0);
+            this.Controls.SetChildIndex(this.txtstyle, 0);
+            this.Controls.SetChildIndex(this.txtseason, 0);
+            this.Controls.SetChildIndex(this.txtcustcd, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -542,43 +542,43 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.Label label10;
-        private Win.UI.Label label11;
-        private Win.UI.Label label12;
-        private Win.UI.Label label13;
-        private Win.UI.Label label14;
-        private Win.UI.Label label15;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.DateRange dateRange4;
-        private Win.UI.DateRange dateRange5;
-        private Win.UI.DateRange dateRange6;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.ComboBox comboBox3;
-        private Win.UI.ComboBox comboBox4;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox5;
-        private Win.UI.CheckBox checkBox6;
-        private Win.UI.CheckBox checkBox7;
-        private Win.UI.CheckBox checkBox8;
-        private Win.UI.CheckBox checkBox9;
-        private Class.txtstyle txtstyle1;
-        private Class.txtseason txtseason1;
-        private Class.txtcustcd txtcustcd1;
-        private Class.txtbrand txtbrand1;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelCutOffDate;
+        private Win.UI.Label labelCustRQSDate;
+        private Win.UI.Label labelPlanDate;
+        private Win.UI.Label labelOrderCfmDate;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelCustCD;
+        private Win.UI.Label labelZone;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelCategory;
+        private Win.UI.Label labelSubProcess;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.DateRange dateCutOffDate;
+        private Win.UI.DateRange dateCustRQSDate;
+        private Win.UI.DateRange datePlanDate;
+        private Win.UI.DateRange dateOrderCfmDate;
+        private Win.UI.ComboBox comboZone;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboSubProcess;
+        private Win.UI.CheckBox checkIncludeHistoryOrder;
+        private Win.UI.CheckBox checkIncludeArtworkdata;
+        private Win.UI.CheckBox checkIncludeArtworkdataKindIsPAP;
+        private Win.UI.CheckBox checkQtyBDownByShipmode;
+        private Win.UI.CheckBox checkListPOCombo;
+        private Win.UI.CheckBox checkBulk;
+        private Win.UI.CheckBox checkSample;
+        private Win.UI.CheckBox checkMaterial;
+        private Win.UI.CheckBox checkForecast;
+        private Class.txtstyle txtstyle;
+        private Class.txtseason txtseason;
+        private Class.txtcustcd txtcustcd;
+        private Class.txtbrand txtbrand;
     }
 }

@@ -30,16 +30,16 @@ and exists (select 1 from Style_WeightData sw WITH (NOLOCK) where sw.StyleUkey =
             item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtFromSeason.Text = item.GetSelectedString();
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue != textBox1.Text)
+            if (txtFromSeason.OldValue != txtFromSeason.Text)
             {
                 //sql參數
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleukey", styleUkey);
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@seasonid", textBox1.Text);
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@seasonid", txtFromSeason.Text);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
@@ -61,7 +61,7 @@ and s.SeasonID = @seasonid";
                     {
                         MyUtility.Msg.WarningBox("The season has no weight data!");
                     }
-                    textBox1.Text = "";
+                    txtFromSeason.Text = "";
                     e.Cancel = true;
                     return;
                 }
@@ -71,7 +71,7 @@ and s.SeasonID = @seasonid";
         //OK
         private void button1_Click(object sender, EventArgs e)
         {
-            PPICP04CopySeason = textBox1.Text;
+            PPICP04CopySeason = txtFromSeason.Text;
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }

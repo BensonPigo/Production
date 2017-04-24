@@ -23,31 +23,31 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
-            comboBox2.Text = "Bulk+Sample";
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboOrderType, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
+            comboOrderType.Text = "Bulk+Sample";
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox3.Text = Sci.Env.User.Factory; 
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory; 
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox("SCI Delivery can't empty!!");
                 return false;
             }
-            _sciDate1 = dateRange1.Value1;
-            _sciDate2 = dateRange1.Value2;
-            _mDivision = comboBox1.Text;
-            _orderType = comboBox2.SelectedIndex == -1 ? "" : comboBox2.SelectedIndex == 0 ? "B" : comboBox2.SelectedIndex == 1 ? "S" : comboBox2.SelectedIndex == 2 ? "BS" : "M";
-            _excludeReplacement = checkBox1.Checked ? 1 : 0;
-            _complection = checkBox2.Checked ? 1 : 0;
-            _factory = comboBox3.Text;
-            _category = comboBox2.Text;
+            _sciDate1 = dateSCIDelivery.Value1;
+            _sciDate2 = dateSCIDelivery.Value2;
+            _mDivision = comboM.Text;
+            _orderType = comboOrderType.SelectedIndex == -1 ? "" : comboOrderType.SelectedIndex == 0 ? "B" : comboOrderType.SelectedIndex == 1 ? "S" : comboOrderType.SelectedIndex == 2 ? "BS" : "M";
+            _excludeReplacement = checkExcludedReplacementItem.Checked ? 1 : 0;
+            _complection = checkPOMaterialCompletion.Checked ? 1 : 0;
+            _factory = comboFactory.Text;
+            _category = comboOrderType.Text;
             return base.ValidateInput();
         }
 

@@ -97,7 +97,7 @@ namespace Sci.Production.PPIC
 where st.ArtworkTypeID = at.ID
 and at.IsTtlTMS = 1
 and st.StyleUkey = {0}",KeyValue1);
-            numericBox1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
+            numTTLTMS.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlCmd));
             #endregion
 
             #region 撈新增的ArtworkType
@@ -184,12 +184,12 @@ where a.StyleUkey = ''", KeyValue1);
         {
             if ((DataTable)gridbs.DataSource == null)
             {
-                numericBox1.Value = 0;
+                numTTLTMS.Value = 0;
             }
             else
             {
                 Object ttlTMS = ((DataTable)gridbs.DataSource).Compute("Sum(Tms)", "IsTtlTMS = 'Y'");
-                numericBox1.Value = MyUtility.Convert.GetDecimal(ttlTMS);
+                numTTLTMS.Value = MyUtility.Convert.GetDecimal(ttlTMS);
             }
         }
 

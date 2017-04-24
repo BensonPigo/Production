@@ -46,11 +46,11 @@ order by oa.Seq,os.Seq", orderID);
             object bookingQty = QtyBDown.Compute("sum(BookingQty)", "");
             object pulloutQty = QtyBDown.Compute("sum(PulloutQty)", "");
             object adjQty = QtyBDown.Compute("sum(AdjQty)", "");
-            numericBox1.Value = orderQty.Empty() ? 0 : Convert.ToInt32(orderQty);
-            numericBox2.Value = packlistQty.Empty() ? 0 : Convert.ToInt32(packlistQty);
-            numericBox3.Value = bookingQty.Empty() ? 0 : Convert.ToInt32(bookingQty);
-            numericBox4.Value = pulloutQty.Empty() ? 0 : Convert.ToInt32(pulloutQty);
-            numericBox5.Value = adjQty.Empty() ? 0 : Convert.ToInt32(adjQty);
+            numOrderQty.Value = orderQty.Empty() ? 0 : Convert.ToInt32(orderQty);
+            numPackingQty.Value = packlistQty.Empty() ? 0 : Convert.ToInt32(packlistQty);
+            numBookingQty.Value = bookingQty.Empty() ? 0 : Convert.ToInt32(bookingQty);
+            numPulloutQty.Value = pulloutQty.Empty() ? 0 : Convert.ToInt32(pulloutQty);
+            numAdjQty.Value = adjQty.Empty() ? 0 : Convert.ToInt32(adjQty);
 
             sqlCmd = string.Format(@"with tmpPackingList
 as (
@@ -117,9 +117,9 @@ select * from tmpInvAdj", orderID);
             adjqty2.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             ctnqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridQtyBDownByGarmentExport.IsEditingReadOnly = true;
+            this.gridQtyBDownByGarmentExport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridQtyBDownByGarmentExport)
                 .Text("Article", header: "Color Way", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(6), settings: orderqty)
@@ -129,9 +129,9 @@ select * from tmpInvAdj", orderID);
                 .Numeric("AdjQty", header: "Adj Q'ty", width: Widths.AnsiChars(6), settings: adjqty1);
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridPackingListBookingPulloutDetail.IsEditingReadOnly = true;
+            this.gridPackingListBookingPulloutDetail.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridPackingListBookingPulloutDetail)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(6))
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
                 .Text("ID", header: "Packing#", width: Widths.AnsiChars(15))

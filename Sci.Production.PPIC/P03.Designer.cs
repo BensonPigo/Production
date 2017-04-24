@@ -33,30 +33,30 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.button5 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.btnViewDetail = new Sci.Win.UI.Button();
+            this.btnBatchUpdate = new Sci.Win.UI.Button();
+            this.dateFactoryReceiveDate = new Sci.Win.UI.DateBox();
+            this.labelFactoryReceiveDate = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.dateSendDate = new Sci.Win.UI.DateBox();
+            this.labelSenddate = new Sci.Win.UI.Label();
+            this.txtSeason = new Sci.Win.UI.TextBox();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.txtStyleNo = new Sci.Win.UI.TextBox();
+            this.labelStyleNo = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridProductionKitsConfirm = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridProductionKitsConfirm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,18 +79,18 @@
             // panel3
             // 
             this.panel3.Controls.Add(this.comboFactory);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.button5);
-            this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.dateBox2);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.dateBox1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.textBox2);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.labelFactory);
+            this.panel3.Controls.Add(this.btnViewDetail);
+            this.panel3.Controls.Add(this.btnBatchUpdate);
+            this.panel3.Controls.Add(this.dateFactoryReceiveDate);
+            this.panel3.Controls.Add(this.labelFactoryReceiveDate);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.dateSendDate);
+            this.panel3.Controls.Add(this.labelSenddate);
+            this.panel3.Controls.Add(this.txtSeason);
+            this.panel3.Controls.Add(this.labelSeason);
+            this.panel3.Controls.Add(this.txtStyleNo);
+            this.panel3.Controls.Add(this.labelStyleNo);
             this.panel3.Controls.Add(this.shapeContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
@@ -109,118 +109,118 @@
             this.comboFactory.Size = new System.Drawing.Size(73, 24);
             this.comboFactory.TabIndex = 10;
             // 
-            // label5
+            // labelFactory
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(8, 13);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(60, 23);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(8, 13);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(60, 23);
+            this.labelFactory.TabIndex = 9;
+            this.labelFactory.Text = "Factory";
             // 
-            // button5
+            // btnViewDetail
             // 
-            this.button5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button5.Location = new System.Drawing.Point(808, 51);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(95, 30);
-            this.button5.TabIndex = 8;
-            this.button5.Text = "View Detail";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnViewDetail.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnViewDetail.Location = new System.Drawing.Point(808, 51);
+            this.btnViewDetail.Name = "btnViewDetail";
+            this.btnViewDetail.Size = new System.Drawing.Size(95, 30);
+            this.btnViewDetail.TabIndex = 8;
+            this.btnViewDetail.Text = "View Detail";
+            this.btnViewDetail.UseVisualStyleBackColor = true;
+            this.btnViewDetail.Click += new System.EventHandler(this.button5_Click);
             // 
-            // button2
+            // btnBatchUpdate
             // 
-            this.button2.Location = new System.Drawing.Point(282, 51);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(131, 30);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Batch update";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnBatchUpdate.Location = new System.Drawing.Point(282, 51);
+            this.btnBatchUpdate.Name = "btnBatchUpdate";
+            this.btnBatchUpdate.Size = new System.Drawing.Size(131, 30);
+            this.btnBatchUpdate.TabIndex = 7;
+            this.btnBatchUpdate.Text = "Batch update";
+            this.btnBatchUpdate.UseVisualStyleBackColor = true;
+            this.btnBatchUpdate.Click += new System.EventHandler(this.button2_Click);
             // 
-            // dateBox2
+            // dateFactoryReceiveDate
             // 
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(141, 55);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(110, 23);
-            this.dateBox2.TabIndex = 6;
+            this.dateFactoryReceiveDate.IsSupportEditMode = false;
+            this.dateFactoryReceiveDate.Location = new System.Drawing.Point(141, 55);
+            this.dateFactoryReceiveDate.Name = "dateFactoryReceiveDate";
+            this.dateFactoryReceiveDate.Size = new System.Drawing.Size(110, 23);
+            this.dateFactoryReceiveDate.TabIndex = 6;
             // 
-            // label4
+            // labelFactoryReceiveDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(8, 55);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(129, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Factory receive date";
+            this.labelFactoryReceiveDate.Lines = 0;
+            this.labelFactoryReceiveDate.Location = new System.Drawing.Point(8, 55);
+            this.labelFactoryReceiveDate.Name = "labelFactoryReceiveDate";
+            this.labelFactoryReceiveDate.Size = new System.Drawing.Size(129, 23);
+            this.labelFactoryReceiveDate.TabIndex = 7;
+            this.labelFactoryReceiveDate.Text = "Factory receive date";
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(823, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(823, 9);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 5;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // dateBox1
+            // dateSendDate
             // 
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(675, 13);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 4;
+            this.dateSendDate.IsSupportEditMode = false;
+            this.dateSendDate.Location = new System.Drawing.Point(675, 13);
+            this.dateSendDate.Name = "dateSendDate";
+            this.dateSendDate.Size = new System.Drawing.Size(110, 23);
+            this.dateSendDate.TabIndex = 4;
             // 
-            // label3
+            // labelSenddate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(604, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Send date";
+            this.labelSenddate.Lines = 0;
+            this.labelSenddate.Location = new System.Drawing.Point(604, 13);
+            this.labelSenddate.Name = "labelSenddate";
+            this.labelSenddate.Size = new System.Drawing.Size(67, 23);
+            this.labelSenddate.TabIndex = 4;
+            this.labelSenddate.Text = "Send date";
             // 
-            // textBox2
+            // txtSeason
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(471, 13);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(92, 23);
-            this.textBox2.TabIndex = 3;
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.IsSupportEditMode = false;
+            this.txtSeason.Location = new System.Drawing.Point(471, 13);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(92, 23);
+            this.txtSeason.TabIndex = 3;
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(416, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(416, 13);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(51, 23);
+            this.labelSeason.TabIndex = 2;
+            this.labelSeason.Text = "Season";
             // 
-            // textBox1
+            // txtStyleNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(239, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(140, 23);
-            this.textBox1.TabIndex = 2;
+            this.txtStyleNo.BackColor = System.Drawing.Color.White;
+            this.txtStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyleNo.IsSupportEditMode = false;
+            this.txtStyleNo.Location = new System.Drawing.Point(239, 13);
+            this.txtStyleNo.Name = "txtStyleNo";
+            this.txtStyleNo.Size = new System.Drawing.Size(140, 23);
+            this.txtStyleNo.TabIndex = 2;
             // 
-            // label1
+            // labelStyleNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(174, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 23);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Style No.";
+            this.labelStyleNo.Lines = 0;
+            this.labelStyleNo.Location = new System.Drawing.Point(174, 13);
+            this.labelStyleNo.Name = "labelStyleNo";
+            this.labelStyleNo.Size = new System.Drawing.Size(61, 23);
+            this.labelStyleNo.TabIndex = 8;
+            this.labelStyleNo.Text = "Style No.";
             // 
             // shapeContainer1
             // 
@@ -245,73 +245,73 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnSave);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 440);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(924, 44);
             this.panel4.TabIndex = 4;
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Location = new System.Drawing.Point(823, 7);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 1;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(823, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button3
+            // btnSave
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(724, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(724, 7);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 0;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridProductionKitsConfirm);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 88);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(924, 352);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridProductionKitsConfirm
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(924, 352);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridProductionKitsConfirm.AllowUserToAddRows = false;
+            this.gridProductionKitsConfirm.AllowUserToDeleteRows = false;
+            this.gridProductionKitsConfirm.AllowUserToResizeRows = false;
+            this.gridProductionKitsConfirm.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridProductionKitsConfirm.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridProductionKitsConfirm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridProductionKitsConfirm.DataSource = this.listControlBindingSource1;
+            this.gridProductionKitsConfirm.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridProductionKitsConfirm.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridProductionKitsConfirm.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridProductionKitsConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridProductionKitsConfirm.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridProductionKitsConfirm.Location = new System.Drawing.Point(0, 0);
+            this.gridProductionKitsConfirm.Name = "gridProductionKitsConfirm";
+            this.gridProductionKitsConfirm.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridProductionKitsConfirm.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridProductionKitsConfirm.RowTemplate.Height = 24;
+            this.gridProductionKitsConfirm.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridProductionKitsConfirm.Size = new System.Drawing.Size(924, 352);
+            this.gridProductionKitsConfirm.TabIndex = 0;
+            this.gridProductionKitsConfirm.TabStop = false;
             // 
             // P03
             // 
-            this.CancelButton = this.button4;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(934, 484);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -331,7 +331,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridProductionKitsConfirm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -342,26 +342,26 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Button button2;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.Label label4;
-        private Win.UI.Button button1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnBatchUpdate;
+        private Win.UI.DateBox dateFactoryReceiveDate;
+        private Win.UI.Label labelFactoryReceiveDate;
+        private Win.UI.Button btnQuery;
+        private Win.UI.DateBox dateSendDate;
+        private Win.UI.Label labelSenddate;
+        private Win.UI.TextBox txtSeason;
+        private Win.UI.Label labelSeason;
+        private Win.UI.TextBox txtStyleNo;
+        private Win.UI.Label labelStyleNo;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Panel panel4;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridProductionKitsConfirm;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button5;
-        private Win.UI.Label label5;
+        private Win.UI.Button btnViewDetail;
+        private Win.UI.Label labelFactory;
         private Win.UI.ComboBox comboFactory;
     }
 }

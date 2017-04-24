@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.label1 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnDownload = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -48,39 +48,39 @@
             this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
             this.label1.TextStyle.GradientColor = System.Drawing.Color.Blue;
             // 
-            // button1
+            // btnDownload
             // 
-            this.button1.Location = new System.Drawing.Point(74, 97);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Download";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnDownload.Location = new System.Drawing.Point(74, 97);
+            this.btnDownload.Name = "btnDownload";
+            this.btnDownload.Size = new System.Drawing.Size(97, 30);
+            this.btnDownload.TabIndex = 2;
+            this.btnDownload.Text = "Download";
+            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnClose
             // 
-            this.button2.Location = new System.Drawing.Point(177, 97);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(97, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnClose.Location = new System.Drawing.Point(177, 97);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(97, 30);
+            this.btnClose.TabIndex = 3;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button2_Click);
             // 
             // P07
             // 
             this.ClientSize = new System.Drawing.Size(284, 137);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.btnDownload);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "P07";
             this.Text = "P07. Download APS Data";
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
-            this.Controls.SetChildIndex(this.button2, 0);
+            this.Controls.SetChildIndex(this.btnDownload, 0);
+            this.Controls.SetChildIndex(this.btnClose, 0);
             this.ResumeLayout(false);
 
         }
@@ -88,7 +88,7 @@
         #endregion
 
         private Win.UI.Label label1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnDownload;
+        private Win.UI.Button btnClose;
     }
 }

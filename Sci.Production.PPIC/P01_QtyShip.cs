@@ -30,9 +30,9 @@ namespace Sci.Production.PPIC
             base.OnFormLoaded();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridQtyBreakDownByShipmode.IsEditingReadOnly = true;
+            this.gridQtyBreakDownByShipmode.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridQtyBreakDownByShipmode)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
                 .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
                 .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
@@ -57,9 +57,9 @@ namespace Sci.Production.PPIC
             StringBuilder pivot = new StringBuilder();
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            var gen = Helper.Controls.Grid.Generator(this.grid2);
+            this.gridQtyBreakDownbyArticleSizeDetail.IsEditingReadOnly = true;
+            this.gridQtyBreakDownbyArticleSizeDetail.DataSource = listControlBindingSource2;
+            var gen = Helper.Controls.Grid.Generator(this.gridQtyBreakDownbyArticleSizeDetail);
             CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
@@ -71,7 +71,7 @@ namespace Sci.Production.PPIC
                 }
             }
             //凍結欄位
-            grid2.Columns[1].Frozen = true;
+            gridQtyBreakDownbyArticleSizeDetail.Columns[1].Frozen = true;
 
             //撈Grid2資料
             sqlCmd = string.Format(@"with tmpData
@@ -142,10 +142,10 @@ namespace Sci.Production.PPIC
             //設定兩個Grid的關聯
             if (grid2Data != null)
             {
-                grid1.SelectionChanged += (s, e) =>
+                gridQtyBreakDownByShipmode.SelectionChanged += (s, e) =>
                 {
-                    grid1.ValidateControl();
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(grid1.GetSelectedRowIndex());
+                    gridQtyBreakDownByShipmode.ValidateControl();
+                    DataRow dr = this.gridQtyBreakDownByShipmode.GetDataRow<DataRow>(gridQtyBreakDownByShipmode.GetSelectedRowIndex());
                     if (dr != null)
                     {
                         string filter = string.Format("Seq = '{0}'", MyUtility.Convert.GetString(dr["Seq"]));

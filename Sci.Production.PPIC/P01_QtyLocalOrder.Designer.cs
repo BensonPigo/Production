@@ -34,20 +34,20 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button8 = new Sci.Win.UI.Button();
-            this.button7 = new Sci.Win.UI.Button();
-            this.button6 = new Sci.Win.UI.Button();
-            this.button5 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnEdit = new Sci.Win.UI.Button();
+            this.btnHorizontalDelete = new Sci.Win.UI.Button();
+            this.btnVerticalDelete = new Sci.Win.UI.Button();
+            this.btnHorizontalInsert = new Sci.Win.UI.Button();
+            this.btnVerticalInsert = new Sci.Win.UI.Button();
+            this.btnHorizontalAdd = new Sci.Win.UI.Button();
+            this.btnVerticalAdd = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridLocalOrder = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLocalOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,119 +77,119 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button8);
-            this.panel4.Controls.Add(this.button7);
-            this.panel4.Controls.Add(this.button6);
-            this.panel4.Controls.Add(this.button5);
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
-            this.panel4.Controls.Add(this.button2);
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnEdit);
+            this.panel4.Controls.Add(this.btnHorizontalDelete);
+            this.panel4.Controls.Add(this.btnVerticalDelete);
+            this.panel4.Controls.Add(this.btnHorizontalInsert);
+            this.panel4.Controls.Add(this.btnVerticalInsert);
+            this.panel4.Controls.Add(this.btnHorizontalAdd);
+            this.panel4.Controls.Add(this.btnVerticalAdd);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 353);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(788, 75);
             this.panel4.TabIndex = 3;
             // 
-            // button8
+            // btnClose
             // 
-            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button8.Location = new System.Drawing.Point(704, 41);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(80, 30);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "Close";
-            this.button8.UseVisualStyleBackColor = true;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(704, 41);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 7;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // button7
+            // btnEdit
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(704, 7);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(80, 30);
-            this.button7.TabIndex = 6;
-            this.button7.Text = "Edit";
-            this.button7.UseVisualStyleBackColor = true;
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Location = new System.Drawing.Point(704, 7);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(80, 30);
+            this.btnEdit.TabIndex = 6;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
             // 
-            // button6
+            // btnHorizontalDelete
             // 
-            this.button6.Location = new System.Drawing.Point(320, 41);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(140, 30);
-            this.button6.TabIndex = 5;
-            this.button6.Text = "Horizontal Delete";
-            this.button6.UseVisualStyleBackColor = true;
+            this.btnHorizontalDelete.Location = new System.Drawing.Point(320, 41);
+            this.btnHorizontalDelete.Name = "btnHorizontalDelete";
+            this.btnHorizontalDelete.Size = new System.Drawing.Size(140, 30);
+            this.btnHorizontalDelete.TabIndex = 5;
+            this.btnHorizontalDelete.Text = "Horizontal Delete";
+            this.btnHorizontalDelete.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // btnVerticalDelete
             // 
-            this.button5.Location = new System.Drawing.Point(320, 7);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(140, 30);
-            this.button5.TabIndex = 2;
-            this.button5.Text = "Vertical Delete";
-            this.button5.UseVisualStyleBackColor = true;
+            this.btnVerticalDelete.Location = new System.Drawing.Point(320, 7);
+            this.btnVerticalDelete.Name = "btnVerticalDelete";
+            this.btnVerticalDelete.Size = new System.Drawing.Size(140, 30);
+            this.btnVerticalDelete.TabIndex = 2;
+            this.btnVerticalDelete.Text = "Vertical Delete";
+            this.btnVerticalDelete.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // btnHorizontalInsert
             // 
-            this.button4.Location = new System.Drawing.Point(176, 41);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(140, 30);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "Horizontal Insert";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnHorizontalInsert.Location = new System.Drawing.Point(176, 41);
+            this.btnHorizontalInsert.Name = "btnHorizontalInsert";
+            this.btnHorizontalInsert.Size = new System.Drawing.Size(140, 30);
+            this.btnHorizontalInsert.TabIndex = 4;
+            this.btnHorizontalInsert.Text = "Horizontal Insert";
+            this.btnHorizontalInsert.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btnVerticalInsert
             // 
-            this.button3.Location = new System.Drawing.Point(176, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(140, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "Vertical Insert";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnVerticalInsert.Location = new System.Drawing.Point(176, 7);
+            this.btnVerticalInsert.Name = "btnVerticalInsert";
+            this.btnVerticalInsert.Size = new System.Drawing.Size(140, 30);
+            this.btnVerticalInsert.TabIndex = 1;
+            this.btnVerticalInsert.Text = "Vertical Insert";
+            this.btnVerticalInsert.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnHorizontalAdd
             // 
-            this.button2.Location = new System.Drawing.Point(32, 41);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(140, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Horizontal Add";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnHorizontalAdd.Location = new System.Drawing.Point(32, 41);
+            this.btnHorizontalAdd.Name = "btnHorizontalAdd";
+            this.btnHorizontalAdd.Size = new System.Drawing.Size(140, 30);
+            this.btnHorizontalAdd.TabIndex = 3;
+            this.btnHorizontalAdd.Text = "Horizontal Add";
+            this.btnHorizontalAdd.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnVerticalAdd
             // 
-            this.button1.Location = new System.Drawing.Point(32, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(140, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Vertical Add";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnVerticalAdd.Location = new System.Drawing.Point(32, 7);
+            this.btnVerticalAdd.Name = "btnVerticalAdd";
+            this.btnVerticalAdd.Size = new System.Drawing.Size(140, 30);
+            this.btnVerticalAdd.TabIndex = 0;
+            this.btnVerticalAdd.Text = "Vertical Add";
+            this.btnVerticalAdd.UseVisualStyleBackColor = true;
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridLocalOrder);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 10);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(788, 343);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridLocalOrder
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridLocalOrder.AllowUserToAddRows = false;
+            this.gridLocalOrder.AllowUserToDeleteRows = false;
+            this.gridLocalOrder.AllowUserToResizeRows = false;
+            this.gridLocalOrder.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridLocalOrder.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridLocalOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLocalOrder.DataSource = this.listControlBindingSource1;
+            this.gridLocalOrder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridLocalOrder.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridLocalOrder.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridLocalOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridLocalOrder.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridLocalOrder.Location = new System.Drawing.Point(0, 0);
+            this.gridLocalOrder.Name = "gridLocalOrder";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -197,14 +197,14 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(788, 343);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridLocalOrder.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridLocalOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridLocalOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridLocalOrder.RowTemplate.Height = 24;
+            this.gridLocalOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLocalOrder.Size = new System.Drawing.Size(788, 343);
+            this.gridLocalOrder.TabIndex = 0;
+            this.gridLocalOrder.TabStop = false;
             // 
             // P01_QtyLocalOrder
             // 
@@ -218,7 +218,7 @@
             this.Text = "Quantity Breakdown for Local order";
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLocalOrder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -231,15 +231,15 @@
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.Button button6;
-        private Win.UI.Button button5;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
-        private Win.UI.Button button8;
-        private Win.UI.Button button7;
+        private Win.UI.Button btnHorizontalAdd;
+        private Win.UI.Button btnVerticalAdd;
+        private Win.UI.Button btnHorizontalDelete;
+        private Win.UI.Button btnVerticalDelete;
+        private Win.UI.Button btnHorizontalInsert;
+        private Win.UI.Button btnVerticalInsert;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnEdit;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridLocalOrder;
     }
 }

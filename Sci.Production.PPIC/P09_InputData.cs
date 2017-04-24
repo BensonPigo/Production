@@ -17,7 +17,7 @@ namespace Sci.Production.PPIC
         public P09_InputData(DataRow MasterData)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
+            MyUtility.Tool.SetupCombox(comboDefectResponsibility, 2, 1, "F,Factory,M,Mill,S,Subcon in Local,T,SCI dep. (purchase/s. mrs/sample room)");
             masterData = MasterData;
         }
 
@@ -26,7 +26,7 @@ namespace Sci.Production.PPIC
             if (MyUtility.Check.Empty(CurrentData["Seq"]))
             {
                 MyUtility.Msg.WarningBox("SEQ can't empty!!");
-                textBox1.Focus();
+                txtSEQ.Focus();
                 return false;
             }
             return base.DoSave();
@@ -35,12 +35,12 @@ namespace Sci.Production.PPIC
         //Seq
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
+            if (EditMode && !MyUtility.Check.Empty(txtSEQ.Text) && txtSEQ.OldValue != txtSEQ.Text)
             {
-                if (textBox1.Text.IndexOf("'") != -1)
+                if (txtSEQ.Text.IndexOf("'") != -1)
                 {
                     MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
-                    textBox1.Text = "";
+                    txtSEQ.Text = "";
                     return;
                 }
 
@@ -56,10 +56,10 @@ left join Export e WITH (NOLOCK) on r.ExportId = e.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.SEQ1 and a.Seq2 = psd.SEQ2
 where a.POID = '{0}' and a.Seq1 = '{1}' and a.Seq2 = '{2}' and a.Result = 'F'
 group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0)
-", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Text.Length < 3 ? textBox1.Text : textBox1.Text.Substring(0, 3), textBox1.Text.Length < 5 ? textBox1.Text.Length < 4 ? "" : textBox1.Text.ToString().Substring(3,1) : textBox1.Text.ToString().Substring(3, 2));
+", MyUtility.Convert.GetString(masterData["POID"]), txtSEQ.Text.Length < 3 ? txtSEQ.Text : txtSEQ.Text.Substring(0, 3), txtSEQ.Text.Length < 5 ? txtSEQ.Text.Length < 4 ? "" : txtSEQ.Text.ToString().Substring(3,1) : txtSEQ.Text.ToString().Substring(3, 2));
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
-                    CurrentData["Seq"] = textBox1.Text;
+                    CurrentData["Seq"] = txtSEQ.Text;
                     CurrentData["Seq1"] = firData["Seq1"];
                     CurrentData["Seq2"] = firData["Seq2"];
                     CurrentData["Refno"] = firData["Refno"];
@@ -87,10 +87,10 @@ and f.MDivisionId = '{3}'
 and mpd.POID = psd.ID
 and mpd.Seq1 = psd.SEQ1
 and mpd.Seq2 = psd.SEQ2
-and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Text.Length < 3 ? textBox1.Text : textBox1.Text.Substring(0, 3), textBox1.Text.Length < 5 ? textBox1.Text.Length < 4 ? "" : textBox1.Text.ToString().Substring(3, 1) : textBox1.Text.ToString().Substring(3, 2), Sci.Env.User.Keyword);
+and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), txtSEQ.Text.Length < 3 ? txtSEQ.Text : txtSEQ.Text.Substring(0, 3), txtSEQ.Text.Length < 5 ? txtSEQ.Text.Length < 4 ? "" : txtSEQ.Text.ToString().Substring(3, 1) : txtSEQ.Text.ToString().Substring(3, 2), Sci.Env.User.Keyword);
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", textBox1.Text));
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", txtSEQ.Text));
                         CurrentData["Seq"] = "";
                         CurrentData["Seq1"] = "";
                         CurrentData["Seq2"] = "";
@@ -99,7 +99,7 @@ and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Te
                     }
                     if (MyUtility.Convert.GetString(poData["FabricType"]) != "A")
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > is not accessory material!!!", textBox1.Text));
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > is not accessory material!!!", txtSEQ.Text));
                         CurrentData["Seq"] = "";
                         CurrentData["Seq1"] = "";
                         CurrentData["Seq2"] = "";
@@ -107,7 +107,7 @@ and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), textBox1.Te
                         return;
                     }
 
-                    CurrentData["Seq"] = textBox1.Text;
+                    CurrentData["Seq"] = txtSEQ.Text;
                     CurrentData["Seq1"] = poData["Seq1"];
                     CurrentData["Seq2"] = poData["Seq2"];
                     CurrentData["Refno"] = poData["Refno"];
