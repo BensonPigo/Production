@@ -257,7 +257,7 @@ namespace Sci.Production.Cutting
             sorting(comboBox1.Text);
             this.detailgrid.SelectRowTo(0);
             this.detailgrid.AutoResizeColumns();
-
+            btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
         }
 
         protected override void OnDetailGridSetup()
