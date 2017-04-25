@@ -114,7 +114,7 @@ namespace Sci.Production.Planning
             cbDateType.SelectedIndex = 0;
 
             #region 取得 Report 資料
-            string sql = @"Select ID,ID as NAME From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', ' ' ";
+            string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', ' ', '0000' order by SEQ";
             DataTable dt_ref = null;
             DualResult result = DBProxy.Current.Select(null, sql, out dt_ref);
 
@@ -135,7 +135,7 @@ namespace Sci.Production.Planning
                 try
                 {
                     List<string> ArtworkLis = new List<string>();
-
+                    
                     if (ArtWorkType == "All")
                     {
                         DataTable dt = (DataTable)cbReportType.DataSource;
@@ -161,7 +161,6 @@ namespace Sci.Production.Planning
                         xltPath = @"Planning_R10_02.xltx";
                         strHeaderRange = "A2:Q4";
                     }
-
                     SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxrc.ExcelApp.ActiveSheet;
 
@@ -176,9 +175,10 @@ namespace Sci.Production.Planning
                         , new SqlParameter("@isSCIDelivery", isSCIDelivery)
                         , new SqlParameter("@Year", intYear)
                         , new SqlParameter("@Month", intMonth)
+                        , new SqlParameter("@SourceStr", SourceStr)
                         , new SqlParameter("@M", M)
-                        , new SqlParameter("@Fty", Fty)
-                        , new SqlParameter("@SourceStr", SourceStr)}, out datas);
+                        , new SqlParameter("@Fty", Fty)                            
+                            }, out datas);
 
                         if (res && datas[1].Rows.Count > 0)
                         {
@@ -205,7 +205,7 @@ namespace Sci.Production.Planning
 
                             Microsoft.Office.Interop.Excel.Range desRg = wks.get_Range(string.Format("A{0}:A{0}", sheetStart.ToString()));
                             wks.get_Range(strHeaderRange).Copy();
-                            desRg.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll); 
+                            desRg.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAll); //Microsoft.Office.Interop.Excel.XlPasteType.xlPasteAllExceptBorders
                             sheetStart += 3;
                         }
 
@@ -645,10 +645,12 @@ namespace Sci.Production.Planning
                     // Order+FactoryOrder 的 SewCapacity
                     DataTable dtOutputMDV = safeGetDt(dt4, string.Format("CountryID = '{0}' And MDivisionID = '{1}'", CountryID, MDivisionID));
                     string MaxSewOutPut = dtOutputMDV.Compute("MAX(SewingYYMM)", "").ToString();
+                    MaxSewOutPut = MaxSewOutPut.Length > 0 ? MaxSewOutPut.Substring(5, MaxSewOutPut.Length - 5) : "";
                     setTableToRow(wks, sheetStart, string.Format("{0} Output ({1})", MDivisionID, MaxSewOutPut), dtOutputMDV);
                     sheetStart += 1;
 
                     //MDV Output  Rate
+                    lisPercent.Add(sheetStart.ToString());
                     setFormulaToRow(wks, sheetStart, string.Format("{0} Output  Rate", MDivisionID), string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", MDVTotalIdx, sheetStart - 1));
 
                     drawBottomLine(wks, sheetStart, 2);
@@ -699,10 +701,13 @@ namespace Sci.Production.Planning
                 lisOutputIdx.Add(sheetStart.ToString());
                 DataTable dtOutputCty = safeGetDt(dt4, string.Format("CountryID = '{0}'", CountryID));
                 string MaxSewOutPutCty = dtOutputCty.Compute("MAX(SewingYYMM)", "").ToString();
+                MaxSewOutPutCty = MaxSewOutPutCty.Length > 0 ? MaxSewOutPutCty.Substring(5, MaxSewOutPutCty.Length - 5) : "";
+
                 setTableToRow(wks, sheetStart, string.Format("{0} Output ({1})", CountryID, MaxSewOutPutCty), dtOutputCty);
                 sheetStart += 1;
 
                 //CountryID Output  Rate
+                lisPercent.Add(sheetStart.ToString());
                 setFormulaToRow(wks, sheetStart, string.Format("{0} Output  Rate", CountryID), string.Format("=IF({0}{1} > 0, {0}{2} / {0}{1},0)", "{0}", MDVTotalIdx, sheetStart - 1));
 
                 drawBottomLine(wks, sheetStart, 3);
@@ -770,10 +775,13 @@ namespace Sci.Production.Planning
 
             DataTable dtOutput = dt4;
             string MaxSewOutPutT = dtOutput.Compute("MAX(SewingYYMM)", "").ToString();
+            MaxSewOutPutT = MaxSewOutPutT.Length > 0 ? MaxSewOutPutT.Substring(5, MaxSewOutPutT.Length - 5) : "";
+
             setFormulaToRow(wks, sheetStart, string.Format("Output ({0})", MaxSewOutPutT), OutPutStr);
             sheetStart += 1;
 
             //Output  Rate
+            lisPercent.Add(sheetStart.ToString());
             lisBold.Add(sheetStart.ToString());
             setFormulaToRow(wks, sheetStart, "Output  Rate", string.Format("=IF({{0}}{0} > 0, {{0}}{1} / {{0}}{0},0)", sheetStart - 5, sheetStart - 1));
 
@@ -1298,6 +1306,7 @@ namespace Sci.Production.Planning
             {
                 numMonth.Value = System.DateTime.Today.Month;
             }
+
         }
 
         private void raProductionStatus_CheckedChanged(object sender, EventArgs e)
