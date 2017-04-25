@@ -366,7 +366,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                 string pullLock = MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ");
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(pullLock))
                 {
-                    MyUtility.Msg.WarningBox("Pullou date less then pullout lock date!!");
+                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     dateBox1.Focus();
                     return false;
                 }
