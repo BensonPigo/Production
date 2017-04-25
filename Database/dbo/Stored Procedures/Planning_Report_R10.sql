@@ -1,4 +1,9 @@
-﻿
+﻿-- =============================================
+-- Author:		Edward / Production Update :  JEFF
+-- Create date: 2017/01/05
+-- Description:
+--Trade.Planning_Report_R02 抓取報表 / PMS.Planning_Report_R10
+-- =============================================
 
 CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	@ReportType int = 1 --1:整個月 2:半個月 --3:Production status 2017.01.04 Serena電話確認後，表示不用做了
@@ -20,7 +25,7 @@ BEGIN
 	
 	declare @CalArtWorkType varchar(30)
 	set @CalArtWorkType = iif(@ArtWorkType = 'SEWING', 'CPU', @ArtWorkType)
-	
+
 	declare @mStandardTMS int = (select StdTMS from System) --1400
 	declare @mSampleCPURate int = (select SampleRate from System) --1
 	declare @date_s date = DATEFROMPARTS(@Year, 1, 8)--DATEFROMPARTS(@Year, 1, 1)
@@ -34,8 +39,8 @@ BEGIN
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CPU
-	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS = cast(Factory_TMS.TMS as numeric(18,0))
-	,Capacity = cast(Capacity as numeric(18,0))
+	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS = cast(Factory_TMS.TMS as numeric(18,12))
+	,Capacity
 	,Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity1
 	,Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity2
 	,iif(@ReportType = 1, Date1, Date2) as OrderYYMM
@@ -48,13 +53,13 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select iif(@CalArtWorkType = 'CPU', Round(cast(Factory_Tms.TMS as numeric(8,0)) * 3600 / @mStandardTMS ,0), cast(Factory_Tms.TMS as numeric(18,0))) as Capacity) cc
+	outer apply (select iif(@CalArtWorkType = 'CPU', Round(cast(Factory_Tms.TMS as numeric(18,12)) * 3600 / @mStandardTMS ,0), cast(Factory_Tms.TMS as numeric(18,12))) as Capacity) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
 	And Artworktype.ID = @ArtWorkType
 	And (factory.MDivisionID = @M or @M = '') And (factory.ID = @Fty or @Fty = '')
-
+	
 	select id,FactoryID,CPU,OrderTypeID,ProgramID,Qty,Category,BrandID,BuyerDelivery,SciDelivery,CpuRate
 	into #Orders From orders 
 	outer apply (select CpuRate from GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O') ) gcRate
@@ -63,13 +68,13 @@ BEGIN
 	And (@BrandID = '' or Orders.BrandID = @BrandID)
 	And Orders.Junk = 0 and Orders.Qty > 0  And Orders.Category in ('B','S') 
 	AND @HasOrders = 1
-	And orders.MDivisionID = @M And orders.FactoryID = @Fty
+	And (orders.MDivisionID = @M or @M = '') And (orders.FactoryID = @Fty or @Fty = '')
 	
 	--Order
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID, CPURate
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID	
-	,Orders.CPU, OrderTMSCPU, cCPU
+	,Orders.CPU, cTms, cCPU
 	,Order_TmsCost.ArtworktypeID
 	,Orders.Qty as OrderQty
 	,(cCPU * Orders.Qty * CpuRate) as OrderCapacity
@@ -79,9 +84,8 @@ BEGIN
 	inner join Factory on Orders.FactoryID = Factory.ID
 	left Join Order_TmsCost on @CalArtWorkType != 'CPU' and Orders.ID = Order_TmsCost.ID And Order_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms )) as cTms) amt
-	outer apply (select cTms / @mStandardTMS as OrderTMSCPU) otmc
-	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, OrderTMSCPU) as cCPU) ccpu
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms / 60 )) as cTms) amt
+	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, cTms) as cCPU) ccpu
 	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
@@ -95,9 +99,8 @@ BEGIN
 	Select #tmpOrder1.*, Sewingoutput_Detail.QAQty, /*Sewingoutput_Detail.InlineQty,*/ Sewingoutput.OutputDate	
 	,iif(@ReportType = 1, Date1, Date2) as SewingYYMM
 	,Sewingoutput.OutputDate as SewingYYMM_Ori
-	,(cCPU * SewingOutput_Detail.QAQty * #tmpOrder1.CPURate) as SewCapacity --(CPU or OrderTMSCPU 來當乘數的值的決定, 是依下拉選擇Report來決定; 若是選擇All 可利用CPU , 若是選擇 非All外,就利用 OrderTMSCPU 來計算 ) 
-	into #tmpOrder2 
-	from #tmpOrder1
+	,(cCPU * SewingOutput_Detail.QAQty * #tmpOrder1.CPURate) as SewCapacity
+	into #tmpOrder2 from #tmpOrder1
 	left join #sew2 Sewingoutput_Detail on #tmpOrder1.ID = Sewingoutput_Detail.OrderID
 	left join #sew1 Sewingoutput on Sewingoutput.ID = Sewingoutput_Detail.ID
 	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
@@ -117,9 +120,9 @@ BEGIN
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID
-	,Style.CPU, FactoryOrderTMSCPU, cCPU
+	,Style.CPU, cTms, cCPU
 	,Style_TmsCost.ArtworkTypeID 
-	,Style_TmsCost.TMS as ArtworkTypeTMS 
+	,cast(Style_TmsCost.TMS as numeric(18,0)) as ArtworkTypeTMS 
 	,FactoryOrder.Qty as OrderQty
 	,CPURate
 	,(cCPU * FactoryOrder.Qty * CPURate) as FactoryOrderCapacity
@@ -131,10 +134,9 @@ BEGIN
 	left join Style on Style.Ukey = FactoryOrder.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms )) as cTms) amt
-	outer apply (select cTms / @mStandardTMS as FactoryOrderTMSCPU ) fotmc
-	outer apply (select iif(@CalArtWorkType = 'CPU', FactoryOrder.CPU, FactoryOrderTMSCPU) as cCPU) ccpu
-	outer apply (select * from GetCPURate('', '', '', '', 'O') ) gcRate
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms / 60 )) as cTms) amt
+	outer apply (select iif(@CalArtWorkType = 'CPU', FactoryOrder.CPU, cTms) as cCPU) ccpu
+	outer apply (select 1 as CpuRate ) gcRate
 	outer apply (select format(dateadd(day,-7,FactoryOrder.BuyerDelivery),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(FactoryOrder.BuyerDelivery) as Date2) odd2
 
@@ -154,12 +156,12 @@ BEGIN
 	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
 
 
-	--Forecast
+	--Orders IsForecast
 	Select Orders.ID, rtrim(Orders.FactoryID) as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CountryID
 	,cTms as ArtworkTypeTMS
-	,Style.CPU, ForecastTMSCPU, cCPU
+	,Style.CPU, cTms, cCPU
 	,Orders.Qty as ForecastQty
 	,Style_TmsCost.ArtworkTypeID
 	,CpuRate
@@ -172,10 +174,9 @@ BEGIN
 	left join Style on Style.Ukey = Orders.StyleUkey
 	left join Style_TmsCost on @CalArtWorkType != 'CPU' and Style.UKey = Style_TMSCost.StyleUkey And Style_TmsCost.ArtworkTypeID = @ArtWorkType
 	left join ArtworkType on ArtworkType.Id = Style_TmsCost.ArtworkTypeID
-	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, Style_TMSCost.Tms )) as cTms) amt
-	outer apply (select cTms / @mStandardTMS as ForecastTMSCPU ) fotmc
-	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, ForecastTMSCPU) as cCPU) ccpu
-	outer apply (select CpuRate from GetCPURate('', '', '', '', 'O') ) gcRate
+	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, cast(Style_TMSCost.Tms as numeric(18,0)) / 60 )) as cTms) amt
+	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, cTms) as cCPU) ccpu
+	outer apply (select 1 as CpuRate ) gcRate
 	outer apply (select format(dateadd(day,-7,Orders.BuyerDelivery),'yyyyMM') as Date1) odd1
 	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
 	Where Orders.BuyerDelivery Between @date_s and @date_e
@@ -183,6 +184,7 @@ BEGIN
 	AND @HasForecast = 1
 	AND Orders.IsForecast = 1
 	And (Orders.MDivisionID = @M or @M = '') And (Orders.FactoryID = @Fty or @Fty = '')
+
 	--
 	declare @tmpFinal table (
 		CountryID varchar(2)
@@ -245,7 +247,7 @@ BEGIN
 			) c group by CountryID, MDivisionID, FactoryID, OrderYYMM			
 		) a
 		left join (
-			select ID,ArtworkTypeID,SUM(Tms) as Tms 
+			select ID,ArtworkTypeID,SUM(cast(Tms as numeric(18,12))) as Tms 
 			from Factory_Tms where YEAR = @Year and ArtworkTypeID = @ArtWorkType
 			GROUP BY ID,ArtworkTypeID
 		) c on a.FactoryID = c.ID
@@ -317,6 +319,6 @@ drop table #sew1
 drop table #sew2
 drop table #FactoryOrder
 drop table #sew3
-drop table #sew4
+drop table #sew4		
 
 END
