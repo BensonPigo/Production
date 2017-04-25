@@ -24,7 +24,7 @@ namespace Sci.Production.Thread
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("<Thread Comb> can not be empty.");
+                MyUtility.Msg.WarningBox("<Thread Combination> can not be empty.");
                 textBox1.Focus();
                 return false;
             }

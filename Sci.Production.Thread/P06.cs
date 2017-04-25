@@ -219,7 +219,7 @@ namespace Sci.Production.Thread
         {
             if (CurrentMaintain["Status"].ToString() != "New")
             {
-                MyUtility.Msg.WarningBox("The record already confrimed, you can't delete", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed, can't be deleted.", "Warning");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -228,7 +228,7 @@ namespace Sci.Production.Thread
         {
             if (CurrentMaintain["Status"].ToString() != "New")
             {
-                MyUtility.Msg.WarningBox("The record already confrimed, you can't modify", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed, can't be modify", "Warning");
                 return false;
             }
             return base.ClickEditBefore();
@@ -353,7 +353,7 @@ namespace Sci.Production.Thread
             if (index == -1)
             {
                 int index2 = detailgridbs.Find("ThreadLocationid", refno);
-                if (index2 == -1) MyUtility.Msg.WarningBox("Data was not found!!");
+                if (index2 == -1) MyUtility.Msg.WarningBox("Data not found.");
                 else detailgridbs.Position = index2;
             }
             else

@@ -88,7 +88,7 @@ namespace Sci.Production.Thread
                 DBProxy.Current.Select("Production", sql, out gridTable);
                 if (gridTable.Rows.Count == 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found");
+                    MyUtility.Msg.WarningBox("Data not found.");
                     return;
                 }
                 this.grid1.DataSource = gridTable;
@@ -145,7 +145,7 @@ namespace Sci.Production.Thread
             }
             else
             {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select data first!", "Warnning");
                 return;
             }
             this.Close();

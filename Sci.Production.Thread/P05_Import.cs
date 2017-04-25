@@ -104,7 +104,7 @@ namespace Sci.Production.Thread
                 {
                     if (dt.Rows.Count == 0)
                     {
-                        MyUtility.Msg.WarningBox("Data not found");
+                        MyUtility.Msg.WarningBox("Data not found.");
                         return;
                     }
                     int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
@@ -220,7 +220,7 @@ namespace Sci.Production.Thread
             }
             else
             {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
+                MyUtility.Msg.WarningBox("Please select data first!", "Warnning");
                 return;
             }
             this.Close();

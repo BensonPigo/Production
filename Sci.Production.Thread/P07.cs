@@ -163,7 +163,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                     if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationfrom"] = newvalue;
                     else
                     {
-                        MyUtility.Msg.WarningBox("<Location> not found");
+                        MyUtility.Msg.WarningBox(string.Format(@"<Location>: {0} not found.", newvalue));
                         CurrentDetailData["Locationfrom"] = "";
                     }
                     CurrentDetailData.EndEdit();
@@ -189,7 +189,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                 if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationto"] = newvalue;
                 else
                 {
-                    MyUtility.Msg.WarningBox("<Location> not found");
+                    MyUtility.Msg.WarningBox(string.Format(@"<Location>:{0} not found", newvalue));
                     CurrentDetailData["Locationto"] = "";
                 }
                 CurrentDetailData.EndEdit();
@@ -263,7 +263,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
         {
             if (CurrentMaintain["Status"].ToString() != "New")
             {
-                MyUtility.Msg.WarningBox("The record already confrimed, you can't delete", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed, can't be deleted.", "Warning");
                 return false;
             }
             return base.ClickDeleteBefore();
@@ -272,7 +272,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
         {
             if (CurrentMaintain["Status"].ToString() != "New")
             {
-                MyUtility.Msg.WarningBox("The record already confrimed, you can't modify", "Warning");
+                MyUtility.Msg.WarningBox("Data is confirmed, can't be modify", "Warning");
                 return false;
             }
             return base.ClickEditBefore();
