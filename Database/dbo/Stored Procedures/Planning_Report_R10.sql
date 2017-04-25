@@ -13,8 +13,8 @@ CREATE PROCEDURE [dbo].[Planning_Report_R10]
 	,@Year int = 2017
 	,@Month int = 1
 	,@SourceStr varchar(50) = 'Order,Forecast,Fty Local Order'
-	,@M varchar(20) = ''
-	,@Fty varchar(20) = ''
+	,@M varchar(20)
+	,@Fty varchar(20)
 AS
 BEGIN
 
@@ -39,7 +39,7 @@ BEGIN
 	SELECT CountryID, Factory.CountryID + '-' + Country.Alias as CountryName , Factory.ID as FactoryID
 		,iif(Factory.Zone <> '', Factory.Zone, iif(Factory.Type = 'S', 'Sample', Factory.Zone)) as MDivisionID
 	, Factory.CPU
-	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS = cast(Factory_TMS.TMS as numeric(18,12))
+	,Factory_TMS.Year, Factory_TMS.Month, Factory_TMS.ArtworkTypeID, Factory_TMS = cast(Factory_TMS.TMS as numeric(18,3))
 	,Capacity
 	,Capacity * fw.HalfMonth1 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity1
 	,Capacity * fw.HalfMonth2 / (fw.HalfMonth1 + fw.HalfMonth2) as HalfCapacity2
@@ -53,7 +53,7 @@ BEGIN
 	outer apply (select DATEFROMPARTS(Factory_Tms.Year,Factory_Tms.Month,8) as OrderDate) od
 	left join ArtworkType on ArtworkType.Id = Factory_TMS.ArtworkTypeID
 	left join Factory_WorkHour fw on Factory.ID = fw.ID and fw.Year = Factory_TMS.Year and fw.Month = Factory_Tms.Month	
-	outer apply (select iif(@CalArtWorkType = 'CPU', Round(cast(Factory_Tms.TMS as numeric(18,12)) * 3600 / @mStandardTMS ,0), cast(Factory_Tms.TMS as numeric(18,12))) as Capacity) cc
+	outer apply (select iif(@CalArtWorkType = 'CPU', Round(cast(Factory_Tms.TMS as numeric(18,3)) * 3600 / @mStandardTMS ,0), cast(Factory_Tms.TMS as numeric(18,3))) as Capacity) cc
 	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
 	outer apply (select cast(Factory_TMS.Year as varchar(4)) + cast(Factory_TMS.Month as varchar(2)) as Date2) odd2
 	Where ISsci = 1  And Factory.Junk = 0 And Artworktype.ReportDropdown = 1 
@@ -247,7 +247,7 @@ BEGIN
 			) c group by CountryID, MDivisionID, FactoryID, OrderYYMM			
 		) a
 		left join (
-			select ID,ArtworkTypeID,SUM(cast(Tms as numeric(18,12))) as Tms 
+			select ID,ArtworkTypeID,SUM(cast(Tms as numeric(18,3))) as Tms 
 			from Factory_Tms where YEAR = @Year and ArtworkTypeID = @ArtWorkType
 			GROUP BY ID,ArtworkTypeID
 		) c on a.FactoryID = c.ID
