@@ -153,7 +153,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 {
                     CurrentDetailData["ThreadColorid"] = "";
                     CurrentDetailData["Colordesc"] = "";
-                    MyUtility.Msg.WarningBox(string.Format("< Thread Color > : {0} not found.", e.FormattedValue.ToString()));
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Color: {0}> not found.", e.FormattedValue.ToString()));
                     return;                   
                 }
                 string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", CurrentDetailData["Refno"].ToString(), newvalue, keyWord);
@@ -420,7 +420,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //確認order.poid 同(po.id)有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from PO WITH (NOLOCK) where id='{0}'", id)))
             {
-                MyUtility.Msg.WarningBox(string.Format("<SP#>: {0} does not exists in Purchase Order!!!", id));
+                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >does not exists in Purchase Order!!!", id));
                 e.Cancel = true;
                 textBox1.Text = "";                
                 return;

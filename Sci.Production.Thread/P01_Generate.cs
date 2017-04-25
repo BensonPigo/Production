@@ -316,7 +316,7 @@ where S.Ukey = '{0}'", styleUkey);
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Machine Type> : {0} not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
                     this.textBox1.Text = "";
                     e.Cancel = true;
                     return;

@@ -163,7 +163,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                     if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationfrom"] = newvalue;
                     else
                     {
-                        MyUtility.Msg.WarningBox(string.Format(@"<Location>: {0} not found.", newvalue));
+                        MyUtility.Msg.WarningBox(string.Format(@"<Location:{0}> not found.", newvalue));
                         CurrentDetailData["Locationfrom"] = "";
                     }
                     CurrentDetailData.EndEdit();
@@ -189,7 +189,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                 if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationto"] = newvalue;
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format(@"<Location>:{0} not found", newvalue));
+                    MyUtility.Msg.WarningBox(string.Format(@"<Location: {0}> not found", newvalue));
                     CurrentDetailData["Locationto"] = "";
                 }
                 CurrentDetailData.EndEdit();
