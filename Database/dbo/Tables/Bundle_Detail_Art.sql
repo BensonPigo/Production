@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Bundle_Detail_Art] (
+CREATE TABLE [dbo].[Bundle_Detail_Art] (
     [Bundleno]     VARCHAR (10) CONSTRAINT [DF_Bundle_Detail_Art_Bundleno] DEFAULT ('') NOT NULL,
     [SubprocessId] VARCHAR (10) CONSTRAINT [DF_Bundle_Detail_Art_SubprocessId] DEFAULT ('') NOT NULL,
     [PatternCode]  VARCHAR (20) CONSTRAINT [DF_Bundle_Detail_Art_PatternCode] DEFAULT ('') NOT NULL,
@@ -6,6 +6,8 @@
     [Ukey]         BIGINT       IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Bundle_Detail_Art] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -31,5 +33,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 
 GO
-
+CREATE NONCLUSTERED INDEX [Bundle_Detail_Art-ID-Bundleno]
+    ON [dbo].[Bundle_Detail_Art]([Bundleno] ASC, [ID] ASC);
 
