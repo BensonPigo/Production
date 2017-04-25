@@ -476,11 +476,14 @@ namespace Sci.Production.Cutting
                 for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
                 {
                     if (Modify >= 0) break;
-                    if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
-                    {
-                        qtyTb.Rows[i].Delete();
-                        Modify++;
-                    }
+                    if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
+                    {                        
+                        if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
+                        {
+                            qtyTb.Rows[i].Delete();
+                            Modify++;
+                        }
+                    }                    
                 }
             }
             
