@@ -24,33 +24,33 @@ namespace Sci.Production.Sewing
             InitializeComponent();
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, factory);
-            comboBox1.Text = Sci.Env.User.Keyword;
-            comboBox2.Text = Sci.Env.User.Factory;
-            txtdropdownlist1.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtdropdownlistCategory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (txtdropdownlist1.SelectedIndex == -1)
+            if (txtdropdownlistCategory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
-            output1 = dateRange1.Value1;
-            output2 = dateRange1.Value2;
-            buyerDel1 = dateRange2.Value1;
-            buyerDel2 = dateRange2.Value2;
-            sciDel1 = dateRange3.Value1;
-            sciDel2 = dateRange3.Value2;
-            season = txtseason1.Text;
-            brand = txtbrand1.Text;
-            mDivision = comboBox1.Text;
-            factory = comboBox2.Text;
-            category = txtdropdownlist1.SelectedIndex;
+            output1 = dateSewingOutputDate.Value1;
+            output2 = dateSewingOutputDate.Value2;
+            buyerDel1 = dateBuyerDelivery.Value1;
+            buyerDel2 = dateBuyerDelivery.Value2;
+            sciDel1 = dateSCIDelivery.Value1;
+            sciDel2 = dateSCIDelivery.Value2;
+            season = txtseason.Text;
+            brand = txtbrand.Text;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
+            category = txtdropdownlistCategory.SelectedIndex;
             return base.ValidateInput();
         }
 

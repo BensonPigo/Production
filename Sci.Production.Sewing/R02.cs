@@ -27,49 +27,49 @@ namespace Sci.Production.Sewing
 union all
 select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
 
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "Included,Excluded");
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Included,Excluded");
-            MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "By Date,By Sewing Line");
-            MyUtility.Tool.SetupCombox(comboBox4, 1, factory);
-            MyUtility.Tool.SetupCombox(comboBox5, 1, 1, "Sewing Line,CPU/Sewer/HR");
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
-            comboBox3.SelectedIndex = 0;
-            comboBox4.Text = Sci.Env.User.Factory;
-            comboBox5.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboHoliday, 1, 1, "Included,Excluded");
+            MyUtility.Tool.SetupCombox(comboSubconIn, 1, 1, "Included,Excluded");
+            MyUtility.Tool.SetupCombox(comboReportType, 1, 1, "By Date,By Sewing Line");
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
+            comboHoliday.SelectedIndex = 0;
+            comboSubconIn.SelectedIndex = 0;
+            comboReportType.SelectedIndex = 0;
+            comboFactory.Text = Sci.Env.User.Factory;
+            comboOrderBy.SelectedIndex = 0;
         }
 
         //Date
         private void dateBox1_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateDateStart.Value))
             {
-                dateBox2.Value = null;
+                dateDateEnd.Value = null;
             }
             else
             {
-                dateBox2.Value = (Convert.ToDateTime(dateBox1.Value).AddDays(1 - Convert.ToDateTime(dateBox1.Value).Day)).AddMonths(1).AddDays(-1);
+                dateDateEnd.Value = (Convert.ToDateTime(dateDateStart.Value).AddDays(1 - Convert.ToDateTime(dateDateStart.Value).Day)).AddMonths(1).AddDays(-1);
             }
         }
 
         //Report Type
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox3.SelectedIndex == 0)
+            if (comboReportType.SelectedIndex == 0)
             {
-                label7.Visible = false;
-                comboBox5.Visible = false;
+                labelOrderBy.Visible = false;
+                comboOrderBy.Visible = false;
             }
             else
             {
-                label7.Visible = true;
-                comboBox5.Visible = true;
+                labelOrderBy.Visible = true;
+                comboOrderBy.Visible = true;
             }
         }
 
         private string SelectSewingLine(string line)
         {
-            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(comboBox4.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboBox4.Text));
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" where FactoryID = '{0}'", comboFactory.Text));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
             item.Width = 300;
             DialogResult result = item.ShowDialog();
@@ -86,65 +86,65 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         //Sewing Line
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox1.Text = SelectSewingLine(textBox1.Text);
+            txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
         }
 
         //Sewing Line
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            textBox2.Text = SelectSewingLine(textBox2.Text);
+            txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateDateStart.Value))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
-            if (comboBox1.SelectedIndex == -1)
+            if (comboHoliday.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Holiday can't empty!!");
                 return false;
             }
 
-            if (comboBox2.SelectedIndex == -1)
+            if (comboSubconIn.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Subcon-in can't empty!!");
                 return false;
             }
 
-            if (comboBox3.SelectedIndex == -1)
+            if (comboReportType.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Report type can't empty!!");
                 return false;
             }
 
-            if (comboBox3.SelectedIndex == 1)
+            if (comboReportType.SelectedIndex == 1)
             {
-                if (comboBox4.SelectedIndex == -1 || comboBox4.SelectedIndex == 0)
+                if (comboFactory.SelectedIndex == -1 || comboFactory.SelectedIndex == 0)
                 {
                     MyUtility.Msg.WarningBox("Factory can't empty!!");
                     return false;
                 }
 
-                if (comboBox5.SelectedIndex == -1)
+                if (comboOrderBy.SelectedIndex == -1)
                 {
                     MyUtility.Msg.WarningBox("Order by can't empty!!");
                     return false;
                 }
             }
-            date1 = dateBox1.Value;
-            date2 = dateBox2.Value;
-            line1 = textBox1.Text;
-            line2 = textBox2.Text;
-            factory = comboBox4.Text;
-            excludeHolday = comboBox1.SelectedIndex;
-            excludeSubconin = comboBox2.SelectedIndex;
-            reportType = comboBox3.SelectedIndex;
-            orderby = comboBox5.SelectedIndex;
+            date1 = dateDateStart.Value;
+            date2 = dateDateEnd.Value;
+            line1 = txtSewingLineStart.Text;
+            line2 = txtSewingLineEnd.Text;
+            factory = comboFactory.Text;
+            excludeHolday = comboHoliday.SelectedIndex;
+            excludeSubconin = comboSubconIn.SelectedIndex;
+            reportType = comboReportType.SelectedIndex;
+            orderby = comboOrderBy.SelectedIndex;
             return base.ValidateInput();
         }
 

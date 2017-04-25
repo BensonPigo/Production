@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelSewingLine = new Sci.Win.UI.Label();
+            this.labelHoliday = new Sci.Win.UI.Label();
+            this.labelSubconIn = new Sci.Win.UI.Label();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelOrderBy = new Sci.Win.UI.Label();
+            this.dateDateStart = new Sci.Win.UI.DateBox();
+            this.dateDateEnd = new Sci.Win.UI.DateBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtSewingLineStart = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.comboBox4 = new Sci.Win.UI.ComboBox();
-            this.comboBox5 = new Sci.Win.UI.ComboBox();
+            this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
+            this.comboHoliday = new Sci.Win.UI.ComboBox();
+            this.comboSubconIn = new Sci.Win.UI.ComboBox();
+            this.comboReportType = new Sci.Win.UI.ComboBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -64,85 +64,85 @@
             this.close.Location = new System.Drawing.Point(351, 84);
             this.close.TabIndex = 12;
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(13, 12);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(80, 23);
+            this.labelDate.TabIndex = 94;
+            this.labelDate.Text = "Date";
             // 
-            // label2
+            // labelSewingLine
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Sewing Line";
+            this.labelSewingLine.Lines = 0;
+            this.labelSewingLine.Location = new System.Drawing.Point(13, 48);
+            this.labelSewingLine.Name = "labelSewingLine";
+            this.labelSewingLine.Size = new System.Drawing.Size(80, 23);
+            this.labelSewingLine.TabIndex = 95;
+            this.labelSewingLine.Text = "Sewing Line";
             // 
-            // label3
+            // labelHoliday
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Holiday";
+            this.labelHoliday.Lines = 0;
+            this.labelHoliday.Location = new System.Drawing.Point(13, 84);
+            this.labelHoliday.Name = "labelHoliday";
+            this.labelHoliday.Size = new System.Drawing.Size(80, 23);
+            this.labelHoliday.TabIndex = 96;
+            this.labelHoliday.Text = "Holiday";
             // 
-            // label4
+            // labelSubconIn
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Subcon-In";
+            this.labelSubconIn.Lines = 0;
+            this.labelSubconIn.Location = new System.Drawing.Point(13, 120);
+            this.labelSubconIn.Name = "labelSubconIn";
+            this.labelSubconIn.Size = new System.Drawing.Size(80, 23);
+            this.labelSubconIn.TabIndex = 97;
+            this.labelSubconIn.Text = "Subcon-In";
             // 
-            // label5
+            // labelReportType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 156);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(13, 156);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(80, 23);
+            this.labelReportType.TabIndex = 98;
+            this.labelReportType.Text = "Report Type";
             // 
-            // label6
+            // labelFactory
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 192);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(80, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 192);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(80, 23);
+            this.labelFactory.TabIndex = 99;
+            this.labelFactory.Text = "Factory";
             // 
-            // label7
+            // labelOrderBy
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 228);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 23);
-            this.label7.TabIndex = 100;
-            this.label7.Text = "Order By";
+            this.labelOrderBy.Lines = 0;
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 228);
+            this.labelOrderBy.Name = "labelOrderBy";
+            this.labelOrderBy.Size = new System.Drawing.Size(80, 23);
+            this.labelOrderBy.TabIndex = 100;
+            this.labelOrderBy.Text = "Order By";
             // 
-            // dateBox1
+            // dateDateStart
             // 
-            this.dateBox1.Location = new System.Drawing.Point(97, 12);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(98, 23);
-            this.dateBox1.TabIndex = 0;
-            this.dateBox1.Validated += new System.EventHandler(this.dateBox1_Validated);
+            this.dateDateStart.Location = new System.Drawing.Point(97, 12);
+            this.dateDateStart.Name = "dateDateStart";
+            this.dateDateStart.Size = new System.Drawing.Size(98, 23);
+            this.dateDateStart.TabIndex = 0;
+            this.dateDateStart.Validated += new System.EventHandler(this.dateBox1_Validated);
             // 
-            // dateBox2
+            // dateDateEnd
             // 
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(222, 12);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(98, 23);
-            this.dateBox2.TabIndex = 1;
+            this.dateDateEnd.IsSupportEditMode = false;
+            this.dateDateEnd.Location = new System.Drawing.Point(222, 12);
+            this.dateDateEnd.Name = "dateDateEnd";
+            this.dateDateEnd.ReadOnly = true;
+            this.dateDateEnd.Size = new System.Drawing.Size(98, 23);
+            this.dateDateEnd.TabIndex = 1;
             // 
             // label8
             // 
@@ -158,15 +158,15 @@
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox1
+            // txtSewingLineStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(97, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(41, 23);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtSewingLineStart.BackColor = System.Drawing.Color.White;
+            this.txtSewingLineStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLineStart.Location = new System.Drawing.Point(97, 48);
+            this.txtSewingLineStart.Name = "txtSewingLineStart";
+            this.txtSewingLineStart.Size = new System.Drawing.Size(41, 23);
+            this.txtSewingLineStart.TabIndex = 2;
+            this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
             // 
             // label9
             // 
@@ -182,71 +182,71 @@
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox2
+            // txtSewingLineEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(165, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(41, 23);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtSewingLineEnd.BackColor = System.Drawing.Color.White;
+            this.txtSewingLineEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLineEnd.Location = new System.Drawing.Point(165, 48);
+            this.txtSewingLineEnd.Name = "txtSewingLineEnd";
+            this.txtSewingLineEnd.Size = new System.Drawing.Size(41, 23);
+            this.txtSewingLineEnd.TabIndex = 3;
+            this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
-            // comboBox1
+            // comboHoliday
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(97, 84);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(90, 24);
-            this.comboBox1.TabIndex = 4;
+            this.comboHoliday.BackColor = System.Drawing.Color.White;
+            this.comboHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboHoliday.FormattingEnabled = true;
+            this.comboHoliday.IsSupportUnselect = true;
+            this.comboHoliday.Location = new System.Drawing.Point(97, 84);
+            this.comboHoliday.Name = "comboHoliday";
+            this.comboHoliday.Size = new System.Drawing.Size(90, 24);
+            this.comboHoliday.TabIndex = 4;
             // 
-            // comboBox2
+            // comboSubconIn
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(97, 120);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(90, 24);
-            this.comboBox2.TabIndex = 5;
+            this.comboSubconIn.BackColor = System.Drawing.Color.White;
+            this.comboSubconIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubconIn.FormattingEnabled = true;
+            this.comboSubconIn.IsSupportUnselect = true;
+            this.comboSubconIn.Location = new System.Drawing.Point(97, 120);
+            this.comboSubconIn.Name = "comboSubconIn";
+            this.comboSubconIn.Size = new System.Drawing.Size(90, 24);
+            this.comboSubconIn.TabIndex = 5;
             // 
-            // comboBox3
+            // comboReportType
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(97, 156);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 6;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.comboReportType.BackColor = System.Drawing.Color.White;
+            this.comboReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReportType.FormattingEnabled = true;
+            this.comboReportType.IsSupportUnselect = true;
+            this.comboReportType.Location = new System.Drawing.Point(97, 156);
+            this.comboReportType.Name = "comboReportType";
+            this.comboReportType.Size = new System.Drawing.Size(121, 24);
+            this.comboReportType.TabIndex = 6;
+            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
-            // comboBox4
+            // comboFactory
             // 
-            this.comboBox4.BackColor = System.Drawing.Color.White;
-            this.comboBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.IsSupportUnselect = true;
-            this.comboBox4.Location = new System.Drawing.Point(97, 192);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(65, 24);
-            this.comboBox4.TabIndex = 7;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(97, 192);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(65, 24);
+            this.comboFactory.TabIndex = 7;
             // 
-            // comboBox5
+            // comboOrderBy
             // 
-            this.comboBox5.BackColor = System.Drawing.Color.White;
-            this.comboBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.IsSupportUnselect = true;
-            this.comboBox5.Location = new System.Drawing.Point(97, 228);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(121, 24);
-            this.comboBox5.TabIndex = 8;
+            this.comboOrderBy.BackColor = System.Drawing.Color.White;
+            this.comboOrderBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOrderBy.FormattingEnabled = true;
+            this.comboOrderBy.IsSupportUnselect = true;
+            this.comboOrderBy.Location = new System.Drawing.Point(97, 228);
+            this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
+            this.comboOrderBy.TabIndex = 8;
             // 
             // label10
             // 
@@ -267,47 +267,47 @@
             // 
             this.ClientSize = new System.Drawing.Size(443, 355);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.comboBox5);
-            this.Controls.Add(this.comboBox4);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.comboOrderBy);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboReportType);
+            this.Controls.Add(this.comboSubconIn);
+            this.Controls.Add(this.comboHoliday);
+            this.Controls.Add(this.txtSewingLineEnd);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtSewingLineStart);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.dateBox2);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateDateEnd);
+            this.Controls.Add(this.dateDateStart);
+            this.Controls.Add(this.labelOrderBy);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.labelReportType);
+            this.Controls.Add(this.labelSubconIn);
+            this.Controls.Add(this.labelHoliday);
+            this.Controls.Add(this.labelSewingLine);
+            this.Controls.Add(this.labelDate);
             this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "dateBox1";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Monthly Production output Report";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.dateBox1, 0);
-            this.Controls.SetChildIndex(this.dateBox2, 0);
+            this.Controls.SetChildIndex(this.labelDate, 0);
+            this.Controls.SetChildIndex(this.labelSewingLine, 0);
+            this.Controls.SetChildIndex(this.labelHoliday, 0);
+            this.Controls.SetChildIndex(this.labelSubconIn, 0);
+            this.Controls.SetChildIndex(this.labelReportType, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelOrderBy, 0);
+            this.Controls.SetChildIndex(this.dateDateStart, 0);
+            this.Controls.SetChildIndex(this.dateDateEnd, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
+            this.Controls.SetChildIndex(this.txtSewingLineStart, 0);
             this.Controls.SetChildIndex(this.label9, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.comboBox3, 0);
-            this.Controls.SetChildIndex(this.comboBox4, 0);
-            this.Controls.SetChildIndex(this.comboBox5, 0);
+            this.Controls.SetChildIndex(this.txtSewingLineEnd, 0);
+            this.Controls.SetChildIndex(this.comboHoliday, 0);
+            this.Controls.SetChildIndex(this.comboSubconIn, 0);
+            this.Controls.SetChildIndex(this.comboReportType, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.comboOrderBy, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
@@ -319,24 +319,24 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DateBox dateBox2;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelSewingLine;
+        private Win.UI.Label labelHoliday;
+        private Win.UI.Label labelSubconIn;
+        private Win.UI.Label labelReportType;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelOrderBy;
+        private Win.UI.DateBox dateDateStart;
+        private Win.UI.DateBox dateDateEnd;
         private Win.UI.Label label8;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtSewingLineStart;
         private Win.UI.Label label9;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.ComboBox comboBox3;
-        private Win.UI.ComboBox comboBox4;
-        private Win.UI.ComboBox comboBox5;
+        private Win.UI.TextBox txtSewingLineEnd;
+        private Win.UI.ComboBox comboHoliday;
+        private Win.UI.ComboBox comboSubconIn;
+        private Win.UI.ComboBox comboReportType;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label label10;
     }
 }

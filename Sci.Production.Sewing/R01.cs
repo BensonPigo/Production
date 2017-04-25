@@ -24,34 +24,34 @@ namespace Sci.Production.Sewing
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, factory);
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
             //MyUtility.Tool.SetupCombox(comboBox2, 1, 1, ",A,B");
-            MyUtility.Tool.SetupCombox(comboBox3, 1, 1, "Included,Excluded");
-            dateBox1.Value = DateTime.Today.AddDays(-1);
-            comboBox1.Text = Sci.Env.User.Factory;
-            comboBox2.SelectedIndex = 0;
-            comboBox3.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboSubconIn, 1, 1, "Included,Excluded");
+            dateDate.Value = DateTime.Today.AddDays(-1);
+            comboFactory.Text = Sci.Env.User.Factory;
+            comboTeam.SelectedIndex = 0;
+            comboSubconIn.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateBox1.Value))
+            if (MyUtility.Check.Empty(dateDate.Value))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
-            if (comboBox1.SelectedIndex == -1)
+            if (comboFactory.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Factory can't empty!!");
                 return false;
             }
 
-            _date = dateBox1.Value;
-            _factory = comboBox1.Text;
-            _team = comboBox2.Text;
-            _excludeSubconIn = comboBox3.SelectedIndex;
+            _date = dateDate.Value;
+            _factory = comboFactory.Text;
+            _team = comboTeam.Text;
+            _excludeSubconIn = comboSubconIn.SelectedIndex;
             return base.ValidateInput();
         }
 

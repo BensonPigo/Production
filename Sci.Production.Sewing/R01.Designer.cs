@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelTeam = new Sci.Win.UI.Label();
+            this.labelSubconIn = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboTeam = new Sci.Win.UI.ComboBox();
+            this.comboSubconIn = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -54,85 +54,85 @@
             this.close.Location = new System.Drawing.Point(302, 84);
             this.close.TabIndex = 7;
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(13, 13);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(70, 23);
+            this.labelDate.TabIndex = 94;
+            this.labelDate.Text = "Date";
             // 
-            // label2
+            // labelFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 48);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(70, 23);
+            this.labelFactory.TabIndex = 95;
+            this.labelFactory.Text = "Factory";
             // 
-            // label3
+            // labelTeam
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(70, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Team";
+            this.labelTeam.Lines = 0;
+            this.labelTeam.Location = new System.Drawing.Point(13, 84);
+            this.labelTeam.Name = "labelTeam";
+            this.labelTeam.Size = new System.Drawing.Size(70, 23);
+            this.labelTeam.TabIndex = 96;
+            this.labelTeam.Text = "Team";
             // 
-            // label4
+            // labelSubconIn
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 121);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Subcon-in";
+            this.labelSubconIn.Lines = 0;
+            this.labelSubconIn.Location = new System.Drawing.Point(13, 121);
+            this.labelSubconIn.Name = "labelSubconIn";
+            this.labelSubconIn.Size = new System.Drawing.Size(70, 23);
+            this.labelSubconIn.TabIndex = 97;
+            this.labelSubconIn.Text = "Subcon-in";
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(88, 13);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(103, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateDate.Location = new System.Drawing.Point(88, 13);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(103, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // comboBox1
+            // comboFactory
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(88, 48);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(75, 24);
-            this.comboBox1.TabIndex = 1;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(88, 48);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(75, 24);
+            this.comboFactory.TabIndex = 1;
             // 
-            // comboBox2
+            // comboTeam
             // 
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.comboTeam.BackColor = System.Drawing.Color.White;
+            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTeam.FormattingEnabled = true;
+            this.comboTeam.IsSupportUnselect = true;
+            this.comboTeam.Items.AddRange(new object[] {
             "",
             "A",
             "B"});
-            this.comboBox2.Location = new System.Drawing.Point(88, 84);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(63, 24);
-            this.comboBox2.TabIndex = 2;
+            this.comboTeam.Location = new System.Drawing.Point(88, 84);
+            this.comboTeam.Name = "comboTeam";
+            this.comboTeam.Size = new System.Drawing.Size(63, 24);
+            this.comboTeam.TabIndex = 2;
             // 
-            // comboBox3
+            // comboSubconIn
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(88, 121);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(91, 24);
-            this.comboBox3.TabIndex = 3;
+            this.comboSubconIn.BackColor = System.Drawing.Color.White;
+            this.comboSubconIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubconIn.FormattingEnabled = true;
+            this.comboSubconIn.IsSupportUnselect = true;
+            this.comboSubconIn.Location = new System.Drawing.Point(88, 121);
+            this.comboSubconIn.Name = "comboSubconIn";
+            this.comboSubconIn.Size = new System.Drawing.Size(91, 24);
+            this.comboSubconIn.TabIndex = 3;
             // 
             // label5
             // 
@@ -152,14 +152,14 @@
             // 
             this.ClientSize = new System.Drawing.Size(394, 201);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboSubconIn);
+            this.Controls.Add(this.comboTeam);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.dateDate);
+            this.Controls.Add(this.labelSubconIn);
+            this.Controls.Add(this.labelTeam);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.labelDate);
             this.DefaultControl = "dateBox1";
             this.DefaultControlForEdit = "dateBox1";
             this.IsSupportToPrint = false;
@@ -168,14 +168,14 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.dateBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox2, 0);
-            this.Controls.SetChildIndex(this.comboBox3, 0);
+            this.Controls.SetChildIndex(this.labelDate, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelTeam, 0);
+            this.Controls.SetChildIndex(this.labelSubconIn, 0);
+            this.Controls.SetChildIndex(this.dateDate, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.comboTeam, 0);
+            this.Controls.SetChildIndex(this.comboSubconIn, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -184,14 +184,14 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.ComboBox comboBox3;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelTeam;
+        private Win.UI.Label labelSubconIn;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboTeam;
+        private Win.UI.ComboBox comboSubconIn;
         private Win.UI.Label label5;
     }
 }

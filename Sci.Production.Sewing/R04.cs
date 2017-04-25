@@ -21,15 +21,15 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",Bulk,Sample,Local Order,Mockup,Bulk+Sample");
+            MyUtility.Tool.SetupCombox(comboCategory, 1, 1, ",Bulk,Sample,Local Order,Mockup,Bulk+Sample");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, mDivision);
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(comboBox3, 1, factory);
-            comboBox1.SelectedIndex = 0;
-            comboBox2.Text = Sci.Env.User.Keyword;
-            comboBox3.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboCategory.SelectedIndex = 0;
+            comboM.Text = Sci.Env.User.Keyword;
+            comboFactory.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -41,13 +41,13 @@ namespace Sci.Production.Sewing
             //    return false;
             //}
 
-            date1 = dateRange1.Value1;
-            date2 = dateRange1.Value2;
-            category = comboBox1.Text;
-            mDivision = comboBox2.Text;
-            factory = comboBox3.Text;
-            brand = txtbrand1.Text;
-            cdcode = txtcdcode1.Text;
+            date1 = dateOoutputDate.Value1;
+            date2 = dateOoutputDate.Value2;
+            category = comboCategory.Text;
+            mDivision = comboM.Text;
+            factory = comboFactory.Text;
+            brand = txtbrand.Text;
+            cdcode = txtCDCode.Text;
 
             return base.ValidateInput();
         }

@@ -310,13 +310,13 @@ where sd.ID = '{0}'", masterID);
         {
             base.ClickEditAfter();
 
-            dateBox1.ReadOnly = true;
+            dateDate.ReadOnly = true;
 
             if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate)
             {
-                txtsewingline1.ReadOnly = true;
-                numericBox1.ReadOnly = true;
-                numericBox2.ReadOnly = true;
+                txtsewinglineLine.ReadOnly = true;
+                numManpower.ReadOnly = true;
+                numWHours.ReadOnly = true;
             }
         }
 
@@ -326,28 +326,28 @@ where sd.ID = '{0}'", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["OutputDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("Line can't empty!!");
-                txtsewingline1.Focus();
+                txtsewinglineLine.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Manpower"]))
             {
                 MyUtility.Msg.WarningBox("Manpower can't empty!!");
-                numericBox1.Focus();
+                numManpower.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["WorkHour"]))
             {
                 MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
-                numericBox2.Focus();
+                numWHours.Focus();
                 return false;
             }
 
@@ -427,7 +427,7 @@ where sd.ID = '{0}'", masterID);
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            txtsewingline1.Enabled = true;
+            txtsewinglineLine.Enabled = true;
         }
 
         protected override bool ClickDeleteBefore()
@@ -450,19 +450,19 @@ where sd.ID = '{0}'", masterID);
         //Date
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(dateBox1.Value))
+            if (this.EditMode && !MyUtility.Check.Empty(dateDate.Value))
             {
-                if (dateBox1.Value > DateTime.Today)
+                if (dateDate.Value > DateTime.Today)
                 {
                     MyUtility.Msg.WarningBox("< Date > is greater than today, please pay attention!!");
-                    dateBox1.Value = null;
+                    dateDate.Value = null;
                     e.Cancel = true;
                     return;
                 }
-                if (dateBox1.Value < systemLockDate)
+                if (dateDate.Value < systemLockDate)
                 {
                     MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + systemLockDate.ToString("d"));
-                    dateBox1.Value = null;
+                    dateDate.Value = null;
                     e.Cancel = true;
                     return;
                 }

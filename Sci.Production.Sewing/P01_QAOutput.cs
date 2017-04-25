@@ -50,13 +50,13 @@ namespace Sci.Production.Sewing
         protected override void OnAttached()
         {
             base.OnAttached();
-            displayBox1.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
-            displayBox2.Value = MyUtility.Convert.GetString(CurrentDetailData["ComboType"]);
-            displayBox3.Value = MyUtility.Convert.GetString(CurrentDetailData["Article"]);
-            displayBox4.Value = MyUtility.Convert.GetString(CurrentDetailData["Color"]);
-            numericBox1.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(OrderQty)", ""));
-            numericBox2.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
-            numericBox3.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
+            displaySPNo.Value = MyUtility.Convert.GetString(CurrentDetailData["OrderID"]);
+            displaySPNo2.Value = MyUtility.Convert.GetString(CurrentDetailData["ComboType"]);
+            displayArticle.Value = MyUtility.Convert.GetString(CurrentDetailData["Article"]);
+            displayColor.Value = MyUtility.Convert.GetString(CurrentDetailData["Color"]);
+            numTotalOrderQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(OrderQty)", ""));
+            numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
+            numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
             CalculateTotal();
             this.grid.AutoResizeColumns();
         }
@@ -111,8 +111,8 @@ namespace Sci.Production.Sewing
         //計算Total QA Q'ty, Total Bal. Q'ty
         private void CalculateTotal()
         {
-            numericBox4.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(QAQty)", ""));
-            numericBox5.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(BalQty)", ""));
+            numTotalQAQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(QAQty)", ""));
+            numTotalBalQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(BalQty)", ""));
         }
     }
 }

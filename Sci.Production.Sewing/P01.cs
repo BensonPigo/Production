@@ -26,7 +26,7 @@ namespace Sci.Production.Sewing
         {
             InitializeComponent();
             DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O'", Sci.Env.User.Factory);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "A,B");
+            MyUtility.Tool.SetupCombox(comboTeam, 1, 1, "A,B");
             systemLockDate = Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) "));
             DoSubForm = new P01_QAOutput();
 
@@ -43,7 +43,7 @@ namespace Sci.Production.Sewing
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            button1.Enabled = !EditMode && MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate;
+            btnRevisedHistory.Enabled = !EditMode && MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -590,14 +590,14 @@ order by a.OrderId,os.Seq";
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            dateBox1.ReadOnly = true;
-            txtsewingline1.ReadOnly = true;
+            dateDate.ReadOnly = true;
+            txtsewinglineLine.ReadOnly = true;
             if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
             {
-                txtdropdownlist1.ReadOnly = true;
-                comboBox1.ReadOnly = true;
-                numericBox1.ReadOnly = true;
-                numericBox2.ReadOnly = true;
+                txtdropdownlistShift.ReadOnly = true;
+                comboTeam.ReadOnly = true;
+                numManpower.ReadOnly = true;
+                numWHours.ReadOnly = true;
             }
         }
 
@@ -634,37 +634,37 @@ order by a.OrderId,os.Seq";
             if (MyUtility.Check.Empty(CurrentMaintain["OutputDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("Line# can't empty!!");
-                txtsewingline1.Focus();
+                txtsewinglineLine.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shift"]))
             {
                 MyUtility.Msg.WarningBox("Shift can't empty!!");
-                txtdropdownlist1.Focus();
+                txtdropdownlistShift.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Team"]))
             {
                 MyUtility.Msg.WarningBox("Team can't empty!!");
-                comboBox1.Focus();
+                comboTeam.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Manpower"]))
             {
                 MyUtility.Msg.WarningBox("Manpower can't empty!!");
-                numericBox1.Focus();
+                numManpower.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["WorkHour"]))
             {
                 MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
-                numericBox2.Focus();
+                numWHours.Focus();
                 return false;
             }
           
@@ -676,7 +676,7 @@ order by a.OrderId,os.Seq";
                 if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
-                    dateBox1.Focus();
+                    dateDate.Focus();
                     return false;
                 }
             }
@@ -811,7 +811,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                         NQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
                     }
                 }
-                if (NQ != (Decimal)(numericBox5.Value))
+                if (NQ != (Decimal)(numQAOutput.Value))
                 {
                     MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
                     return false; 
@@ -1020,19 +1020,19 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         //Date
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (EditMode && !MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
+            if (EditMode && !MyUtility.Check.Empty(dateDate.Value) && dateDate.Value != dateDate.OldValue)
             {
-                if (dateBox1.Value > DateTime.Today)
+                if (dateDate.Value > DateTime.Today)
                 {
                     MyUtility.Msg.WarningBox("Date is later than today, pls pay attention!!");
-                    dateBox1.Value = null;
+                    dateDate.Value = null;
                     e.Cancel = true;
                     return;
                 }
-                if (dateBox1.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
+                if (dateDate.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
                     MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
-                    dateBox1.Value = null;
+                    dateDate.Value = null;
                     e.Cancel = true;
                     return;
                 }
@@ -1043,7 +1043,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         private void numericBox1_Validated(object sender, EventArgs e)
         {
             //值有異動過就要重算ManHour
-            if (EditMode && numericBox1.Value != numericBox1.OldValue)
+            if (EditMode && numManpower.Value != numManpower.OldValue)
             {
                 CalculateManHour();
             }
@@ -1053,7 +1053,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         private void numericBox2_Validated(object sender, EventArgs e)
         {
             //值有異動過就要重算ManHour
-            if (EditMode && numericBox2.Value != numericBox2.OldValue)
+            if (EditMode && numWHours.Value != numWHours.OldValue)
             {
                 CalculateManHour();
             }
