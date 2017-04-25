@@ -54,7 +54,7 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(queryfors, 1, 1, "未結清,未確認,已確認未轉傳票,ALL");
+            MyUtility.Tool.SetupCombox(queryfors, 1, 1, "Outstanding,Not yet CFM,CFM w/o voucher,ALL");
             queryfors.SelectedIndex = 0;
            
         }
