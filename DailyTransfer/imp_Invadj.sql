@@ -47,7 +47,7 @@ INSERT INTO Production.dbo.InvAdjust(
       ,AdjustDocFee
       ,AddName
       ,AddDate
-      ,Edit_Name
+      ,EditName
       ,EditDate
       ,PriceCheckID
 

@@ -24,7 +24,7 @@ BEGIN
 		into #tempMO
 		from Trade_To_Pms.dbo.MockupOrder a WITH (NOLOCK) 
 		inner join Production.dbo.factory b on a.FactoryID = b.ID
-				
+
 	------------------MockupOrder--------------------------------------------------------------
 
 		declare @mockT table (ID varchar(13),isInsert bit)
@@ -51,7 +51,7 @@ BEGIN
 			t.Remark = s.Remark ,
 			t.CMPUnit = s.CMPUnit ,
 			t.CMPPrice = s.CMPPrice ,
-			t.FTYGroup = s.FTY_Group ,
+			t.FTYGroup = s.FTYGroup ,
 			t.CPUFactor =3 ,
 			t.MDivisionID = s.MDivisionID ,
 			t.AddName = s.AddName ,
