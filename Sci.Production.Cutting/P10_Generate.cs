@@ -51,7 +51,7 @@ namespace Sci.Production.Cutting
             DataTable bdwtb2 = null;
             if (table_bundleqty.Rows.Count != 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(table_bundleqty, "", "Select SizeCode,Ukey,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
+                MyUtility.Tool.ProcessWithDatatable(table_bundleqty, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
             }
             NoOfBunble = bdwtb2 == null ? Convert.ToInt16(maindr["Qty"]) : bdwtb2.Rows.Count;
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
@@ -483,13 +483,16 @@ namespace Sci.Production.Cutting
                     }
                 }
             }
-
+            
             //賦予流水號
             int serial = 1;
             foreach (DataRow dr in qtyTb.Rows)
             {
-                dr["No"] = serial;
-                serial++;
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    dr["No"] = serial;
+                    serial++;
+                }
             }
             calQty();
             #endregion
@@ -937,7 +940,6 @@ namespace Sci.Production.Cutting
                 }
             }
             
-            this.listControlBindingSource1.DataSource = null;
             this.Close();
         }
 
@@ -946,5 +948,9 @@ namespace Sci.Production.Cutting
             button_Qty_Click(sender, e);
         }
 
+        private void P10_Generate_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.listControlBindingSource1.DataSource = null;
+        }
     }
 }
