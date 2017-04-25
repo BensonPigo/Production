@@ -63,7 +63,7 @@ BEGIN
 			,SCIDelivery ,MRHandle ,SMR ,Junk ,Remark ,CMPUnit ,CMPPrice ,FTYGroup ,CPUFactor ,MDivisionID ,AddName 
 			,AddDate ,EditName ,EditDate )
 			values(s.ID ,s.MockupID ,s.Description ,s.Cpu ,s.BrandID ,s.StyleID ,s.SeasonID ,s.ProgramID ,s.FactoryID ,s.Qty ,s.CfmDate
-			,s.SCIDelivery,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,FTY_Group ,3 ,s.MDivisionID,s.AddName 
+			,s.SCIDelivery,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,FTYGroup ,3 ,s.MDivisionID,s.AddName 
 			,s.AddDate ,s.EditName ,s.EditDate )
 		output inserted.id, iif(deleted.id='',1,0) into @mockT; --將insert =1 , update =0 把改變過的id output
 		
