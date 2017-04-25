@@ -200,7 +200,7 @@
         private Win.UI.Grid gridImport;
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnImport;
-        private new Win.UI.Button btnClose;
+        private Win.UI.Button btnClose;
         private Win.UI.Label labelCutCell;
         private Win.UI.Label labelEstCutDate;
         private Class.txtCell txtCutCell;
