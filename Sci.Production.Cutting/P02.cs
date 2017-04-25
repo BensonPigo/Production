@@ -266,9 +266,11 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
             EstCutDate.CellValidating += (s, e) =>
             {
+                if (!this.EditMode) { return; }
                 if (!(MyUtility.Check.Empty(e.FormattedValue)))
                 {
                     DataRow dr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                    if (e.FormattedValue.ToString() == dr["estcutdate"].ToString()) { return; }
                     if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
                     {
                         e.Cancel = true;
