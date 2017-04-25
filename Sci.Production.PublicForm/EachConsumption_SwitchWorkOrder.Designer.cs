@@ -29,74 +29,74 @@
         private void InitializeComponent()
         {
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.BYSP = new Sci.Win.UI.RadioButton();
-            this.Combination = new Sci.Win.UI.RadioButton();
-            this.OK_But = new Sci.Win.UI.Button();
-            this.Cancel_But = new Sci.Win.UI.Button();
+            this.radioBySP = new Sci.Win.UI.RadioButton();
+            this.radioCombination = new Sci.Win.UI.RadioButton();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioGroup1
             // 
-            this.radioGroup1.Controls.Add(this.BYSP);
-            this.radioGroup1.Controls.Add(this.Combination);
+            this.radioGroup1.Controls.Add(this.radioBySP);
+            this.radioGroup1.Controls.Add(this.radioCombination);
             this.radioGroup1.Location = new System.Drawing.Point(11, 8);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(183, 85);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
             // 
-            // BYSP
+            // radioBySP
             // 
-            this.BYSP.AutoSize = true;
-            this.BYSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.BYSP.Location = new System.Drawing.Point(19, 48);
-            this.BYSP.Name = "BYSP";
-            this.BYSP.Size = new System.Drawing.Size(72, 21);
-            this.BYSP.TabIndex = 1;
-            this.BYSP.TabStop = true;
-            this.BYSP.Text = "By SP#";
-            this.BYSP.UseVisualStyleBackColor = true;
+            this.radioBySP.AutoSize = true;
+            this.radioBySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBySP.Location = new System.Drawing.Point(19, 48);
+            this.radioBySP.Name = "radioBySP";
+            this.radioBySP.Size = new System.Drawing.Size(72, 21);
+            this.radioBySP.TabIndex = 1;
+            this.radioBySP.TabStop = true;
+            this.radioBySP.Text = "By SP#";
+            this.radioBySP.UseVisualStyleBackColor = true;
             // 
-            // Combination
+            // radioCombination
             // 
-            this.Combination.AutoSize = true;
-            this.Combination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Combination.Location = new System.Drawing.Point(19, 21);
-            this.Combination.Name = "Combination";
-            this.Combination.Size = new System.Drawing.Size(104, 21);
-            this.Combination.TabIndex = 0;
-            this.Combination.TabStop = true;
-            this.Combination.Text = "Combination";
-            this.Combination.UseVisualStyleBackColor = true;
+            this.radioCombination.AutoSize = true;
+            this.radioCombination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioCombination.Location = new System.Drawing.Point(19, 21);
+            this.radioCombination.Name = "radioCombination";
+            this.radioCombination.Size = new System.Drawing.Size(104, 21);
+            this.radioCombination.TabIndex = 0;
+            this.radioCombination.TabStop = true;
+            this.radioCombination.Text = "Combination";
+            this.radioCombination.UseVisualStyleBackColor = true;
             // 
-            // OK_But
+            // btnOK
             // 
-            this.OK_But.Location = new System.Drawing.Point(220, 17);
-            this.OK_But.Name = "OK_But";
-            this.OK_But.Size = new System.Drawing.Size(80, 30);
-            this.OK_But.TabIndex = 1;
-            this.OK_But.Text = "OK";
-            this.OK_But.UseVisualStyleBackColor = true;
-            this.OK_But.Click += new System.EventHandler(this.OK_But_Click);
+            this.btnOK.Location = new System.Drawing.Point(220, 17);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 1;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.OK_But_Click);
             // 
-            // Cancel_But
+            // btnCancel
             // 
-            this.Cancel_But.Location = new System.Drawing.Point(220, 53);
-            this.Cancel_But.Name = "Cancel_But";
-            this.Cancel_But.Size = new System.Drawing.Size(80, 30);
-            this.Cancel_But.TabIndex = 2;
-            this.Cancel_But.Text = "Cancel";
-            this.Cancel_But.UseVisualStyleBackColor = true;
-            this.Cancel_But.Click += new System.EventHandler(this.Cancel_But_Click);
+            this.btnCancel.Location = new System.Drawing.Point(220, 53);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.Cancel_But_Click);
             // 
-            // P01_EachCons_SwitchWorkOrder
+            // EachConsumption_SwitchWorkOrder
             // 
             this.ClientSize = new System.Drawing.Size(334, 115);
-            this.Controls.Add(this.Cancel_But);
-            this.Controls.Add(this.OK_But);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
             this.Controls.Add(this.radioGroup1);
-            this.Name = "P01_EachCons_SwitchWorkOrder";
+            this.Name = "EachConsumption_SwitchWorkOrder";
             this.Text = "Switch To WorkOrder";
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
@@ -107,10 +107,10 @@
         #endregion
 
         private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton BYSP;
-        private Win.UI.RadioButton Combination;
-        private Win.UI.Button OK_But;
-        private Win.UI.Button Cancel_But;
+        private Win.UI.RadioButton radioBySP;
+        private Win.UI.RadioButton radioCombination;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
 
     }
 }

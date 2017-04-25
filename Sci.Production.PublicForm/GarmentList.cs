@@ -24,7 +24,7 @@ namespace Sci.Production.PublicForm
             id = cid;
             requery();
             gridSetup();
-            this.grid1.AutoResizeColumns();
+            this.gridGarment.AutoResizeColumns();
         }
         private void requery()
         {
@@ -90,11 +90,11 @@ namespace Sci.Production.PublicForm
             }
             #endregion
 
-            grid1.DataSource = gridtb;
+            gridGarment.DataSource = gridtb;
         }
         private void gridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridGarment)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("PatternCode", header: "Cutpart ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -109,7 +109,7 @@ namespace Sci.Production.PublicForm
             foreach (DataRow dr in headertb.Rows)
             {
                 string header = dr["ArticleGroup"].ToString().Trim();
-                Helper.Controls.Grid.Generator(this.grid1)
+                Helper.Controls.Grid.Generator(this.gridGarment)
                  .Text(header, header: header, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 
@@ -121,10 +121,10 @@ namespace Sci.Production.PublicForm
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int idx = this.grid1.GetSelectedRowIndex();
+            int idx = this.gridGarment.GetSelectedRowIndex();
             
             Sci.Production.PublicForm.GarmentList_ColorArticle callNextForm =
-new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey, Styleyukey, id, ((DataTable)grid1.DataSource).Rows[idx][11].ToString());
+new Sci.Production.PublicForm.GarmentList_ColorArticle(patternukey, Styleyukey, id, ((DataTable)gridGarment.DataSource).Rows[idx][11].ToString());
             callNextForm.ShowDialog(this);
         }
     }

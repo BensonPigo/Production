@@ -19,7 +19,7 @@ namespace Sci.Production.PublicForm
         {
             InitializeComponent();
             styleUkey = StyleUKey;
-            MyUtility.Tool.SetupCombox(comboBox1,2,1,"A,All,T,Top,B,Bottom,I,Inner,O,Outer");
+            MyUtility.Tool.SetupCombox(comboTypeFilter,2,1,"A,All,T,Top,B,Bottom,I,Inner,O,Outer");
         }
 
         protected override void OnFormLoaded()
@@ -94,20 +94,20 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
 
             if (gridData1.Rows.Count > 0)
             {
-                numericBox1.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
-                numericBox3.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
+                numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
+                numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
             }
             else
             {
-                numericBox1.Value = 0;
-                numericBox3.Value = 0;
+                numTotalGSD.Value = 0;
+                numTotalSMV.Value = 0;
             }
             CalculateData();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1.DataSource;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridStdGSD.IsEditingReadOnly = true;
+            this.gridStdGSD.DataSource = listControlBindingSource1.DataSource;
+            Helper.Controls.Grid.Generator(this.gridStdGSD)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(4))
                  .Text("Type", header: "Type", width: Widths.AnsiChars(6))
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13))
@@ -123,17 +123,17 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
                 .Numeric("ttlSeamLength", header: "Total seam length", decimal_places: 4);
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2.DataSource;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridSummaryByArtwork.IsEditingReadOnly = true;
+            this.gridSummaryByArtwork.DataSource = listControlBindingSource2.DataSource;
+            Helper.Controls.Grid.Generator(this.gridSummaryByArtwork)
                  .Text("Type", header: "Type", width: Widths.AnsiChars(6))
                  .Text("ArtworkTypeID", header: "ArtWork", width: Widths.AnsiChars(20))
                  .Numeric("tms", header: "TMS(sec)", width: Widths.AnsiChars(8));
 
             //設定Grid3的顯示欄位
-            this.grid3.IsEditingReadOnly = true;
-            this.grid3.DataSource = listControlBindingSource3.DataSource;
-            Helper.Controls.Grid.Generator(this.grid3)
+            this.gridSummaryByMachine.IsEditingReadOnly = true;
+            this.gridSummaryByMachine.DataSource = listControlBindingSource3.DataSource;
+            Helper.Controls.Grid.Generator(this.gridSummaryByMachine)
                  .Text("Type", header: "Type", width: Widths.AnsiChars(6))
                  .Text("MachineTypeID", header: "Machine", width: Widths.AnsiChars(10))
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20))
@@ -156,9 +156,9 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
  left join MachineType mt WITH (NOLOCK) on o.MachineTypeID = mt.ID
  left join ArtworkType a WITH (NOLOCK) on mt.ArtworkTypeID = a.ID and a.IsTMS = 1
  where s.Ukey = {0}", styleUkey.ToString()));
-            if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() != "A")
+            if (comboTypeFilter.SelectedIndex != -1 && comboTypeFilter.SelectedValue.ToString() != "A")
             {
-                sqlCmd.Append(string.Format(" and id.Location = '{0}'", comboBox1.SelectedValue.ToString()));
+                sqlCmd.Append(string.Format(" and id.Location = '{0}'", comboTypeFilter.SelectedValue.ToString()));
             }
             sqlCmd.Append(" group by s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion");
 
@@ -169,23 +169,23 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
             }
             if (tmpData.Rows.Count > 0)
             {
-                displayBox1.Value = tmpData.Rows[0]["ID"].ToString();
-                displayBox3.Value = tmpData.Rows[0]["SeasonID"].ToString();
-                displayBox2.Value = tmpData.Rows[0]["IETMSID"].ToString();
-                displayBox4.Value = tmpData.Rows[0]["IETMSVersion"].ToString();
-                numericBox2.Value = Convert.ToDecimal(tmpData.Rows[0]["ttlTMS"]);
+                displayStyleNo.Value = tmpData.Rows[0]["ID"].ToString();
+                displaySeason.Value = tmpData.Rows[0]["SeasonID"].ToString();
+                displayApplyNo.Value = tmpData.Rows[0]["IETMSID"].ToString();
+                displayVersion.Value = tmpData.Rows[0]["IETMSVersion"].ToString();
+                numTotalCPUTMS.Value = Convert.ToDecimal(tmpData.Rows[0]["ttlTMS"]);
                 if (MyUtility.Check.Empty(tmpData.Rows[0]["ActFinDate"]))
                 {
-                    dateBox1.Value = null;
+                    dateRequireFinish.Value = null;
                 }
                 else
                 {
-                    dateBox1.Value = Convert.ToDateTime(tmpData.Rows[0]["ActFinDate"]);
+                    dateRequireFinish.Value = Convert.ToDateTime(tmpData.Rows[0]["ActFinDate"]);
                 }
             }
             else
             {
-                numericBox2.Value = 0;
+                numTotalCPUTMS.Value = 0;
             }
         }
 
@@ -194,21 +194,21 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
         {
             if (gridData1 != null)
             {
-                if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() != "A")
+                if (comboTypeFilter.SelectedIndex != -1 && comboTypeFilter.SelectedValue.ToString() != "A")
                 {
-                    string filter = "Location = '" + comboBox1.SelectedValue.ToString() + "'";
+                    string filter = "Location = '" + comboTypeFilter.SelectedValue.ToString() + "'";
                     gridData1.DefaultView.RowFilter = filter;
                     gridData2.DefaultView.RowFilter = filter;
                     gridData3.DefaultView.RowFilter = filter;
                     if (gridData1.DefaultView.Count > 0)
                     {
-                        numericBox1.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", filter));
-                        numericBox3.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", filter));
+                        numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", filter));
+                        numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", filter));
                     }
                     else
                     {
-                        numericBox1.Value = 0;
-                        numericBox3.Value = 0;
+                        numTotalGSD.Value = 0;
+                        numTotalSMV.Value = 0;
                     }
                     CalculateData();
                 }
@@ -219,13 +219,13 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
                     gridData3.DefaultView.RowFilter = "";
                     if (gridData1.Rows.Count > 0)
                     {
-                        numericBox1.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
-                        numericBox3.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
+                        numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
+                        numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
                     }
                     else
                     {
-                        numericBox1.Value = 0;
-                        numericBox3.Value = 0;
+                        numTotalGSD.Value = 0;
+                        numTotalSMV.Value = 0;
                     }
                     CalculateData();
                 }
@@ -239,7 +239,7 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
             DataTable ExcelTable;
             try
             {
-                string sqlCmd = string.Format("select Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength from #tmp {0}",comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() != "A"?"where Location = '"+comboBox1.SelectedValue.ToString()+"'":"");
+                string sqlCmd = string.Format("select Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength from #tmp {0}",comboTypeFilter.SelectedIndex != -1 && comboTypeFilter.SelectedValue.ToString() != "A"?"where Location = '"+comboTypeFilter.SelectedValue.ToString()+"'":"");
 
                 MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource1.DataSource, "Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength,Location", sqlCmd, out ExcelTable);
             }

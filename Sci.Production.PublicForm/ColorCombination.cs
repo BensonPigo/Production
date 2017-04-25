@@ -37,7 +37,7 @@ namespace Sci.Production.PublicForm
 
         private void requery()
         {
-            Helper.Controls.Grid.Generator(this.gridFab)
+            Helper.Controls.Grid.Generator(this.gridFabric)
             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             Helper.Controls.Grid.Generator(this.gridColorDesc)
@@ -62,7 +62,7 @@ namespace Sci.Production.PublicForm
                 headername = dr["FabricPanelCode"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.FabricPanelCode='{0}' then Colorid end '{0}' ", dr["FabricPanelCode"].ToString().Trim());
 
-                Helper.Controls.Grid.Generator(this.gridFab)
+                Helper.Controls.Grid.Generator(this.gridFabric)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
             //BOA
@@ -78,7 +78,7 @@ namespace Sci.Production.PublicForm
             {
                 headername = dr["PatternPanel"].ToString().Trim();
                 createheader = createheader + string.Format(",case when a.PatternPanel='{0}' then Colorid end '{0}' ", headername);
-                Helper.Controls.Grid.Generator(this.gridFab)
+                Helper.Controls.Grid.Generator(this.gridFabric)
                 .Text(headername, header: headername, width: Widths.AnsiChars(8), iseditingreadonly: true);
             }
 

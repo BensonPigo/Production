@@ -28,60 +28,60 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.edit_Remark = new Sci.Win.UI.EditBox();
             this.SuspendLayout();
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(415, 182);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(415, 182);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnSave
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(329, 182);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Save";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSave.Location = new System.Drawing.Point(329, 182);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 1;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label1
+            // labelRemark
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(9, 14);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 2;
+            this.labelRemark.Text = "Remark";
             // 
-            // editBox1
+            // edit_Remark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(87, 14);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(423, 155);
-            this.editBox1.TabIndex = 4;
+            this.edit_Remark.BackColor = System.Drawing.Color.White;
+            this.edit_Remark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.edit_Remark.Location = new System.Drawing.Point(87, 14);
+            this.edit_Remark.Multiline = true;
+            this.edit_Remark.Name = "edit_Remark";
+            this.edit_Remark.Size = new System.Drawing.Size(423, 155);
+            this.edit_Remark.TabIndex = 4;
             // 
             // EditRemark
             // 
             this.ClientSize = new System.Drawing.Size(522, 228);
-            this.Controls.Add(this.editBox1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.edit_Remark);
+            this.Controls.Add(this.labelRemark);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnClose);
             this.Name = "EditRemark";
             this.Text = "Edit Remark";
             this.ResumeLayout(false);
@@ -91,9 +91,9 @@
 
         #endregion
 
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
-        private Win.UI.Label label1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
+        private Win.UI.Label labelRemark;
+        private Win.UI.EditBox edit_Remark;
     }
 }

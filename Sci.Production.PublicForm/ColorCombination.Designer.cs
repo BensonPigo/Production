@@ -29,23 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.gridFab = new Sci.Win.UI.Grid();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.gridFabric = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.gridColorDesc = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelFabric = new Sci.Win.UI.Label();
+            this.labelColorDescription = new Sci.Win.UI.Label();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelMiddle = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.panelFabric = new Sci.Win.UI.Panel();
-            this.panelColor = new Sci.Win.UI.Panel();
             this.panelMiddleLeft = new Sci.Win.UI.Panel();
+            this.panelFabric = new Sci.Win.UI.Panel();
             this.panelMiddleRight = new Sci.Win.UI.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.gridFab)).BeginInit();
+            this.panelColor = new Sci.Win.UI.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFabric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridColorDesc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -55,54 +55,54 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panelFabric.SuspendLayout();
-            this.panelColor.SuspendLayout();
             this.panelMiddleLeft.SuspendLayout();
+            this.panelFabric.SuspendLayout();
             this.panelMiddleRight.SuspendLayout();
+            this.panelColor.SuspendLayout();
             this.SuspendLayout();
             // 
-            // gridFab
+            // gridFabric
             // 
-            this.gridFab.AllowUserToAddRows = false;
-            this.gridFab.AllowUserToDeleteRows = false;
-            this.gridFab.AllowUserToResizeRows = false;
-            this.gridFab.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridFab.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridFab.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridFab.DataSource = this.listControlBindingSource1;
-            this.gridFab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridFab.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridFab.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridFab.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridFab.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridFab.Location = new System.Drawing.Point(0, 0);
-            this.gridFab.Name = "gridFab";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFab.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.gridFab.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridFab.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridFab.RowTemplate.Height = 24;
-            this.gridFab.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFab.Size = new System.Drawing.Size(661, 459);
-            this.gridFab.TabIndex = 0;
-            this.gridFab.TabStop = false;
+            this.gridFabric.AllowUserToAddRows = false;
+            this.gridFabric.AllowUserToDeleteRows = false;
+            this.gridFabric.AllowUserToResizeRows = false;
+            this.gridFabric.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridFabric.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridFabric.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridFabric.DataSource = this.listControlBindingSource1;
+            this.gridFabric.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridFabric.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridFabric.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridFabric.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridFabric.Location = new System.Drawing.Point(0, 0);
+            this.gridFabric.Name = "gridFabric";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridFabric.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridFabric.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridFabric.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridFabric.RowTemplate.Height = 24;
+            this.gridFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFabric.Size = new System.Drawing.Size(661, 459);
+            this.gridFabric.TabIndex = 0;
+            this.gridFabric.TabStop = false;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(839, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(839, 6);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // gridColorDesc
             // 
@@ -120,14 +120,14 @@
             this.gridColorDesc.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridColorDesc.Location = new System.Drawing.Point(0, 0);
             this.gridColorDesc.Name = "gridColorDesc";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridColorDesc.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridColorDesc.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridColorDesc.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridColorDesc.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridColorDesc.RowTemplate.Height = 24;
@@ -136,27 +136,27 @@
             this.gridColorDesc.TabIndex = 2;
             this.gridColorDesc.TabStop = false;
             // 
-            // label1
+            // labelFabric
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Fabric";
+            this.labelFabric.Lines = 0;
+            this.labelFabric.Location = new System.Drawing.Point(0, 0);
+            this.labelFabric.Name = "labelFabric";
+            this.labelFabric.Size = new System.Drawing.Size(75, 23);
+            this.labelFabric.TabIndex = 3;
+            this.labelFabric.Text = "Fabric";
             // 
-            // label2
+            // labelColorDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(0, -1);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 23);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Color Description";
+            this.labelColorDescription.Lines = 0;
+            this.labelColorDescription.Location = new System.Drawing.Point(0, -1);
+            this.labelColorDescription.Name = "labelColorDescription";
+            this.labelColorDescription.Size = new System.Drawing.Size(111, 23);
+            this.labelColorDescription.TabIndex = 4;
+            this.labelColorDescription.Text = "Color Description";
             // 
             // panelBottom
             // 
-            this.panelBottom.Controls.Add(this.button1);
+            this.panelBottom.Controls.Add(this.btnClose);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottom.Location = new System.Drawing.Point(0, 481);
             this.panelBottom.Name = "panelBottom";
@@ -191,32 +191,23 @@
             this.splitContainer1.SplitterDistance = 661;
             this.splitContainer1.TabIndex = 0;
             // 
-            // panelFabric
-            // 
-            this.panelFabric.Controls.Add(this.label1);
-            this.panelFabric.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelFabric.Location = new System.Drawing.Point(0, 0);
-            this.panelFabric.Name = "panelFabric";
-            this.panelFabric.Size = new System.Drawing.Size(661, 22);
-            this.panelFabric.TabIndex = 1;
-            // 
-            // panelColor
-            // 
-            this.panelColor.Controls.Add(this.label2);
-            this.panelColor.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelColor.Location = new System.Drawing.Point(0, 0);
-            this.panelColor.Name = "panelColor";
-            this.panelColor.Size = new System.Drawing.Size(257, 22);
-            this.panelColor.TabIndex = 3;
-            // 
             // panelMiddleLeft
             // 
-            this.panelMiddleLeft.Controls.Add(this.gridFab);
+            this.panelMiddleLeft.Controls.Add(this.gridFabric);
             this.panelMiddleLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMiddleLeft.Location = new System.Drawing.Point(0, 22);
             this.panelMiddleLeft.Name = "panelMiddleLeft";
             this.panelMiddleLeft.Size = new System.Drawing.Size(661, 459);
             this.panelMiddleLeft.TabIndex = 2;
+            // 
+            // panelFabric
+            // 
+            this.panelFabric.Controls.Add(this.labelFabric);
+            this.panelFabric.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelFabric.Location = new System.Drawing.Point(0, 0);
+            this.panelFabric.Name = "panelFabric";
+            this.panelFabric.Size = new System.Drawing.Size(661, 22);
+            this.panelFabric.TabIndex = 1;
             // 
             // panelMiddleRight
             // 
@@ -227,6 +218,15 @@
             this.panelMiddleRight.Size = new System.Drawing.Size(257, 459);
             this.panelMiddleRight.TabIndex = 4;
             // 
+            // panelColor
+            // 
+            this.panelColor.Controls.Add(this.labelColorDescription);
+            this.panelColor.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelColor.Location = new System.Drawing.Point(0, 0);
+            this.panelColor.Name = "panelColor";
+            this.panelColor.Size = new System.Drawing.Size(257, 22);
+            this.panelColor.TabIndex = 3;
+            // 
             // ColorCombination
             // 
             this.ClientSize = new System.Drawing.Size(922, 520);
@@ -234,7 +234,7 @@
             this.Controls.Add(this.panelBottom);
             this.Name = "ColorCombination";
             this.Text = "Color Combination";
-            ((System.ComponentModel.ISupportInitialize)(this.gridFab)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridFabric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridColorDesc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -244,21 +244,21 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panelFabric.ResumeLayout(false);
-            this.panelColor.ResumeLayout(false);
             this.panelMiddleLeft.ResumeLayout(false);
+            this.panelFabric.ResumeLayout(false);
             this.panelMiddleRight.ResumeLayout(false);
+            this.panelColor.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.Grid gridFab;
-        private Win.UI.Button button1;
+        private Win.UI.Grid gridFabric;
+        private Win.UI.Button btnClose;
         private Win.UI.Grid gridColorDesc;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelFabric;
+        private Win.UI.Label labelColorDescription;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private System.Windows.Forms.Panel panelBottom;

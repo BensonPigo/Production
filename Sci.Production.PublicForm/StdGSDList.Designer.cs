@@ -32,48 +32,48 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.comboTypeFilter = new Sci.Win.UI.ComboBox();
+            this.labelTypeFilter = new Sci.Win.UI.Label();
+            this.numTotalSMV = new Sci.Win.UI.NumericBox();
+            this.labelTotalSMV = new Sci.Win.UI.Label();
+            this.numTotalCPUTMS = new Sci.Win.UI.NumericBox();
+            this.labelTotalCPUTMS = new Sci.Win.UI.Label();
+            this.numTotalGSD = new Sci.Win.UI.NumericBox();
+            this.labelTotalGSD = new Sci.Win.UI.Label();
+            this.dateRequireFinish = new Sci.Win.UI.DateBox();
+            this.labelRequireFinish = new Sci.Win.UI.Label();
+            this.displayVersion = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.labelVersion = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.displayApplyNo = new Sci.Win.UI.DisplayBox();
+            this.displayStyleNo = new Sci.Win.UI.DisplayBox();
+            this.labelApplyNo = new Sci.Win.UI.Label();
+            this.labelStyleNo = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridStdGSD = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridSummaryByArtwork = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.grid3 = new Sci.Win.UI.Grid();
+            this.gridSummaryByMachine = new Sci.Win.UI.Grid();
             this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridStdGSD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSummaryByArtwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSummaryByMachine)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,244 +95,244 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.label9);
-            this.panel3.Controls.Add(this.numericBox3);
-            this.panel3.Controls.Add(this.label8);
-            this.panel3.Controls.Add(this.numericBox2);
-            this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.numericBox1);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.dateBox1);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.displayBox4);
-            this.panel3.Controls.Add(this.displayBox3);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.displayBox2);
-            this.panel3.Controls.Add(this.displayBox1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.comboTypeFilter);
+            this.panel3.Controls.Add(this.labelTypeFilter);
+            this.panel3.Controls.Add(this.numTotalSMV);
+            this.panel3.Controls.Add(this.labelTotalSMV);
+            this.panel3.Controls.Add(this.numTotalCPUTMS);
+            this.panel3.Controls.Add(this.labelTotalCPUTMS);
+            this.panel3.Controls.Add(this.numTotalGSD);
+            this.panel3.Controls.Add(this.labelTotalGSD);
+            this.panel3.Controls.Add(this.dateRequireFinish);
+            this.panel3.Controls.Add(this.labelRequireFinish);
+            this.panel3.Controls.Add(this.displayVersion);
+            this.panel3.Controls.Add(this.displaySeason);
+            this.panel3.Controls.Add(this.labelVersion);
+            this.panel3.Controls.Add(this.labelSeason);
+            this.panel3.Controls.Add(this.displayApplyNo);
+            this.panel3.Controls.Add(this.displayStyleNo);
+            this.panel3.Controls.Add(this.labelApplyNo);
+            this.panel3.Controls.Add(this.labelStyleNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(862, 130);
             this.panel3.TabIndex = 2;
             // 
-            // button1
+            // btnToExcel
             // 
-            this.button1.Location = new System.Drawing.Point(222, 96);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "To Excel";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.Location = new System.Drawing.Point(222, 96);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 18;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox1
+            // comboTypeFilter
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(79, 100);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 17;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboTypeFilter.BackColor = System.Drawing.Color.White;
+            this.comboTypeFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTypeFilter.FormattingEnabled = true;
+            this.comboTypeFilter.IsSupportUnselect = true;
+            this.comboTypeFilter.Location = new System.Drawing.Point(79, 100);
+            this.comboTypeFilter.Name = "comboTypeFilter";
+            this.comboTypeFilter.Size = new System.Drawing.Size(121, 24);
+            this.comboTypeFilter.TabIndex = 17;
+            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label9
+            // labelTypeFilter
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(0, 101);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Type Filter";
+            this.labelTypeFilter.Lines = 0;
+            this.labelTypeFilter.Location = new System.Drawing.Point(0, 101);
+            this.labelTypeFilter.Name = "labelTypeFilter";
+            this.labelTypeFilter.Size = new System.Drawing.Size(75, 23);
+            this.labelTypeFilter.TabIndex = 16;
+            this.labelTypeFilter.Text = "Type Filter";
             // 
-            // numericBox3
+            // numTotalSMV
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DecimalPlaces = 4;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(615, 61);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numTotalSMV.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalSMV.DecimalPlaces = 4;
+            this.numTotalSMV.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalSMV.IsSupportEditMode = false;
+            this.numTotalSMV.Location = new System.Drawing.Point(615, 61);
+            this.numTotalSMV.Name = "numTotalSMV";
+            this.numTotalSMV.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(70, 23);
-            this.numericBox3.TabIndex = 15;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(511, 61);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 23);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "Total SMV(min)";
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DecimalPlaces = 2;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(385, 61);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(70, 23);
-            this.numericBox2.TabIndex = 13;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numTotalSMV.ReadOnly = true;
+            this.numTotalSMV.Size = new System.Drawing.Size(70, 23);
+            this.numTotalSMV.TabIndex = 15;
+            this.numTotalSMV.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label7
+            // labelTotalSMV
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(250, 61);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(131, 23);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Total CPU TMS(sec)";
+            this.labelTotalSMV.Lines = 0;
+            this.labelTotalSMV.Location = new System.Drawing.Point(511, 61);
+            this.labelTotalSMV.Name = "labelTotalSMV";
+            this.labelTotalSMV.Size = new System.Drawing.Size(100, 23);
+            this.labelTotalSMV.TabIndex = 14;
+            this.labelTotalSMV.Text = "Total SMV(min)";
             // 
-            // numericBox1
+            // numTotalCPUTMS
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(104, 61);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numTotalCPUTMS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalCPUTMS.DecimalPlaces = 2;
+            this.numTotalCPUTMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalCPUTMS.IsSupportEditMode = false;
+            this.numTotalCPUTMS.Location = new System.Drawing.Point(385, 61);
+            this.numTotalCPUTMS.Name = "numTotalCPUTMS";
+            this.numTotalCPUTMS.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(70, 23);
-            this.numericBox1.TabIndex = 11;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numTotalCPUTMS.ReadOnly = true;
+            this.numTotalCPUTMS.Size = new System.Drawing.Size(70, 23);
+            this.numTotalCPUTMS.TabIndex = 13;
+            this.numTotalCPUTMS.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label6
+            // labelTotalCPUTMS
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(1, 61);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(99, 23);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Total GSD(sec)";
+            this.labelTotalCPUTMS.Lines = 0;
+            this.labelTotalCPUTMS.Location = new System.Drawing.Point(250, 61);
+            this.labelTotalCPUTMS.Name = "labelTotalCPUTMS";
+            this.labelTotalCPUTMS.Size = new System.Drawing.Size(131, 23);
+            this.labelTotalCPUTMS.TabIndex = 12;
+            this.labelTotalCPUTMS.Text = "Total CPU TMS(sec)";
             // 
-            // dateBox1
+            // numTotalGSD
             // 
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(610, 7);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(110, 23);
-            this.dateBox1.TabIndex = 9;
+            this.numTotalGSD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalGSD.DecimalPlaces = 2;
+            this.numTotalGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalGSD.IsSupportEditMode = false;
+            this.numTotalGSD.Location = new System.Drawing.Point(104, 61);
+            this.numTotalGSD.Name = "numTotalGSD";
+            this.numTotalGSD.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalGSD.ReadOnly = true;
+            this.numTotalGSD.Size = new System.Drawing.Size(70, 23);
+            this.numTotalGSD.TabIndex = 11;
+            this.numTotalGSD.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // label5
+            // labelTotalGSD
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(511, 7);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Require Finish";
+            this.labelTotalGSD.Lines = 0;
+            this.labelTotalGSD.Location = new System.Drawing.Point(1, 61);
+            this.labelTotalGSD.Name = "labelTotalGSD";
+            this.labelTotalGSD.Size = new System.Drawing.Size(99, 23);
+            this.labelTotalGSD.TabIndex = 10;
+            this.labelTotalGSD.Text = "Total GSD(sec)";
             // 
-            // displayBox4
+            // dateRequireFinish
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(306, 34);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(27, 23);
-            this.displayBox4.TabIndex = 7;
+            this.dateRequireFinish.IsSupportEditMode = false;
+            this.dateRequireFinish.Location = new System.Drawing.Point(610, 7);
+            this.dateRequireFinish.Name = "dateRequireFinish";
+            this.dateRequireFinish.ReadOnly = true;
+            this.dateRequireFinish.Size = new System.Drawing.Size(110, 23);
+            this.dateRequireFinish.TabIndex = 9;
             // 
-            // displayBox3
+            // labelRequireFinish
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(306, 7);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 6;
+            this.labelRequireFinish.Lines = 0;
+            this.labelRequireFinish.Location = new System.Drawing.Point(511, 7);
+            this.labelRequireFinish.Name = "labelRequireFinish";
+            this.labelRequireFinish.Size = new System.Drawing.Size(95, 23);
+            this.labelRequireFinish.TabIndex = 8;
+            this.labelRequireFinish.Text = "Require Finish";
             // 
-            // label4
+            // displayVersion
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(250, 34);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Version";
+            this.displayVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayVersion.Location = new System.Drawing.Point(306, 34);
+            this.displayVersion.Name = "displayVersion";
+            this.displayVersion.Size = new System.Drawing.Size(27, 23);
+            this.displayVersion.TabIndex = 7;
             // 
-            // label3
+            // displaySeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(250, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(52, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Season";
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(306, 7);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(80, 23);
+            this.displaySeason.TabIndex = 6;
             // 
-            // displayBox2
+            // labelVersion
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(71, 34);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(100, 23);
-            this.displayBox2.TabIndex = 3;
+            this.labelVersion.Lines = 0;
+            this.labelVersion.Location = new System.Drawing.Point(250, 34);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(52, 23);
+            this.labelVersion.TabIndex = 5;
+            this.labelVersion.Text = "Version";
             // 
-            // displayBox1
+            // labelSeason
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(71, 7);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(130, 23);
-            this.displayBox1.TabIndex = 2;
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(250, 7);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(52, 23);
+            this.labelSeason.TabIndex = 4;
+            this.labelSeason.Text = "Season";
             // 
-            // label2
+            // displayApplyNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(1, 34);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Apply No.";
+            this.displayApplyNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayApplyNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayApplyNo.Location = new System.Drawing.Point(71, 34);
+            this.displayApplyNo.Name = "displayApplyNo";
+            this.displayApplyNo.Size = new System.Drawing.Size(100, 23);
+            this.displayApplyNo.TabIndex = 3;
             // 
-            // label1
+            // displayStyleNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(1, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(66, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Style#";
+            this.displayStyleNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.Location = new System.Drawing.Point(71, 7);
+            this.displayStyleNo.Name = "displayStyleNo";
+            this.displayStyleNo.Size = new System.Drawing.Size(130, 23);
+            this.displayStyleNo.TabIndex = 2;
+            // 
+            // labelApplyNo
+            // 
+            this.labelApplyNo.Lines = 0;
+            this.labelApplyNo.Location = new System.Drawing.Point(1, 34);
+            this.labelApplyNo.Name = "labelApplyNo";
+            this.labelApplyNo.Size = new System.Drawing.Size(66, 23);
+            this.labelApplyNo.TabIndex = 1;
+            this.labelApplyNo.Text = "Apply No.";
+            // 
+            // labelStyleNo
+            // 
+            this.labelStyleNo.Lines = 0;
+            this.labelStyleNo.Location = new System.Drawing.Point(1, 7);
+            this.labelStyleNo.Name = "labelStyleNo";
+            this.labelStyleNo.Size = new System.Drawing.Size(66, 23);
+            this.labelStyleNo.TabIndex = 0;
+            this.labelStyleNo.Text = "Style#";
             // 
             // panel4
             // 
@@ -365,7 +365,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.grid1);
+            this.tabPage1.Controls.Add(this.gridStdGSD);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -373,33 +373,33 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Std. GSD";
             // 
-            // grid1
+            // gridStdGSD
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(3, 3);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(848, 387);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridStdGSD.AllowUserToAddRows = false;
+            this.gridStdGSD.AllowUserToDeleteRows = false;
+            this.gridStdGSD.AllowUserToResizeRows = false;
+            this.gridStdGSD.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridStdGSD.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridStdGSD.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridStdGSD.DataSource = this.listControlBindingSource1;
+            this.gridStdGSD.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridStdGSD.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridStdGSD.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridStdGSD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridStdGSD.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridStdGSD.Location = new System.Drawing.Point(3, 3);
+            this.gridStdGSD.Name = "gridStdGSD";
+            this.gridStdGSD.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridStdGSD.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridStdGSD.RowTemplate.Height = 24;
+            this.gridStdGSD.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridStdGSD.Size = new System.Drawing.Size(848, 387);
+            this.gridStdGSD.TabIndex = 0;
+            this.gridStdGSD.TabStop = false;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.grid2);
+            this.tabPage2.Controls.Add(this.gridSummaryByArtwork);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -407,33 +407,33 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Summary by artwork";
             // 
-            // grid2
+            // gridSummaryByArtwork
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(3, 3);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(848, 387);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridSummaryByArtwork.AllowUserToAddRows = false;
+            this.gridSummaryByArtwork.AllowUserToDeleteRows = false;
+            this.gridSummaryByArtwork.AllowUserToResizeRows = false;
+            this.gridSummaryByArtwork.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSummaryByArtwork.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSummaryByArtwork.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSummaryByArtwork.DataSource = this.listControlBindingSource2;
+            this.gridSummaryByArtwork.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSummaryByArtwork.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSummaryByArtwork.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSummaryByArtwork.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSummaryByArtwork.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSummaryByArtwork.Location = new System.Drawing.Point(3, 3);
+            this.gridSummaryByArtwork.Name = "gridSummaryByArtwork";
+            this.gridSummaryByArtwork.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSummaryByArtwork.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSummaryByArtwork.RowTemplate.Height = 24;
+            this.gridSummaryByArtwork.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSummaryByArtwork.Size = new System.Drawing.Size(848, 387);
+            this.gridSummaryByArtwork.TabIndex = 0;
+            this.gridSummaryByArtwork.TabStop = false;
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.grid3);
+            this.tabPage3.Controls.Add(this.gridSummaryByMachine);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -441,29 +441,29 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Summary by machine";
             // 
-            // grid3
+            // gridSummaryByMachine
             // 
-            this.grid3.AllowUserToAddRows = false;
-            this.grid3.AllowUserToDeleteRows = false;
-            this.grid3.AllowUserToResizeRows = false;
-            this.grid3.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid3.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid3.DataSource = this.listControlBindingSource3;
-            this.grid3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid3.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid3.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid3.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid3.Location = new System.Drawing.Point(3, 3);
-            this.grid3.Name = "grid3";
-            this.grid3.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid3.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid3.RowTemplate.Height = 24;
-            this.grid3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid3.Size = new System.Drawing.Size(848, 387);
-            this.grid3.TabIndex = 0;
-            this.grid3.TabStop = false;
+            this.gridSummaryByMachine.AllowUserToAddRows = false;
+            this.gridSummaryByMachine.AllowUserToDeleteRows = false;
+            this.gridSummaryByMachine.AllowUserToResizeRows = false;
+            this.gridSummaryByMachine.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSummaryByMachine.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSummaryByMachine.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSummaryByMachine.DataSource = this.listControlBindingSource3;
+            this.gridSummaryByMachine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSummaryByMachine.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSummaryByMachine.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSummaryByMachine.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSummaryByMachine.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSummaryByMachine.Location = new System.Drawing.Point(3, 3);
+            this.gridSummaryByMachine.Name = "gridSummaryByMachine";
+            this.gridSummaryByMachine.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSummaryByMachine.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSummaryByMachine.RowTemplate.Height = 24;
+            this.gridSummaryByMachine.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSummaryByMachine.Size = new System.Drawing.Size(848, 387);
+            this.gridSummaryByMachine.TabIndex = 0;
+            this.gridSummaryByMachine.TabStop = false;
             // 
             // StdGSDList
             // 
@@ -481,13 +481,13 @@
             this.panel5.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridStdGSD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSummaryByArtwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSummaryByMachine)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.ResumeLayout(false);
 
@@ -502,32 +502,32 @@
         private Win.UI.Panel panel5;
         private Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridStdGSD;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.TabPage tabPage2;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridSummaryByArtwork;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private System.Windows.Forms.TabPage tabPage3;
-        private Win.UI.Grid grid3;
+        private Win.UI.Grid gridSummaryByMachine;
         private Win.UI.ListControlBindingSource listControlBindingSource3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label6;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label5;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label9;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.Label label8;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label7;
-        private Win.UI.Button button1;
+        private Win.UI.Label labelApplyNo;
+        private Win.UI.Label labelStyleNo;
+        private Win.UI.DisplayBox displayApplyNo;
+        private Win.UI.DisplayBox displayStyleNo;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.Label labelVersion;
+        private Win.UI.Label labelSeason;
+        private Win.UI.DisplayBox displayVersion;
+        private Win.UI.NumericBox numTotalGSD;
+        private Win.UI.Label labelTotalGSD;
+        private Win.UI.DateBox dateRequireFinish;
+        private Win.UI.Label labelRequireFinish;
+        private Win.UI.ComboBox comboTypeFilter;
+        private Win.UI.Label labelTypeFilter;
+        private Win.UI.NumericBox numTotalSMV;
+        private Win.UI.Label labelTotalSMV;
+        private Win.UI.NumericBox numTotalCPUTMS;
+        private Win.UI.Label labelTotalCPUTMS;
+        private Win.UI.Button btnToExcel;
     }
 }

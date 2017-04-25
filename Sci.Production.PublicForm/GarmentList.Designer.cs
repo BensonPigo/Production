@@ -29,29 +29,29 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.gridGarment = new Sci.Win.UI.Grid();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnArticleForFCode = new Sci.Win.UI.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).BeginInit();
             this.SuspendLayout();
             // 
-            // grid1
+            // gridGarment
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridGarment.AllowUserToAddRows = false;
+            this.gridGarment.AllowUserToDeleteRows = false;
+            this.gridGarment.AllowUserToResizeRows = false;
+            this.gridGarment.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(12, 12);
-            this.grid1.Name = "grid1";
+            this.gridGarment.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridGarment.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridGarment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridGarment.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridGarment.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridGarment.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridGarment.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridGarment.Location = new System.Drawing.Point(12, 12);
+            this.gridGarment.Name = "gridGarment";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -59,54 +59,54 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1086, 459);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridGarment.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridGarment.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridGarment.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridGarment.RowTemplate.Height = 24;
+            this.gridGarment.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridGarment.Size = new System.Drawing.Size(1086, 459);
+            this.gridGarment.TabIndex = 0;
+            this.gridGarment.TabStop = false;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(1018, 477);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(1018, 477);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnArticleForFCode
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.Location = new System.Drawing.Point(12, 477);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(150, 30);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Article for F_Code";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnArticleForFCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnArticleForFCode.Location = new System.Drawing.Point(12, 477);
+            this.btnArticleForFCode.Name = "btnArticleForFCode";
+            this.btnArticleForFCode.Size = new System.Drawing.Size(150, 30);
+            this.btnArticleForFCode.TabIndex = 2;
+            this.btnArticleForFCode.Text = "Article for F_Code";
+            this.btnArticleForFCode.UseVisualStyleBackColor = true;
+            this.btnArticleForFCode.Click += new System.EventHandler(this.button2_Click);
             // 
             // GarmentList
             // 
             this.ClientSize = new System.Drawing.Size(1110, 511);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.btnArticleForFCode);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.gridGarment);
             this.Name = "GarmentList";
             this.Text = "Garment List";
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridGarment)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Grid gridGarment;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnArticleForFCode;
     }
 }

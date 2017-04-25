@@ -41,11 +41,11 @@ from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order
             {
                 ShowErr(sqlcmd,sqldr);
             }
-            grid1.DataSource = gridtb;
+            gridColorArticle.DataSource = gridtb;
         }
         private void gridSetup()
         {
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridColorArticle)
                 .Text("ArticleGroup", header: "Article Group", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeRange", header: "Size Range", width: Widths.AnsiChars(20), iseditingreadonly: true)

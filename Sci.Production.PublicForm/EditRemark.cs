@@ -30,7 +30,7 @@ namespace Sci.Production.PublicForm
             _columnNm = columnNm;
             dr = Data;
 
-            editBox1.Text = dr[columnNm].ToString();
+            edit_Remark.Text = dr[columnNm].ToString();
 
         }
 
@@ -75,7 +75,7 @@ namespace Sci.Production.PublicForm
                 }
             }
 
-            sqlcmd = string.Format("update {0} set {1} = '{2}'", _tableNm, _columnNm, editBox1.Text) + sqlwhere;
+            sqlcmd = string.Format("update {0} set {1} = '{2}'", _tableNm, _columnNm, edit_Remark.Text) + sqlwhere;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
                 ShowErr(sqlcmd, result);
             else

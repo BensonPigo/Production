@@ -51,7 +51,7 @@ namespace Sci.Production.PublicForm
         {
             InitializeComponent();
             this.Text = "Each Consumption - ("+keyvalue1+")";
-            this.button1.Visible = canSwitch;
+            this.btnSwitchtoWorkOrder.Visible = canSwitch;
             this._isCuttingPiece = "1";
             this._cuttingPiece = 0;
             if (cuttingPiece)
@@ -62,9 +62,9 @@ namespace Sci.Production.PublicForm
 
             bool EditSwitch2Order = Prgs.GetAuthority(Sci.Env.User.UserID, "P01.Cutting Master List", "CanEdit");
             if (EditSwitch2Order && switchToWorkorder)
-                button1.Enabled = true;
+                btnSwitchtoWorkOrder.Enabled = true;
             else
-                button1.Enabled = false;
+                btnSwitchtoWorkOrder.Enabled = false;
         }
         
         protected override Ict.DualResult OnRequery(out DataTable datas)

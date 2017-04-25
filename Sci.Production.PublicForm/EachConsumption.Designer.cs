@@ -30,65 +30,65 @@
         {
             this.components = new System.ComponentModel.Container();
             this.displayEditBy = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelEditBy = new Sci.Win.UI.Label();
+            this.labelCreateby = new Sci.Win.UI.Label();
             this.panelColorQty = new Sci.Win.UI.Panel();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
+            this.displayDataSource = new Sci.Win.UI.DisplayBox();
+            this.labelDataSource = new Sci.Win.UI.Label();
             this.btnDetail = new Sci.Win.UI.Button();
             this.label3 = new Sci.Win.UI.Label();
             this.panelBasic = new Sci.Win.UI.Panel();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.ConsPC = new Sci.Win.UI.DisplayBox();
+            this.displayType = new Sci.Win.UI.DisplayBox();
+            this.displayConsPC = new Sci.Win.UI.DisplayBox();
             this.panelSizeQty = new Sci.Win.UI.Panel();
             this.gridSizeQty = new Sci.Win.UI.Grid();
             this.sizeQtyGridDbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.numFabricWidth = new Sci.Win.UI.NumericBox();
             this.checkAllSize = new Sci.Win.UI.CheckBox();
-            this.label25 = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
             this.checkCuttingPiece = new Sci.Win.UI.CheckBox();
             this.editRemark = new Sci.Win.UI.EditBox();
-            this.label24 = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
             this.editForArticle = new Sci.Win.UI.EditBox();
-            this.label23 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.displaySeq = new Sci.Win.UI.DisplayBox();
+            this.labelForArticle = new Sci.Win.UI.Label();
+            this.labelSeqNo = new Sci.Win.UI.Label();
+            this.displaySeqNo = new Sci.Win.UI.DisplayBox();
             this.numTotalQty = new Sci.Win.UI.NumericBox();
-            this.label22 = new Sci.Win.UI.Label();
-            this.label21 = new Sci.Win.UI.Label();
-            this.displayWidth = new Sci.Win.UI.DisplayBox();
-            this.label20 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
+            this.labelTotal = new Sci.Win.UI.Label();
+            this.labelSizeRatio = new Sci.Win.UI.Label();
+            this.displayMarkerListWidth = new Sci.Win.UI.DisplayBox();
+            this.labelMarkerListWidth = new Sci.Win.UI.Label();
+            this.labelFabricWidth = new Sci.Win.UI.Label();
             this.displayFabricDesc = new Sci.Win.UI.DisplayBox();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
+            this.labelConsPC = new Sci.Win.UI.Label();
+            this.labelEfficiency = new Sci.Win.UI.Label();
             this.displayFabricCode = new Sci.Win.UI.DisplayBox();
-            this.label16 = new Sci.Win.UI.Label();
+            this.labelFabric = new Sci.Win.UI.Label();
             this.displayFabricCombo = new Sci.Win.UI.DisplayBox();
-            this.label15 = new Sci.Win.UI.Label();
+            this.labelFabricCombo = new Sci.Win.UI.Label();
             this.displayEfficiency = new Sci.Win.UI.DisplayBox();
             this.displayFabricPanelCode = new Sci.Win.UI.DisplayBox();
-            this.label14 = new Sci.Win.UI.Label();
+            this.labelFabricPanelCode = new Sci.Win.UI.Label();
             this.displayPatternPanel = new Sci.Win.UI.DisplayBox();
-            this.label13 = new Sci.Win.UI.Label();
+            this.labelPatternPanel = new Sci.Win.UI.Label();
             this.displayMarkerLength = new Sci.Win.UI.DisplayBox();
-            this.label12 = new Sci.Win.UI.Label();
+            this.labelMarkerLength = new Sci.Win.UI.Label();
             this.displayMarkerName = new Sci.Win.UI.DisplayBox();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelMarkerName = new Sci.Win.UI.Label();
             this.displayMarkerNo = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.labelMarkerNo = new Sci.Win.UI.Label();
             this.panelMarker = new Sci.Win.UI.Panel();
             this.btnDownloadIdList = new Sci.Win.UI.Button();
             this.displayMarkerVersion = new Sci.Win.UI.DisplayBox();
             this.displayPhaseID = new Sci.Win.UI.DisplayBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
+            this.labelMarkerVersion = new Sci.Win.UI.Label();
+            this.labelPhaseID = new Sci.Win.UI.Label();
             this.displayMarkerDownloadID = new Sci.Win.UI.DisplayBox();
-            this.displaySMNoticeID = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
+            this.displayApplyNo = new Sci.Win.UI.DisplayBox();
+            this.labelMarkerDownloadID = new Sci.Win.UI.Label();
+            this.labelApplyNo = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnSwitchtoWorkOrder = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -116,16 +116,16 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Controls.Add(this.btnSwitchtoWorkOrder);
             this.btmcont.Controls.Add(this.displayEditBy);
             this.btmcont.Controls.Add(this.displayCreateBy);
-            this.btmcont.Controls.Add(this.label2);
-            this.btmcont.Controls.Add(this.label1);
+            this.btmcont.Controls.Add(this.labelEditBy);
+            this.btmcont.Controls.Add(this.labelCreateby);
             this.btmcont.Location = new System.Drawing.Point(0, 603);
             this.btmcont.Size = new System.Drawing.Size(874, 72);
             this.btmcont.TabIndex = 3;
-            this.btmcont.Controls.SetChildIndex(this.label1, 0);
-            this.btmcont.Controls.SetChildIndex(this.label2, 0);
+            this.btmcont.Controls.SetChildIndex(this.labelCreateby, 0);
+            this.btmcont.Controls.SetChildIndex(this.labelEditBy, 0);
             this.btmcont.Controls.SetChildIndex(this.displayCreateBy, 0);
             this.btmcont.Controls.SetChildIndex(this.displayEditBy, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -133,7 +133,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnSwitchtoWorkOrder, 0);
             // 
             // gridcont
             // 
@@ -187,32 +187,32 @@
             this.displayEditBy.Size = new System.Drawing.Size(400, 21);
             this.displayEditBy.TabIndex = 9;
             // 
-            // label2
+            // labelEditBy
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(304, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 21);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Edit by";
+            this.labelEditBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelEditBy.Lines = 0;
+            this.labelEditBy.Location = new System.Drawing.Point(304, 40);
+            this.labelEditBy.Name = "labelEditBy";
+            this.labelEditBy.Size = new System.Drawing.Size(75, 21);
+            this.labelEditBy.TabIndex = 8;
+            this.labelEditBy.Text = "Edit by";
             // 
-            // label1
+            // labelCreateby
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(304, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 21);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Create by";
+            this.labelCreateby.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelCreateby.Lines = 0;
+            this.labelCreateby.Location = new System.Drawing.Point(304, 8);
+            this.labelCreateby.Name = "labelCreateby";
+            this.labelCreateby.Size = new System.Drawing.Size(75, 21);
+            this.labelCreateby.TabIndex = 6;
+            this.labelCreateby.Text = "Create by";
             // 
             // panelColorQty
             // 
             this.panelColorQty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelColorQty.Controls.Add(this.displayBox1);
-            this.panelColorQty.Controls.Add(this.label4);
+            this.panelColorQty.Controls.Add(this.displayDataSource);
+            this.panelColorQty.Controls.Add(this.labelDataSource);
             this.panelColorQty.Controls.Add(this.btnDetail);
             this.panelColorQty.Controls.Add(this.label3);
             this.panelColorQty.DrawBorder = true;
@@ -223,25 +223,25 @@
             this.panelColorQty.Size = new System.Drawing.Size(622, 180);
             this.panelColorQty.TabIndex = 2;
             // 
-            // displayBox1
+            // displayDataSource
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EachConsSource", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(319, 8);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 21);
-            this.displayBox1.TabIndex = 3;
+            this.displayDataSource.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDataSource.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EachConsSource", true));
+            this.displayDataSource.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDataSource.Location = new System.Drawing.Point(319, 8);
+            this.displayDataSource.Name = "displayDataSource";
+            this.displayDataSource.Size = new System.Drawing.Size(100, 21);
+            this.displayDataSource.TabIndex = 3;
             // 
-            // label4
+            // labelDataSource
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(240, 7);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(76, 21);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Data Source";
-            this.label4.TextStyle.Color = System.Drawing.Color.White;
+            this.labelDataSource.Lines = 0;
+            this.labelDataSource.Location = new System.Drawing.Point(240, 7);
+            this.labelDataSource.Name = "labelDataSource";
+            this.labelDataSource.Size = new System.Drawing.Size(76, 21);
+            this.labelDataSource.TabIndex = 2;
+            this.labelDataSource.Text = "Data Source";
+            this.labelDataSource.TextStyle.Color = System.Drawing.Color.White;
             // 
             // btnDetail
             // 
@@ -272,68 +272,68 @@
             this.panelBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelBasic.Controls.Add(this.displayBox2);
-            this.panelBasic.Controls.Add(this.ConsPC);
+            this.panelBasic.Controls.Add(this.displayType);
+            this.panelBasic.Controls.Add(this.displayConsPC);
             this.panelBasic.Controls.Add(this.panelSizeQty);
             this.panelBasic.Controls.Add(this.numFabricWidth);
             this.panelBasic.Controls.Add(this.checkAllSize);
-            this.panelBasic.Controls.Add(this.label25);
+            this.panelBasic.Controls.Add(this.labelType);
             this.panelBasic.Controls.Add(this.checkCuttingPiece);
             this.panelBasic.Controls.Add(this.editRemark);
-            this.panelBasic.Controls.Add(this.label24);
+            this.panelBasic.Controls.Add(this.labelRemark);
             this.panelBasic.Controls.Add(this.editForArticle);
-            this.panelBasic.Controls.Add(this.label23);
-            this.panelBasic.Controls.Add(this.label9);
-            this.panelBasic.Controls.Add(this.displaySeq);
+            this.panelBasic.Controls.Add(this.labelForArticle);
+            this.panelBasic.Controls.Add(this.labelSeqNo);
+            this.panelBasic.Controls.Add(this.displaySeqNo);
             this.panelBasic.Controls.Add(this.numTotalQty);
-            this.panelBasic.Controls.Add(this.label22);
-            this.panelBasic.Controls.Add(this.label21);
-            this.panelBasic.Controls.Add(this.displayWidth);
-            this.panelBasic.Controls.Add(this.label20);
-            this.panelBasic.Controls.Add(this.label19);
+            this.panelBasic.Controls.Add(this.labelTotal);
+            this.panelBasic.Controls.Add(this.labelSizeRatio);
+            this.panelBasic.Controls.Add(this.displayMarkerListWidth);
+            this.panelBasic.Controls.Add(this.labelMarkerListWidth);
+            this.panelBasic.Controls.Add(this.labelFabricWidth);
             this.panelBasic.Controls.Add(this.displayFabricDesc);
-            this.panelBasic.Controls.Add(this.label18);
-            this.panelBasic.Controls.Add(this.label17);
+            this.panelBasic.Controls.Add(this.labelConsPC);
+            this.panelBasic.Controls.Add(this.labelEfficiency);
             this.panelBasic.Controls.Add(this.displayFabricCode);
-            this.panelBasic.Controls.Add(this.label16);
+            this.panelBasic.Controls.Add(this.labelFabric);
             this.panelBasic.Controls.Add(this.displayFabricCombo);
-            this.panelBasic.Controls.Add(this.label15);
+            this.panelBasic.Controls.Add(this.labelFabricCombo);
             this.panelBasic.Controls.Add(this.displayEfficiency);
             this.panelBasic.Controls.Add(this.displayFabricPanelCode);
-            this.panelBasic.Controls.Add(this.label14);
+            this.panelBasic.Controls.Add(this.labelFabricPanelCode);
             this.panelBasic.Controls.Add(this.displayPatternPanel);
-            this.panelBasic.Controls.Add(this.label13);
+            this.panelBasic.Controls.Add(this.labelPatternPanel);
             this.panelBasic.Controls.Add(this.displayMarkerLength);
-            this.panelBasic.Controls.Add(this.label12);
+            this.panelBasic.Controls.Add(this.labelMarkerLength);
             this.panelBasic.Controls.Add(this.displayMarkerName);
-            this.panelBasic.Controls.Add(this.label11);
+            this.panelBasic.Controls.Add(this.labelMarkerName);
             this.panelBasic.Controls.Add(this.displayMarkerNo);
-            this.panelBasic.Controls.Add(this.label10);
+            this.panelBasic.Controls.Add(this.labelMarkerNo);
             this.panelBasic.DrawBorder = true;
             this.panelBasic.Location = new System.Drawing.Point(243, 12);
             this.panelBasic.Name = "panelBasic";
             this.panelBasic.Size = new System.Drawing.Size(622, 333);
             this.panelBasic.TabIndex = 0;
             // 
-            // displayBox2
+            // displayType
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(256, 304);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(260, 21);
-            this.displayBox2.TabIndex = 152;
+            this.displayType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "type2", true));
+            this.displayType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayType.Location = new System.Drawing.Point(256, 304);
+            this.displayType.Name = "displayType";
+            this.displayType.Size = new System.Drawing.Size(260, 21);
+            this.displayType.TabIndex = 152;
             // 
-            // ConsPC
+            // displayConsPC
             // 
-            this.ConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.ConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
-            this.ConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ConsPC.Location = new System.Drawing.Point(92, 197);
-            this.ConsPC.Name = "ConsPC";
-            this.ConsPC.Size = new System.Drawing.Size(48, 21);
-            this.ConsPC.TabIndex = 151;
+            this.displayConsPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConsPC.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ConsPC", true));
+            this.displayConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConsPC.Location = new System.Drawing.Point(92, 197);
+            this.displayConsPC.Name = "displayConsPC";
+            this.displayConsPC.Size = new System.Drawing.Size(48, 21);
+            this.displayConsPC.TabIndex = 151;
             // 
             // panelSizeQty
             // 
@@ -403,15 +403,15 @@
             this.checkAllSize.Text = "All Size";
             this.checkAllSize.UseVisualStyleBackColor = true;
             // 
-            // label25
+            // labelType
             // 
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(190, 304);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(62, 21);
-            this.label25.TabIndex = 30;
-            this.label25.Text = "Type";
-            this.label25.TextStyle.Color = System.Drawing.Color.White;
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(190, 304);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(62, 21);
+            this.labelType.TabIndex = 30;
+            this.labelType.Text = "Type";
+            this.labelType.TextStyle.Color = System.Drawing.Color.White;
             // 
             // checkCuttingPiece
             // 
@@ -438,15 +438,15 @@
             this.editRemark.Size = new System.Drawing.Size(496, 50);
             this.editRemark.TabIndex = 28;
             // 
-            // label24
+            // labelRemark
             // 
-            this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(6, 251);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(83, 21);
-            this.label24.TabIndex = 27;
-            this.label24.Text = "Remark";
-            this.label24.TextStyle.Color = System.Drawing.Color.White;
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(6, 251);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(83, 21);
+            this.labelRemark.TabIndex = 27;
+            this.labelRemark.Text = "Remark";
+            this.labelRemark.TextStyle.Color = System.Drawing.Color.White;
             // 
             // editForArticle
             // 
@@ -461,35 +461,35 @@
             this.editForArticle.Size = new System.Drawing.Size(496, 21);
             this.editForArticle.TabIndex = 26;
             // 
-            // label23
+            // labelForArticle
             // 
-            this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(6, 224);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(83, 21);
-            this.label23.TabIndex = 25;
-            this.label23.Text = "For Article";
-            this.label23.TextStyle.Color = System.Drawing.Color.White;
+            this.labelForArticle.Lines = 0;
+            this.labelForArticle.Location = new System.Drawing.Point(6, 224);
+            this.labelForArticle.Name = "labelForArticle";
+            this.labelForArticle.Size = new System.Drawing.Size(83, 21);
+            this.labelForArticle.TabIndex = 25;
+            this.labelForArticle.Text = "For Article";
+            this.labelForArticle.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label9
+            // labelSeqNo
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(6, 6);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(83, 21);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "Seq#";
-            this.label9.TextStyle.Color = System.Drawing.Color.White;
+            this.labelSeqNo.Lines = 0;
+            this.labelSeqNo.Location = new System.Drawing.Point(6, 6);
+            this.labelSeqNo.Name = "labelSeqNo";
+            this.labelSeqNo.Size = new System.Drawing.Size(83, 21);
+            this.labelSeqNo.TabIndex = 0;
+            this.labelSeqNo.Text = "Seq#";
+            this.labelSeqNo.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // displaySeq
+            // displaySeqNo
             // 
-            this.displaySeq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySeq.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
-            this.displaySeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySeq.Location = new System.Drawing.Point(92, 6);
-            this.displaySeq.Name = "displaySeq";
-            this.displaySeq.Size = new System.Drawing.Size(32, 21);
-            this.displaySeq.TabIndex = 1;
+            this.displaySeqNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeqNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Seq", true));
+            this.displaySeqNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeqNo.Location = new System.Drawing.Point(92, 6);
+            this.displaySeqNo.Name = "displaySeqNo";
+            this.displaySeqNo.Size = new System.Drawing.Size(32, 21);
+            this.displaySeqNo.TabIndex = 1;
             // 
             // numTotalQty
             // 
@@ -513,55 +513,55 @@
             0,
             0});
             // 
-            // label22
+            // labelTotal
             // 
-            this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(490, 6);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(50, 21);
-            this.label22.TabIndex = 34;
-            this.label22.Text = "Total";
-            this.label22.TextStyle.Color = System.Drawing.Color.White;
+            this.labelTotal.Lines = 0;
+            this.labelTotal.Location = new System.Drawing.Point(490, 6);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(50, 21);
+            this.labelTotal.TabIndex = 34;
+            this.labelTotal.Text = "Total";
+            this.labelTotal.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label21
+            // labelSizeRatio
             // 
-            this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(233, 6);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(65, 21);
-            this.label21.TabIndex = 33;
-            this.label21.Text = "Size Ratio";
-            this.label21.TextStyle.Color = System.Drawing.Color.White;
+            this.labelSizeRatio.Lines = 0;
+            this.labelSizeRatio.Location = new System.Drawing.Point(233, 6);
+            this.labelSizeRatio.Name = "labelSizeRatio";
+            this.labelSizeRatio.Size = new System.Drawing.Size(65, 21);
+            this.labelSizeRatio.TabIndex = 33;
+            this.labelSizeRatio.Text = "Size Ratio";
+            this.labelSizeRatio.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // displayWidth
+            // displayMarkerListWidth
             // 
-            this.displayWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Width", true));
-            this.displayWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWidth.Location = new System.Drawing.Point(473, 197);
-            this.displayWidth.Name = "displayWidth";
-            this.displayWidth.Size = new System.Drawing.Size(115, 21);
-            this.displayWidth.TabIndex = 24;
+            this.displayMarkerListWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMarkerListWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Width", true));
+            this.displayMarkerListWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMarkerListWidth.Location = new System.Drawing.Point(473, 197);
+            this.displayMarkerListWidth.Name = "displayMarkerListWidth";
+            this.displayMarkerListWidth.Size = new System.Drawing.Size(115, 21);
+            this.displayMarkerListWidth.TabIndex = 24;
             // 
-            // label20
+            // labelMarkerListWidth
             // 
-            this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(370, 197);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(100, 21);
-            this.label20.TabIndex = 23;
-            this.label20.Text = "Marker List Width";
-            this.label20.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerListWidth.Lines = 0;
+            this.labelMarkerListWidth.Location = new System.Drawing.Point(370, 197);
+            this.labelMarkerListWidth.Name = "labelMarkerListWidth";
+            this.labelMarkerListWidth.Size = new System.Drawing.Size(100, 21);
+            this.labelMarkerListWidth.TabIndex = 23;
+            this.labelMarkerListWidth.Text = "Marker List Width";
+            this.labelMarkerListWidth.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label19
+            // labelFabricWidth
             // 
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(152, 197);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(83, 21);
-            this.label19.TabIndex = 21;
-            this.label19.Text = "Fabric Width";
-            this.label19.TextStyle.Color = System.Drawing.Color.White;
+            this.labelFabricWidth.Lines = 0;
+            this.labelFabricWidth.Location = new System.Drawing.Point(152, 197);
+            this.labelFabricWidth.Name = "labelFabricWidth";
+            this.labelFabricWidth.Size = new System.Drawing.Size(83, 21);
+            this.labelFabricWidth.TabIndex = 21;
+            this.labelFabricWidth.Text = "Fabric Width";
+            this.labelFabricWidth.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayFabricDesc
             // 
@@ -573,25 +573,25 @@
             this.displayFabricDesc.Size = new System.Drawing.Size(464, 21);
             this.displayFabricDesc.TabIndex = 18;
             // 
-            // label18
+            // labelConsPC
             // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(6, 197);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(83, 21);
-            this.label18.TabIndex = 19;
-            this.label18.Text = "Cons/pc";
-            this.label18.TextStyle.Color = System.Drawing.Color.White;
+            this.labelConsPC.Lines = 0;
+            this.labelConsPC.Location = new System.Drawing.Point(6, 197);
+            this.labelConsPC.Name = "labelConsPC";
+            this.labelConsPC.Size = new System.Drawing.Size(83, 21);
+            this.labelConsPC.TabIndex = 19;
+            this.labelConsPC.Text = "Cons/pc";
+            this.labelConsPC.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label17
+            // labelEfficiency
             // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(152, 149);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(83, 21);
-            this.label17.TabIndex = 14;
-            this.label17.Text = "Efficiency";
-            this.label17.TextStyle.Color = System.Drawing.Color.White;
+            this.labelEfficiency.Lines = 0;
+            this.labelEfficiency.Location = new System.Drawing.Point(152, 149);
+            this.labelEfficiency.Name = "labelEfficiency";
+            this.labelEfficiency.Size = new System.Drawing.Size(83, 21);
+            this.labelEfficiency.TabIndex = 14;
+            this.labelEfficiency.Text = "Efficiency";
+            this.labelEfficiency.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayFabricCode
             // 
@@ -603,15 +603,15 @@
             this.displayFabricCode.Size = new System.Drawing.Size(30, 21);
             this.displayFabricCode.TabIndex = 17;
             // 
-            // label16
+            // labelFabric
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(6, 173);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(83, 21);
-            this.label16.TabIndex = 16;
-            this.label16.Text = "Fabric";
-            this.label16.TextStyle.Color = System.Drawing.Color.White;
+            this.labelFabric.Lines = 0;
+            this.labelFabric.Location = new System.Drawing.Point(6, 173);
+            this.labelFabric.Name = "labelFabric";
+            this.labelFabric.Size = new System.Drawing.Size(83, 21);
+            this.labelFabric.TabIndex = 16;
+            this.labelFabric.Text = "Fabric";
+            this.labelFabric.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayFabricCombo
             // 
@@ -623,15 +623,15 @@
             this.displayFabricCombo.Size = new System.Drawing.Size(30, 21);
             this.displayFabricCombo.TabIndex = 11;
             // 
-            // label15
+            // labelFabricCombo
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(6, 149);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(83, 21);
-            this.label15.TabIndex = 10;
-            this.label15.Text = "Fab Combo";
-            this.label15.TextStyle.Color = System.Drawing.Color.White;
+            this.labelFabricCombo.Lines = 0;
+            this.labelFabricCombo.Location = new System.Drawing.Point(6, 149);
+            this.labelFabricCombo.Name = "labelFabricCombo";
+            this.labelFabricCombo.Size = new System.Drawing.Size(83, 21);
+            this.labelFabricCombo.TabIndex = 10;
+            this.labelFabricCombo.Text = "Fab Combo";
+            this.labelFabricCombo.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayEfficiency
             // 
@@ -653,15 +653,15 @@
             this.displayFabricPanelCode.Size = new System.Drawing.Size(30, 21);
             this.displayFabricPanelCode.TabIndex = 13;
             // 
-            // label14
+            // labelFabricPanelCode
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(6, 126);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(100, 21);
-            this.label14.TabIndex = 12;
-            this.label14.Text = "Fab_Panel Code";
-            this.label14.TextStyle.Color = System.Drawing.Color.White;
+            this.labelFabricPanelCode.Lines = 0;
+            this.labelFabricPanelCode.Location = new System.Drawing.Point(6, 126);
+            this.labelFabricPanelCode.Name = "labelFabricPanelCode";
+            this.labelFabricPanelCode.Size = new System.Drawing.Size(100, 21);
+            this.labelFabricPanelCode.TabIndex = 12;
+            this.labelFabricPanelCode.Text = "Fab_Panel Code";
+            this.labelFabricPanelCode.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayPatternPanel
             // 
@@ -673,15 +673,15 @@
             this.displayPatternPanel.Size = new System.Drawing.Size(166, 21);
             this.displayPatternPanel.TabIndex = 9;
             // 
-            // label13
+            // labelPatternPanel
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(6, 102);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(83, 21);
-            this.label13.TabIndex = 8;
-            this.label13.Text = "Pattern Panel";
-            this.label13.TextStyle.Color = System.Drawing.Color.White;
+            this.labelPatternPanel.Lines = 0;
+            this.labelPatternPanel.Location = new System.Drawing.Point(6, 102);
+            this.labelPatternPanel.Name = "labelPatternPanel";
+            this.labelPatternPanel.Size = new System.Drawing.Size(83, 21);
+            this.labelPatternPanel.TabIndex = 8;
+            this.labelPatternPanel.Text = "Pattern Panel";
+            this.labelPatternPanel.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayMarkerLength
             // 
@@ -693,15 +693,15 @@
             this.displayMarkerLength.Size = new System.Drawing.Size(100, 21);
             this.displayMarkerLength.TabIndex = 7;
             // 
-            // label12
+            // labelMarkerLength
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(6, 78);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(83, 21);
-            this.label12.TabIndex = 6;
-            this.label12.Text = "Marker Length";
-            this.label12.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerLength.Lines = 0;
+            this.labelMarkerLength.Location = new System.Drawing.Point(6, 78);
+            this.labelMarkerLength.Name = "labelMarkerLength";
+            this.labelMarkerLength.Size = new System.Drawing.Size(83, 21);
+            this.labelMarkerLength.TabIndex = 6;
+            this.labelMarkerLength.Text = "Marker Length";
+            this.labelMarkerLength.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayMarkerName
             // 
@@ -713,15 +713,15 @@
             this.displayMarkerName.Size = new System.Drawing.Size(100, 21);
             this.displayMarkerName.TabIndex = 5;
             // 
-            // label11
+            // labelMarkerName
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(6, 54);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(83, 21);
-            this.label11.TabIndex = 4;
-            this.label11.Text = "Marker Name";
-            this.label11.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerName.Lines = 0;
+            this.labelMarkerName.Location = new System.Drawing.Point(6, 54);
+            this.labelMarkerName.Name = "labelMarkerName";
+            this.labelMarkerName.Size = new System.Drawing.Size(83, 21);
+            this.labelMarkerName.TabIndex = 4;
+            this.labelMarkerName.Text = "Marker Name";
+            this.labelMarkerName.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayMarkerNo
             // 
@@ -733,15 +733,15 @@
             this.displayMarkerNo.Size = new System.Drawing.Size(100, 21);
             this.displayMarkerNo.TabIndex = 3;
             // 
-            // label10
+            // labelMarkerNo
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(6, 30);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(83, 21);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "Marker No.";
-            this.label10.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerNo.Lines = 0;
+            this.labelMarkerNo.Location = new System.Drawing.Point(6, 30);
+            this.labelMarkerNo.Name = "labelMarkerNo";
+            this.labelMarkerNo.Size = new System.Drawing.Size(83, 21);
+            this.labelMarkerNo.TabIndex = 2;
+            this.labelMarkerNo.Text = "Marker No.";
+            this.labelMarkerNo.TextStyle.Color = System.Drawing.Color.White;
             // 
             // panelMarker
             // 
@@ -750,12 +750,12 @@
             this.panelMarker.Controls.Add(this.btnDownloadIdList);
             this.panelMarker.Controls.Add(this.displayMarkerVersion);
             this.panelMarker.Controls.Add(this.displayPhaseID);
-            this.panelMarker.Controls.Add(this.label8);
-            this.panelMarker.Controls.Add(this.label7);
+            this.panelMarker.Controls.Add(this.labelMarkerVersion);
+            this.panelMarker.Controls.Add(this.labelPhaseID);
             this.panelMarker.Controls.Add(this.displayMarkerDownloadID);
-            this.panelMarker.Controls.Add(this.displaySMNoticeID);
-            this.panelMarker.Controls.Add(this.label6);
-            this.panelMarker.Controls.Add(this.label5);
+            this.panelMarker.Controls.Add(this.displayApplyNo);
+            this.panelMarker.Controls.Add(this.labelMarkerDownloadID);
+            this.panelMarker.Controls.Add(this.labelApplyNo);
             this.panelMarker.DrawBorder = true;
             this.panelMarker.Location = new System.Drawing.Point(243, 351);
             this.panelMarker.Name = "panelMarker";
@@ -794,25 +794,25 @@
             this.displayPhaseID.Size = new System.Drawing.Size(100, 21);
             this.displayPhaseID.TabIndex = 3;
             // 
-            // label8
+            // labelMarkerVersion
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(370, 6);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 21);
-            this.label8.TabIndex = 4;
-            this.label8.Text = "Marker Version";
-            this.label8.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerVersion.Lines = 0;
+            this.labelMarkerVersion.Location = new System.Drawing.Point(370, 6);
+            this.labelMarkerVersion.Name = "labelMarkerVersion";
+            this.labelMarkerVersion.Size = new System.Drawing.Size(100, 21);
+            this.labelMarkerVersion.TabIndex = 4;
+            this.labelMarkerVersion.Text = "Marker Version";
+            this.labelMarkerVersion.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label7
+            // labelPhaseID
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(190, 6);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 21);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "Phase";
-            this.label7.TextStyle.Color = System.Drawing.Color.White;
+            this.labelPhaseID.Lines = 0;
+            this.labelPhaseID.Location = new System.Drawing.Point(190, 6);
+            this.labelPhaseID.Name = "labelPhaseID";
+            this.labelPhaseID.Size = new System.Drawing.Size(62, 21);
+            this.labelPhaseID.TabIndex = 2;
+            this.labelPhaseID.Text = "Phase";
+            this.labelPhaseID.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayMarkerDownloadID
             // 
@@ -824,35 +824,35 @@
             this.displayMarkerDownloadID.Size = new System.Drawing.Size(182, 21);
             this.displayMarkerDownloadID.TabIndex = 7;
             // 
-            // displaySMNoticeID
+            // displayApplyNo
             // 
-            this.displaySMNoticeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySMNoticeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMNoticeID", true));
-            this.displaySMNoticeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySMNoticeID.Location = new System.Drawing.Point(72, 6);
-            this.displaySMNoticeID.Name = "displaySMNoticeID";
-            this.displaySMNoticeID.Size = new System.Drawing.Size(100, 21);
-            this.displaySMNoticeID.TabIndex = 1;
+            this.displayApplyNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayApplyNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SMNoticeID", true));
+            this.displayApplyNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayApplyNo.Location = new System.Drawing.Point(72, 6);
+            this.displayApplyNo.Name = "displayApplyNo";
+            this.displayApplyNo.Size = new System.Drawing.Size(100, 21);
+            this.displayApplyNo.TabIndex = 1;
             // 
-            // label6
+            // labelMarkerDownloadID
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(6, 33);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(120, 21);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Marker Download ID";
-            this.label6.TextStyle.Color = System.Drawing.Color.White;
+            this.labelMarkerDownloadID.Lines = 0;
+            this.labelMarkerDownloadID.Location = new System.Drawing.Point(6, 33);
+            this.labelMarkerDownloadID.Name = "labelMarkerDownloadID";
+            this.labelMarkerDownloadID.Size = new System.Drawing.Size(120, 21);
+            this.labelMarkerDownloadID.TabIndex = 6;
+            this.labelMarkerDownloadID.Text = "Marker Download ID";
+            this.labelMarkerDownloadID.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label5
+            // labelApplyNo
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(6, 6);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 21);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Apply No.";
-            this.label5.TextStyle.Color = System.Drawing.Color.White;
+            this.labelApplyNo.Lines = 0;
+            this.labelApplyNo.Location = new System.Drawing.Point(6, 6);
+            this.labelApplyNo.Name = "labelApplyNo";
+            this.labelApplyNo.Size = new System.Drawing.Size(62, 21);
+            this.labelApplyNo.TabIndex = 0;
+            this.labelApplyNo.Text = "Apply No.";
+            this.labelApplyNo.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayCreateBy
             // 
@@ -865,17 +865,17 @@
             this.displayCreateBy.Size = new System.Drawing.Size(399, 21);
             this.displayCreateBy.TabIndex = 7;
             // 
-            // button1
+            // btnSwitchtoWorkOrder
             // 
-            this.button1.Location = new System.Drawing.Point(12, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 30);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "Switch to WorkOrder";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSwitchtoWorkOrder.Location = new System.Drawing.Point(12, 20);
+            this.btnSwitchtoWorkOrder.Name = "btnSwitchtoWorkOrder";
+            this.btnSwitchtoWorkOrder.Size = new System.Drawing.Size(150, 30);
+            this.btnSwitchtoWorkOrder.TabIndex = 12;
+            this.btnSwitchtoWorkOrder.Text = "Switch to WorkOrder";
+            this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
+            this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.button1_Click);
             // 
-            // P01_EachConsumption
+            // EachConsumption
             // 
             this.ClientSize = new System.Drawing.Size(874, 675);
             this.Controls.Add(this.panelMarker);
@@ -891,7 +891,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.MasterKeyField = "Ukey";
-            this.Name = "P01_EachConsumption";
+            this.Name = "EachConsumption";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Each Consumption";
             this.WorkAlias = "Order_EachCons";
@@ -923,64 +923,64 @@
         #endregion
 
         private Win.UI.DisplayBox displayEditBy;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelEditBy;
+        private Win.UI.Label labelCreateby;
         private Win.UI.Panel panelColorQty;
         private Win.UI.Label label3;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelDataSource;
         private Win.UI.Button btnDetail;
         private Win.UI.Panel panelBasic;
         private Win.UI.Panel panelMarker;
         private Win.UI.Button btnDownloadIdList;
         private Win.UI.DisplayBox displayMarkerVersion;
         private Win.UI.DisplayBox displayPhaseID;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
+        private Win.UI.Label labelMarkerVersion;
+        private Win.UI.Label labelPhaseID;
         private Win.UI.DisplayBox displayMarkerDownloadID;
-        private Win.UI.DisplayBox displaySMNoticeID;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label17;
+        private Win.UI.DisplayBox displayApplyNo;
+        private Win.UI.Label labelMarkerDownloadID;
+        private Win.UI.Label labelApplyNo;
+        private Win.UI.Label labelEfficiency;
         private Win.UI.DisplayBox displayFabricCode;
-        private Win.UI.Label label16;
+        private Win.UI.Label labelFabric;
         private Win.UI.DisplayBox displayFabricCombo;
-        private Win.UI.Label label15;
+        private Win.UI.Label labelFabricCombo;
         private Win.UI.DisplayBox displayEfficiency;
         private Win.UI.DisplayBox displayFabricPanelCode;
-        private Win.UI.Label label14;
+        private Win.UI.Label labelFabricPanelCode;
         private Win.UI.DisplayBox displayPatternPanel;
-        private Win.UI.Label label13;
+        private Win.UI.Label labelPatternPanel;
         private Win.UI.DisplayBox displayMarkerLength;
-        private Win.UI.Label label12;
+        private Win.UI.Label labelMarkerLength;
         private Win.UI.DisplayBox displayMarkerName;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label23;
-        private Win.UI.Label label9;
-        private Win.UI.DisplayBox displaySeq;
+        private Win.UI.Label labelMarkerName;
+        private Win.UI.Label labelMarkerNo;
+        private Win.UI.Label labelForArticle;
+        private Win.UI.Label labelSeqNo;
+        private Win.UI.DisplayBox displaySeqNo;
         private Win.UI.NumericBox numTotalQty;
-        private Win.UI.Label label22;
-        private Win.UI.Label label21;
-        private Win.UI.DisplayBox displayWidth;
-        private Win.UI.Label label20;
-        private Win.UI.Label label19;
+        private Win.UI.Label labelTotal;
+        private Win.UI.Label labelSizeRatio;
+        private Win.UI.DisplayBox displayMarkerListWidth;
+        private Win.UI.Label labelMarkerListWidth;
+        private Win.UI.Label labelFabricWidth;
         private Win.UI.DisplayBox displayFabricDesc;
-        private Win.UI.Label label18;
+        private Win.UI.Label labelConsPC;
         private Win.UI.DisplayBox displayMarkerNo;
         private Win.UI.EditBox editForArticle;
         private Win.UI.CheckBox checkAllSize;
-        private Win.UI.Label label25;
+        private Win.UI.Label labelType;
         private Win.UI.CheckBox checkCuttingPiece;
         private Win.UI.EditBox editRemark;
-        private Win.UI.Label label24;
+        private Win.UI.Label labelRemark;
         private Win.UI.NumericBox numFabricWidth;
         private Win.UI.ListControlBindingSource sizeQtyGridDbs;
         private Win.UI.Panel panelSizeQty;
         private Win.UI.Grid gridSizeQty;
         private Win.UI.DisplayBox displayCreateBy;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Button button1;
-        private Win.UI.DisplayBox ConsPC;
-        private Win.UI.DisplayBox displayBox2;
+        private Win.UI.DisplayBox displayDataSource;
+        private Win.UI.Button btnSwitchtoWorkOrder;
+        private Win.UI.DisplayBox displayConsPC;
+        private Win.UI.DisplayBox displayType;
     }
 }
