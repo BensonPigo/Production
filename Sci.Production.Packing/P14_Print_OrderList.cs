@@ -88,6 +88,7 @@ namespace Sci.Production.Packing
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
+            this.ShowWaitMessage("Excel Processing...");
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltFile); //預先開啟excel app
             bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", showExcel: false, xltfile: xltFile, headerRow: headerRow, excelApp: objApp);
@@ -100,24 +101,24 @@ namespace Sci.Production.Packing
             {
                 if (date1 != null && date2 != null)
                     objSheets.Cells[2, 2] = date1 + " ~ " + date2;
-                if (packID != null)
-                    objSheets.Cells[2, 5] = packID;
-                if (SPNo != null)
-                    objSheets.Cells[2, 8] = SPNo;
 
-
-                this.ShowWaitMessage("Excel Processing...");
+                decimal sumTTL = 0;
                 for (int i = 1; i <= ExcelTable.Rows.Count; i++)
                 {
+                    sumTTL += Convert.ToDecimal(ExcelTable.Rows[i - 1]["TTL_Qty"]);
                     string str = objSheets.Cells[i + headerRow, 8].Value;
                     if (!MyUtility.Check.Empty(str))
                         objSheets.Cells[i + headerRow, 8] = str.Trim();
                 }
+
+                objSheets.Cells[ExcelTable.Rows.Count + 4, 1] = "Sub. TTL CTN:";
+                objSheets.Cells[ExcelTable.Rows.Count + 4, 2] = sumTTL;
             }
 
             objSheets.Columns.AutoFit();
             objSheets.Rows.AutoFit();
             objApp.Visible = true;
+            this.HideWaitMessage();
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
