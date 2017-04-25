@@ -17,18 +17,16 @@ namespace Sci.Production.Quality
 {
     public partial class P02_Detail : Sci.Win.Subs.Input6A
     {
-        private string loginID = Sci.Env.User.UserID;
-        private DataRow maindr;
+        private string loginID = Sci.Env.User.UserID;        
         private bool canedit;
+        private string id;
       
 
-        public P02_Detail(bool CanEdit, string airID, DataRow mainDr)
+        public P02_Detail(bool CanEdit, string airID)
         {
             InitializeComponent();
-            string id = airID;
-            this.txtID.Text = id.ToString();
-            this.comboResult.ReadOnly = false;
-            maindr = mainDr;
+            id = airID;            
+            this.comboResult.ReadOnly = false;            
             canedit = CanEdit;
             btn_status(id);
             button_enable(canedit);
@@ -137,7 +135,7 @@ namespace Sci.Production.Quality
 
             DualResult result;
             DataTable dt;
-            strSqlcmd = string.Format("Select * from AIR WITH (NOLOCK) where ID='{0}' ", txtID.Text);          
+            strSqlcmd = string.Format("Select * from AIR WITH (NOLOCK) where ID='{0}' ", id);          
             if (result = DBProxy.Current.Select(null, strSqlcmd, null, out dt))
             {
                 if (dt.Rows.Count > 0)
@@ -191,7 +189,7 @@ namespace Sci.Production.Quality
                         #region  寫入實體Table Encode
                         updatesql = string.Format(
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.txtInspectedQty.Text, this.txtRejectedQty.Text,string.Format("{0:yyyy-MM-dd}",dateInspectDate.Value) , txtInspector.Text, comboResult.Text, editDefect.Text, txtRemark.Text,  txtID.Text);
+                        this.txtInspectedQty.Text, this.txtRejectedQty.Text,string.Format("{0:yyyy-MM-dd}",dateInspectDate.Value) , txtInspector.Text, comboResult.Text, editDefect.Text, txtRemark.Text,  id);
                         DualResult upResult;
                         TransactionScope _transactionscope = new TransactionScope();
                         using (_transactionscope)
@@ -277,7 +275,7 @@ namespace Sci.Production.Quality
                     #region  寫入實體Table Amend
                     updatesql1 = string.Format(
                     "Update Air set Status = 'New',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
-                     loginID, txtID.Text);
+                     loginID, id);
                                        
 
                     DualResult upResult1;
@@ -294,7 +292,7 @@ namespace Sci.Production.Quality
                             }
                             _transactionscope1.Complete();
                             _transactionscope1.Dispose();
-                            btn_status(this.txtID.Text);
+                            btn_status(id);
                             this.save.Text = "Edit";
                             this.btnAmend.Text = "Encode";
                             this.save.Enabled = true;
@@ -347,7 +345,7 @@ namespace Sci.Production.Quality
                 #region  寫入實體Table Encode
                 updatesql = string.Format(
                 "Update Air set Status = 'Confirmed',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
-                loginID, txtID.Text);
+                loginID, id);
                 DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
@@ -367,7 +365,7 @@ namespace Sci.Production.Quality
                         this.save.Text = "Edit";
                         this.save.Enabled = false;
                         
-                        btn_status(this.txtID.Text);
+                        btn_status(this.id);
                     }
                     catch (Exception ex)
                     {

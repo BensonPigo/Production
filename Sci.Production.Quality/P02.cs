@@ -92,9 +92,11 @@ namespace Sci.Production.Quality
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 // 有疑問!!!!
-                var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
-                frm.ShowDialog(this);
-                frm.Dispose();
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+                //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                DoForm.ShowDialog(this);
+                DoForm.Dispose();
                 this.RenewData();
             };
             detail_Int.CellMouseDoubleClick += (s, e) =>
@@ -102,9 +104,11 @@ namespace Sci.Production.Quality
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 // 有疑問!!!!
-                var frm = new Sci.Production.Quality.P02_Detail(false, this.CurrentDetailData["ID"].ToString(), dr);
-                frm.ShowDialog(this);
-                frm.Dispose();
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+                //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                DoForm.ShowDialog(this);
+                DoForm.Dispose();
                 this.RenewData();
             };
 
@@ -352,9 +356,11 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
-            var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);
-            frm.ShowDialog(this);
-            frm.Dispose();
+            P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+            //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+            DoForm.ShowDialog(this);
+            DoForm.Dispose();
             this.RenewData();
             this.OnDetailEntered();
             // 固定滑鼠指向位置,避免被renew影響

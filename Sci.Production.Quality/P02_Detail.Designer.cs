@@ -58,7 +58,6 @@
             this.labelInspector = new Sci.Win.UI.Label();
             this.labelResult = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
-            this.txtID = new Sci.Win.UI.TextBox();
             this.editDefect = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
             this.dateInspectDate = new Sci.Win.UI.DateBox();
@@ -377,16 +376,6 @@
             this.comboResult.Size = new System.Drawing.Size(121, 24);
             this.comboResult.TabIndex = 129;
             // 
-            // txtID
-            // 
-            this.txtID.BackColor = System.Drawing.Color.White;
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtID.Location = new System.Drawing.Point(573, 80);
-            this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(80, 23);
-            this.txtID.TabIndex = 130;
-            this.txtID.Visible = false;
-            // 
             // editDefect
             // 
             this.editDefect.BackColor = System.Drawing.Color.White;
@@ -443,7 +432,6 @@
             // 
             this.ClientSize = new System.Drawing.Size(669, 456);
             this.Controls.Add(this.txtsupplier);
-            this.Controls.Add(this.txtID);
             this.Controls.Add(this.comboResult);
             this.Controls.Add(this.labelResult);
             this.Controls.Add(this.txtInspector);
@@ -506,7 +494,6 @@
             this.Controls.SetChildIndex(this.txtInspector, 0);
             this.Controls.SetChildIndex(this.labelResult, 0);
             this.Controls.SetChildIndex(this.comboResult, 0);
-            this.Controls.SetChildIndex(this.txtID, 0);
             this.Controls.SetChildIndex(this.txtsupplier, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -549,7 +536,6 @@
         private Win.UI.Label labelInspector;
         private Win.UI.Label labelResult;
         private Win.UI.ComboBox comboResult;
-        private Win.UI.TextBox txtID;
         private Win.UI.EditBox editDefect;
         private Win.UI.Panel panel1;
         private Class.txtsupplier txtsupplier;
