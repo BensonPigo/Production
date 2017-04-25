@@ -510,7 +510,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 //string pullLock = MyUtility.GetValue.Lookup("select PullLock from System");
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox("Pullou date less then pullout lock date!!");
+                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     dateBox1.Focus();
                     return false;
                 }
