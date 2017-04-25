@@ -85,7 +85,7 @@ namespace Sci.Production.Subcon
                 ,sum(q.qty)-IssueQty.IssueQty poqty 
                 , oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
                 ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
-                , oa.Cost unitprice, oa.Cost as  price, sum(q.qty)*cost as amount
+                , oa.Cost unitprice, oa.Cost as  price, (sum(q.qty)-IssueQty.IssueQty)*cost as amount
                 from orders o WITH (NOLOCK) 
                 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
                 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
