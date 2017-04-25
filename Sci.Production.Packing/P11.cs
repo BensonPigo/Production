@@ -47,26 +47,26 @@ where od.ID = '{0}'", masterID);
         {
             base.OnDetailEntered();
 
-            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
+            labelConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
 
             //帶出Orders相關欄位
             sqlCmd = string.Format("select StyleID,SeasonID from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out dr))
             {
-                displayBox1.Value = dr["StyleID"].ToString();
-                displayBox2.Value = dr["SeasonID"].ToString();
+                displayStyle.Value = dr["StyleID"].ToString();
+                displaySeason.Value = dr["SeasonID"].ToString();
             }
             else
             {
-                displayBox1.Text = "";
-                displayBox2.Text = "";                
+                displayStyle.Text = "";
+                displaySeason.Text = "";                
             }
 
             DataRow dr1;
             string sqlStatus = string.Format(@"select status from OverrunGMT WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr1))
             {
-                labConfirmed.Text = dr1["Status"].ToString();
+                labelConfirmed.Text = dr1["Status"].ToString();
             }
         }
 
@@ -270,7 +270,7 @@ where od.ID = '{0}'", masterID);
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtSP.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -278,13 +278,13 @@ where od.ID = '{0}'", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("SP# can't empty!!");
-                textBox1.Focus();
+                txtSP.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CloseDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
 
@@ -329,12 +329,12 @@ where od.ID = '{0}'", masterID);
         {
             if (EditMode)
             {
-                if (textBox1.Text != textBox1.OldValue)
+                if (txtSP.Text != txtSP.OldValue)
                 {
-                    if (!MyUtility.Check.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(txtSP.Text))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id",textBox1.Text);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id",txtSP.Text);
                         System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -355,9 +355,9 @@ where od.ID = '{0}'", masterID);
                                 MyUtility.Msg.WarningBox("SP# not found!");
                             }
                             //OrderID異動，其他相關欄位要跟著異動
-                            textBox1.Text = "";
-                            displayBox1.Value = "";
-                            displayBox2.Value = "";
+                            txtSP.Text = "";
+                            displayStyle.Value = "";
+                            displaySeason.Value = "";
                             CurrentMaintain["FactoryID"] = "";
                             e.Cancel = true;
                             return;
@@ -365,9 +365,9 @@ where od.ID = '{0}'", masterID);
                         else
                         {
                             //OrderID異動，其他相關欄位要跟著異動
-                            displayBox1.Value = OrdersData.Rows[0]["StyleID"].ToString();
-                            displayBox2.Value = OrdersData.Rows[0]["SeasonID"].ToString();
-                            CurrentMaintain["ID"] = textBox1.Text;
+                            displayStyle.Value = OrdersData.Rows[0]["StyleID"].ToString();
+                            displaySeason.Value = OrdersData.Rows[0]["SeasonID"].ToString();
+                            CurrentMaintain["ID"] = txtSP.Text;
                             CurrentMaintain["FactoryID"] = OrdersData.Rows[0]["FtyGroup"].ToString();
                         }
                     }

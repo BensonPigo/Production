@@ -47,13 +47,13 @@ namespace Sci.Production.Packing
         {
             base.OnDetailEntered();
 
-            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true;
+            labelConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true;
 
             DataRow dr1;
             string sqlStatus = string.Format(@"select status from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr1))
             {
-                labConfirmed.Text = dr1["Status"].ToString();
+                labelConfirmed.Text = dr1["Status"].ToString();
             }
 
             //帶出Orders相關欄位
@@ -61,9 +61,9 @@ namespace Sci.Production.Packing
             string sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Customize1,ReadyDate from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out dr))
             {
-                displayBox2.Value = dr["StyleID"].ToString();
-                displayBox4.Value = dr["SeasonID"].ToString();
-                displayBox5.Value = dr["CustPONo"].ToString();
+                displayStyle.Value = dr["StyleID"].ToString();
+                displaySeason.Value = dr["SeasonID"].ToString();
+                displayPONo.Value = dr["CustPONo"].ToString();
             }
         }
 
@@ -354,7 +354,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             DataRow[] detailData = ((DataTable)detailgridbs.DataSource).Select("ReceiveDate is null");
             if (detailData.Length != 0)
             {
-                textBox1.ReadOnly = true;
+                txtSP.ReadOnly = true;
             }
         }
 
@@ -367,7 +367,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(pullLock))
                 {
                     MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
-                    dateBox1.Focus();
+                    datePullOutDate.Focus();
                     return false;
                 }
 
@@ -378,7 +378,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                     if (dr["Status"].ToString() != "New")
                     {
                         MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
-                        dateBox1.Focus();
+                        datePullOutDate.Focus();
                         return false;
                     }
                 }
@@ -388,7 +388,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("SP# can't empty!!");
-                textBox1.Focus();
+                txtSP.Focus();
                 return false;
             }
             
@@ -528,7 +528,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
-                numericBox2.Focus();
+                numTtlCBM.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -571,10 +571,10 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             if (EditMode)
             {
-                if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.Text != textBox1.OldValue)
+                if (!MyUtility.Check.Empty(txtSP.Text) && txtSP.Text != txtSP.OldValue)
                 {
                     //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", textBox1.Text);
+                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", txtSP.Text);
                     System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -588,7 +588,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                         MyUtility.Msg.WarningBox("Sql connectionfail!!\r\n" + result.ToString());
                         //OrderID異動，其他相關欄位要跟著異動
                         ChangeOtherData("");
-                        textBox1.Text = "";
+                        txtSP.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -599,7 +599,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                             MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
-                            textBox1.Text = "";
+                            txtSP.Text = "";
                             e.Cancel = true;
                             return;
                         }
@@ -610,7 +610,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                                 MyUtility.Msg.WarningBox("This SP# is not local order!");
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
-                                textBox1.Text = "";
+                                txtSP.Text = "";
                                 e.Cancel = true;
                                 return;
                             }
@@ -623,13 +623,13 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         // SP#輸入完成後要帶入其他欄位值
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (textBox1.OldValue == textBox1.Text)
+            if (txtSP.OldValue == txtSP.Text)
             {
                 return;
             }
 
             //OrderID異動，其他相關欄位要跟著異動
-            ChangeOtherData(textBox1.Text);
+            ChangeOtherData(txtSP.Text);
         }
 
         //OrderID異動，其他相關欄位要跟著異動
@@ -650,9 +650,9 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 CurrentMaintain["ShipModeID"] = "";
                 CurrentMaintain["BrandID"] = "";
                 CurrentMaintain["CustCDID"] = "";
-                displayBox2.Value = "";
-                displayBox4.Value = "";
-                displayBox5.Value = "";
+                displayStyle.Value = "";
+                displaySeason.Value = "";
+                displayPONo.Value = "";
             }
             else
             {
@@ -661,9 +661,9 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 if (MyUtility.Check.Seek(sqlCmd, out dr))
                 {
                     //帶出相關欄位的資料
-                    displayBox2.Value = dr["StyleID"].ToString();
-                    displayBox4.Value = dr["SeasonID"].ToString();
-                    displayBox5.Value = dr["CustPONo"].ToString();
+                    displayStyle.Value = dr["StyleID"].ToString();
+                    displaySeason.Value = dr["SeasonID"].ToString();
+                    displayPONo.Value = dr["CustPONo"].ToString();
                     CurrentMaintain["BrandID"] = dr["BrandID"].ToString();
                     CurrentMaintain["CustCDID"] = dr["CustCDID"].ToString();
 
@@ -714,7 +714,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             {
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["ShipModeID"] = "";
-                dateBox1.Value = null;
+                datePullOutDate.Value = null;
             }
             else
             {
@@ -771,15 +771,15 @@ order by oa.Seq,os.Seq", orderID, seq);
         //Pull-out Date Validating()
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
+            if (!MyUtility.Check.Empty(datePullOutDate.Value) && datePullOutDate.Value != datePullOutDate.OldValue)
             {
                 DataRow dr;
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(dateBox1.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(datePullOutDate.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
                 {
                     if (dr["Status"].ToString() != "New")
                     {
                         MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
-                        dateBox1.Value = null;
+                        datePullOutDate.Value = null;
                         e.Cancel = true;
                         return;
                     }

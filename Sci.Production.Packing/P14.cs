@@ -25,9 +25,9 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Date("TransferDate", header: "Transfer Date")
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
@@ -56,21 +56,21 @@ left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateTransferDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and t.TransferDate >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and t.TransferDate >= '{0}'", Convert.ToDateTime(dateTransferDate.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateTransferDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and t.TransferDate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and t.TransferDate <= '{0}'", Convert.ToDateTime(dateTransferDate.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and t.PackingListID = '{0}'", MyUtility.Convert.GetString(textBox1.Text)));
+                sqlCmd.Append(string.Format(" and t.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtSP.Text))
             {
-                sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(textBox2.Text)));
+                sqlCmd.Append(string.Format(" and t.OrderID = '{0}'", MyUtility.Convert.GetString(txtSP.Text)));
             }
             sqlCmd.Append(@" order by t.TransferDate,t.PackingListID,t.OrderID,
                                 CAST(left(t.CTNStartNo, patindex('%[^0-9]%', t.CTNStartNo + ' ') -1 ) AS INT),
@@ -111,10 +111,10 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             ////P14_Print_OrderList frm = new P14_Print_OrderList();
             ////frm.ShowDialog();
             string date1, date2, packID, SPNo;
-            date1 = (!MyUtility.Check.Empty(dateRange1.Value1)) ? dateRange1.Text1 : null;
-            date2 = (!MyUtility.Check.Empty(dateRange1.Value2)) ? dateRange1.Text1 : null;
-            packID = (!MyUtility.Check.Empty(textBox1.Text)) ? textBox1.Text : null;
-            SPNo = (!MyUtility.Check.Empty(textBox2.Text)) ? textBox2.Text : null;
+            date1 = (!MyUtility.Check.Empty(dateTransferDate.Value1)) ? dateTransferDate.Text1 : null;
+            date2 = (!MyUtility.Check.Empty(dateTransferDate.Value2)) ? dateTransferDate.Text1 : null;
+            packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
+            SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
             P14_Print_OrderList frm = new P14_Print_OrderList(ExcelTable, date1, date2, packID, SPNo);
             frm.ShowDialog();
         }

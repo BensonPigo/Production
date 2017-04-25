@@ -41,9 +41,9 @@ order by oc.RefNo", masterData["ID"].ToString());
             }
             listControlBindingSource1.DataSource = CTNData;
             //設定Grid的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCartonInformation.IsEditingReadOnly = true;
+            this.gridCartonInformation.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCartonInformation)
                 .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(20))
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(30))
                 .Text("Dimension", header: "Dimension", width: Widths.AnsiChars(30))

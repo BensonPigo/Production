@@ -29,10 +29,10 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridDetail.IsEditingReadOnly = false;
+            this.gridDetail.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Type", header: "Packing Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -46,10 +46,10 @@ namespace Sci.Production.Packing
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox2.Text) && MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) && MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) && MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange4.Value2))
+            if (MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(txtSPEnd.Text) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateSewingInlineDate.Value1) && MyUtility.Check.Empty(dateSewingInlineDate.Value2) && MyUtility.Check.Empty(dateCartonEstBooking.Value1) && MyUtility.Check.Empty(dateCartonEstBooking.Value2) && MyUtility.Check.Empty(dateCartonEstArrived.Value1) && MyUtility.Check.Empty(dateCartonEstArrived.Value2))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < SCI Delivery > or < Sewing Inline Date > or < Carton Est. Booking > or < Carton Est. Arrived > can not empty!");
-                textBox1.Focus();
+                txtSPStart.Focus();
                 return;
             }
 
@@ -65,43 +65,43 @@ and pld.ID = pl.ID
 and o.ID = pld.OrderID
 and o.Junk = 0");
             #region 組條件
-            if (!MyUtility.Check.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.txtSPStart.Text))
             {
                 sqlCmd.Append("\r\nand o.ID >= @orderid1");
             }
-            if (!MyUtility.Check.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.txtSPEnd.Text))
             {
                 sqlCmd.Append("\r\nand o.ID <= @orderid2");
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 sqlCmd.Append("\r\nand o.SciDelivery >= @scidelivery1");
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
                 sqlCmd.Append("\r\nand o.SciDelivery <= @scidelivery2");
             }
-            if (!MyUtility.Check.Empty(dateRange2.Value1))
+            if (!MyUtility.Check.Empty(dateSewingInlineDate.Value1))
             {
                 sqlCmd.Append("\r\nand o.SewInLine >= @sewinline1");
             }
-            if (!MyUtility.Check.Empty(dateRange2.Value2))
+            if (!MyUtility.Check.Empty(dateSewingInlineDate.Value2))
             {
                 sqlCmd.Append("\r\nand o.SewInLine <= @sewinline2");
             }
-            if (!MyUtility.Check.Empty(dateRange3.Value1))
+            if (!MyUtility.Check.Empty(dateCartonEstBooking.Value1))
             {
                 sqlCmd.Append("\r\nand pl.EstCTNBooking >= @estbooking1");
             }
-            if (!MyUtility.Check.Empty(dateRange3.Value2))
+            if (!MyUtility.Check.Empty(dateCartonEstBooking.Value2))
             {
                 sqlCmd.Append("\r\nand pl.EstCTNBooking <= @estbooking2");
             }
-            if (!MyUtility.Check.Empty(dateRange4.Value1))
+            if (!MyUtility.Check.Empty(dateCartonEstArrived.Value1))
             {
                 sqlCmd.Append("\r\nand pl.EstCTNArrive >= @estarrive1");
             }
-            if (!MyUtility.Check.Empty(dateRange4.Value2))
+            if (!MyUtility.Check.Empty(dateCartonEstArrived.Value2))
             {
                 sqlCmd.Append("\r\nand pl.EstCTNArrive <= @estarrive2");
             }
@@ -109,40 +109,40 @@ and o.Junk = 0");
 
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderid1", this.textBox1.Text);
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid2", this.textBox2.Text);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderid1", this.txtSPStart.Text);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid2", this.txtSPEnd.Text);
 
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp4.ParameterName = "@scidelivery1";
-            sp4.Value = !MyUtility.Check.Empty(dateRange1.Value1) ? dateRange1.Value1 : DateTime.Now;
+            sp4.Value = !MyUtility.Check.Empty(dateSCIDelivery.Value1) ? dateSCIDelivery.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@scidelivery2";
-            sp5.Value = !MyUtility.Check.Empty(dateRange1.Value2) ? dateRange1.Value2 : DateTime.Now;
+            sp5.Value = !MyUtility.Check.Empty(dateSCIDelivery.Value2) ? dateSCIDelivery.Value2 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@sewinline1";
-            sp6.Value = !MyUtility.Check.Empty(dateRange2.Value1) ? dateRange2.Value1 : DateTime.Now;
+            sp6.Value = !MyUtility.Check.Empty(dateSewingInlineDate.Value1) ? dateSewingInlineDate.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp7.ParameterName = "@sewinline2";
-            sp7.Value = !MyUtility.Check.Empty(dateRange2.Value2) ? dateRange2.Value2 : DateTime.Now;
+            sp7.Value = !MyUtility.Check.Empty(dateSewingInlineDate.Value2) ? dateSewingInlineDate.Value2 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
             sp8.ParameterName = "@estbooking1";
-            sp8.Value = !MyUtility.Check.Empty(dateRange3.Value1) ? dateRange3.Value1 : DateTime.Now;
+            sp8.Value = !MyUtility.Check.Empty(dateCartonEstBooking.Value1) ? dateCartonEstBooking.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp9 = new System.Data.SqlClient.SqlParameter();
             sp9.ParameterName = "@estbooking2";
-            sp9.Value = !MyUtility.Check.Empty(dateRange3.Value2) ? dateRange3.Value2 : DateTime.Now;
+            sp9.Value = !MyUtility.Check.Empty(dateCartonEstBooking.Value2) ? dateCartonEstBooking.Value2 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp10 = new System.Data.SqlClient.SqlParameter();
             sp10.ParameterName = "@estarrive1";
-            sp10.Value = !MyUtility.Check.Empty(dateRange4.Value1) ? dateRange4.Value1 : DateTime.Now;
+            sp10.Value = !MyUtility.Check.Empty(dateCartonEstArrived.Value1) ? dateCartonEstArrived.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp11 = new System.Data.SqlClient.SqlParameter();
             sp11.ParameterName = "@estarrive2";
-            sp11.Value = !MyUtility.Check.Empty(dateRange4.Value2) ? dateRange4.Value2 : DateTime.Now;
+            sp11.Value = !MyUtility.Check.Empty(dateCartonEstArrived.Value2) ? dateCartonEstArrived.Value2 : DateTime.Now;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -202,8 +202,8 @@ and o.Junk = 0");
         //Approve
         private void button3_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
-            this.grid1.EndEdit();
+            this.gridDetail.ValidateControl();
+            this.gridDetail.EndEdit();
             listControlBindingSource1.EndEdit();
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] dr = detailData.Select("Selected = 1");

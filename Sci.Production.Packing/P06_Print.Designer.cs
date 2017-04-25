@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.radioBarcodePrint = new Sci.Win.UI.RadioButton();
+            this.radioPackingGuideReport = new Sci.Win.UI.RadioButton();
+            this.labelCTN = new Sci.Win.UI.Label();
+            this.txtCTNStart = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.txtCTNEnd = new Sci.Win.UI.TextBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,55 +52,55 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioBarcodePrint);
+            this.radioPanel1.Controls.Add(this.radioPackingGuideReport);
             this.radioPanel1.Location = new System.Drawing.Point(20, 12);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(198, 70);
             this.radioPanel1.TabIndex = 94;
             // 
-            // label1
+            // radioBarcodePrint
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(55, 86);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(43, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "CTN#";
+            this.radioBarcodePrint.AutoSize = true;
+            this.radioBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBarcodePrint.Location = new System.Drawing.Point(13, 47);
+            this.radioBarcodePrint.Name = "radioBarcodePrint";
+            this.radioBarcodePrint.Size = new System.Drawing.Size(112, 21);
+            this.radioBarcodePrint.TabIndex = 1;
+            this.radioBarcodePrint.TabStop = true;
+            this.radioBarcodePrint.Text = "Barcode Print";
+            this.radioBarcodePrint.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioPackingGuideReport
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(13, 47);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(112, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Barcode Print";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioPackingGuideReport.AutoSize = true;
+            this.radioPackingGuideReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPackingGuideReport.Location = new System.Drawing.Point(13, 11);
+            this.radioPackingGuideReport.Name = "radioPackingGuideReport";
+            this.radioPackingGuideReport.Size = new System.Drawing.Size(165, 21);
+            this.radioPackingGuideReport.TabIndex = 0;
+            this.radioPackingGuideReport.TabStop = true;
+            this.radioPackingGuideReport.Text = "Packing Guide Report";
+            this.radioPackingGuideReport.UseVisualStyleBackColor = true;
+            this.radioPackingGuideReport.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
-            // radioButton1
+            // labelCTN
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(13, 11);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(165, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Packing Guide Report";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.labelCTN.Lines = 0;
+            this.labelCTN.Location = new System.Drawing.Point(55, 86);
+            this.labelCTN.Name = "labelCTN";
+            this.labelCTN.Size = new System.Drawing.Size(43, 23);
+            this.labelCTN.TabIndex = 2;
+            this.labelCTN.Text = "CTN#";
             // 
-            // textBox1
+            // txtCTNStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(102, 86);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(56, 23);
-            this.textBox1.TabIndex = 3;
+            this.txtCTNStart.BackColor = System.Drawing.Color.White;
+            this.txtCTNStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCTNStart.Location = new System.Drawing.Point(102, 86);
+            this.txtCTNStart.Name = "txtCTNStart";
+            this.txtCTNStart.Size = new System.Drawing.Size(56, 23);
+            this.txtCTNStart.TabIndex = 3;
             // 
             // label2
             // 
@@ -116,34 +116,33 @@
             this.label2.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label2.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox2
+            // txtCTNEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(185, 86);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(56, 23);
-            this.textBox2.TabIndex = 5;
+            this.txtCTNEnd.BackColor = System.Drawing.Color.White;
+            this.txtCTNEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCTNEnd.Location = new System.Drawing.Point(185, 86);
+            this.txtCTNEnd.Name = "txtCTNEnd";
+            this.txtCTNEnd.Size = new System.Drawing.Size(56, 23);
+            this.txtCTNEnd.TabIndex = 5;
             // 
             // P06_Print
             // 
             this.ClientSize = new System.Drawing.Size(380, 159);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.txtCTNEnd);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.Controls.Add(this.txtCTNStart);
+            this.Controls.Add(this.labelCTN);
             this.Name = "P06_Print";
             this.Text = "Print";
             this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.labelCTN, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
+            this.Controls.SetChildIndex(this.txtCTNStart, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
+            this.Controls.SetChildIndex(this.txtCTNEnd, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -154,11 +153,11 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.Label label1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.Label labelCTN;
+        private Win.UI.RadioButton radioBarcodePrint;
+        private Win.UI.RadioButton radioPackingGuideReport;
+        private Win.UI.TextBox txtCTNStart;
         private Win.UI.Label label2;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtCTNEnd;
     }
 }

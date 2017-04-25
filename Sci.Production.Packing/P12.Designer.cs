@@ -32,26 +32,26 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button4 = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.label3 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelExpPoutDate = new Sci.Win.UI.Label();
+            this.dateExpPoutDate = new Sci.Win.UI.DateBox();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.txtLocateForSP = new Sci.Win.UI.TextBox();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridDetail = new Sci.Win.UI.Grid();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -72,16 +72,16 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.label1);
-            this.panel3.Controls.Add(this.dateBox1);
-            this.panel3.Controls.Add(this.button4);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.txtdropdownlist1);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.button2);
+            this.panel3.Controls.Add(this.labelExpPoutDate);
+            this.panel3.Controls.Add(this.dateExpPoutDate);
+            this.panel3.Controls.Add(this.btnFindNow);
+            this.panel3.Controls.Add(this.labelCategory);
+            this.panel3.Controls.Add(this.txtdropdownlistCategory);
+            this.panel3.Controls.Add(this.txtLocateForSP);
+            this.panel3.Controls.Add(this.btnClose);
+            this.panel3.Controls.Add(this.labelLocateForSP);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.shapeContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
@@ -89,102 +89,102 @@
             this.panel3.Size = new System.Drawing.Size(846, 89);
             this.panel3.TabIndex = 3;
             // 
-            // label1
+            // labelExpPoutDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(4, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Exp P/out Date";
+            this.labelExpPoutDate.Lines = 0;
+            this.labelExpPoutDate.Location = new System.Drawing.Point(4, 12);
+            this.labelExpPoutDate.Name = "labelExpPoutDate";
+            this.labelExpPoutDate.Size = new System.Drawing.Size(99, 23);
+            this.labelExpPoutDate.TabIndex = 0;
+            this.labelExpPoutDate.Text = "Exp P/out Date";
             // 
-            // dateBox1
+            // dateExpPoutDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(107, 12);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateExpPoutDate.Location = new System.Drawing.Point(107, 12);
+            this.dateExpPoutDate.Name = "dateExpPoutDate";
+            this.dateExpPoutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateExpPoutDate.TabIndex = 1;
             // 
-            // button4
+            // btnFindNow
             // 
-            this.button4.Location = new System.Drawing.Point(243, 53);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Find Now";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnFindNow.Location = new System.Drawing.Point(243, 53);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(80, 30);
+            this.btnFindNow.TabIndex = 9;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.button4_Click);
             // 
-            // label2
+            // labelCategory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(278, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(278, 11);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(62, 23);
+            this.labelCategory.TabIndex = 2;
+            this.labelCategory.Text = "Category";
             // 
-            // txtdropdownlist1
+            // txtdropdownlistCategory
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(344, 12);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 3;
-            this.txtdropdownlist1.Type = "Fty_GMT_Simple";
+            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistCategory.FormattingEnabled = true;
+            this.txtdropdownlistCategory.IsSupportUnselect = true;
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(344, 12);
+            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlistCategory.TabIndex = 3;
+            this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
             // 
-            // textBox1
+            // txtLocateForSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(107, 57);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 8;
+            this.txtLocateForSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateForSP.Location = new System.Drawing.Point(107, 57);
+            this.txtLocateForSP.MaxLength = 13;
+            this.txtLocateForSP.Name = "txtLocateForSP";
+            this.txtLocateForSP.Size = new System.Drawing.Size(120, 23);
+            this.txtLocateForSP.TabIndex = 8;
             // 
-            // button3
+            // btnClose
             // 
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Location = new System.Drawing.Point(756, 8);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Close";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(756, 8);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 6;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button3_Click);
             // 
-            // label3
+            // labelLocateForSP
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 57);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 23);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Locate for SP#";
+            this.labelLocateForSP.Lines = 0;
+            this.labelLocateForSP.Location = new System.Drawing.Point(4, 57);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(99, 23);
+            this.labelLocateForSP.TabIndex = 7;
+            this.labelLocateForSP.Text = "Locate for SP#";
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(517, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(517, 8);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 4;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnToExcel
             // 
-            this.button2.Location = new System.Drawing.Point(614, 8);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 30);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnToExcel.Location = new System.Drawing.Point(614, 8);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(113, 30);
+            this.btnToExcel.TabIndex = 5;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button2_Click);
             // 
             // shapeContainer1
             // 
@@ -215,41 +215,41 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridDetail);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 89);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(846, 379);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(846, 379);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowHeadersVisible = false;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.Size = new System.Drawing.Size(846, 379);
+            this.gridDetail.TabIndex = 0;
+            this.gridDetail.TabStop = false;
             // 
             // P12
             // 
-            this.CancelButton = this.button3;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(856, 483);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -268,7 +268,7 @@
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -278,20 +278,20 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Label label2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelCategory;
+        private Win.UI.DateBox dateExpPoutDate;
+        private Win.UI.Label labelExpPoutDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button4;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Button button3;
-        private Win.UI.Label label3;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Grid gridDetail;
+        private Win.UI.Button btnFindNow;
+        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Win.UI.TextBox txtLocateForSP;
+        private Win.UI.Button btnClose;
+        private Win.UI.Label labelLocateForSP;
+        private Win.UI.Button btnQuery;
+        private Win.UI.Button btnToExcel;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
     }

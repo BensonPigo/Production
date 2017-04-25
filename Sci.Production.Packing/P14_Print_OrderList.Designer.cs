@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ListCheck = new Sci.Win.UI.RadioButton();
-            this.SlipCheck = new Sci.Win.UI.RadioButton();
+            this.radioTransferList = new Sci.Win.UI.RadioButton();
+            this.radioTransferSlip = new Sci.Win.UI.RadioButton();
+            this.label5 = new Sci.Win.UI.Label();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.label5 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.ListCheck);
-            this.groupBox1.Controls.Add(this.SlipCheck);
+            this.groupBox1.Controls.Add(this.radioTransferList);
+            this.groupBox1.Controls.Add(this.radioTransferSlip);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
@@ -48,31 +48,43 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             // 
-            // ListCheck
+            // radioTransferList
             // 
-            this.ListCheck.AutoSize = true;
-            this.ListCheck.Checked = true;
-            this.ListCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ListCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.ListCheck.Location = new System.Drawing.Point(6, 22);
-            this.ListCheck.Name = "ListCheck";
-            this.ListCheck.Size = new System.Drawing.Size(115, 24);
-            this.ListCheck.TabIndex = 0;
-            this.ListCheck.TabStop = true;
-            this.ListCheck.Text = "Transfer List";
-            this.ListCheck.UseVisualStyleBackColor = true;
+            this.radioTransferList.AutoSize = true;
+            this.radioTransferList.Checked = true;
+            this.radioTransferList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.radioTransferList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioTransferList.Location = new System.Drawing.Point(6, 22);
+            this.radioTransferList.Name = "radioTransferList";
+            this.radioTransferList.Size = new System.Drawing.Size(115, 24);
+            this.radioTransferList.TabIndex = 0;
+            this.radioTransferList.TabStop = true;
+            this.radioTransferList.Text = "Transfer List";
+            this.radioTransferList.UseVisualStyleBackColor = true;
             // 
-            // SlipCheck
+            // radioTransferSlip
             // 
-            this.SlipCheck.AutoSize = true;
-            this.SlipCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.SlipCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.SlipCheck.Location = new System.Drawing.Point(6, 52);
-            this.SlipCheck.Name = "SlipCheck";
-            this.SlipCheck.Size = new System.Drawing.Size(116, 24);
-            this.SlipCheck.TabIndex = 4;
-            this.SlipCheck.Text = "Transfer Slip";
-            this.SlipCheck.UseVisualStyleBackColor = true;
+            this.radioTransferSlip.AutoSize = true;
+            this.radioTransferSlip.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.radioTransferSlip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioTransferSlip.Location = new System.Drawing.Point(6, 52);
+            this.radioTransferSlip.Name = "radioTransferSlip";
+            this.radioTransferSlip.Size = new System.Drawing.Size(116, 24);
+            this.radioTransferSlip.TabIndex = 4;
+            this.radioTransferSlip.Text = "Transfer Slip";
+            this.radioTransferSlip.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.SystemColors.Control;
+            this.label5.Lines = 0;
+            this.label5.Location = new System.Drawing.Point(7, 79);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(104, 23);
+            this.label5.TabIndex = 182;
+            this.label5.Text = "Pager Size A4";
+            this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // btnCancel
             // 
@@ -94,18 +106,6 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
-            // label5
-            // 
-            this.label5.BackColor = System.Drawing.SystemColors.Control;
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(7, 79);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(104, 23);
-            this.label5.TabIndex = 182;
-            this.label5.Text = "Pager Size A4";
-            this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.label5.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
             // P14_Print_OrderList
             // 
             this.ClientSize = new System.Drawing.Size(270, 139);
@@ -126,8 +126,8 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private Win.UI.RadioButton ListCheck;
-        private Win.UI.RadioButton SlipCheck;
+        private Win.UI.RadioButton radioTransferList;
+        private Win.UI.RadioButton radioTransferSlip;
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnToExcel;
         private Win.UI.Label label5;

@@ -29,15 +29,15 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.DataSource = listControlBindingSource1;
 
             //當欄位值為0時，顯示空白
             ctnqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             accuqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             poqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8))
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(13))
@@ -52,23 +52,23 @@ namespace Sci.Production.Packing
                 .Date("Delivery", header: "Delivery")
                 .Numeric("POQty", header: "PO Qty", settings: poqty);
 
-            this.grid1.Columns["LocalPOID"].DefaultCellStyle.BackColor = Color.LightGreen;
-            this.grid1.Columns["Delivery"].DefaultCellStyle.BackColor = Color.LightGreen;
-            this.grid1.Columns["POQty"].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.gridDetail.Columns["LocalPOID"].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.gridDetail.Columns["Delivery"].DefaultCellStyle.BackColor = Color.LightGreen;
+            this.gridDetail.Columns["POQty"].DefaultCellStyle.BackColor = Color.LightGreen;
         }
 
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) && MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) && MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange4.Value2))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateSewingInlineDate.Value1) && MyUtility.Check.Empty(dateSewingInlineDate.Value2) && MyUtility.Check.Empty(dateEstBookingDate.Value1) && MyUtility.Check.Empty(dateEstBookingDate.Value2) && MyUtility.Check.Empty(dateEstArrivedDate.Value1) && MyUtility.Check.Empty(dateEstArrivedDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > or < Sewing Inline Date > or < Carton Est. Booking > or < Carton Est. Arrived > can not empty!");
-                dateRange1.TextBox1.Focus();
+                dateSCIDelivery.TextBox1.Focus();
                 return;
             }
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) && MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange4.Value2))
+            if (MyUtility.Check.Empty(dateEstBookingDate.Value1) && MyUtility.Check.Empty(dateEstBookingDate.Value2) && MyUtility.Check.Empty(dateEstArrivedDate.Value1) && MyUtility.Check.Empty(dateEstArrivedDate.Value2))
             {
                 sqlCmd.Append(string.Format(@"with OrderData
 as
@@ -78,21 +78,21 @@ as
  left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
  left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
  where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-                if (!MyUtility.Check.Empty(dateRange1.Value1))
+                if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange1.Value2))
+                if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange2.Value1))
+                if (!MyUtility.Check.Empty(dateSewingInlineDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'",Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'",Convert.ToDateTime(dateSewingInlineDate.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange2.Value2))
+                if (!MyUtility.Check.Empty(dateSewingInlineDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'",Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'",Convert.ToDateTime(dateSewingInlineDate.Value2).ToString("d")));
                 }
 
                 sqlCmd.Append(@" ),
@@ -126,21 +126,21 @@ as
 (select distinct pld.OrderID
  from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
  where pl.ID = pld.ID");
-                if (!MyUtility.Check.Empty(dateRange3.Value1))
+                if (!MyUtility.Check.Empty(dateEstBookingDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'",Convert.ToDateTime(dateRange3.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'",Convert.ToDateTime(dateEstBookingDate.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange3.Value2))
+                if (!MyUtility.Check.Empty(dateEstBookingDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'",Convert.ToDateTime(dateRange3.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'",Convert.ToDateTime(dateEstBookingDate.Value2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange4.Value1))
+                if (!MyUtility.Check.Empty(dateEstArrivedDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'",Convert.ToDateTime(dateRange4.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'",Convert.ToDateTime(dateEstArrivedDate.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange4.Value2))
+                if (!MyUtility.Check.Empty(dateEstArrivedDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'",Convert.ToDateTime(dateRange4.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'",Convert.ToDateTime(dateEstArrivedDate.Value2).ToString("d")));
                 }
                 sqlCmd.Append(string.Format(@"),
 OrderData
@@ -152,21 +152,21 @@ as
  left join Order_CTNData ocd WITH (NOLOCK) on ocd.ID = o.ID
  left join LocalItem li WITH (NOLOCK) on li.RefNo = ocd.RefNo
  where o.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-                if (!MyUtility.Check.Empty(dateRange1.Value1))
+                if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'",Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange1.Value2))
+                if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange2.Value1))
+                if (!MyUtility.Check.Empty(dateSewingInlineDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'",Convert.ToDateTime(dateRange2.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'",Convert.ToDateTime(dateSewingInlineDate.Value1).ToString("d")));
                 }
-                if (!MyUtility.Check.Empty(dateRange2.Value2))
+                if (!MyUtility.Check.Empty(dateSewingInlineDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'",Convert.ToDateTime(dateRange2.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}'",Convert.ToDateTime(dateSewingInlineDate.Value2).ToString("d")));
                 }
                 sqlCmd.Append(@" ),
 POData

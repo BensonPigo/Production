@@ -40,9 +40,9 @@ order by oa.Seq,os.Seq", orderID);
 
             listControlBindingSource1.DataSource = OverrunData;
             //設定Grid的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridOverrunGarmentRecord.IsEditingReadOnly = true;
+            this.gridOverrunGarmentRecord.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridOverrunGarmentRecord)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8))
                 .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(6))

@@ -24,12 +24,12 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            radioButton1.Checked = true;
+            radioFormA.Checked = true;
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridDetail.IsEditingReadOnly = false;
+            this.gridDetail.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -41,7 +41,7 @@ namespace Sci.Production.Packing
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox2.Text) && MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(txtGarmentBookingStart.Text) && MyUtility.Check.Empty(txtGarmentBookingEnd.Text) && MyUtility.Check.Empty(dateFCRDate.Value1) && MyUtility.Check.Empty(dateFCRDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< Garment Booking# > and < FCR Date > can't both empty!");
                 return;
@@ -58,25 +58,25 @@ inner join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id and oq.Seq = pd.OrderShipmodeSeq
 where p.Type = 'B'
 and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtGarmentBookingStart.Text))
             {
-                sqlCmd.Append(string.Format(" and p.INVNo >= '{0}'", textBox1.Text));
+                sqlCmd.Append(string.Format(" and p.INVNo >= '{0}'", txtGarmentBookingStart.Text));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtGarmentBookingEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and p.INVNo <= '{0}'", textBox2.Text));
+                sqlCmd.Append(string.Format(" and p.INVNo <= '{0}'", txtGarmentBookingEnd.Text));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateFCRDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(dateFCRDate.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateFCRDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(dateFCRDate.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(txtbrand1.Text))
+            if (!MyUtility.Check.Empty(txtbrand.Text))
             {
-                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", txtbrand1.Text));
+                sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", txtbrand.Text));
             }
             sqlCmd.Append(@"),
 MultipleOrder
@@ -115,14 +115,14 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
                 {
-                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), radioButton1.Checked?"1":"2", out printData, out ctnDim, out qtyBDown);
+                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), radioFormA.Checked?"1":"2", out printData, out ctnDim, out qtyBDown);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
                         this.HideWaitMessage();
                         return;
                     }
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, radioButton1.Checked ? "1" : "2", printData, ctnDim, qtyBDown);
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, radioFormA.Checked ? "1" : "2", printData, ctnDim, qtyBDown);
                 }
             }
             this.HideWaitMessage();

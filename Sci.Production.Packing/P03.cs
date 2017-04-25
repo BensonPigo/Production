@@ -68,46 +68,46 @@ namespace Sci.Production.Packing
             comboBox1_RowSource.Add("Color");
             comboBox1_RowSource.Add("Size");
             comboxbs1 = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.DataSource = comboxbs1;
+            comboSortby.DataSource = comboxbs1;
         }
 
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
          
-            labCofirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
+            labelCofirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
 
             DataRow dr;
             string sqlStatus = string.Format(@"select * from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"].ToString());
             if (MyUtility.Check.Seek(sqlStatus,out dr))
             {
-                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labCofirmed.Text = "New";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labCofirmed.Text = "Confirmed";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labCofirmed.Text = "Confirmed";
-                else labCofirmed.Text = "Shipping Lock";
+                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelCofirmed.Text = "New";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelCofirmed.Text = "Confirmed";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelCofirmed.Text = "Confirmed";
+                else labelCofirmed.Text = "Shipping Lock";
             }
 
 
             //Purchase Ctn
-            displayBox7.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
+            displayPurchaseCtn.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
 
             //UnConfirm History按鈕變色
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "PackingList_History", "ID"))
             {
-                this.button3.ForeColor = Color.Blue;
+                this.btnUnConfirmHistory.ForeColor = Color.Blue;
             }
             else
             {
-                this.button3.ForeColor = Color.Black;
+                this.btnUnConfirmHistory.ForeColor = Color.Black;
             }
             //Carton Summary按鈕變色
             if (MyUtility.Check.Seek(string.Format("select pd.ID from PackingList_Detail pd WITH (NOLOCK) , Order_CTNData oc WITH (NOLOCK) where pd.OrderID = oc.ID and pd.ID = '{0}'", CurrentMaintain["ID"].ToString())))
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnCartonSummary.ForeColor = Color.Blue;
             }
             else
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnCartonSummary.ForeColor = Color.Black;
             }
 
             //Start Ctn#
@@ -116,7 +116,7 @@ namespace Sci.Production.Packing
             sqlCmd = string.Format("select isnull(min(CTNStartNo),0) as CTNStartNo  from PackingList_Detail WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
-                displayBox6.Value = orderData["CTNStartNo"].ToString();
+                displayStartCtn.Value = orderData["CTNStartNo"].ToString();
             }
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {              
@@ -534,22 +534,22 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            comboBox1.Text = "";
+            comboSortby.Text = "";
 
             if (CurrentMaintain["ID"].ToString().Substring(3,2).ToUpper()=="PG")
             {
-                txtbrand1.ReadOnly = true;
-                txtcustcd1.ReadOnly = true;
-                txtcountry1.TextBox1.ReadOnly = true;
+                txtbrand.ReadOnly = true;
+                txtcustcd.ReadOnly = true;
+                txtcountry.TextBox1.ReadOnly = true;
             }
             //部分欄位會依某些條件來決定是否可以被修改
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {
-                txtbrand1.ReadOnly = true;
-                txtcustcd1.ReadOnly = true;
-                txtcountry1.TextBox1.ReadOnly = true;
-                editBox1.ReadOnly = true;
-                txtshipmode1.ReadOnly = true;
+                txtbrand.ReadOnly = true;
+                txtcustcd.ReadOnly = true;
+                txtcountry.TextBox1.ReadOnly = true;
+                editRemark.ReadOnly = true;
+                txtshipmode.ReadOnly = true;
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
                 gridicon.Remove.Enabled = false;
@@ -562,8 +562,8 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
 
             if (!MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]))
             {
-                dateBox3.ReadOnly = true;
-                dateBox4.ReadOnly = true;
+                dateCartonEstBooking.ReadOnly = true;
+                dateCartonEstArrived.ReadOnly = true;
             }
         }
 
@@ -573,28 +573,28 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
                 MyUtility.Msg.WarningBox("CustCD can't empty!!");
-                txtcustcd1.Focus();
+                txtcustcd.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
                 MyUtility.Msg.WarningBox("Destination can't empty!!");
-                txtcountry1.Focus();
+                txtcountry.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
-                txtshipmode1.Focus();
+                txtshipmode.Focus();
                 return false;
             }
            
@@ -794,7 +794,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
-                numericBox3.Focus();
+                numTtlCBM.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -1028,53 +1028,53 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //Brand
         private void txtbrand1_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtbrand1.OldValue)) return;
-            if (EditMode && txtbrand1.OldValue != txtbrand1.Text)
+            if (MyUtility.Check.Empty(txtbrand.OldValue)) return;
+            if (EditMode && txtbrand.OldValue != txtbrand.Text)
             {
-                DeleteDetailData(txtbrand1, txtbrand1.OldValue);
+                DeleteDetailData(txtbrand, txtbrand.OldValue);
             }
         }
 
         //CustCD
         private void txtcustcd1_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd1.Text) && txtcustcd1.OldValue != txtcustcd1.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
             {
-                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd1.Text));
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
             }
-            if (MyUtility.Check.Empty(txtcustcd1.OldValue)) return;
-            if (EditMode && txtcustcd1.OldValue != txtcustcd1.Text)
+            if (MyUtility.Check.Empty(txtcustcd.OldValue)) return;
+            if (EditMode && txtcustcd.OldValue != txtcustcd.Text)
             {
-                DeleteDetailData(txtcustcd1, txtcustcd1.OldValue);
+                DeleteDetailData(txtcustcd, txtcustcd.OldValue);
             }            
         }
 
         //Destination
         private void txtcountry1_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtcountry1.TextBox1.OldValue)) return;
-            if (EditMode && txtcountry1.TextBox1.OldValue != txtcountry1.TextBox1.Text)
+            if (MyUtility.Check.Empty(txtcountry.TextBox1.OldValue)) return;
+            if (EditMode && txtcountry.TextBox1.OldValue != txtcountry.TextBox1.Text)
             {
-                DeleteDetailData(txtcountry1.TextBox1, txtcountry1.TextBox1.OldValue);
-                txtcountry1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                DeleteDetailData(txtcountry.TextBox1, txtcountry.TextBox1.OldValue);
+                txtcountry.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
         
         //ShipMode        
         private void txtshipmode1_Validated(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(txtshipmode1.OldValue)) return;
-            if (EditMode && txtshipmode1.OldValue != txtshipmode1.SelectedValue)
+            if (MyUtility.Check.Empty(txtshipmode.OldValue)) return;
+            if (EditMode && txtshipmode.OldValue != txtshipmode.SelectedValue)
             {
                 //if (MyUtility.Check.Empty(DetailDatas.Count)) return;
-                string tempOldValue = txtshipmode1.OldValue.ToString();
+                string tempOldValue = txtshipmode.OldValue.ToString();
 
                 DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");
                 if (diresult == DialogResult.No)
                 {
-                    txtshipmode1.OldValue = tempOldValue;
-                    txtshipmode1.SelectedValue = tempOldValue;
-                    txtshipmode1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                    txtshipmode.OldValue = tempOldValue;
+                    txtshipmode.SelectedValue = tempOldValue;
+                    txtshipmode.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
                     return;
                 }
                 // 清空表身Grid資料
@@ -1120,63 +1120,63 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         //Sort by
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            label24.Visible = true;
-            textBox3.Visible = false;
-            dateBox6.Visible = false;
-            button4.Visible = true;
-            switch (comboBox1.SelectedValue.ToString())
+            labelLocateforTransferClog.Visible = true;
+            txtLocateforTransferClog.Visible = false;
+            dateLocateforTransferClog.Visible = false;
+            btnFindNow.Visible = true;
+            switch (comboSortby.SelectedValue.ToString())
             {
                 case "Transfer Clog":
-                    label24.Text = "Locate for Transfer Clog:";
-                    label24.Width = 156;
-                    dateBox6.Visible = true;
-                    dateBox6.Location = new System.Drawing.Point(448, 193);
-                    button4.Location = new System.Drawing.Point(591, 188);
+                    labelLocateforTransferClog.Text = "Locate for Transfer Clog:";
+                    labelLocateforTransferClog.Width = 156;
+                    dateLocateforTransferClog.Visible = true;
+                    dateLocateforTransferClog.Location = new System.Drawing.Point(448, 193);
+                    btnFindNow.Location = new System.Drawing.Point(591, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "TransferDate,Seq";
                     break;
                 case "Clog Cfm":
-                    label24.Text = "Locate for Clog Cfm:";
-                    label24.Width = 129;
-                    dateBox6.Visible = true;
-                    dateBox6.Location = new System.Drawing.Point(420, 193);
-                    button4.Location = new System.Drawing.Point(563, 188);
+                    labelLocateforTransferClog.Text = "Locate for Clog Cfm:";
+                    labelLocateforTransferClog.Width = 129;
+                    dateLocateforTransferClog.Visible = true;
+                    dateLocateforTransferClog.Location = new System.Drawing.Point(420, 193);
+                    btnFindNow.Location = new System.Drawing.Point(563, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "ReceiveDate,Seq";
                     break;
                 case "Location No":
-                    label24.Text = "Locate for Location No:";
-                    label24.Width = 147;
-                    textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(438, 193);
-                    button4.Location = new System.Drawing.Point(537, 188);
+                    labelLocateforTransferClog.Text = "Locate for Location No:";
+                    labelLocateforTransferClog.Width = 147;
+                    txtLocateforTransferClog.Visible = true;
+                    txtLocateforTransferClog.Location = new System.Drawing.Point(438, 193);
+                    btnFindNow.Location = new System.Drawing.Point(537, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "ClogLocationId,Seq";
                     break;
                 case "ColorWay":
-                    label24.Text = "Locate for ColorWay:";
-                    label24.Width = 135;
-                    textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(426, 193);
-                    button4.Location = new System.Drawing.Point(525, 188);
+                    labelLocateforTransferClog.Text = "Locate for ColorWay:";
+                    labelLocateforTransferClog.Width = 135;
+                    txtLocateforTransferClog.Visible = true;
+                    txtLocateforTransferClog.Location = new System.Drawing.Point(426, 193);
+                    btnFindNow.Location = new System.Drawing.Point(525, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Article,Seq";
                     break;
                 case "Color":
-                    label24.Text = "Locate for Color:";
-                    label24.Width = 106;
-                    textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(397, 193);
-                    button4.Location = new System.Drawing.Point(496, 188);
+                    labelLocateforTransferClog.Text = "Locate for Color:";
+                    labelLocateforTransferClog.Width = 106;
+                    txtLocateforTransferClog.Visible = true;
+                    txtLocateforTransferClog.Location = new System.Drawing.Point(397, 193);
+                    btnFindNow.Location = new System.Drawing.Point(496, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Color,Seq";
                     break;
                 case "Size":
-                    label24.Text = "Locate for Size:";
-                    label24.Width = 100;
-                    textBox3.Visible = true;
-                    textBox3.Location = new System.Drawing.Point(391, 193);
-                    button4.Location = new System.Drawing.Point(490, 188);
+                    labelLocateforTransferClog.Text = "Locate for Size:";
+                    labelLocateforTransferClog.Width = 100;
+                    txtLocateforTransferClog.Visible = true;
+                    txtLocateforTransferClog.Location = new System.Drawing.Point(391, 193);
+                    btnFindNow.Location = new System.Drawing.Point(490, 188);
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "SizeCode,Seq";
                     break;
                 default:
-                    label24.Visible = false;
-                    button4.Visible = false;
+                    labelLocateforTransferClog.Visible = false;
+                    btnFindNow.Visible = false;
                     if (MyUtility.Check.Empty((DataTable)detailgridbs.DataSource)) break;
                     ((DataTable)detailgridbs.DataSource).DefaultView.Sort = "Seq";
                     break;
@@ -1392,25 +1392,25 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
 
             int index;
-            switch (comboBox1.SelectedValue.ToString())
+            switch (comboSortby.SelectedValue.ToString())
             {
                 case "Transfer Clog":
-                    index = detailgridbs.Find("TransferDate", dateBox6.Value.ToString());
+                    index = detailgridbs.Find("TransferDate", dateLocateforTransferClog.Value.ToString());
                     break;
                 case "Clog Cfm":
-                    index = detailgridbs.Find("ReceiveDate", dateBox6.Value.ToString());
+                    index = detailgridbs.Find("ReceiveDate", dateLocateforTransferClog.Value.ToString());
                     break;
                 case "Location No":
-                    index = detailgridbs.Find("ClogLocationId", textBox3.Text.Trim());
+                    index = detailgridbs.Find("ClogLocationId", txtLocateforTransferClog.Text.Trim());
                     break;
                 case "ColorWay":
-                    index = detailgridbs.Find("Article", textBox3.Text.Trim());
+                    index = detailgridbs.Find("Article", txtLocateforTransferClog.Text.Trim());
                     break;
                 case "Color":
-                    index = detailgridbs.Find("Color", textBox3.Text.Trim());
+                    index = detailgridbs.Find("Color", txtLocateforTransferClog.Text.Trim());
                     break;
                 case "Size":
-                    index = detailgridbs.Find("SizeCode", textBox3.Text.Trim());
+                    index = detailgridbs.Find("SizeCode", txtLocateforTransferClog.Text.Trim());
                     break;
                 default:
                     index = -1;
@@ -1435,13 +1435,13 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             #region chech Brand, CustCD, Destination, ShipMode not empty
             List<string> errMsg = new List<string>();
-            if (MyUtility.Check.Empty(txtbrand1.Text.ToString()))
+            if (MyUtility.Check.Empty(txtbrand.Text.ToString()))
                 errMsg.Add("< Brand >");
-            if (MyUtility.Check.Empty(txtcustcd1.Text.ToString()))
+            if (MyUtility.Check.Empty(txtcustcd.Text.ToString()))
                 errMsg.Add("< CustCD >");
-            if (MyUtility.Check.Empty(txtcountry1.TextBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(txtcountry.TextBox1.Text.ToString()))
                 errMsg.Add("< Destination >");
-            if (MyUtility.Check.Empty(txtshipmode1.Text.ToString()))
+            if (MyUtility.Check.Empty(txtshipmode.Text.ToString()))
                 errMsg.Add("< Ship Mode >");
             if (errMsg.Count > 0)
             {

@@ -36,10 +36,10 @@ group by pd.RefNo, li.LocalSuppid + '-' + ls.Abb, li.Description, STR(li.CtnLeng
             DualResult selectResult1 = DBProxy.Current.Select(null, sqlCmd, out selectDataTable);
             listControlBindingSource1.DataSource = selectDataTable;
 
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridCartonSummary.IsEditingReadOnly = true;
+            this.gridCartonSummary.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridCartonSummary)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(13))
                  .Text("Supplier", header: "Supplier ID", width: Widths.AnsiChars(11))
                  .Text("Description", header: "Description", width: Widths.AnsiChars(20))

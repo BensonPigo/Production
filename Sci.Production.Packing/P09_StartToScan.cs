@@ -26,9 +26,9 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(13))
                 .Text("Color", header: "Color", width: Widths.AnsiChars(10))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10))
@@ -37,43 +37,43 @@ namespace Sci.Production.Packing
                 .Text("Barcode", header: "Ref. Barcode", width: Widths.AnsiChars(30));
 
             //按Header沒有排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
+            for (int i = 0; i < this.gridDetail.ColumnCount; i++)
             {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
             //設定Grid的Back Color
-            grid1.RowsAdded += (s, e) =>
+            gridDetail.RowsAdded += (s, e) =>
             {
                 DataTable dtData = (DataTable)listControlBindingSource1.DataSource;
                 for (int i = 0; i < e.RowCount; i++)
                 {
                     if (MyUtility.Convert.GetInt(dtData.Rows[i]["QtyPerCTN"]) > MyUtility.Convert.GetInt(dtData.Rows[i]["ScanQty"]))
                     {
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        gridDetail.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                     }
                     else
                     {
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
+                        gridDetail.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
                     }
                 }
             };
 
-            grid1.RowValidated += (s, e) =>
+            gridDetail.RowValidated += (s, e) =>
                 {
                     DataTable dtData = (DataTable)listControlBindingSource1.DataSource;
                     if (MyUtility.Convert.GetInt(dtData.Rows[e.RowIndex]["QtyPerCTN"]) > MyUtility.Convert.GetInt(dtData.Rows[e.RowIndex]["ScanQty"]))
                     {
-                        grid1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        gridDetail.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                     }
                     else
                     {
-                        grid1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
+                        gridDetail.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
                     }
                 };
 
-            grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            grid1.DefaultCellStyle.ForeColor = System.Drawing.Color.Blue;
+            gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            gridDetail.DefaultCellStyle.ForeColor = System.Drawing.Color.Blue;
 
             //撈Grid資料
             string sqlCmd = string.Format(@"select ID,OrderID,CTNStartNo,Article,Color,SizeCode,QtyPerCTN,ScanQty,Barcode,ShipQty
@@ -91,34 +91,34 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             if (gridData != null)
             {
                 object obj = gridData.Compute("SUM(QtyPerCTN)", "");
-                label15.Text = MyUtility.Convert.GetString(obj);
-                label17.Text = "0";
+                labelTtlPCCTN1.Text = MyUtility.Convert.GetString(obj);
+                labelTtlPCCTNScanned1.Text = "0";
             }
             else
             {
-                label15.Text = "0";
-                label17.Text = "0";
+                labelTtlPCCTN1.Text = "0";
+                labelTtlPCCTNScanned1.Text = "0";
             }
         }
 
         //改變Grid's Row時，表頭的資訊要跟著改變
         private void grid1_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
         {
-            DataRow dr = grid1.GetDataRow(e.RowIndex);
-            displayBox1.Value = MyUtility.Convert.GetString(dr["Barcode"]);
-            label5.Text = MyUtility.Convert.GetString(dr["ID"]);
-            label6.Text = MyUtility.Convert.GetString(dr["Article"]);
-            label8.Text = MyUtility.Convert.GetString(dr["Color"]);
-            label9.Text = MyUtility.Convert.GetString(dr["SizeCode"]);
-            label11.Text = MyUtility.Convert.GetString(dr["CTNStartNo"]);
-            label13.Text = MyUtility.Convert.GetString(dr["OrderID"]);
-            button3.Enabled = !MyUtility.Check.Empty(dr["Barcode"]);
+            DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+            displayRefBarcode.Value = MyUtility.Convert.GetString(dr["Barcode"]);
+            labelID.Text = MyUtility.Convert.GetString(dr["ID"]);
+            labelArticle.Text = MyUtility.Convert.GetString(dr["Article"]);
+            labelColor1.Text = MyUtility.Convert.GetString(dr["Color"]);
+            labelSizeCode.Text = MyUtility.Convert.GetString(dr["SizeCode"]);
+            labelCTNStartNo.Text = MyUtility.Convert.GetString(dr["CTNStartNo"]);
+            labelOrderID.Text = MyUtility.Convert.GetString(dr["OrderID"]);
+            btnReset.Enabled = !MyUtility.Check.Empty(dr["Barcode"]);
         }
 
         //Complete
         private void button1_Click(object sender, EventArgs e)
         {
-            if (label15.Text != label17.Text)
+            if (labelTtlPCCTN1.Text != labelTtlPCCTNScanned1.Text)
             {
                 MyUtility.Msg.WarningBox("It's not complete!!");
                 return;
@@ -185,28 +185,28 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             {
                 return;
             }
-            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+            DataRow dr = gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex());
             dr["Barcode"] = "";
             dr["ScanQty"] = 0;
-            displayBox1.Value = "";
+            displayRefBarcode.Value = "";
             object obj = ((DataTable)listControlBindingSource1.DataSource).Compute("SUM(ScanQty)", "");
-            label17.Text = MyUtility.Convert.GetString(obj);
+            labelTtlPCCTNScanned1.Text = MyUtility.Convert.GetString(obj);
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtScanBarcode.Text))
             {
-                int pos = listControlBindingSource1.Find("Barcode", textBox1.Text);
+                int pos = listControlBindingSource1.Find("Barcode", txtScanBarcode.Text);
                 if (pos >= 0)
                 {
                     listControlBindingSource1.Position = pos;
-                    DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow dr = gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex());
                     if (MyUtility.Convert.GetInt(dr["ScanQty"]) >= MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                     {
                         MyUtility.Msg.WarningBox("PC/Ctn Scanned exceed PC/CTN, can't scanned!!");
-                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
-                        textBox1.Text = "";
+                        IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
+                        txtScanBarcode.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -226,8 +226,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox("Query structure fail!! Pls scan again.\r\n"+result.ToString());
-                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
-                        textBox1.Text = "";
+                        IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
+                        txtScanBarcode.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -250,8 +250,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     if (noBarcodeRecCount == 0)
                     {
                         MyUtility.Msg.WarningBox("Wrong barcode, please check barcode again!!");
-                        IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
-                        textBox1.Text = "";
+                        IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
+                        txtScanBarcode.Text = "";
                         e.Cancel = true;
                         return;
                     }
@@ -260,11 +260,11 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         //如果只剩下一筆資料還沒有Barcode，就直接將指標移至這筆資料
                         int newPos = listControlBindingSource1.Find("Barcode", "");
                         listControlBindingSource1.Position = newPos;
-                        DataRow dr = grid1.GetDataRow(newPos);
-                        IDX.IdxCall(254, "A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
-                                       , ("A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
-                        dr["Barcode"] = textBox1.Text;
-                        displayBox1.Value = textBox1.Text;
+                        DataRow dr = gridDetail.GetDataRow(newPos);
+                        IDX.IdxCall(254, "A:" + txtScanBarcode.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
+                                       , ("A:" + txtScanBarcode.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
+                        dr["Barcode"] = txtScanBarcode.Text;
+                        displayRefBarcode.Value = txtScanBarcode.Text;
                         Counter(dr);
                         e.Cancel = true;
                         return;
@@ -289,11 +289,11 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         if (hadFound)
                         {
                             listControlBindingSource1.Position = newPos;
-                            DataRow dr = grid1.GetDataRow(newPos);
-                            IDX.IdxCall(254, "A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
-                                           , ("A:" + textBox1.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
-                            dr["Barcode"] = textBox1.Text;
-                            displayBox1.Value = textBox1.Text;
+                            DataRow dr = gridDetail.GetDataRow(newPos);
+                            IDX.IdxCall(254, "A:" + txtScanBarcode.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()
+                                           , ("A:" + txtScanBarcode.Text.Trim() + "=" + dr["QtyPerCtn"].ToString().Trim()).Length);
+                            dr["Barcode"] = txtScanBarcode.Text;
+                            displayRefBarcode.Value = txtScanBarcode.Text;
                             Counter(dr);
                             e.Cancel = true;
                             return;
@@ -301,8 +301,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         else
                         {
                             MyUtility.Msg.WarningBox("Selected data not found! Please scan again.");
-                            IDX.IdxCall(254, "a:" + textBox1.Text.Trim(), ("a:" + textBox1.Text.Trim()).Length);
-                            textBox1.Text = "";
+                            IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
+                            txtScanBarcode.Text = "";
                             e.Cancel = true;
                             return;
                         }
@@ -314,13 +314,13 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
         private void Counter(DataRow dr)
         {
             dr["ScanQty"] = MyUtility.Convert.GetInt(dr["ScanQty"]) + 1;
-            label17.Text = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(label17.Text) + 1);
-            textBox1.Text = "";
+            labelTtlPCCTNScanned1.Text = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(labelTtlPCCTNScanned1.Text) + 1);
+            txtScanBarcode.Text = "";
         }
         
         private void displayBox1_TextChanged(object sender, EventArgs e)
         {
-            button3.Enabled = !displayBox1.Value.ToString().Empty();  
+            btnReset.Enabled = !displayRefBarcode.Value.ToString().Empty();  
         }
     }
 }

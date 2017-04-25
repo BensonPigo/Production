@@ -28,37 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.label13 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.txtshipmode1 = new Sci.Production.Class.txtshipmode();
-            this.label14 = new Sci.Win.UI.Label();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelOrderQty = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.labelSeq = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Win.UI.TextBox();
+            this.labelPONo = new Sci.Win.UI.Label();
+            this.labelShippingMode = new Sci.Win.UI.Label();
+            this.labelPackingMethod = new Sci.Win.UI.Label();
+            this.labelStartCtn = new Sci.Win.UI.Label();
+            this.labelTotalCartons = new Sci.Win.UI.Label();
+            this.displayPONo = new Sci.Win.UI.DisplayBox();
+            this.comboPackingMethod = new Sci.Win.UI.ComboBox();
+            this.numStartCtn = new Sci.Win.UI.NumericBox();
+            this.numTotalCartons = new Sci.Win.UI.NumericBox();
+            this.labelTotalShipQty = new Sci.Win.UI.Label();
+            this.numTotalShipQty = new Sci.Win.UI.NumericBox();
+            this.btnSpecialInstruction = new Sci.Win.UI.Button();
+            this.btnCartonDimension = new Sci.Win.UI.Button();
+            this.btnSwitchToPackingList = new Sci.Win.UI.Button();
+            this.txtshipmode = new Sci.Production.Class.txtshipmode();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,70 +75,70 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.txtshipmode1);
-            this.masterpanel.Controls.Add(this.button3);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.numericBox4);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.numericBox3);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.displayFactory);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.txtshipmode);
+            this.masterpanel.Controls.Add(this.btnSwitchToPackingList);
+            this.masterpanel.Controls.Add(this.btnCartonDimension);
+            this.masterpanel.Controls.Add(this.btnSpecialInstruction);
+            this.masterpanel.Controls.Add(this.numTotalShipQty);
+            this.masterpanel.Controls.Add(this.labelTotalShipQty);
+            this.masterpanel.Controls.Add(this.numTotalCartons);
+            this.masterpanel.Controls.Add(this.numStartCtn);
+            this.masterpanel.Controls.Add(this.comboPackingMethod);
+            this.masterpanel.Controls.Add(this.displayPONo);
+            this.masterpanel.Controls.Add(this.labelTotalCartons);
+            this.masterpanel.Controls.Add(this.labelStartCtn);
+            this.masterpanel.Controls.Add(this.labelPackingMethod);
+            this.masterpanel.Controls.Add(this.labelShippingMode);
+            this.masterpanel.Controls.Add(this.labelPONo);
+            this.masterpanel.Controls.Add(this.txtSeq);
+            this.masterpanel.Controls.Add(this.labelSeq);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.numOrderQty);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.txtSPNo);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelOrderQty);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelSPNo);
+            this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Size = new System.Drawing.Size(912, 207);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtshipmode1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOrderQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeq, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSeq, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShippingMode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPackingMethod, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStartCtn, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalCartons, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboPackingMethod, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numStartCtn, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalCartons, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalShipQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalShipQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSpecialInstruction, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCartonDimension, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSwitchToPackingList, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtshipmode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             // 
             // detailpanel
             // 
@@ -184,7 +184,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(892, 488);
+            this.browse.Size = new System.Drawing.Size(912, 488);
             // 
             // tabs
             // 
@@ -203,360 +203,360 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(5, 12);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "SP No.";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(5, 39);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(75, 23);
+            this.labelSPNo.TabIndex = 2;
+            this.labelSPNo.Text = "SP No.";
             // 
-            // label3
+            // labelStyle
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(5, 66);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(5, 66);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 3;
+            this.labelStyle.Text = "Style";
             // 
-            // label4
+            // labelSeason
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(5, 93);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(5, 93);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 4;
+            this.labelSeason.Text = "Season";
             // 
-            // label5
+            // labelOrderQty
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(5, 120);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Order Q\'ty";
+            this.labelOrderQty.Lines = 0;
+            this.labelOrderQty.Location = new System.Drawing.Point(5, 120);
+            this.labelOrderQty.Name = "labelOrderQty";
+            this.labelOrderQty.Size = new System.Drawing.Size(75, 23);
+            this.labelOrderQty.TabIndex = 5;
+            this.labelOrderQty.Text = "Order Q\'ty";
             // 
-            // label6
+            // labelRemark
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(5, 147);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(5, 147);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 6;
+            this.labelRemark.Text = "Remark";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(84, 12);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(84, 12);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 7;
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(84, 39);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(84, 39);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(120, 23);
+            this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // displayBox2
+            // displayStyle
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(84, 66);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(135, 23);
-            this.displayBox2.TabIndex = 9;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(84, 66);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(135, 23);
+            this.displayStyle.TabIndex = 9;
             // 
-            // displayBox3
+            // displaySeason
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(84, 93);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 10;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(84, 93);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(80, 23);
+            this.displaySeason.TabIndex = 10;
             // 
-            // numericBox1
+            // numOrderQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(84, 120);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(84, 120);
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(65, 23);
-            this.numericBox1.TabIndex = 11;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // editBox1
-            // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(84, 147);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(624, 50);
-            this.editBox1.TabIndex = 4;
-            // 
-            // label7
-            // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(221, 38);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(33, 24);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Seq";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderShipmodeSeq", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(258, 39);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(28, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            // 
-            // label8
-            // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(372, 11);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(107, 23);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "P.O. No.";
-            // 
-            // label9
-            // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(372, 38);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(107, 23);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Shipping Mode";
-            // 
-            // label10
-            // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(372, 65);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(107, 23);
-            this.label10.TabIndex = 17;
-            this.label10.Text = "Packing Method";
-            // 
-            // label11
-            // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(372, 92);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(107, 23);
-            this.label11.TabIndex = 18;
-            this.label11.Text = "Start Ctn#";
-            // 
-            // label12
-            // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(372, 119);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(107, 23);
-            this.label12.TabIndex = 19;
-            this.label12.Text = "Total Cartons";
-            // 
-            // displayBox4
-            // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(483, 11);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(200, 23);
-            this.displayBox4.TabIndex = 20;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(483, 64);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(216, 24);
-            this.comboBox1.TabIndex = 22;
-            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNStartNo", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(483, 93);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.Size = new System.Drawing.Size(65, 23);
-            this.numericBox2.TabIndex = 3;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(65, 23);
+            this.numOrderQty.TabIndex = 11;
+            this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox3
+            // editRemark
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(483, 120);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(84, 147);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(624, 50);
+            this.editRemark.TabIndex = 4;
+            // 
+            // labelSeq
+            // 
+            this.labelSeq.Lines = 0;
+            this.labelSeq.Location = new System.Drawing.Point(221, 38);
+            this.labelSeq.Name = "labelSeq";
+            this.labelSeq.Size = new System.Drawing.Size(33, 24);
+            this.labelSeq.TabIndex = 13;
+            this.labelSeq.Text = "Seq";
+            // 
+            // txtSeq
+            // 
+            this.txtSeq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSeq.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderShipmodeSeq", true));
+            this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSeq.IsSupportEditMode = false;
+            this.txtSeq.Location = new System.Drawing.Point(258, 39);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSeq.ReadOnly = true;
+            this.txtSeq.Size = new System.Drawing.Size(28, 23);
+            this.txtSeq.TabIndex = 1;
+            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            // 
+            // labelPONo
+            // 
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(372, 11);
+            this.labelPONo.Name = "labelPONo";
+            this.labelPONo.Size = new System.Drawing.Size(107, 23);
+            this.labelPONo.TabIndex = 15;
+            this.labelPONo.Text = "P.O. No.";
+            // 
+            // labelShippingMode
+            // 
+            this.labelShippingMode.Lines = 0;
+            this.labelShippingMode.Location = new System.Drawing.Point(372, 38);
+            this.labelShippingMode.Name = "labelShippingMode";
+            this.labelShippingMode.Size = new System.Drawing.Size(107, 23);
+            this.labelShippingMode.TabIndex = 16;
+            this.labelShippingMode.Text = "Shipping Mode";
+            // 
+            // labelPackingMethod
+            // 
+            this.labelPackingMethod.Lines = 0;
+            this.labelPackingMethod.Location = new System.Drawing.Point(372, 65);
+            this.labelPackingMethod.Name = "labelPackingMethod";
+            this.labelPackingMethod.Size = new System.Drawing.Size(107, 23);
+            this.labelPackingMethod.TabIndex = 17;
+            this.labelPackingMethod.Text = "Packing Method";
+            // 
+            // labelStartCtn
+            // 
+            this.labelStartCtn.Lines = 0;
+            this.labelStartCtn.Location = new System.Drawing.Point(372, 92);
+            this.labelStartCtn.Name = "labelStartCtn";
+            this.labelStartCtn.Size = new System.Drawing.Size(107, 23);
+            this.labelStartCtn.TabIndex = 18;
+            this.labelStartCtn.Text = "Start Ctn#";
+            // 
+            // labelTotalCartons
+            // 
+            this.labelTotalCartons.Lines = 0;
+            this.labelTotalCartons.Location = new System.Drawing.Point(372, 119);
+            this.labelTotalCartons.Name = "labelTotalCartons";
+            this.labelTotalCartons.Size = new System.Drawing.Size(107, 23);
+            this.labelTotalCartons.TabIndex = 19;
+            this.labelTotalCartons.Text = "Total Cartons";
+            // 
+            // displayPONo
+            // 
+            this.displayPONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPONo.Location = new System.Drawing.Point(483, 11);
+            this.displayPONo.Name = "displayPONo";
+            this.displayPONo.Size = new System.Drawing.Size(200, 23);
+            this.displayPONo.TabIndex = 20;
+            // 
+            // comboPackingMethod
+            // 
+            this.comboPackingMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboPackingMethod.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboPackingMethod.FormattingEnabled = true;
+            this.comboPackingMethod.IsSupportUnselect = true;
+            this.comboPackingMethod.Location = new System.Drawing.Point(483, 64);
+            this.comboPackingMethod.Name = "comboPackingMethod";
+            this.comboPackingMethod.ReadOnly = true;
+            this.comboPackingMethod.Size = new System.Drawing.Size(216, 24);
+            this.comboPackingMethod.TabIndex = 22;
+            this.comboPackingMethod.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
+            // 
+            // numStartCtn
+            // 
+            this.numStartCtn.BackColor = System.Drawing.Color.White;
+            this.numStartCtn.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNStartNo", true));
+            this.numStartCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numStartCtn.Location = new System.Drawing.Point(483, 93);
+            this.numStartCtn.Name = "numStartCtn";
+            this.numStartCtn.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(65, 23);
-            this.numericBox3.TabIndex = 24;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numStartCtn.Size = new System.Drawing.Size(65, 23);
+            this.numStartCtn.TabIndex = 3;
+            this.numStartCtn.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label13
+            // numTotalCartons
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(561, 93);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(96, 23);
-            this.label13.TabIndex = 25;
-            this.label13.Text = "Total Ship Q\'ty";
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(661, 93);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numTotalCartons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalCartons.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
+            this.numTotalCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalCartons.IsSupportEditMode = false;
+            this.numTotalCartons.Location = new System.Drawing.Point(483, 120);
+            this.numTotalCartons.Name = "numTotalCartons";
+            this.numTotalCartons.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(65, 23);
-            this.numericBox4.TabIndex = 26;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numTotalCartons.ReadOnly = true;
+            this.numTotalCartons.Size = new System.Drawing.Size(65, 23);
+            this.numTotalCartons.TabIndex = 24;
+            this.numTotalCartons.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // button1
+            // labelTotalShipQty
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(742, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(143, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Special Instruction";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.labelTotalShipQty.Lines = 0;
+            this.labelTotalShipQty.Location = new System.Drawing.Point(561, 93);
+            this.labelTotalShipQty.Name = "labelTotalShipQty";
+            this.labelTotalShipQty.Size = new System.Drawing.Size(96, 23);
+            this.labelTotalShipQty.TabIndex = 25;
+            this.labelTotalShipQty.Text = "Total Ship Q\'ty";
             // 
-            // button2
+            // numTotalShipQty
             // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button2.Location = new System.Drawing.Point(742, 47);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(143, 30);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Carton Dimension";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.numTotalShipQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalShipQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalShipQty.IsSupportEditMode = false;
+            this.numTotalShipQty.Location = new System.Drawing.Point(661, 93);
+            this.numTotalShipQty.Name = "numTotalShipQty";
+            this.numTotalShipQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalShipQty.ReadOnly = true;
+            this.numTotalShipQty.Size = new System.Drawing.Size(65, 23);
+            this.numTotalShipQty.TabIndex = 26;
+            this.numTotalShipQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // button3
+            // btnSpecialInstruction
             // 
-            this.button3.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button3.Location = new System.Drawing.Point(726, 171);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(160, 30);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Switch to Packing list";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSpecialInstruction.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnSpecialInstruction.Location = new System.Drawing.Point(742, 11);
+            this.btnSpecialInstruction.Name = "btnSpecialInstruction";
+            this.btnSpecialInstruction.Size = new System.Drawing.Size(143, 30);
+            this.btnSpecialInstruction.TabIndex = 5;
+            this.btnSpecialInstruction.Text = "Special Instruction";
+            this.btnSpecialInstruction.UseVisualStyleBackColor = true;
+            this.btnSpecialInstruction.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtshipmode1
+            // btnCartonDimension
             // 
-            this.txtshipmode1.BackColor = System.Drawing.Color.White;
-            this.txtshipmode1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtshipmode1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtshipmode1.FormattingEnabled = true;
-            this.txtshipmode1.IsSupportUnselect = true;
-            this.txtshipmode1.Location = new System.Drawing.Point(483, 37);
-            this.txtshipmode1.Name = "txtshipmode1";
-            this.txtshipmode1.Size = new System.Drawing.Size(121, 24);
-            this.txtshipmode1.TabIndex = 2;
-            this.txtshipmode1.UseFunction = "ORDER";
-            this.txtshipmode1.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
+            this.btnCartonDimension.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCartonDimension.Location = new System.Drawing.Point(742, 47);
+            this.btnCartonDimension.Name = "btnCartonDimension";
+            this.btnCartonDimension.Size = new System.Drawing.Size(143, 30);
+            this.btnCartonDimension.TabIndex = 6;
+            this.btnCartonDimension.Text = "Carton Dimension";
+            this.btnCartonDimension.UseVisualStyleBackColor = true;
+            this.btnCartonDimension.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label14
+            // btnSwitchToPackingList
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(221, 11);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(51, 23);
-            this.label14.TabIndex = 27;
-            this.label14.Text = "Factory";
+            this.btnSwitchToPackingList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnSwitchToPackingList.Location = new System.Drawing.Point(726, 171);
+            this.btnSwitchToPackingList.Name = "btnSwitchToPackingList";
+            this.btnSwitchToPackingList.Size = new System.Drawing.Size(160, 30);
+            this.btnSwitchToPackingList.TabIndex = 7;
+            this.btnSwitchToPackingList.Text = "Switch to Packing list";
+            this.btnSwitchToPackingList.UseVisualStyleBackColor = true;
+            this.btnSwitchToPackingList.Click += new System.EventHandler(this.button3_Click);
             // 
-            // displayBox5
+            // txtshipmode
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(276, 11);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(63, 23);
-            this.displayBox5.TabIndex = 28;
+            this.txtshipmode.BackColor = System.Drawing.Color.White;
+            this.txtshipmode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtshipmode.FormattingEnabled = true;
+            this.txtshipmode.IsSupportUnselect = true;
+            this.txtshipmode.Location = new System.Drawing.Point(483, 37);
+            this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.Size = new System.Drawing.Size(121, 24);
+            this.txtshipmode.TabIndex = 2;
+            this.txtshipmode.UseFunction = "ORDER";
+            this.txtshipmode.SelectionChangeCommitted += new System.EventHandler(this.txtshipmode1_SelectionChangeCommitted);
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(221, 11);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(51, 23);
+            this.labelFactory.TabIndex = 27;
+            this.labelFactory.Text = "Factory";
+            // 
+            // displayFactory
+            // 
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(276, 11);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(63, 23);
+            this.displayFactory.TabIndex = 28;
             // 
             // P02
             // 
@@ -596,36 +596,36 @@
 
         #endregion
 
-        private Class.txtshipmode txtshipmode1;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.Label label13;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label7;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.Label label14;
+        private Class.txtshipmode txtshipmode;
+        private Win.UI.Button btnSwitchToPackingList;
+        private Win.UI.Button btnCartonDimension;
+        private Win.UI.Button btnSpecialInstruction;
+        private Win.UI.NumericBox numTotalShipQty;
+        private Win.UI.Label labelTotalShipQty;
+        private Win.UI.NumericBox numTotalCartons;
+        private Win.UI.NumericBox numStartCtn;
+        private Win.UI.ComboBox comboPackingMethod;
+        private Win.UI.DisplayBox displayPONo;
+        private Win.UI.Label labelTotalCartons;
+        private Win.UI.Label labelStartCtn;
+        private Win.UI.Label labelPackingMethod;
+        private Win.UI.Label labelShippingMode;
+        private Win.UI.Label labelPONo;
+        private Win.UI.TextBox txtSeq;
+        private Win.UI.Label labelSeq;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.NumericBox numOrderQty;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelOrderQty;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelID;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelFactory;
     }
 }

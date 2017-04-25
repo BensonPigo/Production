@@ -360,12 +360,12 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
         protected override void OnDetailEntered()
         {
             DataRow dr;
-            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true  ;
+            labelConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"].ToString()) ? false : true  ;
 
             string sqlStatus = string.Format(@"select status from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["ID"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
-                labConfirmed.Text = dr["Status"].ToString();
+                labelConfirmed.Text = dr["Status"].ToString();
             }
             base.OnDetailEntered();
 
@@ -511,7 +511,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ")))
                 {
                     MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
-                    dateBox1.Focus();
+                    datePullOutDate.Focus();
                     return false;
                 }
 
@@ -521,7 +521,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                     if (dr["Status"].ToString() != "New")
                     {
                         MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
-                        dateBox1.Focus();
+                        datePullOutDate.Focus();
                         return false;
                     }
                 }
@@ -530,14 +530,14 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
-                txtshipmode1.Focus();
+                txtshipmode.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }           
 
@@ -701,7 +701,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
-                numericBox2.Focus();
+                numTtlCBM.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -726,14 +726,14 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
         //Pull-out Date Validating()
         private void dateBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(dateBox1.Value) && dateBox1.Value != dateBox1.OldValue)
+            if (!MyUtility.Check.Empty(datePullOutDate.Value) && datePullOutDate.Value != datePullOutDate.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(dateBox1.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
+                if (MyUtility.Check.Seek(string.Format("select ID,status from Pullout WITH (NOLOCK) where PulloutDate = '{0}' and MDivisionID = '{1}'", Convert.ToDateTime(datePullOutDate.Value.ToString()).ToString("d"), Sci.Env.User.Keyword), out dr))
                 {
                     if (dr["Status"].ToString() != "New")
                     {
                         MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
-                        dateBox1.Value = null;
+                        datePullOutDate.Value = null;
                         e.Cancel = true;
                         return;
                     }

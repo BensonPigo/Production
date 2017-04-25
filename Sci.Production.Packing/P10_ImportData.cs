@@ -30,10 +30,10 @@ namespace Sci.Production.Packing
 
         protected override void OnFormLoaded()
         {
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridDetail.IsEditingReadOnly = false;
+            this.gridDetail.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -50,7 +50,7 @@ namespace Sci.Production.Packing
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text))
+            if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtPO.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -65,17 +65,17 @@ namespace Sci.Production.Packing
                                                          and ((b.ClogReturnId = '' and TransferToClogId = '') or b.ClogReturnId != '') 
                                                          and c.Dest = d.ID 
                                                          and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                sqlCmd.Append(string.Format(" and a.OrderID = '{0}'", this.textBox1.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and a.OrderID = '{0}'", this.txtSP.Text.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.txtPO.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.textBox2.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPO.Text.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.textBox3.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
 
             DataTable selectDataTable;
@@ -94,7 +94,7 @@ namespace Sci.Production.Packing
         private void button3_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
-            this.grid1.ValidateControl();
+            this.gridDetail.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] selectedData = dt.Select("Selected = 1");

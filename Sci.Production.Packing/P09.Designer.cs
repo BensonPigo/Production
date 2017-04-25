@@ -33,49 +33,49 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
-            this.label13 = new Sci.Win.UI.Label();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.displayPONo = new Sci.Win.UI.DisplayBox();
+            this.displayOrder = new Sci.Win.UI.DisplayBox();
+            this.labelPONo = new Sci.Win.UI.Label();
+            this.labelOrder = new Sci.Win.UI.Label();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.labelM = new Sci.Win.UI.Label();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.labelOrderQty = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.displayBuyer = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.labelBuyer = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel7 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label11 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.btnStartToScan = new Sci.Win.UI.Button();
+            this.btnUncomplete = new Sci.Win.UI.Button();
+            this.txtQuickSelectCTN = new Sci.Win.UI.TextBox();
+            this.labelQuickSelectCTN = new Sci.Win.UI.Label();
+            this.comboPackingNoFilter = new Sci.Win.UI.ComboBox();
+            this.labelPackingNoFilter = new Sci.Win.UI.Label();
+            this.checkOnlyNotYetScanComplete = new Sci.Win.UI.CheckBox();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel6.SuspendLayout();
             this.SuspendLayout();
@@ -98,265 +98,265 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.displayBox8);
-            this.panel3.Controls.Add(this.label13);
-            this.panel3.Controls.Add(this.displayBox7);
-            this.panel3.Controls.Add(this.displayBox6);
-            this.panel3.Controls.Add(this.label10);
-            this.panel3.Controls.Add(this.label9);
-            this.panel3.Controls.Add(this.displayBox5);
-            this.panel3.Controls.Add(this.label8);
-            this.panel3.Controls.Add(this.numericBox1);
-            this.panel3.Controls.Add(this.txtcountry1);
-            this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.displayBox4);
-            this.panel3.Controls.Add(this.displayBox3);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.displayBox2);
-            this.panel3.Controls.Add(this.displayBox1);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.displayFactory);
+            this.panel3.Controls.Add(this.labelFactory);
+            this.panel3.Controls.Add(this.displayPONo);
+            this.panel3.Controls.Add(this.displayOrder);
+            this.panel3.Controls.Add(this.labelPONo);
+            this.panel3.Controls.Add(this.labelOrder);
+            this.panel3.Controls.Add(this.displayM);
+            this.panel3.Controls.Add(this.labelM);
+            this.panel3.Controls.Add(this.numOrderQty);
+            this.panel3.Controls.Add(this.txtcountryDestination);
+            this.panel3.Controls.Add(this.labelOrderQty);
+            this.panel3.Controls.Add(this.labelDestination);
+            this.panel3.Controls.Add(this.displayBuyer);
+            this.panel3.Controls.Add(this.displayBrand);
+            this.panel3.Controls.Add(this.labelBuyer);
+            this.panel3.Controls.Add(this.labelBrand);
+            this.panel3.Controls.Add(this.displaySeason);
+            this.panel3.Controls.Add(this.displayStyle);
+            this.panel3.Controls.Add(this.txtSP);
+            this.panel3.Controls.Add(this.labelSeason);
+            this.panel3.Controls.Add(this.labelStyle);
+            this.panel3.Controls.Add(this.labelSP);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(950, 90);
             this.panel3.TabIndex = 3;
             // 
-            // displayBox8
+            // displayFactory
             // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(436, 9);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(64, 23);
-            this.displayBox8.TabIndex = 21;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(436, 9);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(64, 23);
+            this.displayFactory.TabIndex = 21;
             // 
-            // label13
+            // labelFactory
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(358, 9);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 23);
-            this.label13.TabIndex = 20;
-            this.label13.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(358, 9);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.TabIndex = 20;
+            this.labelFactory.Text = "Factory";
             // 
-            // displayBox7
+            // displayPONo
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(746, 63);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(188, 23);
-            this.displayBox7.TabIndex = 19;
+            this.displayPONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPONo.Location = new System.Drawing.Point(746, 63);
+            this.displayPONo.Name = "displayPONo";
+            this.displayPONo.Size = new System.Drawing.Size(188, 23);
+            this.displayPONo.TabIndex = 19;
             // 
-            // displayBox6
+            // displayOrder
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(746, 36);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(139, 23);
-            this.displayBox6.TabIndex = 18;
+            this.displayOrder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayOrder.Location = new System.Drawing.Point(746, 36);
+            this.displayOrder.Name = "displayOrder";
+            this.displayOrder.Size = new System.Drawing.Size(139, 23);
+            this.displayOrder.TabIndex = 18;
             // 
-            // label10
+            // labelPONo
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(685, 63);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(57, 23);
-            this.label10.TabIndex = 17;
-            this.label10.Text = "P.O. No.";
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(685, 63);
+            this.labelPONo.Name = "labelPONo";
+            this.labelPONo.Size = new System.Drawing.Size(57, 23);
+            this.labelPONo.TabIndex = 17;
+            this.labelPONo.Text = "P.O. No.";
             // 
-            // label9
+            // labelOrder
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(685, 36);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(57, 23);
-            this.label9.TabIndex = 16;
-            this.label9.Text = "Order#";
+            this.labelOrder.Lines = 0;
+            this.labelOrder.Location = new System.Drawing.Point(685, 36);
+            this.labelOrder.Name = "labelOrder";
+            this.labelOrder.Size = new System.Drawing.Size(57, 23);
+            this.labelOrder.TabIndex = 16;
+            this.labelOrder.Text = "Order#";
             // 
-            // displayBox5
+            // displayM
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(257, 9);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(64, 23);
-            this.displayBox5.TabIndex = 15;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(257, 9);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(64, 23);
+            this.displayM.TabIndex = 15;
             // 
-            // label8
+            // labelM
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(211, 9);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(42, 23);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(211, 9);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(42, 23);
+            this.labelM.TabIndex = 14;
+            this.labelM.Text = "M";
             // 
-            // numericBox1
+            // numOrderQty
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(437, 63);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(437, 63);
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(64, 23);
-            this.numericBox1.TabIndex = 13;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(64, 23);
+            this.numOrderQty.TabIndex = 13;
+            this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // txtcountry1
+            // txtcountryDestination
             // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(437, 36);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 12;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(437, 36);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 12;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
-            // label7
+            // labelOrderQty
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(358, 63);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Order Qty";
+            this.labelOrderQty.Lines = 0;
+            this.labelOrderQty.Location = new System.Drawing.Point(358, 63);
+            this.labelOrderQty.Name = "labelOrderQty";
+            this.labelOrderQty.Size = new System.Drawing.Size(75, 23);
+            this.labelOrderQty.TabIndex = 11;
+            this.labelOrderQty.Text = "Order Qty";
             // 
-            // label6
+            // labelDestination
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(358, 36);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(358, 36);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(75, 23);
+            this.labelDestination.TabIndex = 10;
+            this.labelDestination.Text = "Destination";
             // 
-            // displayBox4
+            // displayBuyer
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(257, 63);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(80, 23);
-            this.displayBox4.TabIndex = 9;
+            this.displayBuyer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBuyer.Location = new System.Drawing.Point(257, 63);
+            this.displayBuyer.Name = "displayBuyer";
+            this.displayBuyer.Size = new System.Drawing.Size(80, 23);
+            this.displayBuyer.TabIndex = 9;
             // 
-            // displayBox3
+            // displayBrand
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(257, 36);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(80, 23);
-            this.displayBox3.TabIndex = 8;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(257, 36);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(80, 23);
+            this.displayBrand.TabIndex = 8;
             // 
-            // label5
+            // labelBuyer
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(211, 63);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(42, 23);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Buyer";
+            this.labelBuyer.Lines = 0;
+            this.labelBuyer.Location = new System.Drawing.Point(211, 63);
+            this.labelBuyer.Name = "labelBuyer";
+            this.labelBuyer.Size = new System.Drawing.Size(42, 23);
+            this.labelBuyer.TabIndex = 7;
+            this.labelBuyer.Text = "Buyer";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(211, 36);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(42, 23);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(211, 36);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(42, 23);
+            this.labelBrand.TabIndex = 6;
+            this.labelBrand.Text = "Brand";
             // 
-            // displayBox2
+            // displaySeason
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(59, 63);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(74, 23);
-            this.displayBox2.TabIndex = 5;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(59, 63);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(74, 23);
+            this.displaySeason.TabIndex = 5;
             // 
-            // displayBox1
+            // displayStyle
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(59, 36);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(133, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(59, 36);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(133, 23);
+            this.displayStyle.TabIndex = 4;
             // 
-            // textBox1
+            // txtSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(59, 9);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(59, 9);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(130, 23);
+            this.txtSP.TabIndex = 3;
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(3, 63);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(52, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(3, 63);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(52, 23);
+            this.labelSeason.TabIndex = 2;
+            this.labelSeason.Text = "Season";
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(3, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(3, 36);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(52, 23);
+            this.labelStyle.TabIndex = 1;
+            this.labelStyle.Text = "Style";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(3, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(3, 9);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(52, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 504);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(950, 42);
             this.panel4.TabIndex = 4;
             // 
-            // button3
+            // btnClose
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(866, 6);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "Close";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(866, 6);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel5
             // 
@@ -370,29 +370,29 @@
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.grid1);
+            this.panel7.Controls.Add(this.gridDetail);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 42);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(950, 372);
             this.panel7.TabIndex = 1;
             // 
-            // grid1
+            // gridDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Name = "gridDetail";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -400,26 +400,26 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(950, 372);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
-            this.grid1.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridDetail.RowHeadersVisible = false;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.Size = new System.Drawing.Size(950, 372);
+            this.gridDetail.TabIndex = 0;
+            this.gridDetail.TabStop = false;
+            this.gridDetail.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.button2);
-            this.panel6.Controls.Add(this.button1);
-            this.panel6.Controls.Add(this.textBox2);
-            this.panel6.Controls.Add(this.label12);
-            this.panel6.Controls.Add(this.comboBox1);
-            this.panel6.Controls.Add(this.label11);
-            this.panel6.Controls.Add(this.checkBox1);
+            this.panel6.Controls.Add(this.btnStartToScan);
+            this.panel6.Controls.Add(this.btnUncomplete);
+            this.panel6.Controls.Add(this.txtQuickSelectCTN);
+            this.panel6.Controls.Add(this.labelQuickSelectCTN);
+            this.panel6.Controls.Add(this.comboPackingNoFilter);
+            this.panel6.Controls.Add(this.labelPackingNoFilter);
+            this.panel6.Controls.Add(this.checkOnlyNotYetScanComplete);
             this.panel6.Controls.Add(this.shapeContainer1);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(0, 0);
@@ -427,77 +427,77 @@
             this.panel6.Size = new System.Drawing.Size(950, 42);
             this.panel6.TabIndex = 0;
             // 
-            // button2
+            // btnStartToScan
             // 
-            this.button2.Location = new System.Drawing.Point(831, 8);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 30);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Start to Scan";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnStartToScan.Location = new System.Drawing.Point(831, 8);
+            this.btnStartToScan.Name = "btnStartToScan";
+            this.btnStartToScan.Size = new System.Drawing.Size(113, 30);
+            this.btnStartToScan.TabIndex = 6;
+            this.btnStartToScan.Text = "Start to Scan";
+            this.btnStartToScan.UseVisualStyleBackColor = true;
+            this.btnStartToScan.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnUncomplete
             // 
-            this.button1.Location = new System.Drawing.Point(720, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Uncomplete";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnUncomplete.Location = new System.Drawing.Point(720, 8);
+            this.btnUncomplete.Name = "btnUncomplete";
+            this.btnUncomplete.Size = new System.Drawing.Size(104, 30);
+            this.btnUncomplete.TabIndex = 5;
+            this.btnUncomplete.Text = "Uncomplete";
+            this.btnUncomplete.UseVisualStyleBackColor = true;
+            this.btnUncomplete.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox2
+            // txtQuickSelectCTN
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(611, 11);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(65, 23);
-            this.textBox2.TabIndex = 4;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.txtQuickSelectCTN.BackColor = System.Drawing.Color.White;
+            this.txtQuickSelectCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtQuickSelectCTN.Location = new System.Drawing.Point(611, 11);
+            this.txtQuickSelectCTN.Name = "txtQuickSelectCTN";
+            this.txtQuickSelectCTN.Size = new System.Drawing.Size(65, 23);
+            this.txtQuickSelectCTN.TabIndex = 4;
+            this.txtQuickSelectCTN.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
-            // label12
+            // labelQuickSelectCTN
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(484, 11);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(123, 23);
-            this.label12.TabIndex = 3;
-            this.label12.Text = "Quick Select CTN#";
+            this.labelQuickSelectCTN.Lines = 0;
+            this.labelQuickSelectCTN.Location = new System.Drawing.Point(484, 11);
+            this.labelQuickSelectCTN.Name = "labelQuickSelectCTN";
+            this.labelQuickSelectCTN.Size = new System.Drawing.Size(123, 23);
+            this.labelQuickSelectCTN.TabIndex = 3;
+            this.labelQuickSelectCTN.Text = "Quick Select CTN#";
             // 
-            // comboBox1
+            // comboPackingNoFilter
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(323, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(136, 24);
-            this.comboBox1.TabIndex = 2;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboPackingNoFilter.BackColor = System.Drawing.Color.White;
+            this.comboPackingNoFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPackingNoFilter.FormattingEnabled = true;
+            this.comboPackingNoFilter.IsSupportUnselect = true;
+            this.comboPackingNoFilter.Location = new System.Drawing.Point(323, 11);
+            this.comboPackingNoFilter.Name = "comboPackingNoFilter";
+            this.comboPackingNoFilter.Size = new System.Drawing.Size(136, 24);
+            this.comboPackingNoFilter.TabIndex = 2;
+            this.comboPackingNoFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // label11
+            // labelPackingNoFilter
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(211, 11);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(108, 23);
-            this.label11.TabIndex = 1;
-            this.label11.Text = "Packing No Filter";
+            this.labelPackingNoFilter.Lines = 0;
+            this.labelPackingNoFilter.Location = new System.Drawing.Point(211, 11);
+            this.labelPackingNoFilter.Name = "labelPackingNoFilter";
+            this.labelPackingNoFilter.Size = new System.Drawing.Size(108, 23);
+            this.labelPackingNoFilter.TabIndex = 1;
+            this.labelPackingNoFilter.Text = "Packing No Filter";
             // 
-            // checkBox1
+            // checkOnlyNotYetScanComplete
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(3, 11);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(198, 21);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Only not yet scan complete";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkOnlyNotYetScanComplete.AutoSize = true;
+            this.checkOnlyNotYetScanComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOnlyNotYetScanComplete.Location = new System.Drawing.Point(3, 11);
+            this.checkOnlyNotYetScanComplete.Name = "checkOnlyNotYetScanComplete";
+            this.checkOnlyNotYetScanComplete.Size = new System.Drawing.Size(198, 21);
+            this.checkOnlyNotYetScanComplete.TabIndex = 0;
+            this.checkOnlyNotYetScanComplete.Text = "Only not yet scan complete";
+            this.checkOnlyNotYetScanComplete.UseVisualStyleBackColor = true;
+            this.checkOnlyNotYetScanComplete.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // shapeContainer1
             // 
@@ -539,7 +539,7 @@
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
@@ -552,42 +552,42 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.DisplayBox displayBox8;
-        private Win.UI.Label label13;
-        private Win.UI.DisplayBox displayBox7;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.Label label8;
-        private Win.UI.NumericBox numericBox1;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.Label labelFactory;
+        private Win.UI.DisplayBox displayPONo;
+        private Win.UI.DisplayBox displayOrder;
+        private Win.UI.Label labelPONo;
+        private Win.UI.Label labelOrder;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.Label labelM;
+        private Win.UI.NumericBox numOrderQty;
+        private Class.txtcountry txtcountryDestination;
+        private Win.UI.Label labelOrderQty;
+        private Win.UI.Label labelDestination;
+        private Win.UI.DisplayBox displayBuyer;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.Label labelBuyer;
+        private Win.UI.Label labelBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSP;
         private Win.UI.Panel panel4;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnClose;
         private Win.UI.Panel panel5;
         private Win.UI.Panel panel7;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel6;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label12;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label11;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Button btnStartToScan;
+        private Win.UI.Button btnUncomplete;
+        private Win.UI.TextBox txtQuickSelectCTN;
+        private Win.UI.Label labelQuickSelectCTN;
+        private Win.UI.ComboBox comboPackingNoFilter;
+        private Win.UI.Label labelPackingNoFilter;
+        private Win.UI.CheckBox checkOnlyNotYetScanComplete;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
     }

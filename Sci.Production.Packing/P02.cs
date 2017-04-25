@@ -50,9 +50,9 @@ namespace Sci.Production.Packing
             comboBox1_RowSource.Add("3", "ASSORTED COLOR/SOLID SIZE");
             comboBox1_RowSource.Add("4", "ASSORTED COLOR/SIZE");
             comboBox1_RowSource.Add("5", "OTHER");
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboPackingMethod.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboPackingMethod.ValueMember = "Key";
+            comboPackingMethod.DisplayMember = "Value";
         }
 
         protected override void OnDetailEntered()
@@ -63,52 +63,52 @@ namespace Sci.Production.Packing
             sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Qty,CtnType from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             if (MyUtility.Check.Seek(sqlCmd, out orderData))
             {
-                displayBox2.Value = orderData["StyleID"].ToString();
-                displayBox3.Value = orderData["SeasonID"].ToString();
-                displayBox4.Value = orderData["CustPONo"].ToString();
-                numericBox1.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
+                displayStyle.Value = orderData["StyleID"].ToString();
+                displaySeason.Value = orderData["SeasonID"].ToString();
+                displayPONo.Value = orderData["CustPONo"].ToString();
+                numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
                 orderQty = MyUtility.Convert.GetInt(orderData["Qty"]);
-                comboBox1.SelectedValue = orderData["CtnType"].ToString();
+                comboPackingMethod.SelectedValue = orderData["CtnType"].ToString();
                 printPackMethod = orderData["CtnType"].ToString();            
             }
             else
             {
-                displayBox2.Value = "";
-                displayBox3.Value = "";
-                displayBox4.Value = "";
-                numericBox1.Value = 0;
-                comboBox1.SelectedValue = "";
-                numericBox4.Value = 0;
+                displayStyle.Value = "";
+                displaySeason.Value = "";
+                displayPONo.Value = "";
+                numOrderQty.Value = 0;
+                comboPackingMethod.SelectedValue = "";
+                numTotalShipQty.Value = 0;
                 orderQty = 0;
                 ttlShipQty = 0;
                 printPackMethod = "";
             }
             sqlCmd = string.Format("select isnull(SUM(ShipQty),0) from PackingGuide_Detail WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
-            numericBox4.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
-            ttlShipQty = MyUtility.Convert.GetInt(numericBox4.Value);    
+            numTotalShipQty.Value = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
+            ttlShipQty = MyUtility.Convert.GetInt(numTotalShipQty.Value);    
 
             //Special Instruction按鈕變色
             if (MyUtility.Check.Empty(CurrentMaintain["SpecialInstruction"].ToString()))
             {
-                this.button1.ForeColor = Color.Black;
+                this.btnSpecialInstruction.ForeColor = Color.Black;
             }
             else
             {
-                this.button1.ForeColor = Color.Blue;
+                this.btnSpecialInstruction.ForeColor = Color.Blue;
             }
 
             //Carton Dimension按鈕變色
             if (MyUtility.Check.Seek(CurrentMaintain["OrderID"].ToString(), "Order_CTNData", "ID"))
             {
-                this.button2.ForeColor = Color.Blue;
+                this.btnCartonDimension.ForeColor = Color.Blue;
             }
             else
             {
-                this.button2.ForeColor = Color.Black;
+                this.btnCartonDimension.ForeColor = Color.Black;
             }
 
             //Switch to Packing list是否有權限使用
-            this.button3.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
+            this.btnSwitchToPackingList.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
         }
 
         protected override void OnDetailGridSetup()
@@ -225,12 +225,12 @@ namespace Sci.Production.Packing
 
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             CurrentMaintain["CTNStartNo"] = 1;
-            displayBox2.Value = "";
-            displayBox3.Value = "";
-            displayBox4.Value = "";
-            numericBox1.Value = 0;
-            numericBox4.Value = 0;
-            comboBox1.SelectedValue = "";
+            displayStyle.Value = "";
+            displaySeason.Value = "";
+            displayPONo.Value = "";
+            numOrderQty.Value = 0;
+            numTotalShipQty.Value = 0;
+            comboPackingMethod.SelectedValue = "";
         }
 
         protected override void ClickEditAfter()
@@ -244,21 +244,21 @@ namespace Sci.Production.Packing
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
                 MyUtility.Msg.WarningBox("< SP No. > can not be empty!");
-                this.textBox1.Focus();
+                this.txtSPNo.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
                 MyUtility.Msg.WarningBox("< Seq > can not be empty!");
-                this.textBox2.Focus();
+                this.txtSeq.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("< Shipping Mode > can not be empty!");
-                this.txtshipmode1.Focus();
+                this.txtshipmode.Focus();
                 return false;
             }
 
@@ -302,7 +302,7 @@ namespace Sci.Production.Packing
             double ctn, ttlCBM = 0.0;
             string cbm;
 
-            if (comboBox1.SelectedValue.ToString().EqualString("2"))
+            if (comboPackingMethod.SelectedValue.ToString().EqualString("2"))
             {
                 DataTable groupData;
                 DualResult result;
@@ -666,7 +666,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
         private void ControlGridColumn()
         {
             //當Packing Method為SOLID COLOR/ASSORTED SIZE (Order.CTNType = ‘2’)時，欄位Qty/Ctn不可被修改
-            if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() == "2")
+            if (comboPackingMethod.SelectedIndex != -1 && comboPackingMethod.SelectedValue.ToString() == "2")
             {
                 col_qtyperctn.IsEditingReadOnly = true;
                 detailgrid.Columns[5].DefaultCellStyle.ForeColor = Color.Black;
@@ -683,14 +683,14 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
         {
             if (EditMode)
             {
-                if (textBox1.Text != textBox1.OldValue)
+                if (txtSPNo.Text != txtSPNo.OldValue)
                 {
                     bool returnData = false;
                     #region 檢查輸入的值是否符合條件
-                    if (!MyUtility.Check.Empty(textBox1.Text))
+                    if (!MyUtility.Check.Empty(txtSPNo.Text))
                     {
                         DataRow orderData;
-                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders WITH (NOLOCK) where ID = '{0}' and MDivisionID = '{1}'", textBox1.Text, Sci.Env.User.Keyword);
+                        string sqlCmd = string.Format("select Category, LocalOrder, IsForecast from Orders WITH (NOLOCK) where ID = '{0}' and MDivisionID = '{1}'", txtSPNo.Text, Sci.Env.User.Keyword);
                         if (MyUtility.Check.Seek(sqlCmd, out orderData))
                         {
                             string msg = "";
@@ -726,10 +726,10 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             }
                             if (returnData)
                             {
-                                MyUtility.Msg.WarningBox("SP#:" + textBox1.Text + msg);
+                                MyUtility.Msg.WarningBox("SP#:" + txtSPNo.Text + msg);
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
-                                textBox1.Text = "";
+                                txtSPNo.Text = "";
                             }
                         }
                         else
@@ -738,7 +738,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
-                            textBox1.Text = "";
+                            txtSPNo.Text = "";
                         }
                     }
                     #endregion
@@ -754,13 +754,13 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
         // SP#輸入完成後要帶入其他欄位值
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (textBox1.OldValue == textBox1.Text)
+            if (txtSPNo.OldValue == txtSPNo.Text)
             {
                 return;
             }
 
             //OrderID異動，其他相關欄位要跟著異動
-            ChangeOtherData(textBox1.Text);
+            ChangeOtherData(txtSPNo.Text);
         }
 
         //OrderID異動，其他相關欄位要跟著異動
@@ -780,12 +780,12 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["ShipModeID"] = "";
                 CurrentMaintain["FactoryID"] = "";
-                displayBox2.Value = "";
-                displayBox3.Value = "";
-                displayBox4.Value = "";
-                numericBox1.Value = 0;
-                numericBox4.Value = 0;
-                comboBox1.SelectedValue = "";
+                displayStyle.Value = "";
+                displaySeason.Value = "";
+                displayPONo.Value = "";
+                numOrderQty.Value = 0;
+                numTotalShipQty.Value = 0;
+                comboPackingMethod.SelectedValue = "";
             }
             else
             {
@@ -795,11 +795,11 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
                     //帶出相關欄位的資料
-                    displayBox2.Value = orderData["StyleID"].ToString();
-                    displayBox3.Value = orderData["SeasonID"].ToString();
-                    displayBox4.Value = orderData["CustPONo"].ToString();
-                    numericBox1.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
-                    comboBox1.SelectedValue = orderData["CtnType"].ToString();
+                    displayStyle.Value = orderData["StyleID"].ToString();
+                    displaySeason.Value = orderData["SeasonID"].ToString();
+                    displayPONo.Value = orderData["CustPONo"].ToString();
+                    numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
+                    comboPackingMethod.SelectedValue = orderData["CtnType"].ToString();
                     CurrentMaintain["SpecialInstruction"] = orderData["Packing"].ToString();
                     CurrentMaintain["FactoryID"] = orderData["FtyGroup"].ToString();
 
@@ -815,7 +815,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             {
                                 CurrentMaintain["OrderShipmodeSeq"] = orderData["Seq"].ToString();
                                 CurrentMaintain["ShipModeID"] = orderData["ShipModeID"].ToString();
-                                numericBox4.Value = orderQty;
+                                numTotalShipQty.Value = orderQty;
                             }
                         }
                         else
@@ -828,14 +828,14 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                             {
                                 CurrentMaintain["OrderShipmodeSeq"] =   "";
                                 CurrentMaintain["ShipModeID"] = "";
-                                numericBox4.Value = 0;
+                                numTotalShipQty.Value = 0;
                             }
                             else
                             {
                                 orderQtyShipData = item.GetSelecteds();
                                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                                 CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
-                                numericBox4.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"].ToString());
+                                numTotalShipQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"].ToString());
                             }
                         }
                     }
@@ -858,7 +858,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(seq))
             {
                 string sqlCmd;
-                if (comboBox1.SelectedValue.ToString() == "2")
+                if (comboPackingMethod.SelectedValue.ToString() == "2")
                 {
                     sqlCmd = string.Format("select * from Order_QtyCTN WITH (NOLOCK) where Id = '{0}'", orderID);
                     if (!MyUtility.Check.Seek(sqlCmd))
@@ -926,14 +926,14 @@ order by oa.Seq,os.Seq", orderID, seq);
             {
                 CurrentMaintain["OrderShipmodeSeq"] = "";
                 CurrentMaintain["ShipModeID"] = "";
-                numericBox4.Value = 0;
+                numTotalShipQty.Value = 0;
             }
             else
             {
                 orderQtyShipData = item.GetSelecteds();
                 CurrentMaintain["OrderShipmodeSeq"] = item.GetSelectedString();
                 CurrentMaintain["ShipModeID"] = orderQtyShipData[0]["ShipmodeID"].ToString();
-                numericBox4.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
+                numTotalShipQty.Value = MyUtility.Convert.GetInt(orderQtyShipData[0]["Qty"]);
             }
             //產生表身Grid的資料
             GenDetailData(CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString());
@@ -999,7 +999,7 @@ order by oa.Seq,os.Seq", orderID, seq);
 
             #region 組Insert SQL
             string insertCmd;
-            if (comboBox1.SelectedIndex != -1 && comboBox1.SelectedValue.ToString() == "2")
+            if (comboPackingMethod.SelectedIndex != -1 && comboPackingMethod.SelectedValue.ToString() == "2")
             {
                 #region 單色混碼
                 insertCmd = string.Format(@"--宣告變數: PackingGuide帶入的參數
@@ -1576,12 +1576,12 @@ ELSE
         //ShipMode
         private void txtshipmode1_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(txtshipmode1.SelectedValue))
+            if (!MyUtility.Check.Empty(txtshipmode.SelectedValue))
             {
                 if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
                 {
                     MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                    txtshipmode1.SelectedValue = "";
+                    txtshipmode.SelectedValue = "";
                 }
                 else
                 {
@@ -1589,16 +1589,16 @@ ELSE
                     DataRow qtyShipData;
                     if (MyUtility.Check.Seek(sqlCmd, out qtyShipData))
                     {
-                        if (qtyShipData["ShipModeID"].ToString() != txtshipmode1.SelectedValue.ToString())
+                        if (qtyShipData["ShipModeID"].ToString() != txtshipmode.SelectedValue.ToString())
                         {
                             MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                            txtshipmode1.SelectedValue = "";
+                            txtshipmode.SelectedValue = "";
                         }
                     }
                     else
                     {
                         MyUtility.Msg.WarningBox("ShipMode is incorrect!");
-                        txtshipmode1.SelectedValue = "";
+                        txtshipmode.SelectedValue = "";
                     }
                 }
             }

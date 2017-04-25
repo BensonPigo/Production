@@ -32,31 +32,31 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.dateRange4 = new Sci.Win.UI.DateRange();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.dateCartonEstArrived = new Sci.Win.UI.DateRange();
+            this.dateCartonEstBooking = new Sci.Win.UI.DateRange();
+            this.labelCartonEstArrived = new Sci.Win.UI.Label();
+            this.labelSewingInlineDate = new Sci.Win.UI.Label();
+            this.txtSPEnd = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtSPStart = new Sci.Win.UI.TextBox();
+            this.dateSewingInlineDate = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelCartonEstBooking = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelSP = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnApprove = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridDetail = new Sci.Win.UI.Grid();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -77,88 +77,88 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.dateRange4);
-            this.panel3.Controls.Add(this.dateRange3);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.textBox2);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.dateCartonEstArrived);
+            this.panel3.Controls.Add(this.dateCartonEstBooking);
+            this.panel3.Controls.Add(this.labelCartonEstArrived);
+            this.panel3.Controls.Add(this.labelSewingInlineDate);
+            this.panel3.Controls.Add(this.txtSPEnd);
             this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.dateRange2);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.txtSPStart);
+            this.panel3.Controls.Add(this.dateSewingInlineDate);
+            this.panel3.Controls.Add(this.dateSCIDelivery);
+            this.panel3.Controls.Add(this.labelCartonEstBooking);
+            this.panel3.Controls.Add(this.labelSCIDelivery);
+            this.panel3.Controls.Add(this.labelSP);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(954, 85);
             this.panel3.TabIndex = 3;
             // 
-            // button2
+            // btnToExcel
             // 
-            this.button2.Location = new System.Drawing.Point(863, 42);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnToExcel.Location = new System.Drawing.Point(863, 42);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 19;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(863, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(863, 5);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 18;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // dateRange4
+            // dateCartonEstArrived
             // 
-            this.dateRange4.IsRequired = false;
-            this.dateRange4.Location = new System.Drawing.Point(522, 58);
-            this.dateRange4.Name = "dateRange4";
-            this.dateRange4.Size = new System.Drawing.Size(280, 23);
-            this.dateRange4.TabIndex = 17;
+            this.dateCartonEstArrived.IsRequired = false;
+            this.dateCartonEstArrived.Location = new System.Drawing.Point(522, 58);
+            this.dateCartonEstArrived.Name = "dateCartonEstArrived";
+            this.dateCartonEstArrived.Size = new System.Drawing.Size(280, 23);
+            this.dateCartonEstArrived.TabIndex = 17;
             // 
-            // dateRange3
+            // dateCartonEstBooking
             // 
-            this.dateRange3.IsRequired = false;
-            this.dateRange3.Location = new System.Drawing.Point(522, 32);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 16;
+            this.dateCartonEstBooking.IsRequired = false;
+            this.dateCartonEstBooking.Location = new System.Drawing.Point(522, 32);
+            this.dateCartonEstBooking.Name = "dateCartonEstBooking";
+            this.dateCartonEstBooking.Size = new System.Drawing.Size(280, 23);
+            this.dateCartonEstBooking.TabIndex = 16;
             // 
-            // label5
+            // labelCartonEstArrived
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(391, 58);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(127, 23);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "Carton Est. Arrived";
+            this.labelCartonEstArrived.Lines = 0;
+            this.labelCartonEstArrived.Location = new System.Drawing.Point(391, 58);
+            this.labelCartonEstArrived.Name = "labelCartonEstArrived";
+            this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 23);
+            this.labelCartonEstArrived.TabIndex = 15;
+            this.labelCartonEstArrived.Text = "Carton Est. Arrived";
             // 
-            // label4
+            // labelSewingInlineDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(391, 5);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(127, 23);
-            this.label4.TabIndex = 14;
-            this.label4.Text = "Sewing Inline Date";
+            this.labelSewingInlineDate.Lines = 0;
+            this.labelSewingInlineDate.Location = new System.Drawing.Point(391, 5);
+            this.labelSewingInlineDate.Name = "labelSewingInlineDate";
+            this.labelSewingInlineDate.Size = new System.Drawing.Size(127, 23);
+            this.labelSewingInlineDate.TabIndex = 14;
+            this.labelSewingInlineDate.Text = "Sewing Inline Date";
             // 
-            // textBox2
+            // txtSPEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(237, 5);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 13;
+            this.txtSPEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPEnd.Location = new System.Drawing.Point(237, 5);
+            this.txtSPEnd.Name = "txtSPEnd";
+            this.txtSPEnd.Size = new System.Drawing.Size(120, 23);
+            this.txtSPEnd.TabIndex = 13;
             // 
             // label6
             // 
@@ -174,128 +174,128 @@
             this.label6.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label6.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // textBox1
+            // txtSPStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(89, 5);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 5;
+            this.txtSPStart.BackColor = System.Drawing.Color.White;
+            this.txtSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPStart.Location = new System.Drawing.Point(89, 5);
+            this.txtSPStart.Name = "txtSPStart";
+            this.txtSPStart.Size = new System.Drawing.Size(120, 23);
+            this.txtSPStart.TabIndex = 5;
             // 
-            // dateRange2
+            // dateSewingInlineDate
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(522, 5);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 4;
+            this.dateSewingInlineDate.IsRequired = false;
+            this.dateSewingInlineDate.Location = new System.Drawing.Point(522, 5);
+            this.dateSewingInlineDate.Name = "dateSewingInlineDate";
+            this.dateSewingInlineDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingInlineDate.TabIndex = 4;
             // 
-            // dateRange1
+            // dateSCIDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(89, 32);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(89, 32);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 3;
             // 
-            // label3
+            // labelCartonEstBooking
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(391, 32);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Carton Est. Booking";
+            this.labelCartonEstBooking.Lines = 0;
+            this.labelCartonEstBooking.Location = new System.Drawing.Point(391, 32);
+            this.labelCartonEstBooking.Name = "labelCartonEstBooking";
+            this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 23);
+            this.labelCartonEstBooking.TabIndex = 2;
+            this.labelCartonEstBooking.Text = "Carton Est. Booking";
             // 
-            // label2
+            // labelSCIDelivery
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(2, 32);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(2, 32);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(82, 23);
+            this.labelSCIDelivery.TabIndex = 1;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(2, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(2, 5);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(82, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button4);
-            this.panel4.Controls.Add(this.button3);
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Controls.Add(this.btnApprove);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 436);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(954, 44);
             this.panel4.TabIndex = 4;
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Location = new System.Drawing.Point(863, 7);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 1;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(863, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button3
+            // btnApprove
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(766, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(91, 30);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "Approve";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApprove.Location = new System.Drawing.Point(766, 7);
+            this.btnApprove.Name = "btnApprove";
+            this.btnApprove.Size = new System.Drawing.Size(91, 30);
+            this.btnApprove.TabIndex = 0;
+            this.btnApprove.Text = "Approve";
+            this.btnApprove.UseVisualStyleBackColor = true;
+            this.btnApprove.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridDetail);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 85);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(954, 351);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(954, 351);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowHeadersVisible = false;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.Size = new System.Drawing.Size(954, 351);
+            this.gridDetail.TabIndex = 0;
+            this.gridDetail.TabStop = false;
             // 
             // P08
             // 
-            this.CancelButton = this.button4;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(964, 480);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -315,7 +315,7 @@
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -325,25 +325,25 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSPStart;
+        private Win.UI.DateRange dateSewingInlineDate;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelCartonEstBooking;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelSP;
         private Win.UI.Panel panel4;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel5;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtSPEnd;
         private Win.UI.Label label6;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.DateRange dateRange4;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
-        private Win.UI.Grid grid1;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnQuery;
+        private Win.UI.DateRange dateCartonEstArrived;
+        private Win.UI.DateRange dateCartonEstBooking;
+        private Win.UI.Label labelCartonEstArrived;
+        private Win.UI.Label labelSewingInlineDate;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnApprove;
+        private Win.UI.Grid gridDetail;
     }
 }

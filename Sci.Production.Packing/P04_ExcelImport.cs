@@ -31,9 +31,9 @@ namespace Sci.Production.Packing
             ExcelFile.Columns.Add("FullFileName", typeof(String));
 
             listControlBindingSource1.DataSource = ExcelFile;
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridAttachFile.DataSource = listControlBindingSource1;
+            gridAttachFile.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridAttachFile)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
                 .Text("Status", header: "Status", width: Widths.AnsiChars(100));
 
@@ -50,9 +50,9 @@ namespace Sci.Production.Packing
             grid2Data.Columns.Add("ErrMsg", typeof(String));
 
             listControlBindingSource2.DataSource = grid2Data;
-            grid2.DataSource = listControlBindingSource2;
-            grid2.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid2)
+            gridDetail.DataSource = listControlBindingSource2;
+            gridDetail.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13))
                 .Date("BuyerDelivery", header: "Buyer Delivery")
                 .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
@@ -62,9 +62,9 @@ namespace Sci.Production.Packing
                 .Numeric("Qty", header: "Qty")
                 .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100));
 
-            for (int i = 0; i < grid2.ColumnCount; i++)
+            for (int i = 0; i < gridDetail.ColumnCount; i++)
             {
-                grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 
@@ -108,7 +108,7 @@ namespace Sci.Production.Packing
             {
                 grid2Data.Clear();
             }
-            grid2.SuspendLayout();
+            gridDetail.SuspendLayout();
             #region 檢查1. Grid中的檔案是否存在，不存在時顯示於status欄位；2. Grid中的檔案都可以正常開啟，無法開啟時顯示於status欄位；3.檢查開啟的excel檔存在必要的欄位，將不存在欄位顯示於status。當檢查都沒問題時，就將資料寫入第2個Grid
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
@@ -214,7 +214,7 @@ namespace Sci.Production.Packing
             }
             #endregion
 
-            grid2.ResumeLayout();
+            gridDetail.ResumeLayout();
         }
 
         //Write in
@@ -246,14 +246,14 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
                     if (MyUtility.Check.Empty(findDR[0]["ID"]))
                     {
                         dr["ErrMsg"] = "< SP No. > is not exist!";
-                        grid2.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                         allPass = false;
                         continue;
                     }
                     if (MyUtility.Convert.GetString(findDR[0]["Category"]) != "S")
                     {
                         dr["ErrMsg"] = "< SP No. > is not Sample!";
-                        grid2.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                         allPass = false;
                         continue;
                     }
@@ -261,7 +261,7 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
                     if (MyUtility.Check.Empty(findDR[0]["oArticle"]) || MyUtility.Check.Empty(findDR[0]["oSizeCode"]))
                     {
                         dr["ErrMsg"] = "< Color Way> or < Size > is not exist to the < SP No. >!";
-                        grid2.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
+                        gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 192, 203);
                         allPass = false;
                         continue;
                     }
@@ -276,12 +276,12 @@ left join Order_QtyShip_Detail oqd WITH (NOLOCK) on oqd.Id = oq.Id and oqd.Seq =
                     insertRow["SizeCode"] = dr["SizeCode"];
                     insertRow["ShipQty"] = dr["Qty"];
                     detailData.Rows.Add(insertRow);
-                    grid2.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
+                    gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 255);
                 }
                 else
                 {
                     dr["ErrMsg"] = "< SP No. > is not exist!";
-                    grid2.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255,192,203);
+                    gridDetail.Rows[count].DefaultCellStyle.BackColor = Color.FromArgb(255,192,203);
                     allPass = false;
                 }
             }

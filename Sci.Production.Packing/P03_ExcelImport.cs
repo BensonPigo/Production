@@ -35,9 +35,9 @@ namespace Sci.Production.Packing
             excelFile.Columns.Add("FullFileName", typeof(String));
 
             listControlBindingSource1.DataSource = excelFile;
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridAttachFile.DataSource = listControlBindingSource1;
+            gridAttachFile.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridAttachFile)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
                 .EditText("Status", header: "Status", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .EditText("Errlog", header: "ErrLog", iseditingreadonly: true, width: Widths.AnsiChars(30));
@@ -64,9 +64,9 @@ namespace Sci.Production.Packing
             grid2Data.Columns.Add("NWPerPcs", typeof(Int32));
 
             listControlBindingSource2.DataSource = grid2Data;
-            grid2.DataSource = listControlBindingSource2;
-            grid2.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid2)
+            gridDetail.DataSource = listControlBindingSource2;
+            gridDetail.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13))
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -86,9 +86,9 @@ namespace Sci.Production.Packing
                 .Numeric("NWPerPcs", header: "N.W./Pcs", integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0);
             #endregion 
 
-            for (int i = 0; i < grid2.ColumnCount; i++)
+            for (int i = 0; i < gridDetail.ColumnCount; i++)
             {
-                grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 
@@ -130,7 +130,7 @@ namespace Sci.Production.Packing
             {
                 grid2Data.Clear();
             }
-            grid2.SuspendLayout();
+            gridDetail.SuspendLayout();
             #endregion
 
             /* 檢查

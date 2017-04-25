@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labelDelivery = new Sci.Win.UI.Label();
+            this.dateDelivery = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -48,83 +48,83 @@
             // 
             this.close.Location = new System.Drawing.Point(401, 84);
             // 
-            // label1
+            // labelDelivery
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(23, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Delivery";
+            this.labelDelivery.Lines = 0;
+            this.labelDelivery.Location = new System.Drawing.Point(23, 22);
+            this.labelDelivery.Name = "labelDelivery";
+            this.labelDelivery.Size = new System.Drawing.Size(80, 23);
+            this.labelDelivery.TabIndex = 94;
+            this.labelDelivery.Text = "Delivery";
             // 
-            // dateRange1
+            // dateDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.IsSupportEditMode = false;
-            this.dateRange1.Location = new System.Drawing.Point(106, 22);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 95;
+            this.dateDelivery.IsRequired = false;
+            this.dateDelivery.IsSupportEditMode = false;
+            this.dateDelivery.Location = new System.Drawing.Point(106, 22);
+            this.dateDelivery.Name = "dateDelivery";
+            this.dateDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateDelivery.TabIndex = 95;
             // 
-            // dateRange2
+            // dateSCIDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.IsSupportEditMode = false;
-            this.dateRange2.Location = new System.Drawing.Point(106, 58);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 97;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.IsSupportEditMode = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(106, 58);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 97;
             // 
-            // label2
+            // labelSCIDelivery
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(23, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 96;
-            this.label2.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(23, 58);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(80, 23);
+            this.labelSCIDelivery.TabIndex = 96;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(23, 94);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 98;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(23, 94);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(80, 23);
+            this.labelBrand.TabIndex = 98;
+            this.labelBrand.Text = "Brand";
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.IsSupportEditMode = false;
-            this.txtbrand1.Location = new System.Drawing.Point(107, 94);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
-            this.txtbrand1.Size = new System.Drawing.Size(85, 23);
-            this.txtbrand1.TabIndex = 99;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtbrand.Location = new System.Drawing.Point(107, 94);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtbrand.Size = new System.Drawing.Size(85, 23);
+            this.txtbrand.TabIndex = 99;
             // 
             // P12_Print
             // 
             this.ClientSize = new System.Drawing.Size(493, 162);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.dateDelivery);
+            this.Controls.Add(this.labelDelivery);
             this.IsSupportToPrint = false;
             this.Name = "P12_Print";
             this.Text = "Print";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.Controls.SetChildIndex(this.labelDelivery, 0);
+            this.Controls.SetChildIndex(this.dateDelivery, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -132,11 +132,11 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Class.txtbrand txtbrand1;
+        private Win.UI.Label labelDelivery;
+        private Win.UI.DateRange dateDelivery;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelBrand;
+        private Class.txtbrand txtbrand;
     }
 }

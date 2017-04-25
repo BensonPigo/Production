@@ -24,21 +24,21 @@ namespace Sci.Production.Packing
             InitializeComponent();
             this.packingListData = packingListData;
             this.detailData = detailData;
-            displayBox1.Value = packingListData["BrandID"].ToString();
-            displayBox2.Value = packingListData["ShipModeID"].ToString();
-            txtcountry1.TextBox1.Text = packingListData["Dest"].ToString();
-            txtcustcd1.Text = packingListData["CustCDID"].ToString();
-            txtcountry1.TextBox1.IsSupportEditMode = false;
-            txtcountry1.TextBox1.ReadOnly = true;
+            displayBrand.Value = packingListData["BrandID"].ToString();
+            displayShipMode.Value = packingListData["ShipModeID"].ToString();
+            txtcountryDestination.TextBox1.Text = packingListData["Dest"].ToString();
+            txtcustcd.Text = packingListData["CustCDID"].ToString();
+            txtcountryDestination.TextBox1.IsSupportEditMode = false;
+            txtcountryDestination.TextBox1.ReadOnly = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridDetail.IsEditingReadOnly = false;
+            this.gridDetail.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("OrderId", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -65,27 +65,27 @@ as
  from Orders WITH (NOLOCK) 
  where Category = 'S'
  and BrandID = @brand");
-            if (!MyUtility.Check.Empty(txtcustcd1.Text))
+            if (!MyUtility.Check.Empty(txtcustcd.Text))
             {
                 sqlCmd.Append("\r\n and CustCDID = @custcd");
             }
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtOrderType.Text))
             {
                 sqlCmd.Append("\r\n and OrderTypeID = @orderType");
             }
-            if (!MyUtility.Check.Empty(txtseason1.Text))
+            if (!MyUtility.Check.Empty(txtseason.Text))
             {
                 sqlCmd.Append("\r\n and SeasonID = @season");
             }
-            if (!MyUtility.Check.Empty(txtdropdownlist1.SelectedValue))
+            if (!MyUtility.Check.Empty(txtdropdownlistBuyMonth.SelectedValue))
             {
                 sqlCmd.Append("\r\n and BuyMonth = @buyMonth");
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
                 sqlCmd.Append("\r\n and BuyerDelivery >= @buyerDelivery1");
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
                 sqlCmd.Append("\r\n and BuyerDelivery <= @buyerDelivery2");
             }
@@ -97,11 +97,11 @@ from OrderData o, Order_QtyShip oqs WITH (NOLOCK) , Order_QtyShip_Detail oqsd WI
 where oqs.Id = o.OrderID
 and oqs.Id = oqsd.Id
 and oqs.Seq = oqsd.Seq");
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
                 sqlCmd.Append("\r\n and oqs.BuyerDelivery >= @buyerDelivery1");
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateBuyerDelivery.Value2))
             {
                 sqlCmd.Append("\r\n and oqs.BuyerDelivery <= @buyerDelivery2");
             }
@@ -126,19 +126,19 @@ select 0 as Selected,pd.OrderID,pd.StyleID,pd.SeasonID,pd.CustCDID,pd.SeasonID,p
 from PackData pd
 left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Article");
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBox1.Value);
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", txtcustcd1.Text);
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", textBox1.Text);
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", txtseason1.Text);
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBrand.Value);
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", txtcustcd.Text);
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", txtOrderType.Text);
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", txtseason.Text);
             System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
             sp5.ParameterName = "@buyMonth";
-            sp5.Value = !MyUtility.Check.Empty(txtdropdownlist1.SelectedValue) ? txtdropdownlist1.SelectedValue : "";
+            sp5.Value = !MyUtility.Check.Empty(txtdropdownlistBuyMonth.SelectedValue) ? txtdropdownlistBuyMonth.SelectedValue : "";
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@buyerDelivery1";
-            sp6.Value = !MyUtility.Check.Empty(dateRange1.Value1) ? dateRange1.Value1 : DateTime.Now;
+            sp6.Value = !MyUtility.Check.Empty(dateBuyerDelivery.Value1) ? dateBuyerDelivery.Value1 : DateTime.Now;
             sp7.ParameterName = "@buyerDelivery2";
-            sp7.Value = !MyUtility.Check.Empty(dateRange1.Value2) ? dateRange1.Value2 : DateTime.Now;
+            sp7.Value = !MyUtility.Check.Empty(dateBuyerDelivery.Value2) ? dateBuyerDelivery.Value2 : DateTime.Now;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -174,14 +174,14 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtOrderType.Text = item.GetSelectedString();
         }
 
         //Find
         private void button2_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("OrderId", textBox2.Text.ToString());
+            int index = listControlBindingSource1.Find("OrderId", txtLocateSPNo.Text.ToString());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -191,7 +191,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         //Import
         private void button3_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridDetail.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
 

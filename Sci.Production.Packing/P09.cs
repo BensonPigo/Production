@@ -20,21 +20,21 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             InitializeComponent();
-            checkBox1.Checked = true;
+            checkOnlyNotYetScanComplete.Checked = true;
             canUnConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P09. Scan && Pack", "CanUnConfirm");
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            txtcountry1.TextBox1.ReadOnly = true;
-            button1.Enabled = false;
-            button2.Enabled = false;
+            txtcountryDestination.TextBox1.ReadOnly = true;
+            btnUncomplete.Enabled = false;
+            btnStartToScan.Enabled = false;
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15))
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(8))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
@@ -48,19 +48,19 @@ namespace Sci.Production.Packing
                 .Text("Barcode", header: "Ref. Barcode", width: Widths.AnsiChars(13));
 
             //按Header沒有排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
+            for (int i = 0; i < this.gridDetail.ColumnCount; i++)
             {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 
         //SP#
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(textBox1.Text) && textBox1.OldValue != textBox1.Text)
+            if (!MyUtility.Check.Empty(txtSP.Text) && txtSP.OldValue != txtSP.Text)
             {
                 //sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", textBox1.Text);
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSP.Text);
                 System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisioinid", Sci.Env.User.Keyword);
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -80,27 +80,27 @@ namespace Sci.Production.Packing
                     {
                         MyUtility.Msg.WarningBox("SP# not found!!");
                     }
-                    textBox1.Text = "";
+                    txtSP.Text = "";
                     //清除所有欄位資料
-                    displayBox1.Value = "";
-                    displayBox2.Value = "";
-                    displayBox3.Value = "";
-                    displayBox4.Value = "";
-                    displayBox5.Value = "";
-                    displayBox6.Value = "";
-                    displayBox7.Value = "";
-                    displayBox8.Value = "";
-                    txtcountry1.TextBox1.Text = "";
-                    numericBox1.Value = 0;
+                    displayStyle.Value = "";
+                    displaySeason.Value = "";
+                    displayBrand.Value = "";
+                    displayBuyer.Value = "";
+                    displayM.Value = "";
+                    displayOrder.Value = "";
+                    displayPONo.Value = "";
+                    displayFactory.Value = "";
+                    txtcountryDestination.TextBox1.Text = "";
+                    numOrderQty.Value = 0;
                     if (PackID != null)
                     {
                         PackID.Clear();
-                        MyUtility.Tool.SetupCombox(comboBox1, 1, PackID);
-                        comboBox1.SelectedIndex = -1;
+                        MyUtility.Tool.SetupCombox(comboPackingNoFilter, 1, PackID);
+                        comboPackingNoFilter.SelectedIndex = -1;
                     }
-                    textBox2.Text = "";
-                    button1.Enabled = false;
-                    button2.Enabled = false;
+                    txtQuickSelectCTN.Text = "";
+                    btnUncomplete.Enabled = false;
+                    btnStartToScan.Enabled = false;
                     if ((DataTable)listControlBindingSource1.DataSource != null)
                     {
                         ((DataTable)listControlBindingSource1.DataSource).Clear();
@@ -113,21 +113,21 @@ namespace Sci.Production.Packing
         //SP#
         private void textBox1_Validated(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(textBox1.Text) && (textBox1.OldValue != textBox1.Text))
+            if (!MyUtility.Check.Empty(txtSP.Text) && (txtSP.OldValue != txtSP.Text))
             {
                 DataRow OrdersData;
-                string sqlCmd = string.Format("select StyleID,SeasonID,BrandID,Dest,Qty,Customize1,CustPONo,FtyGroup,isnull((select BuyerID from Brand WITH (NOLOCK) where ID =  Orders.BrandID),'') as BuyerID from Orders WITH (NOLOCK) where ID = '{0}'", textBox1.Text);
+                string sqlCmd = string.Format("select StyleID,SeasonID,BrandID,Dest,Qty,Customize1,CustPONo,FtyGroup,isnull((select BuyerID from Brand WITH (NOLOCK) where ID =  Orders.BrandID),'') as BuyerID from Orders WITH (NOLOCK) where ID = '{0}'", txtSP.Text);
                 MyUtility.Check.Seek(sqlCmd, out OrdersData);
-                displayBox1.Value = MyUtility.Convert.GetString(OrdersData["StyleID"]);
-                displayBox2.Value = MyUtility.Convert.GetString(OrdersData["SeasonID"]);
-                displayBox3.Value = MyUtility.Convert.GetString(OrdersData["BrandID"]);
-                displayBox4.Value = MyUtility.Convert.GetString(OrdersData["BuyerID"]);
-                displayBox5.Value = Sci.Env.User.Keyword;
-                displayBox6.Value = MyUtility.Convert.GetString(OrdersData["Customize1"]);
-                displayBox7.Value = MyUtility.Convert.GetString(OrdersData["CustPONo"]);
-                displayBox8.Value = MyUtility.Convert.GetString(OrdersData["FtyGroup"]);
-                txtcountry1.TextBox1.Text = MyUtility.Convert.GetString(OrdersData["Dest"]);
-                numericBox1.Value = MyUtility.Convert.GetInt(OrdersData["Qty"]);
+                displayStyle.Value = MyUtility.Convert.GetString(OrdersData["StyleID"]);
+                displaySeason.Value = MyUtility.Convert.GetString(OrdersData["SeasonID"]);
+                displayBrand.Value = MyUtility.Convert.GetString(OrdersData["BrandID"]);
+                displayBuyer.Value = MyUtility.Convert.GetString(OrdersData["BuyerID"]);
+                displayM.Value = Sci.Env.User.Keyword;
+                displayOrder.Value = MyUtility.Convert.GetString(OrdersData["Customize1"]);
+                displayPONo.Value = MyUtility.Convert.GetString(OrdersData["CustPONo"]);
+                displayFactory.Value = MyUtility.Convert.GetString(OrdersData["FtyGroup"]);
+                txtcountryDestination.TextBox1.Text = MyUtility.Convert.GetString(OrdersData["Dest"]);
+                numOrderQty.Value = MyUtility.Convert.GetInt(OrdersData["Qty"]);
 
                 sqlCmd = string.Format(@"select ID,CTNStartNo,ShipModeID,ShipQty,NotYetScan,
 SUBSTRING(OrderID,1,LEN(OrderID)-1) as OrderID,
@@ -151,7 +151,7 @@ from (select ID,CTNStartNo,ShipModeID,min(Seq) as Seq,NotYetScan,ShipQty,OrderID
 			left join PackingList p WITH (NOLOCK) on p.ID = pd.ID 
 			where pd.OrderID = '{0}' and pd.QtyPerCTN > 0 and p.Type = 'B') b
 	  group by ID,CTNStartNo,ShipModeID,NotYetScan,ShipQty,OrderID,Article,Color,SizeCode,QtyPerCTN,Barcode,ScanQty) a
-order by ID,Seq", textBox1.Text);
+order by ID,Seq", txtSP.Text);
                 DataTable gridData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
                 if (!result)
@@ -161,7 +161,7 @@ order by ID,Seq", textBox1.Text);
                 listControlBindingSource1.DataSource = gridData;
 
 
-                sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}'", textBox1.Text);
+                sqlCmd = string.Format("select distinct ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}'", txtSP.Text);
                 result = DBProxy.Current.Select(null, sqlCmd, out PackID);
                 if (!result)
                 {
@@ -171,16 +171,16 @@ order by ID,Seq", textBox1.Text);
                 //當Grid有資料時Start to scan按鈕才可以按
                 if (gridData == null)
                 {
-                    button2.Enabled = false;
+                    btnStartToScan.Enabled = false;
                 }
                 else
                 {
-                    button2.Enabled = true;
+                    btnStartToScan.Enabled = true;
                 }
-                MyUtility.Tool.SetupCombox(comboBox1, 1, PackID);
-                comboBox1.SelectedIndex = -1;
+                MyUtility.Tool.SetupCombox(comboPackingNoFilter, 1, PackID);
+                comboPackingNoFilter.SelectedIndex = -1;
 
-                SetFilter(checkBox1.Checked);
+                SetFilter(checkOnlyNotYetScanComplete.Checked);
             }
         }
 
@@ -192,17 +192,17 @@ order by ID,Seq", textBox1.Text);
             }
             
             string packID;
-            if (comboBox1.SelectedIndex == -1)
+            if (comboPackingNoFilter.SelectedIndex == -1)
             {
                 packID = "";
             }
             else
             {
-                packID = comboBox1.SelectedValue.ToString();
+                packID = comboPackingNoFilter.SelectedValue.ToString();
             }
 
             //清空Quick Select CTN#欄位值
-            textBox2.Text = "";
+            txtQuickSelectCTN.Text = "";
             
             if (checkBox)
             {
@@ -231,14 +231,14 @@ order by ID,Seq", textBox1.Text);
         //Only not yet scan complete
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            SetFilter(checkBox1.Checked);
+            SetFilter(checkOnlyNotYetScanComplete.Checked);
 
         }
 
         //Packing No Filter
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetFilter(checkBox1.Checked);
+            SetFilter(checkOnlyNotYetScanComplete.Checked);
         }
 
         //Quick Select CTN#
@@ -246,12 +246,12 @@ order by ID,Seq", textBox1.Text);
         {
             int pos = -1;
             bool hadFound = false;
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtQuickSelectCTN.Text))
             {
                 foreach (DataRowView dr in listControlBindingSource1)
                 {
                     pos++;
-                    if (MyUtility.Convert.GetString(dr["CTNStartNo"]).StartsWith(textBox2.Text))
+                    if (MyUtility.Convert.GetString(dr["CTNStartNo"]).StartsWith(txtQuickSelectCTN.Text))
                     {
                         hadFound = true;
                         break;
@@ -263,7 +263,7 @@ order by ID,Seq", textBox1.Text);
                 if (!hadFound)
                 {
                     MyUtility.Msg.WarningBox("Data not found!!");
-                    textBox2.Text = "";
+                    txtQuickSelectCTN.Text = "";
                 }
                 else
                 {
@@ -274,8 +274,8 @@ order by ID,Seq", textBox1.Text);
 
         private void ControlButtonEnable(int rowIndex)
         {
-            DataRow dr = grid1.GetDataRow(rowIndex);
-            button1.Enabled = canUnConfirm && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0";
+            DataRow dr = gridDetail.GetDataRow(rowIndex);
+            btnUncomplete.Enabled = canUnConfirm && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0";
         }
 
         //Close
@@ -294,7 +294,7 @@ order by ID,Seq", textBox1.Text);
                 return;
             }
 
-            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+            DataRow dr = gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex());
             string updateCmd = string.Format("update PackingList_Detail set ScanQty = 0, Barcode = '', ScanEditDate = GETDATE() where ID = '{0}' and CTNStartNo = '{1}';",MyUtility.Convert.GetString(dr["ID"]),MyUtility.Convert.GetString(dr["CTNStartNo"]));
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
@@ -312,11 +312,11 @@ order by ID,Seq", textBox1.Text);
         //Start to Scan
         private void button2_Click(object sender, EventArgs e)
         {
-            if (grid1.GetTable() != null && grid1.GetTable().Rows.Count == 0)
+            if (gridDetail.GetTable() != null && gridDetail.GetTable().Rows.Count == 0)
             {
                 return;
             }
-            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());            
+            DataRow dr = gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex());            
             if (dr != null && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0")
             {
                 MyUtility.Msg.WarningBox("This carton had been scanned, so can't scan again!!");

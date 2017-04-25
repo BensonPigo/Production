@@ -34,13 +34,13 @@ namespace Sci.Production.Packing
 
         private bool ToExcel()
         {
-            if (ListCheck.Checked)
+            if (radioTransferList.Checked)
             {
                 #region ListCheck
                 toExcel("Packing_P14.xltx", 1, dt);
                 #endregion
             }
-            if (SlipCheck.Checked)
+            if (radioTransferSlip.Checked)
             {
                 #region SlipCheck
                 var Slip = (from p in dt.AsEnumerable()

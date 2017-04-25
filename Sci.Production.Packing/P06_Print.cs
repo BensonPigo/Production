@@ -22,14 +22,14 @@ namespace Sci.Production.Packing
             InitializeComponent();
             masterData = MasterData;
             orderQty = OrderQty;
-            radioButton1.Checked = true;
+            radioPackingGuideReport.Checked = true;
             ControlPrintFunction(true);
         }
 
         //Packing Guide Report
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            ControlPrintFunction(radioButton1.Checked);
+            ControlPrintFunction(radioPackingGuideReport.Checked);
         }
 
         //控制元件是否可使用
@@ -37,21 +37,21 @@ namespace Sci.Production.Packing
         {
             this.IsSupportToPrint = !isSupport;
             this.IsSupportToExcel = isSupport;
-            textBox1.Enabled = !isSupport;
-            textBox2.Enabled = !isSupport;
+            txtCTNStart.Enabled = !isSupport;
+            txtCTNEnd.Enabled = !isSupport;
             if (isSupport)
             {
-                textBox1.Text = "";
-                textBox2.Text = "";
+                txtCTNStart.Text = "";
+                txtCTNEnd.Text = "";
             }
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            reportType = radioButton1.Checked ? "1" : "2";
-            ctn1 = textBox1.Text;
-            ctn2 = textBox2.Text;
+            reportType = radioPackingGuideReport.Checked ? "1" : "2";
+            ctn1 = txtCTNStart.Text;
+            ctn2 = txtCTNEnd.Text;
             ReportResourceName = "BarcodePrint.rdlc";
 
             return base.ValidateInput();

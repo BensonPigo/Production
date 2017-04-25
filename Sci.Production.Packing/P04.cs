@@ -61,17 +61,17 @@ namespace Sci.Production.Packing
             base.OnDetailEntered();
 
             //Purchase Ctn
-            displayBox5.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
+            displayPurchaseCTN.Value = MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]) ? "" : "Y";
 
-            labConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
+            labelConfirmed.Visible = MyUtility.Check.Empty(CurrentMaintain["ID"]) ? false : true;
             DataRow dr;
             string sqlStatus = string.Format(@"select * from PackingList WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"].ToString());
             if (MyUtility.Check.Seek(sqlStatus, out dr))
             {
-                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "New";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "Confirmed";
-                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labConfirmed.Text = "Confirmed";
-                else labConfirmed.Text = "Shipping Lock";
+                if (dr["Status"].ToString().ToUpper() == "NEW" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "New";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && !MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "Confirmed";
+                else if (dr["Status"].ToString().ToUpper() == "CONFIRMED" && MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"])) labelConfirmed.Text = "Confirmed";
+                else labelConfirmed.Text = "Shipping Lock";
             }
 
         }
@@ -359,7 +359,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            txtshipmode1.ReadOnly = false;
+            txtshipmode.ReadOnly = false;
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Type"] = "S";
             CurrentMaintain["Status"] = "New";
@@ -379,12 +379,12 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            txtbrand1.ReadOnly = true;
+            txtbrand.ReadOnly = true;
             //部分欄位會依某些條件來決定是否可以被修改
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
             {
-                editBox1.ReadOnly = true;
-                txtshipmode1.ReadOnly = true;
+                editRemark.ReadOnly = true;
+                txtshipmode.ReadOnly = true;
                 gridicon.Append.Enabled = false;
                 gridicon.Insert.Enabled = false;
                 gridicon.Remove.Enabled = false;
@@ -397,8 +397,8 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
 
             if (!MyUtility.Check.Empty(CurrentMaintain["LocalPOID"]))
             {
-                dateBox1.ReadOnly = true;
-                dateBox2.ReadOnly = true;
+                dateCartonEstBooking.ReadOnly = true;
+                dateCartonEstArrived.ReadOnly = true;
             }
         }
 
@@ -407,21 +407,21 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
                 MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
-                txtshipmode1.Focus();
+                txtshipmode.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
                 MyUtility.Msg.WarningBox("Destination can't empty!!");
-                txtcountry1.Focus();
+                txtcountry.Focus();
                 return false;
             }         
 
@@ -599,7 +599,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
-                numericBox4.Focus();
+                numTtlCBM.Focus();
                 return false;
             }
 
@@ -885,9 +885,9 @@ where ID = @INVNo";
 
         private void txtcustcd1_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd1.Text) && txtcustcd1.OldValue != txtcustcd1.Text)
+            if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
             {
-                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd1.Text));
+                CurrentMaintain["Dest"] = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), txtcustcd.Text));
             }      
         }
     }

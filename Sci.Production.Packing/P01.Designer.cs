@@ -28,57 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txttpeuser2 = new Sci.Production.Class.txttpeuser();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
-            this.label20 = new Sci.Win.UI.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.displayBox9 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button5 = new Sci.Win.UI.Button();
-            this.button6 = new Sci.Win.UI.Button();
-            this.button7 = new Sci.Win.UI.Button();
-            this.txtdropdownlist2 = new Sci.Production.Class.txtdropdownlist();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelPONo = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelPackingMethod = new Sci.Win.UI.Label();
+            this.labelQtyCarton = new Sci.Win.UI.Label();
+            this.labelLocalMR = new Sci.Win.UI.Label();
+            this.labelSMR = new Sci.Win.UI.Label();
+            this.labelOrderHandle = new Sci.Win.UI.Label();
+            this.labelPOcombo = new Sci.Win.UI.Label();
+            this.displaySP = new Sci.Win.UI.DisplayBox();
+            this.displayPONo = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.numQtyCarton = new Sci.Win.UI.NumericBox();
+            this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
+            this.txtuserLocalMR = new Sci.Production.Class.txtuser();
+            this.txttpeuserOrderHandle = new Sci.Production.Class.txttpeuser();
+            this.displayPOcombo = new Sci.Win.UI.DisplayBox();
+            this.btnbdown = new Sci.Win.UI.Button();
+            this.checkLocalOrder = new Sci.Win.UI.CheckBox();
+            this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
+            this.checkPullForwardOrder = new Sci.Win.UI.CheckBox();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelProject = new Sci.Win.UI.Label();
+            this.labelOrderQty = new Sci.Win.UI.Label();
+            this.labelSewingInLine = new Sci.Win.UI.Label();
+            this.labelSewingOffline = new Sci.Win.UI.Label();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelCloseGarment = new Sci.Win.UI.Label();
+            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.displayProject = new Sci.Win.UI.DisplayBox();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
+            this.displayOrderQty = new Sci.Win.UI.DisplayBox();
+            this.dateSewingInLine = new Sci.Win.UI.DateBox();
+            this.dateSewingOffline = new Sci.Win.UI.DateBox();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateBox();
+            this.dateCloseGarment = new Sci.Win.UI.DateBox();
+            this.btnQuantityBreakdown = new Sci.Win.UI.Button();
+            this.btnPackingMethod = new Sci.Win.UI.Button();
+            this.btnCartonStatus = new Sci.Win.UI.Button();
+            this.btnMaterialImport = new Sci.Win.UI.Button();
+            this.btnCartonBooking = new Sci.Win.UI.Button();
+            this.btnOverrunGarmentRecord = new Sci.Win.UI.Button();
+            this.txtdropdownlistPackingMethod = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -93,57 +93,57 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtdropdownlist2);
-            this.detailcont.Controls.Add(this.button7);
-            this.detailcont.Controls.Add(this.button6);
-            this.detailcont.Controls.Add(this.button5);
-            this.detailcont.Controls.Add(this.button4);
-            this.detailcont.Controls.Add(this.button3);
-            this.detailcont.Controls.Add(this.button2);
-            this.detailcont.Controls.Add(this.dateBox4);
-            this.detailcont.Controls.Add(this.dateBox3);
-            this.detailcont.Controls.Add(this.dateBox2);
-            this.detailcont.Controls.Add(this.dateBox1);
-            this.detailcont.Controls.Add(this.displayBox9);
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.displayBox8);
-            this.detailcont.Controls.Add(this.txtdropdownlist1);
-            this.detailcont.Controls.Add(this.label20);
-            this.detailcont.Controls.Add(this.label19);
-            this.detailcont.Controls.Add(this.label18);
-            this.detailcont.Controls.Add(this.label17);
-            this.detailcont.Controls.Add(this.label16);
-            this.detailcont.Controls.Add(this.label15);
-            this.detailcont.Controls.Add(this.label14);
-            this.detailcont.Controls.Add(this.checkBox3);
-            this.detailcont.Controls.Add(this.checkBox2);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.button1);
-            this.detailcont.Controls.Add(this.displayBox7);
-            this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Controls.Add(this.txtuser1);
-            this.detailcont.Controls.Add(this.txttpeuser1);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.displayBox6);
-            this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.displayBox5);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label13);
-            this.detailcont.Controls.Add(this.label12);
-            this.detailcont.Controls.Add(this.label11);
-            this.detailcont.Controls.Add(this.label10);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtdropdownlistPackingMethod);
+            this.detailcont.Controls.Add(this.btnOverrunGarmentRecord);
+            this.detailcont.Controls.Add(this.btnCartonBooking);
+            this.detailcont.Controls.Add(this.btnMaterialImport);
+            this.detailcont.Controls.Add(this.btnCartonStatus);
+            this.detailcont.Controls.Add(this.btnPackingMethod);
+            this.detailcont.Controls.Add(this.btnQuantityBreakdown);
+            this.detailcont.Controls.Add(this.dateCloseGarment);
+            this.detailcont.Controls.Add(this.dateBuyerDelivery);
+            this.detailcont.Controls.Add(this.dateSewingOffline);
+            this.detailcont.Controls.Add(this.dateSewingInLine);
+            this.detailcont.Controls.Add(this.displayOrderQty);
+            this.detailcont.Controls.Add(this.numOrderQty);
+            this.detailcont.Controls.Add(this.displayProject);
+            this.detailcont.Controls.Add(this.txtdropdownlistCategory);
+            this.detailcont.Controls.Add(this.labelCloseGarment);
+            this.detailcont.Controls.Add(this.labelBuyerDelivery);
+            this.detailcont.Controls.Add(this.labelSewingOffline);
+            this.detailcont.Controls.Add(this.labelSewingInLine);
+            this.detailcont.Controls.Add(this.labelOrderQty);
+            this.detailcont.Controls.Add(this.labelProject);
+            this.detailcont.Controls.Add(this.labelCategory);
+            this.detailcont.Controls.Add(this.checkPullForwardOrder);
+            this.detailcont.Controls.Add(this.checkCancelledOrder);
+            this.detailcont.Controls.Add(this.checkLocalOrder);
+            this.detailcont.Controls.Add(this.btnbdown);
+            this.detailcont.Controls.Add(this.displayPOcombo);
+            this.detailcont.Controls.Add(this.txttpeuserOrderHandle);
+            this.detailcont.Controls.Add(this.txtuserLocalMR);
+            this.detailcont.Controls.Add(this.txttpeuserSMR);
+            this.detailcont.Controls.Add(this.numQtyCarton);
+            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.txtcountryDestination);
+            this.detailcont.Controls.Add(this.displaySeason);
+            this.detailcont.Controls.Add(this.displayStyle);
+            this.detailcont.Controls.Add(this.displayBrand);
+            this.detailcont.Controls.Add(this.displayPONo);
+            this.detailcont.Controls.Add(this.displaySP);
+            this.detailcont.Controls.Add(this.labelPOcombo);
+            this.detailcont.Controls.Add(this.labelOrderHandle);
+            this.detailcont.Controls.Add(this.labelSMR);
+            this.detailcont.Controls.Add(this.labelLocalMR);
+            this.detailcont.Controls.Add(this.labelQtyCarton);
+            this.detailcont.Controls.Add(this.labelPackingMethod);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelDestination);
+            this.detailcont.Controls.Add(this.labelSeason);
+            this.detailcont.Controls.Add(this.labelStyle);
+            this.detailcont.Controls.Add(this.labelBrand);
+            this.detailcont.Controls.Add(this.labelPONo);
+            this.detailcont.Controls.Add(this.labelSP);
             this.detailcont.Size = new System.Drawing.Size(824, 446);
             // 
             // detailbtm
@@ -153,7 +153,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(796, 484);
+            this.browse.Size = new System.Drawing.Size(824, 484);
             // 
             // tabs
             // 
@@ -172,536 +172,536 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(9, 13);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(75, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
-            // label2
+            // labelPONo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "PO No.";
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(9, 40);
+            this.labelPONo.Name = "labelPONo";
+            this.labelPONo.Size = new System.Drawing.Size(75, 23);
+            this.labelPONo.TabIndex = 1;
+            this.labelPONo.Text = "PO No.";
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(9, 67);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(75, 23);
+            this.labelBrand.TabIndex = 2;
+            this.labelBrand.Text = "Brand";
             // 
-            // label4
+            // labelStyle
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 94);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(9, 94);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 3;
+            this.labelStyle.Text = "Style#";
             // 
-            // label5
+            // labelSeason
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(9, 121);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(9, 121);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 4;
+            this.labelSeason.Text = "Season";
             // 
-            // label6
+            // labelDestination
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(9, 148);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(9, 148);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(75, 23);
+            this.labelDestination.TabIndex = 5;
+            this.labelDestination.Text = "Destination";
             // 
-            // label7
+            // labelDescription
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(9, 175);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(9, 175);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 6;
+            this.labelDescription.Text = "Description";
             // 
-            // label8
+            // labelPackingMethod
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(9, 229);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(104, 23);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Packing method";
+            this.labelPackingMethod.Lines = 0;
+            this.labelPackingMethod.Location = new System.Drawing.Point(9, 229);
+            this.labelPackingMethod.Name = "labelPackingMethod";
+            this.labelPackingMethod.Size = new System.Drawing.Size(104, 23);
+            this.labelPackingMethod.TabIndex = 7;
+            this.labelPackingMethod.Text = "Packing method";
             // 
-            // label9
+            // labelQtyCarton
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(9, 202);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Qty/carton";
+            this.labelQtyCarton.Lines = 0;
+            this.labelQtyCarton.Location = new System.Drawing.Point(9, 202);
+            this.labelQtyCarton.Name = "labelQtyCarton";
+            this.labelQtyCarton.Size = new System.Drawing.Size(75, 23);
+            this.labelQtyCarton.TabIndex = 8;
+            this.labelQtyCarton.Text = "Qty/carton";
             // 
-            // label10
+            // labelLocalMR
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(9, 256);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(104, 23);
-            this.label10.TabIndex = 9;
-            this.label10.Text = "Local MR";
+            this.labelLocalMR.Lines = 0;
+            this.labelLocalMR.Location = new System.Drawing.Point(9, 256);
+            this.labelLocalMR.Name = "labelLocalMR";
+            this.labelLocalMR.Size = new System.Drawing.Size(104, 23);
+            this.labelLocalMR.TabIndex = 9;
+            this.labelLocalMR.Text = "Local MR";
             // 
-            // label11
+            // labelSMR
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(9, 283);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(104, 23);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "SMR";
+            this.labelSMR.Lines = 0;
+            this.labelSMR.Location = new System.Drawing.Point(9, 283);
+            this.labelSMR.Name = "labelSMR";
+            this.labelSMR.Size = new System.Drawing.Size(104, 23);
+            this.labelSMR.TabIndex = 10;
+            this.labelSMR.Text = "SMR";
             // 
-            // label12
+            // labelOrderHandle
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(9, 310);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(104, 23);
-            this.label12.TabIndex = 11;
-            this.label12.Text = "Order Handle";
+            this.labelOrderHandle.Lines = 0;
+            this.labelOrderHandle.Location = new System.Drawing.Point(9, 310);
+            this.labelOrderHandle.Name = "labelOrderHandle";
+            this.labelOrderHandle.Size = new System.Drawing.Size(104, 23);
+            this.labelOrderHandle.TabIndex = 11;
+            this.labelOrderHandle.Text = "Order Handle";
             // 
-            // label13
+            // labelPOcombo
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(9, 337);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(104, 23);
-            this.label13.TabIndex = 12;
-            this.label13.Text = "PO combo";
+            this.labelPOcombo.Lines = 0;
+            this.labelPOcombo.Location = new System.Drawing.Point(9, 337);
+            this.labelPOcombo.Name = "labelPOcombo";
+            this.labelPOcombo.Size = new System.Drawing.Size(104, 23);
+            this.labelPOcombo.TabIndex = 12;
+            this.labelPOcombo.Text = "PO combo";
             // 
-            // displayBox1
+            // displaySP
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(88, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 13;
+            this.displaySP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displaySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySP.Location = new System.Drawing.Point(88, 13);
+            this.displaySP.Name = "displaySP";
+            this.displaySP.Size = new System.Drawing.Size(120, 23);
+            this.displaySP.TabIndex = 13;
             // 
-            // displayBox2
+            // displayPONo
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustPONo", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(88, 40);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(200, 23);
-            this.displayBox2.TabIndex = 14;
+            this.displayPONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustPONo", true));
+            this.displayPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPONo.Location = new System.Drawing.Point(88, 40);
+            this.displayPONo.Name = "displayPONo";
+            this.displayPONo.Size = new System.Drawing.Size(200, 23);
+            this.displayPONo.TabIndex = 14;
             // 
-            // displayBox3
+            // displayBrand
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(88, 67);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(75, 23);
-            this.displayBox3.TabIndex = 15;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(88, 67);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(75, 23);
+            this.displayBrand.TabIndex = 15;
             // 
-            // displayBox4
+            // displayStyle
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(88, 94);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(140, 23);
-            this.displayBox4.TabIndex = 16;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleID", true));
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(88, 94);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(140, 23);
+            this.displayStyle.TabIndex = 16;
             // 
-            // displayBox5
+            // displaySeason
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(88, 121);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(90, 23);
-            this.displayBox5.TabIndex = 17;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(88, 121);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(90, 23);
+            this.displaySeason.TabIndex = 17;
             // 
-            // txtcountry1
+            // txtcountryDestination
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Location = new System.Drawing.Point(88, 148);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 18;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(88, 148);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 18;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
-            // displayBox6
+            // displayDescription
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(88, 175);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(376, 23);
-            this.displayBox6.TabIndex = 19;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(88, 175);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(376, 23);
+            this.displayDescription.TabIndex = 19;
             // 
-            // numericBox1
+            // numQtyCarton
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(88, 202);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numQtyCarton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numQtyCarton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CTNQty", true));
+            this.numQtyCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numQtyCarton.IsSupportEditMode = false;
+            this.numQtyCarton.Location = new System.Drawing.Point(88, 202);
+            this.numQtyCarton.Name = "numQtyCarton";
+            this.numQtyCarton.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 20;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // txttpeuser1
-            // 
-            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(117, 283);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 22;
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(117, 256);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(302, 23);
-            this.txtuser1.TabIndex = 23;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // txttpeuser2
-            // 
-            this.txttpeuser2.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
-            this.txttpeuser2.DisplayBox1Binding = "";
-            this.txttpeuser2.DisplayBox2Binding = "";
-            this.txttpeuser2.Location = new System.Drawing.Point(117, 310);
-            this.txttpeuser2.Name = "txttpeuser2";
-            this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser2.TabIndex = 24;
-            // 
-            // displayBox7
-            // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(117, 337);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(659, 23);
-            this.displayBox7.TabIndex = 25;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.button1.Location = new System.Drawing.Point(143, 201);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(64, 25);
-            this.button1.TabIndex = 26;
-            this.button1.Text = "b\'down";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalOrder", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox1.IsSupportEditMode = false;
-            this.checkBox1.Location = new System.Drawing.Point(362, 13);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.ReadOnly = true;
-            this.checkBox1.Size = new System.Drawing.Size(99, 21);
-            this.checkBox1.TabIndex = 27;
-            this.checkBox1.Text = "Local order";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox2.IsSupportEditMode = false;
-            this.checkBox2.Location = new System.Drawing.Point(362, 40);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.ReadOnly = true;
-            this.checkBox2.Size = new System.Drawing.Size(127, 21);
-            this.checkBox2.TabIndex = 28;
-            this.checkBox2.Text = "Cancelled order";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFOrder", true));
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBox3.IsSupportEditMode = false;
-            this.checkBox3.Location = new System.Drawing.Point(362, 67);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.ReadOnly = true;
-            this.checkBox3.Size = new System.Drawing.Size(139, 21);
-            this.checkBox3.TabIndex = 29;
-            this.checkBox3.Text = "Pull forward order";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // label14
-            // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(548, 13);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(98, 23);
-            this.label14.TabIndex = 30;
-            this.label14.Text = "Category";
-            // 
-            // label15
-            // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(548, 40);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(98, 23);
-            this.label15.TabIndex = 31;
-            this.label15.Text = "Project";
-            // 
-            // label16
-            // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(548, 67);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(98, 23);
-            this.label16.TabIndex = 32;
-            this.label16.Text = "Order qty";
-            // 
-            // label17
-            // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(548, 94);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(98, 23);
-            this.label17.TabIndex = 33;
-            this.label17.Text = "Sewing inline";
-            // 
-            // label18
-            // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(548, 121);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(98, 23);
-            this.label18.TabIndex = 34;
-            this.label18.Text = "Sewing offline";
-            // 
-            // label19
-            // 
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(548, 148);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(98, 23);
-            this.label19.TabIndex = 35;
-            this.label19.Text = "Buyer delivery";
-            // 
-            // label20
-            // 
-            this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(548, 175);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(98, 23);
-            this.label20.TabIndex = 36;
-            this.label20.Text = "Close Garment";
-            // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Category", true));
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(649, 13);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 37;
-            this.txtdropdownlist1.Type = "Category";
-            // 
-            // displayBox8
-            // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProjectID", true));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(649, 40);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(60, 23);
-            this.displayBox8.TabIndex = 38;
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(649, 67);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(70, 23);
-            this.numericBox2.TabIndex = 39;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numQtyCarton.ReadOnly = true;
+            this.numQtyCarton.Size = new System.Drawing.Size(50, 23);
+            this.numQtyCarton.TabIndex = 20;
+            this.numQtyCarton.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // displayBox9
+            // txttpeuserSMR
             // 
-            this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleUnit", true));
-            this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox9.Location = new System.Drawing.Point(721, 67);
-            this.displayBox9.Name = "displayBox9";
-            this.displayBox9.Size = new System.Drawing.Size(55, 23);
-            this.displayBox9.TabIndex = 40;
+            this.txttpeuserSMR.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "SMR", true));
+            this.txttpeuserSMR.DisplayBox1Binding = "";
+            this.txttpeuserSMR.DisplayBox2Binding = "";
+            this.txttpeuserSMR.Location = new System.Drawing.Point(117, 283);
+            this.txttpeuserSMR.Name = "txttpeuserSMR";
+            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserSMR.TabIndex = 22;
             // 
-            // dateBox1
+            // txtuserLocalMR
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewInLine", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(649, 94);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(100, 23);
-            this.dateBox1.TabIndex = 41;
+            this.txtuserLocalMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
+            this.txtuserLocalMR.DisplayBox1Binding = "";
+            this.txtuserLocalMR.Location = new System.Drawing.Point(117, 256);
+            this.txtuserLocalMR.Name = "txtuserLocalMR";
+            this.txtuserLocalMR.Size = new System.Drawing.Size(302, 23);
+            this.txtuserLocalMR.TabIndex = 23;
+            this.txtuserLocalMR.TextBox1Binding = "";
             // 
-            // dateBox2
+            // txttpeuserOrderHandle
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOffLine", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(649, 121);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(100, 23);
-            this.dateBox2.TabIndex = 42;
+            this.txttpeuserOrderHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "MRHandle", true));
+            this.txttpeuserOrderHandle.DisplayBox1Binding = "";
+            this.txttpeuserOrderHandle.DisplayBox2Binding = "";
+            this.txttpeuserOrderHandle.Location = new System.Drawing.Point(117, 310);
+            this.txttpeuserOrderHandle.Name = "txttpeuserOrderHandle";
+            this.txttpeuserOrderHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserOrderHandle.TabIndex = 24;
             // 
-            // dateBox3
+            // displayPOcombo
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDelivery", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(649, 148);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(100, 23);
-            this.dateBox3.TabIndex = 43;
+            this.displayPOcombo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPOcombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPOcombo.Location = new System.Drawing.Point(117, 337);
+            this.displayPOcombo.Name = "displayPOcombo";
+            this.displayPOcombo.Size = new System.Drawing.Size(659, 23);
+            this.displayPOcombo.TabIndex = 25;
             // 
-            // dateBox4
+            // btnbdown
             // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GMTClose", true));
-            this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(649, 175);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.ReadOnly = true;
-            this.dateBox4.Size = new System.Drawing.Size(100, 23);
-            this.dateBox4.TabIndex = 44;
+            this.btnbdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnbdown.Location = new System.Drawing.Point(143, 201);
+            this.btnbdown.Name = "btnbdown";
+            this.btnbdown.Size = new System.Drawing.Size(64, 25);
+            this.btnbdown.TabIndex = 26;
+            this.btnbdown.Text = "b\'down";
+            this.btnbdown.UseVisualStyleBackColor = true;
+            this.btnbdown.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // checkLocalOrder
             // 
-            this.button2.Location = new System.Drawing.Point(20, 366);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(194, 30);
-            this.button2.TabIndex = 45;
-            this.button2.Text = "Quantity breakdown";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.checkLocalOrder.AutoSize = true;
+            this.checkLocalOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalOrder", true));
+            this.checkLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkLocalOrder.IsSupportEditMode = false;
+            this.checkLocalOrder.Location = new System.Drawing.Point(362, 13);
+            this.checkLocalOrder.Name = "checkLocalOrder";
+            this.checkLocalOrder.ReadOnly = true;
+            this.checkLocalOrder.Size = new System.Drawing.Size(99, 21);
+            this.checkLocalOrder.TabIndex = 27;
+            this.checkLocalOrder.Text = "Local order";
+            this.checkLocalOrder.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // checkCancelledOrder
             // 
-            this.button3.Location = new System.Drawing.Point(20, 403);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(194, 30);
-            this.button3.TabIndex = 46;
-            this.button3.Text = "Packing method";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.checkCancelledOrder.AutoSize = true;
+            this.checkCancelledOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkCancelledOrder.IsSupportEditMode = false;
+            this.checkCancelledOrder.Location = new System.Drawing.Point(362, 40);
+            this.checkCancelledOrder.Name = "checkCancelledOrder";
+            this.checkCancelledOrder.ReadOnly = true;
+            this.checkCancelledOrder.Size = new System.Drawing.Size(127, 21);
+            this.checkCancelledOrder.TabIndex = 28;
+            this.checkCancelledOrder.Text = "Cancelled order";
+            this.checkCancelledOrder.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // checkPullForwardOrder
             // 
-            this.button4.Location = new System.Drawing.Point(221, 367);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(194, 30);
-            this.button4.TabIndex = 47;
-            this.button4.Text = "Carton Status";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.checkPullForwardOrder.AutoSize = true;
+            this.checkPullForwardOrder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PFOrder", true));
+            this.checkPullForwardOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkPullForwardOrder.IsSupportEditMode = false;
+            this.checkPullForwardOrder.Location = new System.Drawing.Point(362, 67);
+            this.checkPullForwardOrder.Name = "checkPullForwardOrder";
+            this.checkPullForwardOrder.ReadOnly = true;
+            this.checkPullForwardOrder.Size = new System.Drawing.Size(139, 21);
+            this.checkPullForwardOrder.TabIndex = 29;
+            this.checkPullForwardOrder.Text = "Pull forward order";
+            this.checkPullForwardOrder.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // labelCategory
             // 
-            this.button5.Location = new System.Drawing.Point(221, 403);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(194, 30);
-            this.button5.TabIndex = 48;
-            this.button5.Text = "Material import";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(548, 13);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(98, 23);
+            this.labelCategory.TabIndex = 30;
+            this.labelCategory.Text = "Category";
             // 
-            // button6
+            // labelProject
             // 
-            this.button6.Location = new System.Drawing.Point(422, 367);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(194, 30);
-            this.button6.TabIndex = 49;
-            this.button6.Text = "Carton Booking";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.labelProject.Lines = 0;
+            this.labelProject.Location = new System.Drawing.Point(548, 40);
+            this.labelProject.Name = "labelProject";
+            this.labelProject.Size = new System.Drawing.Size(98, 23);
+            this.labelProject.TabIndex = 31;
+            this.labelProject.Text = "Project";
             // 
-            // button7
+            // labelOrderQty
             // 
-            this.button7.Location = new System.Drawing.Point(422, 403);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(194, 30);
-            this.button7.TabIndex = 50;
-            this.button7.Text = "Overrun garment record";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.labelOrderQty.Lines = 0;
+            this.labelOrderQty.Location = new System.Drawing.Point(548, 67);
+            this.labelOrderQty.Name = "labelOrderQty";
+            this.labelOrderQty.Size = new System.Drawing.Size(98, 23);
+            this.labelOrderQty.TabIndex = 32;
+            this.labelOrderQty.Text = "Order qty";
             // 
-            // txtdropdownlist2
+            // labelSewingInLine
             // 
-            this.txtdropdownlist2.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist2.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
-            this.txtdropdownlist2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist2.FormattingEnabled = true;
-            this.txtdropdownlist2.IsSupportUnselect = true;
-            this.txtdropdownlist2.Location = new System.Drawing.Point(117, 229);
-            this.txtdropdownlist2.Name = "txtdropdownlist2";
-            this.txtdropdownlist2.Size = new System.Drawing.Size(298, 24);
-            this.txtdropdownlist2.TabIndex = 51;
-            this.txtdropdownlist2.Type = "PackingMethod";
+            this.labelSewingInLine.Lines = 0;
+            this.labelSewingInLine.Location = new System.Drawing.Point(548, 94);
+            this.labelSewingInLine.Name = "labelSewingInLine";
+            this.labelSewingInLine.Size = new System.Drawing.Size(98, 23);
+            this.labelSewingInLine.TabIndex = 33;
+            this.labelSewingInLine.Text = "Sewing inline";
+            // 
+            // labelSewingOffline
+            // 
+            this.labelSewingOffline.Lines = 0;
+            this.labelSewingOffline.Location = new System.Drawing.Point(548, 121);
+            this.labelSewingOffline.Name = "labelSewingOffline";
+            this.labelSewingOffline.Size = new System.Drawing.Size(98, 23);
+            this.labelSewingOffline.TabIndex = 34;
+            this.labelSewingOffline.Text = "Sewing offline";
+            // 
+            // labelBuyerDelivery
+            // 
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(548, 148);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(98, 23);
+            this.labelBuyerDelivery.TabIndex = 35;
+            this.labelBuyerDelivery.Text = "Buyer delivery";
+            // 
+            // labelCloseGarment
+            // 
+            this.labelCloseGarment.Lines = 0;
+            this.labelCloseGarment.Location = new System.Drawing.Point(548, 175);
+            this.labelCloseGarment.Name = "labelCloseGarment";
+            this.labelCloseGarment.Size = new System.Drawing.Size(98, 23);
+            this.labelCloseGarment.TabIndex = 36;
+            this.labelCloseGarment.Text = "Close Garment";
+            // 
+            // txtdropdownlistCategory
+            // 
+            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistCategory.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Category", true));
+            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistCategory.FormattingEnabled = true;
+            this.txtdropdownlistCategory.IsSupportUnselect = true;
+            this.txtdropdownlistCategory.Location = new System.Drawing.Point(649, 13);
+            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlistCategory.TabIndex = 37;
+            this.txtdropdownlistCategory.Type = "Category";
+            // 
+            // displayProject
+            // 
+            this.displayProject.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayProject.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProjectID", true));
+            this.displayProject.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayProject.Location = new System.Drawing.Point(649, 40);
+            this.displayProject.Name = "displayProject";
+            this.displayProject.Size = new System.Drawing.Size(60, 23);
+            this.displayProject.TabIndex = 38;
+            // 
+            // numOrderQty
+            // 
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(649, 67);
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(70, 23);
+            this.numOrderQty.TabIndex = 39;
+            this.numOrderQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // displayOrderQty
+            // 
+            this.displayOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleUnit", true));
+            this.displayOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayOrderQty.Location = new System.Drawing.Point(721, 67);
+            this.displayOrderQty.Name = "displayOrderQty";
+            this.displayOrderQty.Size = new System.Drawing.Size(55, 23);
+            this.displayOrderQty.TabIndex = 40;
+            // 
+            // dateSewingInLine
+            // 
+            this.dateSewingInLine.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewInLine", true));
+            this.dateSewingInLine.IsSupportEditMode = false;
+            this.dateSewingInLine.Location = new System.Drawing.Point(649, 94);
+            this.dateSewingInLine.Name = "dateSewingInLine";
+            this.dateSewingInLine.ReadOnly = true;
+            this.dateSewingInLine.Size = new System.Drawing.Size(100, 23);
+            this.dateSewingInLine.TabIndex = 41;
+            // 
+            // dateSewingOffline
+            // 
+            this.dateSewingOffline.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewOffLine", true));
+            this.dateSewingOffline.IsSupportEditMode = false;
+            this.dateSewingOffline.Location = new System.Drawing.Point(649, 121);
+            this.dateSewingOffline.Name = "dateSewingOffline";
+            this.dateSewingOffline.ReadOnly = true;
+            this.dateSewingOffline.Size = new System.Drawing.Size(100, 23);
+            this.dateSewingOffline.TabIndex = 42;
+            // 
+            // dateBuyerDelivery
+            // 
+            this.dateBuyerDelivery.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyerDelivery", true));
+            this.dateBuyerDelivery.IsSupportEditMode = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(649, 148);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.ReadOnly = true;
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(100, 23);
+            this.dateBuyerDelivery.TabIndex = 43;
+            // 
+            // dateCloseGarment
+            // 
+            this.dateCloseGarment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GMTClose", true));
+            this.dateCloseGarment.IsSupportEditMode = false;
+            this.dateCloseGarment.Location = new System.Drawing.Point(649, 175);
+            this.dateCloseGarment.Name = "dateCloseGarment";
+            this.dateCloseGarment.ReadOnly = true;
+            this.dateCloseGarment.Size = new System.Drawing.Size(100, 23);
+            this.dateCloseGarment.TabIndex = 44;
+            // 
+            // btnQuantityBreakdown
+            // 
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(20, 366);
+            this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
+            this.btnQuantityBreakdown.Size = new System.Drawing.Size(194, 30);
+            this.btnQuantityBreakdown.TabIndex = 45;
+            this.btnQuantityBreakdown.Text = "Quantity breakdown";
+            this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
+            this.btnQuantityBreakdown.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnPackingMethod
+            // 
+            this.btnPackingMethod.Location = new System.Drawing.Point(20, 403);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(194, 30);
+            this.btnPackingMethod.TabIndex = 46;
+            this.btnPackingMethod.Text = "Packing method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // btnCartonStatus
+            // 
+            this.btnCartonStatus.Location = new System.Drawing.Point(221, 367);
+            this.btnCartonStatus.Name = "btnCartonStatus";
+            this.btnCartonStatus.Size = new System.Drawing.Size(194, 30);
+            this.btnCartonStatus.TabIndex = 47;
+            this.btnCartonStatus.Text = "Carton Status";
+            this.btnCartonStatus.UseVisualStyleBackColor = true;
+            this.btnCartonStatus.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // btnMaterialImport
+            // 
+            this.btnMaterialImport.Location = new System.Drawing.Point(221, 403);
+            this.btnMaterialImport.Name = "btnMaterialImport";
+            this.btnMaterialImport.Size = new System.Drawing.Size(194, 30);
+            this.btnMaterialImport.TabIndex = 48;
+            this.btnMaterialImport.Text = "Material import";
+            this.btnMaterialImport.UseVisualStyleBackColor = true;
+            this.btnMaterialImport.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // btnCartonBooking
+            // 
+            this.btnCartonBooking.Location = new System.Drawing.Point(422, 367);
+            this.btnCartonBooking.Name = "btnCartonBooking";
+            this.btnCartonBooking.Size = new System.Drawing.Size(194, 30);
+            this.btnCartonBooking.TabIndex = 49;
+            this.btnCartonBooking.Text = "Carton Booking";
+            this.btnCartonBooking.UseVisualStyleBackColor = true;
+            this.btnCartonBooking.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // btnOverrunGarmentRecord
+            // 
+            this.btnOverrunGarmentRecord.Location = new System.Drawing.Point(422, 403);
+            this.btnOverrunGarmentRecord.Name = "btnOverrunGarmentRecord";
+            this.btnOverrunGarmentRecord.Size = new System.Drawing.Size(194, 30);
+            this.btnOverrunGarmentRecord.TabIndex = 50;
+            this.btnOverrunGarmentRecord.Text = "Overrun garment record";
+            this.btnOverrunGarmentRecord.UseVisualStyleBackColor = true;
+            this.btnOverrunGarmentRecord.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // txtdropdownlistPackingMethod
+            // 
+            this.txtdropdownlistPackingMethod.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistPackingMethod.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
+            this.txtdropdownlistPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistPackingMethod.FormattingEnabled = true;
+            this.txtdropdownlistPackingMethod.IsSupportUnselect = true;
+            this.txtdropdownlistPackingMethod.Location = new System.Drawing.Point(117, 229);
+            this.txtdropdownlistPackingMethod.Name = "txtdropdownlistPackingMethod";
+            this.txtdropdownlistPackingMethod.Size = new System.Drawing.Size(298, 24);
+            this.txtdropdownlistPackingMethod.TabIndex = 51;
+            this.txtdropdownlistPackingMethod.Type = "PackingMethod";
             // 
             // P01
             // 
@@ -730,56 +730,56 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.CheckBox checkBox2;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Button button1;
-        private Win.UI.DisplayBox displayBox7;
-        private Class.txttpeuser txttpeuser2;
-        private Class.txtuser txtuser1;
-        private Class.txttpeuser txttpeuser1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox6;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Label label20;
-        private Win.UI.Label label19;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
-        private Win.UI.DisplayBox displayBox8;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox9;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button7;
-        private Win.UI.Button button6;
-        private Win.UI.Button button5;
-        private Win.UI.Button button4;
-        private Class.txtdropdownlist txtdropdownlist2;
+        private Win.UI.CheckBox checkPullForwardOrder;
+        private Win.UI.CheckBox checkCancelledOrder;
+        private Win.UI.CheckBox checkLocalOrder;
+        private Win.UI.Button btnbdown;
+        private Win.UI.DisplayBox displayPOcombo;
+        private Class.txttpeuser txttpeuserOrderHandle;
+        private Class.txtuser txtuserLocalMR;
+        private Class.txttpeuser txttpeuserSMR;
+        private Win.UI.NumericBox numQtyCarton;
+        private Win.UI.DisplayBox displayDescription;
+        private Class.txtcountry txtcountryDestination;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displayPONo;
+        private Win.UI.DisplayBox displaySP;
+        private Win.UI.Label labelPOcombo;
+        private Win.UI.Label labelOrderHandle;
+        private Win.UI.Label labelSMR;
+        private Win.UI.Label labelLocalMR;
+        private Win.UI.Label labelQtyCarton;
+        private Win.UI.Label labelPackingMethod;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelDestination;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelPONo;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelCloseGarment;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelSewingOffline;
+        private Win.UI.Label labelSewingInLine;
+        private Win.UI.Label labelOrderQty;
+        private Win.UI.Label labelProject;
+        private Win.UI.Label labelCategory;
+        private Win.UI.DisplayBox displayProject;
+        private Class.txtdropdownlist txtdropdownlistCategory;
+        private Win.UI.DateBox dateCloseGarment;
+        private Win.UI.DateBox dateBuyerDelivery;
+        private Win.UI.DateBox dateSewingOffline;
+        private Win.UI.DateBox dateSewingInLine;
+        private Win.UI.DisplayBox displayOrderQty;
+        private Win.UI.NumericBox numOrderQty;
+        private Win.UI.Button btnPackingMethod;
+        private Win.UI.Button btnQuantityBreakdown;
+        private Win.UI.Button btnOverrunGarmentRecord;
+        private Win.UI.Button btnCartonBooking;
+        private Win.UI.Button btnMaterialImport;
+        private Win.UI.Button btnCartonStatus;
+        private Class.txtdropdownlist txtdropdownlistPackingMethod;
     }
 }
