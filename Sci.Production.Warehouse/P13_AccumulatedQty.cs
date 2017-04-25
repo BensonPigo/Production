@@ -44,9 +44,9 @@ GROUP BY A.PoId,A.Seq1,A.Seq2", dr["id"].ToString()));
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAccumlatedQty.IsEditingReadOnly = true;
+            this.gridAccumlatedQty.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAccumlatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelLaboratory = new Sci.Win.UI.Label();
+            this.labelInspection = new Sci.Win.UI.Label();
             this.gridFir_Laboratory = new Sci.Win.UI.Grid();
             this.gridFirAir = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.bsAIR_FIR = new Sci.Win.UI.BindingSource(this.components);
             this.bsFIR_Laboratory = new Sci.Win.UI.BindingSource(this.components);
             this.panel1.SuspendLayout();
@@ -48,8 +48,8 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelLaboratory);
+            this.panel1.Controls.Add(this.labelInspection);
             this.panel1.Controls.Add(this.gridFir_Laboratory);
             this.panel1.Controls.Add(this.gridFirAir);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -58,23 +58,23 @@
             this.panel1.Size = new System.Drawing.Size(784, 561);
             this.panel1.TabIndex = 0;
             // 
-            // label2
+            // labelLaboratory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 308);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Laboratory";
+            this.labelLaboratory.Lines = 0;
+            this.labelLaboratory.Location = new System.Drawing.Point(9, 308);
+            this.labelLaboratory.Name = "labelLaboratory";
+            this.labelLaboratory.Size = new System.Drawing.Size(75, 23);
+            this.labelLaboratory.TabIndex = 3;
+            this.labelLaboratory.Text = "Laboratory";
             // 
-            // label1
+            // labelInspection
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Inspection";
+            this.labelInspection.Lines = 0;
+            this.labelInspection.Location = new System.Drawing.Point(9, 14);
+            this.labelInspection.Name = "labelInspection";
+            this.labelInspection.Size = new System.Drawing.Size(75, 23);
+            this.labelInspection.TabIndex = 2;
+            this.labelInspection.Text = "Inspection";
             // 
             // gridFir_Laboratory
             // 
@@ -126,24 +126,24 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 513);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(784, 48);
             this.panel2.TabIndex = 0;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(692, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(692, 11);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // P03_InspectionList
             // 
@@ -167,10 +167,10 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridFirAir;
         private Win.UI.Panel panel2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private Win.UI.BindingSource bsAIR_FIR;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelLaboratory;
+        private Win.UI.Label labelInspection;
         private Win.UI.Grid gridFir_Laboratory;
         private Win.UI.BindingSource bsFIR_Laboratory;
     }

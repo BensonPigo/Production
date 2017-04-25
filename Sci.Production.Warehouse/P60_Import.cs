@@ -32,30 +32,30 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             DateTime? issueDate1, issueDate2;
-            String localpoid = this.textBox1.Text;
-            issueDate1 = dateRange1.Value1;
-            issueDate2 = dateRange1.Value2;
-            String spno1 = txtSpno1.Text;
-            String spno2 = txtSpno2.Text;
-            String category = txtartworktype_fty1.Text;
+            String localpoid = this.txtLocalPO.Text;
+            issueDate1 = datePOIssueDate.Value1;
+            issueDate2 = datePOIssueDate.Value2;
+            String spno1 = txtSPNoStart.Text;
+            String spno2 = txtSPNoEnd.Text;
+            String category = txtartworktype_ftyCategory.Text;
 
             if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1))
             {
                 MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > can't be empty at the same time!!");
-                textBox1.Focus();
+                txtLocalPO.Focus();
                 return;
             }
 
             if (!MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSpno2.Focus();
+                txtSPNoEnd.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(spno1) && !MyUtility.Check.Empty(spno2))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSpno1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
             // 建立可以符合回傳的Cursor
@@ -148,7 +148,7 @@ Where b.Qty - b.InQty >0
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow dr = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(dr["onRoad"].ToString()))
                     {
                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
@@ -161,9 +161,9 @@ Where b.Qty - b.InQty >0
             Ict.Win.UI.DataGridViewNumericBoxColumn col_qty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
             Ict.Win.UI.DataGridViewTextBoxColumn col_remark = new Ict.Win.UI.DataGridViewTextBoxColumn();
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = detailBS;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = detailBS;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("LocalPoId", header: "Local PO#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
@@ -192,7 +192,7 @@ Where b.Qty - b.InQty >0
         private void button2_Click(object sender, EventArgs e)
         {
 
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
 
             DataTable dtGridBS1 = (DataTable)detailBS.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;

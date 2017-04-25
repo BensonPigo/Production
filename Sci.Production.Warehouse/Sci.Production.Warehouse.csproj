@@ -1035,6 +1035,9 @@
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P04_LocalTransaction.resx">
+      <DependentUpon>P04_LocalTransaction.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P07_ExcelImport.resx">
       <DependentUpon>P07_ExcelImport.cs</DependentUpon>
     </EmbeddedResource>

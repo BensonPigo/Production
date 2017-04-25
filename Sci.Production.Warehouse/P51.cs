@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            MyUtility.Tool.SetupCombox(cbbStockType, 2, 1, "B,Bulk,I,Inventory");
+            MyUtility.Tool.SetupCombox(comboStockType, 2, 1, "B,Bulk,I,Inventory");
         }
 
         // 新增時預設資料
@@ -105,7 +105,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -490,7 +490,7 @@ Where a.id = '{0}'", masterID);
 
         private void cbbStockType_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(cbbStockType.SelectedValue) && cbbStockType.SelectedValue != cbbStockType.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
             {
                 if (detailgridbs.DataSource != null && DetailDatas.Count > 0)
                 {

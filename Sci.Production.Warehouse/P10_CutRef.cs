@@ -54,9 +54,9 @@ order by b.POID,c.seq1,c.seq2,c.Cutno
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCutplanID.IsEditingReadOnly = true;
+            this.gridCutplanID.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCutplanID)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

@@ -32,9 +32,9 @@ namespace Sci.Production.Warehouse
             this.selectData();
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridUnfinish.IsEditingReadOnly = true;
+            this.gridUnfinish.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridUnfinish)
                  .Text("ctype", header: "Type", width: Widths.AnsiChars(25))
                  .Text("ID", header: "Request#", width: Widths.AnsiChars(13))
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(13));

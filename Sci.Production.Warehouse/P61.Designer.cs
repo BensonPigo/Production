@@ -29,19 +29,19 @@
         private void InitializeComponent()
         {
             this.txtRemark = new Sci.Win.UI.EditBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
             this.btnImport = new Sci.Win.UI.Button();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.displayID = new Sci.Win.UI.DisplayBox();
             this.lblStatus = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.btnClearEmpty = new Sci.Win.UI.Button();
             this.btnFind = new Sci.Win.UI.Button();
-            this.txtSP = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
+            this.txtLocateForSP = new Sci.Win.UI.TextBox();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,72 +60,67 @@
             // 
             this.masterpanel.Controls.Add(this.btnClearEmpty);
             this.masterpanel.Controls.Add(this.btnFind);
-            this.masterpanel.Controls.Add(this.txtSP);
-            this.masterpanel.Controls.Add(this.label5);
+            this.masterpanel.Controls.Add(this.txtLocateForSP);
+            this.masterpanel.Controls.Add(this.labelLocateForSP);
             this.masterpanel.Controls.Add(this.txtRemark);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.btnImport);
-            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.lblStatus);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.dateBox3);
+            this.masterpanel.Controls.Add(this.labelIssueDate);
+            this.masterpanel.Controls.Add(this.labelID);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 140);
+            this.masterpanel.Size = new System.Drawing.Size(885, 140);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnClearEmpty, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 140);
-            this.detailpanel.Size = new System.Drawing.Size(892, 209);
+            this.detailpanel.Size = new System.Drawing.Size(885, 308);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(767, 104);
+            this.gridicon.Location = new System.Drawing.Point(760, 104);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 209);
+            this.detailgridcont.Size = new System.Drawing.Size(885, 308);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(885, 486);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailgridcont2.Size = new System.Drawing.Size(879, 440);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(885, 486);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(885, 448);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 448);
             // 
             // browse
             // 
@@ -146,21 +141,21 @@
             this.txtRemark.Size = new System.Drawing.Size(658, 51);
             this.txtRemark.TabIndex = 62;
             // 
-            // label1
+            // labelRemark
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(6, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 67;
-            this.label1.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(6, 39);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 67;
+            this.labelRemark.Text = "Remark";
             // 
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(803, 39);
+            this.btnImport.Location = new System.Drawing.Point(796, 39);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 64;
@@ -168,23 +163,23 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // dateBox3
+            // dateIssueDate
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateBox3.Location = new System.Drawing.Point(342, 9);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 60;
+            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
+            this.dateIssueDate.Location = new System.Drawing.Point(342, 9);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 60;
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(88, 9);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 61;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(88, 9);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 61;
             // 
             // lblStatus
             // 
@@ -193,30 +188,30 @@
             this.lblStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblStatus.Lines = 0;
-            this.lblStatus.Location = new System.Drawing.Point(768, 9);
+            this.lblStatus.Location = new System.Drawing.Point(761, 9);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
             this.lblStatus.TabIndex = 66;
             this.lblStatus.Text = "New";
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // label11
+            // labelIssueDate
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(231, 9);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(108, 23);
-            this.label11.TabIndex = 65;
-            this.label11.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(231, 9);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
+            this.labelIssueDate.TabIndex = 65;
+            this.labelIssueDate.Text = "Issue Date";
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(6, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 63;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(6, 9);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 63;
+            this.labelID.Text = "ID";
             // 
             // lineShape1
             // 
@@ -224,7 +219,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 5;
-            this.lineShape1.X2 = 884;
+            this.lineShape1.X2 = 877;
             this.lineShape1.Y1 = 99;
             this.lineShape1.Y2 = 99;
             // 
@@ -235,7 +230,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 140);
+            this.shapeContainer1.Size = new System.Drawing.Size(885, 140);
             this.shapeContainer1.TabIndex = 68;
             this.shapeContainer1.TabStop = false;
             // 
@@ -261,24 +256,24 @@
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
-            // txtSP
+            // txtLocateForSP
             // 
-            this.txtSP.BackColor = System.Drawing.Color.White;
-            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.IsSupportEditMode = false;
-            this.txtSP.Location = new System.Drawing.Point(117, 108);
-            this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(145, 23);
-            this.txtSP.TabIndex = 69;
+            this.txtLocateForSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateForSP.IsSupportEditMode = false;
+            this.txtLocateForSP.Location = new System.Drawing.Point(117, 108);
+            this.txtLocateForSP.Name = "txtLocateForSP";
+            this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
+            this.txtLocateForSP.TabIndex = 69;
             // 
-            // label5
+            // labelLocateForSP
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(5, 108);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(109, 23);
-            this.label5.TabIndex = 72;
-            this.label5.Text = "Locate for SP#";
+            this.labelLocateForSP.Lines = 0;
+            this.labelLocateForSP.Location = new System.Drawing.Point(5, 108);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
+            this.labelLocateForSP.TabIndex = 72;
+            this.labelLocateForSP.Text = "Locate for SP#";
             // 
             // P61
             // 
@@ -323,18 +318,18 @@
         #endregion
 
         private Win.UI.EditBox txtRemark;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelRemark;
         private Win.UI.Button btnImport;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.DateBox dateIssueDate;
+        private Win.UI.DisplayBox displayID;
         private Win.UI.Label lblStatus;
-        private Win.UI.Label label11;
-        private Win.UI.Label label3;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelID;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Button btnClearEmpty;
         private Win.UI.Button btnFind;
-        private Win.UI.TextBox txtSP;
-        private Win.UI.Label label5;
+        private Win.UI.TextBox txtLocateForSP;
+        private Win.UI.Label labelLocateForSP;
     }
 }

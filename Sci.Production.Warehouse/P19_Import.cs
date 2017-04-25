@@ -33,24 +33,24 @@ namespace Sci.Production.Warehouse
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
-            if (cbbStockType.SelectedIndex < 0)
+            if (comboStockType.SelectedIndex < 0)
             {
                 MyUtility.Msg.WarningBox("< Stock Type > can't be empty!!");
-                this.cbbStockType.Focus();
+                this.comboStockType.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.txtSP.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                txtSP.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
 
             StringBuilder sbSQLCmd = new StringBuilder();
-            String stocktype = this.cbbStockType.SelectedValue.ToString();
-            String sp = this.txtSP.Text;
+            String stocktype = this.comboStockType.SelectedValue.ToString();
+            String sp = this.txtSPNo.Text;
 
             #region -- sql parameters declare --
 
@@ -119,30 +119,30 @@ and a.id = @sp and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(cbbStockType, 2, 1, "B,Bulk,I,Inventory");
-            cbbStockType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStockType, 2, 1, "B,Bulk,I,Inventory");
+            comboStockType.SelectedIndex = 0;
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                    grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                 }
             };
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             Ict.Win.UI.DataGridViewNumericBoxColumn nb_qty;
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["stockQty"];
@@ -155,7 +155,7 @@ and a.id = @sp and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
@@ -186,7 +186,7 @@ and a.id = @sp and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) 
                 return;

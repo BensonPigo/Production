@@ -34,9 +34,9 @@ namespace Sci.Production.Warehouse
             ExcelFile.Columns.Add("FullFileName", typeof(String));
 
             listControlBindingSource1.DataSource = ExcelFile;
-            grid1.DataSource = listControlBindingSource1;
-            grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            gridAttachFile.DataSource = listControlBindingSource1;
+            gridAttachFile.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridAttachFile)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
                 .Text("Status", header: "Status", width: Widths.AnsiChars(100));
 
@@ -66,10 +66,10 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("fabrictype", typeof(String));
 
             listControlBindingSource2.DataSource = grid2Data;
-            grid2.DataSource = listControlBindingSource2;
+            gridPoid.DataSource = listControlBindingSource2;
 
-            grid2.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid2)
+            gridPoid.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridPoid)
                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
@@ -84,9 +84,9 @@ namespace Sci.Production.Warehouse
                 .Text("location", header: "Location", width: Widths.AnsiChars(8))
                 .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100));
 
-            for (int i = 0; i < grid2.ColumnCount; i++)
+            for (int i = 0; i < gridPoid.ColumnCount; i++)
             {
-                grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                gridPoid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
 
@@ -130,7 +130,7 @@ namespace Sci.Production.Warehouse
             {
                 grid2Data.Clear();
             }
-            grid2.SuspendLayout();
+            gridPoid.SuspendLayout();
             #endregion
 
             /* 檢查1. Grid中的檔案是否存在，不存在時顯示於status欄位 
@@ -386,7 +386,7 @@ where   stocktype='{0}'
             }
             #endregion
 
-            grid2.ResumeLayout();
+            gridPoid.ResumeLayout();
         }
 
         //Write in

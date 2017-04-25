@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioStocktakingList = new Sci.Win.UI.RadioButton();
+            this.radioBookQty = new Sci.Win.UI.RadioButton();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioGroup1
             // 
-            this.radioGroup1.Controls.Add(this.radioButton2);
-            this.radioGroup1.Controls.Add(this.radioButton1);
+            this.radioGroup1.Controls.Add(this.radioStocktakingList);
+            this.radioGroup1.Controls.Add(this.radioBookQty);
             this.radioGroup1.Location = new System.Drawing.Point(33, 28);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(434, 202);
@@ -47,38 +47,39 @@
             this.radioGroup1.Value = "Forward Stocktaking without Book Qty";
             this.radioGroup1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
             // 
-            // radioButton2
+            // radioStocktakingList
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(7, 97);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(180, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Forward Stocktaking List";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "Forward Stocktaking List";
+            this.radioStocktakingList.AutoSize = true;
+            this.radioStocktakingList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioStocktakingList.Location = new System.Drawing.Point(7, 97);
+            this.radioStocktakingList.Name = "radioStocktakingList";
+            this.radioStocktakingList.Size = new System.Drawing.Size(180, 21);
+            this.radioStocktakingList.TabIndex = 1;
+            this.radioStocktakingList.TabStop = true;
+            this.radioStocktakingList.Text = "Forward Stocktaking List";
+            this.radioStocktakingList.UseVisualStyleBackColor = true;
+            this.radioStocktakingList.Value = "Forward Stocktaking List";
             // 
-            // radioButton1
+            // radioBookQty
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(7, 56);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(264, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Forward Stocktaking without Book Qty";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "Forward Stocktaking without Book Qty";
+            this.radioBookQty.AutoSize = true;
+            this.radioBookQty.Checked = true;
+            this.radioBookQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBookQty.Location = new System.Drawing.Point(7, 56);
+            this.radioBookQty.Name = "radioBookQty";
+            this.radioBookQty.Size = new System.Drawing.Size(264, 21);
+            this.radioBookQty.TabIndex = 0;
+            this.radioBookQty.TabStop = true;
+            this.radioBookQty.Text = "Forward Stocktaking without Book Qty";
+            this.radioBookQty.UseVisualStyleBackColor = true;
+            this.radioBookQty.Value = "Forward Stocktaking without Book Qty";
             // 
             // P50_Print
             // 
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioGroup1);
             this.Name = "P50_Print";
+            this.Text = "() ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -93,8 +94,8 @@
         #endregion
 
         private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioStocktakingList;
+        private Win.UI.RadioButton radioBookQty;
 
     }
 }

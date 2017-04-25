@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtChineseDesc = new Sci.Win.UI.TextBox();
+            this.txtEnglishDesc = new Sci.Win.UI.TextBox();
+            this.labelEnglishDesc = new Sci.Win.UI.Label();
+            this.labelChineseDesc = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,11 +47,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.txtChineseDesc);
+            this.detailcont.Controls.Add(this.txtEnglishDesc);
+            this.detailcont.Controls.Add(this.labelEnglishDesc);
+            this.detailcont.Controls.Add(this.labelChineseDesc);
             this.detailcont.Size = new System.Drawing.Size(900, 357);
             // 
             // detailbtm
@@ -79,59 +79,59 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(446, 13);
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(655, 17);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 17;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(655, 17);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 17;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox3
+            // txtChineseDesc
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox3.IsSupportEditMode = false;
-            this.textBox3.Location = new System.Drawing.Point(125, 58);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(391, 23);
-            this.textBox3.TabIndex = 16;
+            this.txtChineseDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtChineseDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.txtChineseDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtChineseDesc.IsSupportEditMode = false;
+            this.txtChineseDesc.Location = new System.Drawing.Point(125, 58);
+            this.txtChineseDesc.Name = "txtChineseDesc";
+            this.txtChineseDesc.ReadOnly = true;
+            this.txtChineseDesc.Size = new System.Drawing.Size(391, 23);
+            this.txtChineseDesc.TabIndex = 16;
             // 
-            // textBox2
+            // txtEnglishDesc
             // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(125, 17);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(511, 23);
-            this.textBox2.TabIndex = 15;
+            this.txtEnglishDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtEnglishDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
+            this.txtEnglishDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtEnglishDesc.IsSupportEditMode = false;
+            this.txtEnglishDesc.Location = new System.Drawing.Point(125, 17);
+            this.txtEnglishDesc.Name = "txtEnglishDesc";
+            this.txtEnglishDesc.ReadOnly = true;
+            this.txtEnglishDesc.Size = new System.Drawing.Size(511, 23);
+            this.txtEnglishDesc.TabIndex = 15;
             // 
-            // label4
+            // labelEnglishDesc
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 17);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 23);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "English Desc";
+            this.labelEnglishDesc.Lines = 0;
+            this.labelEnglishDesc.Location = new System.Drawing.Point(16, 17);
+            this.labelEnglishDesc.Name = "labelEnglishDesc";
+            this.labelEnglishDesc.Size = new System.Drawing.Size(100, 23);
+            this.labelEnglishDesc.TabIndex = 12;
+            this.labelEnglishDesc.Text = "English Desc";
             // 
-            // label5
+            // labelChineseDesc
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 58);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 23);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Chinese Desc";
+            this.labelChineseDesc.Lines = 0;
+            this.labelChineseDesc.Location = new System.Drawing.Point(16, 58);
+            this.labelChineseDesc.Name = "labelChineseDesc";
+            this.labelChineseDesc.Size = new System.Drawing.Size(100, 23);
+            this.labelChineseDesc.TabIndex = 13;
+            this.labelChineseDesc.Text = "Chinese Desc";
             // 
             // B05
             // 
@@ -161,10 +161,10 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.TextBox txtChineseDesc;
+        private Win.UI.TextBox txtEnglishDesc;
+        private Win.UI.Label labelEnglishDesc;
+        private Win.UI.Label labelChineseDesc;
     }
 }

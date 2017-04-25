@@ -94,14 +94,14 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["localsuppid"]))
             {
                 MyUtility.Msg.WarningBox("< Local Supplier >  can't be empty!", "Warning");
-                txtsubcon1.Focus();
+                txtsubconLocalSupplier.Focus();
                 return false;
             }
 
@@ -524,7 +524,7 @@ Where a.id = '{0}' ", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("OrderId", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("OrderId", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -537,7 +537,7 @@ Where a.id = '{0}' ", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["localsuppid"]))
             {
                 MyUtility.Msg.WarningBox("Please select local supplier first");
-                txtsubcon1.Focus();
+                txtsubconLocalSupplier.Focus();
                 return;
             }
             var frm = new Sci.Production.Warehouse.P60_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);

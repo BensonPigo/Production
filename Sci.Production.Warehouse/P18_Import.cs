@@ -94,7 +94,7 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentrow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(currentrow["Stocktype"].ToString(), currentrow["Location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -105,7 +105,7 @@ where a.status='Confirmed' and a.id='{0}'", transid)); //
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     dr["location"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id
@@ -151,7 +151,7 @@ WHERE   StockType='{0}'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow CurrentDetailData = grid1.GetDataRow(e.RowIndex);
+                    DataRow CurrentDetailData = gridImport.GetDataRow(e.RowIndex);
                     CurrentDetailData["stocktype"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id
@@ -195,9 +195,9 @@ WHERE   StockType='{0}'
             Ict.Win.UI.DataGridViewTextBoxColumn txt_dyelot;
             Ict.Win.UI.DataGridViewTextBoxColumn txt_location;
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
@@ -227,7 +227,7 @@ WHERE   StockType='{0}'
         private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

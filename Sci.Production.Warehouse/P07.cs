@@ -130,13 +130,13 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["invno"]))
             {
                 MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
-                textBox3.Focus();
+                txtInvoiceNo.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ETA"]))
             {
                 MyUtility.Msg.WarningBox("< ETA >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateETA.Focus();
                 return false;
             }
 
@@ -149,21 +149,21 @@ namespace Sci.Production.Warehouse
             bool chk;
             String msg;
 
-            if (!MyUtility.Check.Empty(dateBox2.Value) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
+            if (!MyUtility.Check.Empty(dateArrivePortDate.Value) && !MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
             {
-                ArrivePortDate = DateTime.Parse(dateBox2.Text);//port
+                ArrivePortDate = DateTime.Parse(dateArrivePortDate.Text);//port
                 WhseArrival = DateTime.Parse(CurrentMaintain["WhseArrival"].ToString());//warehouse
                 // 到倉日不可早於到港日
                 if (!(chk=Prgs.CheckArrivedWhseDateWithArrivedPortDate(ArrivePortDate, WhseArrival, out msg)))
                 {
                     MyUtility.Msg.WarningBox(msg);
-                    dateBox3.Focus();
+                    dateArriveWHDate.Focus();
                     return false;
                 }
                 if (DateTime.Compare(WhseArrival, ArrivePortDate.AddDays(20)) > 0)
                 {
                     MyUtility.Msg.WarningBox("Arrive Warehouse date can't be later than arrive port 20 days!!");
-                    dateBox3.Focus();
+                    dateArriveWHDate.Focus();
                     return false;
                 }
             }
@@ -289,15 +289,15 @@ namespace Sci.Production.Warehouse
             DataRow dr;
             if (!(CurrentMaintain == null))
             {
-                dateBox2.Value = null;
-                dateBox5.Value = null;
+                dateArrivePortDate.Value = null;
+                dateDoxRcvDate.Value = null;
                 if (MyUtility.Check.Seek(string.Format(@"select portarrival,docarrival from dbo.export WITH (NOLOCK) where id='{0}'"
                     , CurrentMaintain["exportid"]), out dr, null))
                 {                                      
-                    if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
-                    if (!MyUtility.Check.Empty(dr["docarrival"])) dateBox5.Value = DateTime.Parse(dr["docarrival"].ToString());
+                    if (!MyUtility.Check.Empty(dr["portarrival"])) dateArrivePortDate.Value = DateTime.Parse(dr["portarrival"].ToString());
+                    if (!MyUtility.Check.Empty(dr["docarrival"])) dateDoxRcvDate.Value = DateTime.Parse(dr["docarrival"].ToString());
                 }
-                dateBox1.Enabled = (MyUtility.Check.Empty(CurrentMaintain["third"]) || CurrentMaintain["third"].ToString() == "True");
+                dateETA.Enabled = (MyUtility.Check.Empty(CurrentMaintain["third"]) || CurrentMaintain["third"].ToString() == "True");
             }
 
             #region Status Label
@@ -321,7 +321,7 @@ namespace Sci.Production.Warehouse
                     MyUtility.Msg.WarningBox("< Invoice# >  can't be empty!", "Warning");
                     e.Cancel = true;
                     CurrentDetailData["poid"] = "";
-                    textBox3.Focus();
+                    txtInvoiceNo.Focus();
                     return;
                 }
                 if (this.EditMode && e.FormattedValue.ToString()!="")
@@ -663,13 +663,13 @@ WHERE   StockType='{0}'
             if (MyUtility.Check.Empty(CurrentMaintain["PackingReceive"]))
             {
                 MyUtility.Msg.WarningBox("<Packing Receive Date>  can't be empty!", "Warning");
-                dateBox4.Focus();
+                datePLRcvDate.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["whseArrival"]))
             {
                 MyUtility.Msg.WarningBox("< Arrive W/H Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateArriveWHDate.Focus();
                 return;
             }
             #endregion
@@ -1133,25 +1133,25 @@ Where a.id = '{0}' ", masterID);
         {
             DataRow dr;
             DataTable dt;
-            if (textBox3.Text != textBox3.OldValue)
+            if (txtInvoiceNo.Text != txtInvoiceNo.OldValue)
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
-                CurrentMaintain["invno"] = textBox3.Text;
+                CurrentMaintain["invno"] = txtInvoiceNo.Text;
                 CurrentMaintain["ETA"] = DBNull.Value;
                 CurrentMaintain["WhseArrival"] = DBNull.Value;
-                dateBox5.Value = null;
-                dateBox2.Value = null;
+                dateDoxRcvDate.Value = null;
+                dateArrivePortDate.Value = null;
                 if (MyUtility.Check.Seek(string.Format("select packingarrival,whsearrival,eta,PortArrival,DocArrival from dbo.export WITH (NOLOCK) where id='{0}'"
-                    , textBox3.Text), out dr, null))
+                    , txtInvoiceNo.Text), out dr, null))
                 {
-                    if (!MyUtility.Check.Empty(dr["portarrival"])) dateBox2.Value = DateTime.Parse(dr["portarrival"].ToString());
+                    if (!MyUtility.Check.Empty(dr["portarrival"])) dateArrivePortDate.Value = DateTime.Parse(dr["portarrival"].ToString());
                     CurrentMaintain["exportid"] = CurrentMaintain["invno"];
                     CurrentMaintain["PackingReceive"] = dr["packingarrival"];
                     CurrentMaintain["WhseArrival"] = dr["WhseArrival"];
-                    if (!MyUtility.Check.Empty(dr["DocArrival"])) dateBox5.Value = DateTime.Parse(dr["DocArrival"].ToString());
+                    if (!MyUtility.Check.Empty(dr["DocArrival"])) dateDoxRcvDate.Value = DateTime.Parse(dr["DocArrival"].ToString());
                     CurrentMaintain["ETA"] = dr["ETA"];
                     CurrentMaintain["third"] = 0;
-                    this.dateBox1.Enabled = false;
+                    this.dateETA.Enabled = false;
                     string selCom = string.Format(@"select a.poid,a.seq1,a.seq2,a.Qty+a.Foc as shipqty,a.UnitId,a.WeightKg as Weight
 , a.NetKg as ActualWeight, iif(c.category='M','I','B') as stocktype
 , b.POUnit 
@@ -1203,7 +1203,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
                 {
                     CurrentMaintain["exportid"] = "";
                     CurrentMaintain["third"] = 1;
-                    this.dateBox1.Enabled = true;
+                    this.dateETA.Enabled = true;
                 }
             }
         }
@@ -1225,7 +1225,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
         //Filter
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboBox1.SelectedIndex)
+            switch (comboTypeFilter.SelectedIndex)
             {
                 case 0:
                     detailgridbs.Filter = "";
@@ -1272,9 +1272,9 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
             int index = -1;
 
             if(txtSeq1.checkEmpty(showErrMsg: false)) {
-                index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+                index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             }else{
-                index = detailgridbs.Find("PoidSeq", textBox1.Text.TrimEnd() + txtSeq1.getSeq());
+                index = detailgridbs.Find("PoidSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
             }
             
             if (index == -1)
@@ -1285,7 +1285,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
 
         private void btImportFromExcel_Click(object sender, EventArgs e)
         {
-            if (textBox3.Text == "")
+            if (txtInvoiceNo.Text == "")
             {
                 MyUtility.Msg.WarningBox("Invoice# Can't Null");
             }

@@ -28,35 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.components = new System.ComponentModel.Container();
+            this.labelID = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.labelRequest = new Sci.Win.UI.Label();
             this.txtRequest = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.disLine = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.disCutCell = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.ebCut = new Sci.Win.UI.EditBox();
+            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.displayLineNo = new Sci.Win.UI.DisplayBox();
+            this.labelLineNo = new Sci.Win.UI.Label();
+            this.displayCutCell = new Sci.Win.UI.DisplayBox();
+            this.labelCutCell = new Sci.Win.UI.Label();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelCutNo = new Sci.Win.UI.Label();
+            this.editCutNo = new Sci.Win.UI.EditBox();
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.label25 = new Sci.Win.UI.Label();
             this.btnBreakDown = new Sci.Win.UI.Button();
-            this.ebArticle = new Sci.Win.UI.EditBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.disPOID = new Sci.Win.UI.DisplayBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
+            this.editArticle = new Sci.Win.UI.EditBox();
+            this.labelArticle = new Sci.Win.UI.Label();
+            this.displayPOID = new Sci.Win.UI.DisplayBox();
+            this.labelPOID = new Sci.Win.UI.Label();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnBOA = new Sci.Win.UI.Button();
             this.btnClear = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label10 = new Sci.Win.UI.Label();
+            this.txtOrderID = new Sci.Win.UI.TextBox();
+            this.labelOrderID = new Sci.Win.UI.Label();
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
-            this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.checkByCombo = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,60 +77,60 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label10);
+            this.masterpanel.Controls.Add(this.checkByCombo);
+            this.masterpanel.Controls.Add(this.txtOrderID);
+            this.masterpanel.Controls.Add(this.labelOrderID);
             this.masterpanel.Controls.Add(this.btnClear);
             this.masterpanel.Controls.Add(this.btnBOA);
-            this.masterpanel.Controls.Add(this.disPOID);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.ebArticle);
-            this.masterpanel.Controls.Add(this.label8);
+            this.masterpanel.Controls.Add(this.displayPOID);
+            this.masterpanel.Controls.Add(this.labelPOID);
+            this.masterpanel.Controls.Add(this.editArticle);
+            this.masterpanel.Controls.Add(this.labelArticle);
             this.masterpanel.Controls.Add(this.btnBreakDown);
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.btnAutoPick);
-            this.masterpanel.Controls.Add(this.ebCut);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.disCutCell);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.disLine);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.editCutNo);
+            this.masterpanel.Controls.Add(this.labelCutNo);
+            this.masterpanel.Controls.Add(this.txtRemark);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.displayCutCell);
+            this.masterpanel.Controls.Add(this.labelCutCell);
+            this.masterpanel.Controls.Add(this.displayLineNo);
+            this.masterpanel.Controls.Add(this.labelLineNo);
+            this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.txtRequest);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.labelRequest);
+            this.masterpanel.Controls.Add(this.displayID);
+            this.masterpanel.Controls.Add(this.labelID);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Size = new System.Drawing.Size(999, 164);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRequest, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRequest, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disLine, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disCutCell, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.ebCut, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLineNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayLineNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCutCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCutCell, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCutNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editCutNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBreakDown, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.ebArticle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disPOID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelArticle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editArticle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPOID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPOID, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBOA, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnClear, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOrderID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtOrderID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
             // 
             // detailpanel
             // 
@@ -139,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(1103, 128);
+            this.gridicon.Location = new System.Drawing.Point(1156, 128);
             // 
             // refresh
             // 
@@ -197,33 +198,33 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(421, 149);
             // 
-            // label1
+            // labelID
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(9, 9);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(87, 9);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(107, 23);
-            this.displayBox1.TabIndex = 2;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(87, 9);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(107, 23);
+            this.displayID.TabIndex = 2;
             // 
-            // label2
+            // labelRequest
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Request";
+            this.labelRequest.Lines = 0;
+            this.labelRequest.Location = new System.Drawing.Point(9, 40);
+            this.labelRequest.Name = "labelRequest";
+            this.labelRequest.Size = new System.Drawing.Size(75, 23);
+            this.labelRequest.TabIndex = 3;
+            this.labelRequest.Text = "Request";
             // 
             // txtRequest
             // 
@@ -236,100 +237,100 @@
             this.txtRequest.TabIndex = 1;
             this.txtRequest.Validating += new System.ComponentModel.CancelEventHandler(this.txtRequest_Validating);
             // 
-            // label3
+            // labelIssueDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(224, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(224, 9);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
+            this.labelIssueDate.TabIndex = 5;
+            this.labelIssueDate.Text = "Issue Date";
             // 
-            // dateBox1
+            // dateIssueDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
-            this.dateBox1.Location = new System.Drawing.Point(302, 9);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
+            this.dateIssueDate.Location = new System.Drawing.Point(302, 9);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 0;
             // 
-            // disLine
+            // displayLineNo
             // 
-            this.disLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disLine.Location = new System.Drawing.Point(87, 102);
-            this.disLine.Name = "disLine";
-            this.disLine.Size = new System.Drawing.Size(211, 23);
-            this.disLine.TabIndex = 8;
+            this.displayLineNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLineNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLineNo.Location = new System.Drawing.Point(87, 102);
+            this.displayLineNo.Name = "displayLineNo";
+            this.displayLineNo.Size = new System.Drawing.Size(211, 23);
+            this.displayLineNo.TabIndex = 8;
             // 
-            // label4
+            // labelLineNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 102);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Line#";
+            this.labelLineNo.Lines = 0;
+            this.labelLineNo.Location = new System.Drawing.Point(9, 102);
+            this.labelLineNo.Name = "labelLineNo";
+            this.labelLineNo.Size = new System.Drawing.Size(75, 23);
+            this.labelLineNo.TabIndex = 7;
+            this.labelLineNo.Text = "Line#";
             // 
-            // disCutCell
+            // displayCutCell
             // 
-            this.disCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disCutCell.Location = new System.Drawing.Point(380, 102);
-            this.disCutCell.Name = "disCutCell";
-            this.disCutCell.Size = new System.Drawing.Size(100, 23);
-            this.disCutCell.TabIndex = 10;
+            this.displayCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutCell.Location = new System.Drawing.Point(380, 102);
+            this.displayCutCell.Name = "displayCutCell";
+            this.displayCutCell.Size = new System.Drawing.Size(100, 23);
+            this.displayCutCell.TabIndex = 10;
             // 
-            // label5
+            // labelCutCell
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(302, 102);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Cut Cell";
+            this.labelCutCell.Lines = 0;
+            this.labelCutCell.Location = new System.Drawing.Point(302, 102);
+            this.labelCutCell.Name = "labelCutCell";
+            this.labelCutCell.Size = new System.Drawing.Size(75, 23);
+            this.labelCutCell.TabIndex = 9;
+            this.labelCutCell.Text = "Cut Cell";
             // 
-            // textBox2
+            // txtRemark
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(87, 133);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(340, 23);
-            this.textBox2.TabIndex = 4;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(87, 133);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(340, 23);
+            this.txtRemark.TabIndex = 4;
             // 
-            // label6
+            // labelRemark
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(9, 133);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(9, 133);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 11;
+            this.labelRemark.Text = "Remark";
             // 
-            // label7
+            // labelCutNo
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(441, 9);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Cut#";
+            this.labelCutNo.Lines = 0;
+            this.labelCutNo.Location = new System.Drawing.Point(441, 9);
+            this.labelCutNo.Name = "labelCutNo";
+            this.labelCutNo.Size = new System.Drawing.Size(75, 23);
+            this.labelCutNo.TabIndex = 13;
+            this.labelCutNo.Text = "Cut#";
             // 
-            // ebCut
+            // editCutNo
             // 
-            this.ebCut.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.editCutNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ebCut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.ebCut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ebCut.IsSupportEditMode = false;
-            this.ebCut.Location = new System.Drawing.Point(519, 8);
-            this.ebCut.Multiline = true;
-            this.ebCut.Name = "ebCut";
-            this.ebCut.ReadOnly = true;
-            this.ebCut.Size = new System.Drawing.Size(355, 55);
-            this.ebCut.TabIndex = 14;
+            this.editCutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editCutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editCutNo.IsSupportEditMode = false;
+            this.editCutNo.Location = new System.Drawing.Point(519, 8);
+            this.editCutNo.Multiline = true;
+            this.editCutNo.Name = "editCutNo";
+            this.editCutNo.ReadOnly = true;
+            this.editCutNo.Size = new System.Drawing.Size(355, 55);
+            this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
             // 
@@ -369,46 +370,46 @@
             this.btnBreakDown.UseVisualStyleBackColor = true;
             this.btnBreakDown.Click += new System.EventHandler(this.btnBreakDown_Click);
             // 
-            // ebArticle
+            // editArticle
             // 
-            this.ebArticle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.editArticle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ebArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.ebArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ebArticle.IsSupportEditMode = false;
-            this.ebArticle.Location = new System.Drawing.Point(519, 70);
-            this.ebArticle.Multiline = true;
-            this.ebArticle.Name = "ebArticle";
-            this.ebArticle.ReadOnly = true;
-            this.ebArticle.Size = new System.Drawing.Size(355, 55);
-            this.ebArticle.TabIndex = 47;
+            this.editArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editArticle.IsSupportEditMode = false;
+            this.editArticle.Location = new System.Drawing.Point(519, 70);
+            this.editArticle.Multiline = true;
+            this.editArticle.Name = "editArticle";
+            this.editArticle.ReadOnly = true;
+            this.editArticle.Size = new System.Drawing.Size(355, 55);
+            this.editArticle.TabIndex = 47;
             // 
-            // label8
+            // labelArticle
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(441, 71);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 46;
-            this.label8.Text = "Article";
+            this.labelArticle.Lines = 0;
+            this.labelArticle.Location = new System.Drawing.Point(441, 71);
+            this.labelArticle.Name = "labelArticle";
+            this.labelArticle.Size = new System.Drawing.Size(75, 23);
+            this.labelArticle.TabIndex = 46;
+            this.labelArticle.Text = "Article";
             // 
-            // disPOID
+            // displayPOID
             // 
-            this.disPOID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disPOID.Location = new System.Drawing.Point(302, 71);
-            this.disPOID.Name = "disPOID";
-            this.disPOID.Size = new System.Drawing.Size(107, 23);
-            this.disPOID.TabIndex = 49;
+            this.displayPOID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPOID.Location = new System.Drawing.Point(302, 71);
+            this.displayPOID.Name = "displayPOID";
+            this.displayPOID.Size = new System.Drawing.Size(107, 23);
+            this.displayPOID.TabIndex = 49;
             // 
-            // label9
+            // labelPOID
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(224, 71);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 48;
-            this.label9.Text = "PO ID";
+            this.labelPOID.Lines = 0;
+            this.labelPOID.Location = new System.Drawing.Point(224, 71);
+            this.labelPOID.Name = "labelPOID";
+            this.labelPOID.Size = new System.Drawing.Size(75, 23);
+            this.labelPOID.TabIndex = 48;
+            this.labelPOID.Text = "PO ID";
             // 
             // btnBOA
             // 
@@ -434,26 +435,26 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.button9_Click);
             // 
-            // textBox1
+            // txtOrderID
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderId", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(87, 71);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(107, 23);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtOrderID.BackColor = System.Drawing.Color.White;
+            this.txtOrderID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderId", true));
+            this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtOrderID.Location = new System.Drawing.Point(87, 71);
+            this.txtOrderID.Name = "txtOrderID";
+            this.txtOrderID.Size = new System.Drawing.Size(107, 23);
+            this.txtOrderID.TabIndex = 3;
+            this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtOrderID.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // label10
+            // labelOrderID
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(9, 70);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 23);
-            this.label10.TabIndex = 52;
-            this.label10.Text = "Order ID";
+            this.labelOrderID.Lines = 0;
+            this.labelOrderID.Location = new System.Drawing.Point(9, 70);
+            this.labelOrderID.Name = "labelOrderID";
+            this.labelOrderID.Size = new System.Drawing.Size(75, 23);
+            this.labelOrderID.TabIndex = 52;
+            this.labelOrderID.Text = "Order ID";
             // 
             // gridIssueBreakDown
             // 
@@ -479,19 +480,19 @@
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
             // 
-            // checkBox1
+            // checkByCombo
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(224, 40);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(91, 21);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "By Combo";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkByCombo.AutoSize = true;
+            this.checkByCombo.Checked = true;
+            this.checkByCombo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkByCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkByCombo.Location = new System.Drawing.Point(224, 40);
+            this.checkByCombo.Name = "checkByCombo";
+            this.checkByCombo.Size = new System.Drawing.Size(91, 21);
+            this.checkByCombo.TabIndex = 2;
+            this.checkByCombo.Text = "By Combo";
+            this.checkByCombo.UseVisualStyleBackColor = true;
+            this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // P11
             // 
@@ -538,34 +539,34 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label1;
-        private Win.UI.EditBox ebCut;
-        private Win.UI.Label label7;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label6;
-        private Win.UI.DisplayBox disCutCell;
-        private Win.UI.Label label5;
-        private Win.UI.DisplayBox disLine;
-        private Win.UI.Label label4;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label3;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.Label labelID;
+        private Win.UI.EditBox editCutNo;
+        private Win.UI.Label labelCutNo;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.Label labelRemark;
+        private Win.UI.DisplayBox displayCutCell;
+        private Win.UI.Label labelCutCell;
+        private Win.UI.DisplayBox displayLineNo;
+        private Win.UI.Label labelLineNo;
+        private Win.UI.DateBox dateIssueDate;
+        private Win.UI.Label labelIssueDate;
         private Win.UI.TextBox txtRequest;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelRequest;
         private Win.UI.Button btnAutoPick;
         private Win.UI.Label label25;
         private Win.UI.Button btnBreakDown;
-        private Win.UI.DisplayBox disPOID;
-        private Win.UI.Label label9;
-        private Win.UI.EditBox ebArticle;
-        private Win.UI.Label label8;
+        private Win.UI.DisplayBox displayPOID;
+        private Win.UI.Label labelPOID;
+        private Win.UI.EditBox editArticle;
+        private Win.UI.Label labelArticle;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnBOA;
         private Win.UI.Button btnClear;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label10;
+        private Win.UI.TextBox txtOrderID;
+        private Win.UI.Label labelOrderID;
         private Win.UI.Grid gridIssueBreakDown;
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkByCombo;
     }
 }

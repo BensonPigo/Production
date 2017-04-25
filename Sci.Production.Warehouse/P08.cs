@@ -127,7 +127,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["WhseArrival"]))
             {
                 MyUtility.Msg.WarningBox("< Warehouse Receive Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateArriveWHDate.Focus();
                 return false;
             }
 
@@ -408,7 +408,7 @@ WHERE   StockType='{0}'
             if (MyUtility.Check.Empty(CurrentMaintain["whseArrival"]))
             {
                 MyUtility.Msg.WarningBox("< Warehouse Receive Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateArriveWHDate.Focus();
                 return;
             }
             #endregion
@@ -826,7 +826,7 @@ Where a.id = '{0}' ", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

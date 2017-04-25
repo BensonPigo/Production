@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioBackwardSocktakingLi = new Sci.Win.UI.RadioButton();
+            this.radioBackwardSocktakingForm = new Sci.Win.UI.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -45,8 +45,8 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioBackwardSocktakingLi);
+            this.radioPanel1.Controls.Add(this.radioBackwardSocktakingForm);
             this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Location = new System.Drawing.Point(49, 40);
             this.radioPanel1.Name = "radioPanel1";
@@ -55,31 +55,31 @@
             this.radioPanel1.Value = "Backward Socktaking Form";
             this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
             // 
-            // radioButton2
+            // radioBackwardSocktakingLi
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(19, 74);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(175, 21);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.Text = "Backward Socktaking Li";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "Backward Socktaking Li";
+            this.radioBackwardSocktakingLi.AutoSize = true;
+            this.radioBackwardSocktakingLi.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBackwardSocktakingLi.Location = new System.Drawing.Point(19, 74);
+            this.radioBackwardSocktakingLi.Name = "radioBackwardSocktakingLi";
+            this.radioBackwardSocktakingLi.Size = new System.Drawing.Size(175, 21);
+            this.radioBackwardSocktakingLi.TabIndex = 2;
+            this.radioBackwardSocktakingLi.Text = "Backward Socktaking Li";
+            this.radioBackwardSocktakingLi.UseVisualStyleBackColor = true;
+            this.radioBackwardSocktakingLi.Value = "Backward Socktaking Li";
             // 
-            // radioButton1
+            // radioBackwardSocktakingForm
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(19, 47);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(196, 21);
-            this.radioButton1.TabIndex = 1;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Backward Socktaking Form";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "Backward Socktaking Form";
+            this.radioBackwardSocktakingForm.AutoSize = true;
+            this.radioBackwardSocktakingForm.Checked = true;
+            this.radioBackwardSocktakingForm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBackwardSocktakingForm.Location = new System.Drawing.Point(19, 47);
+            this.radioBackwardSocktakingForm.Name = "radioBackwardSocktakingForm";
+            this.radioBackwardSocktakingForm.Size = new System.Drawing.Size(196, 21);
+            this.radioBackwardSocktakingForm.TabIndex = 1;
+            this.radioBackwardSocktakingForm.TabStop = true;
+            this.radioBackwardSocktakingForm.Text = "Backward Socktaking Form";
+            this.radioBackwardSocktakingForm.UseVisualStyleBackColor = true;
+            this.radioBackwardSocktakingForm.Value = "Backward Socktaking Form";
             // 
             // label1
             // 
@@ -97,6 +97,7 @@
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioPanel1);
             this.Name = "P51_Print";
+            this.Text = "() ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -111,8 +112,8 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioBackwardSocktakingLi;
+        private Win.UI.RadioButton radioBackwardSocktakingForm;
         private Win.UI.Label label1;
     }
 }

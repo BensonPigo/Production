@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.loadData();
             #region Set Grid
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridLocalTransaction)
                .Text("date", header: "Date", iseditingreadonly: true, width: Widths.AnsiChars(13))
                .Text("transactionID", header: "Transaction#", iseditingreadonly: true, width: Widths.AnsiChars(25))
                .Text("name", header: "Name", iseditingreadonly: true, width: Widths.AnsiChars(30))

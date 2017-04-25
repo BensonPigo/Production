@@ -228,13 +228,13 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
-            if (MyUtility.Check.Empty(this.textBox2.Text))
+            if (MyUtility.Check.Empty(this.txtFromFactory.Text))
             {
                 MyUtility.Msg.WarningBox("From Factory cannot be null! ");
-                this.textBox2.Focus();
+                this.txtFromFactory.Focus();
                 return false;
             }
 
@@ -1106,7 +1106,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -1123,12 +1123,12 @@ Where a.id = '{0}'", masterID);
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.textBox2.Text)))
+            if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
-                MyUtility.Msg.WarningBox("From Factory : " + textBox2.Text + " not found!");
-                this.textBox2.Text = "";
-                this.textBox2.Focus();
-                this.textBox2.Select();
+                MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
+                this.txtFromFactory.Text = "";
+                this.txtFromFactory.Focus();
+                this.txtFromFactory.Select();
             }
         }
    
@@ -1137,10 +1137,10 @@ Where a.id = '{0}'", masterID);
         {
             if (!this.EditMode) return;
                 string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.textBox2.ToString());
+                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
-                this.textBox2.Text = item.GetSelectedString();
+                this.txtFromFactory.Text = item.GetSelectedString();
         }
 
         /// <summary>

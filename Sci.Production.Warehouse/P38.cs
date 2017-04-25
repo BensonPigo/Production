@@ -28,14 +28,14 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            cbxStatus.SelectedIndex = 0;
-            cbxStockType.SelectedIndex = 0;
+            comboStatus.SelectedIndex = 0;
+            comboStockType.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             
             ns.CellMouseDoubleClick += (s, e) =>
                 {
-                    DataRow thisRow = this.grid1.GetDataRow(e.RowIndex);
+                    DataRow thisRow = this.gridMaterialLock.GetDataRow(e.RowIndex);
                     string dyelot = thisRow["dyelot"].ToString();
                     DataTable dt = (DataTable)listControlBindingSource1.DataSource;
                     string tempstatus = thisRow["selected"].ToString();
@@ -52,9 +52,9 @@ namespace Sci.Production.Warehouse
                 };
             
             #region -- 設定Grid1的顯示欄位 --
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridMaterialLock.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridMaterialLock.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridMaterialLock)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
                   .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
-            grid1.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
+            gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
             
             #endregion
         }
@@ -92,13 +92,13 @@ namespace Sci.Production.Warehouse
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp1 = this.textBox1.Text.TrimEnd() + '%';
+            String sp1 = this.txtSP.Text.TrimEnd() + '%';
 
 
-            if (string.IsNullOrWhiteSpace(this.textBox1.Text.TrimEnd()))
+            if (string.IsNullOrWhiteSpace(this.txtSP.Text.TrimEnd()))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSP.Focus();
                 return;
             }
 
@@ -135,7 +135,7 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
             sp1_1.Value = sp1;
             cmds.Add(sp1_1);
 
-            switch (cbxStatus.SelectedIndex)
+            switch (comboStatus.SelectedIndex)
             {
                 case 0:
                     break;
@@ -147,7 +147,7 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
                     break;
             }
 
-            switch (cbxStockType.SelectedIndex)
+            switch (comboStockType.SelectedIndex)
             {
                 case 0:
                     strSQLCmd.Append(@" and (stocktype='B' or stocktype ='I')");
@@ -159,9 +159,9 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
                     strSQLCmd.Append(@" and stocktype='I'");
                     break;
             }
-            if (!txtSeq1.checkEmpty(false))
+            if (!txtSeq.checkEmpty(false))
             {
-                strSQLCmd.Append(string.Format(@" and fi.seq1='{0}' and fi.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
+                strSQLCmd.Append(string.Format(@" and fi.seq1='{0}' and fi.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
             }
             
 
@@ -229,8 +229,8 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
         private void LockUnlock(Byte flag)
         {
             bool x;
-            if (!(x = grid1.ValidateControl())) MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
-            grid1.EndEdit();
+            if (!(x = gridMaterialLock.ValidateControl())) MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
+            gridMaterialLock.EndEdit();
             listControlBindingSource1.EndEdit();
             DualResult result;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;

@@ -31,14 +31,14 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-            String transid = this.textBox3.Text.TrimEnd();
-            String wkno = this.textBox4.Text.TrimEnd();
+            String sp = this.txtSPNo.Text.TrimEnd();
+            String transid = this.txtTransaction.Text.TrimEnd();
+            String wkno = this.txtWK.Text.TrimEnd();
 
             if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno))
             {
                 MyUtility.Msg.WarningBox("Please fill < SP# > or < Transaction > or < WK# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
             else
@@ -105,11 +105,11 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     cmds.Add(sp1);
                 }
 
-                if (!txtSeq1.checkEmpty(showErrMsg: false))
+                if (!txtSeq.checkEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(@" and f.seq1 = @seq1 and f.seq2 = @seq2");
-                    seq1.Value = txtSeq1.seq1;
-                    seq2.Value = txtSeq1.seq2;
+                    seq1.Value = txtSeq.seq1;
+                    seq2.Value = txtSeq.seq2;
                     cmds.Add(seq1);
                     cmds.Add(seq2);
                 }
@@ -140,8 +140,8 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                     }
                     listControlBindingSource1.DataSource = dtScrap;
 
-                    grid1.Columns["exportid"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
-                    grid1.Columns["eta"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
+                    gridImport.Columns["exportid"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
+                    gridImport.Columns["eta"].Visible = !(MyUtility.Check.Empty(transid) && MyUtility.Check.Empty(wkno));
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
                 this.HideWaitMessage();
@@ -157,8 +157,8 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
@@ -166,7 +166,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns2 = new DataGridViewGeneratorTextColumnSettings();
             ns2.CellFormatting = (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridImport.GetDataRow(e.RowIndex);
                 switch (dr["StockType"].ToString())
                 {
                     case "B":
@@ -181,14 +181,14 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 }
             };
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -201,7 +201,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("exportid", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
                 .Text("eta", header: "ETA", iseditingreadonly: true, width: Widths.AnsiChars(10)) //2
@@ -216,7 +216,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //11
                ;
 
-            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Close
@@ -229,7 +229,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         private void button2_Click(object sender, EventArgs e)
         {
             string remark = "";
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

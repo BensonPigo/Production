@@ -37,12 +37,12 @@
             this.btnWriteIn = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel7 = new Sci.Win.UI.Panel();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridPoid = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
             this.panel10 = new Sci.Win.UI.Panel();
             this.panel12 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridAttachFile = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel11 = new Sci.Win.UI.Panel();
             this.panel9 = new Sci.Win.UI.Panel();
@@ -50,17 +50,17 @@
             this.btnRemoveExcel = new Sci.Win.UI.Button();
             this.btnAddExcel = new Sci.Win.UI.Button();
             this.panel8 = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelAttachFile = new Sci.Win.UI.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPoid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel6.SuspendLayout();
             this.panel10.SuspendLayout();
             this.panel12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAttachFile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel9.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -132,36 +132,36 @@
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.grid2);
+            this.panel7.Controls.Add(this.gridPoid);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 144);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(814, 332);
             this.panel7.TabIndex = 1;
             // 
-            // grid2
+            // gridPoid
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 0);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(814, 332);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridPoid.AllowUserToAddRows = false;
+            this.gridPoid.AllowUserToDeleteRows = false;
+            this.gridPoid.AllowUserToResizeRows = false;
+            this.gridPoid.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPoid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPoid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPoid.DataSource = this.listControlBindingSource2;
+            this.gridPoid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPoid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPoid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPoid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPoid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPoid.Location = new System.Drawing.Point(0, 0);
+            this.gridPoid.Name = "gridPoid";
+            this.gridPoid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPoid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPoid.RowTemplate.Height = 24;
+            this.gridPoid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPoid.Size = new System.Drawing.Size(814, 332);
+            this.gridPoid.TabIndex = 0;
+            this.gridPoid.TabStop = false;
             // 
             // panel6
             // 
@@ -186,36 +186,36 @@
             // 
             // panel12
             // 
-            this.panel12.Controls.Add(this.grid1);
+            this.panel12.Controls.Add(this.gridAttachFile);
             this.panel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel12.Location = new System.Drawing.Point(0, 0);
             this.panel12.Name = "panel12";
             this.panel12.Size = new System.Drawing.Size(574, 134);
             this.panel12.TabIndex = 1;
             // 
-            // grid1
+            // gridAttachFile
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(574, 134);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridAttachFile.AllowUserToAddRows = false;
+            this.gridAttachFile.AllowUserToDeleteRows = false;
+            this.gridAttachFile.AllowUserToResizeRows = false;
+            this.gridAttachFile.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAttachFile.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAttachFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAttachFile.DataSource = this.listControlBindingSource1;
+            this.gridAttachFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridAttachFile.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAttachFile.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAttachFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAttachFile.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAttachFile.Location = new System.Drawing.Point(0, 0);
+            this.gridAttachFile.Name = "gridAttachFile";
+            this.gridAttachFile.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAttachFile.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAttachFile.RowTemplate.Height = 24;
+            this.gridAttachFile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAttachFile.Size = new System.Drawing.Size(574, 134);
+            this.gridAttachFile.TabIndex = 0;
+            this.gridAttachFile.TabStop = false;
             // 
             // panel11
             // 
@@ -268,21 +268,21 @@
             // 
             // panel8
             // 
-            this.panel8.Controls.Add(this.label1);
+            this.panel8.Controls.Add(this.labelAttachFile);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel8.Location = new System.Drawing.Point(0, 0);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(68, 144);
             this.panel8.TabIndex = 0;
             // 
-            // label1
+            // labelAttachFile
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Attach file";
+            this.labelAttachFile.Lines = 0;
+            this.labelAttachFile.Location = new System.Drawing.Point(0, 0);
+            this.labelAttachFile.Name = "labelAttachFile";
+            this.labelAttachFile.Size = new System.Drawing.Size(64, 23);
+            this.labelAttachFile.TabIndex = 0;
+            this.labelAttachFile.Text = "Attach file";
             // 
             // openFileDialog1
             // 
@@ -303,12 +303,12 @@
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPoid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel10.ResumeLayout(false);
             this.panel12.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAttachFile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel9.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
@@ -326,18 +326,18 @@
         private Win.UI.Button btnClose;
         private Win.UI.Button btnWriteIn;
         private Win.UI.Panel panel7;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridPoid;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Panel panel6;
         private Win.UI.Panel panel10;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridAttachFile;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel9;
         private Win.UI.Button btnCheckImport;
         private Win.UI.Button btnRemoveExcel;
         private Win.UI.Button btnAddExcel;
         private Win.UI.Panel panel8;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelAttachFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Win.UI.Panel panel12;
         private Win.UI.Panel panel11;

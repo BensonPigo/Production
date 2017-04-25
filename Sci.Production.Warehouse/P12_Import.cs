@@ -31,12 +31,12 @@ namespace Sci.Production.Warehouse
         //Find Now Button
         private void button1_Click(object sender, EventArgs e)
         {
-            String sp_b = this.textBox1.Text;
+            String sp_b = this.txtSPNo.Text;
 
             if (string.IsNullOrWhiteSpace(sp_b))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
@@ -104,11 +104,11 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 }
             };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["Selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -121,9 +121,9 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 }
             };
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //2
@@ -132,7 +132,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10 ,settings: ns)  //5
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); //6
 
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  //PCS/Stitch
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -145,7 +145,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

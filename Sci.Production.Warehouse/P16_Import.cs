@@ -36,11 +36,11 @@ namespace Sci.Production.Warehouse
         {
             listControlBindingSource2.EndEdit();
             Object localPrice = dtftyinventory.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            this.displayTotalQty.Value = localPrice.ToString();
         }
         private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            grid2.ValidateControl();
+            gridLack_Detail.ValidateControl();
         }
 
         protected override void OnFormLoaded()
@@ -127,9 +127,9 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
             listControlBindingSource2.DataMember = "rel1";
 
             #region -- Grid1 Setting --
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridlack.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridlack.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridlack)
                 .Text("Poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //2
@@ -145,26 +145,26 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid2.GetDataRow(e.RowIndex)["qty"] = e.FormattedValue;
+                        gridLack_Detail.GetDataRow(e.RowIndex)["qty"] = e.FormattedValue;
                         if (Type != "Lacking")
                         {
-                            if ((decimal)e.FormattedValue > (decimal)grid2.GetDataRow(e.RowIndex)["balance"])
+                            if ((decimal)e.FormattedValue > (decimal)gridLack_Detail.GetDataRow(e.RowIndex)["balance"])
                             {
                                 MyUtility.Msg.WarningBox("Issue qty can't be more than Stock qty!!");
                                 e.Cancel = true;
                                 return;
                             }
                         }
-                        grid2.GetDataRow(e.RowIndex)["selected"] = true;
+                        gridLack_Detail.GetDataRow(e.RowIndex)["selected"] = true;
                         this.sum_checkedqty();
                     }
                 };
 
-            this.grid2.CellValueChanged += (s, e) =>
+            this.gridLack_Detail.CellValueChanged += (s, e) =>
             {
-                if (grid2.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridLack_Detail.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                    DataRow dr = gridLack_Detail.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -176,9 +176,9 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                 }
             };
 
-            this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridLack_Detail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridLack_Detail.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridLack_Detail)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -186,7 +186,7 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //4
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //5
                 ;
-            this.grid2.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLack_Detail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
         }
@@ -201,7 +201,7 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid2.ValidateControl();
+            gridLack_Detail.ValidateControl();
             if (MyUtility.Check.Empty(dtftyinventory) || dtftyinventory.Rows.Count == 0) return;
 
             DataRow[] dr2 = dtftyinventory.Select("Selected = 1");

@@ -232,7 +232,7 @@ where t.id= @ID";
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -317,8 +317,8 @@ where t.id= @ID";
 
             #endregion Status Label
             string tmp = MyUtility.GetValue.Lookup(string.Format("select estbackdate from borrowback WITH (NOLOCK) where id='{0}'", CurrentMaintain["borrowid"]));
-            dateBox2.Value = null;
-            if (!MyUtility.Check.Empty(tmp)) dateBox2.Value =DateTime.Parse(tmp);
+            dateEstReturnDate.Value = null;
+            if (!MyUtility.Check.Empty(tmp)) dateEstReturnDate.Value =DateTime.Parse(tmp);
         }
 
         // detail 新增時設定預設值
@@ -1040,7 +1040,7 @@ Where a.id = '{0}'", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["borrowid"]))
             {
                 MyUtility.Msg.WarningBox("Borrow Id can't be empty!!");
-                textBox2.Focus();
+                txtBorrowID.Focus();
                 return;
             }
             var frm = new Sci.Production.Warehouse.P32_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
@@ -1063,7 +1063,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("frompoid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("frompoid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -1073,7 +1073,7 @@ Where a.id = '{0}'", masterID);
         //borrow id
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtBorrowID.Text))
             {
                 CurrentMaintain["BorrowId"] = "";
                 return;
@@ -1081,7 +1081,7 @@ Where a.id = '{0}'", masterID);
             DataRow dr;
             //BorrowBack MDivisionID 是P31 寫入 => Sci.Env.User.Keyword
             if (!MyUtility.Check.Seek(string.Format(@"select [status],[backdate] from dbo.borrowback where id='{0}' and type='A' and mdivisionid='{1}'"
-                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
+                , txtBorrowID.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check borrow id is existed.", "Data not found!!");
@@ -1099,12 +1099,12 @@ Where a.id = '{0}'", masterID);
                 if (!MyUtility.Check.Empty(dr["backdate"]))
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("This borrow# ({0}) already returned.", textBox2.Text));
+                    MyUtility.Msg.WarningBox(string.Format("This borrow# ({0}) already returned.", txtBorrowID.Text));
                     return;
                 }
 
             }
-            CurrentMaintain["BorrowId"] = textBox2.Text;
+            CurrentMaintain["BorrowId"] = txtBorrowID.Text;
         }
 
         /// <summary>

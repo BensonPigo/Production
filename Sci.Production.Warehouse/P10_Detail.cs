@@ -56,14 +56,14 @@ namespace Sci.Production.Warehouse
                 //dtFtyinventory.DefaultView.Sort = "dyelot,balanceqty desc";
             }
 
-            this.dis_ID.Text = CurrentDetailData["id"].ToString();
-            this.dis_scirefno.Text = CurrentDetailData["scirefno"].ToString();
-            this.dis_poid.Text = CurrentDetailData["poid"].ToString();
-            this.dis_colorid.Text = CurrentDetailData["colorid"].ToString();
+            this.displayID.Text = CurrentDetailData["id"].ToString();
+            this.displaySciRefno.Text = CurrentDetailData["scirefno"].ToString();
+            this.displaySPNo.Text = CurrentDetailData["poid"].ToString();
+            this.displayColorID.Text = CurrentDetailData["colorid"].ToString();
             //this.dis_sizespec.Text = CurrentDetailData["sizespec"].ToString();
-            this.dis_desc.Text = CurrentDetailData["description"].ToString();
-            this.num_requestqty.Text = CurrentDetailData["requestqty"].ToString();
-            this.num_accuIssue.Text = CurrentDetailData["accu_issue"].ToString();
+            this.displayDesc.Text = CurrentDetailData["description"].ToString();
+            this.numRequestQty.Text = CurrentDetailData["requestqty"].ToString();
+            this.numAccuIssue.Text = CurrentDetailData["accu_issue"].ToString();
        
             string STRrequestqty = CurrentDetailData["requestqty"].ToString();
             string STRaccu_issue = CurrentDetailData["accu_issue"].ToString();
@@ -73,14 +73,14 @@ namespace Sci.Production.Warehouse
             { DECrequestqty = 0; }
             if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
             { DECaccu_issue = 0; }
-            this.num_balance.Value = DECrequestqty - DECaccu_issue;
-            this.num_issue.Text = CurrentDetailData["qty"].ToString();
+            this.numBalanceQty.Value = DECrequestqty - DECaccu_issue;
+            this.numIssueQty.Text = CurrentDetailData["qty"].ToString();
             string STRqty = CurrentDetailData["qty"].ToString();
             decimal DECqty;
             if (!decimal.TryParse(STRqty, out DECqty))
             { DECqty = 0; }
 
-            this.num_variance.Value = this.num_balance.Value - this.num_issue.Value;
+            this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
         }
 
         protected override bool OnGridSetup()
@@ -156,8 +156,8 @@ namespace Sci.Production.Warehouse
             grid.EndEdit();
             DataTable subDT = (DataTable)gridbs.DataSource;
             Object SumIssueQTY = subDT.Compute("Sum(qty)","");
-            this.num_issue.Text = SumIssueQTY.ToString();
-            this.num_variance.Value = this.num_balance.Value - this.num_issue.Value;
+            this.numIssueQty.Text = SumIssueQTY.ToString();
+            this.numVariance.Value = this.numBalanceQty.Value - this.numIssueQty.Value;
 
         }
 

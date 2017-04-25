@@ -31,8 +31,8 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            button2.Enabled = !_byroll;     // 從p20呼叫時，不開啟。
-            button2.Visible = !_byroll;     // 從p20呼叫時，不開啟。
+            btnReCalculate.Enabled = !_byroll;     // 從p20呼叫時，不開啟。
+            btnReCalculate.Visible = !_byroll;     // 從p20呼叫時，不開啟。
 
             if (_byroll)
             {
@@ -644,10 +644,10 @@ namespace Sci.Production.Warehouse
                 object outqty = selectDataTable1.Compute("sum(outqty)", null);
                 object adjust = selectDataTable1.Compute("sum(adjust)", null);
                 object balance = Convert.ToDecimal(inqty) - Convert.ToDecimal(outqty) + Convert.ToDecimal(adjust);
-                this.numericBox1.Value = !MyUtility.Check.Empty(inqty) ? decimal.Parse(inqty.ToString()) : 0m;
-                this.numericBox2.Value = !MyUtility.Check.Empty(outqty) ? decimal.Parse(outqty.ToString()) : 0m;
-                this.numericBox3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
-                this.numericBox4.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
+                this.numTotal1.Value = !MyUtility.Check.Empty(inqty) ? decimal.Parse(inqty.ToString()) : 0m;
+                this.numTotal2.Value = !MyUtility.Check.Empty(outqty) ? decimal.Parse(outqty.ToString()) : 0m;
+                this.numTotal3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
+                this.numTotal4.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
             }
 
             bindingSource1.DataSource = selectDataTable1;
@@ -657,7 +657,7 @@ namespace Sci.Production.Warehouse
             ts2.CellMouseDoubleClick += (s, e) =>
             {
                 var frm =new Sci.Win.Tems.Input6(null);
-                var dr2 = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr2 = this.gridTransactionDetail.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr2) return;
                 switch (dr2["name"].ToString().Substring(0,3))
                 {
@@ -785,9 +785,9 @@ namespace Sci.Production.Warehouse
             #endregion
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridTransactionDetail.IsEditingReadOnly = true;
+            this.gridTransactionDetail.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridTransactionDetail)
                  .Date("IssueDate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("ID", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
                 .Text("Name", header: "Name", width: Widths.AnsiChars(25))
@@ -867,16 +867,16 @@ namespace Sci.Production.Warehouse
             worksheet.Columns[8].NumberFormat = "@";
             worksheet.Columns[9].NumberFormat = "@";
 
-            for (int i = 1; i <= grid1.Columns.Count; i++)
+            for (int i = 1; i <= gridTransactionDetail.Columns.Count; i++)
             {
-                worksheet.Cells[1, i] = grid1.Columns[i - 1].Name;
+                worksheet.Cells[1, i] = gridTransactionDetail.Columns[i - 1].Name;
             }
 
-            for (int i = 0; i < grid1.Rows.Count; i++)
+            for (int i = 0; i < gridTransactionDetail.Rows.Count; i++)
             {
-                for (int j = 0; j < grid1.Columns.Count; j++)
+                for (int j = 0; j < gridTransactionDetail.Columns.Count; j++)
                 {
-                    worksheet.Cells[i + 2, j + 1] = grid1.Rows[i].Cells[j].Value;
+                    worksheet.Cells[i + 2, j + 1] = gridTransactionDetail.Rows[i].Cells[j].Value;
                 }
             }
 

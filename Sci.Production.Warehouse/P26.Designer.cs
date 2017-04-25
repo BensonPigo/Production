@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button6 = new Sci.Win.UI.Button();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.comboStockType = new Sci.Win.UI.ComboBox();
+            this.labelStockType = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -54,28 +54,28 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.button6);
-            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.labelStockType);
+            this.masterpanel.Controls.Add(this.comboStockType);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.btnImport);
+            this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label25);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.labelIssueDate);
+            this.masterpanel.Controls.Add(this.labelID);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Size = new System.Drawing.Size(1058, 110);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStockType, 0);
             // 
             // detailpanel
             // 
@@ -143,23 +143,23 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(420, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(16, 13);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // label9
+            // labelIssueDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(257, 13);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(257, 13);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
+            this.labelIssueDate.TabIndex = 9;
+            this.labelIssueDate.Text = "Issue Date";
             // 
             // label25
             // 
@@ -173,77 +173,77 @@
             this.label25.Text = "Not Approve";
             this.label25.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(94, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(94, 13);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 0;
             // 
-            // dateBox1
+            // dateIssueDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
-            this.dateBox1.Location = new System.Drawing.Point(335, 13);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
+            this.dateIssueDate.Location = new System.Drawing.Point(335, 13);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 0;
             // 
-            // button6
+            // btnImport
             // 
-            this.button6.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button6.Location = new System.Drawing.Point(945, 47);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(95, 30);
-            this.button6.TabIndex = 3;
-            this.button6.Text = "Import";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(945, 47);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(95, 30);
+            this.btnImport.TabIndex = 3;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button6_Click);
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(94, 47);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 2;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(94, 47);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(658, 51);
+            this.editRemark.TabIndex = 2;
             // 
-            // label1
+            // labelRemark
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 47);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 61;
-            this.label1.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(16, 47);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 61;
+            this.labelRemark.Text = "Remark";
             // 
-            // comboBox1
+            // comboStockType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "stocktype", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(584, 12);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 1;
-            this.comboBox1.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "stocktype", true));
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Location = new System.Drawing.Point(584, 12);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboStockType.TabIndex = 1;
+            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
             // 
-            // label2
+            // labelStockType
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(498, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 23);
-            this.label2.TabIndex = 63;
-            this.label2.Text = "Stock Type";
+            this.labelStockType.Lines = 0;
+            this.labelStockType.Location = new System.Drawing.Point(498, 13);
+            this.labelStockType.Name = "labelStockType";
+            this.labelStockType.Size = new System.Drawing.Size(82, 23);
+            this.labelStockType.TabIndex = 63;
+            this.labelStockType.Text = "Stock Type";
             // 
             // P26
             // 
@@ -287,15 +287,15 @@
 
         #endregion
 
-        private Win.UI.Label label9;
-        private Win.UI.Label label3;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelID;
+        private Win.UI.DateBox dateIssueDate;
+        private Win.UI.DisplayBox displayID;
         private Win.UI.Label label25;
-        private Win.UI.Button button6;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.Button btnImport;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelStockType;
+        private Win.UI.ComboBox comboStockType;
     }
 }

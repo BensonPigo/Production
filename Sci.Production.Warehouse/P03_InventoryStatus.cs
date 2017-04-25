@@ -138,9 +138,9 @@ from TMP"
             }
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridInventoryStatus.IsEditingReadOnly = true;
+            this.gridInventoryStatus.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridInventoryStatus)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8))
                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4))
                  .Numeric("receiving", header: "Rcv.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -157,7 +157,7 @@ from TMP"
                  .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                  ;
 
-            grid1.Columns[1].Frozen = true;  //Fabric Type
+            gridInventoryStatus.Columns[1].Frozen = true;  //Fabric Type
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -45,9 +45,9 @@ and (inqty - OutQty + adjustqty) > 0
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridScrapList.IsEditingReadOnly = true;
+            this.gridScrapList.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridScrapList)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(13))
                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(13))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(13), integer_places: 8, decimal_places: 2)

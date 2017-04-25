@@ -29,19 +29,19 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioArriveWHReport = new Sci.Win.UI.RadioButton();
+            this.radioPLRcvReport = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.textBox1);
+            this.radioPanel1.Controls.Add(this.txtSPNo);
             this.radioPanel1.Controls.Add(this.label1);
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioArriveWHReport);
+            this.radioPanel1.Controls.Add(this.radioPLRcvReport);
             this.radioPanel1.Location = new System.Drawing.Point(44, 25);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(454, 143);
@@ -49,15 +49,14 @@
             this.radioPanel1.Value = "P/L Rcv Report";
             this.radioPanel1.ValueChanged += new System.EventHandler(this.radioGroup1_ValueChanged);
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(242, 59);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(121, 23);
-            this.textBox1.TabIndex = 3;
-           // this.textBox1.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.textBox1_MaskInputRejected);
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(242, 59);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(121, 23);
+            this.txtSPNo.TabIndex = 3;
             // 
             // label1
             // 
@@ -70,39 +69,40 @@
             this.label1.Text = "SP#:";
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // radioButton2
+            // radioArriveWHReport
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(32, 59);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(141, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Arrive W/H Report";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "Arrive W/H Report";
+            this.radioArriveWHReport.AutoSize = true;
+            this.radioArriveWHReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioArriveWHReport.Location = new System.Drawing.Point(32, 59);
+            this.radioArriveWHReport.Name = "radioArriveWHReport";
+            this.radioArriveWHReport.Size = new System.Drawing.Size(141, 21);
+            this.radioArriveWHReport.TabIndex = 1;
+            this.radioArriveWHReport.TabStop = true;
+            this.radioArriveWHReport.Text = "Arrive W/H Report";
+            this.radioArriveWHReport.UseVisualStyleBackColor = true;
+            this.radioArriveWHReport.Value = "Arrive W/H Report";
             // 
-            // radioButton1
+            // radioPLRcvReport
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(32, 24);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(122, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "P/L Rcv Report";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "P/L Rcv Report";
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioPLRcvReport.AutoSize = true;
+            this.radioPLRcvReport.Checked = true;
+            this.radioPLRcvReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPLRcvReport.Location = new System.Drawing.Point(32, 24);
+            this.radioPLRcvReport.Name = "radioPLRcvReport";
+            this.radioPLRcvReport.Size = new System.Drawing.Size(122, 21);
+            this.radioPLRcvReport.TabIndex = 0;
+            this.radioPLRcvReport.TabStop = true;
+            this.radioPLRcvReport.Text = "P/L Rcv Report";
+            this.radioPLRcvReport.UseVisualStyleBackColor = true;
+            this.radioPLRcvReport.Value = "P/L Rcv Report";
+            this.radioPLRcvReport.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // P07_Print
             // 
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioPanel1);
             this.Name = "P07_Print";
+            this.Text = "() ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -117,9 +117,9 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.RadioButton radioArriveWHReport;
+        private Win.UI.RadioButton radioPLRcvReport;
+        private Win.UI.TextBox txtSPNo;
         private Win.UI.Label label1;
 
     }

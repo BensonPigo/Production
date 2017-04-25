@@ -33,22 +33,22 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.numBalance = new Sci.Win.UI.NumericBox();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelTotal = new Sci.Win.UI.Label();
             this.numReleaced = new Sci.Win.UI.NumericBox();
             this.numArrived = new Sci.Win.UI.NumericBox();
             this.btnReCalculate = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridLocalTransaction = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLocalTransaction)).BeginInit();
             this.SuspendLayout();
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.numBalance);
             this.panel2.Controls.Add(this.btnToExcel);
-            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.labelTotal);
             this.panel2.Controls.Add(this.numReleaced);
             this.panel2.Controls.Add(this.numArrived);
             this.panel2.Controls.Add(this.btnReCalculate);
@@ -93,16 +93,16 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
-            // label1
+            // labelTotal
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.labelTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(339, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Total";
+            this.labelTotal.Lines = 0;
+            this.labelTotal.Location = new System.Drawing.Point(339, 15);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(75, 23);
+            this.labelTotal.TabIndex = 4;
+            this.labelTotal.Text = "Total";
             // 
             // numReleaced
             // 
@@ -173,43 +173,43 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // grid1
+            // gridLocalTransaction
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(902, 395);
-            this.grid1.TabIndex = 2;
-            this.grid1.TabStop = false;
+            this.gridLocalTransaction.AllowUserToAddRows = false;
+            this.gridLocalTransaction.AllowUserToDeleteRows = false;
+            this.gridLocalTransaction.AllowUserToResizeRows = false;
+            this.gridLocalTransaction.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridLocalTransaction.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridLocalTransaction.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLocalTransaction.DataSource = this.listControlBindingSource1;
+            this.gridLocalTransaction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridLocalTransaction.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridLocalTransaction.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridLocalTransaction.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridLocalTransaction.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridLocalTransaction.Location = new System.Drawing.Point(0, 0);
+            this.gridLocalTransaction.Name = "gridLocalTransaction";
+            this.gridLocalTransaction.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridLocalTransaction.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridLocalTransaction.RowTemplate.Height = 24;
+            this.gridLocalTransaction.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLocalTransaction.Size = new System.Drawing.Size(902, 395);
+            this.gridLocalTransaction.TabIndex = 2;
+            this.gridLocalTransaction.TabStop = false;
             // 
             // P04_LocalTransaction
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(902, 443);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.gridLocalTransaction);
             this.Controls.Add(this.panel2);
             this.Name = "P04_LocalTransaction";
             this.Text = "P04_LocalTransaction";
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLocalTransaction)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -220,11 +220,11 @@
         private Win.UI.Panel panel2;
         private Win.UI.NumericBox numBalance;
         private Win.UI.Button btnToExcel;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelTotal;
         private Win.UI.NumericBox numReleaced;
         private Win.UI.NumericBox numArrived;
         private Win.UI.Button btnReCalculate;
         private Win.UI.Button btnClose;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridLocalTransaction;
     }
 }

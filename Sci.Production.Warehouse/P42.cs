@@ -28,21 +28,21 @@ namespace Sci.Production.Warehouse
         {
             
             base.OnFormLoaded();
-            this.checkBox1.Checked = true;
-            this.checkBox2.Checked = true;
-            dateBox1.Value = DateTime.Now;
-            dateBox2.Value = DateTime.Now;
-            grid1.RowPostPaint += (s, e) =>
+            this.checheckEptyEachCons.Checked = true;
+            this.checkEmptyMtlETA.Checked = true;
+            dateInline.Value = DateTime.Now;
+            dateOffline.Value = DateTime.Now;
+            gridCuttingTapeQuickAdjust.RowPostPaint += (s, e) =>
             {
                 //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
                 //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                DataRow dr = gridCuttingTapeQuickAdjust.GetDataRow(e.RowIndex);
+                if (gridCuttingTapeQuickAdjust.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
                 int i = e.RowIndex;
                 if (MyUtility.Check.Empty(dr["EachConsApv"]))
                 {
-                    grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
+                    gridCuttingTapeQuickAdjust.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 128, 192);
                 }
             };
 
@@ -50,9 +50,9 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridCuttingTapeQuickAdjust.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                string colnm = this.grid1.Columns[e.ColumnIndex].DataPropertyName;
+                string colnm = this.gridCuttingTapeQuickAdjust.Columns[e.ColumnIndex].DataPropertyName;
                 string expression = colnm + " = '" + ddr[colnm].ToString().TrimEnd() + "'";
                 DataRow[] drfound = dt.Select(expression);
 
@@ -62,9 +62,9 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridCuttingTapeQuickAdjust.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridCuttingTapeQuickAdjust.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     this.sum_checkedqty();
                 }
@@ -102,9 +102,9 @@ namespace Sci.Production.Warehouse
             };
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCuttingTapeQuickAdjust.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridCuttingTapeQuickAdjust.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCuttingTapeQuickAdjust)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("MdivisionID", header: "M", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
@@ -137,24 +137,24 @@ namespace Sci.Production.Warehouse
             buyerdlv_b = null;
             buyerdlv_e = null;
             bool eachchk, mtletachk;
-            eachchk = checkBox1.Checked;
-            mtletachk = checkBox2.Checked;
+            eachchk = checheckEptyEachCons.Checked;
+            mtletachk = checkEmptyMtlETA.Checked;
 
-            if (dateRange1.Value1 != null) sewinline_b = this.dateRange1.Text1;
-            if (dateRange1.Value2 != null) { sewinline_e = this.dateRange1.Text2; }
+            if (dateSewingInline.Value1 != null) sewinline_b = this.dateSewingInline.Text1;
+            if (dateSewingInline.Value2 != null) { sewinline_e = this.dateSewingInline.Text2; }
 
-            if (dateRange2.Value1 != null) sciDelivery_b = this.dateRange2.Text1;
-            if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
+            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
+            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
 
-            if (dateRange3.Value1 != null) buyerdlv_b = this.dateRange3.Text1;
-            if (dateRange3.Value2 != null) { buyerdlv_e = this.dateRange3.Text2; }
+            if (dateBuyerDelivery.Value1 != null) buyerdlv_b = this.dateBuyerDelivery.Text1;
+            if (dateBuyerDelivery.Value2 != null) { buyerdlv_e = this.dateBuyerDelivery.Text2; }
 
             if ((sewinline_b == null && sewinline_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null) &&
                 (buyerdlv_b == null && buyerdlv_e == null))
             {
                 MyUtility.Msg.WarningBox("< Buyer Delivery > or < SCI Delivery > or < Fist Inline Date > can't be empty!!");
-                dateRange2.Focus1();
+                dateSCIDelivery.Focus1();
                 return;
             }
 
@@ -307,9 +307,9 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
 
             foreach (var item in drfound)
             {
-                if (null != dateBox1.Value)
+                if (null != dateInline.Value)
                 {
-                    item["tapeinline"] = dateBox1.Value;
+                    item["tapeinline"] = dateInline.Value;
                 }
                 else
                     item["tapeinline"] = DBNull.Value;
@@ -324,9 +324,9 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             DataRow[] drfound = dt.Select("selected = 1");
             foreach (var item in drfound)
             {
-                if (null != dateBox2.Value)
+                if (null != dateOffline.Value)
                 {
-                    item["tapeoffline"] = dateBox2.Value;
+                    item["tapeoffline"] = dateOffline.Value;
                 }
                 else
                 item["tapeoffline"] = DBNull.Value;
@@ -336,7 +336,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
         private void button2_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("poid", textBox1.Text.TrimEnd());
+            int index = listControlBindingSource1.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -348,7 +348,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            this.displayCheckedQty.Value = localPrice.ToString();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -366,8 +366,8 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             if(listControlBindingSource1.DataSource == null)
                 return;
             string formatStr = "";
-            if (checkBox1.Checked) formatStr += "EachConsApv is not null ";
-            if (checkBox2.Checked)
+            if (checheckEptyEachCons.Checked) formatStr += "EachConsApv is not null ";
+            if (checkEmptyMtlETA.Checked)
                 formatStr += (formatStr.EqualString("")) ? "ETA is not null" : "and ETA is not null";
 
             listControlBindingSource1.Filter = string.Format(formatStr);

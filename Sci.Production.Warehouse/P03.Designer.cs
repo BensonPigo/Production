@@ -31,156 +31,156 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.tb_Spno = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.label12 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
+            this.labelSortBy = new Sci.Win.UI.Label();
+            this.comboSortBy = new Sci.Win.UI.ComboBox();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridMaterialStatus = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMaterialStatus)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.tb_Spno);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.txtSPNo);
+            this.panel1.Controls.Add(this.labelSPNo);
+            this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 2;
             // 
-            // tb_Spno
+            // txtSPNo
             // 
-            this.tb_Spno.BackColor = System.Drawing.Color.White;
-            this.tb_Spno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.tb_Spno.Location = new System.Drawing.Point(121, 12);
-            this.tb_Spno.Name = "tb_Spno";
-            this.tb_Spno.Size = new System.Drawing.Size(145, 23);
-            this.tb_Spno.TabIndex = 0;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(121, 12);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(145, 23);
+            this.txtSPNo.TabIndex = 0;
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 23);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(9, 12);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(109, 23);
+            this.labelSPNo.TabIndex = 18;
+            this.labelSPNo.Text = "SP#";
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(272, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(272, 8);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 1;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.label12);
-            this.panel3.Controls.Add(this.comboBox1);
-            this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.button4);
+            this.panel3.Controls.Add(this.labelSortBy);
+            this.panel3.Controls.Add(this.comboSortBy);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.btnClose);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 601);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1008, 60);
             this.panel3.TabIndex = 3;
             // 
-            // label12
+            // labelSortBy
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(9, 15);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(109, 23);
-            this.label12.TabIndex = 34;
-            this.label12.Text = "Sort By";
+            this.labelSortBy.Lines = 0;
+            this.labelSortBy.Location = new System.Drawing.Point(9, 15);
+            this.labelSortBy.Name = "labelSortBy";
+            this.labelSortBy.Size = new System.Drawing.Size(109, 23);
+            this.labelSortBy.TabIndex = 34;
+            this.labelSortBy.Text = "Sort By";
             // 
-            // comboBox1
+            // comboSortBy
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboSortBy.BackColor = System.Drawing.Color.White;
+            this.comboSortBy.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboSortBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortBy.FormattingEnabled = true;
+            this.comboSortBy.IsSupportUnselect = true;
+            this.comboSortBy.Items.AddRange(new object[] {
             "Refno",
             "Seq"});
-            this.comboBox1.Location = new System.Drawing.Point(121, 15);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboSortBy.Location = new System.Drawing.Point(121, 15);
+            this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.Size = new System.Drawing.Size(121, 24);
+            this.comboSortBy.TabIndex = 0;
+            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // button3
+            // btnToExcel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(826, 15);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "To Excel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnToExcel.Location = new System.Drawing.Point(826, 15);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(90, 30);
+            this.btnToExcel.TabIndex = 1;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(922, 15);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 2;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(922, 15);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.grid1);
+            this.panel2.Controls.Add(this.gridMaterialStatus);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 88);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 513);
             this.panel2.TabIndex = 4;
             // 
-            // grid1
+            // gridMaterialStatus
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridMaterialStatus.AllowUserToAddRows = false;
+            this.gridMaterialStatus.AllowUserToDeleteRows = false;
+            this.gridMaterialStatus.AllowUserToResizeRows = false;
+            this.gridMaterialStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(3, 4);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1002, 504);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridMaterialStatus.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridMaterialStatus.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridMaterialStatus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridMaterialStatus.DataSource = this.listControlBindingSource1;
+            this.gridMaterialStatus.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridMaterialStatus.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridMaterialStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridMaterialStatus.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridMaterialStatus.Location = new System.Drawing.Point(3, 4);
+            this.gridMaterialStatus.Name = "gridMaterialStatus";
+            this.gridMaterialStatus.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridMaterialStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridMaterialStatus.RowTemplate.Height = 24;
+            this.gridMaterialStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMaterialStatus.Size = new System.Drawing.Size(1002, 504);
+            this.gridMaterialStatus.TabIndex = 0;
+            this.gridMaterialStatus.TabStop = false;
             // 
             // P03
             // 
@@ -198,7 +198,7 @@
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMaterialStatus)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -207,15 +207,15 @@
 
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnQuery;
         private Win.UI.Panel panel3;
-        private Win.UI.Button button4;
+        private Win.UI.Button btnClose;
         private Win.UI.Panel panel2;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button3;
-        private Win.UI.TextBox tb_Spno;
-        private Win.UI.Label label1;
-        private Win.UI.Label label12;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.Grid gridMaterialStatus;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelSortBy;
+        private Win.UI.ComboBox comboSortBy;
     }
 }

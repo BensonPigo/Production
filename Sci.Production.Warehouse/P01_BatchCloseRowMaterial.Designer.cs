@@ -29,87 +29,87 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.txtSP1 = new Sci.Win.UI.TextBox();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnBatchCloseRMTL = new Sci.Win.UI.Button();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToEexcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
-            this.label8 = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.PullOutdateRange = new Sci.Win.UI.DateRange();
-            this.BuyerDeliverydateRange = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.cbbCategory = new Sci.Win.UI.ComboBox();
-            this.txtSP2 = new Sci.Win.UI.TextBox();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelPullOutDate = new Sci.Win.UI.Label();
+            this.datePullOutDate = new Sci.Win.UI.DateRange();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridBatchCloseRowMaterial = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCloseRowMaterial)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button3
+            // btnCancel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(912, 17);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Cancel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 17);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // btnBatchCloseRMTL
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(746, 17);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(160, 30);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Batch Close R/MTL";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnBatchCloseRMTL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchCloseRMTL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchCloseRMTL.Location = new System.Drawing.Point(746, 17);
+            this.btnBatchCloseRMTL.Name = "btnBatchCloseRMTL";
+            this.btnBatchCloseRMTL.Size = new System.Drawing.Size(160, 30);
+            this.btnBatchCloseRMTL.TabIndex = 4;
+            this.btnBatchCloseRMTL.Text = "Batch Close R/MTL";
+            this.btnBatchCloseRMTL.UseVisualStyleBackColor = true;
+            this.btnBatchCloseRMTL.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnFindNow
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(895, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(895, 14);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 8;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtSP1
+            // txtSPNoStart
             // 
-            this.txtSP1.BackColor = System.Drawing.Color.White;
-            this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP1.Location = new System.Drawing.Point(124, 90);
-            this.txtSP1.Name = "txtSP1";
-            this.txtSP1.Size = new System.Drawing.Size(122, 23);
-            this.txtSP1.TabIndex = 2;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(124, 90);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(122, 23);
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnToEexcel);
-            this.groupBox2.Controls.Add(this.button3);
-            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnBatchCloseRMTL);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
@@ -129,22 +129,22 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtstyle1);
-            this.groupBox1.Controls.Add(this.txtmfactory1);
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.txtbrand1);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.PullOutdateRange);
-            this.groupBox1.Controls.Add(this.BuyerDeliverydateRange);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.cbbCategory);
-            this.groupBox1.Controls.Add(this.txtSP2);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.txtSP1);
+            this.groupBox1.Controls.Add(this.txtstyle);
+            this.groupBox1.Controls.Add(this.txtmfactory);
+            this.groupBox1.Controls.Add(this.labelFactory);
+            this.groupBox1.Controls.Add(this.txtbrand);
+            this.groupBox1.Controls.Add(this.labelBrand);
+            this.groupBox1.Controls.Add(this.labelStyle);
+            this.groupBox1.Controls.Add(this.labelPullOutDate);
+            this.groupBox1.Controls.Add(this.datePullOutDate);
+            this.groupBox1.Controls.Add(this.dateBuyerDelivery);
+            this.groupBox1.Controls.Add(this.labelBuyerDelivery);
+            this.groupBox1.Controls.Add(this.labelSPNo);
+            this.groupBox1.Controls.Add(this.labelCategory);
+            this.groupBox1.Controls.Add(this.comboCategory);
+            this.groupBox1.Controls.Add(this.txtSPNoEnd);
+            this.groupBox1.Controls.Add(this.btnFindNow);
+            this.groupBox1.Controls.Add(this.txtSPNoStart);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -152,174 +152,174 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(535, 54);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 5;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(535, 54);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 5;
             // 
-            // txtmfactory1
+            // txtmfactory
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(799, 18);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 7;
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.Location = new System.Drawing.Point(799, 18);
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory.TabIndex = 7;
             // 
-            // label8
+            // labelFactory
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(684, 19);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(112, 23);
-            this.label8.TabIndex = 106;
-            this.label8.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(684, 19);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(112, 23);
+            this.labelFactory.TabIndex = 106;
+            this.labelFactory.Text = "Factory";
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(535, 90);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 6;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(535, 90);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 6;
             // 
-            // label6
+            // labelBrand
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(420, 91);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(112, 23);
-            this.label6.TabIndex = 104;
-            this.label6.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(420, 91);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(112, 23);
+            this.labelBrand.TabIndex = 104;
+            this.labelBrand.Text = "Brand";
             // 
-            // label1
+            // labelStyle
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(420, 54);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 23);
-            this.label1.TabIndex = 103;
-            this.label1.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(420, 54);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(112, 23);
+            this.labelStyle.TabIndex = 103;
+            this.labelStyle.Text = "Style";
             // 
-            // label4
+            // labelPullOutDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 19);
-            this.label4.Name = "label4";
-            this.label4.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label4.Size = new System.Drawing.Size(112, 23);
-            this.label4.TabIndex = 102;
-            this.label4.Text = "PullOut Date";
-            this.label4.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelPullOutDate.Lines = 0;
+            this.labelPullOutDate.Location = new System.Drawing.Point(9, 19);
+            this.labelPullOutDate.Name = "labelPullOutDate";
+            this.labelPullOutDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelPullOutDate.Size = new System.Drawing.Size(112, 23);
+            this.labelPullOutDate.TabIndex = 102;
+            this.labelPullOutDate.Text = "PullOut Date";
+            this.labelPullOutDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // PullOutdateRange
+            // datePullOutDate
             // 
-            this.PullOutdateRange.Location = new System.Drawing.Point(124, 19);
-            this.PullOutdateRange.Name = "PullOutdateRange";
-            this.PullOutdateRange.Size = new System.Drawing.Size(280, 23);
-            this.PullOutdateRange.TabIndex = 0;
+            this.datePullOutDate.Location = new System.Drawing.Point(124, 19);
+            this.datePullOutDate.Name = "datePullOutDate";
+            this.datePullOutDate.Size = new System.Drawing.Size(280, 23);
+            this.datePullOutDate.TabIndex = 0;
             // 
-            // BuyerDeliverydateRange
+            // dateBuyerDelivery
             // 
-            this.BuyerDeliverydateRange.Location = new System.Drawing.Point(124, 54);
-            this.BuyerDeliverydateRange.Name = "BuyerDeliverydateRange";
-            this.BuyerDeliverydateRange.Size = new System.Drawing.Size(280, 23);
-            this.BuyerDeliverydateRange.TabIndex = 1;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(124, 54);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 1;
             // 
-            // label3
+            // labelBuyerDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 54);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label3.Size = new System.Drawing.Size(112, 23);
-            this.label3.TabIndex = 99;
-            this.label3.Text = "Buyer Delivery";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 54);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(112, 23);
+            this.labelBuyerDelivery.TabIndex = 99;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 90);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label2.Size = new System.Drawing.Size(112, 23);
-            this.label2.TabIndex = 97;
-            this.label2.Text = "SP#";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(9, 90);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSPNo.Size = new System.Drawing.Size(112, 23);
+            this.labelSPNo.TabIndex = 97;
+            this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label7
+            // labelCategory
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(420, 18);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(112, 23);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(420, 18);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(112, 23);
+            this.labelCategory.TabIndex = 12;
+            this.labelCategory.Text = "Category";
             // 
-            // cbbCategory
+            // comboCategory
             // 
-            this.cbbCategory.BackColor = System.Drawing.Color.White;
-            this.cbbCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbbCategory.FormattingEnabled = true;
-            this.cbbCategory.IsSupportUnselect = true;
-            this.cbbCategory.Items.AddRange(new object[] {
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Items.AddRange(new object[] {
             "ALL",
             "Bulk",
             "Sample",
             "Material"});
-            this.cbbCategory.Location = new System.Drawing.Point(535, 18);
-            this.cbbCategory.Name = "cbbCategory";
-            this.cbbCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbbCategory.TabIndex = 4;
+            this.comboCategory.Location = new System.Drawing.Point(535, 18);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.TabIndex = 4;
             // 
-            // txtSP2
+            // txtSPNoEnd
             // 
-            this.txtSP2.BackColor = System.Drawing.Color.White;
-            this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP2.Location = new System.Drawing.Point(252, 90);
-            this.txtSP2.Name = "txtSP2";
-            this.txtSP2.Size = new System.Drawing.Size(116, 23);
-            this.txtSP2.TabIndex = 3;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(252, 90);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(116, 23);
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridBatchCloseRowMaterial);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 135);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 342);
             this.panel1.TabIndex = 20;
             // 
-            // grid1
+            // gridBatchCloseRowMaterial
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 342);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridBatchCloseRowMaterial.AllowUserToAddRows = false;
+            this.gridBatchCloseRowMaterial.AllowUserToDeleteRows = false;
+            this.gridBatchCloseRowMaterial.AllowUserToResizeRows = false;
+            this.gridBatchCloseRowMaterial.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridBatchCloseRowMaterial.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridBatchCloseRowMaterial.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridBatchCloseRowMaterial.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridBatchCloseRowMaterial.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridBatchCloseRowMaterial.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridBatchCloseRowMaterial.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridBatchCloseRowMaterial.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridBatchCloseRowMaterial.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridBatchCloseRowMaterial.Location = new System.Drawing.Point(0, 0);
+            this.gridBatchCloseRowMaterial.Name = "gridBatchCloseRowMaterial";
+            this.gridBatchCloseRowMaterial.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridBatchCloseRowMaterial.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridBatchCloseRowMaterial.RowTemplate.Height = 24;
+            this.gridBatchCloseRowMaterial.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCloseRowMaterial.Size = new System.Drawing.Size(1008, 342);
+            this.gridBatchCloseRowMaterial.TabIndex = 0;
+            this.gridBatchCloseRowMaterial.TabStop = false;
             // 
             // P01_BatchCloseRowMaterial
             // 
@@ -333,7 +333,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridBatchCloseRowMaterial)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -341,29 +341,29 @@
 
         #endregion
 
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox txtSP1;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnBatchCloseRMTL;
+        private Win.UI.Button btnFindNow;
+        private Win.UI.TextBox txtSPNoStart;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridBatchCloseRowMaterial;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox txtSP2;
-        private Win.UI.Label label7;
-        private Win.UI.ComboBox cbbCategory;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Class.txtstyle txtstyle1;
-        private Class.txtmfactory txtmfactory1;
-        private Win.UI.Label label8;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label1;
-        private Win.UI.Label label4;
-        private Win.UI.DateRange PullOutdateRange;
-        private Win.UI.DateRange BuyerDeliverydateRange;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.Label labelCategory;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.Label labelSPNo;
+        private Class.txtstyle txtstyle;
+        private Class.txtmfactory txtmfactory;
+        private Win.UI.Label labelFactory;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelPullOutDate;
+        private Win.UI.DateRange datePullOutDate;
+        private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Button btnToEexcel;
     }
 }

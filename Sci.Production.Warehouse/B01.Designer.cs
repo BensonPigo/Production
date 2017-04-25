@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelDesc = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtID = new Sci.Win.UI.TextBox();
+            this.txtDesc = new Sci.Win.UI.TextBox();
+            this.txtRemark = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,13 +49,13 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label5);
+            this.detailcont.Controls.Add(this.txtRemark);
+            this.detailcont.Controls.Add(this.txtDesc);
+            this.detailcont.Controls.Add(this.txtID);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Controls.Add(this.labelDesc);
+            this.detailcont.Controls.Add(this.labelRemark);
             this.detailcont.Size = new System.Drawing.Size(900, 357);
             // 
             // detailbtm
@@ -83,76 +83,76 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(24, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(24, 12);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 4;
+            this.labelID.Text = "ID";
             // 
-            // label4
+            // labelDesc
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(24, 47);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Desc";
+            this.labelDesc.Lines = 0;
+            this.labelDesc.Location = new System.Drawing.Point(24, 47);
+            this.labelDesc.Name = "labelDesc";
+            this.labelDesc.Size = new System.Drawing.Size(75, 23);
+            this.labelDesc.TabIndex = 5;
+            this.labelDesc.Text = "Desc";
             // 
-            // label5
+            // labelRemark
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(24, 82);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(24, 82);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 6;
+            this.labelRemark.Text = "Remark";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(423, 14);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(423, 14);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 1;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtID
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(102, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(48, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtID.IsSupportEditMode = false;
+            this.txtID.Location = new System.Drawing.Point(102, 12);
+            this.txtID.Name = "txtID";
+            this.txtID.ReadOnly = true;
+            this.txtID.Size = new System.Drawing.Size(48, 23);
+            this.txtID.TabIndex = 0;
             // 
-            // textBox2
+            // txtDesc
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(102, 47);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(618, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtDesc.BackColor = System.Drawing.Color.White;
+            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDesc.Location = new System.Drawing.Point(102, 47);
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(618, 23);
+            this.txtDesc.TabIndex = 2;
             // 
-            // textBox3
+            // txtRemark
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(102, 82);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(378, 23);
-            this.textBox3.TabIndex = 3;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(102, 82);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(378, 23);
+            this.txtRemark.TabIndex = 3;
             // 
             // B01
             // 
@@ -183,12 +183,12 @@
 
         #endregion
 
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.TextBox txtDesc;
+        private Win.UI.TextBox txtID;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.Label labelID;
+        private Win.UI.Label labelDesc;
+        private Win.UI.Label labelRemark;
     }
 }

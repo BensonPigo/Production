@@ -30,11 +30,11 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             #region CheckBox = true
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["Selected"]) == true && Convert.ToDecimal(dr["Qty"].ToString()) == 0)
                     {
                         dr["Qty"] = dr["stockQty"];
@@ -50,15 +50,15 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings setQty = new DataGridViewGeneratorNumericColumnSettings();
             setQty.CellValidating = (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridImport.GetDataRow(e.RowIndex);
                 dr["Qty"] = e.FormattedValue;
                 dr["Selected"] = (Convert.ToDecimal(e.FormattedValue) != 0);
                 dr.EndEdit();
             };
             #endregion 
             #region Set Grid
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -93,7 +93,7 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
 ";
 
             List<SqlParameter> listPar = new List<SqlParameter>();
-            listPar.Add(new SqlParameter("@SP", txtSP.Text.Trim()));
+            listPar.Add(new SqlParameter("@SP", txtSPNo.Text.Trim()));
             #endregion 
             #region SQL Data Loading...
             Ict.DualResult result;
@@ -116,10 +116,10 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt)) return;
-            DataRow[] dataRow = this.grid1.GetTable().Select("Selected = 1");
+            DataRow[] dataRow = this.gridImport.GetTable().Select("Selected = 1");
             foreach (DataRow dr in dataRow)
             {
                 DataRow[] checkDR = P61_Detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["OrderID"].EqualString(dr["OrderID"])

@@ -25,8 +25,8 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
-            MyUtility.Tool.SetupCombox(cbbCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
-            cbbCategory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
+            comboCategory.SelectedIndex = 0;
 
         }
         public P01_BatchCloseRowMaterial(DataRow master, DataTable detail)
@@ -46,20 +46,20 @@ namespace Sci.Production.Warehouse
         {
             DateTime? pulloutdate1, pulloutdate2, buyerDelivery1, buyerDelivery2;
             StringBuilder strSQLCmd = new StringBuilder();
-            pulloutdate1 = PullOutdateRange.Value1;
-            pulloutdate2 = PullOutdateRange.Value2;
-            buyerDelivery1 = BuyerDeliverydateRange.Value1;
-            buyerDelivery2 = BuyerDeliverydateRange.Value2;
-            String sp1 = this.txtSP1.Text.TrimEnd();
-            String sp2 = this.txtSP2.Text.TrimEnd();
-            String category = this.cbbCategory.SelectedValue.ToString();
-            String style = txtstyle1.Text;
-            String brand = txtbrand1.Text;
-            String factory = txtmfactory1.Text;
+            pulloutdate1 = datePullOutDate.Value1;
+            pulloutdate2 = datePullOutDate.Value2;
+            buyerDelivery1 = dateBuyerDelivery.Value1;
+            buyerDelivery2 = dateBuyerDelivery.Value2;
+            String sp1 = this.txtSPNoStart.Text.TrimEnd();
+            String sp2 = this.txtSPNoEnd.Text.TrimEnd();
+            String category = this.comboCategory.SelectedValue.ToString();
+            String style = txtstyle.Text;
+            String brand = txtbrand.Text;
+            String factory = txtmfactory.Text;
 
-            if (MyUtility.Check.Empty(PullOutdateRange.Value1) &&
-                MyUtility.Check.Empty(BuyerDeliverydateRange.Value1) &&
-                (MyUtility.Check.Empty(txtSP1.Text) || MyUtility.Check.Empty(txtSP2.Text)))
+            if (MyUtility.Check.Empty(datePullOutDate.Value1) &&
+                MyUtility.Check.Empty(dateBuyerDelivery.Value1) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) || MyUtility.Check.Empty(txtSPNoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Pullout Date > & < Buyer Delivery > & < SP# > can't be empty!!");
                 return;
@@ -188,9 +188,9 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
         {
             base.OnFormLoaded();
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchCloseRowMaterial.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridBatchCloseRowMaterial.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBatchCloseRowMaterial)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
                 .Text("factoryid", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(8)) //1
@@ -212,7 +212,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridBatchCloseRowMaterial.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

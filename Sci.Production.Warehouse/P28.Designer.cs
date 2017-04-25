@@ -32,26 +32,26 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.cbxCategory = new Sci.Win.UI.ComboBox();
-            this.label8 = new Sci.Win.UI.Label();
-            this.cbxFabricType = new Sci.Win.UI.ComboBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.dateRangeInputDate = new Sci.Win.UI.DateRange();
-            this.dateRangeATA = new Sci.Win.UI.DateRange();
-            this.txtSP = new Sci.Win.UI.TextBox();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.comboFabricType = new Sci.Win.UI.ComboBox();
+            this.labelFabricType = new Sci.Win.UI.Label();
+            this.dateInputDate = new Sci.Win.UI.DateRange();
+            this.dateMaterialATA = new Sci.Win.UI.DateRange();
+            this.txtIssueSP = new Sci.Win.UI.TextBox();
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelInputDate = new Sci.Win.UI.Label();
+            this.labelMaterialATA = new Sci.Win.UI.Label();
+            this.labelIssueSP = new Sci.Win.UI.Label();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.checkOnly = new Sci.Win.UI.CheckBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnCreate = new Sci.Win.UI.Button();
             this.btnExcel = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.gridComplete = new Sci.Win.UI.Grid();
+            this.gridRel = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -60,100 +60,100 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridComplete)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridRel)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.cbxCategory);
-            this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.cbxFabricType);
-            this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.dateRangeInputDate);
-            this.panel1.Controls.Add(this.dateRangeATA);
-            this.panel1.Controls.Add(this.txtSP);
+            this.panel1.Controls.Add(this.comboCategory);
+            this.panel1.Controls.Add(this.labelCategory);
+            this.panel1.Controls.Add(this.comboFabricType);
+            this.panel1.Controls.Add(this.labelFabricType);
+            this.panel1.Controls.Add(this.dateInputDate);
+            this.panel1.Controls.Add(this.dateMaterialATA);
+            this.panel1.Controls.Add(this.txtIssueSP);
             this.panel1.Controls.Add(this.btnAutoPick);
             this.panel1.Controls.Add(this.btnQuery);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.labelInputDate);
+            this.panel1.Controls.Add(this.labelMaterialATA);
+            this.panel1.Controls.Add(this.labelIssueSP);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
             // 
-            // cbxCategory
+            // comboCategory
             // 
-            this.cbxCategory.BackColor = System.Drawing.Color.White;
-            this.cbxCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbxCategory.FormattingEnabled = true;
-            this.cbxCategory.IsSupportUnselect = true;
-            this.cbxCategory.Items.AddRange(new object[] {
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Items.AddRange(new object[] {
             "Bulk",
             "Sample",
             "Material"});
-            this.cbxCategory.Location = new System.Drawing.Point(729, 42);
-            this.cbxCategory.Name = "cbxCategory";
-            this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 4;
+            this.comboCategory.Location = new System.Drawing.Point(729, 42);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.TabIndex = 4;
             // 
-            // label8
+            // labelCategory
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(637, 42);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(89, 23);
-            this.label8.TabIndex = 115;
-            this.label8.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(637, 42);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(89, 23);
+            this.labelCategory.TabIndex = 115;
+            this.labelCategory.Text = "Category";
             // 
-            // cbxFabricType
+            // comboFabricType
             // 
-            this.cbxFabricType.BackColor = System.Drawing.Color.White;
-            this.cbxFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbxFabricType.FormattingEnabled = true;
-            this.cbxFabricType.IsSupportUnselect = true;
-            this.cbxFabricType.Items.AddRange(new object[] {
+            this.comboFabricType.BackColor = System.Drawing.Color.White;
+            this.comboFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabricType.FormattingEnabled = true;
+            this.comboFabricType.IsSupportUnselect = true;
+            this.comboFabricType.Items.AddRange(new object[] {
             "Fabric",
             "Accessory",
             "All"});
-            this.cbxFabricType.Location = new System.Drawing.Point(729, 9);
-            this.cbxFabricType.Name = "cbxFabricType";
-            this.cbxFabricType.Size = new System.Drawing.Size(121, 24);
-            this.cbxFabricType.TabIndex = 3;
+            this.comboFabricType.Location = new System.Drawing.Point(729, 9);
+            this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.Size = new System.Drawing.Size(121, 24);
+            this.comboFabricType.TabIndex = 3;
             // 
-            // label9
+            // labelFabricType
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(637, 9);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(89, 23);
-            this.label9.TabIndex = 113;
-            this.label9.Text = "Fabric Type";
+            this.labelFabricType.Lines = 0;
+            this.labelFabricType.Location = new System.Drawing.Point(637, 9);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(89, 23);
+            this.labelFabricType.TabIndex = 113;
+            this.labelFabricType.Text = "Fabric Type";
             // 
-            // dateRangeInputDate
+            // dateInputDate
             // 
-            this.dateRangeInputDate.Location = new System.Drawing.Point(334, 42);
-            this.dateRangeInputDate.Name = "dateRangeInputDate";
-            this.dateRangeInputDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeInputDate.TabIndex = 2;
+            this.dateInputDate.Location = new System.Drawing.Point(334, 42);
+            this.dateInputDate.Name = "dateInputDate";
+            this.dateInputDate.Size = new System.Drawing.Size(280, 23);
+            this.dateInputDate.TabIndex = 2;
             // 
-            // dateRangeATA
+            // dateMaterialATA
             // 
-            this.dateRangeATA.Location = new System.Drawing.Point(334, 9);
-            this.dateRangeATA.Name = "dateRangeATA";
-            this.dateRangeATA.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeATA.TabIndex = 1;
+            this.dateMaterialATA.Location = new System.Drawing.Point(334, 9);
+            this.dateMaterialATA.Name = "dateMaterialATA";
+            this.dateMaterialATA.Size = new System.Drawing.Size(280, 23);
+            this.dateMaterialATA.TabIndex = 1;
             // 
-            // txtSP
+            // txtIssueSP
             // 
-            this.txtSP.BackColor = System.Drawing.Color.White;
-            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(87, 9);
-            this.txtSP.Name = "txtSP";
-            this.txtSP.Size = new System.Drawing.Size(117, 23);
-            this.txtSP.TabIndex = 0;
+            this.txtIssueSP.BackColor = System.Drawing.Color.White;
+            this.txtIssueSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIssueSP.Location = new System.Drawing.Point(87, 9);
+            this.txtIssueSP.Name = "txtIssueSP";
+            this.txtIssueSP.Size = new System.Drawing.Size(117, 23);
+            this.txtIssueSP.TabIndex = 0;
             // 
             // btnAutoPick
             // 
@@ -175,36 +175,36 @@
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
-            // label4
+            // labelInputDate
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(218, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(113, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Input Date";
+            this.labelInputDate.Lines = 0;
+            this.labelInputDate.Location = new System.Drawing.Point(218, 42);
+            this.labelInputDate.Name = "labelInputDate";
+            this.labelInputDate.Size = new System.Drawing.Size(113, 23);
+            this.labelInputDate.TabIndex = 3;
+            this.labelInputDate.Text = "Input Date";
             // 
-            // label3
+            // labelMaterialATA
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(218, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Material ATA";
+            this.labelMaterialATA.Lines = 0;
+            this.labelMaterialATA.Location = new System.Drawing.Point(218, 9);
+            this.labelMaterialATA.Name = "labelMaterialATA";
+            this.labelMaterialATA.Size = new System.Drawing.Size(113, 23);
+            this.labelMaterialATA.TabIndex = 2;
+            this.labelMaterialATA.Text = "Material ATA";
             // 
-            // label1
+            // labelIssueSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Issue SP#";
+            this.labelIssueSP.Lines = 0;
+            this.labelIssueSP.Location = new System.Drawing.Point(9, 9);
+            this.labelIssueSP.Name = "labelIssueSP";
+            this.labelIssueSP.Size = new System.Drawing.Size(75, 23);
+            this.labelIssueSP.TabIndex = 7;
+            this.labelIssueSP.Text = "Issue SP#";
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.checkBox1);
+            this.panel2.Controls.Add(this.checkOnly);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Controls.Add(this.btnCreate);
             this.panel2.Controls.Add(this.btnExcel);
@@ -214,17 +214,17 @@
             this.panel2.Size = new System.Drawing.Size(1008, 53);
             this.panel2.TabIndex = 3;
             // 
-            // checkBox1
+            // checkOnly
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(12, 17);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(316, 21);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "Only show data of complete inventory location";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkOnly.AutoSize = true;
+            this.checkOnly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOnly.Location = new System.Drawing.Point(12, 17);
+            this.checkOnly.Name = "checkOnly";
+            this.checkOnly.Size = new System.Drawing.Size(316, 21);
+            this.checkOnly.TabIndex = 3;
+            this.checkOnly.Text = "Only show data of complete inventory location";
+            this.checkOnly.UseVisualStyleBackColor = true;
+            this.checkOnly.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // btnClose
             // 
@@ -268,60 +268,60 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.grid1);
+            this.splitContainer1.Panel1.Controls.Add(this.gridComplete);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.grid2);
+            this.splitContainer1.Panel2.Controls.Add(this.gridRel);
             this.splitContainer1.Size = new System.Drawing.Size(1008, 441);
             this.splitContainer1.SplitterDistance = 571;
             this.splitContainer1.TabIndex = 4;
             // 
-            // grid1
+            // gridComplete
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(571, 441);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridComplete.AllowUserToAddRows = false;
+            this.gridComplete.AllowUserToDeleteRows = false;
+            this.gridComplete.AllowUserToResizeRows = false;
+            this.gridComplete.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridComplete.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridComplete.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridComplete.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridComplete.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridComplete.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridComplete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridComplete.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridComplete.Location = new System.Drawing.Point(0, 0);
+            this.gridComplete.Name = "gridComplete";
+            this.gridComplete.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridComplete.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridComplete.RowTemplate.Height = 24;
+            this.gridComplete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridComplete.Size = new System.Drawing.Size(571, 441);
+            this.gridComplete.TabIndex = 0;
+            this.gridComplete.TabStop = false;
             // 
-            // grid2
+            // gridRel
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 0);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(433, 441);
-            this.grid2.TabIndex = 0;
-            this.grid2.TabStop = false;
+            this.gridRel.AllowUserToAddRows = false;
+            this.gridRel.AllowUserToDeleteRows = false;
+            this.gridRel.AllowUserToResizeRows = false;
+            this.gridRel.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridRel.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridRel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridRel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridRel.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridRel.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridRel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridRel.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridRel.Location = new System.Drawing.Point(0, 0);
+            this.gridRel.Name = "gridRel";
+            this.gridRel.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridRel.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridRel.RowTemplate.Height = 24;
+            this.gridRel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRel.Size = new System.Drawing.Size(433, 441);
+            this.gridRel.TabIndex = 0;
+            this.gridRel.TabStop = false;
             // 
             // P28
             // 
@@ -347,8 +347,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridComplete)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridRel)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -360,23 +360,23 @@
         private Win.UI.Panel panel1;
         private Win.UI.Button btnAutoPick;
         private Win.UI.Button btnQuery;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelInputDate;
+        private Win.UI.Label labelMaterialATA;
+        private Win.UI.Label labelIssueSP;
         private Win.UI.Panel panel2;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnCreate;
         private Win.UI.Button btnExcel;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Win.UI.DateRange dateRangeInputDate;
-        private Win.UI.DateRange dateRangeATA;
-        private Win.UI.TextBox txtSP;
-        private Win.UI.ComboBox cbxCategory;
-        private Win.UI.Label label8;
-        private Win.UI.ComboBox cbxFabricType;
-        private Win.UI.Label label9;
-        private Win.UI.Grid grid1;
-        private Win.UI.Grid grid2;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.DateRange dateInputDate;
+        private Win.UI.DateRange dateMaterialATA;
+        private Win.UI.TextBox txtIssueSP;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label labelCategory;
+        private Win.UI.ComboBox comboFabricType;
+        private Win.UI.Label labelFabricType;
+        private Win.UI.Grid gridComplete;
+        private Win.UI.Grid gridRel;
+        private Win.UI.CheckBox checkOnly;
     }
 }

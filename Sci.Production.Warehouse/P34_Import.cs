@@ -31,15 +31,15 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-            String refno = this.textBox3.Text.TrimEnd();
-            String location = this.textBox4.Text.TrimEnd();
-            string fabrictype = txtdropdownlist1.SelectedValue.ToString();
+            String sp = this.txtSPNo.Text.TrimEnd();
+            String refno = this.txtRef.Text.TrimEnd();
+            String location = this.txtLocation.Text.TrimEnd();
+            string fabrictype = txtdropdownlistFabricType.SelectedValue.ToString();
 
             if (string.IsNullOrWhiteSpace(sp) && string.IsNullOrWhiteSpace(refno) && string.IsNullOrWhiteSpace(location))
             {
                 MyUtility.Msg.WarningBox("< SP# > < Ref# > < Location > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
@@ -82,9 +82,9 @@ Where c.lock = 0 and f.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                     strSQLCmd.Append(string.Format(@" and c.ukey in (select ukey from dbo.ftyinventory_detail WITH (NOLOCK) where mtllocationid = '{0}') ", location));
                 }
 
-                if (!txtSeq1.checkEmpty(showErrMsg: false))
+                if (!txtSeq.checkEmpty(showErrMsg: false))
                 {
-                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
+                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
                 }
 
                 switch (fabrictype)
@@ -128,9 +128,9 @@ Where c.lock = 0 and f.mdivisionid = '{0}'", Sci.Env.User.Keyword));
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
             {
-                comboBox2.DataSource = dropDownListTable;
-                comboBox2.DisplayMember = "IDName";
-                comboBox2.ValueMember = "ID";
+                comboReason.DataSource = dropDownListTable;
+                comboReason.DisplayMember = "IDName";
+                comboReason.ValueMember = "ID";
             }
             #endregion
             #region -- Current Qty Valid --
@@ -139,8 +139,8 @@ Where c.lock = 0 and f.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qtyafter"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qtyafter"] = e.FormattedValue;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
@@ -165,27 +165,27 @@ Where c.lock = 0 and f.mdivisionid = '{0}'", Sci.Env.User.Keyword));
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(poitems
                         , "ID,Name"
                         , "5,150"
-                        , grid1.GetDataRow(grid1.GetSelectedRowIndex())["reasonid"].ToString()
+                        , gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString()
                         , "ID,Name");
                     item.Width = 600;
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     x = item.GetSelecteds();
 
-                    grid1.GetDataRow(grid1.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
-                    grid1.GetDataRow(grid1.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
+                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = x[0]["id"];
+                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = x[0]["name"];
                 }
             };
             ts.CellValidating += (s, e) =>
             {
                 DataRow dr;
                 if (!this.EditMode) return;
-                if (String.Compare(e.FormattedValue.ToString(), grid1.GetDataRow(grid1.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
+                if (String.Compare(e.FormattedValue.ToString(), gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"].ToString()) != 0)
                 {
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["reasonid"] = "";
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["reason_nm"] = "";
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = "";
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = "";
                     }
                     else
                     {
@@ -198,17 +198,17 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         }
                         else
                         {
-                            grid1.GetDataRow(grid1.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
-                            grid1.GetDataRow(grid1.GetSelectedRowIndex())["reason_nm"] = dr["name"];
+                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reasonid"] = e.FormattedValue;
+                            gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["reason_nm"] = dr["name"];
                         }
                     }
                 }
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -223,8 +223,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                 .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))      //11
                ;
 
-            this.grid1.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
         //Close
         private void button3_Click(object sender, EventArgs e)
@@ -234,7 +234,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
@@ -315,8 +315,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         //Update All
         private void button4_Click(object sender, EventArgs e)
         {
-            string reasonid = comboBox2.SelectedValue.ToString();
-            grid1.ValidateControl();
+            string reasonid = comboReason.SelectedValue.ToString();
+            gridImport.ValidateControl();
 
             if (dtInventory == null || dtInventory.Rows.Count == 0) return;
             DataRow[] drfound = dtInventory.Select("selected = 1");
@@ -324,13 +324,13 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             foreach (var item in drfound)
             {
                 item["reasonid"] = reasonid;
-                item["reason_nm"] = comboBox2.Text;
+                item["reason_nm"] = comboReason.Text;
             }
         }
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox4.Text.ToString() == "") return;
+            if (txtLocation.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"
 select 1 
 where exists(
@@ -339,7 +339,7 @@ where exists(
     where   StockType='I' 
             and id = '{0}'
             and junk != '1'
-)", textBox4.Text), null))
+)", txtLocation.Text), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
@@ -354,10 +354,10 @@ select  id
         , [Description] 
 from    dbo.MtlLocation WITH (NOLOCK) 
 where   StockType='I'
-        and junk != '1'"), "10,40", textBox4.Text, "ID,Desc");
+        and junk != '1'"), "10,40", txtLocation.Text, "ID,Desc");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox4.Text = item.GetSelectedString();
+            txtLocation.Text = item.GetSelectedString();
         }
     }
 }

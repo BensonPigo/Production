@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.button8 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.button9 = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.dateIssueDate = new Sci.Win.UI.DateBox();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.txtLocateForSP = new Sci.Win.UI.TextBox();
+            this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.btnDelete = new Sci.Win.UI.Button();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.txtsubconLocalSupplier = new Sci.Production.Class.txtsubcon();
+            this.labelLocalSupplier = new Sci.Win.UI.Label();
+            this.labelInvoice = new Sci.Win.UI.Label();
+            this.txtInvoice = new Sci.Win.UI.TextBox();
             this.txtTotal = new Sci.Win.UI.DisplayBox();
             this.lblTotal = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -64,40 +64,40 @@
             // 
             this.masterpanel.Controls.Add(this.txtTotal);
             this.masterpanel.Controls.Add(this.lblTotal);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.txtsubcon1);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.button9);
-            this.masterpanel.Controls.Add(this.button8);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.txtInvoice);
+            this.masterpanel.Controls.Add(this.labelInvoice);
+            this.masterpanel.Controls.Add(this.labelLocalSupplier);
+            this.masterpanel.Controls.Add(this.txtsubconLocalSupplier);
+            this.masterpanel.Controls.Add(this.btnImport);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.btnDelete);
+            this.masterpanel.Controls.Add(this.btnFind);
+            this.masterpanel.Controls.Add(this.txtLocateForSP);
+            this.masterpanel.Controls.Add(this.labelLocateForSP);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
+            this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.label25);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.labelIssueDate);
+            this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Size = new System.Drawing.Size(1058, 189);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsubcon1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDelete, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsubconLocalSupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLocalSupplier, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInvoice, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtInvoice, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTotal, 0);
             // 
@@ -167,23 +167,23 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(419, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(16, 13);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 1;
+            this.labelID.Text = "ID";
             // 
-            // label11
+            // labelIssueDate
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(241, 13);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(108, 23);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "Issue Date";
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(241, 13);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
+            this.labelIssueDate.TabIndex = 11;
+            this.labelIssueDate.Text = "Issue Date";
             // 
             // label25
             // 
@@ -197,138 +197,139 @@
             this.label25.Text = "Not Approve";
             this.label25.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(94, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(94, 13);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(120, 23);
+            this.displayID.TabIndex = 0;
             // 
-            // dateBox3
+            // dateIssueDate
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateBox3.Location = new System.Drawing.Point(352, 13);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 0;
+            this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
+            this.dateIssueDate.Location = new System.Drawing.Point(352, 13);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssueDate.TabIndex = 0;
             // 
-            // button8
+            // btnFind
             // 
-            this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button8.Location = new System.Drawing.Point(279, 146);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(70, 30);
-            this.button8.TabIndex = 5;
-            this.button8.Text = "Find";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnFind.Location = new System.Drawing.Point(279, 146);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(70, 30);
+            this.btnFind.TabIndex = 5;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.button8_Click);
             // 
-            // textBox1
+            // txtLocateForSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(128, 150);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 4;
+            this.txtLocateForSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateForSP.IsSupportEditMode = false;
+            this.txtLocateForSP.Location = new System.Drawing.Point(128, 150);
+            this.txtLocateForSP.Name = "txtLocateForSP";
+            this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
+            this.txtLocateForSP.TabIndex = 4;
             // 
-            // label5
+            // labelLocateForSP
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 150);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(109, 23);
-            this.label5.TabIndex = 58;
-            this.label5.Text = "Locate for SP#";
+            this.labelLocateForSP.Lines = 0;
+            this.labelLocateForSP.Location = new System.Drawing.Point(16, 150);
+            this.labelLocateForSP.Name = "labelLocateForSP";
+            this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
+            this.labelLocateForSP.TabIndex = 58;
+            this.labelLocateForSP.Text = "Locate for SP#";
             // 
-            // button9
+            // btnDelete
             // 
-            this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button9.Location = new System.Drawing.Point(355, 146);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(80, 30);
-            this.button9.TabIndex = 6;
-            this.button9.Text = "Delete all";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.btnDelete.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnDelete.Location = new System.Drawing.Point(355, 146);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(80, 30);
+            this.btnDelete.TabIndex = 6;
+            this.btnDelete.Text = "Delete all";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.button9_Click);
             // 
-            // label1
+            // labelRemark
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 82);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 59;
-            this.label1.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(16, 82);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 59;
+            this.labelRemark.Text = "Remark";
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(94, 82);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(658, 51);
-            this.editBox1.TabIndex = 3;
+            this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editRemark.Location = new System.Drawing.Point(94, 82);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.Size = new System.Drawing.Size(658, 51);
+            this.editRemark.TabIndex = 3;
             // 
-            // button1
+            // btnImport
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(799, 148);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(123, 30);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Batch Import";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Location = new System.Drawing.Point(799, 148);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(123, 30);
+            this.btnImport.TabIndex = 7;
+            this.btnImport.Text = "Batch Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button1_Click);
             // 
-            // txtsubcon1
+            // txtsubconLocalSupplier
             // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(635, 13);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 1;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconLocalSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "localsuppid", true));
+            this.txtsubconLocalSupplier.DisplayBox1Binding = "";
+            this.txtsubconLocalSupplier.IsIncludeJunk = false;
+            this.txtsubconLocalSupplier.Location = new System.Drawing.Point(635, 13);
+            this.txtsubconLocalSupplier.Name = "txtsubconLocalSupplier";
+            this.txtsubconLocalSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconLocalSupplier.TabIndex = 1;
+            this.txtsubconLocalSupplier.TextBox1Binding = "";
             // 
-            // label2
+            // labelLocalSupplier
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(524, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 23);
-            this.label2.TabIndex = 63;
-            this.label2.Text = "Local Supplier";
+            this.labelLocalSupplier.Lines = 0;
+            this.labelLocalSupplier.Location = new System.Drawing.Point(524, 13);
+            this.labelLocalSupplier.Name = "labelLocalSupplier";
+            this.labelLocalSupplier.Size = new System.Drawing.Size(108, 23);
+            this.labelLocalSupplier.TabIndex = 63;
+            this.labelLocalSupplier.Text = "Local Supplier";
             // 
-            // label4
+            // labelInvoice
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 48);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 64;
-            this.label4.Text = "Invoice#";
+            this.labelInvoice.Lines = 0;
+            this.labelInvoice.Location = new System.Drawing.Point(16, 48);
+            this.labelInvoice.Name = "labelInvoice";
+            this.labelInvoice.Size = new System.Drawing.Size(75, 23);
+            this.labelInvoice.TabIndex = 64;
+            this.labelInvoice.Text = "Invoice#";
             // 
-            // textBox2
+            // txtInvoice
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "invNO", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(94, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(145, 23);
-            this.textBox2.TabIndex = 2;
+            this.txtInvoice.BackColor = System.Drawing.Color.White;
+            this.txtInvoice.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "invNO", true));
+            this.txtInvoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInvoice.Location = new System.Drawing.Point(94, 48);
+            this.txtInvoice.Name = "txtInvoice";
+            this.txtInvoice.Size = new System.Drawing.Size(145, 23);
+            this.txtInvoice.TabIndex = 2;
             // 
             // txtTotal
             // 
             this.txtTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtTotal.Location = new System.Drawing.Point(635, 48);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.Size = new System.Drawing.Size(145, 23);
@@ -386,22 +387,22 @@
 
         #endregion
 
-        private Win.UI.Label label11;
-        private Win.UI.Label label3;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelID;
+        private Win.UI.DisplayBox displayID;
         private Win.UI.Label label25;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.Button button8;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label5;
-        private Win.UI.Button button9;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Label label4;
-        private Win.UI.Label label2;
-        private Class.txtsubcon txtsubcon1;
+        private Win.UI.DateBox dateIssueDate;
+        private Win.UI.Button btnFind;
+        private Win.UI.TextBox txtLocateForSP;
+        private Win.UI.Label labelLocateForSP;
+        private Win.UI.Button btnDelete;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Button btnImport;
+        private Win.UI.TextBox txtInvoice;
+        private Win.UI.Label labelInvoice;
+        private Win.UI.Label labelLocalSupplier;
+        private Class.txtsubcon txtsubconLocalSupplier;
         private Win.UI.DisplayBox txtTotal;
         private Win.UI.Label lblTotal;
     }

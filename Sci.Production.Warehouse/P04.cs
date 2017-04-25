@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings setBalance = new DataGridViewGeneratorNumericColumnSettings();
             setBalance.CellMouseDoubleClick += (s, e) =>
             {
-                var dataRow = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (dataRow != null)
                 {
                     var form = new Sci.Production.Warehouse.P04_LocalTransaction(dataRow);
@@ -45,7 +45,7 @@ namespace Sci.Production.Warehouse
             };
             #endregion 
             #region Set Grid
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridMaterialStatus)
                 .Text("sp", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("unit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (tb_Spno.Focus())
+            if (txtSPNo.Focus())
             {
                 switch (keyData)
                 {
@@ -80,10 +80,10 @@ namespace Sci.Production.Warehouse
         private void event_Query()
         {
             #region check SP#
-            if (tb_Spno.Text.Empty())
+            if (txtSPNo.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-                tb_Spno.Focus();
+                txtSPNo.Focus();
                 return;
             }
             #endregion 
@@ -104,7 +104,7 @@ left join LocalSupp c on b.LocalSuppid=c.ID
 where l.OrderID like @spno
 ");
 
-            string spno = tb_Spno.Text.TrimEnd() + "%";
+            string spno = txtSPNo.Text.TrimEnd() + "%";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@spno", spno));
             #endregion

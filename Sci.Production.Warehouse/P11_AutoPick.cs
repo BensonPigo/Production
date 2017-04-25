@@ -355,9 +355,9 @@ delete from #tmp2 where qty = 0;
             }
 
             this.listControlBindingSource1.DataSource = BOA_PO;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridAutoPick.DataSource = listControlBindingSource1;
 
-            this.grid1.AutoResizeColumns();
+            this.gridAutoPick.AutoResizeColumns();
             //this.gridBOA.DataSource = BOA;
             //Helper.Controls.Grid.Generator(this.gridBOA)
 
@@ -384,10 +384,10 @@ delete from #tmp2 where qty = 0;
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail();
-                DataTable tmpDt = dictionaryDatas[grid1.GetDataRow(e.RowIndex)];
+                DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
                 //DataTable _clone = tmpDt.Copy();
                 frm.SetGrid(tmpDt);
                 DialogResult DResult = frm.ShowDialog(this);
@@ -417,7 +417,7 @@ delete from #tmp2 where qty = 0;
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.CellValidating += (s, e) =>
             {              
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 if (Convert.ToDecimal(e.FormattedValue) == Convert.ToDecimal(dr["qty"])) return;
                 dr["qty"] = e.FormattedValue;
@@ -427,9 +427,9 @@ delete from #tmp2 where qty = 0;
 
             #region --設定Grid1的顯示欄位--
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAutoPick.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPick.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAutoPick)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -449,9 +449,9 @@ delete from #tmp2 where qty = 0;
                   .Text("usageqty", header: "Usage Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("usageunit", header: "Usage Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  ;
-            grid1.Columns["qty"].Frozen = true;  //Qty
-            grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
-            grid1.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            gridAutoPick.Columns["qty"].Frozen = true;  //Qty
+            gridAutoPick.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
+            gridAutoPick.Columns["Output"].DefaultCellStyle.BackColor = Color.Pink;   //Qty
             #endregion
 
         }
@@ -469,7 +469,7 @@ delete from #tmp2 where qty = 0;
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridAutoPick.ValidateControl();
             DataRow[] dr2 = BOA_PO.Select("Selected = 1");
             if (dr2.Length == 0)
             {

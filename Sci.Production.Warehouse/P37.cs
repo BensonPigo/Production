@@ -244,21 +244,21 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["WhseReasonId"]))
             {
                 MyUtility.Msg.WarningBox("< Refund Reason >  can't be empty!", "Warning");
-                txtwhseReason1.TextBox1.Focus();
+                txtwhseReasonRefundReason.TextBox1.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["actionid"]))
             {
                 MyUtility.Msg.WarningBox("< Action>  can't be empty!", "Warning");
-                txtwhseRefundAction1.TextBox1.Focus();
+                txtwhseRefundAction.TextBox1.Focus();
                 return false;
             }
 
@@ -315,8 +315,8 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.txtwhseRefundAction1.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", "RA" + this.txtwhseRefundAction1.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
-            this.txtwhseReason1.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason1.Type.ToString() + this.txtwhseReason1.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
+            this.txtwhseRefundAction.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", "RA" + this.txtwhseRefundAction.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
+            this.txtwhseReasonRefundReason.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReasonRefundReason.Type.ToString() + this.txtwhseReasonRefundReason.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();
@@ -854,7 +854,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -862,9 +862,9 @@ Where a.id = '{0}'", masterID);
         }
         private void txtwhseReason1_Validated(object sender, EventArgs e)
         {
-            this.txtwhseRefundAction1.TextBox1.Text = "";
-            this.txtwhseRefundAction1.DisplayBox1.Text = "";
-            this.txtwhseRefundAction1.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue()); 
+            this.txtwhseRefundAction.TextBox1.Text = "";
+            this.txtwhseRefundAction.DisplayBox1.Text = "";
+            this.txtwhseRefundAction.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue()); 
         }
     
     }

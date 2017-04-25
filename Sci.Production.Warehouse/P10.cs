@@ -327,7 +327,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -578,8 +578,8 @@ left join NetQty b on a.Poid = b.ID and a.seq1 = b.seq1 and a.seq2 = b.seq2
             DataTable dt;
             if (!(CurrentMaintain == null))
             {
-                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
-                disLine.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
+                displayCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan  WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
+                displayLineNo.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
 from dbo.Issue_Summary a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
 
                 DBProxy.Current.Select(null, string.Format(@";with cte as
@@ -588,7 +588,7 @@ where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
 ", CurrentMaintain["cutplanid"]), out dt);
-                ebCut.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString())
+                editCutNo.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString())
        );
 
             }
@@ -932,7 +932,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string Remark = row["Remark"].ToString();
             string cutplanID = row["cutplanID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-            string cutno = this.ebCut.Text;
+            string cutno = this.editCutNo.Text;
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();

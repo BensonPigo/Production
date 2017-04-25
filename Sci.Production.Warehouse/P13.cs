@@ -223,14 +223,14 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Whsereasonid"]))
             {
                 MyUtility.Msg.WarningBox("< Reason >  can't be empty!", "Warning");
-                txtwhseReason1.TextBox1.Focus();
+                txtwhseReason.TextBox1.Focus();
                 return false;
             }
             else
@@ -238,7 +238,7 @@ namespace Sci.Production.Warehouse
                 if (CurrentMaintain["Whsereasonid"].ToString() == "00005" && MyUtility.Check.Empty(CurrentMaintain["remark"]))
                 {
                     MyUtility.Msg.WarningBox("< Remark >  can't be empty!", "Warning");
-                    editBox1.Focus();
+                    editRemark.Focus();
                     return false;
                 }
             }
@@ -297,7 +297,7 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.txtwhseReason1.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason1.Type.ToString() + this.txtwhseReason1.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
+            this.txtwhseReason.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason.Type.ToString() + this.txtwhseReason.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
             #region Status Label
 
             label25.Text = CurrentMaintain["status"].ToString();
@@ -690,7 +690,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

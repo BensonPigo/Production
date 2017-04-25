@@ -36,7 +36,7 @@ namespace Sci.Production.Warehouse
 
             if (ReportResourceName == "P07_Report2.rdlc")
             {
-                if (!MyUtility.Check.Empty(textBox1.Text) && !poidList.Contains(this.textBox1.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
+                if (!MyUtility.Check.Empty(txtSPNo.Text) && !poidList.Contains(this.txtSPNo.Text.TrimEnd(), StringComparer.OrdinalIgnoreCase))
                 {
                     MyUtility.Msg.ErrorBox("SP# is not found.");
                     return false;
@@ -93,9 +93,9 @@ namespace Sci.Production.Warehouse
             LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id = @ID ";
 
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                pars.Add(new SqlParameter("@poid", textBox1.Text));
+                pars.Add(new SqlParameter("@poid", txtSPNo.Text));
                 sql += " and R.Poid = @poid";
             }
 
@@ -163,7 +163,7 @@ namespace Sci.Production.Warehouse
 
             this.ReportResourceNamespace = typeof(P07_PrintData);
             this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            this.ReportResourceName = this.radioPanel1.Value == this.radioButton1.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
+            this.ReportResourceName = this.radioPanel1.Value == this.radioPLRcvReport.Value ? "P07_Report1.rdlc" : "P07_Report2.rdlc";
 
         }
 
@@ -175,15 +175,15 @@ namespace Sci.Production.Warehouse
         }
         private void CheckControlEnable()
         {
-            if (radioButton1.Checked == true)
+            if (radioPLRcvReport.Checked == true)
             {
                
-                textBox1.Enabled = false;
+                txtSPNo.Enabled = false;
                
             }
             else
             {              
-                textBox1.Enabled = true;                                            
+                txtSPNo.Enabled = true;                                            
             }
         }
         protected override bool OnToExcel(ReportDefinition report)

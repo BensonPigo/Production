@@ -29,14 +29,14 @@ namespace Sci.Production.Warehouse
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Desc > can not be empty!");
-                this.textBox2.Focus();
+                this.txtDesc.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ActionCode"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Action Code > can not be empty!");
-                this.textBox4.Focus();
+                this.txtActionCode.Focus();
                 return false;
             }
 
@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
 
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", textBox2.Text, true, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select id,description from whseReason WITH (NOLOCK) where type='RA' and junk = 0", "10,20", txtDesc.Text, true, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.CurrentMaintain["ActionCode"] = item.GetSelectedString();

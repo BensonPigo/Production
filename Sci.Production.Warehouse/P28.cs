@@ -24,16 +24,16 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.ActiveControl = txtSP;
+            this.ActiveControl = txtIssueSP;
 
-            cbxCategory.SelectedIndex = 0;
-            cbxFabricType.SelectedIndex = 0;
+            comboCategory.SelectedIndex = 0;
+            comboFabricType.SelectedIndex = 0;
             
             #region -- Grid1 設定 --
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridComplete.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridComplete.DataSource = listControlBindingSource1;
             
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridComplete)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
                 .Text("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true,alignment:DataGridViewContentAlignment.MiddleCenter)
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -50,11 +50,11 @@ iseditingreadonly: true)
             #endregion
             col_chk.CellClick += (s, e) =>
             {
-                DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
                 if (null == thisRow) { return; }
                 if (e.RowIndex==-1)
                 {
-                    if (((bool)this.grid1.Rows[0].Cells[e.ColumnIndex].Value))
+                    if (((bool)this.gridComplete.Rows[0].Cells[e.ColumnIndex].Value))
                     {
                         foreach (DataRow dr in detail.Rows)
                         {
@@ -64,7 +64,7 @@ iseditingreadonly: true)
                 }
                 else
                 {
-                    if (((bool)this.grid1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
+                    if (((bool)this.gridComplete.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
                         thisRow["total_qty"] = DBNull.Value;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
@@ -74,7 +74,7 @@ iseditingreadonly: true)
                         }
                     }
                 }
-                this.grid1.ValidateControl();
+                this.gridComplete.ValidateControl();
             };
 
             Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
@@ -87,9 +87,9 @@ iseditingreadonly: true)
                 //if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 if (this.EditMode && e.FormattedValue!=null)
                 {
-                    DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                    DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
-                    DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
+                    DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
                     decimal total_qty = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     if (total_qty > 0)
@@ -120,7 +120,7 @@ iseditingreadonly: true)
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow dr = grid2.GetDataRow(grid2.GetSelectedRowIndex());
+                    DataRow dr = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(dr["tostocktype"].ToString(), dr["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -132,7 +132,7 @@ iseditingreadonly: true)
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
                     dr["tolocation"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id
@@ -172,13 +172,13 @@ WHERE   StockType='{0}'
             };
             #endregion
             #region -- Grid2 設定 --
-            this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid2.DataSource = listControlBindingSource2;
+            this.gridRel.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridRel.DataSource = listControlBindingSource2;
 
-            this.grid2.CellValueChanged += (s, e) =>
+            this.gridRel.CellValueChanged += (s, e) =>
             {
-                if(grid2.Columns[e.ColumnIndex].Name == col_chk2.Name){
-                    DataRow dr = grid2.GetDataRow(e.RowIndex);
+                if(gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name){
+                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
                     if(Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0){
                         dr["qty"] = dr["balanceQty"];
                     }
@@ -188,9 +188,9 @@ WHERE   StockType='{0}'
                     }
                     dr.EndEdit();
 
-                    DataRow thisRow = this.grid1.GetDataRow(this.listControlBindingSource1.Position);
+                    DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
-                    DataRow currentrow = grid2.GetDataRow(grid2.GetSelectedRowIndex());
+                    DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     decimal total_qty =curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     if (total_qty > 0)
                     {
@@ -204,7 +204,7 @@ WHERE   StockType='{0}'
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid2)
+            Helper.Controls.Grid.Generator(this.gridRel)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -224,11 +224,11 @@ WHERE   StockType='{0}'
             #region selected
             col_chk2.CellClick += (s, e) =>
             {
-                DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
+                DataRow thisRow = this.gridRel.GetDataRow(this.listControlBindingSource2.Position);
                 if (null == thisRow) { return; }
                 if (e.RowIndex == -1)
                 {
-                    if (!((bool)this.grid2.Rows[0].Cells[e.ColumnIndex].Value))
+                    if (!((bool)this.gridRel.Rows[0].Cells[e.ColumnIndex].Value))
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
@@ -236,7 +236,7 @@ WHERE   StockType='{0}'
                 }
                 else
                 {
-                    if (!((bool)this.grid2.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
+                    if (!((bool)this.gridRel.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
@@ -260,35 +260,35 @@ WHERE   StockType='{0}'
 
                     }
                 }
-                this.grid2.ValidateControl();
-                this.grid1.ValidateControl();
+                this.gridRel.ValidateControl();
+                this.gridComplete.ValidateControl();
             };
             #endregion
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            int selectindex = cbxCategory.SelectedIndex;
-            int selectindex2 = cbxFabricType.SelectedIndex;
+            int selectindex = comboCategory.SelectedIndex;
+            int selectindex2 = comboFabricType.SelectedIndex;
             string ATA_b, ATA_e, InputDate_b, InputDate_e, SP;
             ATA_b = null;
             ATA_e = null;
             InputDate_b = null;
             InputDate_e = null;
-            SP = txtSP.Text;
+            SP = txtIssueSP.Text;
 
-            if (dateRangeATA.Value1 != null) ATA_b = this.dateRangeATA.Text1;
-            if (dateRangeATA.Value2 != null) { ATA_e = this.dateRangeATA.Text2; }
+            if (dateMaterialATA.Value1 != null) ATA_b = this.dateMaterialATA.Text1;
+            if (dateMaterialATA.Value2 != null) { ATA_e = this.dateMaterialATA.Text2; }
 
-            if (dateRangeInputDate.Value1 != null) { InputDate_b = this.dateRangeInputDate.Text1; }
-            if (dateRangeInputDate.Value2 != null) { InputDate_e = this.dateRangeInputDate.Text2; }
+            if (dateInputDate.Value1 != null) { InputDate_b = this.dateInputDate.Text1; }
+            if (dateInputDate.Value2 != null) { InputDate_e = this.dateInputDate.Text2; }
 
             if ((ATA_b == null && ATA_e == null) &&
                 MyUtility.Check.Empty(SP) && 
                 (InputDate_b == null && InputDate_e == null))
             {
                 MyUtility.Msg.WarningBox(" < Cutting Inline > or < Order Confirm Date > or < Issue SP# > can't be empty!!");
-                txtSP.Focus();
+                txtIssueSP.Focus();
                 return;
             }
 
@@ -477,8 +477,8 @@ drop table #tmp");
                     }
                     var tempchildrows = dr.GetChildRows("rel1");
                     dr["total_qty"] = tempchildrows.Sum(row => (decimal)row["qty"]);
-                    this.grid2.ValidateControl();
-                    this.grid1.ValidateControl();
+                    this.gridRel.ValidateControl();
+                    this.gridComplete.ValidateControl();
                 }
             }
         }
@@ -580,13 +580,13 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
             }
             //Create後Btn失效，需重新Qurey才能再使用。
             btnCreate.Enabled = false;
-            this.grid2.ValidateControl();
-            this.grid1.ValidateControl();
+            this.gridRel.ValidateControl();
+            this.gridComplete.ValidateControl();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkOnly.Checked)
             {
                 listControlBindingSource1.Filter = "complete = 'Y'";
             }

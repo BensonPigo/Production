@@ -32,11 +32,11 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-            String refno = this.textBox5.Text.TrimEnd();
-            String locationid = this.textBox6.Text.TrimEnd();
-            String dyelot = this.textBox7.Text.TrimEnd();
-            String transid = this.textBox4.Text.TrimEnd();
+            String sp = this.txtSPNo.Text.TrimEnd();
+            String refno = this.txtRef.Text.TrimEnd();
+            String locationid = this.txtLocation.Text.TrimEnd();
+            String dyelot = this.txtDyelot.Text.TrimEnd();
+            String transid = this.txtTransactionID.Text.TrimEnd();
 
             switch (radioPanel1.Value)
             {
@@ -44,7 +44,7 @@ namespace Sci.Production.Warehouse
                     if (MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(locationid))
                     {
                         MyUtility.Msg.WarningBox("< SP# > or < Location > can't be empty!!");
-                        textBox1.Focus();
+                        txtSPNo.Focus();
                         return;
                     }
                         
@@ -69,9 +69,9 @@ where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
                         {
                             strSQLCmd.Append(string.Format(@" and a.poid='{0}' ", sp));
                         }
-                        if (!txtSeq1.checkEmpty(showErrMsg: false))
+                        if (!txtSeq.checkEmpty(showErrMsg: false))
                         {
-                            strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
+                            strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
                         }
                         if (!MyUtility.Check.Empty(refno))
                         {
@@ -92,7 +92,7 @@ where A.StockType='{0}' AND  A.Lock = 0 and a.InQty - a.OutQty + a.AdjustQty > 0
                     if (string.IsNullOrWhiteSpace(transid))
                     {
                         MyUtility.Msg.WarningBox("< Transaction ID# > can't be empty!!");
-                        textBox4.Focus();
+                        txtTransactionID.Focus();
                         return;
                     }
                     strSQLCmd.Append(string.Format(@"select 0 as selected,a.Poid,a.seq1,a.seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq,a.Roll,a.Dyelot,a.InQty - a.OutQty + a.AdjustQty qty,a.Ukey
@@ -182,14 +182,14 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            textBox1.Focus();
+            txtSPNo.Focus();
             #region Location 右鍵開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentrow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow currentrow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(dr_master["Stocktype"].ToString(), currentrow["ToLocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -202,7 +202,7 @@ and r1.id = '{0}' ", transid, dr_master["stocktype"].ToString(),Sci.Env.User.Key
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id
@@ -241,14 +241,14 @@ WHERE   StockType='{0}'
 
                     dr["selected"] = (!String.IsNullOrEmpty(dr["ToLocation"].ToString())) ? 1 : 0; 
 
-                    grid1.RefreshEdit();
+                    gridImport.RefreshEdit();
                 }
             };
             #endregion Location 右鍵開窗
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
@@ -259,7 +259,7 @@ WHERE   StockType='{0}'
             .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //7
             .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false)    //8
             ;
-            this.grid1.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -273,7 +273,7 @@ WHERE   StockType='{0}'
         private void button2_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
@@ -346,7 +346,7 @@ WHERE   StockType='{0}'
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox3.Text = item.GetSelectedString();
+            txtLocation2.Text = item.GetSelectedString();
         }
 
         private void radioPanel1_ValueChanged(object sender, EventArgs e)
@@ -355,27 +355,27 @@ WHERE   StockType='{0}'
             switch (rdoG.Value)
             {
                 case "1":
-                    textBox1.ReadOnly = false;
-                    txtSeq1.txtSeq_ReadOnly(false);
-                    textBox5.ReadOnly = false;
-                    textBox6.ReadOnly = false;
-                    textBox7.ReadOnly = false;
-                    textBox4.ReadOnly = true;
-                    textBox4.Text = "";
+                    txtSPNo.ReadOnly = false;
+                    txtSeq.txtSeq_ReadOnly(false);
+                    txtRef.ReadOnly = false;
+                    txtLocation.ReadOnly = false;
+                    txtDyelot.ReadOnly = false;
+                    txtTransactionID.ReadOnly = true;
+                    txtTransactionID.Text = "";
                     break;
                 case "2":
-                    textBox1.ReadOnly = true;
-                    txtSeq1.txtSeq_ReadOnly(true);
-                    textBox5.ReadOnly = true;
-                    textBox6.ReadOnly = true;
-                    textBox7.ReadOnly = true;
-                    textBox1.Text = "";
-                    txtSeq1.seq1 = "";
-                    txtSeq1.seq2 = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    textBox7.Text = "";
-                    textBox4.ReadOnly = false;
+                    txtSPNo.ReadOnly = true;
+                    txtSeq.txtSeq_ReadOnly(true);
+                    txtRef.ReadOnly = true;
+                    txtLocation.ReadOnly = true;
+                    txtDyelot.ReadOnly = true;
+                    txtSPNo.Text = "";
+                    txtSeq.seq1 = "";
+                    txtSeq.seq2 = "";
+                    txtRef.Text = "";
+                    txtLocation.Text = "";
+                    txtDyelot.Text = "";
+                    txtTransactionID.ReadOnly = false;
                     break;
             }
         }
@@ -389,28 +389,28 @@ WHERE   StockType='{0}'
 
             foreach (var item in drfound)
             {
-                item["tolocation"] = this.textBox3.Text;
+                item["tolocation"] = this.txtLocation2.Text;
             }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             bool re = base.ProcessCmdKey(ref msg, keyData);
-            if (radioButton2.Focused && radioButton2.Checked == true)
+            if (radioTransactionID.Focused && radioTransactionID.Checked == true)
             {
                 if (keyData == Keys.Tab || keyData == Keys.Enter)
                 {
-                    textBox4.Select();
+                    txtTransactionID.Select();
                     return true;
                 }
             }
 
-            if (textBox4.Focused)
+            if (txtTransactionID.Focused)
             {
                 if(keyData == Keys.Tab || keyData == Keys.Enter)
                 {
-                    textBox4.TabStop = false;
-                    button1.Select();
+                    txtTransactionID.TabStop = false;
+                    btnQuery.Select();
                     return true;
                 }
             }

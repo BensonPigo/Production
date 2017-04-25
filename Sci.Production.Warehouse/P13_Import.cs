@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
+            String sp = this.txtSPNo.Text.TrimEnd();
             string seq1 = txtSeq1.seq1;
             string seq2 = txtSeq1.seq2;
             string seq = seq1 + " " + seq2;
@@ -41,7 +41,7 @@ namespace Sci.Production.Warehouse
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
@@ -102,7 +102,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            this.displayTotal.Value = localPrice.ToString();
         }
 
         protected override void OnFormLoaded()

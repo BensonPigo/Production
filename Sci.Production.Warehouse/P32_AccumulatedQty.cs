@@ -88,9 +88,9 @@ left join Orders o  WITH (NOLOCK) on  p.id = o.id
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAccumulatedQty.IsEditingReadOnly = true;
+            this.gridAccumulatedQty.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("frompoid", header: "Borrow SP#", width: Widths.AnsiChars(13))
                  .Text("fromseq1", header: "Borrow" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(4))
                  .Text("fromseq2", header: "Borrow" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(3))

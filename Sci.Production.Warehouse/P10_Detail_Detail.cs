@@ -34,20 +34,20 @@ namespace Sci.Production.Warehouse
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
             if (!MyUtility.Check.Empty(localPrice) && !MyUtility.Check.Empty(dr_master["requestqty"].ToString()))
             {
-                num_variance.Value = Convert.ToDecimal(dr_master["requestqty"].ToString()) - Convert.ToDecimal(localPrice.ToString());
+                numRequestVariance.Value = Convert.ToDecimal(dr_master["requestqty"].ToString()) - Convert.ToDecimal(localPrice.ToString());
             }
-            this.displayBox1.Value = localPrice.ToString();              
+            this.displayTotalQty.Value = localPrice.ToString();              
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
 
-            this.dis_scirefno.Text = dr_master["scirefno"].ToString();
-            this.dis_poid.Text = dr_master["poid"].ToString();
-            this.dis_colorid.Text = dr_master["colorid"].ToString();
-            this.dis_sizespec.Text = dr_master["sizespec"].ToString();
-            this.dis_desc.Text = dr_master["description"].ToString();
+            this.displaySciRefno.Text = dr_master["scirefno"].ToString();
+            this.displaySPNo.Text = dr_master["poid"].ToString();
+            this.displayColorID.Text = dr_master["colorid"].ToString();
+            this.displaySizeSpec.Text = dr_master["sizespec"].ToString();
+            this.displayDesc.Text = dr_master["description"].ToString();
 
 
             StringBuilder strSQLCmd = new StringBuilder();
@@ -101,17 +101,17 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        gridRollNo.GetDataRow(gridRollNo.GetSelectedRowIndex())["selected"] = true;
                         this.sum_checkedqty();
                     }
                 };
             
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridRollNo.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridRollNo.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridRollNo.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balanceqty"];
@@ -125,9 +125,9 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 }
             };
             
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridRollNo.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridRollNo.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridRollNo)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //2
@@ -138,7 +138,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: ns)  //7
                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); //8
 
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -150,7 +150,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridRollNo.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

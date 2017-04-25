@@ -35,17 +35,17 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             this.Text += string.Format(@" ({0}-{1}-{2})", dr["id"], dr["seq1"], dr["seq2"]);  //351: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，3.Tool bar要帶出SP# & Seq
-            this.displayBox1.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
-            this.displayBox2.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
-            this.numericBox1.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
-            this.numericBox2.Value = MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString());
+            this.displaySeqNo.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
+            this.displayDescription.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
+            this.numArrivedQtyBySeq.Value = MyUtility.Check.Empty( dr["inqty"]) ? decimal.Parse("0.00"): decimal.Parse(dr["inqty"].ToString());
+            this.numReleasedQtyBySeq.Value = MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString());
 
             //this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
             //  ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
             decimal IN = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString()));
             decimal OUT = (MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString()));
             decimal ADJ = (MyUtility.Check.Empty(dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
-            this.numericBox3.Value = IN - OUT + ADJ;
+            this.numBalQtyBySeq.Value = IN - OUT + ADJ;
 
 
 
@@ -284,9 +284,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 bindingSource2.DataMember = "Rol1";
 
                 //設定Grid1的顯示欄位
-                this.grid1.IsEditingReadOnly = true;
-                this.grid1.DataSource = bindingSource1;
-                Helper.Controls.Grid.Generator(this.grid1)
+                this.gridFtyinventory.IsEditingReadOnly = true;
+                this.gridFtyinventory.DataSource = bindingSource1;
+                Helper.Controls.Grid.Generator(this.gridFtyinventory)
                      .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8))
                      .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4))
                      .Text("stocktype", header: "Stock Type", width: Widths.AnsiChars(10))
@@ -298,9 +298,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      ;
 
                 //設定Grid2的顯示欄位
-                this.grid2.IsEditingReadOnly = true;
-                this.grid2.DataSource = bindingSource2;
-                Helper.Controls.Grid.Generator(this.grid2)
+                this.gridTrans.IsEditingReadOnly = true;
+                this.gridTrans.DataSource = bindingSource2;
+                Helper.Controls.Grid.Generator(this.gridTrans)
                     .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
                      .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                      .Text("name", header: "Name", width: Widths.AnsiChars(13))
@@ -310,9 +310,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2);
 
                 //設定Grid3的顯示欄位
-                this.grid3.IsEditingReadOnly = true;
-                this.grid3.DataSource = bindingSource3;
-                Helper.Controls.Grid.Generator(this.grid3)
+                this.gridSummary.IsEditingReadOnly = true;
+                this.gridSummary.DataSource = bindingSource3;
+                Helper.Controls.Grid.Generator(this.gridSummary)
                      .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6))
                      .Numeric("rollcount", header: "# of Rolls", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
                      .Text("roll", header: "Rolls", width: Widths.AnsiChars(13))
@@ -337,7 +337,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             bindingSource1_PositionChanged(sender, e);  //687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
-            switch (comboBox1.SelectedIndex)
+            switch (comboStockType.SelectedIndex)
             {
                 case 0:
                     bindingSource1.Filter = "";
@@ -355,7 +355,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
         {
             string[] tmpStocktype = new string[] { "", "" };
             
-            switch (comboBox1.SelectedIndex)
+            switch (comboStockType.SelectedIndex)
             {
                 case -1:
                     tmpStocktype[0] = "Bulk";

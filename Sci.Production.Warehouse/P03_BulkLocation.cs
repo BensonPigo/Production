@@ -77,10 +77,10 @@ order by EditName,ID"
             }
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
+            this.gridBulkLocationTransaction.IsEditingReadOnly = true;
+            this.gridBulkLocationTransaction.DataSource = bindingSource1;
             
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridBulkLocationTransaction)
                 .Date("issuedate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                  .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

@@ -91,7 +91,7 @@ namespace Sci.Production.Warehouse
 
             this.ReportResourceNamespace = typeof(P51_PrintData);
             this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            this.ReportResourceName = this.radioPanel1.Value == this.radioButton1.Value ? "P51_Report1.rdlc" : "P51_Report2.rdlc";
+            this.ReportResourceName = this.radioPanel1.Value == this.radioBackwardSocktakingForm.Value ? "P51_Report1.rdlc" : "P51_Report2.rdlc";
 
         }
 

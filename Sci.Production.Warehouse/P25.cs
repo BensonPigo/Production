@@ -738,7 +738,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("fromseq", txtSeq1.getSeq());
+            int index = detailgridbs.Find("fromseq", txtSeq.getSeq());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

@@ -29,12 +29,12 @@ namespace Sci.Production.Warehouse
             di_fabrictype.Add("A", "Accessory");
             dr_master = master;
             dt_detail = detail;
-            MyUtility.Tool.SetupCombox(cbbCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
-            cbbCategory.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",All,F,Fabric,A,Accessory");
-            cbbFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbSort, 1, 1, "Material Type,SP#");
-            cbbSort.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, ",All,B,Bulk,S,Sample,M,Material");
+            comboCategory.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",All,F,Fabric,A,Accessory");
+            comboFabricType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboSortby, 1, 1, "Material Type,SP#");
+            comboSortby.SelectedIndex = 0;
         }
 
         //Find Now Button
@@ -42,27 +42,27 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
 
-            String sp1 = this.txtSP1.Text.TrimEnd();
-            String sp2 = this.txtSP2.Text.TrimEnd();
+            String sp1 = this.txtSPNoStart.Text.TrimEnd();
+            String sp2 = this.txtSPNoEnd.Text.TrimEnd();
 
-            String category = this.cbbCategory.SelectedValue.ToString();
-            String fabrictype = this.cbbFabricType.SelectedValue.ToString();
+            String category = this.comboCategory.SelectedValue.ToString();
+            String fabrictype = this.comboFabricType.SelectedValue.ToString();
 
             String location = this.txtLocation.Text;
-            String price1 = this.nbPrice1.Text;
-            String price2 = this.nbPrice2.Text;
+            String price1 = this.numPrice1.Text;
+            String price2 = this.numPrice2.Text;
 
-            String randomCount = this.nbRandom.Text;
+            String randomCount = this.numRandom.Text;
 
             if (MyUtility.Check.Empty(sp1) && MyUtility.Check.Empty(sp2) && MyUtility.Check.Empty(category) && MyUtility.Check.Empty(fabrictype))
             {
                 MyUtility.Msg.WarningBox("< SP# > < Category > < Fabric Type > can't be empty!!");
-                txtSP1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
 
 
-            if (!(MyUtility.Check.Empty(this.nbRandom.Value)))
+            if (!(MyUtility.Check.Empty(this.numRandom.Value)))
             {
                 strSQLCmd.Append(string.Format(@"select top {0} ", randomCount));
             }
@@ -91,7 +91,7 @@ inner join dbo.Factory f on f.ID=b.factoryID"));
 
             if (!MyUtility.Check.Empty(category)) strSQLCmd.Append(string.Format(@" inner join dbo.orders c on c.id = a.poid"));
             if (!MyUtility.Check.Empty(location)) strSQLCmd.Append(string.Format(@" inner join dbo.FtyInventory_Detail d on d.Ukey = a.Ukey"));
-            if (!MyUtility.Check.Empty(nbPrice1.Value) || !MyUtility.Check.Empty(nbPrice2.Value)) strSQLCmd.Append(string.Format(@" cross apply (select * from dbo.getusdprice(a.poid,a.seq1,a.seq2)) e"));
+            if (!MyUtility.Check.Empty(numPrice1.Value) || !MyUtility.Check.Empty(numPrice2.Value)) strSQLCmd.Append(string.Format(@" cross apply (select * from dbo.getusdprice(a.poid,a.seq1,a.seq2)) e"));
             strSQLCmd.Append(string.Format(@" where a.lock=0 and a.InQty - a.OutQty + a.AdjustQty > 0 and a.StockType ='{1}' 
 and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); // 
 
@@ -111,7 +111,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             {
                 strSQLCmd.Append(string.Format(@" and d.mtllocationid = '{0}' ", location));
             }
-            if (!MyUtility.Check.Empty(nbPrice1.Value) || !MyUtility.Check.Empty(nbPrice2.Value))
+            if (!MyUtility.Check.Empty(numPrice1.Value) || !MyUtility.Check.Empty(numPrice2.Value))
             {
                 strSQLCmd.Append(string.Format(@" and usd_price between {0} and {1} ", price1, price2));
             }
@@ -139,9 +139,9 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             base.OnFormLoaded();
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
@@ -170,7 +170,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
         private void button2_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
@@ -211,7 +211,7 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
 
         private void cbbSort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (cbbSort.SelectedIndex)
+            switch (comboSortby.SelectedIndex)
             {
                 case 0:
                     if (!MyUtility.Check.Empty(dtFtyinventory))

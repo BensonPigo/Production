@@ -221,7 +221,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -900,14 +900,14 @@ Where a.id = '{0}'", masterID);
         {
             if (!this.EditMode) return;
 
-            if (!MyUtility.Check.Empty(textBox2.Text) && textBox2.Text != textBox2.OldValue)
+            if (!MyUtility.Check.Empty(txtTransfer.Text) && txtTransfer.Text != txtTransfer.OldValue)
             {
                 ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
 
                 DataRow dr;
                 DataTable dt;
                 if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from dbo.issue WITH (NOLOCK) where id='{0}' and status !='New')"
-                    , textBox2.Text), out dr, null))
+                    , txtTransfer.Text), out dr, null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Transfer# is not found!!");
@@ -923,7 +923,7 @@ Where a.id = '{0}'", masterID);
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ftyinventoryukey
 from dbo.Issue_Detail a WITH (NOLOCK) inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-where a.id='{0}'", textBox2.Text), out dt);
+where a.id='{0}'", txtTransfer.Text), out dt);
                     foreach (var item in dt.ToList())
                     {
                         //DetailDatas.(item);
@@ -937,7 +937,7 @@ where a.id='{0}'", textBox2.Text), out dt);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

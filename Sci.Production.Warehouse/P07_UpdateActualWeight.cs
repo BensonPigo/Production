@@ -57,9 +57,9 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_fabrictype;
             
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridUpdateAct.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridUpdateAct.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridUpdateAct)
                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13),iseditingreadonly:true)  //0
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
             cbb_fabrictype.ValueMember = "Key";
             cbb_fabrictype.DisplayMember = "Value";
 
-            grid1.Columns["actualweight"].DefaultCellStyle.BackColor = Color.Pink;
+            gridUpdateAct.Columns["actualweight"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -87,7 +87,7 @@ namespace Sci.Production.Warehouse
         private void button3_Click(object sender, EventArgs e)
         {
             bool rtn;
-            grid1.ValidateControl();
+            gridUpdateAct.ValidateControl();
 
             if (!(rtn = MyUtility.Tool.CursorUpdateTable(selectDataTable1,"dbo.receiving_detail",null)))
             {

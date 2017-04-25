@@ -40,9 +40,9 @@ namespace Sci.Production.Warehouse
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
-            this.grid2.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridFromPoId.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridFromPoId.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridFromPoId)
                 .Text("FromPoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
                 .Text("fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2)) //1
                 .Text("fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2)) //2
@@ -112,11 +112,11 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                     }
                 };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         checkBorrowReturnQty(e.RowIndex, Convert.ToDecimal(dr["balance"]));
@@ -131,9 +131,9 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
 
             //Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)//0
                 .Text("frompoid", header: "From" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
                 .Text("fromseq", header: "From" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -150,8 +150,8 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 .ComboBox("FromStocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //13
                 ;
 
-            this.grid1.Columns["ToRoll"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["ToRoll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -263,10 +263,10 @@ drop table #tmp
         private void button2_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
-            dtBorrow = grid1.GetTable();
+            dtBorrow = gridImport.GetTable();
 
-            grid1.ValidateControl();
-            grid1.EndEdit();
+            gridImport.ValidateControl();
+            gridImport.EndEdit();
 
             if (MyUtility.Check.Empty(dtBorrow) || dtBorrow.Rows.Count == 0) return;
 
@@ -338,10 +338,10 @@ drop table #tmp
 
         private bool CheckAndShowInfo(string sp, string seq1, string seq2)
         {
-            this.displayBox2.Value = "";
-            this.displayBox3.Value = "";
-            this.displayBox4.Value = "";
-            this.editBox1.Text = "";
+            this.displaySizeSpec.Value = "";
+            this.displayRefno.Value = "";
+            this.displayColorID.Value = "";
+            this.editDesc.Text = "";
 
             DataRow tmp;
             if (!MyUtility.Check.Seek(string.Format(@"
@@ -357,10 +357,10 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             }
             else
             {
-                this.displayBox2.Value = tmp["sizespec"];
-                this.displayBox3.Value = tmp["refno"];
-                this.displayBox4.Value = tmp["colorid"];
-                this.editBox1.Text = tmp["description"].ToString();
+                this.displaySizeSpec.Value = tmp["sizespec"];
+                this.displayRefno.Value = tmp["refno"];
+                this.displayColorID.Value = tmp["colorid"];
+                this.editDesc.Text = tmp["description"].ToString();
                 return false;
             }
         }
@@ -368,14 +368,14 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
         private void grid2_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
         {
             this.grid2SelectIndex = e.RowIndex;
-            DataRow dr = grid2.GetDataRow(this.grid2SelectIndex);
+            DataRow dr = gridFromPoId.GetDataRow(this.grid2SelectIndex);
             CheckAndShowInfo(dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
             listControlBindingSource1.Filter = string.Format("ToPoid = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}'", dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
         }
 
         private void grid1_RowLeave(object sender, DataGridViewCellEventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
         }
 
         private void checkBorrowReturnQty(int rowIndex, decimal qty)
@@ -385,13 +385,13 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             //紀錄 Stock and Return 總數
             decimal sumGrid2eturn = 0, sumReturn = 0;
             //Get Grid1 目前選取的Data
-            DataRow grid1Dr = grid1.GetDataRow(rowIndex);
+            DataRow grid1Dr = gridImport.GetDataRow(rowIndex);
             grid1Dr["Qty"] = 0;
 
             #region Grid2.Return + Grid2.AccuReturn <= BorrowQty
-            DataRow grid2Dr = grid2.GetDataRow(grid2SelectIndex);
+            DataRow grid2Dr = gridFromPoId.GetDataRow(grid2SelectIndex);
 
-            DataRow[] findrow = grid1.GetTable().Select(string.Format("toPoid = '{0}' and toSeq1 = '{1}' and toSeq2 = '{2}' and toStockType = '{3}'", grid2Dr["FromPoid"], grid2Dr["FromSeq1"], grid2Dr["FromSeq2"], grid2Dr["FromStockType"]));
+            DataRow[] findrow = gridImport.GetTable().Select(string.Format("toPoid = '{0}' and toSeq1 = '{1}' and toSeq2 = '{2}' and toStockType = '{3}'", grid2Dr["FromPoid"], grid2Dr["FromSeq1"], grid2Dr["FromSeq2"], grid2Dr["FromStockType"]));
             foreach (DataRow dr in findrow)
                 sumGrid2eturn += Convert.ToDecimal(dr["qty"]);
 
@@ -402,7 +402,7 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             #endregion
 
             #region sum(Grid1.Qty) <= balance
-            findrow = grid1.GetTable().Select(string.Format("toPoid = '{0}' and toSeq1 = '{1}' and toSeq2 = '{2}' and toRoll = '{3}' and toDyelot = '{4}' and FromStockType = '{5}'"
+            findrow = gridImport.GetTable().Select(string.Format("toPoid = '{0}' and toSeq1 = '{1}' and toSeq2 = '{2}' and toRoll = '{3}' and toDyelot = '{4}' and FromStockType = '{5}'"
                                                             , grid1Dr["toPoid"], grid1Dr["toSeq1"], grid1Dr["toSeq2"], grid1Dr["toRoll"], grid1Dr["toDyelot"], grid1Dr["FromStockType"]));
             foreach (DataRow dr in findrow)
                 sumReturn += Convert.ToDecimal(dr["qty"]);
@@ -437,8 +437,8 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
 
             grid1Dr["selected"] = (Convert.ToDecimal(grid1Dr["Qty"]) > 0);
 
-            grid1.RefreshEdit();
-            grid2.RefreshEdit();
+            gridImport.RefreshEdit();
+            gridFromPoId.RefreshEdit();
         }
     }
 }

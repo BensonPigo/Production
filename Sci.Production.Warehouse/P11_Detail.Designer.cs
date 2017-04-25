@@ -29,23 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.dis_seq = new Sci.Win.UI.DisplayBox();
-            this.dis_sizeunit = new Sci.Win.UI.DisplayBox();
-            this.dis_colorid = new Sci.Win.UI.DisplayBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dis_special = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
+            this.labelSeqNo = new Sci.Win.UI.Label();
+            this.labelUnit = new Sci.Win.UI.Label();
+            this.displySeqNo = new Sci.Win.UI.DisplayBox();
+            this.displyUnit = new Sci.Win.UI.DisplayBox();
+            this.displyColorid = new Sci.Win.UI.DisplayBox();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.displySpecial = new Sci.Win.UI.DisplayBox();
+            this.labelSpecial = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.eb_desc = new Sci.Win.UI.EditBox();
-            this.eb_orderlist = new Sci.Win.UI.EditBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.dis_usedqty = new Sci.Win.UI.DisplayBox();
-            this.dis_sizespec = new Sci.Win.UI.DisplayBox();
-            this.label11 = new Sci.Win.UI.Label();
+            this.editOrderList = new Sci.Win.UI.EditBox();
+            this.labelQty = new Sci.Win.UI.Label();
+            this.labelSize = new Sci.Win.UI.Label();
+            this.displyQty = new Sci.Win.UI.DisplayBox();
+            this.displySize = new Sci.Win.UI.DisplayBox();
+            this.labelOrderList = new Sci.Win.UI.Label();
             this.gridBreakDown = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
@@ -82,77 +82,77 @@
             // 
             this.prev.Location = new System.Drawing.Point(728, 5);
             // 
-            // label1
+            // labelSeqNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 99;
-            this.label1.Text = "Seq#";
+            this.labelSeqNo.Lines = 0;
+            this.labelSeqNo.Location = new System.Drawing.Point(9, 22);
+            this.labelSeqNo.Name = "labelSeqNo";
+            this.labelSeqNo.Size = new System.Drawing.Size(75, 23);
+            this.labelSeqNo.TabIndex = 99;
+            this.labelSeqNo.Text = "Seq#";
             // 
-            // label2
+            // labelUnit
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(252, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "Unit";
+            this.labelUnit.Lines = 0;
+            this.labelUnit.Location = new System.Drawing.Point(252, 22);
+            this.labelUnit.Name = "labelUnit";
+            this.labelUnit.Size = new System.Drawing.Size(75, 23);
+            this.labelUnit.TabIndex = 100;
+            this.labelUnit.Text = "Unit";
             // 
-            // dis_seq
+            // displySeqNo
             // 
-            this.dis_seq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_seq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_seq.Location = new System.Drawing.Point(87, 22);
-            this.dis_seq.Name = "dis_seq";
-            this.dis_seq.Size = new System.Drawing.Size(124, 23);
-            this.dis_seq.TabIndex = 101;
+            this.displySeqNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displySeqNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displySeqNo.Location = new System.Drawing.Point(87, 22);
+            this.displySeqNo.Name = "displySeqNo";
+            this.displySeqNo.Size = new System.Drawing.Size(124, 23);
+            this.displySeqNo.TabIndex = 101;
             // 
-            // dis_sizeunit
+            // displyUnit
             // 
-            this.dis_sizeunit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_sizeunit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_sizeunit.Location = new System.Drawing.Point(330, 22);
-            this.dis_sizeunit.Name = "dis_sizeunit";
-            this.dis_sizeunit.Size = new System.Drawing.Size(124, 23);
-            this.dis_sizeunit.TabIndex = 102;
+            this.displyUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displyUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displyUnit.Location = new System.Drawing.Point(330, 22);
+            this.displyUnit.Name = "displyUnit";
+            this.displyUnit.Size = new System.Drawing.Size(124, 23);
+            this.displyUnit.TabIndex = 102;
             // 
-            // dis_colorid
+            // displyColorid
             // 
-            this.dis_colorid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_colorid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_colorid.Location = new System.Drawing.Point(87, 92);
-            this.dis_colorid.Name = "dis_colorid";
-            this.dis_colorid.Size = new System.Drawing.Size(124, 23);
-            this.dis_colorid.TabIndex = 104;
+            this.displyColorid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displyColorid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displyColorid.Location = new System.Drawing.Point(87, 92);
+            this.displyColorid.Name = "displyColorid";
+            this.displyColorid.Size = new System.Drawing.Size(124, 23);
+            this.displyColorid.TabIndex = 104;
             // 
-            // label3
+            // labelColor
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 92);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 103;
-            this.label3.Text = "Color";
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(9, 92);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(75, 23);
+            this.labelColor.TabIndex = 103;
+            this.labelColor.Text = "Color";
             // 
-            // dis_special
+            // displySpecial
             // 
-            this.dis_special.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_special.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_special.Location = new System.Drawing.Point(87, 127);
-            this.dis_special.Name = "dis_special";
-            this.dis_special.Size = new System.Drawing.Size(124, 23);
-            this.dis_special.TabIndex = 106;
+            this.displySpecial.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displySpecial.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displySpecial.Location = new System.Drawing.Point(87, 127);
+            this.displySpecial.Name = "displySpecial";
+            this.displySpecial.Size = new System.Drawing.Size(124, 23);
+            this.displySpecial.TabIndex = 106;
             // 
-            // label4
+            // labelSpecial
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 127);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 105;
-            this.label4.Text = "Special";
+            this.labelSpecial.Lines = 0;
+            this.labelSpecial.Location = new System.Drawing.Point(9, 127);
+            this.labelSpecial.Name = "labelSpecial";
+            this.labelSpecial.Size = new System.Drawing.Size(75, 23);
+            this.labelSpecial.TabIndex = 105;
+            this.labelSpecial.Text = "Special";
             // 
             // label5
             // 
@@ -166,21 +166,21 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.eb_desc);
-            this.groupBox1.Controls.Add(this.eb_orderlist);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.dis_usedqty);
-            this.groupBox1.Controls.Add(this.dis_sizespec);
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.dis_special);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.editOrderList);
+            this.groupBox1.Controls.Add(this.labelQty);
+            this.groupBox1.Controls.Add(this.labelSize);
+            this.groupBox1.Controls.Add(this.displyQty);
+            this.groupBox1.Controls.Add(this.displySize);
+            this.groupBox1.Controls.Add(this.labelOrderList);
+            this.groupBox1.Controls.Add(this.labelSeqNo);
+            this.groupBox1.Controls.Add(this.displySpecial);
+            this.groupBox1.Controls.Add(this.labelSpecial);
+            this.groupBox1.Controls.Add(this.labelUnit);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.dis_seq);
-            this.groupBox1.Controls.Add(this.dis_sizeunit);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.dis_colorid);
+            this.groupBox1.Controls.Add(this.displySeqNo);
+            this.groupBox1.Controls.Add(this.displyUnit);
+            this.groupBox1.Controls.Add(this.labelColor);
+            this.groupBox1.Controls.Add(this.displyColorid);
             this.groupBox1.Location = new System.Drawing.Point(12, 223);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(542, 284);
@@ -200,62 +200,62 @@
             this.eb_desc.Size = new System.Drawing.Size(449, 50);
             this.eb_desc.TabIndex = 116;
             // 
-            // eb_orderlist
+            // editOrderList
             // 
-            this.eb_orderlist.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.eb_orderlist.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.eb_orderlist.IsSupportEditMode = false;
-            this.eb_orderlist.Location = new System.Drawing.Point(87, 162);
-            this.eb_orderlist.Multiline = true;
-            this.eb_orderlist.Name = "eb_orderlist";
-            this.eb_orderlist.ReadOnly = true;
-            this.eb_orderlist.Size = new System.Drawing.Size(449, 50);
-            this.eb_orderlist.TabIndex = 115;
+            this.editOrderList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editOrderList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editOrderList.IsSupportEditMode = false;
+            this.editOrderList.Location = new System.Drawing.Point(87, 162);
+            this.editOrderList.Multiline = true;
+            this.editOrderList.Name = "editOrderList";
+            this.editOrderList.ReadOnly = true;
+            this.editOrderList.Size = new System.Drawing.Size(449, 50);
+            this.editOrderList.TabIndex = 115;
             // 
-            // label6
+            // labelQty
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(9, 57);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 111;
-            this.label6.Text = "@Qty";
+            this.labelQty.Lines = 0;
+            this.labelQty.Location = new System.Drawing.Point(9, 57);
+            this.labelQty.Name = "labelQty";
+            this.labelQty.Size = new System.Drawing.Size(75, 23);
+            this.labelQty.TabIndex = 111;
+            this.labelQty.Text = "@Qty";
             // 
-            // label7
+            // labelSize
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(252, 57);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 112;
-            this.label7.Text = "Size";
+            this.labelSize.Lines = 0;
+            this.labelSize.Location = new System.Drawing.Point(252, 57);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(75, 23);
+            this.labelSize.TabIndex = 112;
+            this.labelSize.Text = "Size";
             // 
-            // dis_usedqty
+            // displyQty
             // 
-            this.dis_usedqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_usedqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_usedqty.Location = new System.Drawing.Point(87, 57);
-            this.dis_usedqty.Name = "dis_usedqty";
-            this.dis_usedqty.Size = new System.Drawing.Size(124, 23);
-            this.dis_usedqty.TabIndex = 113;
+            this.displyQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displyQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displyQty.Location = new System.Drawing.Point(87, 57);
+            this.displyQty.Name = "displyQty";
+            this.displyQty.Size = new System.Drawing.Size(124, 23);
+            this.displyQty.TabIndex = 113;
             // 
-            // dis_sizespec
+            // displySize
             // 
-            this.dis_sizespec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis_sizespec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis_sizespec.Location = new System.Drawing.Point(330, 57);
-            this.dis_sizespec.Name = "dis_sizespec";
-            this.dis_sizespec.Size = new System.Drawing.Size(124, 23);
-            this.dis_sizespec.TabIndex = 114;
+            this.displySize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displySize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displySize.Location = new System.Drawing.Point(330, 57);
+            this.displySize.Name = "displySize";
+            this.displySize.Size = new System.Drawing.Size(124, 23);
+            this.displySize.TabIndex = 114;
             // 
-            // label11
+            // labelOrderList
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(9, 162);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 23);
-            this.label11.TabIndex = 109;
-            this.label11.Text = "Order List";
+            this.labelOrderList.Lines = 0;
+            this.labelOrderList.Location = new System.Drawing.Point(9, 162);
+            this.labelOrderList.Name = "labelOrderList";
+            this.labelOrderList.Size = new System.Drawing.Size(75, 23);
+            this.labelOrderList.TabIndex = 109;
+            this.labelOrderList.Text = "Order List";
             // 
             // gridBreakDown
             // 
@@ -306,23 +306,23 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.DisplayBox dis_seq;
-        private Win.UI.DisplayBox dis_sizeunit;
-        private Win.UI.DisplayBox dis_colorid;
-        private Win.UI.Label label3;
-        private Win.UI.DisplayBox dis_special;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelSeqNo;
+        private Win.UI.Label labelUnit;
+        private Win.UI.DisplayBox displySeqNo;
+        private Win.UI.DisplayBox displyUnit;
+        private Win.UI.DisplayBox displyColorid;
+        private Win.UI.Label labelColor;
+        private Win.UI.DisplayBox displySpecial;
+        private Win.UI.Label labelSpecial;
         private Win.UI.Label label5;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.Label label11;
+        private Win.UI.Label labelOrderList;
         private Win.UI.EditBox eb_desc;
-        private Win.UI.EditBox eb_orderlist;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.DisplayBox dis_usedqty;
-        private Win.UI.DisplayBox dis_sizespec;
+        private Win.UI.EditBox editOrderList;
+        private Win.UI.Label labelQty;
+        private Win.UI.Label labelSize;
+        private Win.UI.DisplayBox displyQty;
+        private Win.UI.DisplayBox displySize;
         private Win.UI.Grid gridBreakDown;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
     }

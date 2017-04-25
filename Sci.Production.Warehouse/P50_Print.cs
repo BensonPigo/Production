@@ -142,11 +142,11 @@ namespace Sci.Production.Warehouse
         private void radioGroup1_ValueChanged(object sender, EventArgs e)
         {
             selectOption = this.radioGroup1.Value;
-            isStockList = (selectOption == this.radioButton2.Value);
+            isStockList = (selectOption == this.radioStocktakingList.Value);
 
             this.ReportResourceNamespace = typeof(P50_PrintData);
             this.ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            this.ReportResourceName = selectOption == this.radioButton1.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
+            this.ReportResourceName = selectOption == this.radioBookQty.Value ? "P50BookQty_Print.rdlc" : "P50List_Print.rdlc";
             
         }
     }

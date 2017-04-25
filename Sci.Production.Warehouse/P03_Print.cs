@@ -60,7 +60,7 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             //string xlt;
 
-            if (this.radioPanel1.Value == this.radioButton1.Value)
+            if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 //xlt = @"Warehouse_P03_Print-1.xltx";
                 DBProxy.Current.Select("", @"select a.id [sp]
@@ -181,7 +181,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            if (this.radioPanel1.Value == this.radioButton1.Value)
+            if (this.radioPanel1.Value == this.radioMaterialStatus.Value)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Print-1.xltx"); //預先開啟excel app
                 MyUtility.Excel.CopyToXls(dt, "", "Warehouse_P03_Print-1.xltx", 1, true, null, objApp);      // 將datatable copy to excel

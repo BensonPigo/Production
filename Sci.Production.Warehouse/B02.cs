@@ -27,9 +27,9 @@ namespace Sci.Production.Warehouse
             //Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             //comboBox1_RowSource.Add("I", "Inventory");
             //comboBox1_RowSource.Add("B", "Bulk");
-            comboBox1.DataSource = combos;//new BindingSource(comboBox1_RowSource, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboStockType.DataSource = combos;//new BindingSource(comboBox1_RowSource, null);
+            comboStockType.ValueMember = "Key";
+            comboStockType.DisplayMember = "Value";
 
             
         }
@@ -38,8 +38,8 @@ namespace Sci.Production.Warehouse
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-            this.comboBox1.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
+            this.comboStockType.ReadOnly = true;
         }
 
         //存檔前檢查
@@ -48,20 +48,20 @@ namespace Sci.Production.Warehouse
             if (CurrentMaintain["ID"].ToString().IndexOfAny(new char[] {','}, 0) > -1)
             {
                 MyUtility.Msg.WarningBox("< Code > can not have ',' !");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Stocktype"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Stock Type > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboStockType.Focus();
                 return false;
             }
 
@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.textBox2.Focus();
+                this.txtDescription.Focus();
                 return false;
             }
 
@@ -104,7 +104,7 @@ namespace Sci.Production.Warehouse
             }
             else if (dt != null && dt.Rows.Count > 0)
             {
-                MyUtility.Msg.InfoBox(string.Format("This <code> is areadly in {0}", comboBox1.Text.ToString()));
+                MyUtility.Msg.InfoBox(string.Format("This <code> is areadly in {0}", comboStockType.Text.ToString()));
                 check = false;
             }
             return check;

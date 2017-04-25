@@ -29,9 +29,9 @@ namespace Sci.Production.Warehouse
             di_Stocktype.Add("B", "Bulk");
             di_Stocktype.Add("I", "Inventory");
 
-            comboBox1.DataSource = new BindingSource(di_Stocktype, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboStockType.DataSource = new BindingSource(di_Stocktype, null);
+            comboStockType.ValueMember = "Key";
+            comboStockType.DisplayMember = "Value";
 
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["IssueDate"] = DateTime.Now;
             CurrentMaintain["Status"] = "New";
-            comboBox1.SelectedIndex = 0;
+            comboStockType.SelectedIndex = 0;
         }
 
         private void ChangeDetailColor()
@@ -422,7 +422,7 @@ Where a.id = '{0}' ", masterID);
         //217: WAREHOUSE_P26_Mtl Location update，2.當表身已經有值時，編輯時若換了stock type則表身要一併清空。
         private void comboBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(comboBox1.SelectedValue) && comboBox1.SelectedValue != comboBox1.OldValue)
+            if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
             {
                 if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
                 {

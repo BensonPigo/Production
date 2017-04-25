@@ -32,12 +32,12 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
+            String sp = this.txtSP.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSP.Focus();
                 return;
             }
 
@@ -104,11 +104,11 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
                     cmds.Add(sp1);
                 }
 
-                if (!txtSeq1.checkEmpty(showErrMsg: false))
+                if (!txtSeq.checkEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(@" and a.seq1 = @seq1 and a.seq2 = @seq2");
-                    seq1.Value = txtSeq1.seq1;
-                    seq2.Value = txtSeq1.seq2;
+                    seq1.Value = txtSeq.seq1;
+                    seq2.Value = txtSeq.seq2;
                     cmds.Add(seq1);
                     cmds.Add(seq2);
                 }
@@ -139,8 +139,8 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
@@ -151,11 +151,11 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(grid1.GetDataRow(grid1.GetSelectedRowIndex())["tostocktype"].ToString()
-                        , grid1.GetDataRow(grid1.GetSelectedRowIndex())["tolocation"].ToString());
+                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["tostocktype"].ToString()
+                        , gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    grid1.GetDataRow(grid1.GetSelectedRowIndex())["tolocation"] = item.GetSelectedString();
+                    gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["tolocation"] = item.GetSelectedString();
                 }
             };
 
@@ -163,7 +163,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     dr["ToLocation"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id
@@ -203,14 +203,14 @@ WHERE   StockType='{0}'
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -223,7 +223,7 @@ WHERE   StockType='{0}'
                 } 
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
                 .Text("fromseq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -236,8 +236,8 @@ WHERE   StockType='{0}'
                 .Text("tolocation", header: "Location", iseditingreadonly: false, settings: ts2, width: Widths.AnsiChars(20))    //9
                ;
 
-            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["tolocation"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["tolocation"].DefaultCellStyle.BackColor = Color.Pink;
             //this.grid1.Columns[].DefaultCellStyle.BackColor = Color.Pink;
         }
 
@@ -250,7 +250,7 @@ WHERE   StockType='{0}'
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
@@ -349,7 +349,7 @@ WHERE   StockType='{0}'
 
             foreach (var item in drfound)
             {
-                item["tolocation"] = displayBox1.Text;
+                item["tolocation"] = displayLocation.Text;
             }
         }
 
@@ -359,10 +359,10 @@ WHERE   StockType='{0}'
 
             if (this.EditMode && e.Button == MouseButtons.Right)
             {
-                Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("I", displayBox1.Text);
+                Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation("I", displayLocation.Text);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
-                displayBox1.Text = item.GetSelectedString();
+                displayLocation.Text = item.GetSelectedString();
             }
 
             #endregion Location 右鍵開窗

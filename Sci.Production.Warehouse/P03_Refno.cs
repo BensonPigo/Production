@@ -26,7 +26,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             dr = data;
             //Helper.Controls.ContextMenu.Generator(myCMS).Menu("item1", onclick: (s, e) => DoMyCMS());
-            grid1.ContextMenuStrip = myCMS;
+            gridRefNo.ContextMenuStrip = myCMS;
             this.Text += string.Format(" ({0})", dr["refno"]);
         }
 
@@ -130,10 +130,10 @@ order by ColorID, SizeSpec ,SewinLine
                 //MyUtility.Tool.SetupCombox(comboSize, 1, dt3);
             }
             //設定Grid1的顯示欄位
-            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.grid1, null, "factoryid,colorid,sizespec");
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            MyUtility.Tool.AddMenuToPopupGridFilter(this, this.gridRefNo, null, "factoryid,colorid,sizespec");
+            this.gridRefNo.IsEditingReadOnly = true;
+            this.gridRefNo.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridRefNo)
                  //.Text("mdivisionid", header: "M", width: Widths.AnsiChars(8))
                  .Text("id", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq", header: "Seq", width: Widths.AnsiChars(5))

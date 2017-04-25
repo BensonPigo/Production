@@ -30,16 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridTaipeiInventoryList = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.labelSortBy = new Sci.Win.UI.Label();
+            this.comboSortBy = new Sci.Win.UI.ComboBox();
+            this.btnClose = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTaipeiInventoryList)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -49,104 +49,104 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridTaipeiInventoryList);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 393);
             this.panel1.TabIndex = 0;
             // 
-            // grid1
+            // gridTaipeiInventoryList
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 393);
-            this.grid1.TabIndex = 2;
-            this.grid1.TabStop = false;
+            this.gridTaipeiInventoryList.AllowUserToAddRows = false;
+            this.gridTaipeiInventoryList.AllowUserToDeleteRows = false;
+            this.gridTaipeiInventoryList.AllowUserToResizeRows = false;
+            this.gridTaipeiInventoryList.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridTaipeiInventoryList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridTaipeiInventoryList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridTaipeiInventoryList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridTaipeiInventoryList.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridTaipeiInventoryList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridTaipeiInventoryList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridTaipeiInventoryList.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridTaipeiInventoryList.Location = new System.Drawing.Point(0, 0);
+            this.gridTaipeiInventoryList.Name = "gridTaipeiInventoryList";
+            this.gridTaipeiInventoryList.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridTaipeiInventoryList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridTaipeiInventoryList.RowTemplate.Height = 24;
+            this.gridTaipeiInventoryList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTaipeiInventoryList.Size = new System.Drawing.Size(1008, 393);
+            this.gridTaipeiInventoryList.TabIndex = 2;
+            this.gridTaipeiInventoryList.TabStop = false;
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.editBox1);
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.comboBox1);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.editRemark);
+            this.panel2.Controls.Add(this.labelRemark);
+            this.panel2.Controls.Add(this.labelSortBy);
+            this.panel2.Controls.Add(this.comboSortBy);
+            this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 399);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 74);
             this.panel2.TabIndex = 0;
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(283, 11);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(615, 56);
-            this.editBox1.TabIndex = 4;
+            this.editRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editRemark.IsSupportEditMode = false;
+            this.editRemark.Location = new System.Drawing.Point(283, 11);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.ReadOnly = true;
+            this.editRemark.Size = new System.Drawing.Size(615, 56);
+            this.editRemark.TabIndex = 4;
             // 
-            // label2
+            // labelRemark
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(205, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(205, 12);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 3;
+            this.labelRemark.Text = "Remark";
             // 
-            // label1
+            // labelSortBy
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Sort By";
+            this.labelSortBy.Lines = 0;
+            this.labelSortBy.Location = new System.Drawing.Point(13, 11);
+            this.labelSortBy.Name = "labelSortBy";
+            this.labelSortBy.Size = new System.Drawing.Size(75, 23);
+            this.labelSortBy.TabIndex = 2;
+            this.labelSortBy.Text = "Sort By";
             // 
-            // comboBox1
+            // comboSortBy
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboSortBy.BackColor = System.Drawing.Color.White;
+            this.comboSortBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortBy.FormattingEnabled = true;
+            this.comboSortBy.IsSupportUnselect = true;
+            this.comboSortBy.Items.AddRange(new object[] {
             "Date",
             "Type"});
-            this.comboBox1.Location = new System.Drawing.Point(91, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(100, 24);
-            this.comboBox1.TabIndex = 1;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboSortBy.Location = new System.Drawing.Point(91, 11);
+            this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.Size = new System.Drawing.Size(100, 24);
+            this.comboSortBy.TabIndex = 1;
+            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(916, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(916, 37);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // P03_TaipeiInventory
             // 
@@ -156,7 +156,7 @@
             this.Name = "P03_TaipeiInventory";
             this.Text = "Taipei Inventory List";
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTaipeiInventoryList)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
@@ -168,12 +168,12 @@
 
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private Win.UI.BindingSource bindingSource1;
-        private Win.UI.Grid grid1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.EditBox editBox1;
+        private Win.UI.Grid gridTaipeiInventoryList;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelSortBy;
+        private Win.UI.ComboBox comboSortBy;
+        private Win.UI.EditBox editRemark;
     }
 }

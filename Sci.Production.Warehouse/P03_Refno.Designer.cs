@@ -30,20 +30,20 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridRefNo = new Sci.Win.UI.Grid();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.comboSize = new Sci.Win.UI.ComboBox();
-            this.label4 = new Sci.Win.UI.Label();
+            this.labelSize = new Sci.Win.UI.Label();
             this.comboColor = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.labelFilterCondition = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridRefNo)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -52,42 +52,42 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridRefNo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 503);
             this.panel1.TabIndex = 0;
             // 
-            // grid1
+            // gridRefNo
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 503);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridRefNo.AllowUserToAddRows = false;
+            this.gridRefNo.AllowUserToDeleteRows = false;
+            this.gridRefNo.AllowUserToResizeRows = false;
+            this.gridRefNo.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridRefNo.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridRefNo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridRefNo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridRefNo.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridRefNo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridRefNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridRefNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridRefNo.Location = new System.Drawing.Point(0, 0);
+            this.gridRefNo.Name = "gridRefNo";
+            this.gridRefNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridRefNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridRefNo.RowTemplate.Height = 24;
+            this.gridRefNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRefNo.Size = new System.Drawing.Size(1008, 503);
+            this.gridRefNo.TabIndex = 0;
+            this.gridRefNo.TabStop = false;
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.panel3);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.labelFilterCondition);
+            this.panel2.Controls.Add(this.btnToExcel);
+            this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 503);
             this.panel2.Name = "panel2";
@@ -97,9 +97,9 @@
             // panel3
             // 
             this.panel3.Controls.Add(this.comboSize);
-            this.panel3.Controls.Add(this.label4);
+            this.panel3.Controls.Add(this.labelSize);
             this.panel3.Controls.Add(this.comboColor);
-            this.panel3.Controls.Add(this.label3);
+            this.panel3.Controls.Add(this.labelColor);
             this.panel3.Location = new System.Drawing.Point(114, 7);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(364, 34);
@@ -117,14 +117,14 @@
             this.comboSize.TabIndex = 8;
             this.comboSize.SelectedIndexChanged += new System.EventHandler(this.comboSize_SelectedIndexChanged);
             // 
-            // label4
+            // labelSize
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(191, 6);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(38, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Size";
+            this.labelSize.Lines = 0;
+            this.labelSize.Location = new System.Drawing.Point(191, 6);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(38, 23);
+            this.labelSize.TabIndex = 7;
+            this.labelSize.Text = "Size";
             // 
             // comboColor
             // 
@@ -138,47 +138,47 @@
             this.comboColor.TabIndex = 6;
             this.comboColor.SelectedIndexChanged += new System.EventHandler(this.comboColor_SelectedIndexChanged);
             // 
-            // label3
+            // labelColor
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Color";
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(9, 5);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(44, 23);
+            this.labelColor.TabIndex = 5;
+            this.labelColor.Text = "Color";
             // 
-            // label1
+            // labelFilterCondition
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Filter Condition";
+            this.labelFilterCondition.Lines = 0;
+            this.labelFilterCondition.Location = new System.Drawing.Point(9, 11);
+            this.labelFilterCondition.Name = "labelFilterCondition";
+            this.labelFilterCondition.Size = new System.Drawing.Size(102, 23);
+            this.labelFilterCondition.TabIndex = 2;
+            this.labelFilterCondition.Text = "Filter Condition";
             // 
-            // button2
+            // btnToExcel
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(830, 11);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "To Excel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnToExcel.Location = new System.Drawing.Point(830, 11);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 1;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(916, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(916, 11);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // P03_Refno
             // 
@@ -188,7 +188,7 @@
             this.Name = "P03_Refno";
             this.Text = "Ref#";
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridRefNo)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
@@ -200,17 +200,17 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridRefNo;
         private Win.UI.Panel panel2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private Win.UI.BindingSource bindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnToExcel;
         private Win.UI.Panel panel3;
         private Win.UI.ComboBox comboSize;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelSize;
         private Win.UI.ComboBox comboColor;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelColor;
+        private Win.UI.Label labelFilterCondition;
     }
 }

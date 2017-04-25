@@ -28,52 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.displayBox6 = new Sci.Win.UI.DisplayBox();
-            this.displayBox7 = new Sci.Win.UI.DisplayBox();
-            this.displayBox8 = new Sci.Win.UI.DisplayBox();
-            this.displayBox9 = new Sci.Win.UI.DisplayBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.labelWKNo = new Sci.Win.UI.Label();
+            this.labelETA = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelConsignee = new Sci.Win.UI.Label();
+            this.labelPackages = new Sci.Win.UI.Label();
+            this.labelContainerType = new Sci.Win.UI.Label();
+            this.labelSONo = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.displayWKNo = new Sci.Win.UI.DisplayBox();
+            this.dateETA = new Sci.Win.UI.DateBox();
+            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.displayConsignee = new Sci.Win.UI.DisplayBox();
+            this.numPackages = new Sci.Win.UI.NumericBox();
+            this.displayContainerType = new Sci.Win.UI.DisplayBox();
+            this.displaySONo = new Sci.Win.UI.DisplayBox();
+            this.editRemark = new Sci.Win.UI.EditBox();
+            this.labelInvoiceNo = new Sci.Win.UI.Label();
+            this.labelPayer = new Sci.Win.UI.Label();
+            this.labelBLNo = new Sci.Win.UI.Label();
+            this.labelVesselName = new Sci.Win.UI.Label();
+            this.labelNWGW = new Sci.Win.UI.Label();
+            this.labelCBM = new Sci.Win.UI.Label();
+            this.displayInvoiceNo = new Sci.Win.UI.DisplayBox();
+            this.displayPayer = new Sci.Win.UI.DisplayBox();
+            this.displayBLNo = new Sci.Win.UI.DisplayBox();
+            this.displayVesselName = new Sci.Win.UI.DisplayBox();
+            this.numNetKg = new Sci.Win.UI.NumericBox();
             this.label15 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label19 = new Sci.Win.UI.Label();
-            this.label20 = new Sci.Win.UI.Label();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
-            this.dateBox5 = new Sci.Win.UI.DateBox();
+            this.numWeightKg = new Sci.Win.UI.NumericBox();
+            this.numCBM = new Sci.Win.UI.NumericBox();
+            this.labelHandle = new Sci.Win.UI.Label();
+            this.labelPLRcvDate = new Sci.Win.UI.Label();
+            this.labelArrivePortDate = new Sci.Win.UI.Label();
+            this.labelArriveWHDate = new Sci.Win.UI.Label();
+            this.labelDoxRcvDate = new Sci.Win.UI.Label();
+            this.datePLRcvDate = new Sci.Win.UI.DateBox();
+            this.dateArrivePortDate = new Sci.Win.UI.DateBox();
+            this.dateArriveWHDate = new Sci.Win.UI.DateBox();
+            this.dateDoxRcvDate = new Sci.Win.UI.DateBox();
             this.label21 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.label22 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.btnShippingMark = new Sci.Win.UI.Button();
+            this.labelLocateSP = new Sci.Win.UI.Label();
+            this.txtLocateSP = new Sci.Win.UI.TextBox();
             this.label23 = new Sci.Win.UI.Label();
-            this.button3 = new Sci.Win.UI.Button();
-            this.txttpeuser1 = new Sci.Production.Class.txttpeuser();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.txtSeq1 = new Sci.Production.Class.txtSeq();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -92,100 +92,100 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.txtSeq1);
-            this.masterpanel.Controls.Add(this.button3);
+            this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.label23);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label22);
-            this.masterpanel.Controls.Add(this.button2);
+            this.masterpanel.Controls.Add(this.txtLocateSP);
+            this.masterpanel.Controls.Add(this.labelLocateSP);
+            this.masterpanel.Controls.Add(this.btnShippingMark);
             this.masterpanel.Controls.Add(this.label21);
-            this.masterpanel.Controls.Add(this.txttpeuser1);
-            this.masterpanel.Controls.Add(this.label20);
-            this.masterpanel.Controls.Add(this.label19);
-            this.masterpanel.Controls.Add(this.label18);
-            this.masterpanel.Controls.Add(this.label17);
-            this.masterpanel.Controls.Add(this.label16);
-            this.masterpanel.Controls.Add(this.numericBox4);
-            this.masterpanel.Controls.Add(this.numericBox3);
+            this.masterpanel.Controls.Add(this.txttpeuserHandle);
+            this.masterpanel.Controls.Add(this.labelDoxRcvDate);
+            this.masterpanel.Controls.Add(this.labelArriveWHDate);
+            this.masterpanel.Controls.Add(this.labelArrivePortDate);
+            this.masterpanel.Controls.Add(this.labelPLRcvDate);
+            this.masterpanel.Controls.Add(this.labelHandle);
+            this.masterpanel.Controls.Add(this.numCBM);
+            this.masterpanel.Controls.Add(this.numWeightKg);
             this.masterpanel.Controls.Add(this.label15);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.displayBox9);
-            this.masterpanel.Controls.Add(this.displayBox8);
-            this.masterpanel.Controls.Add(this.displayBox7);
-            this.masterpanel.Controls.Add(this.displayBox6);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.editBox1);
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox5);
-            this.masterpanel.Controls.Add(this.dateBox4);
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.numNetKg);
+            this.masterpanel.Controls.Add(this.displayVesselName);
+            this.masterpanel.Controls.Add(this.displayBLNo);
+            this.masterpanel.Controls.Add(this.displayPayer);
+            this.masterpanel.Controls.Add(this.displayInvoiceNo);
+            this.masterpanel.Controls.Add(this.labelCBM);
+            this.masterpanel.Controls.Add(this.labelNWGW);
+            this.masterpanel.Controls.Add(this.labelVesselName);
+            this.masterpanel.Controls.Add(this.labelBLNo);
+            this.masterpanel.Controls.Add(this.labelPayer);
+            this.masterpanel.Controls.Add(this.labelInvoiceNo);
+            this.masterpanel.Controls.Add(this.editRemark);
+            this.masterpanel.Controls.Add(this.displaySONo);
+            this.masterpanel.Controls.Add(this.displayContainerType);
+            this.masterpanel.Controls.Add(this.numPackages);
+            this.masterpanel.Controls.Add(this.displayConsignee);
+            this.masterpanel.Controls.Add(this.displayFactory);
+            this.masterpanel.Controls.Add(this.displayWKNo);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelSONo);
+            this.masterpanel.Controls.Add(this.labelContainerType);
+            this.masterpanel.Controls.Add(this.labelPackages);
+            this.masterpanel.Controls.Add(this.labelConsignee);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelETA);
+            this.masterpanel.Controls.Add(this.labelWKNo);
+            this.masterpanel.Controls.Add(this.dateDoxRcvDate);
+            this.masterpanel.Controls.Add(this.dateArriveWHDate);
+            this.masterpanel.Controls.Add(this.dateArrivePortDate);
+            this.masterpanel.Controls.Add(this.datePLRcvDate);
+            this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Size = new System.Drawing.Size(990, 285);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datePLRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateArrivePortDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelWKNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelETA, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelConsignee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPackages, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelContainerType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayWKNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayConsignee, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numPackages, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayContainerType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPayer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBLNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelVesselName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNWGW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCBM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayInvoiceNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayPayer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBLNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayVesselName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numNetKg, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label18, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label19, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label20, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txttpeuser1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numWeightKg, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numCBM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelHandle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPLRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelArrivePortDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelArriveWHDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDoxRcvDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txttpeuserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.label21, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label22, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnShippingMark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLocateSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocateSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.label23, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             // 
             // detailpanel
@@ -252,297 +252,297 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(444, 13);
             // 
-            // label1
+            // labelWKNo
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "WK No.";
+            this.labelWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelWKNo.Lines = 0;
+            this.labelWKNo.Location = new System.Drawing.Point(5, 6);
+            this.labelWKNo.Name = "labelWKNo";
+            this.labelWKNo.Size = new System.Drawing.Size(89, 23);
+            this.labelWKNo.TabIndex = 1;
+            this.labelWKNo.Text = "WK No.";
             // 
-            // label2
+            // labelETA
             // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 33);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "ETA";
+            this.labelETA.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelETA.Lines = 0;
+            this.labelETA.Location = new System.Drawing.Point(5, 33);
+            this.labelETA.Name = "labelETA";
+            this.labelETA.Size = new System.Drawing.Size(89, 23);
+            this.labelETA.TabIndex = 2;
+            this.labelETA.Text = "ETA";
             // 
-            // label3
+            // labelFactory
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(4, 60);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Factory";
+            this.labelFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(4, 60);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(90, 23);
+            this.labelFactory.TabIndex = 3;
+            this.labelFactory.Text = "Factory";
             // 
-            // label4
+            // labelConsignee
             // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(4, 87);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Consignee";
+            this.labelConsignee.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelConsignee.Lines = 0;
+            this.labelConsignee.Location = new System.Drawing.Point(4, 87);
+            this.labelConsignee.Name = "labelConsignee";
+            this.labelConsignee.Size = new System.Drawing.Size(90, 23);
+            this.labelConsignee.TabIndex = 4;
+            this.labelConsignee.Text = "Consignee";
             // 
-            // label5
+            // labelPackages
             // 
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(4, 114);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Packages";
+            this.labelPackages.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelPackages.Lines = 0;
+            this.labelPackages.Location = new System.Drawing.Point(4, 114);
+            this.labelPackages.Name = "labelPackages";
+            this.labelPackages.Size = new System.Drawing.Size(90, 23);
+            this.labelPackages.TabIndex = 5;
+            this.labelPackages.Text = "Packages";
             // 
-            // label6
+            // labelContainerType
             // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(4, 141);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(90, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Container Type";
+            this.labelContainerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelContainerType.Lines = 0;
+            this.labelContainerType.Location = new System.Drawing.Point(4, 141);
+            this.labelContainerType.Name = "labelContainerType";
+            this.labelContainerType.Size = new System.Drawing.Size(90, 23);
+            this.labelContainerType.TabIndex = 6;
+            this.labelContainerType.Text = "Container Type";
             // 
-            // label7
+            // labelSONo
             // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(4, 168);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(90, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "S/O#";
+            this.labelSONo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelSONo.Lines = 0;
+            this.labelSONo.Location = new System.Drawing.Point(4, 168);
+            this.labelSONo.Name = "labelSONo";
+            this.labelSONo.Size = new System.Drawing.Size(90, 23);
+            this.labelSONo.TabIndex = 7;
+            this.labelSONo.Text = "S/O#";
             // 
-            // label8
+            // labelRemark
             // 
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(4, 195);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(90, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Remark";
+            this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(4, 195);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(90, 23);
+            this.labelRemark.TabIndex = 8;
+            this.labelRemark.Text = "Remark";
             // 
-            // displayBox1
+            // displayWKNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(98, 6);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 9;
+            this.displayWKNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayWKNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayWKNo.Location = new System.Drawing.Point(98, 6);
+            this.displayWKNo.Name = "displayWKNo";
+            this.displayWKNo.Size = new System.Drawing.Size(120, 23);
+            this.displayWKNo.TabIndex = 9;
             // 
-            // dateBox1
+            // dateETA
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Eta", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(98, 33);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 10;
+            this.dateETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Eta", true));
+            this.dateETA.IsSupportEditMode = false;
+            this.dateETA.Location = new System.Drawing.Point(98, 33);
+            this.dateETA.Name = "dateETA";
+            this.dateETA.ReadOnly = true;
+            this.dateETA.Size = new System.Drawing.Size(130, 23);
+            this.dateETA.TabIndex = 10;
             // 
-            // displayBox2
+            // displayFactory
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(98, 60);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(75, 23);
-            this.displayBox2.TabIndex = 11;
+            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFactory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
+            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFactory.Location = new System.Drawing.Point(98, 60);
+            this.displayFactory.Name = "displayFactory";
+            this.displayFactory.Size = new System.Drawing.Size(75, 23);
+            this.displayFactory.TabIndex = 11;
             // 
-            // displayBox3
+            // displayConsignee
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Consignee", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(98, 87);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(75, 23);
-            this.displayBox3.TabIndex = 12;
+            this.displayConsignee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConsignee.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Consignee", true));
+            this.displayConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConsignee.Location = new System.Drawing.Point(98, 87);
+            this.displayConsignee.Name = "displayConsignee";
+            this.displayConsignee.Size = new System.Drawing.Size(75, 23);
+            this.displayConsignee.TabIndex = 12;
             // 
-            // numericBox1
+            // numPackages
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(98, 114);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numPackages.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPackages.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packages", true));
+            this.numPackages.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPackages.IsSupportEditMode = false;
+            this.numPackages.Location = new System.Drawing.Point(98, 114);
+            this.numPackages.Name = "numPackages";
+            this.numPackages.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 13;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numPackages.ReadOnly = true;
+            this.numPackages.Size = new System.Drawing.Size(50, 23);
+            this.numPackages.TabIndex = 13;
+            this.numPackages.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // displayBox4
+            // displayContainerType
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CYCFS", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(98, 141);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(30, 23);
-            this.displayBox4.TabIndex = 14;
+            this.displayContainerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CYCFS", true));
+            this.displayContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayContainerType.Location = new System.Drawing.Point(98, 141);
+            this.displayContainerType.Name = "displayContainerType";
+            this.displayContainerType.Size = new System.Drawing.Size(30, 23);
+            this.displayContainerType.TabIndex = 14;
             // 
-            // displayBox5
+            // displaySONo
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sono", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(98, 168);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(120, 23);
-            this.displayBox5.TabIndex = 15;
+            this.displaySONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sono", true));
+            this.displaySONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySONo.Location = new System.Drawing.Point(98, 168);
+            this.displaySONo.Name = "displaySONo";
+            this.displaySONo.Size = new System.Drawing.Size(120, 23);
+            this.displaySONo.TabIndex = 15;
             // 
-            // editBox1
+            // editRemark
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(98, 195);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(444, 50);
-            this.editBox1.TabIndex = 16;
+            this.editRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editRemark.IsSupportEditMode = false;
+            this.editRemark.Location = new System.Drawing.Point(98, 195);
+            this.editRemark.Multiline = true;
+            this.editRemark.Name = "editRemark";
+            this.editRemark.ReadOnly = true;
+            this.editRemark.Size = new System.Drawing.Size(444, 50);
+            this.editRemark.TabIndex = 16;
             // 
-            // label9
+            // labelInvoiceNo
             // 
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(250, 33);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(79, 23);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Invoice#";
+            this.labelInvoiceNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelInvoiceNo.Lines = 0;
+            this.labelInvoiceNo.Location = new System.Drawing.Point(250, 33);
+            this.labelInvoiceNo.Name = "labelInvoiceNo";
+            this.labelInvoiceNo.Size = new System.Drawing.Size(79, 23);
+            this.labelInvoiceNo.TabIndex = 17;
+            this.labelInvoiceNo.Text = "Invoice#";
             // 
-            // label10
+            // labelPayer
             // 
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(250, 60);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(79, 23);
-            this.label10.TabIndex = 18;
-            this.label10.Text = "Payer";
+            this.labelPayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelPayer.Lines = 0;
+            this.labelPayer.Location = new System.Drawing.Point(250, 60);
+            this.labelPayer.Name = "labelPayer";
+            this.labelPayer.Size = new System.Drawing.Size(79, 23);
+            this.labelPayer.TabIndex = 18;
+            this.labelPayer.Text = "Payer";
             // 
-            // label11
+            // labelBLNo
             // 
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(250, 87);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(79, 23);
-            this.label11.TabIndex = 19;
-            this.label11.Text = "B/L No.";
+            this.labelBLNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelBLNo.Lines = 0;
+            this.labelBLNo.Location = new System.Drawing.Point(250, 87);
+            this.labelBLNo.Name = "labelBLNo";
+            this.labelBLNo.Size = new System.Drawing.Size(79, 23);
+            this.labelBLNo.TabIndex = 19;
+            this.labelBLNo.Text = "B/L No.";
             // 
-            // label12
+            // labelVesselName
             // 
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(250, 114);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(79, 23);
-            this.label12.TabIndex = 20;
-            this.label12.Text = "Vessel Name";
+            this.labelVesselName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelVesselName.Lines = 0;
+            this.labelVesselName.Location = new System.Drawing.Point(250, 114);
+            this.labelVesselName.Name = "labelVesselName";
+            this.labelVesselName.Size = new System.Drawing.Size(79, 23);
+            this.labelVesselName.TabIndex = 20;
+            this.labelVesselName.Text = "Vessel Name";
             // 
-            // label13
+            // labelNWGW
             // 
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(250, 141);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(79, 23);
-            this.label13.TabIndex = 21;
-            this.label13.Text = "N.W./G.W.";
+            this.labelNWGW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelNWGW.Lines = 0;
+            this.labelNWGW.Location = new System.Drawing.Point(250, 141);
+            this.labelNWGW.Name = "labelNWGW";
+            this.labelNWGW.Size = new System.Drawing.Size(79, 23);
+            this.labelNWGW.TabIndex = 21;
+            this.labelNWGW.Text = "N.W./G.W.";
             // 
-            // label14
+            // labelCBM
             // 
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(250, 168);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(79, 23);
-            this.label14.TabIndex = 22;
-            this.label14.Text = "CBM";
+            this.labelCBM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelCBM.Lines = 0;
+            this.labelCBM.Location = new System.Drawing.Point(250, 168);
+            this.labelCBM.Name = "labelCBM";
+            this.labelCBM.Size = new System.Drawing.Size(79, 23);
+            this.labelCBM.TabIndex = 22;
+            this.labelCBM.Text = "CBM";
             // 
-            // displayBox6
+            // displayInvoiceNo
             // 
-            this.displayBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox6.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvNo", true));
-            this.displayBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox6.Location = new System.Drawing.Point(332, 33);
-            this.displayBox6.Name = "displayBox6";
-            this.displayBox6.Size = new System.Drawing.Size(210, 23);
-            this.displayBox6.TabIndex = 23;
+            this.displayInvoiceNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayInvoiceNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvNo", true));
+            this.displayInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayInvoiceNo.Location = new System.Drawing.Point(332, 33);
+            this.displayInvoiceNo.Name = "displayInvoiceNo";
+            this.displayInvoiceNo.Size = new System.Drawing.Size(210, 23);
+            this.displayInvoiceNo.TabIndex = 23;
             // 
-            // displayBox7
+            // displayPayer
             // 
-            this.displayBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox7.Location = new System.Drawing.Point(332, 60);
-            this.displayBox7.Name = "displayBox7";
-            this.displayBox7.Size = new System.Drawing.Size(210, 23);
-            this.displayBox7.TabIndex = 24;
+            this.displayPayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPayer.Location = new System.Drawing.Point(332, 60);
+            this.displayPayer.Name = "displayPayer";
+            this.displayPayer.Size = new System.Drawing.Size(210, 23);
+            this.displayPayer.TabIndex = 24;
             // 
-            // displayBox8
+            // displayBLNo
             // 
-            this.displayBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox8.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Blno", true));
-            this.displayBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox8.Location = new System.Drawing.Point(332, 87);
-            this.displayBox8.Name = "displayBox8";
-            this.displayBox8.Size = new System.Drawing.Size(175, 23);
-            this.displayBox8.TabIndex = 25;
+            this.displayBLNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBLNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Blno", true));
+            this.displayBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBLNo.Location = new System.Drawing.Point(332, 87);
+            this.displayBLNo.Name = "displayBLNo";
+            this.displayBLNo.Size = new System.Drawing.Size(175, 23);
+            this.displayBLNo.TabIndex = 25;
             // 
-            // displayBox9
+            // displayVesselName
             // 
-            this.displayBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Vessel", true));
-            this.displayBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox9.Location = new System.Drawing.Point(332, 114);
-            this.displayBox9.Name = "displayBox9";
-            this.displayBox9.Size = new System.Drawing.Size(226, 23);
-            this.displayBox9.TabIndex = 26;
+            this.displayVesselName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayVesselName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Vessel", true));
+            this.displayVesselName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayVesselName.Location = new System.Drawing.Point(332, 114);
+            this.displayVesselName.Name = "displayVesselName";
+            this.displayVesselName.Size = new System.Drawing.Size(226, 23);
+            this.displayVesselName.TabIndex = 26;
             // 
-            // numericBox2
+            // numNetKg
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetKg", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(332, 141);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numNetKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNetKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetKg", true));
+            this.numNetKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNetKg.IsSupportEditMode = false;
+            this.numNetKg.Location = new System.Drawing.Point(332, 141);
+            this.numNetKg.Name = "numNetKg";
+            this.numNetKg.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(65, 23);
-            this.numericBox2.TabIndex = 27;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numNetKg.ReadOnly = true;
+            this.numNetKg.Size = new System.Drawing.Size(65, 23);
+            this.numNetKg.TabIndex = 27;
+            this.numNetKg.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -562,138 +562,138 @@
             this.label15.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label15.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // numericBox3
+            // numWeightKg
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WeightKg", true));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(407, 141);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numWeightKg.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numWeightKg.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WeightKg", true));
+            this.numWeightKg.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numWeightKg.IsSupportEditMode = false;
+            this.numWeightKg.Location = new System.Drawing.Point(407, 141);
+            this.numWeightKg.Name = "numWeightKg";
+            this.numWeightKg.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(65, 23);
-            this.numericBox3.TabIndex = 29;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox4
-            // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Cbm", true));
-            this.numericBox4.DecimalPlaces = 3;
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(332, 168);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(90, 23);
-            this.numericBox4.TabIndex = 30;
-            this.numericBox4.Value = new decimal(new int[] {
+            this.numWeightKg.ReadOnly = true;
+            this.numWeightKg.Size = new System.Drawing.Size(65, 23);
+            this.numWeightKg.TabIndex = 29;
+            this.numWeightKg.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label16
+            // numCBM
             // 
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(577, 33);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(92, 23);
-            this.label16.TabIndex = 31;
-            this.label16.Text = "Handle";
+            this.numCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCBM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Cbm", true));
+            this.numCBM.DecimalPlaces = 3;
+            this.numCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCBM.IsSupportEditMode = false;
+            this.numCBM.Location = new System.Drawing.Point(332, 168);
+            this.numCBM.Name = "numCBM";
+            this.numCBM.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCBM.ReadOnly = true;
+            this.numCBM.Size = new System.Drawing.Size(90, 23);
+            this.numCBM.TabIndex = 30;
+            this.numCBM.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // label17
+            // labelHandle
             // 
-            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(577, 60);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(92, 23);
-            this.label17.TabIndex = 32;
-            this.label17.Text = "P/L Rcv Date";
+            this.labelHandle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelHandle.Lines = 0;
+            this.labelHandle.Location = new System.Drawing.Point(577, 33);
+            this.labelHandle.Name = "labelHandle";
+            this.labelHandle.Size = new System.Drawing.Size(92, 23);
+            this.labelHandle.TabIndex = 31;
+            this.labelHandle.Text = "Handle";
             // 
-            // label18
+            // labelPLRcvDate
             // 
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(577, 88);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(92, 23);
-            this.label18.TabIndex = 33;
-            this.label18.Text = "Arrive Port Date";
+            this.labelPLRcvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelPLRcvDate.Lines = 0;
+            this.labelPLRcvDate.Location = new System.Drawing.Point(577, 60);
+            this.labelPLRcvDate.Name = "labelPLRcvDate";
+            this.labelPLRcvDate.Size = new System.Drawing.Size(92, 23);
+            this.labelPLRcvDate.TabIndex = 32;
+            this.labelPLRcvDate.Text = "P/L Rcv Date";
             // 
-            // label19
+            // labelArrivePortDate
             // 
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label19.Lines = 0;
-            this.label19.Location = new System.Drawing.Point(577, 115);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(92, 23);
-            this.label19.TabIndex = 34;
-            this.label19.Text = "Arrive W/H Date";
+            this.labelArrivePortDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelArrivePortDate.Lines = 0;
+            this.labelArrivePortDate.Location = new System.Drawing.Point(577, 88);
+            this.labelArrivePortDate.Name = "labelArrivePortDate";
+            this.labelArrivePortDate.Size = new System.Drawing.Size(92, 23);
+            this.labelArrivePortDate.TabIndex = 33;
+            this.labelArrivePortDate.Text = "Arrive Port Date";
             // 
-            // label20
+            // labelArriveWHDate
             // 
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label20.Lines = 0;
-            this.label20.Location = new System.Drawing.Point(577, 142);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(92, 23);
-            this.label20.TabIndex = 35;
-            this.label20.Text = "Dox Rcv Date";
+            this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelArriveWHDate.Lines = 0;
+            this.labelArriveWHDate.Location = new System.Drawing.Point(577, 115);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.Size = new System.Drawing.Size(92, 23);
+            this.labelArriveWHDate.TabIndex = 34;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
-            // dateBox2
+            // labelDoxRcvDate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingArrival", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(673, 61);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 37;
+            this.labelDoxRcvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelDoxRcvDate.Lines = 0;
+            this.labelDoxRcvDate.Location = new System.Drawing.Point(577, 142);
+            this.labelDoxRcvDate.Name = "labelDoxRcvDate";
+            this.labelDoxRcvDate.Size = new System.Drawing.Size(92, 23);
+            this.labelDoxRcvDate.TabIndex = 35;
+            this.labelDoxRcvDate.Text = "Dox Rcv Date";
             // 
-            // dateBox3
+            // datePLRcvDate
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PortArrival", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(673, 88);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 38;
+            this.datePLRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingArrival", true));
+            this.datePLRcvDate.IsSupportEditMode = false;
+            this.datePLRcvDate.Location = new System.Drawing.Point(673, 61);
+            this.datePLRcvDate.Name = "datePLRcvDate";
+            this.datePLRcvDate.ReadOnly = true;
+            this.datePLRcvDate.Size = new System.Drawing.Size(130, 23);
+            this.datePLRcvDate.TabIndex = 37;
             // 
-            // dateBox4
+            // dateArrivePortDate
             // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WhseArrival", true));
-            this.dateBox4.Location = new System.Drawing.Point(673, 115);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 39;
+            this.dateArrivePortDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PortArrival", true));
+            this.dateArrivePortDate.IsSupportEditMode = false;
+            this.dateArrivePortDate.Location = new System.Drawing.Point(673, 88);
+            this.dateArrivePortDate.Name = "dateArrivePortDate";
+            this.dateArrivePortDate.ReadOnly = true;
+            this.dateArrivePortDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArrivePortDate.TabIndex = 38;
             // 
-            // dateBox5
+            // dateArriveWHDate
             // 
-            this.dateBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DocArrival", true));
-            this.dateBox5.IsSupportEditMode = false;
-            this.dateBox5.Location = new System.Drawing.Point(673, 142);
-            this.dateBox5.Name = "dateBox5";
-            this.dateBox5.ReadOnly = true;
-            this.dateBox5.Size = new System.Drawing.Size(130, 23);
-            this.dateBox5.TabIndex = 40;
+            this.dateArriveWHDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WhseArrival", true));
+            this.dateArriveWHDate.Location = new System.Drawing.Point(673, 115);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.TabIndex = 39;
+            // 
+            // dateDoxRcvDate
+            // 
+            this.dateDoxRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DocArrival", true));
+            this.dateDoxRcvDate.IsSupportEditMode = false;
+            this.dateDoxRcvDate.Location = new System.Drawing.Point(673, 142);
+            this.dateDoxRcvDate.Name = "dateDoxRcvDate";
+            this.dateDoxRcvDate.ReadOnly = true;
+            this.dateDoxRcvDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDoxRcvDate.TabIndex = 40;
             // 
             // label21
             // 
@@ -710,33 +710,33 @@
             this.label21.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label21.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
-            // button2
+            // btnShippingMark
             // 
-            this.button2.Location = new System.Drawing.Point(859, 97);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(123, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Shipping Mark";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnShippingMark.Location = new System.Drawing.Point(859, 97);
+            this.btnShippingMark.Name = "btnShippingMark";
+            this.btnShippingMark.Size = new System.Drawing.Size(123, 30);
+            this.btnShippingMark.TabIndex = 3;
+            this.btnShippingMark.Text = "Shipping Mark";
+            this.btnShippingMark.UseVisualStyleBackColor = true;
+            this.btnShippingMark.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label22
+            // labelLocateSP
             // 
-            this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(5, 252);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(89, 23);
-            this.label22.TabIndex = 44;
-            this.label22.Text = "Locate SP#";
+            this.labelLocateSP.Lines = 0;
+            this.labelLocateSP.Location = new System.Drawing.Point(5, 252);
+            this.labelLocateSP.Name = "labelLocateSP";
+            this.labelLocateSP.Size = new System.Drawing.Size(89, 23);
+            this.labelLocateSP.TabIndex = 44;
+            this.labelLocateSP.Text = "Locate SP#";
             // 
-            // textBox1
+            // txtLocateSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(98, 252);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtLocateSP.BackColor = System.Drawing.Color.White;
+            this.txtLocateSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateSP.Location = new System.Drawing.Point(98, 252);
+            this.txtLocateSP.Name = "txtLocateSP";
+            this.txtLocateSP.Size = new System.Drawing.Size(100, 23);
+            this.txtLocateSP.TabIndex = 0;
             // 
             // label23
             // 
@@ -752,25 +752,25 @@
             this.label23.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label23.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // button3
+            // btnFind
             // 
-            this.button3.Location = new System.Drawing.Point(280, 248);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(58, 30);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Find";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnFind.Location = new System.Drawing.Point(280, 248);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(58, 30);
+            this.btnFind.TabIndex = 2;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.button3_Click);
             // 
-            // txttpeuser1
+            // txttpeuserHandle
             // 
-            this.txttpeuser1.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
-            this.txttpeuser1.DisplayBox1Binding = "";
-            this.txttpeuser1.DisplayBox2Binding = "";
-            this.txttpeuser1.Location = new System.Drawing.Point(672, 33);
-            this.txttpeuser1.Name = "txttpeuser1";
-            this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser1.TabIndex = 36;
+            this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
+            this.txttpeuserHandle.DisplayBox1Binding = "";
+            this.txttpeuserHandle.DisplayBox2Binding = "";
+            this.txttpeuserHandle.Location = new System.Drawing.Point(672, 33);
+            this.txttpeuserHandle.Name = "txttpeuserHandle";
+            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserHandle.TabIndex = 36;
             // 
             // txtSeq1
             // 
@@ -821,52 +821,52 @@
 
         #endregion
 
-        private Win.UI.Button button3;
+        private Win.UI.Button btnFind;
         private Win.UI.Label label23;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label22;
-        private Win.UI.Button button2;
+        private Win.UI.TextBox txtLocateSP;
+        private Win.UI.Label labelLocateSP;
+        private Win.UI.Button btnShippingMark;
         private Win.UI.Label label21;
-        private Win.UI.DateBox dateBox5;
-        private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DateBox dateBox2;
-        private Class.txttpeuser txttpeuser1;
-        private Win.UI.Label label20;
-        private Win.UI.Label label19;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.NumericBox numericBox3;
+        private Win.UI.DateBox dateDoxRcvDate;
+        private Win.UI.DateBox dateArriveWHDate;
+        private Win.UI.DateBox dateArrivePortDate;
+        private Win.UI.DateBox datePLRcvDate;
+        private Class.txttpeuser txttpeuserHandle;
+        private Win.UI.Label labelDoxRcvDate;
+        private Win.UI.Label labelArriveWHDate;
+        private Win.UI.Label labelArrivePortDate;
+        private Win.UI.Label labelPLRcvDate;
+        private Win.UI.Label labelHandle;
+        private Win.UI.NumericBox numCBM;
+        private Win.UI.NumericBox numWeightKg;
         private Win.UI.Label label15;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.DisplayBox displayBox9;
-        private Win.UI.DisplayBox displayBox8;
-        private Win.UI.DisplayBox displayBox7;
-        private Win.UI.DisplayBox displayBox6;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.NumericBox numNetKg;
+        private Win.UI.DisplayBox displayVesselName;
+        private Win.UI.DisplayBox displayBLNo;
+        private Win.UI.DisplayBox displayPayer;
+        private Win.UI.DisplayBox displayInvoiceNo;
+        private Win.UI.Label labelCBM;
+        private Win.UI.Label labelNWGW;
+        private Win.UI.Label labelVesselName;
+        private Win.UI.Label labelBLNo;
+        private Win.UI.Label labelPayer;
+        private Win.UI.Label labelInvoiceNo;
+        private Win.UI.EditBox editRemark;
+        private Win.UI.DisplayBox displaySONo;
+        private Win.UI.DisplayBox displayContainerType;
+        private Win.UI.NumericBox numPackages;
+        private Win.UI.DisplayBox displayConsignee;
+        private Win.UI.DisplayBox displayFactory;
+        private Win.UI.DateBox dateETA;
+        private Win.UI.DisplayBox displayWKNo;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelSONo;
+        private Win.UI.Label labelContainerType;
+        private Win.UI.Label labelPackages;
+        private Win.UI.Label labelConsignee;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelETA;
+        private Win.UI.Label labelWKNo;
         private Class.txtSeq txtSeq1;
     }
 }

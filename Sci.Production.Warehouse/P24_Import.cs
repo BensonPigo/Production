@@ -32,12 +32,12 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
+            String sp = this.txtSPNo.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtSPNo.Focus();
                 return;
             }
 
@@ -98,11 +98,11 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
                     cmds.Add(sp1);
                 }
 
-                if (!txtSeq1.checkEmpty(showErrMsg: false))
+                if (!txtSeq.checkEmpty(showErrMsg: false))
                 {
                     strSQLCmd.Append(@" and a.seq1 = @seq1 and a.seq2 = @seq2");
-                    seq1.Value = txtSeq1.seq1;
-                    seq2.Value = txtSeq1.seq2;
+                    seq1.Value = txtSeq.seq1;
+                    seq2.Value = txtSeq.seq2;
                     cmds.Add(seq1);
                     cmds.Add(seq2);
                 }
@@ -133,20 +133,20 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     }
                 };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -159,7 +159,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
                 .Text("fromseq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -172,7 +172,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
                 .Text("fromlocation", header: "From Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //9
                ;
 
-            this.grid1.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -185,7 +185,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
         //Import
         private void button2_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 

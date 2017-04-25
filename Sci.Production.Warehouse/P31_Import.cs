@@ -34,13 +34,13 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-            String fromSP = this.textBox3.Text.TrimEnd();
+            String sp = this.txtToSP.Text.TrimEnd();
+            String fromSP = this.txtBorrowFromSP.Text.TrimEnd();
 
-            if (string.IsNullOrWhiteSpace(sp) || txtSeq1.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
-                textBox1.Focus();
+                txtToSP.Focus();
                 return;
             }
 
@@ -90,7 +90,7 @@ outer apply(
         and Roll = c.Roll
 ) as toSP
 Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and Factory.MDivisionID = '{4}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword)); // 
+and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq1, txtSeq.seq2, Sci.Env.User.Keyword)); // 
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
@@ -111,7 +111,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            this.displayTotalQty.Value = localPrice.ToString();
         }
 
         protected override void OnFormLoaded()
@@ -123,17 +123,17 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
                 {
                     if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                     {
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["qty"] = e.FormattedValue;
-                        grid1.GetDataRow(grid1.GetSelectedRowIndex())["selected"] = true;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
+                        gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                         this.sum_checkedqty();
                     }
                 };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridImport.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridImport.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid1.GetDataRow(e.RowIndex);
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
@@ -149,9 +149,9 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
 
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
@@ -166,8 +166,8 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns)  //11
                ;
 
-            this.grid1.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -185,8 +185,8 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq1.se
         {
             StringBuilder warningmsg = new StringBuilder();
 
-            grid1.ValidateControl();
-            grid1.EndEdit();
+            gridImport.ValidateControl();
+            gridImport.EndEdit();
 
             if (MyUtility.Check.Empty(dtBorrow) || dtBorrow.Rows.Count == 0) return;
 

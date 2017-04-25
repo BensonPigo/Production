@@ -33,7 +33,7 @@
             this.gridQtyBreakDown = new Sci.Win.UI.Grid();
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnSet = new Sci.Win.UI.Button();
+            this.btnCopyQTY = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -119,7 +119,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.btnSet);
+            this.panel1.Controls.Add(this.btnCopyQTY);
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -128,15 +128,15 @@
             this.panel1.Size = new System.Drawing.Size(784, 50);
             this.panel1.TabIndex = 1;
             // 
-            // btnSet
+            // btnCopyQTY
             // 
-            this.btnSet.Location = new System.Drawing.Point(12, 10);
-            this.btnSet.Name = "btnSet";
-            this.btnSet.Size = new System.Drawing.Size(93, 30);
-            this.btnSet.TabIndex = 2;
-            this.btnSet.Text = "Copy QTY";
-            this.btnSet.UseVisualStyleBackColor = true;
-            this.btnSet.Click += new System.EventHandler(this.btnSet_Click);
+            this.btnCopyQTY.Location = new System.Drawing.Point(12, 10);
+            this.btnCopyQTY.Name = "btnCopyQTY";
+            this.btnCopyQTY.Size = new System.Drawing.Size(93, 30);
+            this.btnCopyQTY.TabIndex = 2;
+            this.btnCopyQTY.Text = "Copy QTY";
+            this.btnCopyQTY.UseVisualStyleBackColor = true;
+            this.btnCopyQTY.Click += new System.EventHandler(this.btnSet_Click);
             // 
             // btnCancel
             // 
@@ -190,7 +190,7 @@
         private Win.UI.Button btnSave;
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
         private Win.UI.ListControlBindingSource gridQtyBreakDownBS;
-        private Win.UI.Button btnSet;
+        private Win.UI.Button btnCopyQTY;
 
     }
 }

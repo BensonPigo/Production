@@ -41,9 +41,9 @@ namespace Sci.Production.Warehouse
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridWkno.IsEditingReadOnly = true;
+            this.gridWkno.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridWkno)
                  .Text("id", header: "WK#", width: Widths.AnsiChars(13))
                  .Date("ETA", header: "ETA", width: Widths.AnsiChars(12))
                  .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))

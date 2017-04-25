@@ -41,25 +41,25 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(mtbs.DataSource)) 
             { 
                 mtbs.DataSource = selectDataTable1;
-                displayBox1.DataBindings.Add(new Binding("Text", mtbs, "id", true));
-                textBox1.DataBindings.Add(new Binding("Text", mtbs, "zipcode", true));
-                textBox2.DataBindings.Add(new Binding("Text", mtbs, "abbCH", true));
-                textBox3.DataBindings.Add(new Binding("Text", mtbs, "abbEN", true));
-                textBox4.DataBindings.Add(new Binding("Text", mtbs, "NameCH", true));
-                textBox5.DataBindings.Add(new Binding("Text", mtbs, "NameEN", true));
-                textBox6.DataBindings.Add(new Binding("Text", mtbs, "addressCH", true));
-                textBox7.DataBindings.Add(new Binding("Text", mtbs, "tel", true));
-                textBox8.DataBindings.Add(new Binding("Text", mtbs, "fax", true));
-                textBox9.DataBindings.Add(new Binding("Text", mtbs, "currencyid", true));
-                textBox10.DataBindings.Add(new Binding("Text", mtbs, "countryid", true));
-                textBox11.DataBindings.Add(new Binding("Text", mtbs, "countryAlias", true));
-                editBox1.DataBindings.Add(new Binding("Text", mtbs, "lockmemo", true));
-                editBox2.DataBindings.Add(new Binding("Text", mtbs, "delaymemo", true));
-                editBox3.DataBindings.Add(new Binding("Text", mtbs, "addressEN", true));
-                dateBox1.DataBindings.Add(new Binding("Text", mtbs, "lockdate", true));
-                dateBox2.DataBindings.Add(new Binding("Text", mtbs, "delay", true));
-                checkBox1.DataBindings.Add(new Binding("Value", mtbs, "junk", true));
-                checkBox2.DataBindings.Add(new Binding("Value", mtbs, "ThirdCountry", true));
+                displaySupplierID.DataBindings.Add(new Binding("Text", mtbs, "id", true));
+                txtZipCode.DataBindings.Add(new Binding("Text", mtbs, "zipcode", true));
+                txtAbbrChinese.DataBindings.Add(new Binding("Text", mtbs, "abbCH", true));
+                txtAbbrEnglish.DataBindings.Add(new Binding("Text", mtbs, "abbEN", true));
+                txtCompanyCH.DataBindings.Add(new Binding("Text", mtbs, "NameCH", true));
+                txtCompanyEN.DataBindings.Add(new Binding("Text", mtbs, "NameEN", true));
+                txtAddressCH.DataBindings.Add(new Binding("Text", mtbs, "addressCH", true));
+                txtTEL.DataBindings.Add(new Binding("Text", mtbs, "tel", true));
+                txtFax.DataBindings.Add(new Binding("Text", mtbs, "fax", true));
+                txtCurrency.DataBindings.Add(new Binding("Text", mtbs, "currencyid", true));
+                txtNationality.DataBindings.Add(new Binding("Text", mtbs, "countryid", true));
+                txtNationality2.DataBindings.Add(new Binding("Text", mtbs, "countryAlias", true));
+                editLockDate.DataBindings.Add(new Binding("Text", mtbs, "lockmemo", true));
+                editDelay.DataBindings.Add(new Binding("Text", mtbs, "delaymemo", true));
+                editAddressEN.DataBindings.Add(new Binding("Text", mtbs, "addressEN", true));
+                dateLockDate.DataBindings.Add(new Binding("Text", mtbs, "lockdate", true));
+                dateDelay.DataBindings.Add(new Binding("Text", mtbs, "delay", true));
+                checkJunk.DataBindings.Add(new Binding("Value", mtbs, "junk", true));
+                checkThirdCountry.DataBindings.Add(new Binding("Value", mtbs, "ThirdCountry", true));
 
             }
             

@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            this.ActiveControl = textBox1;
+            this.ActiveControl = txtSPNo;
         }
 
         protected override void OnFormLoaded()
@@ -31,9 +31,9 @@ namespace Sci.Production.Warehouse
             //data.Tables.Add("dtSummary");
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridStockList.IsEditingReadOnly = true;
+            this.gridStockList.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridStockList)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
@@ -54,9 +54,9 @@ namespace Sci.Production.Warehouse
                  ;
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = bindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridTransactionID.IsEditingReadOnly = true;
+            this.gridTransactionID.DataSource = bindingSource2;
+            Helper.Controls.Grid.Generator(this.gridTransactionID)
                  .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                  .Text("type", header: "Type", width: Widths.AnsiChars(15))
                  .Date("ConfirmDate", header: "CFM Date", width: Widths.AnsiChars(10))
@@ -74,7 +74,7 @@ namespace Sci.Production.Warehouse
             {
                 if (!this.EditMode)
                 {
-                    var dr = this.grid3.GetDataRow<DataRow>(e.RowIndex);
+                    var dr = this.gridRoll.GetDataRow<DataRow>(e.RowIndex);
                     if (null == dr) return;
                     var frm = new Sci.Production.Warehouse.P03_Transaction(dr,true);
                     frm.ShowDialog(this);
@@ -83,9 +83,9 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             //設定Grid3的顯示欄位
-            this.grid3.IsEditingReadOnly = true;
-            this.grid3.DataSource = bindingSource3;
-            Helper.Controls.Grid.Generator(this.grid3)
+            this.gridRoll.IsEditingReadOnly = true;
+            this.gridRoll.DataSource = bindingSource3;
+            Helper.Controls.Grid.Generator(this.gridRoll)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(9))
                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(5))
                  .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -111,9 +111,9 @@ namespace Sci.Production.Warehouse
             bindingSource3.DataSource = null;
 
             string spno, seq1, seq2;
-            spno = textBox1.Text;
-            seq1 = txtSeq1.seq1;
-            seq2 = txtSeq1.seq2;
+            spno = txtSPNo.Text;
+            seq1 = txtSeq.seq1;
+            seq2 = txtSeq.seq2;
             if (MyUtility.Check.Empty(spno))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("It will take a lot of time for searching data if condition of SP# is empty, Do you continue?");
@@ -250,7 +250,7 @@ select i.poid,i.seq1,i.Seq2,t.id
                 return;
             }
 
-            if (dtTpeIventory.Select("qty > 0", "").Count() == 0 && checkBox1.Checked)
+            if (dtTpeIventory.Select("qty > 0", "").Count() == 0 && checkQty.Checked)
             {
                 MyUtility.Msg.WarningBox("qty > 0 Data not found!!");
             }
@@ -281,7 +281,7 @@ select i.poid,i.seq1,i.Seq2,t.id
 
             bindingSource3.DataSource = dtFtyInventory;
             
-            if (checkBox1.Checked)
+            if (checkQty.Checked)
             {
                 bindingSource1.Filter = "qty > 0";
             }
@@ -294,7 +294,7 @@ select i.poid,i.seq1,i.Seq2,t.id
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkQty.Checked)
             {
                 bindingSource1.Filter = "qty > 0";
             }
@@ -316,7 +316,7 @@ select i.poid,i.seq1,i.Seq2,t.id
             if (dtFtyInventory==null) return;
             dtFtyInventory.DefaultView.RowFilter = string.Format("1=0");
             if (-1 == bindingSource1.Position) return;
-            DataRow tmp = grid1.GetDataRow(bindingSource1.Position);
+            DataRow tmp = gridStockList.GetDataRow(bindingSource1.Position);
             if (MyUtility.Check.Empty(tmp)) return;
             dtFtyInventory.DefaultView.RowFilter = string.Format("poid = '{0}' and seq1='{1}' and seq2='{2}'", tmp["poid"], tmp["seq1"], tmp["seq2"]);
         }

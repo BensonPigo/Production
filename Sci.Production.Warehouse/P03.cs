@@ -51,13 +51,13 @@ namespace Sci.Production.Warehouse
         {
 
             base.OnFormLoaded();
-            comboBox1.SelectedIndex = 1;
+            comboSortBy.SelectedIndex = 1;
 
             #region Supp 開窗
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Supplier(dr);
                 frm.ShowDialog(this);
@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Refno(dr);
                 frm.ShowDialog(this);
@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts3 = new DataGridViewGeneratorNumericColumnSettings();
             ts3.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Wkno(dr);
                 frm.ShowDialog(this);
@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts4 = new DataGridViewGeneratorNumericColumnSettings();
             ts4.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_TaipeiInventory(dr);
                 frm.ShowDialog(this);
@@ -99,7 +99,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts5 = new DataGridViewGeneratorNumericColumnSettings();
             ts5.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_RollTransaction(dr);
                 frm.ShowDialog(this);
@@ -109,7 +109,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts6 = new DataGridViewGeneratorNumericColumnSettings();
             ts6.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                 DialogResult DR =  frm.ShowDialog(this);
@@ -120,7 +120,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts7 = new DataGridViewGeneratorNumericColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_InventoryStatus(dr);
                 frm.ShowDialog(this);
@@ -131,7 +131,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ts8 = new DataGridViewGeneratorNumericColumnSettings();
             ts8.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
                 frm.ShowDialog(this);
@@ -142,7 +142,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts9 = new DataGridViewGeneratorTextColumnSettings();
             ts9.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "B");
                 frm.ShowDialog(this);
@@ -153,7 +153,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts11 = new DataGridViewGeneratorTextColumnSettings();
             ts11.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_BulkLocation(dr, "I");
                 frm.ShowDialog(this);
@@ -164,7 +164,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts10 = new DataGridViewGeneratorTextColumnSettings();
             ts10.CellMouseDoubleClick += (s, e) =>
             {
-                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_InspectionList(dr);
                 frm.ShowDialog(this);
@@ -173,7 +173,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridMaterialStatus)
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //0
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))  //1
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(4))  //2
@@ -212,42 +212,42 @@ namespace Sci.Production.Warehouse
             ;
             #endregion
 
-            grid1.Columns[7].Frozen = true;  //Fabric Type
+            gridMaterialStatus.Columns[7].Frozen = true;  //Fabric Type
         }
 
         private void ChangeDetailColor()
         {
-            for (int index = 0; index < grid1.Rows.Count; index++)
+            for (int index = 0; index < gridMaterialStatus.Rows.Count; index++)
             {
-                DataRow dr = grid1.GetDataRow(index);
-                if (grid1.Rows.Count <= index || index < 0) return;
+                DataRow dr = gridMaterialStatus.GetDataRow(index);
+                if (gridMaterialStatus.Rows.Count <= index || index < 0) return;
 
                 int i = index;
                 if (dr["junk"].ToString() == "True")
                 {
-                    grid1.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
+                    gridMaterialStatus.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
                 }
                 else
                 {
                     if (dr["ThirdCountry"].ToString() == "True")
                     {
-                        grid1.Rows[i].Cells[3].Style.BackColor = Color.DeepPink;
+                        gridMaterialStatus.Rows[i].Cells[3].Style.BackColor = Color.DeepPink;
                     }
 
                     if (dr["BomTypeCalculate"].ToString() == "True")
                     {
-                        grid1.Rows[i].Cells[6].Style.BackColor = Color.Orange;
+                        gridMaterialStatus.Rows[i].Cells[6].Style.BackColor = Color.Orange;
                     }
 
                     if (Convert.ToDecimal(dr["ShipQty"].ToString()) < Convert.ToDecimal(dr["Qty"].ToString()))
                     {
-                        grid1.Rows[i].Cells[16].Style.ForeColor = Color.Red;
+                        gridMaterialStatus.Rows[i].Cells[16].Style.ForeColor = Color.Red;
                     }
 
                     if (dr["SuppCountry"].ToString().EqualString(userCountry))
                     {
-                        grid1.Rows[i].Cells[1].Style.BackColor = Color.Yellow;
-                        grid1.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells[1].Style.BackColor = Color.Yellow;
+                        gridMaterialStatus.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
                     }
                 }
             }
@@ -262,13 +262,13 @@ namespace Sci.Production.Warehouse
         private void Query()
         {
             DataTable dtData;
-            if (MyUtility.Check.Empty(tb_Spno.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text))
             {
                 MyUtility.Msg.WarningBox("SP# can't be empty. Please fill SP# first!");
-                tb_Spno.Focus();
+                txtSPNo.Focus();
                 return;
             }
-            string spno = tb_Spno.Text.TrimEnd() + "%";
+            string spno = txtSPNo.Text.TrimEnd() + "%";
             #region -- SQL Command --
             string sqlcmd
                 = string.Format(@"
@@ -458,16 +458,16 @@ where ROW_NUMBER_D =1
 
         private void grid1_sorting()
         {
-            if (grid1.RowCount > 0)
+            if (gridMaterialStatus.RowCount > 0)
             {
-                switch (comboBox1.SelectedIndex)
+                switch (comboSortBy.SelectedIndex)
                 {
                     case 0:
-                        if (MyUtility.Check.Empty(grid1)) break;
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,fabrictypeOrderby, refno , colorid";
                         break;
                     case 1:
-                        if (MyUtility.Check.Empty(grid1)) break;
+                        if (MyUtility.Check.Empty(gridMaterialStatus)) break;
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "id,seq1 , seq2";
                         break;
                 }
@@ -500,8 +500,8 @@ where ROW_NUMBER_D =1
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
             //MyUtility.Excel.CopyToXls(dt, "");
             
-            if (null == this.grid1.CurrentRow) return;
-            var dr = this.grid1.GetDataRow<DataRow>(this.grid1.CurrentRow.Index);
+            if (null == this.gridMaterialStatus.CurrentRow) return;
+            var dr = this.gridMaterialStatus.GetDataRow<DataRow>(this.gridMaterialStatus.CurrentRow.Index);
             if (null == dr) return;
 
             P03_Print p = new P03_Print(dr);
@@ -517,7 +517,7 @@ where ROW_NUMBER_D =1
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (tb_Spno.Focus())
+            if (txtSPNo.Focus())
             {
                 switch (keyData)
                 {

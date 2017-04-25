@@ -48,15 +48,15 @@ namespace Sci.Production.Warehouse
         //按鈕控制
         private void ControlButton()
         {
-            button3.Enabled = CurrentMaintain != null;
-            button4.Enabled = CurrentMaintain != null;
-            button6.Enabled = CurrentMaintain != null;
-            button8.Enabled = CurrentMaintain != null;
-            button14.Enabled = CurrentMaintain != null;
-            button19.Enabled = CurrentMaintain != null;
-            button23.Enabled = CurrentMaintain != null;
-            button25.Enabled = CurrentMaintain != null;
-            button29.Enabled = CurrentMaintain != null;
+            btnProductionOutput.Enabled = CurrentMaintain != null;
+            btnOrderRemark.Enabled = CurrentMaintain != null;
+            btnLabelHangtag.Enabled = CurrentMaintain != null;
+            btnQuantityBreakdown.Enabled = CurrentMaintain != null;
+            btnArtwork.Enabled = CurrentMaintain != null;
+            btnMaterialImport.Enabled = CurrentMaintain != null;
+            btnEachConsumption.Enabled = CurrentMaintain != null;
+            btnProductionKits.Enabled = CurrentMaintain != null;
+            btnPackingMethod.Enabled = CurrentMaintain != null;
         }
 
         protected override void OnFormLoaded()
@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
             btnBatchClose.Size = new Size(180, 30);//預設是(80,30)
             btnBatchClose.Visible = dataType != "Y";
             #endregion
-            MyUtility.Tool.SetupCombox(cbbCategory, 2, 1, "B,Bulk,S,Sample,M,Material");
+            MyUtility.Tool.SetupCombox(comboCategory, 2, 1, "B,Bulk,S,Sample,M,Material");
 
         }
 
@@ -90,42 +90,42 @@ namespace Sci.Production.Warehouse
                 ControlButton();
             }
 
-            displayBox6.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["KPIChangeReason"])));
-            displayBox14.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));
-            displayBox17.Value = MyUtility.Convert.GetString(CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
+            displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["KPIChangeReason"])));
+            displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Style_SpecialMark' and ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["SpecialMark"])));
+            displayMTLCmpltSP.Value = MyUtility.Convert.GetString(CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : "";
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow StyleData;
             string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
-                displayBox5.Value = MyUtility.Convert.GetString(StyleData["Description"]);
-                checkBox11.Value = MyUtility.Convert.GetString(StyleData["ExpectionForm"]);
-                editBox3.Text = MyUtility.Convert.GetString(StyleData["FTYRemark"]);
+                displayDescription.Value = MyUtility.Convert.GetString(StyleData["Description"]);
+                checkExceptionForm.Value = MyUtility.Convert.GetString(StyleData["ExpectionForm"]);
+                editFtyRemark.Text = MyUtility.Convert.GetString(StyleData["FTYRemark"]);
 
             }
             else
             {
-                displayBox5.Value = "";
-                checkBox11.Value = "false";
-                editBox3.Text = "";
+                displayDescription.Value = "";
+                checkExceptionForm.Value = "false";
+                editFtyRemark.Text = "";
             }
             #endregion
             #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
             DataRow brandData;
             if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"])), out brandData))
             {
-                displayBox2.Value = MyUtility.Convert.GetString(brandData["BuyerID"]);
-                label32.Text = MyUtility.Convert.GetString(brandData["Customize1"]);
-                label33.Text = MyUtility.Convert.GetString(brandData["Customize2"]);
-                label34.Text = MyUtility.Convert.GetString(brandData["Customize3"]);
+                displayBuyer.Value = MyUtility.Convert.GetString(brandData["BuyerID"]);
+                labelSpecialId1.Text = MyUtility.Convert.GetString(brandData["Customize1"]);
+                labelSpecialId2.Text = MyUtility.Convert.GetString(brandData["Customize2"]);
+                labelSpecialId3.Text = MyUtility.Convert.GetString(brandData["Customize3"]);
             }
             else
             {
-                displayBox2.Value = "";
-                label32.Text = "";
-                label33.Text = "";
-                label34.Text = "";
+                displayBuyer.Value = "";
+                labelSpecialId1.Text = "";
+                labelSpecialId2.Text = "";
+                labelSpecialId3.Text = "";
             }
             #endregion
             #region 填PO SMR, PO Handle欄位值
@@ -133,13 +133,13 @@ namespace Sci.Production.Warehouse
             sqlCmd = string.Format("select POSMR,POHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out POData))
             {
-                txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
-                txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
+                txttpeuserPOSMR.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POSMR"]);
+                txttpeuserPOHandle.DisplayBox1Binding = MyUtility.Convert.GetString(POData["POHandle"]);
             }
             else
             {
-                txttpeuser3.DisplayBox1Binding = "";
-                txttpeuser4.DisplayBox1Binding = "";
+                txttpeuserPOSMR.DisplayBox1Binding = "";
+                txttpeuserPOHandle.DisplayBox1Binding = "";
             }
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T欄位值
@@ -154,26 +154,26 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             {
                 if (OrdersData.Rows.Count > 0)
                 {
-                    editBox2.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"]);
-                    editBox4.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"]);
-                    displayBox18.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["MTLExport"]);
-                    displayBox20.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["PulloutComplete"]);
+                    editPOCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["PoList"]);
+                    editCuttingCombo.Text = MyUtility.Convert.GetString(OrdersData.Rows[0]["CuttingList"]);
+                    displayRMTLETAMasterSP.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["MTLExport"]);
+                    displayActPullout.Value = MyUtility.Convert.GetString(OrdersData.Rows[0]["PulloutComplete"]);
                 }
                 else
                 {
-                    editBox2.Text = "";
-                    editBox4.Text = "";
-                    displayBox18.Value = "";
-                    displayBox20.Value = "";
+                    editPOCombo.Text = "";
+                    editCuttingCombo.Text = "";
+                    displayRMTLETAMasterSP.Value = "";
+                    displayActPullout.Value = "";
                 }
             }
             else
             {
                 MyUtility.Msg.ErrorBox("Query OrdersData fail!!" + result.ToString());
-                editBox2.Text = "";
-                editBox4.Text = "";
-                displayBox18.Value = "";
-                displayBox20.Value = "";
+                editPOCombo.Text = "";
+                editCuttingCombo.Text = "";
+                displayRMTLETAMasterSP.Value = "";
+                displayActPullout.Value = "";
             }
             #endregion
             bool lConfirm = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. PPIC Master List", "CanConfirm");
@@ -181,26 +181,26 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             //按鈕變色
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
 
-            button3.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
-            button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
+            btnProductionOutput.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            btnOrderRemark.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
-            button6.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
+            btnLabelHangtag.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
 
 
-            button14.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            btnArtwork.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            button19.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
+            btnMaterialImport.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Export_Detail WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
 
-            button25.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            btnProductionKits.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
             
-            button29.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
+            btnPackingMethod.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing"]) ? Color.Blue : Color.Black;
 
-            button23.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a WITH (NOLOCK)  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
+            btnEachConsumption.ForeColor = MyUtility.Check.Seek(string.Format("select ID From dbo.Order_EachCons a WITH (NOLOCK)  where a.id ='{0}'", CurrentMaintain["id"].ToString())) ? Color.Blue : Color.Black;
 
-            button8.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o WITH (NOLOCK) inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+            btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format(@"select oq.Article from Orders o WITH (NOLOCK) inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
 
-            button4.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
+            btnOrderRemark.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
         }
 
@@ -483,7 +483,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         //Quantity breakdown
         private void button8_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain["id"].ToString(), CurrentMaintain["poid"].ToString(), editBox2.Text);
+            Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain["id"].ToString(), CurrentMaintain["poid"].ToString(), editPOCombo.Text);
             callNextForm.ShowDialog(this);
         }
 

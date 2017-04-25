@@ -77,9 +77,9 @@ group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["i
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAccumulatedQty.IsEditingReadOnly = true;
+            this.gridAccumulatedQty.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("fromseq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("fromseq2", header: "Seq2", width: Widths.AnsiChars(3))

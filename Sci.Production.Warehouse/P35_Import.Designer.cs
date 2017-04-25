@@ -29,95 +29,95 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelSP = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.button4 = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.btnUpdateAll = new Sci.Win.UI.Button();
+            this.labelReason = new Sci.Win.UI.Label();
+            this.comboReason = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.textBox4 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.txtdropdownlistFabricType = new Sci.Production.Class.txtdropdownlist();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.labelLocation = new Sci.Win.UI.Label();
+            this.labelFabricType = new Sci.Win.UI.Label();
+            this.txtRef = new Sci.Win.UI.TextBox();
+            this.labelRef = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button3
+            // btnCancel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(912, 15);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 30);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Cancel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // btnImport
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(816, 16);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(90, 30);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 16);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnFindNow
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(890, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(890, 15);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 5;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // txtSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(81, 19);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(81, 19);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(122, 23);
+            this.txtSP.TabIndex = 0;
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(9, 19);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(69, 23);
+            this.labelSP.TabIndex = 0;
+            this.labelSP.Text = "SP#";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.comboBox2);
-            this.groupBox2.Controls.Add(this.button3);
-            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.btnUpdateAll);
+            this.groupBox2.Controls.Add(this.labelReason);
+            this.groupBox2.Controls.Add(this.comboReason);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
@@ -125,58 +125,58 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
-            // button4
+            // btnUpdateAll
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(675, 16);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(90, 30);
-            this.button4.TabIndex = 1;
-            this.button4.Text = "Update All";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnUpdateAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAll.Location = new System.Drawing.Point(675, 16);
+            this.btnUpdateAll.Name = "btnUpdateAll";
+            this.btnUpdateAll.Size = new System.Drawing.Size(90, 30);
+            this.btnUpdateAll.TabIndex = 1;
+            this.btnUpdateAll.Text = "Update All";
+            this.btnUpdateAll.UseVisualStyleBackColor = true;
+            this.btnUpdateAll.Click += new System.EventHandler(this.button4_Click);
             // 
-            // label2
+            // labelReason
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.labelReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(160, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 23);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Reason";
+            this.labelReason.Lines = 0;
+            this.labelReason.Location = new System.Drawing.Point(160, 19);
+            this.labelReason.Name = "labelReason";
+            this.labelReason.Size = new System.Drawing.Size(69, 23);
+            this.labelReason.TabIndex = 8;
+            this.labelReason.Text = "Reason";
             // 
-            // comboBox2
+            // comboReason
             // 
-            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.comboReason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox2.BackColor = System.Drawing.Color.White;
-            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Items.AddRange(new object[] {
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboBox2.Location = new System.Drawing.Point(232, 19);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(437, 24);
-            this.comboBox2.TabIndex = 0;
+            this.comboReason.Location = new System.Drawing.Point(232, 19);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.Size = new System.Drawing.Size(437, 24);
+            this.comboReason.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtSeq1);
-            this.groupBox1.Controls.Add(this.txtdropdownlist1);
-            this.groupBox1.Controls.Add(this.textBox4);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.textBox3);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.txtSeq);
+            this.groupBox1.Controls.Add(this.txtdropdownlistFabricType);
+            this.groupBox1.Controls.Add(this.txtLocation);
+            this.groupBox1.Controls.Add(this.labelLocation);
+            this.groupBox1.Controls.Add(this.labelFabricType);
+            this.groupBox1.Controls.Add(this.txtRef);
+            this.groupBox1.Controls.Add(this.labelRef);
+            this.groupBox1.Controls.Add(this.btnFindNow);
+            this.groupBox1.Controls.Add(this.txtSP);
+            this.groupBox1.Controls.Add(this.labelSP);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -184,108 +184,108 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
-            // txtSeq1
+            // txtSeq
             // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(210, 19);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
-            this.txtSeq1.Leave += new System.EventHandler(this.txtSeq1_Leave);
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(210, 19);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 1;
+            this.txtSeq.Leave += new System.EventHandler(this.txtSeq1_Leave);
             // 
-            // txtdropdownlist1
+            // txtdropdownlistFabricType
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(779, 19);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(105, 24);
-            this.txtdropdownlist1.TabIndex = 4;
-            this.txtdropdownlist1.Type = "FabricType_Condition";
+            this.txtdropdownlistFabricType.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistFabricType.FormattingEnabled = true;
+            this.txtdropdownlistFabricType.IsSupportUnselect = true;
+            this.txtdropdownlistFabricType.Location = new System.Drawing.Point(779, 19);
+            this.txtdropdownlistFabricType.Name = "txtdropdownlistFabricType";
+            this.txtdropdownlistFabricType.Size = new System.Drawing.Size(105, 24);
+            this.txtdropdownlistFabricType.TabIndex = 4;
+            this.txtdropdownlistFabricType.Type = "FabricType_Condition";
             // 
-            // textBox4
+            // txtLocation
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(563, 19);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(106, 23);
-            this.textBox4.TabIndex = 3;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
-            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocation.Location = new System.Drawing.Point(563, 19);
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.Size = new System.Drawing.Size(106, 23);
+            this.txtLocation.TabIndex = 3;
+            this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.txtLocation.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
-            // label4
+            // labelLocation
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(491, 19);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(69, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Location";
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(491, 19);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(69, 23);
+            this.labelLocation.TabIndex = 7;
+            this.labelLocation.Text = "Location";
             // 
-            // label6
+            // labelFabricType
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(691, 19);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(85, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Fabric Type";
+            this.labelFabricType.Lines = 0;
+            this.labelFabricType.Location = new System.Drawing.Point(691, 19);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(85, 23);
+            this.labelFabricType.TabIndex = 6;
+            this.labelFabricType.Text = "Fabric Type";
             // 
-            // textBox3
+            // txtRef
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(361, 19);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(106, 23);
-            this.textBox3.TabIndex = 2;
+            this.txtRef.BackColor = System.Drawing.Color.White;
+            this.txtRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRef.Location = new System.Drawing.Point(361, 19);
+            this.txtRef.Name = "txtRef";
+            this.txtRef.Size = new System.Drawing.Size(106, 23);
+            this.txtRef.TabIndex = 2;
             // 
-            // label3
+            // labelRef
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(289, 19);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Ref#";
+            this.labelRef.Lines = 0;
+            this.labelRef.Location = new System.Drawing.Point(289, 19);
+            this.labelRef.Name = "labelRef";
+            this.labelRef.Size = new System.Drawing.Size(69, 23);
+            this.labelRef.TabIndex = 4;
+            this.labelRef.Text = "Ref#";
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 58);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 419);
             this.panel1.TabIndex = 20;
             // 
-            // grid1
+            // gridImport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 419);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 0);
+            this.gridImport.Name = "gridImport";
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(1008, 419);
+            this.gridImport.TabIndex = 0;
+            this.gridImport.TabStop = false;
             // 
             // P35_Import
             // 
@@ -299,7 +299,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -307,25 +307,25 @@
 
         #endregion
 
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
+        private Win.UI.Button btnFindNow;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelSP;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label6;
-        private Win.UI.Button button4;
-        private Win.UI.Label label2;
-        private Win.UI.ComboBox comboBox2;
-        private Win.UI.TextBox textBox4;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Class.txtSeq txtSeq1;
+        private Win.UI.TextBox txtRef;
+        private Win.UI.Label labelRef;
+        private Win.UI.Label labelLocation;
+        private Win.UI.Label labelFabricType;
+        private Win.UI.Button btnUpdateAll;
+        private Win.UI.Label labelReason;
+        private Win.UI.ComboBox comboReason;
+        private Win.UI.TextBox txtLocation;
+        private Class.txtdropdownlist txtdropdownlistFabricType;
+        private Class.txtSeq txtSeq;
     }
 }

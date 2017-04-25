@@ -30,40 +30,40 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
-            this.cbxStockType = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.cbxStatus = new Sci.Win.UI.ComboBox();
+            this.labelSEQ = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.comboStockType = new Sci.Win.UI.ComboBox();
+            this.labelStockType = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.labelStatus = new Sci.Win.UI.Label();
+            this.comboStatus = new Sci.Win.UI.ComboBox();
             this.btnQuery = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridMaterialLock = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnExcel = new Sci.Win.UI.Button();
             this.btnLock = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.txtSeq1);
-            this.panel1.Controls.Add(this.cbxStockType);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.cbxStatus);
+            this.panel1.Controls.Add(this.labelSEQ);
+            this.panel1.Controls.Add(this.txtSeq);
+            this.panel1.Controls.Add(this.comboStockType);
+            this.panel1.Controls.Add(this.labelStockType);
+            this.panel1.Controls.Add(this.txtSP);
+            this.panel1.Controls.Add(this.labelSP);
+            this.panel1.Controls.Add(this.labelStatus);
+            this.panel1.Controls.Add(this.comboStatus);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -71,91 +71,91 @@
             this.panel1.Size = new System.Drawing.Size(1008, 45);
             this.panel1.TabIndex = 0;
             // 
-            // label4
+            // labelSEQ
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(234, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(59, 23);
-            this.label4.TabIndex = 40;
-            this.label4.Text = "SEQ";
+            this.labelSEQ.Lines = 0;
+            this.labelSEQ.Location = new System.Drawing.Point(234, 10);
+            this.labelSEQ.Name = "labelSEQ";
+            this.labelSEQ.Size = new System.Drawing.Size(59, 23);
+            this.labelSEQ.TabIndex = 40;
+            this.labelSEQ.Text = "SEQ";
             // 
-            // txtSeq1
+            // txtSeq
             // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(296, 10);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(296, 10);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 1;
             // 
-            // cbxStockType
+            // comboStockType
             // 
-            this.cbxStockType.BackColor = System.Drawing.Color.White;
-            this.cbxStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbxStockType.FormattingEnabled = true;
-            this.cbxStockType.IsSupportUnselect = true;
-            this.cbxStockType.Items.AddRange(new object[] {
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Items.AddRange(new object[] {
             "ALL",
             "Bulk",
             "Inventory"});
-            this.cbxStockType.Location = new System.Drawing.Point(766, 10);
-            this.cbxStockType.Name = "cbxStockType";
-            this.cbxStockType.Size = new System.Drawing.Size(100, 24);
-            this.cbxStockType.TabIndex = 4;
+            this.comboStockType.Location = new System.Drawing.Point(766, 10);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.Size = new System.Drawing.Size(100, 24);
+            this.comboStockType.TabIndex = 4;
             // 
-            // label3
+            // labelStockType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(668, 10);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 38;
-            this.label3.Text = "Stock Type";
+            this.labelStockType.Lines = 0;
+            this.labelStockType.Location = new System.Drawing.Point(668, 10);
+            this.labelStockType.Name = "labelStockType";
+            this.labelStockType.Size = new System.Drawing.Size(95, 23);
+            this.labelStockType.TabIndex = 38;
+            this.labelStockType.Text = "Stock Type";
             // 
-            // textBox1
+            // txtSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(71, 10);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(71, 10);
+            this.txtSP.MaxLength = 13;
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(122, 23);
+            this.txtSP.TabIndex = 0;
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 23);
-            this.label1.TabIndex = 35;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(9, 10);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(59, 23);
+            this.labelSP.TabIndex = 35;
+            this.labelSP.Text = "SP#";
             // 
-            // label2
+            // labelStatus
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(415, 10);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 23);
-            this.label2.TabIndex = 33;
-            this.label2.Text = "Status";
+            this.labelStatus.Lines = 0;
+            this.labelStatus.Location = new System.Drawing.Point(415, 10);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(74, 23);
+            this.labelStatus.TabIndex = 33;
+            this.labelStatus.Text = "Status";
             // 
-            // cbxStatus
+            // comboStatus
             // 
-            this.cbxStatus.BackColor = System.Drawing.Color.White;
-            this.cbxStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbxStatus.FormattingEnabled = true;
-            this.cbxStatus.IsSupportUnselect = true;
-            this.cbxStatus.Items.AddRange(new object[] {
+            this.comboStatus.BackColor = System.Drawing.Color.White;
+            this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStatus.FormattingEnabled = true;
+            this.comboStatus.IsSupportUnselect = true;
+            this.comboStatus.Items.AddRange(new object[] {
             "All",
             "Locked",
             "Unlocked"});
-            this.cbxStatus.Location = new System.Drawing.Point(492, 10);
-            this.cbxStatus.Name = "cbxStatus";
-            this.cbxStatus.Size = new System.Drawing.Size(121, 24);
-            this.cbxStatus.TabIndex = 3;
+            this.comboStatus.Location = new System.Drawing.Point(492, 10);
+            this.comboStatus.Name = "comboStatus";
+            this.comboStatus.Size = new System.Drawing.Size(121, 24);
+            this.comboStatus.TabIndex = 3;
             // 
             // btnQuery
             // 
@@ -169,43 +169,43 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.grid1);
+            this.panel2.Controls.Add(this.gridMaterialLock);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 45);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 616);
             this.panel2.TabIndex = 0;
             // 
-            // grid1
+            // gridMaterialLock
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridMaterialLock.AllowUserToAddRows = false;
+            this.gridMaterialLock.AllowUserToDeleteRows = false;
+            this.gridMaterialLock.AllowUserToResizeRows = false;
+            this.gridMaterialLock.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(3, 3);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1002, 547);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridMaterialLock.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridMaterialLock.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridMaterialLock.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridMaterialLock.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridMaterialLock.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridMaterialLock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridMaterialLock.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridMaterialLock.Location = new System.Drawing.Point(3, 3);
+            this.gridMaterialLock.Name = "gridMaterialLock";
+            this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridMaterialLock.RowTemplate.Height = 24;
+            this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 547);
+            this.gridMaterialLock.TabIndex = 0;
+            this.gridMaterialLock.TabStop = false;
             // 
             // panel3
             // 
             this.panel3.Controls.Add(this.btnExcel);
             this.panel3.Controls.Add(this.btnLock);
-            this.panel3.Controls.Add(this.button4);
+            this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.btnUnlock);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 601);
@@ -235,16 +235,16 @@
             this.btnLock.UseVisualStyleBackColor = true;
             this.btnLock.Click += new System.EventHandler(this.btnLock_Click);
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(922, 15);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 2;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(922, 15);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
             // btnUnlock
             // 
@@ -273,7 +273,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).EndInit();
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -286,19 +286,19 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Button btnQuery;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button4;
+        private Win.UI.Grid gridMaterialLock;
+        private Win.UI.Button btnClose;
         private Win.UI.Button btnUnlock;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label2;
-        private Win.UI.ComboBox cbxStatus;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label3;
-        private Win.UI.ComboBox cbxStockType;
+        private Win.UI.Label labelStatus;
+        private Win.UI.ComboBox comboStatus;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelSP;
+        private Win.UI.Label labelStockType;
+        private Win.UI.ComboBox comboStockType;
         private Win.UI.Button btnLock;
         private Win.UI.Button btnExcel;
-        private Class.txtSeq txtSeq1;
-        private Win.UI.Label label4;
+        private Class.txtSeq txtSeq;
+        private Win.UI.Label labelSEQ;
     }
 }

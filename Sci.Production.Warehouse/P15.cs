@@ -76,9 +76,9 @@ namespace Sci.Production.Warehouse
             Dictionary<string, string> di_type = new Dictionary<string, string>();
             di_type.Add("L", "Lacking");
             di_type.Add("R", "Replacement");
-            comboBox1.DataSource = new BindingSource(di_type, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboType.DataSource = new BindingSource(di_type, null);
+            comboType.ValueMember = "Key";
+            comboType.DisplayMember = "Value";
         }
 
         // 新增時預設資料
@@ -129,14 +129,14 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Requestid"]))
             {
                 MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
-                textBox2.Focus();
+                txtRequest.Focus();
                 return false;
             }
 
@@ -211,11 +211,11 @@ namespace Sci.Production.Warehouse
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]))))
             {
                 DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"])));
-                this.displayBox3.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                this.displayApvDate.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
             }
             else
             {
-                this.displayBox3.Text = "";
+                this.displayApvDate.Text = "";
             }
         }
 
@@ -618,7 +618,7 @@ Where a.id = '{0}'", masterID);
                 return;
             }
             //string aa = comboBox1.Text;
-            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboBox1.Text, "P15_Import");
+            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboType.Text, "P15_Import");
             frm.P16 = this;
             frm.ShowDialog(this);
             this.RenewData();
@@ -643,7 +643,7 @@ Where a.id = '{0}'", masterID);
         private void button8_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
+            int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -656,7 +656,7 @@ Where a.id = '{0}'", masterID);
             DataRow dr;
             if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack WITH (NOLOCK) 
 where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
-                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
+                , txtRequest.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
@@ -674,12 +674,12 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                 if (!MyUtility.Check.Empty(dr["issuelackid"]))
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", textBox2.Text, dr["issuelackid"]));
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", txtRequest.Text, dr["issuelackid"]));
                     return;
                 }
 
             }
-            CurrentMaintain["requestid"] = textBox2.Text;
+            CurrentMaintain["requestid"] = txtRequest.Text;
             CurrentMaintain["type"] = dr["type"].ToString();
         }
 

@@ -29,52 +29,53 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioPurchaseList = new Sci.Win.UI.RadioButton();
+            this.radioMaterialStatus = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioPurchaseList);
+            this.radioPanel1.Controls.Add(this.radioMaterialStatus);
             this.radioPanel1.Location = new System.Drawing.Point(35, 25);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(387, 204);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "Material Status";
             // 
-            // radioButton2
+            // radioPurchaseList
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(26, 114);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(112, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Purchase List";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "Purchase List";
+            this.radioPurchaseList.AutoSize = true;
+            this.radioPurchaseList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioPurchaseList.Location = new System.Drawing.Point(26, 114);
+            this.radioPurchaseList.Name = "radioPurchaseList";
+            this.radioPurchaseList.Size = new System.Drawing.Size(112, 21);
+            this.radioPurchaseList.TabIndex = 1;
+            this.radioPurchaseList.Text = "Purchase List";
+            this.radioPurchaseList.UseVisualStyleBackColor = true;
+            this.radioPurchaseList.Value = "Purchase List";
             // 
-            // radioButton1
+            // radioMaterialStatus
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(26, 32);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(120, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Material Status";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "Material Status";
+            this.radioMaterialStatus.AutoSize = true;
+            this.radioMaterialStatus.Checked = true;
+            this.radioMaterialStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioMaterialStatus.Location = new System.Drawing.Point(26, 32);
+            this.radioMaterialStatus.Name = "radioMaterialStatus";
+            this.radioMaterialStatus.Size = new System.Drawing.Size(120, 21);
+            this.radioMaterialStatus.TabIndex = 0;
+            this.radioMaterialStatus.TabStop = true;
+            this.radioMaterialStatus.Text = "Material Status";
+            this.radioMaterialStatus.UseVisualStyleBackColor = true;
+            this.radioMaterialStatus.Value = "Material Status";
             // 
             // P03_Print
             // 
             this.ClientSize = new System.Drawing.Size(627, 314);
             this.Controls.Add(this.radioPanel1);
             this.Name = "P03_Print";
+            this.Text = "() ";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -89,8 +90,8 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
+        private Win.UI.RadioButton radioPurchaseList;
+        private Win.UI.RadioButton radioMaterialStatus;
 
 
     }

@@ -47,9 +47,9 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridModifyRoll.IsEditingReadOnly = true;
+            this.gridModifyRoll.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridModifyRoll)
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(7), iseditable: false).Get(out cbb_fabrictype)  //0
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13))  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6))  //2
@@ -79,10 +79,10 @@ namespace Sci.Production.Warehouse
 
         private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            displayBox1.Text = source.Rows[e.RowIndex]["poid"].ToString();
-            displayBox2.Text = source.Rows[e.RowIndex]["seq"].ToString();
-            textBox1.Text = source.Rows[e.RowIndex]["roll"].ToString();
-            textBox2.Text = source.Rows[e.RowIndex]["dyelot"].ToString();
+            displaySPNo.Text = source.Rows[e.RowIndex]["poid"].ToString();
+            displaySeqNo.Text = source.Rows[e.RowIndex]["seq"].ToString();
+            txtRollNo.Text = source.Rows[e.RowIndex]["roll"].ToString();
+            txtDyelotNo.Text = source.Rows[e.RowIndex]["dyelot"].ToString();
             string selectCommand1;
             #region sql command
             selectCommand1 =
@@ -227,13 +227,13 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
             }
             else
             {
-                grid2.DataSource = dt;
-                grid2.AutoGenerateColumns = true;
-                grid2.AutoResizeColumns();
+                gridDyelot.DataSource = dt;
+                gridDyelot.AutoGenerateColumns = true;
+                gridDyelot.AutoResizeColumns();
             }
-            button3.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString()=="F";
-            textBox1.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
-            textBox2.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
+            btnCommit.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString()=="F";
+            txtRollNo.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
+            txtDyelotNo.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
             //MyUtility.Msg.WaitClear();
             this.HideWaitMessage();
         }
@@ -242,16 +242,16 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
         {
             string sqlcmd,sqlupd1, sqlupd2, newRoll, newDyelot;
             DualResult result1, result2;
-            newRoll = textBox1.Text.TrimEnd();
-            newDyelot = textBox2.Text.TrimEnd();
+            newRoll = txtRollNo.Text.TrimEnd();
+            newDyelot = txtDyelotNo.Text.TrimEnd();
 
-            if (MyUtility.Check.Empty(textBox1.Text) || MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtRollNo.Text) || MyUtility.Check.Empty(txtDyelotNo.Text))
             {
                 MyUtility.Msg.WarningBox("Roll# & Dyelot# can't be empty!!");
                 return;
             }
-            int temprowindex = grid1.GetSelectedRowIndex();
-            DataRow dr = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+            int temprowindex = gridModifyRoll.GetSelectedRowIndex();
+            DataRow dr = gridModifyRoll.GetDataRow(gridModifyRoll.GetSelectedRowIndex());
             sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
                 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
                 , docno, dr["poid"], dr["seq1"], dr["seq2"], newRoll, newDyelot);
@@ -328,9 +328,9 @@ Where a.id = '{0}' ", docno);
             else
             {
                 source = dt;
-                grid1.DataSource = dt;              
+                gridModifyRoll.DataSource = dt;              
             }
-            grid1.SelectRowTo(temprowindex);
+            gridModifyRoll.SelectRowTo(temprowindex);
         }
     }
 }

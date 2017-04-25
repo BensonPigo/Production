@@ -20,7 +20,7 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             dr = data;
-            comboBox1.SelectedIndex = 0;
+            comboSortBy.SelectedIndex = 0;
             this.Text += string.Format(" ({0}-{1}- {2})", dr["id"].ToString()
 , dr["seq1"].ToString()
 , dr["seq2"].ToString());
@@ -106,13 +106,13 @@ SELECT invtrans.ID,Type,case Type
                         remark += dr2["remark"].ToString().TrimEnd() + Environment.NewLine;
                     }
                 }
-                this.editBox1.Text = remark;
+                this.editRemark.Text = remark;
             }
             bindingSource1.DataSource = selectDataTable1;
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridTaipeiInventoryList.IsEditingReadOnly = true;
+            this.gridTaipeiInventoryList.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridTaipeiInventoryList)
                  .Text("id", header: "Transaction ID", width: Widths.AnsiChars(13))
                  .Text("factoryid", header: "Factory", width: Widths.AnsiChars(8))
                  .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
@@ -138,7 +138,7 @@ SELECT invtrans.ID,Type,case Type
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboBox1.SelectedIndex)
+            switch (comboSortBy.SelectedIndex)
             {
                 case 0:
                     if (MyUtility.Check.Empty(selectDataTable1)) break;

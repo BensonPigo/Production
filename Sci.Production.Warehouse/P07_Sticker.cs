@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
         {
             
             InitializeComponent();
-            this.grid1.DataSource = this.Data;
+            this.gridSticker.DataSource = this.Data;
             this.GridSetup();
             string RcvDate="" ;
             if (!MyUtility.Check.Empty(row["WhseArrival"])) RcvDate = ((DateTime)MyUtility.Convert.GetDate(row["WhseArrival"])).ToShortDateString();              
@@ -92,8 +92,8 @@ namespace Sci.Production.Warehouse
 
         void GridSetup()
         {
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridSticker.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridSticker)
                 .CheckBox("selected", header: "", width: Widths.AnsiChars(14), iseditable: true,trueValue: true,falseValue:false)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)

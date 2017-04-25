@@ -46,9 +46,9 @@ namespace Sci.Production.Warehouse
                 
                 );
             Decimal usedqty;
-            if (Convert.ToDecimal(dis_usedqty.Text)!=0) 
+            if (Convert.ToDecimal(displyQty.Text)!=0) 
             {
-                usedqty = Convert.ToDecimal(dis_usedqty.Text);
+                usedqty = Convert.ToDecimal(displyQty.Text);
             }
             else 
             {
@@ -157,13 +157,13 @@ namespace Sci.Production.Warehouse
 from dbo.po_supp_detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , CurrentDetailData["poid"], CurrentDetailData["seq1"], CurrentDetailData["seq2"]), out dr))
             {
-                this.dis_seq.Text = dr["seq"].ToString();
-                this.dis_sizeunit.Text = dr["sizeunit"].ToString();
-                this.dis_usedqty.Text = dr["usedqty"].ToString();
-                this.dis_sizespec.Text = dr["sizespec"].ToString();
-                this.dis_colorid.Text = dr["colorid"].ToString();
-                this.dis_special.Text = dr["special"].ToString();
-                this.eb_orderlist.Text = dr["orderlist"].ToString();
+                this.displySeqNo.Text = dr["seq"].ToString();
+                this.displyUnit.Text = dr["sizeunit"].ToString();
+                this.displyQty.Text = dr["usedqty"].ToString();
+                this.displySize.Text = dr["sizespec"].ToString();
+                this.displyColorid.Text = dr["colorid"].ToString();
+                this.displySpecial.Text = dr["special"].ToString();
+                this.editOrderList.Text = dr["orderlist"].ToString();
                 this.eb_desc.Text = dr["description"].ToString();
                 Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }

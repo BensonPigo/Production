@@ -98,9 +98,9 @@ group by PoId,Seq1,Seq2,Qty,stockunit
             bindingSource1.DataSource = selectDataTable1;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = bindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAccumulatedQty.IsEditingReadOnly = true;
+            this.gridAccumulatedQty.DataSource = bindingSource1;
+            Helper.Controls.Grid.Generator(this.gridAccumulatedQty)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))

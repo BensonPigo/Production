@@ -305,7 +305,7 @@ where LID.ID = @ID";
         private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("OrderID", txtSP.Text.TrimEnd());
+            int index = detailgridbs.Find("OrderID", txtLocateForSP.Text.TrimEnd());
             if (index == -1)
             { 
                 MyUtility.Msg.InfoBox("Data was not found!!"); 

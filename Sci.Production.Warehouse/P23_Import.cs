@@ -31,12 +31,12 @@ namespace Sci.Production.Warehouse
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
+            String sp = this.txtIssueSP.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtIssueSP.Focus();
                 return;
             }
 
@@ -326,7 +326,7 @@ WHERE   StockType='{0}'
 
         private void myFilter()
         {
-            if (cb_return.CheckState == CheckState.Checked)
+            if (checkReturn.CheckState == CheckState.Checked)
             {
                 TaipeiInputBS.Filter = "taipei_qty <= accu_qty";
                 FtyDetailBS.Filter = "";
@@ -347,7 +347,7 @@ WHERE   StockType='{0}'
             foreach (DataRow dr2 in drs)
             {
                 if (dr2["selected"].ToString() == "1")
-                    dr2["tolocation"] = this.textBox3.Text;
+                    dr2["tolocation"] = this.txtLocation.Text;
             }
         }
 
@@ -356,7 +356,7 @@ WHERE   StockType='{0}'
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox3.Text = item.GetSelectedString();
+            txtLocation.Text = item.GetSelectedString();
         }
 
         private void btn_Import_Click(object sender, EventArgs e)
@@ -369,7 +369,7 @@ WHERE   StockType='{0}'
             if (MyUtility.Check.Empty(dsTmp)) return;
             DataRow[] drs;
             DataTable dt = dsTmp.Tables["TaipeiInput"];
-            if (cb_return.CheckState == CheckState.Checked)
+            if (checkReturn.CheckState == CheckState.Checked)
                 drs = dt.Select("taipei_qty <= accu_qty");
             else
                 drs = dt.Select("taipei_qty > accu_qty");

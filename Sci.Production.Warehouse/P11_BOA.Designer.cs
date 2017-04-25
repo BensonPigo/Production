@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.panel2 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.gridBOA = new Sci.Win.UI.Grid();
             this.panel2.SuspendLayout();
@@ -38,24 +38,24 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 503);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 48);
             this.panel2.TabIndex = 0;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(916, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose.Location = new System.Drawing.Point(916, 11);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // splitter1
             // 
@@ -105,7 +105,7 @@
         #endregion
 
         private Win.UI.Panel panel2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private System.Windows.Forms.Splitter splitter1;
         private Win.UI.Grid gridBOA;
     }

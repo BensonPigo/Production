@@ -44,19 +44,19 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridbs;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAutoPickDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridAutoPickDetail.DataSource = gridbs;
+            Helper.Controls.Grid.Generator(this.gridAutoPickDetail)
                 .Text("sizecode", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("qty", header: "Qty", iseditable: true, decimal_places: 2, integer_places: 10)
                 ;
 
-            this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
+            this.gridAutoPickDetail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!this.grid1.ValidateControl()) { return; }
+            if (!this.gridAutoPickDetail.ValidateControl()) { return; }
             foreach (DataRow dr in dt_detail.Rows)
             {
                 dr["ori_qty"] = decimal.Parse(dr["qty"].ToString());

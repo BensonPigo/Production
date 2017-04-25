@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btn_Cancel = new Sci.Win.UI.Button();
-            this.btn_Import = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.btnFindNow = new Sci.Win.UI.Button();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.btn_updateLoc = new Sci.Win.UI.Button();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.cb_return = new Sci.Win.UI.CheckBox();
+            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.labelLocation = new Sci.Win.UI.Label();
+            this.checkReturn = new Sci.Win.UI.CheckBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.grid_TaipeiInput = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
@@ -54,70 +54,70 @@
             ((System.ComponentModel.ISupportInitialize)(this.FtyDetailBS)).BeginInit();
             this.SuspendLayout();
             // 
-            // btn_Cancel
+            // btnCancel
             // 
-            this.btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Cancel.Location = new System.Drawing.Point(912, 15);
-            this.btn_Cancel.Name = "btn_Cancel";
-            this.btn_Cancel.Size = new System.Drawing.Size(90, 30);
-            this.btn_Cancel.TabIndex = 3;
-            this.btn_Cancel.Text = "Cancel";
-            this.btn_Cancel.UseVisualStyleBackColor = true;
-            this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // btn_Import
+            // btnImport
             // 
-            this.btn_Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Import.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Import.Location = new System.Drawing.Point(816, 15);
-            this.btn_Import.Name = "btn_Import";
-            this.btn_Import.Size = new System.Drawing.Size(90, 30);
-            this.btn_Import.TabIndex = 2;
-            this.btn_Import.Text = "Import";
-            this.btn_Import.UseVisualStyleBackColor = true;
-            this.btn_Import.Click += new System.EventHandler(this.btn_Import_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 15);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btn_Import_Click);
             // 
-            // button1
+            // btnFindNow
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(235, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(235, 15);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 1;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(107, 19);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(107, 19);
+            this.txtSPNo.MaxLength = 13;
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(122, 23);
+            this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP# (Poid)";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(9, 19);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(95, 23);
+            this.labelSPNo.TabIndex = 0;
+            this.labelSPNo.Text = "SP# (Poid)";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btn_updateLoc);
-            this.groupBox2.Controls.Add(this.textBox3);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.cb_return);
-            this.groupBox2.Controls.Add(this.btn_Cancel);
-            this.groupBox2.Controls.Add(this.btn_Import);
+            this.groupBox2.Controls.Add(this.btnUpdateAllLocation);
+            this.groupBox2.Controls.Add(this.txtLocation);
+            this.groupBox2.Controls.Add(this.labelLocation);
+            this.groupBox2.Controls.Add(this.checkReturn);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
             this.groupBox2.Name = "groupBox2";
@@ -125,61 +125,61 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
-            // btn_updateLoc
+            // btnUpdateAllLocation
             // 
-            this.btn_updateLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_updateLoc.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_updateLoc.Location = new System.Drawing.Point(625, 15);
-            this.btn_updateLoc.Name = "btn_updateLoc";
-            this.btn_updateLoc.Size = new System.Drawing.Size(142, 30);
-            this.btn_updateLoc.TabIndex = 7;
-            this.btn_updateLoc.Text = "Update All Location";
-            this.btn_updateLoc.UseVisualStyleBackColor = true;
-            this.btn_updateLoc.Click += new System.EventHandler(this.btn_updateLoc_Click);
+            this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(625, 15);
+            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
+            this.btnUpdateAllLocation.Size = new System.Drawing.Size(142, 30);
+            this.btnUpdateAllLocation.TabIndex = 7;
+            this.btnUpdateAllLocation.Text = "Update All Location";
+            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btn_updateLoc_Click);
             // 
-            // textBox3
+            // txtLocation
             // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox3.IsSupportEditMode = false;
-            this.textBox3.Location = new System.Drawing.Point(397, 19);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(222, 23);
-            this.textBox3.TabIndex = 6;
-            this.textBox3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox3_MouseDown);
+            this.txtLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtLocation.IsSupportEditMode = false;
+            this.txtLocation.Location = new System.Drawing.Point(397, 19);
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.ReadOnly = true;
+            this.txtLocation.Size = new System.Drawing.Size(222, 23);
+            this.txtLocation.TabIndex = 6;
+            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox3_MouseDown);
             // 
-            // label2
+            // labelLocation
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(324, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 23);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Location";
+            this.labelLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(324, 19);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(69, 23);
+            this.labelLocation.TabIndex = 8;
+            this.labelLocation.Text = "Location";
             // 
-            // cb_return
+            // checkReturn
             // 
-            this.cb_return.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cb_return.AutoSize = true;
-            this.cb_return.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cb_return.IsSupportEditMode = false;
-            this.cb_return.Location = new System.Drawing.Point(9, 19);
-            this.cb_return.Name = "cb_return";
-            this.cb_return.Size = new System.Drawing.Size(189, 21);
-            this.cb_return.TabIndex = 5;
-            this.cb_return.Text = "Return Transfer Qty Back";
-            this.cb_return.UseVisualStyleBackColor = true;
-            this.cb_return.Click += new System.EventHandler(this.cb_return_Click);
+            this.checkReturn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkReturn.AutoSize = true;
+            this.checkReturn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkReturn.IsSupportEditMode = false;
+            this.checkReturn.Location = new System.Drawing.Point(9, 19);
+            this.checkReturn.Name = "checkReturn";
+            this.checkReturn.Size = new System.Drawing.Size(189, 21);
+            this.checkReturn.TabIndex = 5;
+            this.checkReturn.Text = "Return Transfer Qty Back";
+            this.checkReturn.UseVisualStyleBackColor = true;
+            this.checkReturn.Click += new System.EventHandler(this.cb_return_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.grid_TaipeiInput);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.btnFindNow);
+            this.groupBox1.Controls.Add(this.txtSPNo);
+            this.groupBox1.Controls.Add(this.labelSPNo);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -266,11 +266,11 @@
 
         #endregion
 
-        private Win.UI.Button btn_Cancel;
-        private Win.UI.Button btn_Import;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
+        private Win.UI.Button btnFindNow;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label labelSPNo;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
@@ -278,9 +278,9 @@
         private Win.UI.ListControlBindingSource TaipeiInputBS;
         private Win.UI.Grid grid_TaipeiInput;
         private Win.UI.ListControlBindingSource FtyDetailBS;
-        private Win.UI.CheckBox cb_return;
-        private Win.UI.Button btn_updateLoc;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.Label label2;
+        private Win.UI.CheckBox checkReturn;
+        private Win.UI.Button btnUpdateAllLocation;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Label labelLocation;
     }
 }

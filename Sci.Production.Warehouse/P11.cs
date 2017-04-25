@@ -212,7 +212,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
         {
             subform.master = CurrentMaintain;
             subform.parentData = this.CurrentDetailData;
-            subform.combo = checkBox1.Checked;
+            subform.combo = checkByCombo.Checked;
             base.OpenSubDetailPage();
 
         }
@@ -258,9 +258,9 @@ Where a.id = '{0}'", masterID);
             CurrentMaintain["issuedate"] = DateTime.Now;
             dtIssueBreakDown = null;
             gridIssueBreakDown.DataSource = null;
-            textBox1.IsSupportEditMode = true;
+            txtOrderID.IsSupportEditMode = true;
             txtRequest.IsSupportEditMode = true;
-            textBox1.ReadOnly = false;
+            txtOrderID.ReadOnly = false;
             txtRequest.ReadOnly = false;
         }
 
@@ -284,9 +284,9 @@ Where a.id = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
                 return false;
             }
-            textBox1.IsSupportEditMode = false;
+            txtOrderID.IsSupportEditMode = false;
             txtRequest.IsSupportEditMode = false;
-            textBox1.ReadOnly = true;
+            txtOrderID.ReadOnly = true;
             txtRequest.ReadOnly = true;
             return base.ClickEditBefore();
         }
@@ -299,16 +299,16 @@ Where a.id = '{0}'", masterID);
 
             #region 必輸檢查
 
-            if (MyUtility.Check.Empty(textBox1.Text.ToString()))
+            if (MyUtility.Check.Empty(txtOrderID.Text.ToString()))
             {
                 MyUtility.Msg.WarningBox("< Request# > or < Order ID >  can't be empty!", "Warning");
-                textBox1.Focus();
+                txtOrderID.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox1.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -344,11 +344,11 @@ Where a.id = '{0}'", masterID);
 
             if (dtSizeCode != null && dtSizeCode.Rows.Count != 0)
             {
-                if (checkBox1.Checked == false)
+                if (checkByCombo.Checked == false)
                 {
                     foreach (DataRow data in dtIssueBreakDown.ToList())
                     {
-                        if (data.ItemArray[0].ToString() != textBox1.Text)
+                        if (data.ItemArray[0].ToString() != txtOrderID.Text)
                             dtIssueBreakDown.Rows.Remove(data);                                          
                     }
                 }                
@@ -423,11 +423,11 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         private void btnAutoPick_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選Combo，處理傳入AutoPick資料篩選
-            if (!checkBox1.Checked && dtIssueBreakDown!=null)
+            if (!checkByCombo.Checked && dtIssueBreakDown!=null)
             {
                 foreach (DataRow tempRow in dtIssueBreakDown.Rows)
                 {
-                    if (tempRow["OrderID"].ToString() != textBox1.Text.ToString())
+                    if (tempRow["OrderID"].ToString() != txtOrderID.Text.ToString())
                     {
                         foreach (DataColumn tempColumn in dtIssueBreakDown.Columns)
                         {
@@ -438,7 +438,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 }
             }
 
-            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(), textBox1.Text.ToString(), dtIssueBreakDown, sbSizecode);
+            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(), txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode);
             DialogResult result = frm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
@@ -484,9 +484,9 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             if (txtRequest.Text == txtRequest.OldValue) return;
             //DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
             CurrentMaintain["cutplanid"] = txtRequest.Text;
-            textBox1.Text = "";
+            txtOrderID.Text = "";
             CurrentMaintain["orderid"] = "";
-            this.disPOID.Text = "";
+            this.displayPOID.Text = "";
             this.poid = MyUtility.GetValue.Lookup(string.Format("select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", CurrentMaintain["cutplanid"], Sci.Env.User.Keyword));
 
             if (MyUtility.Check.Empty(txtRequest.Text))
@@ -517,7 +517,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 return;
             }
             //getpoid();
-            this.disPOID.Text = this.poid;
+            this.displayPOID.Text = this.poid;
             CurrentMaintain["orderid"] = this.poid;
             Detail_Reload();
             Ismatrix_Reload = true;
@@ -531,8 +531,8 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             DataTable dt;
             if (!(CurrentMaintain == null))
             {
-                disCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
-                disLine.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
+                displayCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan WITH (NOLOCK) where id='{0}'", CurrentMaintain["cutplanid"]));
+                displayLineNo.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.SewLine+','  from (select distinct o.SewLine 
 from dbo.Issue_detail a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on a.Poid = o.POID where a.id='{0}' and o.sewline !='') t for xml path('')", CurrentMaintain["id"]));
 
                 DBProxy.Current.Select(null, string.Format(@";with cte as
@@ -541,7 +541,7 @@ where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
 ", CurrentMaintain["cutplanid"]), out dt);
-                ebCut.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString()));
+                editCutNo.Text = String.Join(" / ", dt.AsEnumerable().Select(row => row["FabricCombo"].ToString() + "-" + row["cutnos"].ToString()));
                 //ebArticle.Text = MyUtility.GetValue.Lookup(string.Format(@"select t.article+','  from (select distinct article 
                 //from dbo.cutplan_detail  where id='{0}') t for xml path('')", CurrentMaintain["cutplanid"]));
 
@@ -553,7 +553,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
                 #endregion Status Label
                 #region -- POID
                 this.getpoid();
-                this.disPOID.Text = this.poid;
+                this.displayPOID.Text = this.poid;
                 #endregion
 
                 #region -- matrix breakdown
@@ -576,7 +576,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             StringBuilder sbIssueBreakDown;
             DualResult result;
 
-            string OrderID = textBox1.Text;
+            string OrderID = txtOrderID.Text;
 
             sqlcmd = string.Format(@"select sizecode from dbo.order_sizecode WITH (NOLOCK) 
 where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by seq", OrderID);
@@ -1001,7 +1001,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void btnBOA_Click(object sender, EventArgs e)
         {
-            var frm = new Sci.Production.Warehouse.P11_BOA(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(),textBox1.Text.ToString());
+            var frm = new Sci.Production.Warehouse.P11_BOA(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(),txtOrderID.Text.ToString());
             frm.ShowDialog(this);
         }
 
@@ -1035,8 +1035,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string request = issue["cutplanid"].ToString();
             string issuedate = issue["issuedate"].ToString();
             string remark = issue["remark"].ToString();
-            string cutno = this.ebCut.Text;
-            string article = this.ebArticle.Text;
+            string cutno = this.editCutNo.Text;
+            string article = this.editArticle.Text;
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
 
@@ -1290,28 +1290,28 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
         private void textBox1_Validating(object sender, EventArgs e)
         {
-            if (textBox1.Text == textBox1.OldValue) return;
-            CurrentMaintain["orderid"] = textBox1.Text;
-            this.disPOID.Text = "";
+            if (txtOrderID.Text == txtOrderID.OldValue) return;
+            CurrentMaintain["orderid"] = txtOrderID.Text;
+            this.displayPOID.Text = "";
             this.poid = MyUtility.GetValue.Lookup(string.Format("select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{0}' and Factory.mdivisionid = '{1}'", CurrentMaintain["orderid"], Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtOrderID.Text))
             {
                 if (MyUtility.Check.Empty(this.poid))
                 {
                     MyUtility.Msg.WarningBox("Can't found data");
                     CurrentMaintain["cutplanid"] = "";
                     txtRequest.Text = "";
-                    textBox1.Text = "";
+                    txtOrderID.Text = "";
                     return;
                 }
-                this.disPOID.Text = this.poid;
+                this.displayPOID.Text = this.poid;
                 //CurrentMaintain["orderid"] = this.poid;    
             }
         }
 
         private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
-            if (textBox1.Text == textBox1.OldValue) return;
+            if (txtOrderID.Text == txtOrderID.OldValue) return;
            // DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
             CurrentMaintain["cutplanid"] = "";
             if (MyUtility.Check.Empty(this.poid))
@@ -1406,13 +1406,13 @@ where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetail
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (dtIssueBreakDown == null) return;
-            if (checkBox1.Checked)
+            if (checkByCombo.Checked)
             {
                 dtIssueBreakDown.DefaultView.RowFilter = string.Format("");
             }
             else
             {
-                dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", textBox1.Text);
+                dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", txtOrderID.Text);
             }
 
         }
