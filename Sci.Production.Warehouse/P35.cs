@@ -599,10 +599,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 ,a.StockType
 ,a.ukey
 ,a.ftyinventoryukey
-,stuff((select ',' + mtllocationid from 
-	(select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where ukey= a.ftyinventoryukey)t for xml path('')), 1, 1, '') location
+,dbo.Getlocation(fi.ukey) location
 from dbo.Adjust_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

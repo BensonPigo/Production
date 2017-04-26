@@ -60,13 +60,7 @@ select  selected = 0
         , fromStocktype = c.StockType
         , balance = c.inqty - c.outqty + c.adjustqty 
         , qty = 0.00 
-        , location = isnull(stuff((select ',' + cast(mtllocationid as varchar) 
-                                   from (select mtllocationid 
-                                         from ftyinventory_detail WITH (NOLOCK) 
-                                         where ukey = c.ukey)t 
-                                   for xml path(''))
-                                  , 1, 1, '')
-                            ,'')
+        , location = dbo.Getlocation(c.ukey)
         , a.FabricType
         , a.stockunit
         , a.InputQty

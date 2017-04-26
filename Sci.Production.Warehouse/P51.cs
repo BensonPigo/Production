@@ -298,11 +298,11 @@ namespace Sci.Production.Warehouse
                     if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                     string sqlcmd = string.Format(@"select a.ukey,a.roll,a.dyelot,inqty-a.outqty+a.adjustqty qty 
-                                 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
+                                 ,dbo.Getlocation(a.ukey) as location 
                                  ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description]
                                         from dbo.ftyinventory a WITH (NOLOCK) 
                                         where poid='{0}' and seq1='{1}' and seq2='{2}' 
-                                        and stocktype='{3}' and lock =0",CurrentDetailData["poid"]
+                                        and stocktype='{3}' and lock =0", CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
                                                                         ,CurrentDetailData["stocktype"]);
@@ -349,10 +349,10 @@ namespace Sci.Production.Warehouse
                         if (MyUtility.Check.Empty(CurrentDetailData["stocktype"])) CurrentDetailData["stocktype"] = CurrentMaintain["stocktype"].ToString();
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
-                                 ,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.Ukey) t for xml path('')), 1, 1, '') as location 
+                                 ,dbo.Getlocation(a.ukey) as location 
                                  ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description] 
                                         from dbo.ftyinventory a WITH (NOLOCK) where poid='{0}' and seq1='{1}' and seq2='{2}' 
-                                        and stocktype='{3}' and roll='{4}' and lock =0",CurrentDetailData["poid"]
+                                        and stocktype='{3}' and roll='{4}' and lock =0", CurrentDetailData["poid"]
                                                                         ,CurrentDetailData["seq1"]
                                                                         ,CurrentDetailData["seq2"]
                                                                         ,CurrentDetailData["stocktype"]
@@ -453,8 +453,7 @@ namespace Sci.Production.Warehouse
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+,dbo.Getlocation(fi.ukey) location
 ,a.QtyBefore
 ,a.QtyAfter
 ,a.QtyAfter - a.QtyBefore as variance
@@ -466,7 +465,10 @@ namespace Sci.Production.Warehouse
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
 ,a.ukey
 ,a.ftyinventoryukey
-from dbo.StockTaking_detail as a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.StockTaking_detail as a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

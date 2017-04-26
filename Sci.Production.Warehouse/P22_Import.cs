@@ -87,7 +87,7 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1
 ,isnull((select inqty from dbo.FtyInventory t WITH (NOLOCK) 
 	where t.POID = fi.POID and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.StockType = 'I' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as accu_qty
-,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where FtyInventory_Detail.Ukey = fi.Ukey)t1 for xml path('')), 1, 1, '') as [Location]
+,dbo.Getlocation(fi.ukey) as [Location]
 ,rtrim(fi.poid) ToPOID,rtrim(fi.seq1) ToSeq1, fi.seq2 ToSeq2 , cte.ToFactoryID
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t1 for xml path('')), 1, 1, '') as [ToLocation]

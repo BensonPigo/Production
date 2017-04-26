@@ -734,22 +734,25 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            result = DBProxy.Current.Select("",
-            @"select  a.POID,a.Seq1+'-'+a.seq2 as SEQ,a.Roll,a.Dyelot 
-	        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-			  AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-			  AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-			  ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
-            ,b.StockUnit
-	        ,a.Qty
-            ,dbo.Getlocation(a.FtyInventoryUkey)[Location] 
-            ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.seq1,a.seq2 )
-
-            from dbo.IssueLack_detail a WITH (NOLOCK) 
-            left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-             on 
-             b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-                where a.id= @ID", pars, out dtDetail);
+            result = DBProxy.Current.Select("",@"
+select  a.POID
+        ,a.Seq1+'-'+a.seq2 as SEQ
+        ,a.Roll
+        ,a.Dyelot 
+        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
+	        AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+	        AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+	    ,''
+        ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
+        ,b.StockUnit
+        ,a.Qty
+        ,dbo.Getlocation(fi.ukey)[Location] 
+        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.seq1,a.seq2 )
+from dbo.IssueLack_detail a WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
+where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
 
             if (dtDetail == null || dtDetail.Rows.Count == 0)

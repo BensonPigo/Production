@@ -71,7 +71,7 @@ select 0 as selected ,'' id,a.id as PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1
 ,0.00 as Qty
 ,'B' StockType
 ,c.ukey as ftyinventoryukey
-,stuff((select ',' + cast(mtllocationid as varchar) from (select mtllocationid from ftyinventory_detail WITH (NOLOCK) where ukey = c.ukey)t for xml path('')), 1, 1, '') as location
+,dbo.Getlocation(c.ukey) as location
 ,c.inqty-c.outqty + c.adjustqty as balanceqty
 ,c.inqty,c.outqty, c.adjustqty 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 

@@ -157,7 +157,7 @@ select  FromSP = a.FromPOID + '(' + a.FromSeq1 + '-' + a.Fromseq2 + ')'
                         when 'B' then 'Bulk'
                         when 'I' then 'Inventory'
                         else a.FromStockType end 
-        ,[Location] = dbo.Getlocation(a.FromFtyInventoryUkey)
+        ,[Location] = dbo.Getlocation(fi.ukey)
         ,unit = b.StockUnit
         ,a.FromRoll
         ,a.FromDyelot
@@ -165,6 +165,8 @@ select  FromSP = a.FromPOID + '(' + a.FromSeq1 + '-' + a.Fromseq2 + ')'
         ,[Total] = sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
 from dbo.Borrowback_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
+    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
 left join dbo.SubTransfer_Detail c on c.id=a.id
 where a.id= @ID", pars, out dd);
             if (!result1) { this.ShowErr(result1); }
@@ -980,11 +982,13 @@ select  a.id
         ,location = stuff((select ',' + mtllocationid 
                            from (select mtllocationid 
                                  from dbo.ftyinventory_detail fd WITH (NOLOCK) 
-                                 where ukey= a.fromftyinventoryukey)t 
+                                 where ukey= FI.ukey)t 
                            for xml path(''))
                           , 1, 1, '') 
 from dbo.BorrowBack_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join FtyInventory FI on a.FromPoid = Fi.Poid and a.FromSeq1 = Fi.Seq1 and a.FromSeq2 = Fi.Seq2 
+    and a.FromRoll = Fi.Roll and a.FromDyelot = Fi.Dyelot and a.FromStockType = StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1136,7 +1140,7 @@ Update RD
 set RD.Roll = '{0}'
     , RD.Dyelot = '{1}'
 From Receiving_Detail RD
-where RD.Ukey = '{2}'", dt.Rows[0]["toRoll"], dt.Rows[0]["toDyelot"], row["Ukey"]));
+where RD.Ukey = '{2}'", dt.Rows[0]["Roll"], dt.Rows[0]["Dyelot"], row["Ukey"]));
 
                                     if (!result)
                                     {

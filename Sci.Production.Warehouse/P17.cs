@@ -135,23 +135,24 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"select a.poid [SP]
-                    ,a.Seq1+'-'+a.Seq2 [SEQ]
-                    ,a.Roll [ROLL]
-                    ,a.Dyelot [DYELOT]
-                    ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-			           AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-			           AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-			           ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESCRIPTION]
-                    ,b.StockUnit [UNIT]
-                    ,a.Qty [RETURN_QTY]
-                    ,dbo.Getlocation(a.ftyinventoryukey) [LOCATION]
-                    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
-            from dbo.IssueReturn_Detail a WITH (NOLOCK) 
-            inner join PO_Supp_Detail b WITH (NOLOCK) 
-                on a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
-            where a.id= @ID", pars, out dd);
+            result = DBProxy.Current.Select("",@"
+select a.poid [SP]
+        ,a.Seq1+'-'+a.Seq2 [SEQ]
+        ,a.Roll [ROLL]
+        ,a.Dyelot [DYELOT]
+        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
+			AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+			AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+			,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESCRIPTION]
+        ,b.StockUnit [UNIT]
+        ,a.Qty [RETURN_QTY]
+        ,dbo.Getlocation(fi.ukey) [LOCATION]
+        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.seq2)
+from dbo.IssueReturn_Detail a WITH (NOLOCK) 
+inner join PO_Supp_Detail b WITH (NOLOCK) on a.poid=b.id and a.Seq1 = b.SEQ1 and a.Seq2 = b.SEQ2
+left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
+where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
             if (dd == null || dd.Rows.Count == 0)
@@ -463,10 +464,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     string sqlcmd = string.Format(@"SELECT  dyelot
-                                                            ,stuff((select ',' + mtllocationid from (
-                                                                                        select MtlLocationID 
-                                                                                        from dbo.FtyInventory_Detail 
-                                                                                        WITH (NOLOCK) where ukey = a.Ukey)t for xml path('')), 1, 1, '') as [location]
+                                                            ,dbo.Getlocation(a.ukey) as [location]
                                                             ,ukey
                                                         FROM dbo.ftyinventory a WITH (NOLOCK) 
                                                         WHERE   stocktype = 'B'
@@ -837,10 +835,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Qty
 ,a.StockType
 ,a.ftyinventoryukey
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+,dbo.Getlocation(fi.ukey) location
 ,a.ukey
-from dbo.IssueReturn_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.IssueReturn_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory FI on a.Poid = FI.Poid and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 
+    and a.Roll = FI.Roll and a.StockType = FI.StockType
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -82,7 +82,7 @@ namespace Sci.Production.Warehouse
 ,b.FabricType
 ,b.StockUnit
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) [description]
-,stuff((select ',' + t.mtllocationid from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where Ukey = a.Ukey) t for xml path('')), 1, 1, '') [location]
+,dbo.Getlocation(a.ukey) [location]
 ,a.inqty-a.OutQty+a.AdjustQty qtybefore
 ,0.00 as QtyAfter
 from dbo.FtyInventory a WITH (NOLOCK) 

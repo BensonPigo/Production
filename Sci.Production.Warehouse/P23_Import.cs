@@ -91,8 +91,7 @@ select 0 AS selected,'' as id
 ,isnull((select inqty from dbo.FtyInventory t WITH (NOLOCK) 
 	where t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
 	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
-,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where FtyInventory_Detail.Ukey = fi.Ukey)t1 
-	for xml path('')), 1, 1, '') as [Location]
+,dbo.Getlocation(fi.ukey) as [Location]
 ,#tmp.ToFactoryID
 ,rtrim(#tmp.poid) ToPOID
 ,rtrim(#tmp.seq1) ToSeq1
@@ -342,13 +341,16 @@ WHERE   StockType='{0}'
         {
             FtyDetailBS.EndEdit();
             DataRow dr = grid_TaipeiInput.GetDataRow(grid_TaipeiInput.GetSelectedRowIndex());
-            var drs = dr.GetChildRows(relation);
-
-            foreach (DataRow dr2 in drs)
+            if (dr != null)
             {
-                if (dr2["selected"].ToString() == "1")
-                    dr2["tolocation"] = this.txtLocation.Text;
-            }
+                var drs = dr.GetChildRows(relation);
+
+                foreach (DataRow dr2 in drs)
+                {
+                    if (dr2["selected"].ToString() == "1")
+                        dr2["tolocation"] = this.txtLocation.Text;
+                }
+            }   
         }
 
         private void textBox3_MouseDown(object sender, MouseEventArgs e)

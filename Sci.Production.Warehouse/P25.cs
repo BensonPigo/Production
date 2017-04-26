@@ -787,11 +787,9 @@ select  frompoid
         ,SEQ = a.fromseq1+'-'+a.fromseq2
         ,a.FromRoll
         ,a.FromDyelot
-        ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
-                      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-                      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-        ,''
-        ,[Description] = dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))
+        ,[Description] = IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2)) AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+                              ,''
+                              ,dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))
         ,b.StockUnit
         , case b.fabrictype
             WHEN 'F'THEN 'Fabric'
@@ -800,10 +798,11 @@ select  frompoid
             ELSE b.FabricType
           end MtlType
         ,a.Qty
-        ,[Location] = dbo.Getlocation(A.FromFtyInventoryUkey)
+        ,[Location] = dbo.Getlocation(fi.ukey)
 from dbo.Subtransfer_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-  on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
+    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
 where a.id= @ID", pars, out dtDetail);
             if (!result) { this.ShowErr(result); }
 

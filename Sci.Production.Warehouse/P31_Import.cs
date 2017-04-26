@@ -64,7 +64,7 @@ select  selected = 0
         ,a.stockunit
         ,fromstocktype = c.StockType 
         ,balance = c.InQty - c.OutQty + c.AdjustQty 
-        ,location = stuff((select ',' + mtllocationid from (select mtllocationid from ftyinventory_detail where ukey = c.ukey)t for xml path('')), 1, 1, '') 
+        ,location = dbo.Getlocation(c.ukey)
         ,toseq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) 
         ,toroll = iif(toSP.Roll is not null, toSP.Roll, c.Roll)
         ,todyelot = iif(toSP.Roll is not null, toSP.Dyelot, c.Dyelot)

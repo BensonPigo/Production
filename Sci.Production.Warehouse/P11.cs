@@ -236,13 +236,16 @@ a.Id
 ,p.SizeSpec
 ,p.UsedQty
 ,p.SizeUnit
-,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey=a.FtyInventoryUkey)t for xml path('')), 1, 1, ''),'') [location]
+,dbo.Getlocation(fi.ukey) [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select sum(Issue_Detail.qty) from dbo.issue WITH (NOLOCK) inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
 ,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size WITH (NOLOCK) where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
 ,a.Ukey
 ,isnull((select inqty-outqty+adjustqty from dbo.ftyinventory WITH (NOLOCK) where ukey = a.ftyinventoryukey),0.00) as balanceqty
-from dbo.Issue_Detail a WITH (NOLOCK) left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
+from dbo.Issue_Detail a WITH (NOLOCK) 
+left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
+left join dbo.FtyInventory FI on a.Poid = Fi.Poid and a.Seq1 = fi.seq1 and a.seq2 = fi.seq2 
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1092,25 +1095,33 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             DataTable dtseq;
 
-            string sqlcmd = string.Format(@"select Issue_detail.Seq1 + '-' + Issue_detail.Seq2 as SEQ
-                    ,dbo.getMtlDesc(poid,Issue_detail.Seq1,Issue_detail.Seq2,2,0) as Description
-                   ,Po_supp_detail.sizeunit as Unit,Po_supp_detail.colorid as Color,
-                   Issue_detail.Qty as TransferQTY,dbo.Getlocation(ftyinventoryUkey) as Location,
-                   s.*
-                    from(
-                    select * 
-                    from (
-	                    select sizecode,Issue_DetailUkey, qty
-	                    from dbo.Issue_Size WITH (NOLOCK) 
-	                    where id = @ID
-	                    ) as s
-	                    PIVOT
-	                    (
-	                     Sum(qty)
-	                     FOR sizecode  IN ({0})
-                    ) AS PivotTable) as s
-                   left join dbo.Issue_Detail WITH (NOLOCK) on ukey = s.Issue_DetailUkey
-                    left join dbo.po_supp_detail WITH (NOLOCK) on po_supp_detail.id = Issue_detail.POID and po_supp_detail.seq1 = Issue_detail.seq1 and po_supp_detail.seq2=Issue_detail.seq2
+            string sqlcmd = string.Format(@"
+select  a.Seq1 + '-' + a.Seq2 as SEQ
+        ,dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0) as Description
+        ,Po_supp_detail.sizeunit as Unit
+        ,Po_supp_detail.colorid as Color
+        ,a.Qty as TransferQTY
+        ,dbo.Getlocation(fi.ukey) as Location
+        ,s.*
+from(
+    select * 
+    from (
+        select  sizecode
+                ,Issue_DetailUkey
+                , qty
+        from dbo.Issue_Size WITH (NOLOCK) 
+        where id = @ID
+    ) as s
+    PIVOT
+    (
+        Sum(qty)
+        FOR sizecode  IN ({0})
+    ) AS PivotTable
+) as s
+left join dbo.Issue_detail a WITH (NOLOCK) on ukey = s.Issue_DetailUkey
+left join dbo.po_supp_detail WITH (NOLOCK) on po_supp_detail.id = a.POID and po_supp_detail.seq1 = a.seq1 and po_supp_detail.seq2=a.seq2
+left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2 = fi.seq2 
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
 ", sizecodes);
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtseq);
 
@@ -1351,7 +1362,7 @@ a.POID
 ,b.SizeSpec
 ,b.UsedQty
 ,b.SizeUnit
-,isnull(stuff((select ',' + t.MtlLocationID from (select mtllocationid from [Production].[dbo].FtyInventory_Detail WITH (NOLOCK) where ukey=a.Ukey)t for xml path('')), 1, 1, ''), '') [location]
+,dbo.Getlocation(a.ukey) [location]
 ,[Production].[dbo].getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select a.InQty-a.OutQty+a.AdjustQty ),0.00) as balanceqty
 from [Production].[dbo].ftyinventory a WITH (NOLOCK) 

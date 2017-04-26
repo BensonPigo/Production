@@ -726,26 +726,25 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"select a.POID
-                    ,a.Seq1+'-'+a.seq2 as SEQ
-	                ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-			           AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-			           AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-			           ,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESC]
-		            ,unit = b.StockUnit
-		            ,ReqQty=c.Requestqty 
-	                ,a.Qty
-                    ,[Location]=dbo.Getlocation(a.FtyInventoryUkey)
-                    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
-             from dbo.IssueLack_Detail a WITH (NOLOCK) 
-		     left join dbo.IssueLack d WITH (NOLOCK) 
-                 on d.id=a.ID
-             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-                 on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
-		     left join dbo.Lack_Detail c WITH (NOLOCK) 
-		         on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
-             where a.id= @ID", pars, out dd);
+            result = DBProxy.Current.Select("",@"
+select a.POID
+    ,a.Seq1+'-'+a.seq2 as SEQ
+	,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
+		AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+		AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+		,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESC]
+	,unit = b.StockUnit
+	,ReqQty=c.Requestqty 
+	,a.Qty
+    ,[Location]=dbo.Getlocation(fi.ukey)
+    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
+from dbo.IssueLack_Detail a WITH (NOLOCK) 
+left join dbo.IssueLack d WITH (NOLOCK) on d.id=a.ID
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
+left join dbo.Lack_Detail c WITH (NOLOCK) on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
+left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
+where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
             if (dd == null || dd.Rows.Count == 0)

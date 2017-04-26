@@ -55,21 +55,16 @@ namespace Sci.Production.Warehouse
                                 ,[stocktype] = case when stocktype = 'B' then 'Bulk'
                                                     when stocktype = 'I' then 'Invertory'
 			                                        when stocktype = 'O' then 'Other' End
-                                            ,a.InQty,a.OutQty,a.AdjustQty
-                                            ,a.InQty - a.OutQty + a.AdjustQty as balance
-                                            ,stuff((Select ',' + cast(tmp.MtlLocationID as nvarchar) 
-                                                                    from (select b.MtlLocationID 
-                                                                                from FtyInventory_Detail b WITH (NOLOCK) 
-                                                                                where a.Ukey = b.Ukey 
-                                                                                    group by b.MtlLocationID) tmp 
-                                                                    for XML PATH('')), 1, 1, '') as  MtlLocationID 
+                                                ,a.InQty,a.OutQty,a.AdjustQty
+                                                ,a.InQty - a.OutQty + a.AdjustQty as balance
+                                                ,dbo.Getlocation(a.ukey)  MtlLocationID 
                                             from FtyInventory a WITH (NOLOCK) 
                                             where a.Poid = '{0}'
-                                            and a.Seq1 = '{1}'
-                                            and a.Seq2 = '{2}' 
-                                            --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
-                                            --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
-                                            and StockType <> 'O'  --C倉不用算
+                                                and a.Seq1 = '{1}'
+                                                and a.Seq2 = '{2}' 
+                                                --and MDivisionPoDetailUkey is not null  --避免下面Relations發生問題
+                                                --and MDivisionID='{3}'  --新增MDivisionID條件，避免下面DataRelation出錯
+                                                and StockType <> 'O'  --C倉不用算
                                             order by a.dyelot,a.roll,a.stocktype"
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()

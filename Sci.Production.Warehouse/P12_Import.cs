@@ -59,12 +59,7 @@ select  selected = 0
         , Qty = 0.00 
         , StockType = 'B' 
         , ftyinventoryukey = c.ukey 
-        , location = stuff((select ',' + mtllocationid 
-                            from (select mtllocationid 
-                                  from dbo.ftyinventory_detail WITH (NOLOCK) 
-                                  where ukey = c.ukey) t 
-                            for xml path(''))
-                           , 1, 1, '') 
+        , location = dbo.Getlocation(c.ukey) 
         , balance = c.inqty-c.outqty + c.adjustqty 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'

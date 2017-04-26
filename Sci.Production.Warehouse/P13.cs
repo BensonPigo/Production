@@ -136,25 +136,26 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
             string sqlcmd = @"
-            select t.POID,
-	               t.seq1+ '-' +t.seq2 as SEQ,
-                   p.Scirefno,
-	               p.seq1,
-	               p.seq2,
-	               IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
-				     AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-				     AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-				     ,'',dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc],
-	               t.Roll,
-	               t.Dyelot,
-	               t.Qty,
-	               p.StockUnit,
-                   dbo.Getlocation(t.FtyInventoryUkey) [location],
-	               [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
-            from dbo.Issue_Detail t WITH (NOLOCK) 
-                   left join dbo.PO_Supp_Detail p WITH (NOLOCK) 
-                   on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-            where t.id= @ID";
+select t.POID,
+	    t.seq1+ '-' +t.seq2 as SEQ,
+        p.Scirefno,
+	    p.seq1,
+	    p.seq2,
+	    IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+			AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+			AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+			,'',dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0))[desc],
+	    t.Roll,
+	    t.Dyelot,
+	    t.Qty,
+	    p.StockUnit,
+        dbo.Getlocation(fi.ukey) [location],
+	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
+from dbo.Issue_Detail t WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
+left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 
+    and t.roll = fi.roll and t.stocktype = fi.stocktype
+where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
 
@@ -648,11 +649,12 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.Qty
 ,a.StockType
 ,Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
-,stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+,dbo.Getlocation(c.ukey) location
 ,a.ukey
-from dbo.issue_detail as a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B' and c.roll=a.roll and c.Dyelot=a.Dyelot
+from dbo.issue_detail as a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+    and c.stocktype = 'B' and c.roll=a.roll
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -70,8 +70,7 @@ select 	selected = 0
 		, todyelot = c.Dyelot 
         , toFactoryID = orders.FactoryID
 		, toStocktype = 'O' 
-		, Fromlocation = stuff((select ',' + t.MtlLocationID from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = c.Ukey) t 
-							for xml path('')), 1, 1, '') 
+		, Fromlocation = dbo.Getlocation(c.ukey)
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id

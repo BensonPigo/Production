@@ -217,18 +217,13 @@ select  distinct selected = 0
         , toDyelot = iif (toSP.Roll is not null, toSP.Dyelot, c.dyelot)
         , ToFactoryID = #tmp.FromFactoryID
         , toseq = concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) 
-        , location = stuff((select ',' + mtllocationid 
-                            from (select mtllocationid 
-                                  from ftyinventory_detail WITH (NOLOCK) 
-                                  where ukey = c.ukey)t 
-                            for xml path(''))
-                          , 1, 1, '') 
+        , location = dbo.Getlocation(c.ukey)
         , [description] = dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) 
         , p.StockUnit
         , p.FabricType
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
 inner join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
-inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2 
+inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2
 inner join Orders orders on c.POID = orders.ID
 inner join Factory factory on orders.FtyGroup = factory.ID
 left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2

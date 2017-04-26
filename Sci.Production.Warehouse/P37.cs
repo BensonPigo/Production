@@ -160,27 +160,28 @@ namespace Sci.Production.Warehouse
 
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            string sqlcmd = @"select  
-			ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
-			,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
-			,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
-			          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-			          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-			          ,'',dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,0))[desc]
-            ,p.StockUnit,R.Roll,R.dyelot,R.qty
-		    ,case R.StockType
-			WHEN 'I'THEN 'Inventory'
+            string sqlcmd = @"
+select  ROW_NUMBER() OVER(ORDER BY R.POID,R.SEQ1,R.SEQ2) AS NoID
+		,R.poid AS SP,R.seq1  + '-' +R.seq2 as SEQ
+		,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
+		          AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
+		          AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+	          ,''
+              ,dbo.getMtlDesc(R.POID,R.Seq1,R.Seq2,2,0))[desc]
+        ,p.StockUnit,R.Roll,R.dyelot,R.qty
+	    ,case R.StockType
+    		WHEN 'I'THEN 'Inventory'
 			WHEN 'B'THEN 'Bulk'
 			ELSE R.StockType
-			end StockType
-			,dbo.Getlocation(R.FtyInventoryUkey) [Location]
-			,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-            from dbo.ReturnReceipt_Detail R WITH (NOLOCK) 
-            LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) 
-            on 
-           p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
-            where R.id= @ID";
-            result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
+		end StockType
+		,dbo.Getlocation(fi.ukey) [Location]
+		,[Total]=sum(R.Qty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
+from dbo.ReturnReceipt_Detail R WITH (NOLOCK) 
+LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
+left join dbo.FtyInventory FI on r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2 
+    and r.roll = fi.roll and r.stocktype = fi.stocktype
+where R.id= @ID";
+        result1 = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result1) { this.ShowErr(sqlcmd, result1); }
 
             if (dtDetail == null || dtDetail.Rows.Count == 0)
@@ -813,11 +814,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 ,a.Qty
 ,a.StockType
-,stuff((select t.MtlLocationID+',' from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.Ukey = a.FtyInventoryUkey) t 
-	for xml path('')), 1, 1, '') location
+,dbo.Getlocation(fi.ukey) location
 ,a.ukey
 ,a.FtyInventoryUkey
-from dbo.ReturnReceipt_Detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+from dbo.ReturnReceipt_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

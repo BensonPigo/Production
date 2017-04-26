@@ -745,9 +745,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 ,a.ToLocation
 ,a.fromftyinventoryukey
 ,a.ukey
-,stuff((select ',' + mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) 
-where ukey= a.fromftyinventoryukey)t for xml path('')), 1, 1, '') location
-from dbo.SubTransfer_detail a WITH (NOLOCK) left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+,dbo.Getlocation(fi.ukey) location
+from dbo.SubTransfer_detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
+    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -834,24 +836,25 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",
-            @"select a.FromPOID
-                     ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-                    ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
-				      AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-				      AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-				      ,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
-			         ,unit = b.StockUnit
-			         ,a.FromRoll
-                     ,a.FromDyelot
-		             ,a.Qty
-		             ,[From_Location]=dbo.Getlocation(a.FromFtyInventoryUkey)
-			         ,a.ToLocation 
-                     ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
-             from dbo.Subtransfer_detail a  WITH (NOLOCK) 
-             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-                on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-             where a.id= @ID", pars, out dd);
+            result = DBProxy.Current.Select("",@"
+select a.FromPOID
+        ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
+        ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
+		    AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+		    AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+		,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
+		,unit = b.StockUnit
+		,a.FromRoll
+        ,a.FromDyelot
+		,a.Qty
+		,[From_Location]=dbo.Getlocation(fi.ukey)
+		,a.ToLocation 
+        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
+from dbo.Subtransfer_detail a  WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
+left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
+    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
+where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
             if (dd == null || dd.Rows.Count == 0)

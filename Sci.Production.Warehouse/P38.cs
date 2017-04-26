@@ -109,7 +109,7 @@ select 0 as [selected], fi.POID,fi.seq1,fi.seq2,fi.Roll,fi.Dyelot,iif(fi.Lock=0,
 ,fi.LockDate
 ,(select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) LockName
 ,fi.ukey
-,stuff((select ',' + mtllocationid from (select MtlLocationID from dbo.FtyInventory_Detail WITH (NOLOCK) where ukey = fi.Ukey)t for xml path('')), 1, 1, '') as [location]
+,dbo.Getlocation(fi.ukey) as [location]
 ,dbo.getMtlDesc(fi.poid,fi.seq1,fi.seq2,2,0) as [Description]
 ,pd.ColorID
 ,o.styleid

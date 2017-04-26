@@ -80,7 +80,7 @@ namespace Sci.Production.Warehouse
 ,0.00 as Qty
 ,c.StockType
 ,c.ukey as ftyinventoryukey
-,stuff((select ',' + t.mtllocationid from (select mtllocationid from dbo.ftyinventory_detail fd WITH (NOLOCK) where fd.ukey = c.ukey) t for xml path('') ), 1, 1, '') location
+,dbo.Getlocation(c.ukey) location
 ,c.inqty-c.outqty + c.adjustqty as stockqty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 

@@ -53,43 +53,45 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",
-             @"select a.POID
-                     ,a.Seq1+'-'+a.seq2 as SEQ
-			         ,a.Roll,a.Dyelot	        
-			         ,Ref = b.Refno 
-			         ,Material_Type =b.fabrictype 
-			         ,Color =b.colorid 
-			         ,Unit=b.stockunit 		     
-		             ,[Book_Location]=dbo.Getlocation(a.FtyInventoryUkey)
-             from dbo.Stocktaking_detail a WITH (NOLOCK) 
-             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-                on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
-             where a.id= @ID", pars, out dd);
+            result = DBProxy.Current.Select("",@"
+select a.POID
+        ,a.Seq1+'-'+a.seq2 as SEQ
+		,a.Roll,a.Dyelot	        
+		,Ref = b.Refno 
+		,Material_Type =b.fabrictype 
+		,Color =b.colorid 
+		,Unit=b.stockunit 		     
+		,[Book_Location]=dbo.Getlocation(fi.ukey)
+from dbo.Stocktaking_detail a WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
+where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
 
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable da;
-            result = DBProxy.Current.Select("",
-             @"select a.POID
-                     ,a.Seq1+'-'+a.seq2 as SEQ
-			         ,a.Roll,a.Dyelot	        
-			         ,Ref = b.Refno 
-			         ,Material_Type =b.fabrictype 
-			         ,Color =b.colorid 
-			         ,Unit=b.stockunit 
-			         ,Book_Qty=a.qtybefore	
-		             ,[Book_Location]=dbo.Getlocation(a.FtyInventoryUkey) 
-			         ,Actual_Qty=a.Qtyafter
-			         ,Variance=a.Qtyafter-a.qtybefore
-			         ,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
-			         ,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
-             from dbo.Stocktaking_detail a WITH (NOLOCK) 
-             left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
-                on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
-             where a.id= @ID", pars, out da);
+            result = DBProxy.Current.Select("",@"
+select a.POID
+        ,a.Seq1+'-'+a.seq2 as SEQ
+		,a.Roll,a.Dyelot	        
+		,Ref = b.Refno 
+		,Material_Type =b.fabrictype 
+		,Color =b.colorid 
+		,Unit=b.stockunit 
+		,Book_Qty=a.qtybefore	
+		,[Book_Location]=dbo.Getlocation(fi.ukey) 
+		,Actual_Qty=a.Qtyafter
+		,Variance=a.Qtyafter-a.qtybefore
+		,[Total1]=sum(a.qtybefore) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )
+		,[Total2]=sum(a.Qtyafter) OVER (PARTITION BY a.POID ,a.seq1,a.Seq2 )
+from dbo.Stocktaking_detail a WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
+left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype
+where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }
 
             
