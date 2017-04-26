@@ -61,15 +61,17 @@ namespace Sci.Production.PPIC
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select s.BrandID,s.ID,s.SeasonID,sp.MDivisionID,sp.FactoryID,sp.DOC+'-'+isnull(r.Name,'') as Doc,
-sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,
-sp.BuyerDelivery,IIF(sp.IsPF = 1,'Y','N') as PullForward,
-sp.SendName+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SendName),'') as Handle,
-sp.MRHandle+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle),'') as MRHandle,
-sp.SMR+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SMR),'') as SMR,
-sp.PoHandle+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle),'') as POHandle,
-sp.POSMR+'-'+isnull((select Name from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR),'') as POSMR,
-sp.FtyHandle+'-'+isnull((select Name from Pass1 WITH (NOLOCK) where ID = sp.FtyHandle),'') as FtyHandle
+            sqlCmd.Append(string.Format(@"
+select s.BrandID,s.ID,s.SeasonID,sp.MDivisionID,sp.FactoryID
+	,Doc = CONCAT(sp.DOC,'-',r.Name)
+	,sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,sp.BuyerDelivery
+	,PullForward = IIF(sp.IsPF = 1,'Y','N')
+	,Handle		 = CONCAT(sp.SendName,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SendName))
+	,MRHandle	 = CONCAT(sp.MRHandle,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle))
+	,SMR		 = CONCAT(sp.SMR,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SMR))
+	,POHandle	 = CONCAT(sp.PoHandle,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle))
+	,POSMR		 = CONCAT(sp.POSMR,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR))
+	,FtyHandle	 = CONCAT(sp.FtyHandle,'-',(select Name from Pass1 WITH (NOLOCK) where ID = sp.FtyHandle))
 from Style_ProductionKits sp WITH (NOLOCK) 
 inner join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 left join Reason r WITH (NOLOCK) on r.ReasonTypeID = 'ProductionKits' and r.ID = sp.DOC
