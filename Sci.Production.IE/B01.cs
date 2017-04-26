@@ -19,7 +19,7 @@ namespace Sci.Production.IE
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "A,All,N,New,R,Repeat");
+            MyUtility.Tool.SetupCombox(comboNewRepeatAll, 2, 1, "A,All,N,New,R,Repeat");
         }
 
         protected override void ClickNewAfter()
@@ -32,8 +32,8 @@ namespace Sci.Production.IE
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-            textBox4.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
+            txtBrand.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -41,7 +41,7 @@ namespace Sci.Production.IE
             if (MyUtility.Check.Empty(CurrentMaintain["Code"]))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
@@ -56,14 +56,14 @@ namespace Sci.Production.IE
             if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {
                 MyUtility.Msg.WarningBox("< Activities > can not be empty!");
-                this.textBox2.Focus();
+                this.txtActivities.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["UseFor"]))
             {
                 MyUtility.Msg.WarningBox("< New/Repeat > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboNewRepeatAll.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -73,22 +73,22 @@ namespace Sci.Production.IE
         private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK)	WHERE Junk=0  ORDER BY Id";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", textBox4.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", txtBrand.Text, false, ",");
             item.Size = new System.Drawing.Size(750, 500);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox4.Text = item.GetSelectedString();
+            txtBrand.Text = item.GetSelectedString();
         }
 
         private void textBox4_Validating(object sender, CancelEventArgs e)
         {
-            string textValue = this.textBox4.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox4.OldValue)
+            string textValue = this.txtBrand.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtBrand.OldValue)
             {
                 if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WITH (NOLOCK) WHERE Junk=0 AND id = '{0}'", textValue)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
-                    this.textBox4.Text = "";
+                    this.txtBrand.Text = "";
                     e.Cancel = true;
                     return;
                 }

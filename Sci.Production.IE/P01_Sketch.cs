@@ -54,10 +54,10 @@ where s.ID = @styleid and s.SeasonID = @seasonid and s.BrandID = @brandid";
             }
             if (styleData.Rows.Count > 0)
             {
-                displayBox1.Value = styleData.Rows[0]["Picture1"].ToString().Trim();
-                displayBox2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
-                pictureBox1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
-                pictureBox2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
+                displayPicture1.Value = styleData.Rows[0]["Picture1"].ToString().Trim();
+                displayPicture2.Value = styleData.Rows[0]["Picture2"].ToString().Trim();
+                picture1.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture1"].ToString().Trim();
+                picture2.ImageLocation = styleData.Rows[0]["PicPath"].ToString().Trim() + styleData.Rows[0]["Picture2"].ToString().Trim();
                
             }
             //Image images = Image.FromFile(@"D:\images.jpg");

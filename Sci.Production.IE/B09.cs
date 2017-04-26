@@ -28,17 +28,17 @@ namespace Sci.Production.IE
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.displayBox3.Text = MyUtility.GetValue.Lookup("Description", this.displayBox2.Text.ToString(), "MachineType","ID");
-            string selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00001'", this.displayBox7.Text.ToString());
-            this.displayBox8.Text = MyUtility.GetValue.Lookup(selectCommand,null);
-            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where  ID = '{0}' and  type='00002'", this.displayBox10.Text.ToString());
-            this.displayBox9.Text = MyUtility.GetValue.Lookup(selectCommand, null);
-            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00003'", this.displayBox12.Text.ToString());
-            this.displayBox11.Text = MyUtility.GetValue.Lookup(selectCommand, null);
-            this.numericBox8.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
-            this.numericBox9.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayBox2.Text.ToString(), "MachineType", "ID");
-            this.pictureBox1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + CurrentMaintain["Picture1"].ToString();
-            this.pictureBox2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
+            this.displayMachine.Text = MyUtility.GetValue.Lookup("Description", this.displayMachineTypeID.Text.ToString(), "MachineType","ID");
+            string selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00001'", this.displayOperationType.Text.ToString());
+            this.displayOperationType1.Text = MyUtility.GetValue.Lookup(selectCommand,null);
+            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where  ID = '{0}' and  type='00002'", this.displayCostCenter.Text.ToString());
+            this.displayCostCenter1.Text = MyUtility.GetValue.Lookup(selectCommand, null);
+            selectCommand = string.Format("select Name from IESELECTCODE WITH (NOLOCK) where ID = '{0}' and  type='00003'", this.displaySection.Text.ToString());
+            this.displaySection1.Text = MyUtility.GetValue.Lookup(selectCommand, null);
+            this.numMachineAllowance.Text = MyUtility.GetValue.Lookup("MachineAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
+            this.numManualAllowance.Text = MyUtility.GetValue.Lookup("ManAllow", this.displayMachineTypeID.Text.ToString(), "MachineType", "ID");
+            this.picture1.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture1"]) ? null : destination_path + CurrentMaintain["Picture1"].ToString();
+            this.picture2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,7 +66,7 @@ namespace Sci.Production.IE
                             //update picture1 path
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Operation set Picture1 ='" + destination_fileName.Trim() + "' where ukey=" + this.CurrentMaintain["UKey"]); ;
                             this.CurrentMaintain["Picture1"] = destination_path.Trim() + destination_fileName.Trim();
-                            this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
+                            this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
                         }
                     }
                 }
@@ -88,7 +88,7 @@ namespace Sci.Production.IE
                     {
                         System.IO.File.Delete(destination_path+CurrentMaintain["Picture1"].ToString());
                         this.CurrentMaintain["Picture1"] = string.Empty;
-                        this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
+                        this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
                         DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                         if (!result)
                         {
@@ -104,7 +104,7 @@ namespace Sci.Production.IE
                 else
                 {
                     this.CurrentMaintain["Picture1"] = string.Empty;
-                    this.pictureBox1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
+                    this.picture1.ImageLocation = this.CurrentMaintain["Picture1"].ToString();
                     DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture1='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                     if (!result)
                     {
@@ -140,7 +140,7 @@ namespace Sci.Production.IE
                             //update picture2 path
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Operation set Picture2 ='" + destination_fileName.Trim() + "' where Ukey='" + this.CurrentMaintain["UKey"] + "'"); ;
                             this.CurrentMaintain["Picture2"] = destination_path.Trim() + destination_fileName.Trim();
-                            this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+                            this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
                         }
                     }
                 }
@@ -162,7 +162,7 @@ namespace Sci.Production.IE
                     {
                         System.IO.File.Delete(destination_path+CurrentMaintain["Picture2"].ToString());
                         this.CurrentMaintain["Picture2"] = string.Empty;
-                        this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+                        this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
                         DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                         if (!result)
                         {
@@ -178,7 +178,7 @@ namespace Sci.Production.IE
                 else
                 {
                     this.CurrentMaintain["Picture2"] = string.Empty;
-                    this.pictureBox2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
+                    this.picture2.ImageLocation = this.CurrentMaintain["Picture2"].ToString();
                     DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Operation set Picture2='' where UKey={0}", this.CurrentMaintain["UKey"].ToString()));
                     if (!result)
                     {

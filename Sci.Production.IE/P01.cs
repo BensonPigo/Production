@@ -59,7 +59,7 @@ namespace Sci.Production.IE
         {
             base.OnFormLoaded();
             //MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "Estimate,Initial,Prelim,Final");
+            MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Estimate,Initial,Prelim,Final");
 
             #region modify comboBox1 DataSource as Style_Location
             String sqlCmd = "select distinct Location from Style_Location WITH (NOLOCK) ";
@@ -67,9 +67,9 @@ namespace Sci.Production.IE
             DataTable dtLocation;
             result = DBProxy.Current.Select(null, sqlCmd, out dtLocation);
 
-            this.comboBox1.DataSource = dtLocation;
-            this.comboBox1.DisplayMember = "Location";
-            this.comboBox1.ValueMember = "Location";
+            this.comboStyle.DataSource = dtLocation;
+            this.comboStyle.DisplayMember = "Location";
+            this.comboStyle.ValueMember = "Location";
             #endregion
 
         }
@@ -79,12 +79,12 @@ namespace Sci.Production.IE
             base.OnDetailEntered();
             GenCD(null, null);  //撈CD Code
             bool canEdit = PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P01. Factory GSD", "CanEdit");
-            button1.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
-            button2.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
-            button3.Enabled = !this.EditMode && CurrentMaintain != null;
-            button8.Enabled = !this.EditMode && CurrentMaintain != null;
-            button5.Enabled = CurrentMaintain != null;
-            button6.Enabled = CurrentMaintain != null;
+            btnNewVersion.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
+            btnNewStatus.Enabled = !this.EditMode && CurrentMaintain != null && canEdit;
+            btnHistory.Enabled = !this.EditMode && CurrentMaintain != null;
+            btnStdGSDList.Enabled = !this.EditMode && CurrentMaintain != null;
+            btnArtSum.Enabled = CurrentMaintain != null;
+            btnSketch.Enabled = CurrentMaintain != null;
 
             this.detailgrid.AutoResizeColumn(0);
             this.detailgrid.AutoResizeColumn(1);
@@ -495,28 +495,28 @@ namespace Sci.Production.IE
             if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
             {
                 MyUtility.Msg.WarningBox("Style can't empty");
-                textBox1.Focus();
+                txtStyle.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SeasonID"]))
             {
                 MyUtility.Msg.WarningBox("Season can't empty");
-                txtseason1.Focus();
+                txtseason.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty");
-                textBox2.Focus();
+                txtBrand.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ComboType"]))
             {
                 MyUtility.Msg.WarningBox("Combo type can't empty");
-                comboBox1.Focus();
+                comboStyle.Focus();
                 return false;
             }
             #endregion
@@ -570,7 +570,7 @@ namespace Sci.Production.IE
             decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(SMV)", ""));
             CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
             string TotalSewing = CurrentMaintain["TotalSewingTime"].ToString();
-            numericBox2.Text = TotalSewing; 
+            numTotalSewingTimePc.Text = TotalSewing; 
             decimal allSewer = MyUtility.Check.Empty(CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(CurrentMaintain["NumberSewer"]);
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)
             {
@@ -785,7 +785,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
         //Copy from style std. GSD
         private void button7_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text) || MyUtility.Check.Empty(comboBox1.Text) || MyUtility.Check.Empty(textBox2.Text) || MyUtility.Check.Empty(txtseason1.Text))
+            if (MyUtility.Check.Empty(txtStyle.Text) || MyUtility.Check.Empty(comboStyle.Text) || MyUtility.Check.Empty(txtBrand.Text) || MyUtility.Check.Empty(txtseason.Text))
             {
                 MyUtility.Msg.WarningBox("< Style > or < Combo Type > or < Season > or < Brand > can't empty!!");
                 return;
@@ -805,7 +805,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
 
             #region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
             bool isComboType = true;
-            string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", textBox2.Text, textBox1.Text, txtseason1.Text);
+            string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", txtBrand.Text, txtStyle.Text, txtseason.Text);
             isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
             #endregion
 
@@ -815,15 +815,15 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
-            sp1.Value = textBox1.Text;
+            sp1.Value = txtStyle.Text;
             sp2.ParameterName = "@seasonid";
-            sp2.Value = txtseason1.Text;
+            sp2.Value = txtseason.Text;
             sp3.ParameterName = "@brandid";
-            sp3.Value = textBox2.Text;
+            sp3.Value = txtBrand.Text;
             if (isComboType)
             {
                 sp4.ParameterName = "@location";
-                sp4.Value = comboBox1.Text;
+                sp4.Value = comboStyle.Text;
             } 
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -1015,11 +1015,11 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
-                displayBox2.Value = "";
+                displayCD.Value = "";
             }
             else
             {
-                displayBox2.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+                displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
             }
         }
 

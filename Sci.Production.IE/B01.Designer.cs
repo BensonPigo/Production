@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelActivities = new Sci.Win.UI.Label();
+            this.labelDaysbefore = new Sci.Win.UI.Label();
+            this.labelBaseOn = new Sci.Win.UI.Label();
+            this.labelNewRepeatAll = new Sci.Win.UI.Label();
+            this.txtCode = new Sci.Win.UI.TextBox();
+            this.txtActivities = new Sci.Win.UI.TextBox();
+            this.txtDaysbefore = new Sci.Win.UI.TextBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.radioSCIDelivery = new Sci.Win.UI.RadioButton();
+            this.radioChangeOver = new Sci.Win.UI.RadioButton();
+            this.comboNewRepeatAll = new Sci.Win.UI.ComboBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtBrand = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,19 +58,19 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox4);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
+            this.detailcont.Controls.Add(this.txtBrand);
+            this.detailcont.Controls.Add(this.labelBrand);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.comboNewRepeatAll);
             this.detailcont.Controls.Add(this.radioPanel1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtDaysbefore);
+            this.detailcont.Controls.Add(this.txtActivities);
+            this.detailcont.Controls.Add(this.txtCode);
+            this.detailcont.Controls.Add(this.labelNewRepeatAll);
+            this.detailcont.Controls.Add(this.labelBaseOn);
+            this.detailcont.Controls.Add(this.labelDaysbefore);
+            this.detailcont.Controls.Add(this.labelActivities);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(832, 357);
             this.detailcont.TabIndex = 0;
             // 
@@ -80,7 +80,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(696, 395);
+            this.browse.Size = new System.Drawing.Size(832, 395);
             // 
             // tabs
             // 
@@ -100,162 +100,162 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(42, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(103, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(42, 28);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(103, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelActivities
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(42, 68);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(103, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Activities";
+            this.labelActivities.Lines = 0;
+            this.labelActivities.Location = new System.Drawing.Point(42, 68);
+            this.labelActivities.Name = "labelActivities";
+            this.labelActivities.Size = new System.Drawing.Size(103, 23);
+            this.labelActivities.TabIndex = 1;
+            this.labelActivities.Text = "Activities";
             // 
-            // label5
+            // labelDaysbefore
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(42, 108);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(103, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Days before";
+            this.labelDaysbefore.Lines = 0;
+            this.labelDaysbefore.Location = new System.Drawing.Point(42, 108);
+            this.labelDaysbefore.Name = "labelDaysbefore";
+            this.labelDaysbefore.Size = new System.Drawing.Size(103, 23);
+            this.labelDaysbefore.TabIndex = 2;
+            this.labelDaysbefore.Text = "Days before";
             // 
-            // label6
+            // labelBaseOn
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(222, 108);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(58, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Base On";
+            this.labelBaseOn.Lines = 0;
+            this.labelBaseOn.Location = new System.Drawing.Point(222, 108);
+            this.labelBaseOn.Name = "labelBaseOn";
+            this.labelBaseOn.Size = new System.Drawing.Size(58, 23);
+            this.labelBaseOn.TabIndex = 3;
+            this.labelBaseOn.Text = "Base On";
             // 
-            // label7
+            // labelNewRepeatAll
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(42, 148);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(103, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "New/Repeat/All";
+            this.labelNewRepeatAll.Lines = 0;
+            this.labelNewRepeatAll.Location = new System.Drawing.Point(42, 148);
+            this.labelNewRepeatAll.Name = "labelNewRepeatAll";
+            this.labelNewRepeatAll.Size = new System.Drawing.Size(103, 23);
+            this.labelNewRepeatAll.TabIndex = 4;
+            this.labelNewRepeatAll.Text = "New/Repeat/All";
             // 
-            // textBox1
+            // txtCode
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Code", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(149, 28);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(50, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtCode.BackColor = System.Drawing.Color.White;
+            this.txtCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Code", true));
+            this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCode.Location = new System.Drawing.Point(149, 28);
+            this.txtCode.Name = "txtCode";
+            this.txtCode.Size = new System.Drawing.Size(50, 23);
+            this.txtCode.TabIndex = 0;
             // 
-            // textBox2
+            // txtActivities
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(149, 68);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(404, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtActivities.BackColor = System.Drawing.Color.White;
+            this.txtActivities.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtActivities.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.txtActivities.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtActivities.Location = new System.Drawing.Point(149, 68);
+            this.txtActivities.Name = "txtActivities";
+            this.txtActivities.Size = new System.Drawing.Size(404, 23);
+            this.txtActivities.TabIndex = 1;
             // 
-            // textBox3
+            // txtDaysbefore
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DaysBefore", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(149, 108);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(38, 23);
-            this.textBox3.TabIndex = 2;
+            this.txtDaysbefore.BackColor = System.Drawing.Color.White;
+            this.txtDaysbefore.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DaysBefore", true));
+            this.txtDaysbefore.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDaysbefore.Location = new System.Drawing.Point(149, 108);
+            this.txtDaysbefore.Name = "txtDaysbefore";
+            this.txtDaysbefore.Size = new System.Drawing.Size(38, 23);
+            this.txtDaysbefore.TabIndex = 2;
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioSCIDelivery);
+            this.radioPanel1.Controls.Add(this.radioChangeOver);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BaseOn", true));
             this.radioPanel1.Location = new System.Drawing.Point(283, 108);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(270, 23);
             this.radioPanel1.TabIndex = 8;
             // 
-            // radioButton2
+            // radioSCIDelivery
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(128, 1);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(102, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "SCI Delivery";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "2";
+            this.radioSCIDelivery.AutoSize = true;
+            this.radioSCIDelivery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSCIDelivery.Location = new System.Drawing.Point(128, 1);
+            this.radioSCIDelivery.Name = "radioSCIDelivery";
+            this.radioSCIDelivery.Size = new System.Drawing.Size(102, 21);
+            this.radioSCIDelivery.TabIndex = 1;
+            this.radioSCIDelivery.TabStop = true;
+            this.radioSCIDelivery.Text = "SCI Delivery";
+            this.radioSCIDelivery.UseVisualStyleBackColor = true;
+            this.radioSCIDelivery.Value = "2";
             // 
-            // radioButton1
+            // radioChangeOver
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(3, 1);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(106, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "ChangeOver";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "1";
+            this.radioChangeOver.AutoSize = true;
+            this.radioChangeOver.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioChangeOver.Location = new System.Drawing.Point(3, 1);
+            this.radioChangeOver.Name = "radioChangeOver";
+            this.radioChangeOver.Size = new System.Drawing.Size(106, 21);
+            this.radioChangeOver.TabIndex = 0;
+            this.radioChangeOver.TabStop = true;
+            this.radioChangeOver.Text = "ChangeOver";
+            this.radioChangeOver.UseVisualStyleBackColor = true;
+            this.radioChangeOver.Value = "1";
             // 
-            // comboBox1
+            // comboNewRepeatAll
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UseFor", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(149, 148);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(92, 24);
-            this.comboBox1.TabIndex = 3;
+            this.comboNewRepeatAll.BackColor = System.Drawing.Color.White;
+            this.comboNewRepeatAll.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UseFor", true));
+            this.comboNewRepeatAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboNewRepeatAll.FormattingEnabled = true;
+            this.comboNewRepeatAll.IsSupportUnselect = true;
+            this.comboNewRepeatAll.Location = new System.Drawing.Point(149, 148);
+            this.comboNewRepeatAll.Name = "comboNewRepeatAll";
+            this.comboNewRepeatAll.Size = new System.Drawing.Size(92, 24);
+            this.comboNewRepeatAll.TabIndex = 3;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(449, 30);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(449, 30);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 5;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // labelBrand
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(238, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(42, 23);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(238, 28);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(42, 23);
+            this.labelBrand.TabIndex = 11;
+            this.labelBrand.Text = "Brand";
             // 
-            // textBox4
+            // txtBrand
             // 
-            this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox4.Location = new System.Drawing.Point(283, 28);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(66, 23);
-            this.textBox4.TabIndex = 4;
-            this.textBox4.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
-            this.textBox4.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(283, 28);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(66, 23);
+            this.txtBrand.TabIndex = 4;
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
             // 
             // B01
             // 
@@ -287,20 +287,20 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.ComboBox comboBox1;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.ComboBox comboNewRepeatAll;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox4;
+        private Win.UI.RadioButton radioSCIDelivery;
+        private Win.UI.RadioButton radioChangeOver;
+        private Win.UI.TextBox txtDaysbefore;
+        private Win.UI.TextBox txtActivities;
+        private Win.UI.TextBox txtCode;
+        private Win.UI.Label labelNewRepeatAll;
+        private Win.UI.Label labelBaseOn;
+        private Win.UI.Label labelDaysbefore;
+        private Win.UI.Label labelActivities;
+        private Win.UI.Label labelCode;
+        private Win.UI.Label labelBrand;
+        private Win.UI.TextBox txtBrand;
     }
 }

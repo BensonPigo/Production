@@ -23,33 +23,33 @@ namespace Sci.Production.IE
         private void button1_Click(object sender, EventArgs e)
         {
             string style, season, brand, version;
-            style = txtstyle1.Text;
-            season = txtseason1.Text;
-            brand = txtbrand1.Text;
-            version = textBox1.Text;
+            style = txtstyle.Text;
+            season = txtseason.Text;
+            brand = txtbrand.Text;
+            version = txtLineMappingVersion.Text;
 
             if (MyUtility.Check.Empty(style))
             {
                 MyUtility.Msg.WarningBox("Style# can't empty!!");
-                txtstyle1.Focus();
+                txtstyle.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(season))
             {
                 MyUtility.Msg.WarningBox("Season can't empty!!");
-                txtseason1.Focus();
+                txtseason.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(brand))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!!");
-                txtbrand1.Focus();
+                txtbrand.Focus();
                 return;
             }
             if (MyUtility.Check.Empty(version))
             {
                 MyUtility.Msg.WarningBox("Line mapping versioncan't empty!!");
-                textBox1.Focus();
+                txtLineMappingVersion.Focus();
                 return;
             }
 

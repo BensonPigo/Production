@@ -21,28 +21,28 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
             masterData = MasterData;
-            label4.Text = "Language\r\n(For description)";
+            labelLanguage.Text = "Language\r\n(For description)";
             DataTable artworkType;
             string sqlCmd = string.Format("Select distinct ArtworkTypeID from MachineType WITH (NOLOCK) , TimeStudy_Detail WITH (NOLOCK) where MachineType.ID = TimeStudy_Detail.MachineTypeID and TimeStudy_Detail.ID = {0}", MyUtility.Convert.GetString(masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
-            MyUtility.Tool.SetupCombox(comboBox1, 1,artworkType);
-            MyUtility.Tool.SetupCombox(comboBox2, 1, 1, "English,Chinese,Cambodia,Vietnam");
-            comboBox1.SelectedIndex = -1;
-            comboBox2.Text = "English";
+            MyUtility.Tool.SetupCombox(comboArtworkType, 1,artworkType);
+            MyUtility.Tool.SetupCombox(comboLanguage, 1, 1, "English,Chinese,Cambodia,Vietnam");
+            comboArtworkType.SelectedIndex = -1;
+            comboLanguage.Text = "English";
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(numericBox1.Value))
+            if (MyUtility.Check.Empty(numEfficiencySetting.Value))
             {
                 MyUtility.Msg.WarningBox("Efficiency setting can't empty!!");
                 return false;
             }
 
-            efficiency = MyUtility.Convert.GetInt(numericBox1.Value);
-            artworktype = comboBox1.Text;
-            language = comboBox2.Text;
+            efficiency = MyUtility.Convert.GetInt(numEfficiencySetting.Value);
+            artworktype = comboArtworkType.Text;
+            language = comboLanguage.Text;
 
             return base.ValidateInput();
         }

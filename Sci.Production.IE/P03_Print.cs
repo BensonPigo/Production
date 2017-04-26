@@ -21,20 +21,20 @@ namespace Sci.Production.IE
         public P03_Print(DataRow MasterData,decimal StyleCPU)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "English,Chinese,Cambodia,Vietnam");
-            comboBox1.Text = "English";
+            MyUtility.Tool.SetupCombox(comboLanguage, 1, 1, "English,Chinese,Cambodia,Vietnam");
+            comboLanguage.Text = "English";
             masterData = MasterData;
             styleCPU = StyleCPU;
-            radioButton1.Checked = true;
-            radioButton3.Checked = true;
+            radioU.Checked = true;
+            radioDescription.Checked = true;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            display = radioButton1.Checked ? "U" : "Z";
-            contentType = radioButton3.Checked ? "D" : "A";
-            language = comboBox1.Text;
+            display = radioU.Checked ? "U" : "Z";
+            contentType = radioDescription.Checked ? "D" : "A";
+            language = comboLanguage.Text;
             return base.ValidateInput();
         }
 

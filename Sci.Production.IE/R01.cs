@@ -19,7 +19,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, ",A,B");
+            MyUtility.Tool.SetupCombox(comboTeam, 1, 1, ",A,B");
         }
        
         //Factory
@@ -27,10 +27,10 @@ namespace Sci.Production.IE
         {
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", textBox1.Text, "Factory");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", txtFactory.Text, "Factory");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtFactory.Text = item.GetSelectedString();
            
         }
 
@@ -39,34 +39,34 @@ namespace Sci.Production.IE
         {
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", textBox2.Text, "Style#,Brand,Description");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "16,10,50", txtStyle.Text, "Style#,Brand,Description");
             item.Width = 800;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
+            txtStyle.Text = item.GetSelectedString();
         }
 
         //Season
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 ORDER BY ID DESC";
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", textBox3.Text, "Season");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", txtSeason.Text, "Season");
             item.Width = 300;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
-            textBox3.Text = item.GetSelectedString();
+            txtSeason.Text = item.GetSelectedString();
         }
             
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
          
-            factory = textBox1.Text;
-            style = textBox2.Text;
-            season = textBox3.Text;
-            team = comboBox1.SelectedIndex == -1 || comboBox1.SelectedIndex == 0 ? "" : comboBox1.SelectedIndex == 1 ? "A" : "B";
-            inline1 = String.Format("{0:yyyy-MM-dd}", InlineDate.Value1);
-            inline2 = String.Format("{0:yyyy-MM-dd}", InlineDate.Value2);
+            factory = txtFactory.Text;
+            style = txtStyle.Text;
+            season = txtSeason.Text;
+            team = comboTeam.SelectedIndex == -1 || comboTeam.SelectedIndex == 0 ? "" : comboTeam.SelectedIndex == 1 ? "A" : "B";
+            inline1 = String.Format("{0:yyyy-MM-dd}", dateInlineDate.Value1);
+            inline2 = String.Format("{0:yyyy-MM-dd}", dateInlineDate.Value2);
 
             return base.ValidateInput();
         }
@@ -206,17 +206,17 @@ inner join(
             foreach (DataRow dr in FactoryData.Rows)
             {
                 fac = dr["FTYGroup"].ToString();
-                if (textBox1.Text == fac) { return; }
+                if (txtFactory.Text == fac) { return; }
             }
-            if (textBox1.Text == "")
+            if (txtFactory.Text == "")
             {
-                textBox1.Text = "";
+                txtFactory.Text = "";
                 return;
             }
-            if (textBox1.Text != fac)
+            if (txtFactory.Text != fac)
             {
                 MyUtility.Msg.WarningBox("This Factory is wrong!");
-                textBox1.Text = "";
+                txtFactory.Text = "";
                 return;
             }
         }
@@ -229,17 +229,17 @@ inner join(
             foreach (DataRow dr in StyleData.Rows)
             {
                 sty = dr["ID"].ToString();
-                if (textBox2.Text == sty) { return; }
+                if (txtStyle.Text == sty) { return; }
             }
-            if (textBox2.Text == "")
+            if (txtStyle.Text == "")
             {
-                textBox2.Text = "";
+                txtStyle.Text = "";
                 return;
             }
-            if (textBox2.Text != sty)
+            if (txtStyle.Text != sty)
             {
                 MyUtility.Msg.WarningBox("This Style# is wrong!");
-                textBox2.Text = "";
+                txtStyle.Text = "";
                 return;
             }
         }
@@ -252,17 +252,17 @@ inner join(
             foreach (DataRow dr in SeasonData.Rows)
             {
                 season = dr["ID"].ToString();
-                if (textBox3.Text == season) { return; }
+                if (txtSeason.Text == season) { return; }
             }
-            if (textBox3.Text == "")
+            if (txtSeason.Text == "")
             {
-                textBox3.Text = "";
+                txtSeason.Text = "";
                 return;
             }
-            if (textBox3.Text != season)
+            if (txtSeason.Text != season)
             {
                 MyUtility.Msg.WarningBox("This Season is wrong!");
-                textBox3.Text = "";
+                txtSeason.Text = "";
                 return;
             }
         }

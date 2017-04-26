@@ -182,14 +182,14 @@ namespace Sci.Production.IE
             base.ClickNewAfter();
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            textBox3.BackColor = Color.White;
+            txtSkill.BackColor = Color.White;
         }
 
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
-            textBox3.BackColor = Color.White;
+            this.txtEmployee.ReadOnly = true;
+            txtSkill.BackColor = Color.White;
         }
 
         protected override bool ClickSaveBefore()
@@ -197,38 +197,38 @@ namespace Sci.Production.IE
             if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("< Factory > can not be empty!");
-                txtmfactory1.Focus();
+                txtmfactory.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("< Employee# > can not be empty!");
-                this.textBox1.Focus();
+                this.txtEmployee.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Name"]))
             {
                 MyUtility.Msg.WarningBox("< Nick Name > can not be empty!");
-                this.textBox2.Focus();
+                this.txtNickName.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["OnBoardDate"]))
             {
                 MyUtility.Msg.WarningBox("< Hired on > can not be empty!");
-                this.dateBox1.Focus();
+                this.dateHiredOn.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
                 MyUtility.Msg.WarningBox("< Line > can not be empty!");
-                this.txtsewingline1.Focus();
+                this.txtsewingline.Focus();
                 return false;
             }
-            textBox3.BackColor = displayBox2.BackColor;
+            txtSkill.BackColor = displayM.BackColor;
             return base.ClickSaveBefore();
         }
 
@@ -270,7 +270,7 @@ namespace Sci.Production.IE
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            textBox3.BackColor = displayBox2.BackColor;
+            txtSkill.BackColor = displayM.BackColor;
         }
 
         private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -279,7 +279,7 @@ namespace Sci.Production.IE
             {
                 DataTable MachineGroup;
                 Ict.DualResult returnResule = DBProxy.Current.Select("Machine", "select ID,Description from MachineGroup WITH (NOLOCK)	where Junk = 0 order by ID", out MachineGroup);
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,35", textBox3.Text);
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(MachineGroup, "ID,Description", "Group ID,Description", "2,35", txtSkill.Text);
 
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }

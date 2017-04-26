@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.numEfficiencySetting = new Sci.Win.UI.NumericBox();
+            this.labelEfficiencySetting = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -47,50 +47,50 @@
             this.close.Location = new System.Drawing.Point(253, 84);
             this.close.TabIndex = 3;
             // 
-            // numericBox1
+            // numEfficiencySetting
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(148, 48);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numEfficiencySetting.BackColor = System.Drawing.Color.White;
+            this.numEfficiencySetting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numEfficiencySetting.Location = new System.Drawing.Point(148, 48);
+            this.numEfficiencySetting.Maximum = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.numericBox1.MaxLength = 3;
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numEfficiencySetting.MaxLength = 3;
+            this.numEfficiencySetting.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numEfficiencySetting.Name = "numEfficiencySetting";
+            this.numEfficiencySetting.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 0;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numEfficiencySetting.Size = new System.Drawing.Size(50, 23);
+            this.numEfficiencySetting.TabIndex = 0;
+            this.numEfficiencySetting.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label1
+            // labelEfficiencySetting
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(37, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 23);
-            this.label1.TabIndex = 99;
-            this.label1.Text = "Efficiency setting";
+            this.labelEfficiencySetting.Lines = 0;
+            this.labelEfficiencySetting.Location = new System.Drawing.Point(37, 48);
+            this.labelEfficiencySetting.Name = "labelEfficiencySetting";
+            this.labelEfficiencySetting.Size = new System.Drawing.Size(107, 23);
+            this.labelEfficiencySetting.TabIndex = 99;
+            this.labelEfficiencySetting.Text = "Efficiency setting";
             // 
             // P01_History_Print
             // 
             this.ClientSize = new System.Drawing.Size(345, 156);
-            this.Controls.Add(this.numericBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.numEfficiencySetting);
+            this.Controls.Add(this.labelEfficiencySetting);
             this.DefaultControl = "numericBox1";
             this.DefaultControlForEdit = "numericBox1";
             this.IsSupportPrint = false;
@@ -100,8 +100,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.numericBox1, 0);
+            this.Controls.SetChildIndex(this.labelEfficiencySetting, 0);
+            this.Controls.SetChildIndex(this.numEfficiencySetting, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -109,7 +109,7 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label1;
+        private Win.UI.NumericBox numEfficiencySetting;
+        private Win.UI.Label labelEfficiencySetting;
     }
 }

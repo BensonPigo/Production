@@ -28,11 +28,11 @@ namespace Sci.Production.IE
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            displayBox1.Value = masterData["StyleID"].ToString();
-            displayBox2.Value = masterData["SeasonID"].ToString();
-            displayBox4.Value = masterData["ComboType"].ToString();
-            numericBox1.Value = MyUtility.Convert.GetInt(masterData["TotalSewingTime"]);
-            numericBox2.Value = MyUtility.Convert.GetInt(masterData["NumberSewer"]);
+            displayStyle.Value = masterData["StyleID"].ToString();
+            displaySeason.Value = masterData["SeasonID"].ToString();
+            displayStyle1.Value = masterData["ComboType"].ToString();
+            numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(masterData["TotalSewingTime"]);
+            numNumOfSewer.Value = MyUtility.Convert.GetInt(masterData["NumberSewer"]);
 
             //sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -61,11 +61,11 @@ namespace Sci.Production.IE
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
-                displayBox3.Value = "";
+                displayCD.Value = "";
             }
             else
             {
-                displayBox3.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
+                displayCD.Value = cdCode.Rows.Count > 0 ? cdCode.Rows[0]["CdCodeID"].ToString() : "";
             }
 
             //撈Grid資料
@@ -93,11 +93,11 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                         comboBox1_RowSource.Add(dr["Status"].ToString());
                     }
                 }
-                comboBox1.DataSource = comboBox1_RowSource;
+                comboStatus.DataSource = comboBox1_RowSource;
             }
             listControlBindingSource1.DataSource = gridData;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .EditText("DescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -110,24 +110,24 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
                 .Numeric("PcsPerHour", header: "Pcs/hr", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", decimal_places: 4, iseditingreadonly: true);
-            this.grid1.AutoResizeColumns();
+            this.gridDetail.AutoResizeColumns();
         }
 
         //Status
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex != -1)
+            if (comboStatus.SelectedIndex != -1)
             {
-                gridData.DefaultView.RowFilter = "Status = '" + comboBox1.SelectedValue.ToString() + "'";
+                gridData.DefaultView.RowFilter = "Status = '" + comboStatus.SelectedValue.ToString() + "'";
 
-                numericBox1.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["TotalSewingTime"]);
-                numericBox2.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["NumberSewer"]);
+                numTotalSewingTimePc.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["TotalSewingTime"]);
+                numNumOfSewer.Value = MyUtility.Convert.GetInt(gridData.DefaultView[0]["NumberSewer"]);
             }
             else
             {
                 gridData.DefaultView.RowFilter = "Status = ''";
-                numericBox1.Value = 0;
-                numericBox2.Value = 0;
+                numTotalSewingTimePc.Value = 0;
+                numNumOfSewer.Value = 0;
             }
         }
 
@@ -150,7 +150,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         //To Excel
         private void button1_Click(object sender, EventArgs e)
         {
-            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(masterData, MyUtility.Convert.GetString(comboBox1.SelectedValue), MyUtility.Convert.GetString(displayBox3.Value), MyUtility.Convert.GetInt(numericBox1.Value), MyUtility.Convert.GetInt(numericBox2.Value));
+            Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(masterData, MyUtility.Convert.GetString(comboStatus.SelectedValue), MyUtility.Convert.GetString(displayCD.Value), MyUtility.Convert.GetInt(numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(numNumOfSewer.Value));
             DialogResult result = callNextForm.ShowDialog(this);
         }
     }

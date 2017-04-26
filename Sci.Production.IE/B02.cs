@@ -20,7 +20,7 @@ namespace Sci.Production.IE
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "LBR,Line Balancing (%),LLER,Lean Line Eff. (%),EFF.,Efficiency,COPT,Changeover Process Time,COT,Changeover Time");
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "LBR,Line Balancing (%),LLER,Lean Line Eff. (%),EFF.,Efficiency,COPT,Changeover Process Time,COT,Changeover Time");
         }
 
         protected override void OnDetailEntered()
@@ -28,11 +28,11 @@ namespace Sci.Production.IE
             base.OnDetailEntered();
             if ((CurrentMaintain["Type"].ToString().Trim() == "COPT" || CurrentMaintain["Type"].ToString().Trim() == "COT"))
             {
-                this.label6.Text = "Target (min)";
+                this.labelTarget.Text = "Target (min)";
             }
             else
             {
-                this.label6.Text = "Target (%)";
+                this.labelTarget.Text = "Target (%)";
             }
         }
 
@@ -46,8 +46,8 @@ namespace Sci.Production.IE
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.dateBox1.ReadOnly = true;
-            this.comboBox1.ReadOnly = true;
+            this.dateDate.ReadOnly = true;
+            this.comboType.ReadOnly = true;
         }
 
         protected override void ClickCopyAfter()
@@ -61,14 +61,14 @@ namespace Sci.Production.IE
             if (MyUtility.Check.Empty(CurrentMaintain["EffectiveDate"]))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
-                this.dateBox1.Focus();
+                this.dateDate.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
                 MyUtility.Msg.WarningBox("< Type > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboType.Focus();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -76,24 +76,24 @@ namespace Sci.Production.IE
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex != -1)
+            if (comboType.SelectedIndex != -1)
             {
-                switch (comboBox1.SelectedValue.ToString())
+                switch (comboType.SelectedValue.ToString())
                 {
                     case "COPT":
-                        label6.Text = "Target (min)";
+                        labelTarget.Text = "Target (min)";
                         break;
                     case "COT":
-                        label6.Text = "Target (min)";
+                        labelTarget.Text = "Target (min)";
                         break;
                     default:
-                        label6.Text = "Target (%)";
+                        labelTarget.Text = "Target (%)";
                         break;
                 }
             }
             else
             {
-                label6.Text = "Target";
+                labelTarget.Text = "Target";
             }
         }   
     }

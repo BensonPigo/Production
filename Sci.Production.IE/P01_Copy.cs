@@ -19,11 +19,11 @@ namespace Sci.Production.IE
         {
             InitializeComponent();
             masterData = MasterData;
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "T,B,I,O");
-            textBox1.Text = masterData["StyleID"].ToString();
-            txtseason1.Text = masterData["SeasonID"].ToString();
-            textBox2.Text = masterData["BrandID"].ToString();
-            comboBox1.Text = masterData["ComboType"].ToString();
+            MyUtility.Tool.SetupCombox(comboStyle, 1, 1, "T,B,I,O");
+            txtStyle.Text = masterData["StyleID"].ToString();
+            txtseason.Text = masterData["SeasonID"].ToString();
+            txtBrand.Text = masterData["BrandID"].ToString();
+            comboStyle.Text = masterData["ComboType"].ToString();
         }
 
         //Style
@@ -37,9 +37,9 @@ namespace Sci.Production.IE
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             IList<DataRow> selectedData = item.GetSelecteds();
-            textBox1.Text = item.GetSelectedString();
-            txtseason1.Text = (selectedData[0])["SeasonID"].ToString();
-            textBox2.Text = (selectedData[0])["BrandID"].ToString();
+            txtStyle.Text = item.GetSelectedString();
+            txtseason.Text = (selectedData[0])["SeasonID"].ToString();
+            txtBrand.Text = (selectedData[0])["BrandID"].ToString();
         }
 
         //Style
@@ -56,7 +56,7 @@ namespace Sci.Production.IE
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
+            txtBrand.Text = item.GetSelectedString();
         }
 
         //Season
@@ -67,15 +67,15 @@ namespace Sci.Production.IE
 
         private void GetBrand()
         {
-            if (!MyUtility.Check.Empty(textBox1.Text) && !MyUtility.Check.Empty(txtseason1.Text))
+            if (!MyUtility.Check.Empty(txtStyle.Text) && !MyUtility.Check.Empty(txtseason.Text))
             {
                 //sql參數
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
                 System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                 sp1.ParameterName = "@id";
-                sp1.Value = textBox1.Text;
+                sp1.Value = txtStyle.Text;
                 sp2.ParameterName = "@seasonid";
-                sp2.Value = txtseason1.Text;
+                sp2.Value = txtseason.Text;
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);
@@ -91,11 +91,11 @@ namespace Sci.Production.IE
 
                 if (styleBrand.Rows.Count > 0)
                 {
-                    textBox2.Text = MyUtility.Convert.GetString(styleBrand.Rows[0]["BrandID"]);
+                    txtBrand.Text = MyUtility.Convert.GetString(styleBrand.Rows[0]["BrandID"]);
                 }
                 else
                 {
-                    textBox2.Text = "";
+                    txtBrand.Text = "";
                 }
             }
         }
@@ -103,31 +103,31 @@ namespace Sci.Production.IE
         //OK
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(textBox1.Text))
+            if (MyUtility.Check.Empty(txtStyle.Text))
             {
                 MyUtility.Msg.WarningBox("Style can't empty!");
-                textBox1.Focus();
+                txtStyle.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(txtseason1.Text))
+            if (MyUtility.Check.Empty(txtseason.Text))
             {
                 MyUtility.Msg.WarningBox("Season can't empty!");
-                txtseason1.Focus();
+                txtseason.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(textBox2.Text))
+            if (MyUtility.Check.Empty(txtBrand.Text))
             {
                 MyUtility.Msg.WarningBox("Brand can't empty!");
-                textBox2.Focus();
+                txtBrand.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(comboBox1.SelectedValue))
+            if (MyUtility.Check.Empty(comboStyle.SelectedValue))
             {
                 MyUtility.Msg.WarningBox("ComboType can't empty!");
-                comboBox1.Focus();
+                comboStyle.Focus();
                 return;
             }
 
@@ -138,13 +138,13 @@ namespace Sci.Production.IE
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id";
-            sp1.Value = textBox1.Text;
+            sp1.Value = txtStyle.Text;
             sp2.ParameterName = "@seasonid";
-            sp2.Value = txtseason1.Text;
+            sp2.Value = txtseason.Text;
             sp3.ParameterName = "@brandid";
-            sp3.Value = textBox2.Text;
+            sp3.Value = txtBrand.Text;
             sp4.ParameterName = "@location";
-            sp4.Value = comboBox1.SelectedValue;
+            sp4.Value = comboStyle.SelectedValue;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);

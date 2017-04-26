@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelEmployee = new Sci.Win.UI.Label();
+            this.labelNickName = new Sci.Win.UI.Label();
+            this.labelSkill = new Sci.Win.UI.Label();
+            this.labelHiredOn = new Sci.Win.UI.Label();
+            this.labelResigned = new Sci.Win.UI.Label();
+            this.labelLine = new Sci.Win.UI.Label();
+            this.txtEmployee = new Sci.Win.UI.TextBox();
+            this.txtNickName = new Sci.Win.UI.TextBox();
+            this.txtSkill = new Sci.Win.UI.TextBox();
+            this.dateHiredOn = new Sci.Win.UI.DateBox();
+            this.dateResigned = new Sci.Win.UI.DateBox();
+            this.labelM = new Sci.Win.UI.Label();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtsewingline = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,22 +58,22 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtmfactory1);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.txtsewingline1);
-            this.detailcont.Controls.Add(this.dateBox2);
-            this.detailcont.Controls.Add(this.dateBox1);
-            this.detailcont.Controls.Add(this.textBox3);
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtmfactory);
+            this.detailcont.Controls.Add(this.displayM);
+            this.detailcont.Controls.Add(this.labelM);
+            this.detailcont.Controls.Add(this.txtsewingline);
+            this.detailcont.Controls.Add(this.dateResigned);
+            this.detailcont.Controls.Add(this.dateHiredOn);
+            this.detailcont.Controls.Add(this.txtSkill);
+            this.detailcont.Controls.Add(this.txtNickName);
+            this.detailcont.Controls.Add(this.txtEmployee);
+            this.detailcont.Controls.Add(this.labelLine);
+            this.detailcont.Controls.Add(this.labelResigned);
+            this.detailcont.Controls.Add(this.labelHiredOn);
+            this.detailcont.Controls.Add(this.labelSkill);
+            this.detailcont.Controls.Add(this.labelNickName);
+            this.detailcont.Controls.Add(this.labelEmployee);
+            this.detailcont.Controls.Add(this.labelFactory);
             this.detailcont.Size = new System.Drawing.Size(832, 357);
             // 
             // detailbtm
@@ -102,159 +102,159 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelFactory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(53, 32);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(53, 32);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.TabIndex = 0;
+            this.labelFactory.Text = "Factory";
             // 
-            // label4
+            // labelEmployee
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(53, 80);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Employee#";
+            this.labelEmployee.Lines = 0;
+            this.labelEmployee.Location = new System.Drawing.Point(53, 80);
+            this.labelEmployee.Name = "labelEmployee";
+            this.labelEmployee.Size = new System.Drawing.Size(75, 23);
+            this.labelEmployee.TabIndex = 1;
+            this.labelEmployee.Text = "Employee#";
             // 
-            // label5
+            // labelNickName
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(53, 131);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Nick Name";
+            this.labelNickName.Lines = 0;
+            this.labelNickName.Location = new System.Drawing.Point(53, 131);
+            this.labelNickName.Name = "labelNickName";
+            this.labelNickName.Size = new System.Drawing.Size(75, 23);
+            this.labelNickName.TabIndex = 2;
+            this.labelNickName.Text = "Nick Name";
             // 
-            // label6
+            // labelSkill
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(53, 182);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Skill";
+            this.labelSkill.Lines = 0;
+            this.labelSkill.Location = new System.Drawing.Point(53, 182);
+            this.labelSkill.Name = "labelSkill";
+            this.labelSkill.Size = new System.Drawing.Size(75, 23);
+            this.labelSkill.TabIndex = 3;
+            this.labelSkill.Text = "Skill";
             // 
-            // label7
+            // labelHiredOn
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(400, 32);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Hired On";
+            this.labelHiredOn.Lines = 0;
+            this.labelHiredOn.Location = new System.Drawing.Point(400, 32);
+            this.labelHiredOn.Name = "labelHiredOn";
+            this.labelHiredOn.Size = new System.Drawing.Size(75, 23);
+            this.labelHiredOn.TabIndex = 4;
+            this.labelHiredOn.Text = "Hired On";
             // 
-            // label8
+            // labelResigned
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(400, 81);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Resigned";
+            this.labelResigned.Lines = 0;
+            this.labelResigned.Location = new System.Drawing.Point(400, 81);
+            this.labelResigned.Name = "labelResigned";
+            this.labelResigned.Size = new System.Drawing.Size(75, 23);
+            this.labelResigned.TabIndex = 5;
+            this.labelResigned.Text = "Resigned";
             // 
-            // label9
+            // labelLine
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(400, 132);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 6;
-            this.label9.Text = "Line";
+            this.labelLine.Lines = 0;
+            this.labelLine.Location = new System.Drawing.Point(400, 132);
+            this.labelLine.Name = "labelLine";
+            this.labelLine.Size = new System.Drawing.Size(75, 23);
+            this.labelLine.TabIndex = 6;
+            this.labelLine.Text = "Line";
             // 
-            // textBox1
+            // txtEmployee
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(132, 80);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtEmployee.BackColor = System.Drawing.Color.White;
+            this.txtEmployee.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtEmployee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtEmployee.Location = new System.Drawing.Point(132, 80);
+            this.txtEmployee.Name = "txtEmployee";
+            this.txtEmployee.Size = new System.Drawing.Size(80, 23);
+            this.txtEmployee.TabIndex = 0;
             // 
-            // textBox2
+            // txtNickName
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(132, 131);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(200, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtNickName.BackColor = System.Drawing.Color.White;
+            this.txtNickName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtNickName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Name", true));
+            this.txtNickName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNickName.Location = new System.Drawing.Point(132, 131);
+            this.txtNickName.Name = "txtNickName";
+            this.txtNickName.Size = new System.Drawing.Size(200, 23);
+            this.txtNickName.TabIndex = 1;
             // 
-            // textBox3
+            // txtSkill
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Skill", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox3.IsSupportEditMode = false;
-            this.textBox3.Location = new System.Drawing.Point(132, 182);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(140, 23);
-            this.textBox3.TabIndex = 2;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtSkill.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSkill.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Skill", true));
+            this.txtSkill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSkill.IsSupportEditMode = false;
+            this.txtSkill.Location = new System.Drawing.Point(132, 182);
+            this.txtSkill.Name = "txtSkill";
+            this.txtSkill.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtSkill.ReadOnly = true;
+            this.txtSkill.Size = new System.Drawing.Size(140, 23);
+            this.txtSkill.TabIndex = 2;
+            this.txtSkill.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
             // 
-            // dateBox1
+            // dateHiredOn
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoardDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(479, 32);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 3;
+            this.dateHiredOn.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoardDate", true));
+            this.dateHiredOn.Location = new System.Drawing.Point(479, 32);
+            this.dateHiredOn.Name = "dateHiredOn";
+            this.dateHiredOn.Size = new System.Drawing.Size(130, 23);
+            this.dateHiredOn.TabIndex = 3;
             // 
-            // dateBox2
+            // dateResigned
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResignationDate", true));
-            this.dateBox2.Location = new System.Drawing.Point(479, 81);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 4;
+            this.dateResigned.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResignationDate", true));
+            this.dateResigned.Location = new System.Drawing.Point(479, 81);
+            this.dateResigned.Name = "dateResigned";
+            this.dateResigned.Size = new System.Drawing.Size(130, 23);
+            this.dateResigned.TabIndex = 4;
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(253, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(253, 32);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(16, 23);
+            this.labelM.TabIndex = 14;
+            this.labelM.Text = "M";
             // 
-            // displayBox2
+            // displayM
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(273, 32);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(40, 23);
-            this.displayBox2.TabIndex = 15;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(273, 32);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(40, 23);
+            this.displayM.TabIndex = 15;
             // 
-            // txtmfactory1
+            // txtmfactory
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(132, 32);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 16;
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.Location = new System.Drawing.Point(132, 32);
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory.TabIndex = 16;
             // 
-            // txtsewingline1
+            // txtsewingline
             // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = this.txtmfactory1;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(479, 132);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline1.TabIndex = 5;
+            this.txtsewingline.BackColor = System.Drawing.Color.White;
+            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline.factoryobjectName = this.txtmfactory;
+            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline.Location = new System.Drawing.Point(479, 132);
+            this.txtsewingline.Name = "txtsewingline";
+            this.txtsewingline.Size = new System.Drawing.Size(60, 23);
+            this.txtsewingline.TabIndex = 5;
             // 
             // B08
             // 
@@ -282,21 +282,21 @@
 
         #endregion
 
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Class.txtsewingline txtsewingline1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label1;
-        private Class.txtmfactory txtmfactory1;
+        private Win.UI.DateBox dateResigned;
+        private Win.UI.DateBox dateHiredOn;
+        private Win.UI.TextBox txtSkill;
+        private Win.UI.TextBox txtNickName;
+        private Win.UI.TextBox txtEmployee;
+        private Win.UI.Label labelLine;
+        private Win.UI.Label labelResigned;
+        private Win.UI.Label labelHiredOn;
+        private Win.UI.Label labelSkill;
+        private Win.UI.Label labelNickName;
+        private Win.UI.Label labelEmployee;
+        private Win.UI.Label labelFactory;
+        private Class.txtsewingline txtsewingline;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.Label labelM;
+        private Class.txtmfactory txtmfactory;
     }
 }

@@ -28,31 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.numericBox5 = new Sci.Win.UI.NumericBox();
-            this.numericBox6 = new Sci.Win.UI.NumericBox();
-            this.numericBox7 = new Sci.Win.UI.NumericBox();
+            this.labelVersion = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelDesc = new Sci.Win.UI.Label();
+            this.numVersion = new Sci.Win.UI.NumericBox();
+            this.txtFactory = new Sci.Win.UI.TextBox();
+            this.txtStyleComboType = new Sci.Win.UI.TextBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displayDesc = new Sci.Win.UI.DisplayBox();
+            this.labelNoOfOprts = new Sci.Win.UI.Label();
+            this.labelTargetHr = new Sci.Win.UI.Label();
+            this.labelDailydemandshift = new Sci.Win.UI.Label();
+            this.labelTaktTime = new Sci.Win.UI.Label();
+            this.labelSewingLineTeam = new Sci.Win.UI.Label();
+            this.labelCurrent = new Sci.Win.UI.Label();
+            this.labelIdeal = new Sci.Win.UI.Label();
+            this.numTargetHrCurrent = new Sci.Win.UI.NumericBox();
+            this.numDailydemandshiftCurrent = new Sci.Win.UI.NumericBox();
+            this.numTaktTimeCurrent = new Sci.Win.UI.NumericBox();
+            this.numTaktTimeIdeal = new Sci.Win.UI.NumericBox();
+            this.numDailydemandshiftIdeal = new Sci.Win.UI.NumericBox();
+            this.numTargetHrIdeal = new Sci.Win.UI.NumericBox();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -64,44 +64,44 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.comboSewingLineTeam = new Sci.Win.UI.ComboBox();
             this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.numericBox8 = new Sci.Win.UI.NumericBox();
-            this.label16 = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
-            this.label18 = new Sci.Win.UI.Label();
-            this.label21 = new Sci.Win.UI.Label();
-            this.numericBox9 = new Sci.Win.UI.NumericBox();
-            this.numericBox10 = new Sci.Win.UI.NumericBox();
-            this.numericBox12 = new Sci.Win.UI.NumericBox();
-            this.numericBox13 = new Sci.Win.UI.NumericBox();
-            this.numericBox14 = new Sci.Win.UI.NumericBox();
-            this.numericBox16 = new Sci.Win.UI.NumericBox();
-            this.numericBox17 = new Sci.Win.UI.NumericBox();
-            this.numericBox19 = new Sci.Win.UI.NumericBox();
-            this.numericBox20 = new Sci.Win.UI.NumericBox();
-            this.label23 = new Sci.Win.UI.Label();
-            this.label24 = new Sci.Win.UI.Label();
-            this.label25 = new Sci.Win.UI.Label();
-            this.label26 = new Sci.Win.UI.Label();
-            this.label27 = new Sci.Win.UI.Label();
-            this.label22 = new Sci.Win.UI.Label();
-            this.label28 = new Sci.Win.UI.Label();
-            this.label29 = new Sci.Win.UI.Label();
-            this.label30 = new Sci.Win.UI.Label();
-            this.numericBox21 = new Sci.Win.UI.NumericBox();
-            this.numericBox22 = new Sci.Win.UI.NumericBox();
-            this.numericBox23 = new Sci.Win.UI.NumericBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
-            this.textBox7 = new Sci.Win.UI.TextBox();
-            this.numericBox11 = new Sci.Win.UI.NumericBox();
-            this.numericBox15 = new Sci.Win.UI.NumericBox();
-            this.numericBox18 = new Sci.Win.UI.NumericBox();
-            this.label31 = new Sci.Win.UI.Label();
-            this.txtsewingline1 = new Sci.Production.Class.txtsewingline();
+            this.labelCPUPC = new Sci.Win.UI.Label();
+            this.numCPUPC = new Sci.Win.UI.NumericBox();
+            this.labelTotalGSDTime = new Sci.Win.UI.Label();
+            this.labelTotalCycleTime = new Sci.Win.UI.Label();
+            this.labelTotalTimeDiff = new Sci.Win.UI.Label();
+            this.labelNoOfHours = new Sci.Win.UI.Label();
+            this.numTotalGSDTime = new Sci.Win.UI.NumericBox();
+            this.numTotalCycleTime = new Sci.Win.UI.NumericBox();
+            this.numlOprtsCurrent = new Sci.Win.UI.NumericBox();
+            this.numOprtsIdeal = new Sci.Win.UI.NumericBox();
+            this.numNoOfHours = new Sci.Win.UI.NumericBox();
+            this.numNetAvailableTime = new Sci.Win.UI.NumericBox();
+            this.numEOLR = new Sci.Win.UI.NumericBox();
+            this.numHighestCycleTime = new Sci.Win.UI.NumericBox();
+            this.numHighestGSDTime = new Sci.Win.UI.NumericBox();
+            this.labelNetAvailableTime = new Sci.Win.UI.Label();
+            this.labelEOLR = new Sci.Win.UI.Label();
+            this.labelHighestTimeDiff = new Sci.Win.UI.Label();
+            this.labelHighestCycleTime = new Sci.Win.UI.Label();
+            this.labelHighestGSDTime = new Sci.Win.UI.Label();
+            this.labelEffieiency = new Sci.Win.UI.Label();
+            this.labelPPH = new Sci.Win.UI.Label();
+            this.labelLBR = new Sci.Win.UI.Label();
+            this.labelLLER = new Sci.Win.UI.Label();
+            this.numPPH = new Sci.Win.UI.NumericBox();
+            this.numLBR = new Sci.Win.UI.NumericBox();
+            this.numLLER = new Sci.Win.UI.NumericBox();
+            this.btnNotHitTargetReason = new Sci.Win.UI.Button();
+            this.btnCopyFromOtherLineMapping = new Sci.Win.UI.Button();
+            this.btnCopyFromGSD = new Sci.Win.UI.Button();
+            this.txtStyleID = new Sci.Win.UI.TextBox();
+            this.numTotalTimeDiff = new Sci.Win.UI.NumericBox();
+            this.numHighestTimeDiff = new Sci.Win.UI.NumericBox();
+            this.numEffieiency = new Sci.Win.UI.NumericBox();
+            this.labelOprts = new Sci.Win.UI.Label();
+            this.txtsewingline = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -118,136 +118,136 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.label31);
-            this.masterpanel.Controls.Add(this.numericBox18);
-            this.masterpanel.Controls.Add(this.numericBox15);
-            this.masterpanel.Controls.Add(this.numericBox11);
-            this.masterpanel.Controls.Add(this.textBox7);
-            this.masterpanel.Controls.Add(this.button3);
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.numericBox23);
-            this.masterpanel.Controls.Add(this.numericBox22);
-            this.masterpanel.Controls.Add(this.numericBox21);
-            this.masterpanel.Controls.Add(this.label30);
-            this.masterpanel.Controls.Add(this.label29);
-            this.masterpanel.Controls.Add(this.label28);
-            this.masterpanel.Controls.Add(this.label22);
-            this.masterpanel.Controls.Add(this.numericBox16);
-            this.masterpanel.Controls.Add(this.numericBox17);
-            this.masterpanel.Controls.Add(this.numericBox19);
-            this.masterpanel.Controls.Add(this.numericBox20);
-            this.masterpanel.Controls.Add(this.label23);
-            this.masterpanel.Controls.Add(this.label24);
-            this.masterpanel.Controls.Add(this.label25);
-            this.masterpanel.Controls.Add(this.label26);
-            this.masterpanel.Controls.Add(this.label27);
-            this.masterpanel.Controls.Add(this.numericBox14);
-            this.masterpanel.Controls.Add(this.numericBox13);
-            this.masterpanel.Controls.Add(this.numericBox12);
-            this.masterpanel.Controls.Add(this.numericBox10);
-            this.masterpanel.Controls.Add(this.numericBox9);
-            this.masterpanel.Controls.Add(this.label21);
-            this.masterpanel.Controls.Add(this.label18);
-            this.masterpanel.Controls.Add(this.label17);
-            this.masterpanel.Controls.Add(this.label16);
-            this.masterpanel.Controls.Add(this.numericBox8);
-            this.masterpanel.Controls.Add(this.label15);
+            this.masterpanel.Controls.Add(this.labelOprts);
+            this.masterpanel.Controls.Add(this.numEffieiency);
+            this.masterpanel.Controls.Add(this.numHighestTimeDiff);
+            this.masterpanel.Controls.Add(this.numTotalTimeDiff);
+            this.masterpanel.Controls.Add(this.txtStyleID);
+            this.masterpanel.Controls.Add(this.btnCopyFromGSD);
+            this.masterpanel.Controls.Add(this.btnCopyFromOtherLineMapping);
+            this.masterpanel.Controls.Add(this.btnNotHitTargetReason);
+            this.masterpanel.Controls.Add(this.numLLER);
+            this.masterpanel.Controls.Add(this.numLBR);
+            this.masterpanel.Controls.Add(this.numPPH);
+            this.masterpanel.Controls.Add(this.labelLLER);
+            this.masterpanel.Controls.Add(this.labelLBR);
+            this.masterpanel.Controls.Add(this.labelPPH);
+            this.masterpanel.Controls.Add(this.labelEffieiency);
+            this.masterpanel.Controls.Add(this.numNetAvailableTime);
+            this.masterpanel.Controls.Add(this.numEOLR);
+            this.masterpanel.Controls.Add(this.numHighestCycleTime);
+            this.masterpanel.Controls.Add(this.numHighestGSDTime);
+            this.masterpanel.Controls.Add(this.labelNetAvailableTime);
+            this.masterpanel.Controls.Add(this.labelEOLR);
+            this.masterpanel.Controls.Add(this.labelHighestTimeDiff);
+            this.masterpanel.Controls.Add(this.labelHighestCycleTime);
+            this.masterpanel.Controls.Add(this.labelHighestGSDTime);
+            this.masterpanel.Controls.Add(this.numNoOfHours);
+            this.masterpanel.Controls.Add(this.numOprtsIdeal);
+            this.masterpanel.Controls.Add(this.numlOprtsCurrent);
+            this.masterpanel.Controls.Add(this.numTotalCycleTime);
+            this.masterpanel.Controls.Add(this.numTotalGSDTime);
+            this.masterpanel.Controls.Add(this.labelNoOfHours);
+            this.masterpanel.Controls.Add(this.labelTotalTimeDiff);
+            this.masterpanel.Controls.Add(this.labelTotalCycleTime);
+            this.masterpanel.Controls.Add(this.labelTotalGSDTime);
+            this.masterpanel.Controls.Add(this.numCPUPC);
+            this.masterpanel.Controls.Add(this.labelCPUPC);
             this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.txtsewingline1);
-            this.masterpanel.Controls.Add(this.numericBox5);
-            this.masterpanel.Controls.Add(this.numericBox6);
-            this.masterpanel.Controls.Add(this.numericBox7);
-            this.masterpanel.Controls.Add(this.numericBox4);
-            this.masterpanel.Controls.Add(this.numericBox3);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.comboSewingLineTeam);
+            this.masterpanel.Controls.Add(this.txtsewingline);
+            this.masterpanel.Controls.Add(this.numTaktTimeIdeal);
+            this.masterpanel.Controls.Add(this.numDailydemandshiftIdeal);
+            this.masterpanel.Controls.Add(this.numTargetHrIdeal);
+            this.masterpanel.Controls.Add(this.numTaktTimeCurrent);
+            this.masterpanel.Controls.Add(this.numDailydemandshiftCurrent);
+            this.masterpanel.Controls.Add(this.numTargetHrCurrent);
+            this.masterpanel.Controls.Add(this.labelIdeal);
+            this.masterpanel.Controls.Add(this.labelCurrent);
+            this.masterpanel.Controls.Add(this.labelSewingLineTeam);
+            this.masterpanel.Controls.Add(this.labelTaktTime);
+            this.masterpanel.Controls.Add(this.labelDailydemandshift);
+            this.masterpanel.Controls.Add(this.labelTargetHr);
+            this.masterpanel.Controls.Add(this.labelNoOfOprts);
+            this.masterpanel.Controls.Add(this.displayDesc);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.txtStyleComboType);
+            this.masterpanel.Controls.Add(this.txtFactory);
+            this.masterpanel.Controls.Add(this.numVersion);
+            this.masterpanel.Controls.Add(this.labelDesc);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.labelFactory);
+            this.masterpanel.Controls.Add(this.labelVersion);
             this.masterpanel.Controls.Add(this.shapeContainer1);
             this.masterpanel.Size = new System.Drawing.Size(996, 206);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsewingline1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelVersion, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDesc, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numVersion, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStyleComboType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDesc, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNoOfOprts, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTargetHr, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDailydemandshift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTaktTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSewingLineTeam, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCurrent, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelIdeal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTargetHrCurrent, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numDailydemandshiftCurrent, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTaktTimeCurrent, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTargetHrIdeal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numDailydemandshiftIdeal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTaktTimeIdeal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboSewingLineTeam, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label18, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label21, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox14, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCPUPC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numCPUPC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalGSDTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalCycleTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalTimeDiff, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNoOfHours, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalGSDTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalCycleTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numlOprtsCurrent, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOprtsIdeal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numNoOfHours, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label27, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label26, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label24, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label23, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox20, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox19, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox17, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox16, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label22, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label28, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label29, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label30, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox21, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox22, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox23, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox18, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label31, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelHighestGSDTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelHighestCycleTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelHighestTimeDiff, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEOLR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNetAvailableTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numHighestGSDTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numHighestCycleTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numEOLR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numNetAvailableTime, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEffieiency, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPPH, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLBR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelLLER, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numPPH, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numLBR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numLLER, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnNotHitTargetReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCopyFromOtherLineMapping, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCopyFromGSD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtStyleID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalTimeDiff, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numHighestTimeDiff, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numEffieiency, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOprts, 0);
             // 
             // detailpanel
             // 
@@ -314,353 +314,353 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelVersion
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(5, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 21);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Version";
+            this.labelVersion.Lines = 0;
+            this.labelVersion.Location = new System.Drawing.Point(5, 7);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(49, 21);
+            this.labelVersion.TabIndex = 1;
+            this.labelVersion.Text = "Version";
             // 
-            // label2
+            // labelFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(5, 35);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 21);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(5, 35);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(50, 21);
+            this.labelFactory.TabIndex = 2;
+            this.labelFactory.Text = "Factory";
             // 
-            // label3
+            // labelStyle
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(5, 63);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 21);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(5, 63);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(50, 21);
+            this.labelStyle.TabIndex = 3;
+            this.labelStyle.Text = "Style#";
             // 
-            // label4
+            // labelSeason
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(5, 91);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(50, 21);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(5, 91);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(50, 21);
+            this.labelSeason.TabIndex = 4;
+            this.labelSeason.Text = "Season";
             // 
-            // label5
+            // labelBrand
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(5, 119);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(50, 21);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(5, 119);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(50, 21);
+            this.labelBrand.TabIndex = 5;
+            this.labelBrand.Text = "Brand";
             // 
-            // label6
+            // labelDesc
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(5, 175);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 21);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Desc";
+            this.labelDesc.Lines = 0;
+            this.labelDesc.Location = new System.Drawing.Point(5, 175);
+            this.labelDesc.Name = "labelDesc";
+            this.labelDesc.Size = new System.Drawing.Size(50, 21);
+            this.labelDesc.TabIndex = 6;
+            this.labelDesc.Text = "Desc";
             // 
-            // numericBox1
+            // numVersion
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(57, 7);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
+            this.numVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numVersion.IsSupportEditMode = false;
+            this.numVersion.Location = new System.Drawing.Point(57, 7);
+            this.numVersion.Name = "numVersion";
+            this.numVersion.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(43, 21);
-            this.numericBox1.TabIndex = 0;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(57, 35);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(70, 21);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ComboType", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(179, 63);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(26, 21);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            // 
-            // displayBox1
-            // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(57, 91);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(80, 21);
-            this.displayBox1.TabIndex = 4;
-            // 
-            // displayBox2
-            // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(57, 119);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(70, 21);
-            this.displayBox2.TabIndex = 5;
-            // 
-            // displayBox3
-            // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(57, 175);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(279, 21);
-            this.displayBox3.TabIndex = 7;
-            // 
-            // label7
-            // 
-            this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(235, 7);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(82, 21);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "No. of Oprts";
-            this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label7.TextStyle.Color = System.Drawing.Color.Black;
-            this.label7.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label7.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // label8
-            // 
-            this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(214, 35);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(108, 21);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "Target / Hr. (100%)";
-            this.label8.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label8.TextStyle.Color = System.Drawing.Color.Black;
-            this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // label9
-            // 
-            this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(214, 63);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(106, 21);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "Daily demand/shift";
-            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label9.TextStyle.Color = System.Drawing.Color.Black;
-            this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label9.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // label10
-            // 
-            this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(214, 91);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(69, 21);
-            this.label10.TabIndex = 17;
-            this.label10.Text = "Takt Time";
-            this.label10.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label10.TextStyle.Color = System.Drawing.Color.Black;
-            this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label10.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // label11
-            // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(212, 147);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(108, 21);
-            this.label11.TabIndex = 18;
-            this.label11.Text = "Sewing Line/Team";
-            // 
-            // label12
-            // 
-            this.label12.BackColor = System.Drawing.Color.Transparent;
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(333, 7);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(50, 21);
-            this.label12.TabIndex = 19;
-            this.label12.Text = "Current";
-            this.label12.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label12.TextStyle.Color = System.Drawing.Color.Black;
-            this.label12.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label12.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // label13
-            // 
-            this.label13.BackColor = System.Drawing.Color.Transparent;
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(404, 7);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(39, 21);
-            this.label13.TabIndex = 20;
-            this.label13.Text = "Ideal";
-            this.label13.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label13.TextStyle.Color = System.Drawing.Color.Black;
-            this.label13.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label13.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StandardOutput", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(331, 35);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(55, 21);
-            this.numericBox2.TabIndex = 8;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numVersion.ReadOnly = true;
+            this.numVersion.Size = new System.Drawing.Size(43, 21);
+            this.numVersion.TabIndex = 0;
+            this.numVersion.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox3
+            // txtFactory
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(331, 63);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(57, 35);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(70, 21);
+            this.txtFactory.TabIndex = 1;
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            // 
+            // txtStyleComboType
+            // 
+            this.txtStyleComboType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyleComboType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ComboType", true));
+            this.txtStyleComboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyleComboType.IsSupportEditMode = false;
+            this.txtStyleComboType.Location = new System.Drawing.Point(179, 63);
+            this.txtStyleComboType.Name = "txtStyleComboType";
+            this.txtStyleComboType.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtStyleComboType.ReadOnly = true;
+            this.txtStyleComboType.Size = new System.Drawing.Size(26, 21);
+            this.txtStyleComboType.TabIndex = 3;
+            this.txtStyleComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            // 
+            // displaySeason
+            // 
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(57, 91);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(80, 21);
+            this.displaySeason.TabIndex = 4;
+            // 
+            // displayBrand
+            // 
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(57, 119);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(70, 21);
+            this.displayBrand.TabIndex = 5;
+            // 
+            // displayDesc
+            // 
+            this.displayDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDesc.Location = new System.Drawing.Point(57, 175);
+            this.displayDesc.Name = "displayDesc";
+            this.displayDesc.Size = new System.Drawing.Size(279, 21);
+            this.displayDesc.TabIndex = 7;
+            // 
+            // labelNoOfOprts
+            // 
+            this.labelNoOfOprts.BackColor = System.Drawing.Color.Transparent;
+            this.labelNoOfOprts.Lines = 0;
+            this.labelNoOfOprts.Location = new System.Drawing.Point(235, 7);
+            this.labelNoOfOprts.Name = "labelNoOfOprts";
+            this.labelNoOfOprts.Size = new System.Drawing.Size(82, 21);
+            this.labelNoOfOprts.TabIndex = 14;
+            this.labelNoOfOprts.Text = "No. of Oprts";
+            this.labelNoOfOprts.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelNoOfOprts.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelNoOfOprts.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelNoOfOprts.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // labelTargetHr
+            // 
+            this.labelTargetHr.BackColor = System.Drawing.Color.Transparent;
+            this.labelTargetHr.Lines = 0;
+            this.labelTargetHr.Location = new System.Drawing.Point(214, 35);
+            this.labelTargetHr.Name = "labelTargetHr";
+            this.labelTargetHr.Size = new System.Drawing.Size(108, 21);
+            this.labelTargetHr.TabIndex = 15;
+            this.labelTargetHr.Text = "Target / Hr. (100%)";
+            this.labelTargetHr.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelTargetHr.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelTargetHr.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelTargetHr.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // labelDailydemandshift
+            // 
+            this.labelDailydemandshift.BackColor = System.Drawing.Color.Transparent;
+            this.labelDailydemandshift.Lines = 0;
+            this.labelDailydemandshift.Location = new System.Drawing.Point(214, 63);
+            this.labelDailydemandshift.Name = "labelDailydemandshift";
+            this.labelDailydemandshift.Size = new System.Drawing.Size(106, 21);
+            this.labelDailydemandshift.TabIndex = 3;
+            this.labelDailydemandshift.Text = "Daily demand/shift";
+            this.labelDailydemandshift.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelDailydemandshift.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelDailydemandshift.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelDailydemandshift.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // labelTaktTime
+            // 
+            this.labelTaktTime.BackColor = System.Drawing.Color.Transparent;
+            this.labelTaktTime.Lines = 0;
+            this.labelTaktTime.Location = new System.Drawing.Point(214, 91);
+            this.labelTaktTime.Name = "labelTaktTime";
+            this.labelTaktTime.Size = new System.Drawing.Size(69, 21);
+            this.labelTaktTime.TabIndex = 17;
+            this.labelTaktTime.Text = "Takt Time";
+            this.labelTaktTime.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelTaktTime.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelTaktTime.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelTaktTime.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // labelSewingLineTeam
+            // 
+            this.labelSewingLineTeam.Lines = 0;
+            this.labelSewingLineTeam.Location = new System.Drawing.Point(212, 147);
+            this.labelSewingLineTeam.Name = "labelSewingLineTeam";
+            this.labelSewingLineTeam.Size = new System.Drawing.Size(108, 21);
+            this.labelSewingLineTeam.TabIndex = 18;
+            this.labelSewingLineTeam.Text = "Sewing Line/Team";
+            // 
+            // labelCurrent
+            // 
+            this.labelCurrent.BackColor = System.Drawing.Color.Transparent;
+            this.labelCurrent.Lines = 0;
+            this.labelCurrent.Location = new System.Drawing.Point(333, 7);
+            this.labelCurrent.Name = "labelCurrent";
+            this.labelCurrent.Size = new System.Drawing.Size(50, 21);
+            this.labelCurrent.TabIndex = 19;
+            this.labelCurrent.Text = "Current";
+            this.labelCurrent.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelCurrent.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelCurrent.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelCurrent.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // labelIdeal
+            // 
+            this.labelIdeal.BackColor = System.Drawing.Color.Transparent;
+            this.labelIdeal.Lines = 0;
+            this.labelIdeal.Location = new System.Drawing.Point(404, 7);
+            this.labelIdeal.Name = "labelIdeal";
+            this.labelIdeal.Size = new System.Drawing.Size(39, 21);
+            this.labelIdeal.TabIndex = 20;
+            this.labelIdeal.Text = "Ideal";
+            this.labelIdeal.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelIdeal.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelIdeal.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelIdeal.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // numTargetHrCurrent
+            // 
+            this.numTargetHrCurrent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTargetHrCurrent.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StandardOutput", true));
+            this.numTargetHrCurrent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTargetHrCurrent.IsSupportEditMode = false;
+            this.numTargetHrCurrent.Location = new System.Drawing.Point(331, 35);
+            this.numTargetHrCurrent.Name = "numTargetHrCurrent";
+            this.numTargetHrCurrent.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(55, 21);
-            this.numericBox3.TabIndex = 10;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numTargetHrCurrent.ReadOnly = true;
+            this.numTargetHrCurrent.Size = new System.Drawing.Size(55, 21);
+            this.numTargetHrCurrent.TabIndex = 8;
+            this.numTargetHrCurrent.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox4
+            // numDailydemandshiftCurrent
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(331, 91);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.NullValue = new decimal(new int[] {
+            this.numDailydemandshiftCurrent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDailydemandshiftCurrent.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DailyDemand", true));
+            this.numDailydemandshiftCurrent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDailydemandshiftCurrent.IsSupportEditMode = false;
+            this.numDailydemandshiftCurrent.Location = new System.Drawing.Point(331, 63);
+            this.numDailydemandshiftCurrent.Name = "numDailydemandshiftCurrent";
+            this.numDailydemandshiftCurrent.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(55, 21);
-            this.numericBox4.TabIndex = 12;
-            this.numericBox4.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox5
-            // 
-            this.numericBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox5.IsSupportEditMode = false;
-            this.numericBox5.Location = new System.Drawing.Point(395, 91);
-            this.numericBox5.Name = "numericBox5";
-            this.numericBox5.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox5.ReadOnly = true;
-            this.numericBox5.Size = new System.Drawing.Size(55, 21);
-            this.numericBox5.TabIndex = 13;
-            this.numericBox5.Value = new decimal(new int[] {
+            this.numDailydemandshiftCurrent.ReadOnly = true;
+            this.numDailydemandshiftCurrent.Size = new System.Drawing.Size(55, 21);
+            this.numDailydemandshiftCurrent.TabIndex = 10;
+            this.numDailydemandshiftCurrent.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox6
+            // numTaktTimeCurrent
             // 
-            this.numericBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox6.IsSupportEditMode = false;
-            this.numericBox6.Location = new System.Drawing.Point(395, 63);
-            this.numericBox6.Name = "numericBox6";
-            this.numericBox6.NullValue = new decimal(new int[] {
+            this.numTaktTimeCurrent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTaktTimeCurrent.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
+            this.numTaktTimeCurrent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTaktTimeCurrent.IsSupportEditMode = false;
+            this.numTaktTimeCurrent.Location = new System.Drawing.Point(331, 91);
+            this.numTaktTimeCurrent.Name = "numTaktTimeCurrent";
+            this.numTaktTimeCurrent.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox6.ReadOnly = true;
-            this.numericBox6.Size = new System.Drawing.Size(55, 21);
-            this.numericBox6.TabIndex = 11;
-            this.numericBox6.Value = new decimal(new int[] {
+            this.numTaktTimeCurrent.ReadOnly = true;
+            this.numTaktTimeCurrent.Size = new System.Drawing.Size(55, 21);
+            this.numTaktTimeCurrent.TabIndex = 12;
+            this.numTaktTimeCurrent.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox7
+            // numTaktTimeIdeal
             // 
-            this.numericBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox7.IsSupportEditMode = false;
-            this.numericBox7.Location = new System.Drawing.Point(395, 35);
-            this.numericBox7.Name = "numericBox7";
-            this.numericBox7.NullValue = new decimal(new int[] {
+            this.numTaktTimeIdeal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTaktTimeIdeal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTaktTimeIdeal.IsSupportEditMode = false;
+            this.numTaktTimeIdeal.Location = new System.Drawing.Point(395, 91);
+            this.numTaktTimeIdeal.Name = "numTaktTimeIdeal";
+            this.numTaktTimeIdeal.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox7.ReadOnly = true;
-            this.numericBox7.Size = new System.Drawing.Size(55, 21);
-            this.numericBox7.TabIndex = 9;
-            this.numericBox7.Value = new decimal(new int[] {
+            this.numTaktTimeIdeal.ReadOnly = true;
+            this.numTaktTimeIdeal.Size = new System.Drawing.Size(55, 21);
+            this.numTaktTimeIdeal.TabIndex = 13;
+            this.numTaktTimeIdeal.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numDailydemandshiftIdeal
+            // 
+            this.numDailydemandshiftIdeal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDailydemandshiftIdeal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDailydemandshiftIdeal.IsSupportEditMode = false;
+            this.numDailydemandshiftIdeal.Location = new System.Drawing.Point(395, 63);
+            this.numDailydemandshiftIdeal.Name = "numDailydemandshiftIdeal";
+            this.numDailydemandshiftIdeal.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numDailydemandshiftIdeal.ReadOnly = true;
+            this.numDailydemandshiftIdeal.Size = new System.Drawing.Size(55, 21);
+            this.numDailydemandshiftIdeal.TabIndex = 11;
+            this.numDailydemandshiftIdeal.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTargetHrIdeal
+            // 
+            this.numTargetHrIdeal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTargetHrIdeal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTargetHrIdeal.IsSupportEditMode = false;
+            this.numTargetHrIdeal.Location = new System.Drawing.Point(395, 35);
+            this.numTargetHrIdeal.Name = "numTargetHrIdeal";
+            this.numTargetHrIdeal.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTargetHrIdeal.ReadOnly = true;
+            this.numTargetHrIdeal.Size = new System.Drawing.Size(55, 21);
+            this.numTargetHrIdeal.TabIndex = 9;
+            this.numTargetHrIdeal.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -776,17 +776,17 @@
             this.lineShape1.Y1 = 6;
             this.lineShape1.Y2 = 6;
             // 
-            // comboBox1
+            // comboSewingLineTeam
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(400, 147);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(51, 23);
-            this.comboBox1.TabIndex = 5;
+            this.comboSewingLineTeam.BackColor = System.Drawing.Color.White;
+            this.comboSewingLineTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
+            this.comboSewingLineTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSewingLineTeam.FormattingEnabled = true;
+            this.comboSewingLineTeam.IsSupportUnselect = true;
+            this.comboSewingLineTeam.Location = new System.Drawing.Point(400, 147);
+            this.comboSewingLineTeam.Name = "comboSewingLineTeam";
+            this.comboSewingLineTeam.Size = new System.Drawing.Size(51, 23);
+            this.comboSewingLineTeam.TabIndex = 5;
             // 
             // label14
             // 
@@ -802,555 +802,555 @@
             this.label14.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label14.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // label15
+            // labelCPUPC
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(5, 147);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(50, 21);
-            this.label15.TabIndex = 31;
-            this.label15.Text = "CPU/pc";
+            this.labelCPUPC.Lines = 0;
+            this.labelCPUPC.Location = new System.Drawing.Point(5, 147);
+            this.labelCPUPC.Name = "labelCPUPC";
+            this.labelCPUPC.Size = new System.Drawing.Size(50, 21);
+            this.labelCPUPC.TabIndex = 31;
+            this.labelCPUPC.Text = "CPU/pc";
             // 
-            // numericBox8
+            // numCPUPC
             // 
-            this.numericBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox8.DecimalPlaces = 3;
-            this.numericBox8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox8.IsSupportEditMode = false;
-            this.numericBox8.Location = new System.Drawing.Point(57, 147);
-            this.numericBox8.Name = "numericBox8";
-            this.numericBox8.NullValue = new decimal(new int[] {
+            this.numCPUPC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCPUPC.DecimalPlaces = 3;
+            this.numCPUPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCPUPC.IsSupportEditMode = false;
+            this.numCPUPC.Location = new System.Drawing.Point(57, 147);
+            this.numCPUPC.Name = "numCPUPC";
+            this.numCPUPC.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox8.ReadOnly = true;
-            this.numericBox8.Size = new System.Drawing.Size(65, 21);
-            this.numericBox8.TabIndex = 6;
-            this.numericBox8.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label16
-            // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(481, 7);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(94, 21);
-            this.label16.TabIndex = 33;
-            this.label16.Text = "Total GSD time";
-            // 
-            // label17
-            // 
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(481, 35);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(94, 21);
-            this.label17.TabIndex = 34;
-            this.label17.Text = "Total cycle time";
-            // 
-            // label18
-            // 
-            this.label18.Lines = 0;
-            this.label18.Location = new System.Drawing.Point(481, 63);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(94, 21);
-            this.label18.TabIndex = 35;
-            this.label18.Text = "Total % time diff";
-            // 
-            // label21
-            // 
-            this.label21.Lines = 0;
-            this.label21.Location = new System.Drawing.Point(481, 147);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(75, 21);
-            this.label21.TabIndex = 38;
-            this.label21.Text = "No. of Hours";
-            // 
-            // numericBox9
-            // 
-            this.numericBox9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox9.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSD", true));
-            this.numericBox9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox9.IsSupportEditMode = false;
-            this.numericBox9.Location = new System.Drawing.Point(578, 7);
-            this.numericBox9.Name = "numericBox9";
-            this.numericBox9.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox9.ReadOnly = true;
-            this.numericBox9.Size = new System.Drawing.Size(50, 21);
-            this.numericBox9.TabIndex = 18;
-            this.numericBox9.Value = new decimal(new int[] {
+            this.numCPUPC.ReadOnly = true;
+            this.numCPUPC.Size = new System.Drawing.Size(65, 21);
+            this.numCPUPC.TabIndex = 6;
+            this.numCPUPC.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox10
+            // labelTotalGSDTime
             // 
-            this.numericBox10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox10.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCycle", true));
-            this.numericBox10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox10.IsSupportEditMode = false;
-            this.numericBox10.Location = new System.Drawing.Point(578, 35);
-            this.numericBox10.Name = "numericBox10";
-            this.numericBox10.NullValue = new decimal(new int[] {
+            this.labelTotalGSDTime.Lines = 0;
+            this.labelTotalGSDTime.Location = new System.Drawing.Point(481, 7);
+            this.labelTotalGSDTime.Name = "labelTotalGSDTime";
+            this.labelTotalGSDTime.Size = new System.Drawing.Size(94, 21);
+            this.labelTotalGSDTime.TabIndex = 33;
+            this.labelTotalGSDTime.Text = "Total GSD time";
+            // 
+            // labelTotalCycleTime
+            // 
+            this.labelTotalCycleTime.Lines = 0;
+            this.labelTotalCycleTime.Location = new System.Drawing.Point(481, 35);
+            this.labelTotalCycleTime.Name = "labelTotalCycleTime";
+            this.labelTotalCycleTime.Size = new System.Drawing.Size(94, 21);
+            this.labelTotalCycleTime.TabIndex = 34;
+            this.labelTotalCycleTime.Text = "Total cycle time";
+            // 
+            // labelTotalTimeDiff
+            // 
+            this.labelTotalTimeDiff.Lines = 0;
+            this.labelTotalTimeDiff.Location = new System.Drawing.Point(481, 63);
+            this.labelTotalTimeDiff.Name = "labelTotalTimeDiff";
+            this.labelTotalTimeDiff.Size = new System.Drawing.Size(94, 21);
+            this.labelTotalTimeDiff.TabIndex = 35;
+            this.labelTotalTimeDiff.Text = "Total % time diff";
+            // 
+            // labelNoOfHours
+            // 
+            this.labelNoOfHours.Lines = 0;
+            this.labelNoOfHours.Location = new System.Drawing.Point(481, 147);
+            this.labelNoOfHours.Name = "labelNoOfHours";
+            this.labelNoOfHours.Size = new System.Drawing.Size(75, 21);
+            this.labelNoOfHours.TabIndex = 38;
+            this.labelNoOfHours.Text = "No. of Hours";
+            // 
+            // numTotalGSDTime
+            // 
+            this.numTotalGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGSD", true));
+            this.numTotalGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalGSDTime.IsSupportEditMode = false;
+            this.numTotalGSDTime.Location = new System.Drawing.Point(578, 7);
+            this.numTotalGSDTime.Name = "numTotalGSDTime";
+            this.numTotalGSDTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox10.ReadOnly = true;
-            this.numericBox10.Size = new System.Drawing.Size(50, 21);
-            this.numericBox10.TabIndex = 19;
-            this.numericBox10.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox12
-            // 
-            this.numericBox12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox12.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrentOperators", true));
-            this.numericBox12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox12.IsSupportEditMode = false;
-            this.numericBox12.Location = new System.Drawing.Point(331, 119);
-            this.numericBox12.Name = "numericBox12";
-            this.numericBox12.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox12.ReadOnly = true;
-            this.numericBox12.Size = new System.Drawing.Size(55, 21);
-            this.numericBox12.TabIndex = 14;
-            this.numericBox12.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox13
-            // 
-            this.numericBox13.BackColor = System.Drawing.Color.White;
-            this.numericBox13.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IdealOperators", true));
-            this.numericBox13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox13.Location = new System.Drawing.Point(395, 118);
-            this.numericBox13.Name = "numericBox13";
-            this.numericBox13.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox13.Size = new System.Drawing.Size(55, 21);
-            this.numericBox13.TabIndex = 15;
-            this.numericBox13.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox13.Validated += new System.EventHandler(this.numericBox13_Validated);
-            // 
-            // numericBox14
-            // 
-            this.numericBox14.BackColor = System.Drawing.Color.White;
-            this.numericBox14.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Workhour", true));
-            this.numericBox14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox14.Location = new System.Drawing.Point(559, 147);
-            this.numericBox14.Name = "numericBox14";
-            this.numericBox14.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox14.Size = new System.Drawing.Size(50, 21);
-            this.numericBox14.TabIndex = 23;
-            this.numericBox14.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox14.Validated += new System.EventHandler(this.numericBox14_Validated);
-            // 
-            // numericBox16
-            // 
-            this.numericBox16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox16.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetTime", true));
-            this.numericBox16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox16.IsSupportEditMode = false;
-            this.numericBox16.Location = new System.Drawing.Point(590, 119);
-            this.numericBox16.Name = "numericBox16";
-            this.numericBox16.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox16.ReadOnly = true;
-            this.numericBox16.Size = new System.Drawing.Size(50, 21);
-            this.numericBox16.TabIndex = 22;
-            this.numericBox16.Value = new decimal(new int[] {
+            this.numTotalGSDTime.ReadOnly = true;
+            this.numTotalGSDTime.Size = new System.Drawing.Size(50, 21);
+            this.numTotalGSDTime.TabIndex = 18;
+            this.numTotalGSDTime.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox17
+            // numTotalCycleTime
             // 
-            this.numericBox17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox17.DecimalPlaces = 2;
-            this.numericBox17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox17.IsSupportEditMode = false;
-            this.numericBox17.Location = new System.Drawing.Point(579, 91);
-            this.numericBox17.Name = "numericBox17";
-            this.numericBox17.NullValue = new decimal(new int[] {
+            this.numTotalCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCycle", true));
+            this.numTotalCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalCycleTime.IsSupportEditMode = false;
+            this.numTotalCycleTime.Location = new System.Drawing.Point(578, 35);
+            this.numTotalCycleTime.Name = "numTotalCycleTime";
+            this.numTotalCycleTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox17.ReadOnly = true;
-            this.numericBox17.Size = new System.Drawing.Size(50, 21);
-            this.numericBox17.TabIndex = 21;
-            this.numericBox17.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox19
-            // 
-            this.numericBox19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox19.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestCycle", true));
-            this.numericBox19.DecimalPlaces = 2;
-            this.numericBox19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox19.IsSupportEditMode = false;
-            this.numericBox19.Location = new System.Drawing.Point(773, 34);
-            this.numericBox19.Name = "numericBox19";
-            this.numericBox19.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox19.ReadOnly = true;
-            this.numericBox19.Size = new System.Drawing.Size(50, 21);
-            this.numericBox19.TabIndex = 25;
-            this.numericBox19.Value = new decimal(new int[] {
+            this.numTotalCycleTime.ReadOnly = true;
+            this.numTotalCycleTime.Size = new System.Drawing.Size(50, 21);
+            this.numTotalCycleTime.TabIndex = 19;
+            this.numTotalCycleTime.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox20
+            // numlOprtsCurrent
             // 
-            this.numericBox20.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox20.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestGSD", true));
-            this.numericBox20.DecimalPlaces = 2;
-            this.numericBox20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox20.IsSupportEditMode = false;
-            this.numericBox20.Location = new System.Drawing.Point(773, 6);
-            this.numericBox20.Name = "numericBox20";
-            this.numericBox20.NullValue = new decimal(new int[] {
+            this.numlOprtsCurrent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numlOprtsCurrent.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrentOperators", true));
+            this.numlOprtsCurrent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numlOprtsCurrent.IsSupportEditMode = false;
+            this.numlOprtsCurrent.Location = new System.Drawing.Point(331, 119);
+            this.numlOprtsCurrent.Name = "numlOprtsCurrent";
+            this.numlOprtsCurrent.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox20.ReadOnly = true;
-            this.numericBox20.Size = new System.Drawing.Size(50, 21);
-            this.numericBox20.TabIndex = 24;
-            this.numericBox20.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label23
-            // 
-            this.label23.Lines = 0;
-            this.label23.Location = new System.Drawing.Point(481, 119);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(107, 21);
-            this.label23.TabIndex = 49;
-            this.label23.Text = "Net available time";
-            // 
-            // label24
-            // 
-            this.label24.Lines = 0;
-            this.label24.Location = new System.Drawing.Point(481, 91);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(94, 21);
-            this.label24.TabIndex = 48;
-            this.label24.Text = "EOLR";
-            // 
-            // label25
-            // 
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(664, 62);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(107, 21);
-            this.label25.TabIndex = 47;
-            this.label25.Text = "Highest % time diff";
-            // 
-            // label26
-            // 
-            this.label26.Lines = 0;
-            this.label26.Location = new System.Drawing.Point(664, 34);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(107, 21);
-            this.label26.TabIndex = 46;
-            this.label26.Text = "Highest cycle time";
-            // 
-            // label27
-            // 
-            this.label27.Lines = 0;
-            this.label27.Location = new System.Drawing.Point(664, 6);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(106, 21);
-            this.label27.TabIndex = 45;
-            this.label27.Text = "Highest GSD time";
-            // 
-            // label22
-            // 
-            this.label22.Lines = 0;
-            this.label22.Location = new System.Drawing.Point(664, 91);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(75, 21);
-            this.label22.TabIndex = 56;
-            this.label22.Text = "Effieiency(%)";
-            // 
-            // label28
-            // 
-            this.label28.Lines = 0;
-            this.label28.Location = new System.Drawing.Point(664, 119);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(75, 21);
-            this.label28.TabIndex = 57;
-            this.label28.Text = "PPH";
-            // 
-            // label29
-            // 
-            this.label29.Lines = 0;
-            this.label29.Location = new System.Drawing.Point(664, 147);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(75, 21);
-            this.label29.TabIndex = 58;
-            this.label29.Text = "LBR";
-            // 
-            // label30
-            // 
-            this.label30.Lines = 0;
-            this.label30.Location = new System.Drawing.Point(664, 175);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(75, 21);
-            this.label30.TabIndex = 59;
-            this.label30.Text = "LLER";
-            // 
-            // numericBox21
-            // 
-            this.numericBox21.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox21.DecimalPlaces = 4;
-            this.numericBox21.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox21.IsSupportEditMode = false;
-            this.numericBox21.Location = new System.Drawing.Point(743, 119);
-            this.numericBox21.Name = "numericBox21";
-            this.numericBox21.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox21.ReadOnly = true;
-            this.numericBox21.Size = new System.Drawing.Size(68, 21);
-            this.numericBox21.TabIndex = 28;
-            this.numericBox21.Value = new decimal(new int[] {
+            this.numlOprtsCurrent.ReadOnly = true;
+            this.numlOprtsCurrent.Size = new System.Drawing.Size(55, 21);
+            this.numlOprtsCurrent.TabIndex = 14;
+            this.numlOprtsCurrent.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox22
+            // numOprtsIdeal
             // 
-            this.numericBox22.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox22.DecimalPlaces = 2;
-            this.numericBox22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox22.IsSupportEditMode = false;
-            this.numericBox22.Location = new System.Drawing.Point(743, 147);
-            this.numericBox22.Name = "numericBox22";
-            this.numericBox22.NullValue = new decimal(new int[] {
+            this.numOprtsIdeal.BackColor = System.Drawing.Color.White;
+            this.numOprtsIdeal.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IdealOperators", true));
+            this.numOprtsIdeal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numOprtsIdeal.Location = new System.Drawing.Point(395, 118);
+            this.numOprtsIdeal.Name = "numOprtsIdeal";
+            this.numOprtsIdeal.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox22.ReadOnly = true;
-            this.numericBox22.Size = new System.Drawing.Size(68, 21);
-            this.numericBox22.TabIndex = 29;
-            this.numericBox22.Value = new decimal(new int[] {
+            this.numOprtsIdeal.Size = new System.Drawing.Size(55, 21);
+            this.numOprtsIdeal.TabIndex = 15;
+            this.numOprtsIdeal.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numOprtsIdeal.Validated += new System.EventHandler(this.numericBox13_Validated);
             // 
-            // numericBox23
+            // numNoOfHours
             // 
-            this.numericBox23.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox23.DecimalPlaces = 2;
-            this.numericBox23.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox23.IsSupportEditMode = false;
-            this.numericBox23.Location = new System.Drawing.Point(743, 175);
-            this.numericBox23.Name = "numericBox23";
-            this.numericBox23.NullValue = new decimal(new int[] {
+            this.numNoOfHours.BackColor = System.Drawing.Color.White;
+            this.numNoOfHours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Workhour", true));
+            this.numNoOfHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numNoOfHours.Location = new System.Drawing.Point(559, 147);
+            this.numNoOfHours.Name = "numNoOfHours";
+            this.numNoOfHours.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox23.ReadOnly = true;
-            this.numericBox23.Size = new System.Drawing.Size(68, 21);
-            this.numericBox23.TabIndex = 30;
-            this.numericBox23.Value = new decimal(new int[] {
+            this.numNoOfHours.Size = new System.Drawing.Size(50, 21);
+            this.numNoOfHours.TabIndex = 23;
+            this.numNoOfHours.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            this.numNoOfHours.Validated += new System.EventHandler(this.numericBox14_Validated);
             // 
-            // button1
+            // numNetAvailableTime
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(852, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(139, 43);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Not hit target reason";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button2.Location = new System.Drawing.Point(852, 54);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(139, 51);
-            this.button2.TabIndex = 32;
-            this.button2.Text = "Copy from other line mapping";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button3.Location = new System.Drawing.Point(852, 109);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(139, 30);
-            this.button3.TabIndex = 33;
-            this.button3.Text = "Copy from GSD";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // textBox7
-            // 
-            this.textBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox7.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
-            this.textBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox7.IsSupportEditMode = false;
-            this.textBox7.Location = new System.Drawing.Point(57, 63);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
-            this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(120, 21);
-            this.textBox7.TabIndex = 2;
-            this.textBox7.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
-            // 
-            // numericBox11
-            // 
-            this.numericBox11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox11.DecimalPlaces = 2;
-            this.numericBox11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox11.IsSupportEditMode = false;
-            this.numericBox11.Location = new System.Drawing.Point(578, 63);
-            this.numericBox11.Name = "numericBox11";
-            this.numericBox11.NullValue = new decimal(new int[] {
+            this.numNetAvailableTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNetAvailableTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NetTime", true));
+            this.numNetAvailableTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNetAvailableTime.IsSupportEditMode = false;
+            this.numNetAvailableTime.Location = new System.Drawing.Point(590, 119);
+            this.numNetAvailableTime.Name = "numNetAvailableTime";
+            this.numNetAvailableTime.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox11.ReadOnly = true;
-            this.numericBox11.Size = new System.Drawing.Size(58, 21);
-            this.numericBox11.TabIndex = 20;
-            this.numericBox11.Value = new decimal(new int[] {
+            this.numNetAvailableTime.ReadOnly = true;
+            this.numNetAvailableTime.Size = new System.Drawing.Size(50, 21);
+            this.numNetAvailableTime.TabIndex = 22;
+            this.numNetAvailableTime.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox15
+            // numEOLR
             // 
-            this.numericBox15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox15.DecimalPlaces = 2;
-            this.numericBox15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox15.IsSupportEditMode = false;
-            this.numericBox15.Location = new System.Drawing.Point(773, 63);
-            this.numericBox15.Name = "numericBox15";
-            this.numericBox15.NullValue = new decimal(new int[] {
+            this.numEOLR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numEOLR.DecimalPlaces = 2;
+            this.numEOLR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numEOLR.IsSupportEditMode = false;
+            this.numEOLR.Location = new System.Drawing.Point(579, 91);
+            this.numEOLR.Name = "numEOLR";
+            this.numEOLR.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox15.ReadOnly = true;
-            this.numericBox15.Size = new System.Drawing.Size(58, 21);
-            this.numericBox15.TabIndex = 26;
-            this.numericBox15.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox18
-            // 
-            this.numericBox18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox18.DecimalPlaces = 2;
-            this.numericBox18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox18.IsSupportEditMode = false;
-            this.numericBox18.Location = new System.Drawing.Point(743, 91);
-            this.numericBox18.Name = "numericBox18";
-            this.numericBox18.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox18.ReadOnly = true;
-            this.numericBox18.Size = new System.Drawing.Size(58, 21);
-            this.numericBox18.TabIndex = 27;
-            this.numericBox18.Value = new decimal(new int[] {
+            this.numEOLR.ReadOnly = true;
+            this.numEOLR.Size = new System.Drawing.Size(50, 21);
+            this.numEOLR.TabIndex = 21;
+            this.numEOLR.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label31
+            // numHighestCycleTime
             // 
-            this.label31.BackColor = System.Drawing.Color.Transparent;
-            this.label31.Lines = 0;
-            this.label31.Location = new System.Drawing.Point(214, 118);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(69, 21);
-            this.label31.TabIndex = 74;
-            this.label31.Text = "Oprts.";
-            this.label31.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label31.TextStyle.Color = System.Drawing.Color.Black;
-            this.label31.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label31.TextStyle.GradientColor = System.Drawing.Color.Black;
+            this.numHighestCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numHighestCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestCycle", true));
+            this.numHighestCycleTime.DecimalPlaces = 2;
+            this.numHighestCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numHighestCycleTime.IsSupportEditMode = false;
+            this.numHighestCycleTime.Location = new System.Drawing.Point(773, 34);
+            this.numHighestCycleTime.Name = "numHighestCycleTime";
+            this.numHighestCycleTime.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numHighestCycleTime.ReadOnly = true;
+            this.numHighestCycleTime.Size = new System.Drawing.Size(50, 21);
+            this.numHighestCycleTime.TabIndex = 25;
+            this.numHighestCycleTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // txtsewingline1
+            // numHighestGSDTime
             // 
-            this.txtsewingline1.BackColor = System.Drawing.Color.White;
-            this.txtsewingline1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline1.factoryobjectName = this.textBox1;
-            this.txtsewingline1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline1.Location = new System.Drawing.Point(322, 147);
-            this.txtsewingline1.Name = "txtsewingline1";
-            this.txtsewingline1.Size = new System.Drawing.Size(60, 21);
-            this.txtsewingline1.TabIndex = 16;
+            this.numHighestGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numHighestGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HighestGSD", true));
+            this.numHighestGSDTime.DecimalPlaces = 2;
+            this.numHighestGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numHighestGSDTime.IsSupportEditMode = false;
+            this.numHighestGSDTime.Location = new System.Drawing.Point(773, 6);
+            this.numHighestGSDTime.Name = "numHighestGSDTime";
+            this.numHighestGSDTime.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numHighestGSDTime.ReadOnly = true;
+            this.numHighestGSDTime.Size = new System.Drawing.Size(50, 21);
+            this.numHighestGSDTime.TabIndex = 24;
+            this.numHighestGSDTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labelNetAvailableTime
+            // 
+            this.labelNetAvailableTime.Lines = 0;
+            this.labelNetAvailableTime.Location = new System.Drawing.Point(481, 119);
+            this.labelNetAvailableTime.Name = "labelNetAvailableTime";
+            this.labelNetAvailableTime.Size = new System.Drawing.Size(107, 21);
+            this.labelNetAvailableTime.TabIndex = 49;
+            this.labelNetAvailableTime.Text = "Net available time";
+            // 
+            // labelEOLR
+            // 
+            this.labelEOLR.Lines = 0;
+            this.labelEOLR.Location = new System.Drawing.Point(481, 91);
+            this.labelEOLR.Name = "labelEOLR";
+            this.labelEOLR.Size = new System.Drawing.Size(94, 21);
+            this.labelEOLR.TabIndex = 48;
+            this.labelEOLR.Text = "EOLR";
+            // 
+            // labelHighestTimeDiff
+            // 
+            this.labelHighestTimeDiff.Lines = 0;
+            this.labelHighestTimeDiff.Location = new System.Drawing.Point(664, 62);
+            this.labelHighestTimeDiff.Name = "labelHighestTimeDiff";
+            this.labelHighestTimeDiff.Size = new System.Drawing.Size(107, 21);
+            this.labelHighestTimeDiff.TabIndex = 47;
+            this.labelHighestTimeDiff.Text = "Highest % time diff";
+            // 
+            // labelHighestCycleTime
+            // 
+            this.labelHighestCycleTime.Lines = 0;
+            this.labelHighestCycleTime.Location = new System.Drawing.Point(664, 34);
+            this.labelHighestCycleTime.Name = "labelHighestCycleTime";
+            this.labelHighestCycleTime.Size = new System.Drawing.Size(107, 21);
+            this.labelHighestCycleTime.TabIndex = 46;
+            this.labelHighestCycleTime.Text = "Highest cycle time";
+            // 
+            // labelHighestGSDTime
+            // 
+            this.labelHighestGSDTime.Lines = 0;
+            this.labelHighestGSDTime.Location = new System.Drawing.Point(664, 6);
+            this.labelHighestGSDTime.Name = "labelHighestGSDTime";
+            this.labelHighestGSDTime.Size = new System.Drawing.Size(106, 21);
+            this.labelHighestGSDTime.TabIndex = 45;
+            this.labelHighestGSDTime.Text = "Highest GSD time";
+            // 
+            // labelEffieiency
+            // 
+            this.labelEffieiency.Lines = 0;
+            this.labelEffieiency.Location = new System.Drawing.Point(664, 91);
+            this.labelEffieiency.Name = "labelEffieiency";
+            this.labelEffieiency.Size = new System.Drawing.Size(75, 21);
+            this.labelEffieiency.TabIndex = 56;
+            this.labelEffieiency.Text = "Effieiency(%)";
+            // 
+            // labelPPH
+            // 
+            this.labelPPH.Lines = 0;
+            this.labelPPH.Location = new System.Drawing.Point(664, 119);
+            this.labelPPH.Name = "labelPPH";
+            this.labelPPH.Size = new System.Drawing.Size(75, 21);
+            this.labelPPH.TabIndex = 57;
+            this.labelPPH.Text = "PPH";
+            // 
+            // labelLBR
+            // 
+            this.labelLBR.Lines = 0;
+            this.labelLBR.Location = new System.Drawing.Point(664, 147);
+            this.labelLBR.Name = "labelLBR";
+            this.labelLBR.Size = new System.Drawing.Size(75, 21);
+            this.labelLBR.TabIndex = 58;
+            this.labelLBR.Text = "LBR";
+            // 
+            // labelLLER
+            // 
+            this.labelLLER.Lines = 0;
+            this.labelLLER.Location = new System.Drawing.Point(664, 175);
+            this.labelLLER.Name = "labelLLER";
+            this.labelLLER.Size = new System.Drawing.Size(75, 21);
+            this.labelLLER.TabIndex = 59;
+            this.labelLLER.Text = "LLER";
+            // 
+            // numPPH
+            // 
+            this.numPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numPPH.DecimalPlaces = 4;
+            this.numPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numPPH.IsSupportEditMode = false;
+            this.numPPH.Location = new System.Drawing.Point(743, 119);
+            this.numPPH.Name = "numPPH";
+            this.numPPH.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numPPH.ReadOnly = true;
+            this.numPPH.Size = new System.Drawing.Size(68, 21);
+            this.numPPH.TabIndex = 28;
+            this.numPPH.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numLBR
+            // 
+            this.numLBR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numLBR.DecimalPlaces = 2;
+            this.numLBR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numLBR.IsSupportEditMode = false;
+            this.numLBR.Location = new System.Drawing.Point(743, 147);
+            this.numLBR.Name = "numLBR";
+            this.numLBR.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numLBR.ReadOnly = true;
+            this.numLBR.Size = new System.Drawing.Size(68, 21);
+            this.numLBR.TabIndex = 29;
+            this.numLBR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numLLER
+            // 
+            this.numLLER.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numLLER.DecimalPlaces = 2;
+            this.numLLER.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numLLER.IsSupportEditMode = false;
+            this.numLLER.Location = new System.Drawing.Point(743, 175);
+            this.numLLER.Name = "numLLER";
+            this.numLLER.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numLLER.ReadOnly = true;
+            this.numLLER.Size = new System.Drawing.Size(68, 21);
+            this.numLLER.TabIndex = 30;
+            this.numLLER.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // btnNotHitTargetReason
+            // 
+            this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(852, 7);
+            this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(139, 43);
+            this.btnNotHitTargetReason.TabIndex = 31;
+            this.btnNotHitTargetReason.Text = "Not hit target reason";
+            this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
+            this.btnNotHitTargetReason.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnCopyFromOtherLineMapping
+            // 
+            this.btnCopyFromOtherLineMapping.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCopyFromOtherLineMapping.Location = new System.Drawing.Point(852, 54);
+            this.btnCopyFromOtherLineMapping.Name = "btnCopyFromOtherLineMapping";
+            this.btnCopyFromOtherLineMapping.Size = new System.Drawing.Size(139, 51);
+            this.btnCopyFromOtherLineMapping.TabIndex = 32;
+            this.btnCopyFromOtherLineMapping.Text = "Copy from other line mapping";
+            this.btnCopyFromOtherLineMapping.UseVisualStyleBackColor = true;
+            this.btnCopyFromOtherLineMapping.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnCopyFromGSD
+            // 
+            this.btnCopyFromGSD.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnCopyFromGSD.Location = new System.Drawing.Point(852, 109);
+            this.btnCopyFromGSD.Name = "btnCopyFromGSD";
+            this.btnCopyFromGSD.Size = new System.Drawing.Size(139, 30);
+            this.btnCopyFromGSD.TabIndex = 33;
+            this.btnCopyFromGSD.Text = "Copy from GSD";
+            this.btnCopyFromGSD.UseVisualStyleBackColor = true;
+            this.btnCopyFromGSD.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // txtStyleID
+            // 
+            this.txtStyleID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyleID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
+            this.txtStyleID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyleID.IsSupportEditMode = false;
+            this.txtStyleID.Location = new System.Drawing.Point(57, 63);
+            this.txtStyleID.Name = "txtStyleID";
+            this.txtStyleID.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtStyleID.ReadOnly = true;
+            this.txtStyleID.Size = new System.Drawing.Size(120, 21);
+            this.txtStyleID.TabIndex = 2;
+            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
+            // 
+            // numTotalTimeDiff
+            // 
+            this.numTotalTimeDiff.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalTimeDiff.DecimalPlaces = 2;
+            this.numTotalTimeDiff.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalTimeDiff.IsSupportEditMode = false;
+            this.numTotalTimeDiff.Location = new System.Drawing.Point(578, 63);
+            this.numTotalTimeDiff.Name = "numTotalTimeDiff";
+            this.numTotalTimeDiff.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalTimeDiff.ReadOnly = true;
+            this.numTotalTimeDiff.Size = new System.Drawing.Size(58, 21);
+            this.numTotalTimeDiff.TabIndex = 20;
+            this.numTotalTimeDiff.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numHighestTimeDiff
+            // 
+            this.numHighestTimeDiff.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numHighestTimeDiff.DecimalPlaces = 2;
+            this.numHighestTimeDiff.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numHighestTimeDiff.IsSupportEditMode = false;
+            this.numHighestTimeDiff.Location = new System.Drawing.Point(773, 63);
+            this.numHighestTimeDiff.Name = "numHighestTimeDiff";
+            this.numHighestTimeDiff.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numHighestTimeDiff.ReadOnly = true;
+            this.numHighestTimeDiff.Size = new System.Drawing.Size(58, 21);
+            this.numHighestTimeDiff.TabIndex = 26;
+            this.numHighestTimeDiff.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numEffieiency
+            // 
+            this.numEffieiency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numEffieiency.DecimalPlaces = 2;
+            this.numEffieiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numEffieiency.IsSupportEditMode = false;
+            this.numEffieiency.Location = new System.Drawing.Point(743, 91);
+            this.numEffieiency.Name = "numEffieiency";
+            this.numEffieiency.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numEffieiency.ReadOnly = true;
+            this.numEffieiency.Size = new System.Drawing.Size(58, 21);
+            this.numEffieiency.TabIndex = 27;
+            this.numEffieiency.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labelOprts
+            // 
+            this.labelOprts.BackColor = System.Drawing.Color.Transparent;
+            this.labelOprts.Lines = 0;
+            this.labelOprts.Location = new System.Drawing.Point(214, 118);
+            this.labelOprts.Name = "labelOprts";
+            this.labelOprts.Size = new System.Drawing.Size(69, 21);
+            this.labelOprts.TabIndex = 74;
+            this.labelOprts.Text = "Oprts.";
+            this.labelOprts.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelOprts.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelOprts.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.labelOprts.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtsewingline
+            // 
+            this.txtsewingline.BackColor = System.Drawing.Color.White;
+            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline.factoryobjectName = this.txtFactory;
+            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline.Location = new System.Drawing.Point(322, 147);
+            this.txtsewingline.Name = "txtsewingline";
+            this.txtsewingline.Size = new System.Drawing.Size(60, 21);
+            this.txtsewingline.TabIndex = 16;
             // 
             // P03
             // 
@@ -1394,64 +1394,64 @@
 
         #endregion
 
-        private Win.UI.Button button3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.NumericBox numericBox23;
-        private Win.UI.NumericBox numericBox22;
-        private Win.UI.NumericBox numericBox21;
-        private Win.UI.Label label30;
-        private Win.UI.Label label29;
-        private Win.UI.Label label28;
-        private Win.UI.Label label22;
-        private Win.UI.NumericBox numericBox16;
-        private Win.UI.NumericBox numericBox17;
-        private Win.UI.NumericBox numericBox19;
-        private Win.UI.NumericBox numericBox20;
-        private Win.UI.Label label23;
-        private Win.UI.Label label24;
-        private Win.UI.Label label25;
-        private Win.UI.Label label26;
-        private Win.UI.Label label27;
-        private Win.UI.NumericBox numericBox14;
-        private Win.UI.NumericBox numericBox13;
-        private Win.UI.NumericBox numericBox12;
-        private Win.UI.NumericBox numericBox10;
-        private Win.UI.NumericBox numericBox9;
-        private Win.UI.Label label21;
-        private Win.UI.Label label18;
-        private Win.UI.Label label17;
-        private Win.UI.Label label16;
-        private Win.UI.NumericBox numericBox8;
-        private Win.UI.Label label15;
+        private Win.UI.Button btnCopyFromGSD;
+        private Win.UI.Button btnCopyFromOtherLineMapping;
+        private Win.UI.Button btnNotHitTargetReason;
+        private Win.UI.NumericBox numLLER;
+        private Win.UI.NumericBox numLBR;
+        private Win.UI.NumericBox numPPH;
+        private Win.UI.Label labelLLER;
+        private Win.UI.Label labelLBR;
+        private Win.UI.Label labelPPH;
+        private Win.UI.Label labelEffieiency;
+        private Win.UI.NumericBox numNetAvailableTime;
+        private Win.UI.NumericBox numEOLR;
+        private Win.UI.NumericBox numHighestCycleTime;
+        private Win.UI.NumericBox numHighestGSDTime;
+        private Win.UI.Label labelNetAvailableTime;
+        private Win.UI.Label labelEOLR;
+        private Win.UI.Label labelHighestTimeDiff;
+        private Win.UI.Label labelHighestCycleTime;
+        private Win.UI.Label labelHighestGSDTime;
+        private Win.UI.NumericBox numNoOfHours;
+        private Win.UI.NumericBox numOprtsIdeal;
+        private Win.UI.NumericBox numlOprtsCurrent;
+        private Win.UI.NumericBox numTotalCycleTime;
+        private Win.UI.NumericBox numTotalGSDTime;
+        private Win.UI.Label labelNoOfHours;
+        private Win.UI.Label labelTotalTimeDiff;
+        private Win.UI.Label labelTotalCycleTime;
+        private Win.UI.Label labelTotalGSDTime;
+        private Win.UI.NumericBox numCPUPC;
+        private Win.UI.Label labelCPUPC;
         private Win.UI.Label label14;
-        private Win.UI.ComboBox comboBox1;
-        private Class.txtsewingline txtsewingline1;
-        private Win.UI.NumericBox numericBox5;
-        private Win.UI.NumericBox numericBox6;
-        private Win.UI.NumericBox numericBox7;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboSewingLineTeam;
+        private Class.txtsewingline txtsewingline;
+        private Win.UI.NumericBox numTaktTimeIdeal;
+        private Win.UI.NumericBox numDailydemandshiftIdeal;
+        private Win.UI.NumericBox numTargetHrIdeal;
+        private Win.UI.NumericBox numTaktTimeCurrent;
+        private Win.UI.NumericBox numDailydemandshiftCurrent;
+        private Win.UI.NumericBox numTargetHrCurrent;
+        private Win.UI.Label labelIdeal;
+        private Win.UI.Label labelCurrent;
+        private Win.UI.Label labelSewingLineTeam;
+        private Win.UI.Label labelTaktTime;
+        private Win.UI.Label labelDailydemandshift;
+        private Win.UI.Label labelTargetHr;
+        private Win.UI.Label labelNoOfOprts;
+        private Win.UI.DisplayBox displayDesc;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.TextBox txtStyleComboType;
+        private Win.UI.TextBox txtFactory;
+        private Win.UI.NumericBox numVersion;
+        private Win.UI.Label labelDesc;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelVersion;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape9;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape8;
@@ -1462,11 +1462,11 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Win.UI.TextBox textBox7;
-        private Win.UI.NumericBox numericBox18;
-        private Win.UI.NumericBox numericBox15;
-        private Win.UI.NumericBox numericBox11;
-        private Win.UI.Label label31;
+        private Win.UI.TextBox txtStyleID;
+        private Win.UI.NumericBox numEffieiency;
+        private Win.UI.NumericBox numHighestTimeDiff;
+        private Win.UI.NumericBox numTotalTimeDiff;
+        private Win.UI.Label labelOprts;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape10;
     }
 }

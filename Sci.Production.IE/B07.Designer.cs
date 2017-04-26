@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.editBox2 = new Sci.Win.UI.EditBox();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.labelID = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelDescriptionEnglish = new Sci.Win.UI.Label();
+            this.labelDescriptionChinese = new Sci.Win.UI.Label();
+            this.displayID = new Sci.Win.UI.DisplayBox();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.editDescriptionEnglish = new Sci.Win.UI.EditBox();
+            this.editDescriptionChinese = new Sci.Win.UI.EditBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,15 +51,15 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.editBox2);
-            this.detailcont.Controls.Add(this.editBox1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.editDescriptionChinese);
+            this.detailcont.Controls.Add(this.editDescriptionEnglish);
+            this.detailcont.Controls.Add(this.comboType);
+            this.detailcont.Controls.Add(this.displayID);
+            this.detailcont.Controls.Add(this.labelDescriptionChinese);
+            this.detailcont.Controls.Add(this.labelDescriptionEnglish);
+            this.detailcont.Controls.Add(this.labelType);
+            this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(828, 357);
             // 
             // detailbtm
@@ -68,7 +68,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(680, 395);
+            this.browse.Size = new System.Drawing.Size(828, 395);
             // 
             // tabs
             // 
@@ -87,96 +87,96 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelID
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(42, 33);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "ID";
+            this.labelID.Lines = 0;
+            this.labelID.Location = new System.Drawing.Point(42, 33);
+            this.labelID.Name = "labelID";
+            this.labelID.Size = new System.Drawing.Size(75, 23);
+            this.labelID.TabIndex = 0;
+            this.labelID.Text = "ID";
             // 
-            // label4
+            // labelType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(42, 73);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(42, 73);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(75, 23);
+            this.labelType.TabIndex = 1;
+            this.labelType.Text = "Type";
             // 
-            // label5
+            // labelDescriptionEnglish
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(42, 113);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 46);
-            this.label5.TabIndex = 2;
+            this.labelDescriptionEnglish.Lines = 0;
+            this.labelDescriptionEnglish.Location = new System.Drawing.Point(42, 113);
+            this.labelDescriptionEnglish.Name = "labelDescriptionEnglish";
+            this.labelDescriptionEnglish.Size = new System.Drawing.Size(75, 46);
+            this.labelDescriptionEnglish.TabIndex = 2;
             // 
-            // label6
+            // labelDescriptionChinese
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(42, 177);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 46);
-            this.label6.TabIndex = 3;
+            this.labelDescriptionChinese.Lines = 0;
+            this.labelDescriptionChinese.Location = new System.Drawing.Point(42, 177);
+            this.labelDescriptionChinese.Name = "labelDescriptionChinese";
+            this.labelDescriptionChinese.Size = new System.Drawing.Size(75, 46);
+            this.labelDescriptionChinese.TabIndex = 3;
             // 
-            // displayBox1
+            // displayID
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(121, 33);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(138, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayID.Location = new System.Drawing.Point(121, 33);
+            this.displayID.Name = "displayID";
+            this.displayID.Size = new System.Drawing.Size(138, 23);
+            this.displayID.TabIndex = 4;
             // 
-            // comboBox1
+            // comboType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(121, 73);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.ReadOnly = true;
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(121, 73);
+            this.comboType.Name = "comboType";
+            this.comboType.ReadOnly = true;
+            this.comboType.Size = new System.Drawing.Size(121, 24);
+            this.comboType.TabIndex = 5;
             // 
-            // editBox1
+            // editDescriptionEnglish
             // 
-            this.editBox1.BackColor = System.Drawing.Color.White;
-            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(121, 113);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.Size = new System.Drawing.Size(456, 50);
-            this.editBox1.TabIndex = 8;
+            this.editDescriptionEnglish.BackColor = System.Drawing.Color.White;
+            this.editDescriptionEnglish.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
+            this.editDescriptionEnglish.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescriptionEnglish.Location = new System.Drawing.Point(121, 113);
+            this.editDescriptionEnglish.Multiline = true;
+            this.editDescriptionEnglish.Name = "editDescriptionEnglish";
+            this.editDescriptionEnglish.Size = new System.Drawing.Size(456, 50);
+            this.editDescriptionEnglish.TabIndex = 8;
             // 
-            // editBox2
+            // editDescriptionChinese
             // 
-            this.editBox2.BackColor = System.Drawing.Color.White;
-            this.editBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescCH", true));
-            this.editBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox2.Location = new System.Drawing.Point(121, 177);
-            this.editBox2.Multiline = true;
-            this.editBox2.Name = "editBox2";
-            this.editBox2.Size = new System.Drawing.Size(456, 50);
-            this.editBox2.TabIndex = 9;
+            this.editDescriptionChinese.BackColor = System.Drawing.Color.White;
+            this.editDescriptionChinese.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescCH", true));
+            this.editDescriptionChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDescriptionChinese.Location = new System.Drawing.Point(121, 177);
+            this.editDescriptionChinese.Multiline = true;
+            this.editDescriptionChinese.Name = "editDescriptionChinese";
+            this.editDescriptionChinese.Size = new System.Drawing.Size(456, 50);
+            this.editDescriptionChinese.TabIndex = 9;
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(468, 33);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 10;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(468, 33);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 10;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // B07
             // 
@@ -206,14 +206,14 @@
 
         #endregion
 
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.EditBox editBox2;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.Label labelDescriptionChinese;
+        private Win.UI.Label labelDescriptionEnglish;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelID;
+        private Win.UI.EditBox editDescriptionChinese;
+        private Win.UI.EditBox editDescriptionEnglish;
+        private Win.UI.ComboBox comboType;
+        private Win.UI.DisplayBox displayID;
+        private Win.UI.CheckBox checkJunk;
     }
 }

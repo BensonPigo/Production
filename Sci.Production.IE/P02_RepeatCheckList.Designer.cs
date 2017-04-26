@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -36,13 +36,13 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             // 
             // append
             // 
@@ -62,17 +62,17 @@
             // 
             this.save.Click += new System.EventHandler(this.save_Click);
             // 
-            // button1
+            // btnToExcel
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.button1.Location = new System.Drawing.Point(494, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 95;
-            this.button1.Text = "To Excel";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnToExcel.Location = new System.Drawing.Point(494, 8);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 95;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
             // 
             // P02_RepeatCheckList
             // 
@@ -92,6 +92,6 @@
 
         #endregion
 
-        private Win.UI.Button button1;
+        private Win.UI.Button btnToExcel;
     }
 }

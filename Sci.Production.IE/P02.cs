@@ -36,8 +36,8 @@ namespace Sci.Production.IE
                 dateTimeMask = dateTimeMask + dtmask;
                 emptyDTMask = emptyDTMask + empmask;
             }
-            textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
-            textBox4.Mask = dateTimeMask;
+            txtInLineDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inline", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, emptyDTMask, Sci.Env.Cfg.DateTimeStringFormat));
+            txtInLineDate.Mask = dateTimeMask;
         }
 
         string StdTMS = ""; DataTable dt1; DataTable dt2;
@@ -53,16 +53,16 @@ namespace Sci.Production.IE
             if (!res) { this.ShowErr(res); }
             if (brandOutput.Rows.Count < 1)
             {
-                textBox_brand.Text = "";
+                txtBrand.Text = "";
             }
             else
             {
-                textBox_brand.Text = brandOutput.Rows[0]["BrandID"].ToString();
+                txtBrand.Text = brandOutput.Rows[0]["BrandID"].ToString();
             }
             //  textBox_brand.Visible = false;
 
-            textBox_brand.ReadOnly = true;
-            label18.Text = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
+            txtBrand.ReadOnly = true;
+            labelType.Text = CurrentMaintain["Type"].ToString() == "N" ? "New" : "Repeat";
             string sqlCmd = string.Format(@"with tmpSO
 as
 (
@@ -109,19 +109,19 @@ order by OutputDate
                     switch (rec)
                     {
                         case 1:
-                            dateBox2.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numericBox6.Value = Convert.ToDecimal(dr["Eff"]);
-                            numericBox7.Value = Convert.ToDecimal(dr["Rft"]);
+                            dateSewingDate1stDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numEFF1stDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            numRFT1stDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         case 2:
-                            dateBox3.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numericBox8.Value = Convert.ToDecimal(dr["Eff"]);
-                            numericBox9.Value = Convert.ToDecimal(dr["Rft"]);
+                            dateSewingDate2ndDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numEFF2ndDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            numRFT2ndDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         case 3:
-                            dateBox4.Value = Convert.ToDateTime(dr["OutputDate"]);
-                            numericBox10.Value = Convert.ToDecimal(dr["Eff"]);
-                            numericBox11.Value = Convert.ToDecimal(dr["Rft"]);
+                            dateSewingDate3rdDay.Value = Convert.ToDateTime(dr["OutputDate"]);
+                            numEFF3rdDay.Value = Convert.ToDecimal(dr["Eff"]);
+                            numRFT3rdDay.Value = Convert.ToDecimal(dr["Rft"]);
                             break;
                         default:
                             break;
@@ -133,28 +133,28 @@ order by OutputDate
                     switch (rec)
                     {
                         case 0:
-                            dateBox2.Value = null;
-                            numericBox6.Value = 0;
-                            numericBox7.Value = 0;
-                            dateBox3.Value = null;
-                            numericBox8.Value = 0;
-                            numericBox9.Value = 0;
-                            dateBox4.Value = null;
-                            numericBox10.Value = 0;
-                            numericBox11.Value = 0;
+                            dateSewingDate1stDay.Value = null;
+                            numEFF1stDay.Value = 0;
+                            numRFT1stDay.Value = 0;
+                            dateSewingDate2ndDay.Value = null;
+                            numEFF2ndDay.Value = 0;
+                            numRFT2ndDay.Value = 0;
+                            dateSewingDate3rdDay.Value = null;
+                            numEFF3rdDay.Value = 0;
+                            numRFT3rdDay.Value = 0;
                             break;
                         case 1:
-                            dateBox3.Value = null;
-                            numericBox8.Value = 0;
-                            numericBox9.Value = 0;
-                            dateBox4.Value = null;
-                            numericBox10.Value = 0;
-                            numericBox11.Value = 0;
+                            dateSewingDate2ndDay.Value = null;
+                            numEFF2ndDay.Value = 0;
+                            numRFT2ndDay.Value = 0;
+                            dateSewingDate3rdDay.Value = null;
+                            numEFF3rdDay.Value = 0;
+                            numRFT3rdDay.Value = 0;
                             break;
                         case 2:
-                            dateBox4.Value = null;
-                            numericBox10.Value = 0;
-                            numericBox11.Value = 0;
+                            dateSewingDate3rdDay.Value = null;
+                            numEFF3rdDay.Value = 0;
+                            numRFT3rdDay.Value = 0;
                             break;
                         default:
                             break;

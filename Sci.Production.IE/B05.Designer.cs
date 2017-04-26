@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelGroupID = new Sci.Win.UI.Label();
+            this.labelArtworkType = new Sci.Win.UI.Label();
+            this.labelMachineAllowance = new Sci.Win.UI.Label();
+            this.labelManualAllowance = new Sci.Win.UI.Label();
+            this.displayCode = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.displayGroupID = new Sci.Win.UI.DisplayBox();
+            this.displayArtworkType = new Sci.Win.UI.DisplayBox();
+            this.numMachineAllowance = new Sci.Win.UI.NumericBox();
+            this.numManualAllowance = new Sci.Win.UI.NumericBox();
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,21 +57,21 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkBox1);
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label10);
             this.detailcont.Controls.Add(this.label9);
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.displayBox4);
-            this.detailcont.Controls.Add(this.displayBox3);
-            this.detailcont.Controls.Add(this.displayBox2);
-            this.detailcont.Controls.Add(this.displayBox1);
-            this.detailcont.Controls.Add(this.label8);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label6);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.numManualAllowance);
+            this.detailcont.Controls.Add(this.numMachineAllowance);
+            this.detailcont.Controls.Add(this.displayArtworkType);
+            this.detailcont.Controls.Add(this.displayGroupID);
+            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.displayCode);
+            this.detailcont.Controls.Add(this.labelManualAllowance);
+            this.detailcont.Controls.Add(this.labelMachineAllowance);
+            this.detailcont.Controls.Add(this.labelArtworkType);
+            this.detailcont.Controls.Add(this.labelGroupID);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Size = new System.Drawing.Size(829, 357);
             // 
             // detailbtm
@@ -80,7 +80,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(686, 395);
+            this.browse.Size = new System.Drawing.Size(829, 395);
             // 
             // tabs
             // 
@@ -100,137 +100,137 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelCode
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(30, 30);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Code";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(30, 30);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(125, 23);
+            this.labelCode.TabIndex = 0;
+            this.labelCode.Text = "Code";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(30, 65);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(125, 23);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(30, 65);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(125, 23);
+            this.labelDescription.TabIndex = 1;
+            this.labelDescription.Text = "Description";
             // 
-            // label5
+            // labelGroupID
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(30, 100);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(125, 23);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Group ID";
+            this.labelGroupID.Lines = 0;
+            this.labelGroupID.Location = new System.Drawing.Point(30, 100);
+            this.labelGroupID.Name = "labelGroupID";
+            this.labelGroupID.Size = new System.Drawing.Size(125, 23);
+            this.labelGroupID.TabIndex = 2;
+            this.labelGroupID.Text = "Group ID";
             // 
-            // label6
+            // labelArtworkType
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(30, 135);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(125, 23);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Artwork Type";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(30, 135);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(125, 23);
+            this.labelArtworkType.TabIndex = 3;
+            this.labelArtworkType.Text = "Artwork Type";
             // 
-            // label7
+            // labelMachineAllowance
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(30, 170);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(125, 23);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Machine Allowance";
+            this.labelMachineAllowance.Lines = 0;
+            this.labelMachineAllowance.Location = new System.Drawing.Point(30, 170);
+            this.labelMachineAllowance.Name = "labelMachineAllowance";
+            this.labelMachineAllowance.Size = new System.Drawing.Size(125, 23);
+            this.labelMachineAllowance.TabIndex = 4;
+            this.labelMachineAllowance.Text = "Machine Allowance";
             // 
-            // label8
+            // labelManualAllowance
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(30, 205);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 23);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Manual Allowance";
+            this.labelManualAllowance.Lines = 0;
+            this.labelManualAllowance.Location = new System.Drawing.Point(30, 205);
+            this.labelManualAllowance.Name = "labelManualAllowance";
+            this.labelManualAllowance.Size = new System.Drawing.Size(125, 23);
+            this.labelManualAllowance.TabIndex = 5;
+            this.labelManualAllowance.Text = "Manual Allowance";
             // 
-            // displayBox1
+            // displayCode
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(159, 30);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(80, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCode.Location = new System.Drawing.Point(159, 30);
+            this.displayCode.Name = "displayCode";
+            this.displayCode.Size = new System.Drawing.Size(80, 23);
+            this.displayCode.TabIndex = 0;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(159, 65);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(380, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(159, 65);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(380, 23);
+            this.displayDescription.TabIndex = 1;
             // 
-            // displayBox3
+            // displayGroupID
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineGroupID", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(159, 100);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(35, 23);
-            this.displayBox3.TabIndex = 2;
+            this.displayGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineGroupID", true));
+            this.displayGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGroupID.Location = new System.Drawing.Point(159, 100);
+            this.displayGroupID.Name = "displayGroupID";
+            this.displayGroupID.Size = new System.Drawing.Size(35, 23);
+            this.displayGroupID.TabIndex = 2;
             // 
-            // displayBox4
+            // displayArtworkType
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkTypeID", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(159, 135);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(140, 23);
-            this.displayBox4.TabIndex = 3;
+            this.displayArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkTypeID", true));
+            this.displayArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayArtworkType.Location = new System.Drawing.Point(159, 135);
+            this.displayArtworkType.Name = "displayArtworkType";
+            this.displayArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.displayArtworkType.TabIndex = 3;
             // 
-            // numericBox1
+            // numMachineAllowance
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineAllow", true));
-            this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(159, 170);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numMachineAllowance.BackColor = System.Drawing.Color.White;
+            this.numMachineAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineAllow", true));
+            this.numMachineAllowance.DecimalPlaces = 2;
+            this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numMachineAllowance.Location = new System.Drawing.Point(159, 170);
+            this.numMachineAllowance.Name = "numMachineAllowance";
+            this.numMachineAllowance.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(50, 23);
-            this.numericBox1.TabIndex = 4;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numMachineAllowance.Size = new System.Drawing.Size(50, 23);
+            this.numMachineAllowance.TabIndex = 4;
+            this.numMachineAllowance.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numManualAllowance
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManAllow", true));
-            this.numericBox2.DecimalPlaces = 2;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(159, 205);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numManualAllowance.BackColor = System.Drawing.Color.White;
+            this.numManualAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManAllow", true));
+            this.numManualAllowance.DecimalPlaces = 2;
+            this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numManualAllowance.Location = new System.Drawing.Point(159, 205);
+            this.numManualAllowance.Name = "numManualAllowance";
+            this.numManualAllowance.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(50, 23);
-            this.numericBox2.TabIndex = 5;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numManualAllowance.Size = new System.Drawing.Size(50, 23);
+            this.numManualAllowance.TabIndex = 5;
+            this.numManualAllowance.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -254,17 +254,17 @@
             this.label10.TabIndex = 13;
             this.label10.Text = "%";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(432, 30);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(432, 30);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 6;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // B05
             // 
@@ -297,20 +297,20 @@
 
         #endregion
 
-        private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.Label label10;
         private Win.UI.Label label9;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
+        private Win.UI.NumericBox numManualAllowance;
+        private Win.UI.NumericBox numMachineAllowance;
+        private Win.UI.DisplayBox displayArtworkType;
+        private Win.UI.DisplayBox displayGroupID;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayCode;
+        private Win.UI.Label labelManualAllowance;
+        private Win.UI.Label labelMachineAllowance;
+        private Win.UI.Label labelArtworkType;
+        private Win.UI.Label labelGroupID;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelCode;
     }
 }

@@ -29,11 +29,11 @@ namespace Sci.Production.IE
         {
             base.OnFormLoaded();
 
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridArtworkSummary.IsEditingReadOnly = true;
+            this.gridArtworkSummary.DataSource = listControlBindingSource1;
             tms.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridArtworkSummary)
                 .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("TMS", header: "TMS", decimal_places: 4, iseditingreadonly: true, settings: tms);
 

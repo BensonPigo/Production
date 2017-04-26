@@ -20,7 +20,7 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
-            MyUtility.Tool.SetupCombox(comboBox1, 1, 1, "A,B");
+            MyUtility.Tool.SetupCombox(comboSewingLineTeam, 1, 1, "A,B");
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
             gridicon.Append.Visible = false;
@@ -44,17 +44,17 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             DataRow StyleData;
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
-                displayBox3.Value = StyleData["Description"];
-                numericBox8.Value = Convert.ToDecimal(StyleData["CPU"]);
+                displayDesc.Value = StyleData["Description"];
+                numCPUPC.Value = Convert.ToDecimal(StyleData["CPU"]);
             }
             else
             {
-                displayBox3.Value = "";
-                numericBox8.Value = 0;
+                displayDesc.Value = "";
+                numCPUPC.Value = 0;
             }
             CalculateValue(0);
             SaveCalculateValue();
-            button1.Enabled = !MyUtility.Check.Empty(CurrentMaintain["IEReasonID"]);
+            btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(CurrentMaintain["IEReasonID"]);
             this.detailgrid.AutoResizeColumn(0);
             this.detailgrid.AutoResizeColumn(3);
             this.detailgrid.AutoResizeColumn(4);
@@ -369,7 +369,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         {
             base.ClickNewAfter();
             CurrentMaintain["Status"] = "New";
-            textBox2.BackColor = Color.White;
+            txtStyleComboType.BackColor = Color.White;
         }
 
         protected override void ClickCopyAfter()
@@ -378,7 +378,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             CurrentMaintain["Version"] = DBNull.Value;
             CurrentMaintain["IEReasonID"] = "";
             CurrentMaintain["Status"] = "New";
-            textBox2.BackColor = Color.White;
+            txtStyleComboType.BackColor = Color.White;
         }
 
         protected override bool ClickEditBefore()
@@ -394,7 +394,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
             }
-            textBox2.BackColor = Color.White;
+            txtStyleComboType.BackColor = Color.White;
             return true;
         }
 
@@ -420,13 +420,13 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
             {
                 MyUtility.Msg.WarningBox("Style can't empty");
-                textBox7.Focus();
+                txtStyleID.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ComboType"]))
             {
                 MyUtility.Msg.WarningBox("Combo type can't empty");
-                textBox2.Focus();
+                txtStyleComboType.Focus();
                 return false;
             }
             #endregion
@@ -475,7 +475,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 }
                 CurrentMaintain["Version"] = newVersion;
             }
-            textBox2.BackColor = textBox7.BackColor;
+            txtStyleComboType.BackColor = txtStyleID.BackColor;
             return true;
         }
         
@@ -516,7 +516,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
 
         protected override bool ClickPrint()
         {
-            Sci.Production.IE.P03_Print callNextForm = new Sci.Production.IE.P03_Print(CurrentMaintain, MyUtility.Convert.GetDecimal(numericBox8.Value));
+            Sci.Production.IE.P03_Print callNextForm = new Sci.Production.IE.P03_Print(CurrentMaintain, MyUtility.Convert.GetDecimal(numCPUPC.Value));
             callNextForm.ShowDialog(this);
             return base.ClickPrint();
         }
@@ -524,7 +524,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            textBox2.BackColor = textBox7.BackColor;
+            txtStyleComboType.BackColor = txtStyleID.BackColor;
         }
 
         //加總傳入的GroupKey的GSD & Cycle Time
@@ -577,21 +577,21 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                 CurrentMaintain["NetTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * 3600, 0);
                 CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["DailyDemand"]), 0);
             }
-            numericBox23.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
-            numericBox7.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]), 0);
-            numericBox6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(numericBox7.Value), 0);
-            numericBox5.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(numericBox6.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(numericBox6.Value), 0);
+            numLLER.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TaktTime"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
+            numTargetHrIdeal.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]), 0);
+            numDailydemandshiftIdeal.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(numTargetHrIdeal.Value), 0);
+            numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(numDailydemandshiftIdeal.Value), 0);
         }
 
         //計算Total % time diff,Highest % time diff,Effieiency(%),Effieiency(%),PPH,LBR欄位值
         private void SaveCalculateValue()
         {
-            numericBox11.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"])) * 100, 2);
-            numericBox15.Value = MyUtility.Check.Empty(CurrentMaintain["HighestGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"])) * 100, 2);
-            numericBox17.Value = MyUtility.Check.Empty(CurrentMaintain["HighestCycle"]) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]), 2);
-            numericBox18.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) * 100, 2);
-            numericBox21.Value = MyUtility.Check.Empty(CurrentMaintain["CurrentOperators"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(numericBox17.Value) * MyUtility.Convert.GetDecimal(numericBox8.Value) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]), 4);
-            numericBox22.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
+            numTotalTimeDiff.Value = MyUtility.Check.Empty(CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"])) * 100, 2);
+            numHighestTimeDiff.Value = MyUtility.Check.Empty(CurrentMaintain["HighestGSD"]) ? 0 : MyUtility.Math.Round(((MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"]) - MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"])) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestGSD"])) * 100, 2);
+            numEOLR.Value = MyUtility.Check.Empty(CurrentMaintain["HighestCycle"]) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]), 2);
+            numEffieiency.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round((MyUtility.Convert.GetDecimal(CurrentMaintain["TotalGSD"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) * 100, 2);
+            numPPH.Value = MyUtility.Check.Empty(CurrentMaintain["CurrentOperators"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(numEOLR.Value) * MyUtility.Convert.GetDecimal(numCPUPC.Value) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]), 4);
+            numLBR.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["HighestCycle"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["CurrentOperators"]) * 100, 2);
         }
 
         //重新計算Grid的Cycle Time
@@ -627,10 +627,10 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         //Factory
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", txtFactory.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtFactory.Text = item.GetSelectedString();
         }
 
         //Style#
@@ -638,7 +638,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         {
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style WITH (NOLOCK) where Junk = 0 order by ID,SeasonID";
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", textBox7.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals:"0,0,0,0,3,0");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "15,8,10,40,5,6", txtStyleID.Text, "Style#,Season,Brand,Description,CPU,Key", columndecimals:"0,0,0,0,3,0");
             item.Width = 838;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
@@ -647,8 +647,8 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
             CurrentMaintain["SeasonID"] = styleData[0]["SeasonID"];
             CurrentMaintain["BrandID"] = styleData[0]["BrandID"];
             CurrentMaintain["StyleUKey"] = styleData[0]["Ukey"];
-            displayBox3.Value = styleData[0]["Description"];
-            numericBox8.Value = MyUtility.Convert.GetDecimal(styleData[0]["CPU"]);
+            displayDesc.Value = styleData[0]["Description"];
+            numCPUPC.Value = MyUtility.Convert.GetDecimal(styleData[0]["CPU"]);
 
             DataTable ComboType;
             DualResult result = DBProxy.Current.Select(null, string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), out ComboType);
@@ -705,8 +705,8 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
 
             string lBRTarget = FindTarget("LBR");
             string lLERTarget = FindTarget("LLER");
-            bool checkLBR = (!MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(numericBox22.Value) < Convert.ToDecimal(lBRTarget));
-            bool checkLLER = (!MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(numericBox23.Value) < Convert.ToDecimal(lLERTarget));
+            bool checkLBR = (!MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(numLBR.Value) < Convert.ToDecimal(lBRTarget));
+            bool checkLLER = (!MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(numLLER.Value) < Convert.ToDecimal(lLERTarget));
             string notHitReasonID = "";
 
             if (checkLBR || checkLLER)

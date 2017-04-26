@@ -28,95 +28,95 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.pictureBox2 = new Sci.Win.UI.PictureBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.labelPicture1 = new Sci.Win.UI.Label();
+            this.displayPicture1 = new Sci.Win.UI.DisplayBox();
+            this.picture1 = new Sci.Win.UI.PictureBox();
+            this.picture2 = new Sci.Win.UI.PictureBox();
+            this.displayPicture2 = new Sci.Win.UI.DisplayBox();
+            this.labelPicture2 = new Sci.Win.UI.Label();
+            this.btnClose = new Sci.Win.UI.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picture1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picture2)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // labelPicture1
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Picture1";
+            this.labelPicture1.Lines = 0;
+            this.labelPicture1.Location = new System.Drawing.Point(9, 9);
+            this.labelPicture1.Name = "labelPicture1";
+            this.labelPicture1.Size = new System.Drawing.Size(56, 23);
+            this.labelPicture1.TabIndex = 0;
+            this.labelPicture1.Text = "Picture1";
             // 
-            // displayBox1
+            // displayPicture1
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(69, 9);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(273, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayPicture1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPicture1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPicture1.Location = new System.Drawing.Point(69, 9);
+            this.displayPicture1.Name = "displayPicture1";
+            this.displayPicture1.Size = new System.Drawing.Size(273, 23);
+            this.displayPicture1.TabIndex = 0;
             // 
-            // pictureBox1
+            // picture1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(9, 50);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(364, 329);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.picture1.Location = new System.Drawing.Point(9, 50);
+            this.picture1.Name = "picture1";
+            this.picture1.Size = new System.Drawing.Size(364, 329);
+            this.picture1.TabIndex = 2;
+            this.picture1.TabStop = false;
             // 
-            // pictureBox2
+            // picture2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(402, 50);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(364, 329);
-            this.pictureBox2.TabIndex = 5;
-            this.pictureBox2.TabStop = false;
+            this.picture2.Location = new System.Drawing.Point(402, 50);
+            this.picture2.Name = "picture2";
+            this.picture2.Size = new System.Drawing.Size(364, 329);
+            this.picture2.TabIndex = 5;
+            this.picture2.TabStop = false;
             // 
-            // displayBox2
+            // displayPicture2
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(462, 9);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(273, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayPicture2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayPicture2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayPicture2.Location = new System.Drawing.Point(462, 9);
+            this.displayPicture2.Name = "displayPicture2";
+            this.displayPicture2.Size = new System.Drawing.Size(273, 23);
+            this.displayPicture2.TabIndex = 1;
             // 
-            // label2
+            // labelPicture2
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(402, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Picture2";
+            this.labelPicture2.Lines = 0;
+            this.labelPicture2.Location = new System.Drawing.Point(402, 9);
+            this.labelPicture2.Name = "labelPicture2";
+            this.labelPicture2.Size = new System.Drawing.Size(56, 23);
+            this.labelPicture2.TabIndex = 3;
+            this.labelPicture2.Text = "Picture2";
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(671, 392);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(671, 392);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // P01_Sketch
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(776, 430);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.displayBox2);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.displayBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.picture2);
+            this.Controls.Add(this.displayPicture2);
+            this.Controls.Add(this.labelPicture2);
+            this.Controls.Add(this.picture1);
+            this.Controls.Add(this.displayPicture1);
+            this.Controls.Add(this.labelPicture1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "P01_Sketch";
             this.Text = "Sketch";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picture1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picture2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -124,12 +124,12 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.PictureBox pictureBox1;
-        private Win.UI.PictureBox pictureBox2;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label2;
-        private Win.UI.Button button1;
+        private Win.UI.Label labelPicture1;
+        private Win.UI.DisplayBox displayPicture1;
+        private Win.UI.PictureBox picture1;
+        private Win.UI.PictureBox picture2;
+        private Win.UI.DisplayBox displayPicture2;
+        private Win.UI.Label labelPicture2;
+        private Win.UI.Button btnClose;
     }
 }

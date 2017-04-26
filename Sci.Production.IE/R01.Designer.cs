@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.InlineDate = new Sci.Win.UI.DateRange();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelTeam = new Sci.Win.UI.Label();
+            this.txtFactory = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtSeason = new Sci.Win.UI.TextBox();
+            this.comboTeam = new Sci.Win.UI.ComboBox();
+            this.labelInlineDate = new Sci.Win.UI.Label();
+            this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -55,116 +55,116 @@
             this.close.Location = new System.Drawing.Point(292, 84);
             this.close.TabIndex = 6;
             // 
-            // label1
+            // labelFactory
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 13);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.TabIndex = 94;
+            this.labelFactory.Text = "Factory";
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(13, 48);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 95;
+            this.labelStyle.Text = "Style#";
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(13, 84);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 96;
+            this.labelSeason.Text = "Season";
             // 
-            // label4
+            // labelTeam
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "Team";
+            this.labelTeam.Lines = 0;
+            this.labelTeam.Location = new System.Drawing.Point(13, 120);
+            this.labelTeam.Name = "labelTeam";
+            this.labelTeam.Size = new System.Drawing.Size(75, 23);
+            this.labelTeam.TabIndex = 97;
+            this.labelTeam.Text = "Team";
             // 
-            // textBox1
+            // txtFactory
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(91, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(70, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(91, 13);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(70, 23);
+            this.txtFactory.TabIndex = 0;
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // textBox2
+            // txtStyle
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(91, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(150, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(91, 48);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.Size = new System.Drawing.Size(150, 23);
+            this.txtStyle.TabIndex = 1;
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox3
+            // txtSeason
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(91, 84);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(80, 23);
-            this.textBox3.TabIndex = 2;
-            this.textBox3.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.textBox3.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(91, 84);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(80, 23);
+            this.txtSeason.TabIndex = 2;
+            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
             // 
-            // comboBox1
+            // comboTeam
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(91, 120);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(70, 24);
-            this.comboBox1.TabIndex = 3;
+            this.comboTeam.BackColor = System.Drawing.Color.White;
+            this.comboTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTeam.FormattingEnabled = true;
+            this.comboTeam.IsSupportUnselect = true;
+            this.comboTeam.Location = new System.Drawing.Point(91, 120);
+            this.comboTeam.Name = "comboTeam";
+            this.comboTeam.Size = new System.Drawing.Size(70, 24);
+            this.comboTeam.TabIndex = 3;
             // 
-            // label5
+            // labelInlineDate
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 152);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Inline Date";
+            this.labelInlineDate.Lines = 0;
+            this.labelInlineDate.Location = new System.Drawing.Point(13, 152);
+            this.labelInlineDate.Name = "labelInlineDate";
+            this.labelInlineDate.Size = new System.Drawing.Size(75, 23);
+            this.labelInlineDate.TabIndex = 98;
+            this.labelInlineDate.Text = "Inline Date";
             // 
-            // InlineDate
+            // dateInlineDate
             // 
-            this.InlineDate.IsRequired = false;
-            this.InlineDate.Location = new System.Drawing.Point(91, 152);
-            this.InlineDate.Name = "InlineDate";
-            this.InlineDate.Size = new System.Drawing.Size(280, 23);
-            this.InlineDate.TabIndex = 99;
+            this.dateInlineDate.IsRequired = false;
+            this.dateInlineDate.Location = new System.Drawing.Point(91, 152);
+            this.dateInlineDate.Name = "dateInlineDate";
+            this.dateInlineDate.Size = new System.Drawing.Size(280, 23);
+            this.dateInlineDate.TabIndex = 99;
             // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(384, 209);
-            this.Controls.Add(this.InlineDate);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateInlineDate);
+            this.Controls.Add(this.labelInlineDate);
+            this.Controls.Add(this.comboTeam);
+            this.Controls.Add(this.txtSeason);
+            this.Controls.Add(this.txtStyle);
+            this.Controls.Add(this.txtFactory);
+            this.Controls.Add(this.labelTeam);
+            this.Controls.Add(this.labelSeason);
+            this.Controls.Add(this.labelStyle);
+            this.Controls.Add(this.labelFactory);
             this.DefaultControl = "textBox1";
             this.DefaultControlForEdit = "textBox1";
             this.IsSupportToPrint = false;
@@ -173,16 +173,16 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.InlineDate, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
+            this.Controls.SetChildIndex(this.labelSeason, 0);
+            this.Controls.SetChildIndex(this.labelTeam, 0);
+            this.Controls.SetChildIndex(this.txtFactory, 0);
+            this.Controls.SetChildIndex(this.txtStyle, 0);
+            this.Controls.SetChildIndex(this.txtSeason, 0);
+            this.Controls.SetChildIndex(this.comboTeam, 0);
+            this.Controls.SetChildIndex(this.labelInlineDate, 0);
+            this.Controls.SetChildIndex(this.dateInlineDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,15 +190,15 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label5;
-        private Win.UI.DateRange InlineDate;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelTeam;
+        private Win.UI.TextBox txtFactory;
+        private Win.UI.TextBox txtStyle;
+        private Win.UI.TextBox txtSeason;
+        private Win.UI.ComboBox comboTeam;
+        private Win.UI.Label labelInlineDate;
+        private Win.UI.DateRange dateInlineDate;
     }
 }

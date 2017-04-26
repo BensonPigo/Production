@@ -14,10 +14,10 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             InitializeComponent();
-            this.label5.Text = "Description\r\n(English)";
-            this.label6.Text = "Description\r\n(Chinese)";
+            this.labelDescriptionEnglish.Text = "Description\r\n(English)";
+            this.labelDescriptionChinese.Text = "Description\r\n(Chinese)";
 
-            MyUtility.Tool.SetupCombox(comboBox1, 2, 1, "A,Accoessory,W,Workmanship");
+            MyUtility.Tool.SetupCombox(comboType, 2, 1, "A,Accoessory,W,Workmanship");
         }
     }
 }

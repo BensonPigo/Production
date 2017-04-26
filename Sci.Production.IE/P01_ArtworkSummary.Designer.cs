@@ -34,13 +34,13 @@
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridArtworkSummary = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridArtworkSummary)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -69,59 +69,59 @@
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button1);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 236);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(357, 42);
             this.panel4.TabIndex = 3;
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(267, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(267, 6);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridArtworkSummary);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 10);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(357, 226);
             this.panel5.TabIndex = 4;
             // 
-            // grid1
+            // gridArtworkSummary
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(357, 226);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridArtworkSummary.AllowUserToAddRows = false;
+            this.gridArtworkSummary.AllowUserToDeleteRows = false;
+            this.gridArtworkSummary.AllowUserToResizeRows = false;
+            this.gridArtworkSummary.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridArtworkSummary.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridArtworkSummary.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridArtworkSummary.DataSource = this.listControlBindingSource1;
+            this.gridArtworkSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridArtworkSummary.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridArtworkSummary.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridArtworkSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridArtworkSummary.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridArtworkSummary.Location = new System.Drawing.Point(0, 0);
+            this.gridArtworkSummary.Name = "gridArtworkSummary";
+            this.gridArtworkSummary.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridArtworkSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridArtworkSummary.RowTemplate.Height = 24;
+            this.gridArtworkSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridArtworkSummary.Size = new System.Drawing.Size(357, 226);
+            this.gridArtworkSummary.TabIndex = 0;
+            this.gridArtworkSummary.TabStop = false;
             // 
             // P01_ArtworkSummary
             // 
-            this.CancelButton = this.button1;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(377, 278);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
@@ -133,7 +133,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridArtworkSummary)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -145,8 +145,8 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel4;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnClose;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridArtworkSummary;
     }
 }

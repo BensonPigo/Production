@@ -30,13 +30,13 @@ namespace Sci.Production.IE
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(numericBox1.Value))
+            if (MyUtility.Check.Empty(numEfficiencySetting.Value))
             {
                 MyUtility.Msg.WarningBox("Efficiency setting can't empty!!");
                 return false;
             }
 
-            efficiency = MyUtility.Convert.GetInt(numericBox1.Value);
+            efficiency = MyUtility.Convert.GetInt(numEfficiencySetting.Value);
            
             return base.ValidateInput();
         }

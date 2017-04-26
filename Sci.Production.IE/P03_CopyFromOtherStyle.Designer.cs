@@ -28,127 +28,127 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelLineMappingVersion = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.btnCopy = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.txtLineMappingVersion = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
-            // label1
+            // labelStyle
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(13, 13);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 0;
+            this.labelStyle.Text = "Style#";
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(13, 40);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 1;
+            this.labelSeason.Text = "Season";
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 67);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 67);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(75, 23);
+            this.labelBrand.TabIndex = 2;
+            this.labelBrand.Text = "Brand";
             // 
-            // label4
+            // labelLineMappingVersion
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 94);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(136, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Line mapping version";
+            this.labelLineMappingVersion.Lines = 0;
+            this.labelLineMappingVersion.Location = new System.Drawing.Point(13, 94);
+            this.labelLineMappingVersion.Name = "labelLineMappingVersion";
+            this.labelLineMappingVersion.Size = new System.Drawing.Size(136, 23);
+            this.labelLineMappingVersion.TabIndex = 3;
+            this.labelLineMappingVersion.Text = "Line mapping version";
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(92, 13);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 0;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(92, 13);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 0;
             // 
-            // txtseason1
+            // txtseason
             // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(92, 40);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 1;
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(92, 40);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(80, 23);
+            this.txtseason.TabIndex = 1;
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(92, 67);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 2;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(92, 67);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 2;
             // 
-            // button1
+            // btnCopy
             // 
-            this.button1.Location = new System.Drawing.Point(264, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Copy";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnCopy.Location = new System.Drawing.Point(264, 14);
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(80, 30);
+            this.btnCopy.TabIndex = 4;
+            this.btnCopy.Text = "Copy";
+            this.btnCopy.UseVisualStyleBackColor = true;
+            this.btnCopy.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnClose
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(264, 50);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(264, 50);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 5;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtLineMappingVersion
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(154, 94);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(39, 23);
-            this.textBox1.TabIndex = 3;
+            this.txtLineMappingVersion.BackColor = System.Drawing.Color.White;
+            this.txtLineMappingVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLineMappingVersion.Location = new System.Drawing.Point(154, 94);
+            this.txtLineMappingVersion.Name = "txtLineMappingVersion";
+            this.txtLineMappingVersion.Size = new System.Drawing.Size(39, 23);
+            this.txtLineMappingVersion.TabIndex = 3;
             // 
             // P03_CopyFromOtherStyle
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnCopy;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(352, 125);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.txtseason1);
-            this.Controls.Add(this.txtstyle1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtLineMappingVersion);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.btnCopy);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.txtseason);
+            this.Controls.Add(this.txtstyle);
+            this.Controls.Add(this.labelLineMappingVersion);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelSeason);
+            this.Controls.Add(this.labelStyle);
             this.DefaultControl = "txtstyle1";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P03_CopyFromOtherStyle";
@@ -160,15 +160,15 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Class.txtstyle txtstyle1;
-        private Class.txtseason txtseason1;
-        private Class.txtbrand txtbrand1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelLineMappingVersion;
+        private Class.txtstyle txtstyle;
+        private Class.txtseason txtseason;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Button btnCopy;
+        private Win.UI.Button btnClose;
+        private Win.UI.TextBox txtLineMappingVersion;
     }
 }

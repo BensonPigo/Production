@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.comboStyle = new Sci.Win.UI.ComboBox();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -54,110 +54,110 @@
             this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Blue;
             this.label1.TextStyle.GradientColor = System.Drawing.Color.Blue;
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(25, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(25, 36);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(51, 23);
+            this.labelStyle.TabIndex = 1;
+            this.labelStyle.Text = "Style";
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(25, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(25, 73);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(51, 23);
+            this.labelSeason.TabIndex = 2;
+            this.labelSeason.Text = "Season";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(25, 111);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(51, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(25, 111);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(51, 23);
+            this.labelBrand.TabIndex = 3;
+            this.labelBrand.Text = "Brand";
             // 
-            // textBox2
+            // txtBrand
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(79, 111);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(79, 111);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(80, 23);
+            this.txtBrand.TabIndex = 3;
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
             // 
-            // textBox1
+            // txtStyle
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(79, 36);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(79, 36);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.Size = new System.Drawing.Size(130, 23);
+            this.txtStyle.TabIndex = 0;
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtStyle.Validated += new System.EventHandler(this.textBox1_Validated);
             // 
-            // txtseason1
+            // txtseason
             // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(79, 73);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 2;
-            this.txtseason1.Validated += new System.EventHandler(this.txtseason1_Validated);
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(79, 73);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(80, 23);
+            this.txtseason.TabIndex = 2;
+            this.txtseason.Validated += new System.EventHandler(this.txtseason1_Validated);
             // 
-            // comboBox1
+            // comboStyle
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(213, 35);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(40, 24);
-            this.comboBox1.TabIndex = 1;
+            this.comboStyle.BackColor = System.Drawing.Color.White;
+            this.comboStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStyle.FormattingEnabled = true;
+            this.comboStyle.IsSupportUnselect = true;
+            this.comboStyle.Location = new System.Drawing.Point(213, 35);
+            this.comboStyle.Name = "comboStyle";
+            this.comboStyle.Size = new System.Drawing.Size(40, 24);
+            this.comboStyle.TabIndex = 1;
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Location = new System.Drawing.Point(288, 36);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Location = new System.Drawing.Point(288, 36);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 4;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(288, 72);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(288, 72);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // P01_Copy
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnOK;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(374, 152);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.txtseason1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.txtBrand);
+            this.Controls.Add(this.txtStyle);
+            this.Controls.Add(this.txtseason);
+            this.Controls.Add(this.comboStyle);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelSeason);
+            this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.label1);
             this.DefaultControl = "textBox1";
             this.Name = "P01_Copy";
@@ -170,14 +170,14 @@
         #endregion
 
         private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Class.txtseason txtseason1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelBrand;
+        private Win.UI.TextBox txtBrand;
+        private Win.UI.TextBox txtStyle;
+        private Class.txtseason txtseason;
+        private Win.UI.ComboBox comboStyle;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
     }
 }
