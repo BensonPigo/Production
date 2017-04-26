@@ -27,11 +27,11 @@ namespace Sci.Production.Thread
             DBProxy.Current.Select("", sqlcmd, out factory);
             factory.Rows.Add(new string[] { "" });
             factory.DefaultView.Sort = "FTYGroup";
-            this.comboBox1.DataSource = factory;
-            this.comboBox1.ValueMember = "FTYGroup";
-            this.comboBox1.DisplayMember = "FTYGroup";
-            this.comboBox1.SelectedIndex = 0;
-            this.comboBox1.Text = Sci.Env.User.Factory;
+            this.comboFactory.DataSource = factory;
+            this.comboFactory.ValueMember = "FTYGroup";
+            this.comboFactory.DisplayMember = "FTYGroup";
+            this.comboFactory.SelectedIndex = 0;
+            this.comboFactory.Text = Sci.Env.User.Factory;
 
             this.comboMDivision.setDefalutIndex(true);
             print.Enabled = false;
@@ -39,28 +39,28 @@ namespace Sci.Production.Thread
 
         protected override bool ValidateInput()
         {
-            bool sp_Empty1 = !this.textBox1.Text.Empty(), sp_Empty2 = !this.textBox2.Text.Empty(), dateRange1_Empty = !this.dateRange_book.HasValue, dateRange2_Empty = !this.dateRange_Arr.HasValue;
+            bool sp_Empty1 = !this.txtSPNoStart.Text.Empty(), sp_Empty2 = !this.txtSPNoEnd.Text.Empty(), dateRange1_Empty = !this.dateEstBooking.HasValue, dateRange2_Empty = !this.dateEstArrived.HasValue;
             if (sp_Empty1 && sp_Empty2 && dateRange1_Empty && dateRange2_Empty)
             {
                 MyUtility.Msg.ErrorBox("You must enter the SP No,Est.booking,Est.Arrived");
 
-                textBox1.Focus();
+                txtSPNoStart.Focus();
 
                 return false;
             }
-            sp1 = textBox1.Text.ToString();
-            sp2 = textBox2.Text.ToString();
-            EstBook1 = dateRange_book.Value1;
-            EstBook2 = dateRange_book.Value2;
-            EstArr1 = dateRange_Arr.Value1;
-            EstArr2 = dateRange_Arr.Value2;
-            fac = comboBox1.SelectedValue.ToString();
+            sp1 = txtSPNoStart.Text.ToString();
+            sp2 = txtSPNoEnd.Text.ToString();
+            EstBook1 = dateEstBooking.Value1;
+            EstBook2 = dateEstBooking.Value2;
+            EstArr1 = dateEstArrived.Value1;
+            EstArr2 = dateEstArrived.Value2;
+            fac = comboFactory.SelectedValue.ToString();
             M = comboMDivision.Text.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = ""; string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.textBox1.Text.Empty())
+            if (!this.txtSPNoStart.Text.Empty())
             {
                 sqlWheres.Add("t.OrderID between @spNo1 and @spNo2");
                 lis.Add(new SqlParameter("@spNo1", sp1));
@@ -92,7 +92,7 @@ namespace Sci.Production.Thread
                     lis.Add(new SqlParameter("@EstArr2", EstArr2));
                 }
             } 
-            if (!this.comboBox1.Text.Empty())
+            if (!this.comboFactory.Text.Empty())
             {
                 sqlWheres.Add("t.FactoryID = @fac");
                 lis.Add(new SqlParameter("@fac", fac));

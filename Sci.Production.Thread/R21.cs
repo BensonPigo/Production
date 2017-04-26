@@ -28,40 +28,40 @@ namespace Sci.Production.Thread
         protected override bool ValidateInput()
         {
 
-            RefN1 = textBox1.Text.ToString();
-            RefN2 = textBox2.Text.ToString();
-            sha = textSHA.Text.ToString();
-            TYPE = textTYPE.Text.ToString();
-            Thread = textITEM.Text.ToString();
-            LOC1 = textLOC1.Text.ToString();
-            LOC2 = textLOC2.Text.ToString();
+            RefN1 = txtRefnoStart.Text.ToString();
+            RefN2 = txtRefnoEnd.Text.ToString();
+            sha = txtShade.Text.ToString();
+            TYPE = txtType.Text.ToString();
+            Thread = txtThreadItem.Text.ToString();
+            LOC1 = txtLocationStart.Text.ToString();
+            LOC2 = txtLocationEnd.Text.ToString();
             M = comboMDivision.Text.ToString();
             lis = new List<SqlParameter>();
             string sqlWhere = "";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.textBox1.Text.Empty())
+            if (!this.txtRefnoStart.Text.Empty())
             {
                 sqlWheres.Add("ThreadStock.refno between @RefN1 and @RefN2");
                 lis.Add(new SqlParameter("@RefN1", RefN1));
                 lis.Add(new SqlParameter("@RefN2", RefN2));
             }
-            if (!this.textSHA.Text.Empty())
+            if (!this.txtShade.Text.Empty())
             {
                 sqlWheres.Add("ThreadStock.threadcolorid = @sha");
                 lis.Add(new SqlParameter("@sha", sha));  
             }
-            if (!this.textTYPE.Text.Empty())
+            if (!this.txtType.Text.Empty())
             {
                 sqlWheres.Add("(select LocalItem.Category from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) = @TYPE");
                 lis.Add(new SqlParameter("@TYPE", TYPE));  
             }
-            if (!this.textITEM.Text.Empty())
+            if (!this.txtThreadItem.Text.Empty())
             {
                 sqlWheres.Add("ThreadStock.refno = @Thread");
                 lis.Add(new SqlParameter("@Thread", Thread));
             }
-            if (!this.textLOC1.Text.Empty())
+            if (!this.txtLocationStart.Text.Empty())
             {
                 sqlWheres.Add("ThreadStock.threadlocationid between @LOC1 and @LOC2");
                 lis.Add(new SqlParameter("@LOC1", LOC1));
@@ -141,7 +141,7 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox1.Text = item.GetSelectedString();
+            txtRefnoStart.Text = item.GetSelectedString();
         }
 
         private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -154,35 +154,35 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textBox2.Text = item.GetSelectedString();
+            txtRefnoEnd.Text = item.GetSelectedString();
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
             
-            if (textBox1.Text.ToString() == "") return;
+            if (txtRefnoStart.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct Refno,
                                     (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
                                        from dbo.ThreadStock WITH (NOLOCK) 
-                                       where Refno='{0}'",textBox1.Text),null))
+                                       where Refno='{0}'",txtRefnoStart.Text),null))
             {
                 MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
                 e.Cancel = true;
-                textBox1.Text = "";
+                txtRefnoStart.Text = "";
             }
         }
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox2.Text.ToString() == "") return;
+            if (txtRefnoEnd.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct Refno,
                                     (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
                                        from dbo.ThreadStock WITH (NOLOCK) 
-                                       where Refno='{0}'", textBox2.Text), null))
+                                       where Refno='{0}'", txtRefnoEnd.Text), null))
             {
                 MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
                 e.Cancel = true;
-                textBox2.Text = "";
+                txtRefnoEnd.Text = "";
             }
         }
 
@@ -196,19 +196,19 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "13, 13", null, "Shade, Color desc");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textSHA.Text = item.GetSelectedString();
+            txtShade.Text = item.GetSelectedString();
         }
         private void textSHA_Validating(object sender, CancelEventArgs e)
         {
-            if (textSHA.Text.ToString() == "") return;
+            if (txtShade.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct threadcolorid, 
                                         (select tc.Description from dbo.ThreadColor tc where tc.id = ThreadStock.ThreadColorID) [Color_desc] 
                                from ThreadStock WITH (NOLOCK) 
-                               where threadcolorid ='{0}'", textSHA.Text), null))
+                               where threadcolorid ='{0}'", txtShade.Text), null))
             {
                 MyUtility.Msg.WarningBox("Shade is not exist!!", "Data not found");
                 e.Cancel = true;
-                textSHA.Text = "";
+                txtShade.Text = "";
             }
         }
         private void textTYPE_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -221,20 +221,20 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20", null, "Type");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textTYPE.Text = item.GetSelectedString();
+            txtType.Text = item.GetSelectedString();
         }
 
         private void textTYPE_Validating(object sender, CancelEventArgs e)
         {
-            if (textTYPE.Text.ToString() == "") return;
+            if (txtType.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct l.Category 
                                from dbo.ThreadStock ts WITH (NOLOCK) 
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
-                               where l.category ='{0}'", textTYPE.Text), null))
+                               where l.category ='{0}'", txtType.Text), null))
             {
                 MyUtility.Msg.WarningBox("Type is not exist!!", "Data not found");
                 e.Cancel = true;
-                textTYPE.Text = "";
+                txtType.Text = "";
             }
         }
 
@@ -248,20 +248,20 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "35", null, "Thread Item");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textITEM.Text = item.GetSelectedString();
+            txtThreadItem.Text = item.GetSelectedString();
         }
 
         private void textITEM_Validating(object sender, CancelEventArgs e)
         {
-            if (textITEM.Text.ToString() == "") return;
+            if (txtThreadItem.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct l.Category 
                                from dbo.ThreadStock ts WITH (NOLOCK) 
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
-                               where l.category='{0}'", textITEM.Text), null))
+                               where l.category='{0}'", txtThreadItem.Text), null))
             {
                 MyUtility.Msg.WarningBox("Thread Item is not exist!!", "Data not found");
                 e.Cancel = true;
-                textITEM.Text = "";
+                txtThreadItem.Text = "";
             }
         }
 
@@ -275,20 +275,20 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textLOC1.Text = item.GetSelectedString();
+            txtLocationStart.Text = item.GetSelectedString();
         }
 
         private void textLOC1_Validating(object sender, CancelEventArgs e)
         {
-            if (textLOC1.Text.ToString() == "") return;
+            if (txtLocationStart.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct ThreadlocationID,
                                     (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock  WITH (NOLOCK) 
-                               where ThreadlocationID='{0}'", textLOC1.Text), null))
+                               where ThreadlocationID='{0}'", txtLocationStart.Text), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
-                textLOC1.Text = "";
+                txtLocationStart.Text = "";
             }
         }
 
@@ -302,20 +302,20 @@ namespace Sci.Production.Thread
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            textLOC2.Text = item.GetSelectedString();
+            txtLocationEnd.Text = item.GetSelectedString();
         }
 
         private void textLOC2_Validating(object sender, CancelEventArgs e)
         {
-            if (textLOC2.Text.ToString() == "") return;
+            if (txtLocationEnd.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct ThreadlocationID,
                                     (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock  WITH (NOLOCK) 
-                               where ThreadlocationID='{0}'", textLOC2.Text), null))
+                               where ThreadlocationID='{0}'", txtLocationEnd.Text), null))
             {
                 MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
-                textLOC2.Text = "";
+                txtLocationEnd.Text = "";
             }
         }
 

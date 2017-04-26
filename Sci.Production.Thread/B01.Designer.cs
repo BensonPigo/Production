@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.labelThreadCombination = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.txtThreadCombination = new Sci.Win.UI.TextBox();
+            this.txtDescription = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,11 +43,11 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.textBox2);
-            this.detailcont.Controls.Add(this.textBox1);
-            this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.txtDescription);
+            this.detailcont.Controls.Add(this.txtThreadCombination);
+            this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Controls.Add(this.labelDescription);
+            this.detailcont.Controls.Add(this.labelThreadCombination);
             // 
             // createby
             // 
@@ -62,55 +62,55 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(436, 13);
             // 
-            // label3
+            // labelThreadCombination
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(50, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(134, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Thread Combination";
+            this.labelThreadCombination.Lines = 0;
+            this.labelThreadCombination.Location = new System.Drawing.Point(50, 46);
+            this.labelThreadCombination.Name = "labelThreadCombination";
+            this.labelThreadCombination.Size = new System.Drawing.Size(134, 23);
+            this.labelThreadCombination.TabIndex = 3;
+            this.labelThreadCombination.Text = "Thread Combination";
             // 
-            // label4
+            // labelDescription
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(50, 103);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(134, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(50, 103);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(134, 23);
+            this.labelDescription.TabIndex = 4;
+            this.labelDescription.Text = "Description";
             // 
-            // checkBox1
+            // checkJunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(411, 46);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(57, 21);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "Junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(411, 46);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 2;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtThreadCombination
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(190, 46);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtThreadCombination.BackColor = System.Drawing.Color.White;
+            this.txtThreadCombination.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtThreadCombination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadCombination.Location = new System.Drawing.Point(190, 46);
+            this.txtThreadCombination.Name = "txtThreadCombination";
+            this.txtThreadCombination.Size = new System.Drawing.Size(100, 23);
+            this.txtThreadCombination.TabIndex = 0;
             // 
-            // textBox2
+            // txtDescription
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(190, 103);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(249, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDescription.Location = new System.Drawing.Point(190, 103);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(249, 23);
+            this.txtDescription.TabIndex = 1;
             // 
             // B01
             // 
@@ -137,10 +137,10 @@
 
         #endregion
 
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelThreadCombination;
+        private Win.UI.CheckBox checkJunk;
+        private Win.UI.TextBox txtDescription;
+        private Win.UI.TextBox txtThreadCombination;
     }
 }

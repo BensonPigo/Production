@@ -78,8 +78,8 @@ namespace Sci.Production.Thread
 
             //};
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: "", width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
             .Text("Seq", header: "SEQ", width: Widths.Auto(true),iseditingreadonly:true)
             .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
@@ -88,19 +88,19 @@ namespace Sci.Production.Thread
             .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
             .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
             .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
-            grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
+            gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
-            if (MyUtility.Check.Empty(textBox1.Text))
+            gridDetail.ValidateControl();
+            if (MyUtility.Check.Empty(txtMachineType.Text))
             {
-                gridTable.DefaultView.RowFilter = this.checkBox1.Value == "True" ? "Threadcombid is null" : "";
+                gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? "Threadcombid is null" : "";
             }
             else
             {
-                gridTable.DefaultView.RowFilter = this.checkBox1.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", textBox1.Text) : string.Format("MachineTypeid = '{0}'", textBox1.Text);
+                gridTable.DefaultView.RowFilter = this.checkOnlyShowNotYetAssignCombination.Value == "True" ? string.Format("MachineTypeid = '{0}' and Threadcombid is null", txtMachineType.Text) : string.Format("MachineTypeid = '{0}'", txtMachineType.Text);
             }
         }
 
@@ -113,7 +113,7 @@ namespace Sci.Production.Thread
         //save到DB
         private void btn_Generate_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridDetail.ValidateControl();
             DataTable groupTable, operTable, gridTable3;
             StringBuilder delesql = new StringBuilder();
             string sql = "", str_Select;
@@ -286,13 +286,13 @@ where S.Ukey = '{0}'", styleUkey);
             {
                 if (dr["Sel"].ToString() == "1")
                 {
-                    dr["ThreadCombid"] = txtthreadcomb1.Text;
+                    dr["ThreadCombid"] = txtthreadcomb.Text;
                     dr["Sel"] = false;
                     dr.EndEdit();
                 }
 
             }
-            grid1.ValidateControl();
+            gridDetail.ValidateControl();
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -300,24 +300,24 @@ where S.Ukey = '{0}'", styleUkey);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
             join operation e WITH (NOLOCK) on e.id = d.operationid
-            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.textBox1.Text, false, ",");
+            where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and d.SeamLength>0 ", strstyleid, strseason, strbrandid), "23", this.txtMachineType.Text, false, ",");
             //
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            this.textBox1.Text = item.GetSelectedString();
+            this.txtMachineType.Text = item.GetSelectedString();
         }
 
         private  void textBox1_Validating(object sender, CancelEventArgs e)
         {
             base.OnValidating(e);
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            string str = this.txtMachineType.Text;
+            if (!string.IsNullOrWhiteSpace(str) && str != this.txtMachineType.OldValue)
             {
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
-                    this.textBox1.Text = "";
+                    this.txtMachineType.Text = "";
                     e.Cancel = true;
                     return;
                 }

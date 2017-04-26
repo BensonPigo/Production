@@ -30,18 +30,18 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.dateRange_Arr = new Sci.Win.UI.DateRange();
-            this.dateRange_book = new Sci.Win.UI.DateRange();
-            this.label6 = new Sci.Win.UI.Label();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.dateEstArrived = new Sci.Win.UI.DateRange();
+            this.dateEstBooking = new Sci.Win.UI.DateRange();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelEstArrived = new Sci.Win.UI.Label();
+            this.labelEstBooking = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,48 +60,59 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.comboMDivision);
-            this.panel1.Controls.Add(this.comboBox1);
-            this.panel1.Controls.Add(this.dateRange_Arr);
-            this.panel1.Controls.Add(this.dateRange_book);
+            this.panel1.Controls.Add(this.comboFactory);
+            this.panel1.Controls.Add(this.dateEstArrived);
+            this.panel1.Controls.Add(this.dateEstBooking);
             this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtSPNoEnd);
+            this.panel1.Controls.Add(this.txtSPNoStart);
+            this.panel1.Controls.Add(this.labelM);
+            this.panel1.Controls.Add(this.labelFactory);
+            this.panel1.Controls.Add(this.labelEstArrived);
+            this.panel1.Controls.Add(this.labelEstBooking);
+            this.panel1.Controls.Add(this.labelSPNo);
             this.panel1.Location = new System.Drawing.Point(12, 22);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(497, 233);
             this.panel1.TabIndex = 0;
             // 
-            // comboBox1
+            // comboMDivision
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(100, 147);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 4;
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(100, 189);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 5;
             // 
-            // dateRange_Arr
+            // comboFactory
             // 
-            this.dateRange_Arr.IsRequired = false;
-            this.dateRange_Arr.Location = new System.Drawing.Point(100, 104);
-            this.dateRange_Arr.Name = "dateRange_Arr";
-            this.dateRange_Arr.Size = new System.Drawing.Size(336, 23);
-            this.dateRange_Arr.TabIndex = 3;
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(100, 147);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 4;
             // 
-            // dateRange_book
+            // dateEstArrived
             // 
-            this.dateRange_book.IsRequired = false;
-            this.dateRange_book.Location = new System.Drawing.Point(100, 62);
-            this.dateRange_book.Name = "dateRange_book";
-            this.dateRange_book.Size = new System.Drawing.Size(336, 23);
-            this.dateRange_book.TabIndex = 2;
+            this.dateEstArrived.IsRequired = false;
+            this.dateEstArrived.Location = new System.Drawing.Point(100, 104);
+            this.dateEstArrived.Name = "dateEstArrived";
+            this.dateEstArrived.Size = new System.Drawing.Size(336, 23);
+            this.dateEstArrived.TabIndex = 3;
+            // 
+            // dateEstBooking
+            // 
+            this.dateEstBooking.IsRequired = false;
+            this.dateEstBooking.Location = new System.Drawing.Point(100, 62);
+            this.dateEstBooking.Name = "dateEstBooking";
+            this.dateEstBooking.Size = new System.Drawing.Size(336, 23);
+            this.dateEstBooking.TabIndex = 2;
             // 
             // label6
             // 
@@ -114,79 +125,68 @@
             this.label6.Text = "~";
             this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textBox2
+            // txtSPNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(287, 23);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(149, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(287, 23);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(149, 23);
+            this.txtSPNoEnd.TabIndex = 1;
             // 
-            // textBox1
+            // txtSPNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(100, 23);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(149, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(100, 23);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(149, 23);
+            this.txtSPNoStart.TabIndex = 0;
             // 
-            // label5
+            // labelM
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(11, 189);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(11, 189);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(86, 23);
+            this.labelM.TabIndex = 4;
+            this.labelM.Text = "M";
             // 
-            // label4
+            // labelFactory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(11, 147);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(11, 147);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(86, 23);
+            this.labelFactory.TabIndex = 3;
+            this.labelFactory.Text = "Factory";
             // 
-            // label3
+            // labelEstArrived
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(11, 104);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Est. Arrived";
+            this.labelEstArrived.Lines = 0;
+            this.labelEstArrived.Location = new System.Drawing.Point(11, 104);
+            this.labelEstArrived.Name = "labelEstArrived";
+            this.labelEstArrived.Size = new System.Drawing.Size(86, 23);
+            this.labelEstArrived.TabIndex = 2;
+            this.labelEstArrived.Text = "Est. Arrived";
             // 
-            // label2
+            // labelEstBooking
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(11, 64);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Est. Booking";
+            this.labelEstBooking.Lines = 0;
+            this.labelEstBooking.Location = new System.Drawing.Point(11, 64);
+            this.labelEstBooking.Name = "labelEstBooking";
+            this.labelEstBooking.Size = new System.Drawing.Size(86, 23);
+            this.labelEstBooking.TabIndex = 1;
+            this.labelEstBooking.Text = "Est. Booking";
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(11, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(86, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "SP No";
-            // 
-            // comboMDivision
-            // 
-            this.comboMDivision.BackColor = System.Drawing.Color.White;
-            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboMDivision.FormattingEnabled = true;
-            this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(100, 189);
-            this.comboMDivision.Name = "comboMDivision";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision.TabIndex = 5;
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(11, 23);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(86, 23);
+            this.labelSPNo.TabIndex = 0;
+            this.labelSPNo.Text = "SP No";
             // 
             // R20
             // 
@@ -208,17 +208,17 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DateRange dateRange_Arr;
-        private Win.UI.DateRange dateRange_book;
+        private Win.UI.ComboBox comboFactory;
+        private Win.UI.DateRange dateEstArrived;
+        private Win.UI.DateRange dateEstBooking;
         private Win.UI.Label label6;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.TextBox txtSPNoStart;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelEstArrived;
+        private Win.UI.Label labelEstBooking;
+        private Win.UI.Label labelSPNo;
         private Class.comboMDivision comboMDivision;
     }
 }

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBoxTotalLength = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtTotalLength = new Sci.Win.UI.TextBox();
+            this.labelTotalLength = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -41,8 +41,8 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.label1);
-            this.btmcont.Controls.Add(this.textBoxTotalLength);
+            this.btmcont.Controls.Add(this.labelTotalLength);
+            this.btmcont.Controls.Add(this.txtTotalLength);
             this.btmcont.Size = new System.Drawing.Size(696, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
@@ -51,8 +51,8 @@
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.next, 0);
             this.btmcont.Controls.SetChildIndex(this.prev, 0);
-            this.btmcont.Controls.SetChildIndex(this.textBoxTotalLength, 0);
-            this.btmcont.Controls.SetChildIndex(this.label1, 0);
+            this.btmcont.Controls.SetChildIndex(this.txtTotalLength, 0);
+            this.btmcont.Controls.SetChildIndex(this.labelTotalLength, 0);
             // 
             // save
             // 
@@ -70,25 +70,25 @@
             // 
             this.prev.Location = new System.Drawing.Point(416, 5);
             // 
-            // textBoxTotalLength
+            // txtTotalLength
             // 
-            this.textBoxTotalLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxTotalLength.BackColor = System.Drawing.Color.White;
-            this.textBoxTotalLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBoxTotalLength.Location = new System.Drawing.Point(338, 8);
-            this.textBoxTotalLength.Name = "textBoxTotalLength";
-            this.textBoxTotalLength.Size = new System.Drawing.Size(72, 23);
-            this.textBoxTotalLength.TabIndex = 97;
+            this.txtTotalLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTotalLength.BackColor = System.Drawing.Color.White;
+            this.txtTotalLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTotalLength.Location = new System.Drawing.Point(338, 8);
+            this.txtTotalLength.Name = "txtTotalLength";
+            this.txtTotalLength.Size = new System.Drawing.Size(72, 23);
+            this.txtTotalLength.TabIndex = 97;
             // 
-            // label1
+            // labelTotalLength
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(253, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "TotalLength";
+            this.labelTotalLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTotalLength.Lines = 0;
+            this.labelTotalLength.Location = new System.Drawing.Point(253, 8);
+            this.labelTotalLength.Name = "labelTotalLength";
+            this.labelTotalLength.Size = new System.Drawing.Size(82, 23);
+            this.labelTotalLength.TabIndex = 98;
+            this.labelTotalLength.Text = "TotalLength";
             // 
             // P02_Detail
             // 
@@ -111,7 +111,7 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBoxTotalLength;
+        private Win.UI.Label labelTotalLength;
+        private Win.UI.TextBox txtTotalLength;
     }
 }

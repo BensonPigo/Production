@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.dateSewingInLine = new Sci.Win.UI.DateBox();
+            this.dateSCIDelivery = new Sci.Win.UI.DateBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.dateEstArrived = new Sci.Win.UI.DateBox();
+            this.dateEstBooking = new Sci.Win.UI.DateBox();
+            this.labelEstArrived = new Sci.Win.UI.Label();
+            this.labelEstBooking = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelSewingInLine = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.displayStyle = new Sci.Win.UI.DisplayBox();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelSP = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,44 +62,44 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox4);
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.displayM);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.labelEstArrived);
+            this.masterpanel.Controls.Add(this.labelEstBooking);
+            this.masterpanel.Controls.Add(this.labelM);
+            this.masterpanel.Controls.Add(this.labelSewingInLine);
+            this.masterpanel.Controls.Add(this.labelSCIDelivery);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.displayStyle);
+            this.masterpanel.Controls.Add(this.txtSP);
+            this.masterpanel.Controls.Add(this.labelSP);
+            this.masterpanel.Controls.Add(this.dateSewingInLine);
+            this.masterpanel.Controls.Add(this.dateSCIDelivery);
+            this.masterpanel.Controls.Add(this.dateEstArrived);
+            this.masterpanel.Controls.Add(this.dateEstBooking);
             this.masterpanel.Size = new System.Drawing.Size(912, 157);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateEstArrived, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSewingInLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSewingInLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelEstArrived, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             // 
             // detailpanel
             // 
@@ -118,6 +118,18 @@
             // detailgridcont
             // 
             this.detailgridcont.Size = new System.Drawing.Size(912, 192);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(912, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(906, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(906, 40);
             // 
             // detail
             // 
@@ -152,171 +164,171 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // displayBox4
+            // displayM
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(616, 18);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(66, 23);
-            this.displayBox4.TabIndex = 34;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(616, 18);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(66, 23);
+            this.displayM.TabIndex = 34;
             // 
-            // dateBox4
+            // dateSewingInLine
             // 
-            this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(374, 100);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.ReadOnly = true;
-            this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 31;
+            this.dateSewingInLine.IsSupportEditMode = false;
+            this.dateSewingInLine.Location = new System.Drawing.Point(374, 100);
+            this.dateSewingInLine.Name = "dateSewingInLine";
+            this.dateSewingInLine.ReadOnly = true;
+            this.dateSewingInLine.Size = new System.Drawing.Size(130, 23);
+            this.dateSewingInLine.TabIndex = 31;
             // 
-            // dateBox3
+            // dateSCIDelivery
             // 
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(374, 58);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 30;
+            this.dateSCIDelivery.IsSupportEditMode = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(374, 58);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.ReadOnly = true;
+            this.dateSCIDelivery.Size = new System.Drawing.Size(130, 23);
+            this.dateSCIDelivery.TabIndex = 30;
             // 
-            // displayBox3
+            // displayBrand
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(374, 17);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(78, 23);
-            this.displayBox3.TabIndex = 33;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(374, 17);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(78, 23);
+            this.displayBrand.TabIndex = 33;
             // 
-            // displayBox2
+            // displaySeason
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(118, 100);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(90, 23);
-            this.displayBox2.TabIndex = 32;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(118, 100);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(90, 23);
+            this.displaySeason.TabIndex = 32;
             // 
-            // dateBox2
+            // dateEstArrived
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstArriveDate", true));
-            this.dateBox2.Location = new System.Drawing.Point(616, 101);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 2;
+            this.dateEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstArriveDate", true));
+            this.dateEstArrived.Location = new System.Drawing.Point(616, 101);
+            this.dateEstArrived.Name = "dateEstArrived";
+            this.dateEstArrived.Size = new System.Drawing.Size(130, 23);
+            this.dateEstArrived.TabIndex = 2;
             // 
-            // dateBox1
+            // dateEstBooking
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estbookDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(616, 59);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 1;
+            this.dateEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estbookDate", true));
+            this.dateEstBooking.Location = new System.Drawing.Point(616, 59);
+            this.dateEstBooking.Name = "dateEstBooking";
+            this.dateEstBooking.Size = new System.Drawing.Size(130, 23);
+            this.dateEstBooking.TabIndex = 1;
             // 
-            // label7
+            // labelEstArrived
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(528, 101);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(85, 23);
-            this.label7.TabIndex = 27;
-            this.label7.Text = "Est. Arrived";
+            this.labelEstArrived.Lines = 0;
+            this.labelEstArrived.Location = new System.Drawing.Point(528, 101);
+            this.labelEstArrived.Name = "labelEstArrived";
+            this.labelEstArrived.Size = new System.Drawing.Size(85, 23);
+            this.labelEstArrived.TabIndex = 27;
+            this.labelEstArrived.Text = "Est. Arrived";
             // 
-            // label8
+            // labelEstBooking
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(528, 59);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(85, 23);
-            this.label8.TabIndex = 26;
-            this.label8.Text = "Est. Booking";
+            this.labelEstBooking.Lines = 0;
+            this.labelEstBooking.Location = new System.Drawing.Point(528, 59);
+            this.labelEstBooking.Name = "labelEstBooking";
+            this.labelEstBooking.Size = new System.Drawing.Size(85, 23);
+            this.labelEstBooking.TabIndex = 26;
+            this.labelEstBooking.Text = "Est. Booking";
             // 
-            // label9
+            // labelM
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(528, 18);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(85, 23);
-            this.label9.TabIndex = 25;
-            this.label9.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(528, 18);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(85, 23);
+            this.labelM.TabIndex = 25;
+            this.labelM.Text = "M";
             // 
-            // label6
+            // labelSewingInLine
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(268, 100);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(103, 23);
-            this.label6.TabIndex = 24;
-            this.label6.Text = "Sewing In- Line";
+            this.labelSewingInLine.Lines = 0;
+            this.labelSewingInLine.Location = new System.Drawing.Point(268, 100);
+            this.labelSewingInLine.Name = "labelSewingInLine";
+            this.labelSewingInLine.Size = new System.Drawing.Size(103, 23);
+            this.labelSewingInLine.TabIndex = 24;
+            this.labelSewingInLine.Text = "Sewing In- Line";
             // 
-            // label5
+            // labelSCIDelivery
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(268, 58);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(103, 23);
-            this.label5.TabIndex = 23;
-            this.label5.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(268, 58);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(103, 23);
+            this.labelSCIDelivery.TabIndex = 23;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(268, 17);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(103, 23);
-            this.label4.TabIndex = 22;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(268, 17);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(103, 23);
+            this.labelBrand.TabIndex = 22;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(40, 100);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 21;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(40, 100);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 21;
+            this.labelSeason.Text = "Season";
             // 
-            // label2
+            // labelStyle
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(40, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 20;
-            this.label2.Text = "Style#";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(40, 58);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 20;
+            this.labelStyle.Text = "Style#";
             // 
-            // displayBox1
+            // displayStyle
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "styleid", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(118, 58);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(120, 23);
-            this.displayBox1.TabIndex = 19;
+            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "styleid", true));
+            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyle.Location = new System.Drawing.Point(118, 58);
+            this.displayStyle.Name = "displayStyle";
+            this.displayStyle.Size = new System.Drawing.Size(120, 23);
+            this.displayStyle.TabIndex = 19;
             // 
-            // textBox1
+            // txtSP
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(118, 17);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(108, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "orderid", true));
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.Location = new System.Drawing.Point(118, 17);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(108, 23);
+            this.txtSP.TabIndex = 0;
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label1
+            // labelSP
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(40, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 17;
-            this.label1.Text = "SP#";
+            this.labelSP.Lines = 0;
+            this.labelSP.Location = new System.Drawing.Point(40, 17);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(75, 23);
+            this.labelSP.TabIndex = 17;
+            this.labelSP.Text = "SP#";
             // 
             // P02
             // 
@@ -363,23 +375,23 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label8;
-        private Win.UI.Label label9;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.DateBox dateSewingInLine;
+        private Win.UI.DateBox dateSCIDelivery;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DateBox dateEstArrived;
+        private Win.UI.DateBox dateEstBooking;
+        private Win.UI.Label labelEstArrived;
+        private Win.UI.Label labelEstBooking;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelSewingInLine;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyle;
+        private Win.UI.DisplayBox displayStyle;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelSP;
     }
 }

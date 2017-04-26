@@ -28,7 +28,7 @@ namespace Sci.Production.Thread
             {
                 a += Convert.ToDecimal(dr["TotalLength"]);
             }
-            textBoxTotalLength.Text = a.ToString();        
+            txtTotalLength.Text = a.ToString();        
         }
 
         protected override bool OnGridSetup()

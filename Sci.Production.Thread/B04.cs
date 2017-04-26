@@ -22,7 +22,7 @@ namespace Sci.Production.Thread
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
+            txtThreadLocation.ReadOnly = true;
         }
         protected override void ClickNewAfter()
         {
@@ -34,7 +34,7 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("<Thread Location> can not be empty.");
-                textBox1.Focus();
+                txtThreadLocation.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

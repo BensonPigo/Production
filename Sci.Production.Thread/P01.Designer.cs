@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.labelStyleNo = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.displayStyleNo = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.btnGenerate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -51,27 +51,27 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 55);
+            this.masterpanel.Controls.Add(this.btnGenerate);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.displayStyleNo);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelStyleNo);
+            this.masterpanel.Size = new System.Drawing.Size(914, 55);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyleNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnGenerate, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 55);
-            this.detailpanel.Size = new System.Drawing.Size(892, 294);
+            this.detailpanel.Size = new System.Drawing.Size(914, 294);
             // 
             // gridicon
             // 
@@ -83,7 +83,31 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 294);
+            this.detailgridcont.Size = new System.Drawing.Size(914, 294);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(914, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(908, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(908, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(914, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(914, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(914, 38);
             // 
             // browse
             // 
@@ -106,73 +130,73 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelStyleNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(39, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Style No";
+            this.labelStyleNo.Lines = 0;
+            this.labelStyleNo.Location = new System.Drawing.Point(39, 22);
+            this.labelStyleNo.Name = "labelStyleNo";
+            this.labelStyleNo.Size = new System.Drawing.Size(75, 23);
+            this.labelStyleNo.TabIndex = 1;
+            this.labelStyleNo.Text = "Style No";
             // 
-            // label2
+            // labelSeason
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(303, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(303, 22);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 2;
+            this.labelSeason.Text = "Season";
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(520, 22);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(520, 22);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(75, 23);
+            this.labelBrand.TabIndex = 3;
+            this.labelBrand.Text = "Brand";
             // 
-            // displayBox1
+            // displayStyleNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(117, 22);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(141, 23);
-            this.displayBox1.TabIndex = 4;
+            this.displayStyleNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.Location = new System.Drawing.Point(117, 22);
+            this.displayStyleNo.Name = "displayStyleNo";
+            this.displayStyleNo.Size = new System.Drawing.Size(141, 23);
+            this.displayStyleNo.TabIndex = 4;
             // 
-            // displayBox2
+            // displaySeason
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(381, 22);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(73, 23);
-            this.displayBox2.TabIndex = 5;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(381, 22);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(73, 23);
+            this.displaySeason.TabIndex = 5;
             // 
-            // displayBox3
+            // displayBrand
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(598, 22);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(100, 23);
-            this.displayBox3.TabIndex = 6;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(598, 22);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(100, 23);
+            this.displayBrand.TabIndex = 6;
             // 
-            // button1
+            // btnGenerate
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(790, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Generate";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnGenerate.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnGenerate.Location = new System.Drawing.Point(790, 15);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(80, 30);
+            this.btnGenerate.TabIndex = 7;
+            this.btnGenerate.Text = "Generate";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.button1_Click);
             // 
             // P01
             // 
@@ -217,12 +241,12 @@
 
         #endregion
 
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button1;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyleNo;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyleNo;
+        private Win.UI.Button btnGenerate;
     }
 }

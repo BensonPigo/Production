@@ -40,16 +40,16 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["OrderID"].ToString()), out dr))
             {
                 if (!MyUtility.Check.Empty(dr["SciDelivery"]))
-                dateBox3.Value = Convert.ToDateTime(dr["SciDelivery"]);
-                else dateBox3.Text = "";
+                dateSCIDelivery.Value = Convert.ToDateTime(dr["SciDelivery"]);
+                else dateSCIDelivery.Text = "";
                 if (!MyUtility.Check.Empty(dr["SewInLine"]))
-                dateBox4.Value = Convert.ToDateTime(dr["SewInLine"]);
-                else dateBox4.Text = "";
+                dateSewingInLine.Value = Convert.ToDateTime(dr["SewInLine"]);
+                else dateSewingInLine.Text = "";
             }
             else
             {
-                dateBox3.Text = "";
-                dateBox4.Text = "";
+                dateSCIDelivery.Text = "";
+                dateSewingInLine.Text = "";
 
             }
         }
@@ -366,13 +366,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (MyUtility.Check.Empty(CurrentMaintain["estbookDate"]))
             {
                 MyUtility.Msg.WarningBox("<Est. Booking> can not be empty.");
-                dateBox1.Focus();
+                dateEstBooking.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EstArriveDate"]))
             {
                 MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
-                dateBox2.Focus();
+                dateEstArrived.Focus();
                 return false;
             }
             //foreach (DataRow dr in DetailDatas)
@@ -398,8 +398,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            if (textBox1.OldValue == textBox1.Text) return;
-            string id = textBox1.Text;
+            if (txtSP.OldValue == txtSP.Text) return;
+            string id = txtSP.Text;
             DataRow drOrder;
             DataTable pretb_cons, TR_DUK;
             string sqlpre;
@@ -408,7 +408,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             foreach (Control item in masterpanel.Controls)
             {
-                if (item is Sci.Win.UI.Label || item == displayBox4 || item == textBox1) { }
+                if (item is Sci.Win.UI.Label || item == displayM || item == txtSP) { }
                 else
                 {
                     item.Text = "";                
@@ -416,13 +416,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
             detailtb.Clear();
 
-            if (textBox1.Text == "") return;
+            if (txtSP.Text == "") return;
             //確認order.poid 同(po.id)有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from PO WITH (NOLOCK) where id='{0}'", id)))
             {
                 MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >does not exists in Purchase Order!!!", id));
                 e.Cancel = true;
-                textBox1.Text = "";                
+                txtSP.Text = "";                
                 return;
             }
             //確認ThreadRequisition有沒有這筆,有則return
@@ -430,13 +430,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             {
                 MyUtility.Msg.WarningBox("Order number exists already.");
                 e.Cancel = true;
-                textBox1.Text = "";
+                txtSP.Text = "";
                 return;
             }
             //輸入的POno帶出其他6個表頭
             if (!MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where poid='{0}'", id), out drOrder)) return;
-            dateBox3.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
-            dateBox4.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
+            dateSCIDelivery.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
+            dateSewingInLine.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
             CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
             CurrentMaintain["Seasonid"] = drOrder["Seasonid"].ToString();
             CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
@@ -870,17 +870,17 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             else
             {
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                objSheets.Cells[3, 2] = textBox1.Text.ToString();
-                objSheets.Cells[3, 6] = dateBox3.Text.ToString();
+                objSheets.Cells[3, 2] = txtSP.Text.ToString();
+                objSheets.Cells[3, 6] = dateSCIDelivery.Text.ToString();
 
-                objSheets.Cells[4, 2] = displayBox3.Text.ToString();
-                objSheets.Cells[4, 6] = dateBox4.Text.ToString();
+                objSheets.Cells[4, 2] = displayBrand.Text.ToString();
+                objSheets.Cells[4, 6] = dateSewingInLine.Text.ToString();
 
-                objSheets.Cells[5, 2] = displayBox1.Text.ToString();
-                objSheets.Cells[5, 6] = dateBox1.Text.ToString();
+                objSheets.Cells[5, 2] = displayStyle.Text.ToString();
+                objSheets.Cells[5, 6] = dateEstBooking.Text.ToString();
 
-                objSheets.Cells[6, 2] = displayBox2.Text.ToString();
-                objSheets.Cells[6, 6] = dateBox2.Text.ToString();
+                objSheets.Cells[6, 2] = displaySeason.Text.ToString();
+                objSheets.Cells[6, 6] = dateEstArrived.Text.ToString();
 
                 objSheets.Columns.AutoFit();
                 objSheets.Rows.AutoFit();

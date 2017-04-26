@@ -282,7 +282,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
-                this.dateBox1.Focus();
+                this.dateDate.Focus();
                 return false;
             }
             foreach (DataRow dr in this.DetailDatas)
@@ -343,7 +343,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
-            dateBox1.ReadOnly = true;
+            dateDate.ReadOnly = true;
         }
         protected override void ClickConfirm()
         {

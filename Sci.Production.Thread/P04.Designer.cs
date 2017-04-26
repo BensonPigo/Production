@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.labelNo = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelRemark = new Sci.Win.UI.Label();
+            this.displayNo = new Sci.Win.UI.DisplayBox();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.displayM = new Sci.Win.UI.DisplayBox();
+            this.txtRemark = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -54,24 +54,24 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.txtRemark);
+            this.masterpanel.Controls.Add(this.displayM);
+            this.masterpanel.Controls.Add(this.displayNo);
+            this.masterpanel.Controls.Add(this.labelRemark);
+            this.masterpanel.Controls.Add(this.labelDate);
+            this.masterpanel.Controls.Add(this.labelM);
+            this.masterpanel.Controls.Add(this.labelNo);
+            this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(918, 104);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             // 
             // detailpanel
@@ -94,15 +94,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(918, 352);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(912, 306);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(912, 40);
             // 
             // detail
             // 
@@ -138,79 +138,79 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label1
+            // labelNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(37, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "No.";
+            this.labelNo.Lines = 0;
+            this.labelNo.Location = new System.Drawing.Point(37, 22);
+            this.labelNo.Name = "labelNo";
+            this.labelNo.Size = new System.Drawing.Size(75, 23);
+            this.labelNo.TabIndex = 1;
+            this.labelNo.Text = "No.";
             // 
-            // label2
+            // labelM
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(274, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(274, 22);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(75, 23);
+            this.labelM.TabIndex = 2;
+            this.labelM.Text = "M";
             // 
-            // label3
+            // labelDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(37, 71);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(37, 71);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(75, 23);
+            this.labelDate.TabIndex = 3;
+            this.labelDate.Text = "Date";
             // 
-            // label4
+            // labelRemark
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(274, 71);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Remark";
+            this.labelRemark.Lines = 0;
+            this.labelRemark.Location = new System.Drawing.Point(274, 71);
+            this.labelRemark.Name = "labelRemark";
+            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.TabIndex = 4;
+            this.labelRemark.Text = "Remark";
             // 
-            // displayBox2
+            // displayNo
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(115, 22);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(108, 23);
-            this.displayBox2.TabIndex = 33;
+            this.displayNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displayNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayNo.Location = new System.Drawing.Point(115, 22);
+            this.displayNo.Name = "displayNo";
+            this.displayNo.Size = new System.Drawing.Size(108, 23);
+            this.displayNo.TabIndex = 33;
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
-            this.dateBox1.Location = new System.Drawing.Point(115, 71);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
+            this.dateDate.Location = new System.Drawing.Point(115, 71);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // displayBox3
+            // displayM
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(352, 22);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(66, 23);
-            this.displayBox3.TabIndex = 36;
+            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
+            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayM.Location = new System.Drawing.Point(352, 22);
+            this.displayM.Name = "displayM";
+            this.displayM.Size = new System.Drawing.Size(66, 23);
+            this.displayM.TabIndex = 36;
             // 
-            // textBox2
+            // txtRemark
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(352, 71);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(256, 23);
-            this.textBox2.TabIndex = 1;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(352, 71);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(256, 23);
+            this.txtRemark.TabIndex = 1;
             // 
             // label7
             // 
@@ -262,14 +262,14 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelNo;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.DisplayBox displayM;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.DisplayBox displayNo;
+        private Win.UI.Label labelRemark;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelM;
         private Win.UI.Label label7;
     }
 }

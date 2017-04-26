@@ -30,7 +30,7 @@ namespace Sci.Production.Thread
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string season = txtseason1.Text;
+            string season = txtseason.Text;
             if (season == master["seasonid"].ToString())
             {
                 MyUtility.Msg.WarningBox("Season can not same.");
@@ -175,7 +175,7 @@ namespace Sci.Production.Thread
                     if (!(upResult = DBProxy.Current.Execute(null, insertSql.ToString())))
                     {
                         _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox(string.Format("Season <{0}> exists, can't copy!!!", txtseason1.Text));
+                        MyUtility.Msg.WarningBox(string.Format("Season <{0}> exists, can't copy!!!", txtseason.Text));
                         return;
                     }                    
                     _transactionscope.Complete();

@@ -55,13 +55,13 @@ namespace Sci.Production.Thread
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string threadlocation1 = this.txtthreadlocation1.Text, threadlocation2 = this.txtthreadlocation2.Text;
-            string thradrefno1 = txtlocalitem1.Text, thradrefno2 = txtlocalitem2.Text;
-            string color1 = txtthreadcolor1.Text, color2 = txtthreadcolor2.Text;
+            string threadlocation1 = this.txtthreadlocationStart.Text, threadlocation2 = this.txtthreadlocationEnd.Text;
+            string thradrefno1 = txtlocalitemStart.Text, thradrefno2 = txtlocalitemEnd.Text;
+            string color1 = txtthreadcolorStart.Text, color2 = txtthreadcolorEnd.Text;
             if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2))
             {
                 MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
-                this.txtlocalitem1.Focus();
+                this.txtlocalitemStart.Focus();
                 return;
             }
             string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,

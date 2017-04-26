@@ -30,28 +30,28 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.label10 = new Sci.Win.UI.Label();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.labelM = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.textLOC2 = new Sci.Win.UI.TextBox();
-            this.textLOC1 = new Sci.Win.UI.TextBox();
-            this.textITEM = new Sci.Win.UI.TextBox();
-            this.textTYPE = new Sci.Win.UI.TextBox();
-            this.textSHA = new Sci.Win.UI.TextBox();
+            this.txtLocationEnd = new Sci.Win.UI.TextBox();
+            this.txtLocationStart = new Sci.Win.UI.TextBox();
+            this.txtThreadItem = new Sci.Win.UI.TextBox();
+            this.txtType = new Sci.Win.UI.TextBox();
+            this.txtShade = new Sci.Win.UI.TextBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.txtRefNoEnd = new Sci.Win.UI.TextBox();
+            this.txtRefNoStart = new Sci.Win.UI.TextBox();
+            this.dateDate = new Sci.Win.UI.DateRange();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.labelLocation = new Sci.Win.UI.Label();
+            this.labelThreadItem = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelShade = new Sci.Win.UI.Label();
+            this.labelRefNo = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -74,38 +74,49 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.comboMDivision);
-            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.textLOC2);
-            this.panel1.Controls.Add(this.textLOC1);
-            this.panel1.Controls.Add(this.textITEM);
-            this.panel1.Controls.Add(this.textTYPE);
-            this.panel1.Controls.Add(this.textSHA);
+            this.panel1.Controls.Add(this.txtLocationEnd);
+            this.panel1.Controls.Add(this.txtLocationStart);
+            this.panel1.Controls.Add(this.txtThreadItem);
+            this.panel1.Controls.Add(this.txtType);
+            this.panel1.Controls.Add(this.txtShade);
             this.panel1.Controls.Add(this.radioPanel1);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.dateRange1);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtRefNoEnd);
+            this.panel1.Controls.Add(this.txtRefNoStart);
+            this.panel1.Controls.Add(this.dateDate);
+            this.panel1.Controls.Add(this.labelReportType);
+            this.panel1.Controls.Add(this.labelLocation);
+            this.panel1.Controls.Add(this.labelThreadItem);
+            this.panel1.Controls.Add(this.labelType);
+            this.panel1.Controls.Add(this.labelShade);
+            this.panel1.Controls.Add(this.labelRefNo);
+            this.panel1.Controls.Add(this.labelDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(409, 292);
             this.panel1.TabIndex = 0;
             // 
-            // label10
+            // comboMDivision
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(19, 226);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(90, 23);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "M";
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(117, 226);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 8;
+            // 
+            // labelM
+            // 
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(19, 226);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(90, 23);
+            this.labelM.TabIndex = 27;
+            this.labelM.Text = "M";
             // 
             // label8
             // 
@@ -129,190 +140,179 @@
             this.label9.Text = "~";
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textLOC2
+            // txtLocationEnd
             // 
-            this.textLOC2.BackColor = System.Drawing.Color.White;
-            this.textLOC2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC2.Location = new System.Drawing.Point(256, 193);
-            this.textLOC2.Name = "textLOC2";
-            this.textLOC2.Size = new System.Drawing.Size(113, 23);
-            this.textLOC2.TabIndex = 7;
-            this.textLOC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
+            this.txtLocationEnd.BackColor = System.Drawing.Color.White;
+            this.txtLocationEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocationEnd.Location = new System.Drawing.Point(256, 193);
+            this.txtLocationEnd.Name = "txtLocationEnd";
+            this.txtLocationEnd.Size = new System.Drawing.Size(113, 23);
+            this.txtLocationEnd.TabIndex = 7;
+            this.txtLocationEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
-            // textLOC1
+            // txtLocationStart
             // 
-            this.textLOC1.BackColor = System.Drawing.Color.White;
-            this.textLOC1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC1.Location = new System.Drawing.Point(117, 193);
-            this.textLOC1.Name = "textLOC1";
-            this.textLOC1.Size = new System.Drawing.Size(113, 23);
-            this.textLOC1.TabIndex = 6;
-            this.textLOC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
+            this.txtLocationStart.BackColor = System.Drawing.Color.White;
+            this.txtLocationStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocationStart.Location = new System.Drawing.Point(117, 193);
+            this.txtLocationStart.Name = "txtLocationStart";
+            this.txtLocationStart.Size = new System.Drawing.Size(113, 23);
+            this.txtLocationStart.TabIndex = 6;
+            this.txtLocationStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
             // 
-            // textITEM
+            // txtThreadItem
             // 
-            this.textITEM.BackColor = System.Drawing.Color.White;
-            this.textITEM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textITEM.Location = new System.Drawing.Point(116, 159);
-            this.textITEM.Name = "textITEM";
-            this.textITEM.Size = new System.Drawing.Size(127, 23);
-            this.textITEM.TabIndex = 5;
-            this.textITEM.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
+            this.txtThreadItem.BackColor = System.Drawing.Color.White;
+            this.txtThreadItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadItem.Location = new System.Drawing.Point(116, 159);
+            this.txtThreadItem.Name = "txtThreadItem";
+            this.txtThreadItem.Size = new System.Drawing.Size(127, 23);
+            this.txtThreadItem.TabIndex = 5;
+            this.txtThreadItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
             // 
-            // textTYPE
+            // txtType
             // 
-            this.textTYPE.BackColor = System.Drawing.Color.White;
-            this.textTYPE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textTYPE.Location = new System.Drawing.Point(117, 123);
-            this.textTYPE.Name = "textTYPE";
-            this.textTYPE.Size = new System.Drawing.Size(135, 23);
-            this.textTYPE.TabIndex = 4;
-            this.textTYPE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
+            this.txtType.BackColor = System.Drawing.Color.White;
+            this.txtType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtType.Location = new System.Drawing.Point(117, 123);
+            this.txtType.Name = "txtType";
+            this.txtType.Size = new System.Drawing.Size(135, 23);
+            this.txtType.TabIndex = 4;
+            this.txtType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
             // 
-            // textSHA
+            // txtShade
             // 
-            this.textSHA.BackColor = System.Drawing.Color.White;
-            this.textSHA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSHA.Location = new System.Drawing.Point(117, 86);
-            this.textSHA.Name = "textSHA";
-            this.textSHA.Size = new System.Drawing.Size(122, 23);
-            this.textSHA.TabIndex = 3;
-            this.textSHA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
+            this.txtShade.BackColor = System.Drawing.Color.White;
+            this.txtShade.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShade.Location = new System.Drawing.Point(117, 86);
+            this.txtShade.Name = "txtShade";
+            this.txtShade.Size = new System.Drawing.Size(122, 23);
+            this.txtShade.TabIndex = 3;
+            this.txtShade.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radioSummary);
+            this.radioPanel1.Controls.Add(this.radioDetail);
             this.radioPanel1.Location = new System.Drawing.Point(116, 256);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(175, 26);
             this.radioPanel1.TabIndex = 9;
             // 
-            // radioButton2
+            // radioSummary
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(78, 3);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(85, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Summary";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(78, 3);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 1;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // radioDetail
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(10, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(62, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Detail";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(10, 3);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 0;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // txtRefNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(240, 52);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 2;
-            this.textBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.txtRefNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtRefNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefNoEnd.Location = new System.Drawing.Point(240, 52);
+            this.txtRefNoEnd.Name = "txtRefNoEnd";
+            this.txtRefNoEnd.Size = new System.Drawing.Size(100, 23);
+            this.txtRefNoEnd.TabIndex = 2;
+            this.txtRefNoEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
-            // textBox1
+            // txtRefNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(116, 52);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.txtRefNoStart.BackColor = System.Drawing.Color.White;
+            this.txtRefNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefNoStart.Location = new System.Drawing.Point(116, 52);
+            this.txtRefNoStart.Name = "txtRefNoStart";
+            this.txtRefNoStart.Size = new System.Drawing.Size(100, 23);
+            this.txtRefNoStart.TabIndex = 1;
+            this.txtRefNoStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             // 
-            // dateRange1
+            // dateDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(116, 17);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateDate.IsRequired = false;
+            this.dateDate.Location = new System.Drawing.Point(116, 17);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDate.TabIndex = 0;
             // 
-            // label7
+            // labelReportType
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(19, 259);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(90, 23);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Report Type";
+            this.labelReportType.Lines = 0;
+            this.labelReportType.Location = new System.Drawing.Point(19, 259);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(90, 23);
+            this.labelReportType.TabIndex = 6;
+            this.labelReportType.Text = "Report Type";
             // 
-            // label6
+            // labelLocation
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(19, 193);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(90, 23);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Location";
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(19, 193);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(90, 23);
+            this.labelLocation.TabIndex = 5;
+            this.labelLocation.Text = "Location";
             // 
-            // label5
+            // labelThreadItem
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(19, 159);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(90, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Thread Item";
+            this.labelThreadItem.Lines = 0;
+            this.labelThreadItem.Location = new System.Drawing.Point(19, 159);
+            this.labelThreadItem.Name = "labelThreadItem";
+            this.labelThreadItem.Size = new System.Drawing.Size(90, 23);
+            this.labelThreadItem.TabIndex = 4;
+            this.labelThreadItem.Text = "Thread Item";
             // 
-            // label4
+            // labelType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(19, 123);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(19, 123);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(90, 23);
+            this.labelType.TabIndex = 3;
+            this.labelType.Text = "Type";
             // 
-            // label3
+            // labelShade
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(19, 86);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Shade";
+            this.labelShade.Lines = 0;
+            this.labelShade.Location = new System.Drawing.Point(19, 86);
+            this.labelShade.Name = "labelShade";
+            this.labelShade.Size = new System.Drawing.Size(90, 23);
+            this.labelShade.TabIndex = 2;
+            this.labelShade.Text = "Shade";
             // 
-            // label2
+            // labelRefNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(19, 52);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(90, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "RefNo";
+            this.labelRefNo.Lines = 0;
+            this.labelRefNo.Location = new System.Drawing.Point(19, 52);
+            this.labelRefNo.Name = "labelRefNo";
+            this.labelRefNo.Size = new System.Drawing.Size(90, 23);
+            this.labelRefNo.TabIndex = 1;
+            this.labelRefNo.Text = "RefNo";
             // 
-            // label1
+            // labelDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(19, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Date";
-            // 
-            // comboMDivision
-            // 
-            this.comboMDivision.BackColor = System.Drawing.Color.White;
-            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboMDivision.FormattingEnabled = true;
-            this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(117, 226);
-            this.comboMDivision.Name = "comboMDivision";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision.TabIndex = 8;
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(19, 17);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(90, 23);
+            this.labelDate.TabIndex = 0;
+            this.labelDate.Text = "Date";
             // 
             // R08
             // 
@@ -340,25 +340,25 @@
         private Win.UI.Panel panel1;
         private Win.UI.Label label8;
         private Win.UI.Label label9;
-        private Win.UI.TextBox textLOC2;
-        private Win.UI.TextBox textLOC1;
-        private Win.UI.TextBox textITEM;
-        private Win.UI.TextBox textTYPE;
-        private Win.UI.TextBox textSHA;
+        private Win.UI.TextBox txtLocationEnd;
+        private Win.UI.TextBox txtLocationStart;
+        private Win.UI.TextBox txtThreadItem;
+        private Win.UI.TextBox txtType;
+        private Win.UI.TextBox txtShade;
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Label label10;
+        private Win.UI.RadioButton radioSummary;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.TextBox txtRefNoEnd;
+        private Win.UI.TextBox txtRefNoStart;
+        private Win.UI.DateRange dateDate;
+        private Win.UI.Label labelReportType;
+        private Win.UI.Label labelLocation;
+        private Win.UI.Label labelThreadItem;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelShade;
+        private Win.UI.Label labelRefNo;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelM;
         private Class.comboMDivision comboMDivision;
     }
 }

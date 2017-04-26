@@ -30,24 +30,24 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
-            this.label6 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.button3 = new Sci.Win.UI.Button();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.labelDescription = new Sci.Win.UI.Label();
+            this.labelCategory = new Sci.Win.UI.Label();
+            this.labelThreadType = new Sci.Win.UI.Label();
+            this.labelThreadTex = new Sci.Win.UI.Label();
+            this.checkjunk = new Sci.Win.UI.CheckBox();
+            this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.displayCategory = new Sci.Win.UI.DisplayBox();
+            this.displayThreadType = new Sci.Win.UI.DisplayBox();
+            this.numThreadTex = new Sci.Win.UI.NumericBox();
+            this.comboThreadColorLocation = new Sci.Win.UI.ComboBox();
+            this.txtThreadColorLocation = new Sci.Win.UI.TextBox();
+            this.btnFilter = new Sci.Win.UI.Button();
+            this.btnRecalculateStockQty = new Sci.Win.UI.Button();
+            this.labelTransactionDate = new Sci.Win.UI.Label();
+            this.dateTransactionDate = new Sci.Win.UI.DateRange();
+            this.btnQuery = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,38 +65,38 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.button2);
-            this.masterpanel.Controls.Add(this.button1);
-            this.masterpanel.Controls.Add(this.textBox1);
-            this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.numericBox1);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.checkBox1);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.btnRecalculateStockQty);
+            this.masterpanel.Controls.Add(this.btnFilter);
+            this.masterpanel.Controls.Add(this.txtThreadColorLocation);
+            this.masterpanel.Controls.Add(this.comboThreadColorLocation);
+            this.masterpanel.Controls.Add(this.numThreadTex);
+            this.masterpanel.Controls.Add(this.displayThreadType);
+            this.masterpanel.Controls.Add(this.displayCategory);
+            this.masterpanel.Controls.Add(this.displayDescription);
+            this.masterpanel.Controls.Add(this.displayRefno);
+            this.masterpanel.Controls.Add(this.checkjunk);
+            this.masterpanel.Controls.Add(this.labelThreadTex);
+            this.masterpanel.Controls.Add(this.labelThreadType);
+            this.masterpanel.Controls.Add(this.labelCategory);
+            this.masterpanel.Controls.Add(this.labelDescription);
+            this.masterpanel.Controls.Add(this.labelRefno);
             this.masterpanel.Size = new System.Drawing.Size(911, 108);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.checkBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelThreadType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelThreadTex, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkjunk, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayDescription, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCategory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayThreadType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numThreadTex, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboThreadColorLocation, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtThreadColorLocation, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFilter, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnRecalculateStockQty, 0);
             // 
             // detailpanel
             // 
@@ -118,15 +118,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(911, 528);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(905, 482);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(905, 40);
             // 
             // detail
             // 
@@ -138,9 +138,9 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.button3);
-            this.detailbtm.Controls.Add(this.dateRange1);
-            this.detailbtm.Controls.Add(this.label6);
+            this.detailbtm.Controls.Add(this.btnQuery);
+            this.detailbtm.Controls.Add(this.dateTransactionDate);
+            this.detailbtm.Controls.Add(this.labelTransactionDate);
             this.detailbtm.Controls.Add(this.grid1);
             this.detailbtm.Location = new System.Drawing.Point(0, 280);
             this.detailbtm.Size = new System.Drawing.Size(911, 248);
@@ -150,9 +150,9 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.grid1, 0);
-            this.detailbtm.Controls.SetChildIndex(this.label6, 0);
-            this.detailbtm.Controls.SetChildIndex(this.dateRange1, 0);
-            this.detailbtm.Controls.SetChildIndex(this.button3, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelTransactionDate, 0);
+            this.detailbtm.Controls.SetChildIndex(this.dateTransactionDate, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnQuery, 0);
             // 
             // browse
             // 
@@ -213,191 +213,191 @@
             this.grid1.TabIndex = 3;
             this.grid1.TabStop = false;
             // 
-            // label1
+            // labelRefno
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(28, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Refno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(28, 13);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelRefno.TabIndex = 1;
+            this.labelRefno.Text = "Refno";
             // 
-            // label2
+            // labelDescription
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(28, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Description";
+            this.labelDescription.Lines = 0;
+            this.labelDescription.Location = new System.Drawing.Point(28, 48);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.TabIndex = 2;
+            this.labelDescription.Text = "Description";
             // 
-            // label3
+            // labelCategory
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(293, 13);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Category";
+            this.labelCategory.Lines = 0;
+            this.labelCategory.Location = new System.Drawing.Point(293, 13);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(75, 23);
+            this.labelCategory.TabIndex = 3;
+            this.labelCategory.Text = "Category";
             // 
-            // label4
+            // labelThreadType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(506, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Thread Type";
+            this.labelThreadType.Lines = 0;
+            this.labelThreadType.Location = new System.Drawing.Point(506, 13);
+            this.labelThreadType.Name = "labelThreadType";
+            this.labelThreadType.Size = new System.Drawing.Size(88, 23);
+            this.labelThreadType.TabIndex = 4;
+            this.labelThreadType.Text = "Thread Type";
             // 
-            // label5
+            // labelThreadTex
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(506, 48);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Thread Tex";
+            this.labelThreadTex.Lines = 0;
+            this.labelThreadTex.Location = new System.Drawing.Point(506, 48);
+            this.labelThreadTex.Name = "labelThreadTex";
+            this.labelThreadTex.Size = new System.Drawing.Size(88, 23);
+            this.labelThreadTex.TabIndex = 5;
+            this.labelThreadTex.Text = "Thread Tex";
             // 
-            // checkBox1
+            // checkjunk
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(697, 50);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(53, 21);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "junk";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkjunk.AutoSize = true;
+            this.checkjunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
+            this.checkjunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkjunk.Location = new System.Drawing.Point(697, 50);
+            this.checkjunk.Name = "checkjunk";
+            this.checkjunk.Size = new System.Drawing.Size(53, 21);
+            this.checkjunk.TabIndex = 6;
+            this.checkjunk.Text = "junk";
+            this.checkjunk.UseVisualStyleBackColor = true;
             // 
-            // displayBox1
+            // displayRefno
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "refno", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(106, 13);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(184, 23);
-            this.displayBox1.TabIndex = 7;
+            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefno.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "refno", true));
+            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefno.Location = new System.Drawing.Point(106, 13);
+            this.displayRefno.Name = "displayRefno";
+            this.displayRefno.Size = new System.Drawing.Size(184, 23);
+            this.displayRefno.TabIndex = 7;
             // 
-            // displayBox2
+            // displayDescription
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "description", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(106, 48);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(314, 23);
-            this.displayBox2.TabIndex = 8;
+            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "description", true));
+            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayDescription.Location = new System.Drawing.Point(106, 48);
+            this.displayDescription.Name = "displayDescription";
+            this.displayDescription.Size = new System.Drawing.Size(314, 23);
+            this.displayDescription.TabIndex = 8;
             // 
-            // displayBox3
+            // displayCategory
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "category", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(371, 13);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(132, 23);
-            this.displayBox3.TabIndex = 9;
+            this.displayCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCategory.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "category", true));
+            this.displayCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCategory.Location = new System.Drawing.Point(371, 13);
+            this.displayCategory.Name = "displayCategory";
+            this.displayCategory.Size = new System.Drawing.Size(132, 23);
+            this.displayCategory.TabIndex = 9;
             // 
-            // displayBox4
+            // displayThreadType
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "threadtypeid", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(597, 13);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(153, 23);
-            this.displayBox4.TabIndex = 10;
+            this.displayThreadType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayThreadType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "threadtypeid", true));
+            this.displayThreadType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayThreadType.Location = new System.Drawing.Point(597, 13);
+            this.displayThreadType.Name = "displayThreadType";
+            this.displayThreadType.Size = new System.Drawing.Size(153, 23);
+            this.displayThreadType.TabIndex = 10;
             // 
-            // numericBox1
+            // numThreadTex
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "threadtex", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(597, 48);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numThreadTex.BackColor = System.Drawing.Color.White;
+            this.numThreadTex.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "threadtex", true));
+            this.numThreadTex.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numThreadTex.Location = new System.Drawing.Point(597, 48);
+            this.numThreadTex.Name = "numThreadTex";
+            this.numThreadTex.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(61, 23);
-            this.numericBox1.TabIndex = 11;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numThreadTex.Size = new System.Drawing.Size(61, 23);
+            this.numThreadTex.TabIndex = 11;
+            this.numThreadTex.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // comboBox1
+            // comboThreadColorLocation
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(28, 79);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(135, 24);
-            this.comboBox1.TabIndex = 12;
+            this.comboThreadColorLocation.BackColor = System.Drawing.Color.White;
+            this.comboThreadColorLocation.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboThreadColorLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboThreadColorLocation.FormattingEnabled = true;
+            this.comboThreadColorLocation.IsSupportUnselect = true;
+            this.comboThreadColorLocation.Location = new System.Drawing.Point(28, 79);
+            this.comboThreadColorLocation.Name = "comboThreadColorLocation";
+            this.comboThreadColorLocation.Size = new System.Drawing.Size(135, 24);
+            this.comboThreadColorLocation.TabIndex = 12;
             // 
-            // textBox1
+            // txtThreadColorLocation
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(173, 80);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(117, 23);
-            this.textBox1.TabIndex = 13;
+            this.txtThreadColorLocation.BackColor = System.Drawing.Color.White;
+            this.txtThreadColorLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadColorLocation.IsSupportEditMode = false;
+            this.txtThreadColorLocation.Location = new System.Drawing.Point(173, 80);
+            this.txtThreadColorLocation.Name = "txtThreadColorLocation";
+            this.txtThreadColorLocation.Size = new System.Drawing.Size(117, 23);
+            this.txtThreadColorLocation.TabIndex = 13;
             // 
-            // button1
+            // btnFilter
             // 
-            this.button1.Location = new System.Drawing.Point(296, 76);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 14;
-            this.button1.Text = "Filter";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFilter.Location = new System.Drawing.Point(296, 76);
+            this.btnFilter.Name = "btnFilter";
+            this.btnFilter.Size = new System.Drawing.Size(80, 30);
+            this.btnFilter.TabIndex = 14;
+            this.btnFilter.Text = "Filter";
+            this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnRecalculateStockQty
             // 
-            this.button2.Location = new System.Drawing.Point(732, 72);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(171, 30);
-            this.button2.TabIndex = 15;
-            this.button2.Text = "Re-calculate stock qty";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnRecalculateStockQty.Location = new System.Drawing.Point(732, 72);
+            this.btnRecalculateStockQty.Name = "btnRecalculateStockQty";
+            this.btnRecalculateStockQty.Size = new System.Drawing.Size(171, 30);
+            this.btnRecalculateStockQty.TabIndex = 15;
+            this.btnRecalculateStockQty.Text = "Re-calculate stock qty";
+            this.btnRecalculateStockQty.UseVisualStyleBackColor = true;
+            this.btnRecalculateStockQty.Click += new System.EventHandler(this.button2_Click);
             // 
-            // label6
+            // labelTransactionDate
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(28, 4);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(112, 23);
-            this.label6.TabIndex = 16;
-            this.label6.Text = "Transaction Date";
+            this.labelTransactionDate.Lines = 0;
+            this.labelTransactionDate.Location = new System.Drawing.Point(28, 4);
+            this.labelTransactionDate.Name = "labelTransactionDate";
+            this.labelTransactionDate.Size = new System.Drawing.Size(112, 23);
+            this.labelTransactionDate.TabIndex = 16;
+            this.labelTransactionDate.Text = "Transaction Date";
             // 
-            // dateRange1
+            // dateTransactionDate
             // 
-            this.dateRange1.IsSupportEditMode = false;
-            this.dateRange1.Location = new System.Drawing.Point(143, 4);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 17;
+            this.dateTransactionDate.IsSupportEditMode = false;
+            this.dateTransactionDate.Location = new System.Drawing.Point(143, 4);
+            this.dateTransactionDate.Name = "dateTransactionDate";
+            this.dateTransactionDate.Size = new System.Drawing.Size(280, 23);
+            this.dateTransactionDate.TabIndex = 17;
             // 
-            // button3
+            // btnQuery
             // 
-            this.button3.Location = new System.Drawing.Point(433, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 16;
-            this.button3.Text = "Query";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnQuery.Location = new System.Drawing.Point(433, 3);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 16;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button3_Click);
             // 
             // B05
             // 
@@ -440,24 +440,24 @@
 
         #endregion
 
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Button button3;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label6;
+        private Win.UI.Button btnRecalculateStockQty;
+        private Win.UI.Button btnFilter;
+        private Win.UI.TextBox txtThreadColorLocation;
+        private Win.UI.ComboBox comboThreadColorLocation;
+        private Win.UI.NumericBox numThreadTex;
+        private Win.UI.DisplayBox displayThreadType;
+        private Win.UI.DisplayBox displayCategory;
+        private Win.UI.DisplayBox displayDescription;
+        private Win.UI.DisplayBox displayRefno;
+        private Win.UI.CheckBox checkjunk;
+        private Win.UI.Label labelThreadTex;
+        private Win.UI.Label labelThreadType;
+        private Win.UI.Label labelCategory;
+        private Win.UI.Label labelDescription;
+        private Win.UI.Label labelRefno;
+        private Win.UI.Button btnQuery;
+        private Win.UI.DateRange dateTransactionDate;
+        private Win.UI.Label labelTransactionDate;
         private Win.UI.Grid grid1;
     }
 }

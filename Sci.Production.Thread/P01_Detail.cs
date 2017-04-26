@@ -34,14 +34,14 @@ namespace Sci.Production.Thread
             styleUkey = masterrow["Ukey"].ToString();
             detail = detailrow;
             master = masterrow;
-            displayBox1.Value = detailrow["Machinetypeid"].ToString();
-            displayBox2.Value = masterrow["id"].ToString();
-            displayBox3.Value = masterrow["Seasonid"].ToString();
-            displayBox4.Value = detailrow["ThreadCombID"].ToString();
+            displayMachineType.Value = detailrow["Machinetypeid"].ToString();
+            displayStyleNo.Value = masterrow["id"].ToString();
+            displaySeason.Value = masterrow["Seasonid"].ToString();
+            displayThreadCombination.Value = detailrow["ThreadCombID"].ToString();
             combdetail_id = detailrow["id"].ToString();
             
-            button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
-            button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            btnEdit.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            btnEdit.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
             //建立Gird
             generateGrid();
 
@@ -123,9 +123,9 @@ namespace Sci.Production.Thread
                 {
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
-                    DataRow row = grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow row = gridDetail.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele;
-                    string header = grid1.Columns[e.ColumnIndex].HeaderText;
+                    string header = gridDetail.Columns[e.ColumnIndex].HeaderText;
                     sele = new SelectItem("Select id, description From ThreadColor WITH (NOLOCK) where junk=0", "23", row[header].ToString(), false, ",");
 
                     DialogResult result = sele.ShowDialog();
@@ -140,8 +140,8 @@ namespace Sci.Production.Thread
                 // Parent form 若是非編輯狀態就 return 
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
-                DataRow row = grid1.GetDataRow<DataRow>(e.RowIndex);
-                string header = grid1.Columns[e.ColumnIndex].HeaderText;
+                DataRow row = gridDetail.GetDataRow<DataRow>(e.RowIndex);
+                string header = gridDetail.Columns[e.ColumnIndex].HeaderText;
                 String oldValue = row[header].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
 
@@ -159,7 +159,7 @@ namespace Sci.Production.Thread
                 }
             };
 
-            Helper.Controls.Grid.Generator(grid1)
+            Helper.Controls.Grid.Generator(gridDetail)
                 .Text("SEQ", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("ThreadLocation", header: "Thread Location", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.Auto(true), iseditingreadonly: true)
@@ -167,14 +167,14 @@ namespace Sci.Production.Thread
                 .Text("Refno", header: "Refno", width: Widths.Auto(true), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 
-            grid1.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
+            gridDetail.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
 
             for(int i = 0;i < tbArticle.Rows.Count;i++)
             {
-                Helper.Controls.Grid.Generator(grid1)
+                Helper.Controls.Grid.Generator(gridDetail)
                     .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.Auto(true), settings: threadcolor_col);
 
-                grid1.Columns[tbArticle.Rows[i]["article"].ToString().Trim()].DefaultCellStyle.BackColor = Color.Pink;
+                gridDetail.Columns[tbArticle.Rows[i]["article"].ToString().Trim()].DefaultCellStyle.BackColor = Color.Pink;
             }
             #endregion
 
@@ -219,7 +219,7 @@ namespace Sci.Production.Thread
             }
             #endregion
 
-            grid1.DataSource = gridTable;           
+            gridDetail.DataSource = gridTable;           
             
         }
 
@@ -233,13 +233,13 @@ namespace Sci.Production.Thread
             
             if (!EditMode)
             {
-                button1.Text = "Save";
+                btnEdit.Text = "Save";
                 EditMode = true;
-                grid1.IsEditingReadOnly = !EditMode;
+                gridDetail.IsEditingReadOnly = !EditMode;
             }
             else
             {
-                grid1.ValidateControl();
+                gridDetail.ValidateControl();
                 //string article, seekSql, refnoSql;
                 //string delSql = "", updateSql = "", insertSql = "";
                 //bool msg = true; //判斷是否要Show error
@@ -408,9 +408,9 @@ namespace Sci.Production.Thread
                 _transactionscope.Dispose();
                 _transactionscope = null;
 
-                button1.Text = "Edit";
+                btnEdit.Text = "Edit";
                 EditMode = false;
-                grid1.IsEditingReadOnly = !EditMode;
+                gridDetail.IsEditingReadOnly = !EditMode;
             }
         }
 

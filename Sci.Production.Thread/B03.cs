@@ -18,14 +18,14 @@ namespace Sci.Production.Thread
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            textBox1.ReadOnly = true;
+            txtThreadType.ReadOnly = true;
         }
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
                 MyUtility.Msg.WarningBox("<Thread Type> can not be empty.");
-                textBox1.Focus();
+                txtThreadType.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

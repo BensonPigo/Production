@@ -31,21 +31,21 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
-            this.label8 = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.textLOC2 = new Sci.Win.UI.TextBox();
-            this.textLOC1 = new Sci.Win.UI.TextBox();
-            this.textITEM = new Sci.Win.UI.TextBox();
-            this.textTYPE = new Sci.Win.UI.TextBox();
-            this.textSHA = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.txtLocationEnd = new Sci.Win.UI.TextBox();
+            this.txtLocationStart = new Sci.Win.UI.TextBox();
+            this.txtThreadItem = new Sci.Win.UI.TextBox();
+            this.txtType = new Sci.Win.UI.TextBox();
+            this.txtShade = new Sci.Win.UI.TextBox();
+            this.txtRefnoEnd = new Sci.Win.UI.TextBox();
+            this.txtRefnoStart = new Sci.Win.UI.TextBox();
+            this.labelLocation = new Sci.Win.UI.Label();
+            this.labelThreadItem = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.labelShade = new Sci.Win.UI.Label();
+            this.labelRefno = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,21 +68,21 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.comboMDivision);
-            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.textLOC2);
-            this.panel1.Controls.Add(this.textLOC1);
-            this.panel1.Controls.Add(this.textITEM);
-            this.panel1.Controls.Add(this.textTYPE);
-            this.panel1.Controls.Add(this.textSHA);
-            this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtLocationEnd);
+            this.panel1.Controls.Add(this.txtLocationStart);
+            this.panel1.Controls.Add(this.txtThreadItem);
+            this.panel1.Controls.Add(this.txtType);
+            this.panel1.Controls.Add(this.txtShade);
+            this.panel1.Controls.Add(this.txtRefnoEnd);
+            this.panel1.Controls.Add(this.txtRefnoStart);
+            this.panel1.Controls.Add(this.labelLocation);
+            this.panel1.Controls.Add(this.labelThreadItem);
+            this.panel1.Controls.Add(this.labelType);
+            this.panel1.Controls.Add(this.labelShade);
+            this.panel1.Controls.Add(this.labelRefno);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(434, 190);
@@ -99,14 +99,14 @@
             this.comboMDivision.Size = new System.Drawing.Size(80, 24);
             this.comboMDivision.TabIndex = 7;
             // 
-            // label8
+            // labelM
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(16, 154);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(80, 23);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(16, 154);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(80, 23);
+            this.labelM.TabIndex = 14;
+            this.labelM.Text = "M";
             // 
             // label7
             // 
@@ -130,127 +130,127 @@
             this.label6.Text = "~";
             this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textLOC2
+            // txtLocationEnd
             // 
-            this.textLOC2.BackColor = System.Drawing.Color.White;
-            this.textLOC2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC2.Location = new System.Drawing.Point(243, 125);
-            this.textLOC2.Name = "textLOC2";
-            this.textLOC2.Size = new System.Drawing.Size(113, 23);
-            this.textLOC2.TabIndex = 6;
-            this.textLOC2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC2_PopUp);
-            this.textLOC2.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC2_Validating);
+            this.txtLocationEnd.BackColor = System.Drawing.Color.White;
+            this.txtLocationEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocationEnd.Location = new System.Drawing.Point(243, 125);
+            this.txtLocationEnd.Name = "txtLocationEnd";
+            this.txtLocationEnd.Size = new System.Drawing.Size(113, 23);
+            this.txtLocationEnd.TabIndex = 6;
+            this.txtLocationEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC2_PopUp);
+            this.txtLocationEnd.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC2_Validating);
             // 
-            // textLOC1
+            // txtLocationStart
             // 
-            this.textLOC1.BackColor = System.Drawing.Color.White;
-            this.textLOC1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textLOC1.Location = new System.Drawing.Point(99, 125);
-            this.textLOC1.Name = "textLOC1";
-            this.textLOC1.Size = new System.Drawing.Size(113, 23);
-            this.textLOC1.TabIndex = 5;
-            this.textLOC1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC1_PopUp);
-            this.textLOC1.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC1_Validating);
+            this.txtLocationStart.BackColor = System.Drawing.Color.White;
+            this.txtLocationStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocationStart.Location = new System.Drawing.Point(99, 125);
+            this.txtLocationStart.Name = "txtLocationStart";
+            this.txtLocationStart.Size = new System.Drawing.Size(113, 23);
+            this.txtLocationStart.TabIndex = 5;
+            this.txtLocationStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textLOC1_PopUp);
+            this.txtLocationStart.Validating += new System.ComponentModel.CancelEventHandler(this.textLOC1_Validating);
             // 
-            // textITEM
+            // txtThreadItem
             // 
-            this.textITEM.BackColor = System.Drawing.Color.White;
-            this.textITEM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textITEM.Location = new System.Drawing.Point(99, 96);
-            this.textITEM.Name = "textITEM";
-            this.textITEM.Size = new System.Drawing.Size(127, 23);
-            this.textITEM.TabIndex = 4;
-            this.textITEM.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textITEM_PopUp);
-            this.textITEM.Validating += new System.ComponentModel.CancelEventHandler(this.textITEM_Validating);
+            this.txtThreadItem.BackColor = System.Drawing.Color.White;
+            this.txtThreadItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadItem.Location = new System.Drawing.Point(99, 96);
+            this.txtThreadItem.Name = "txtThreadItem";
+            this.txtThreadItem.Size = new System.Drawing.Size(127, 23);
+            this.txtThreadItem.TabIndex = 4;
+            this.txtThreadItem.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textITEM_PopUp);
+            this.txtThreadItem.Validating += new System.ComponentModel.CancelEventHandler(this.textITEM_Validating);
             // 
-            // textTYPE
+            // txtType
             // 
-            this.textTYPE.BackColor = System.Drawing.Color.White;
-            this.textTYPE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textTYPE.Location = new System.Drawing.Point(99, 65);
-            this.textTYPE.Name = "textTYPE";
-            this.textTYPE.Size = new System.Drawing.Size(135, 23);
-            this.textTYPE.TabIndex = 3;
-            this.textTYPE.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textTYPE_PopUp);
-            this.textTYPE.Validating += new System.ComponentModel.CancelEventHandler(this.textTYPE_Validating);
+            this.txtType.BackColor = System.Drawing.Color.White;
+            this.txtType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtType.Location = new System.Drawing.Point(99, 65);
+            this.txtType.Name = "txtType";
+            this.txtType.Size = new System.Drawing.Size(135, 23);
+            this.txtType.TabIndex = 3;
+            this.txtType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textTYPE_PopUp);
+            this.txtType.Validating += new System.ComponentModel.CancelEventHandler(this.textTYPE_Validating);
             // 
-            // textSHA
+            // txtShade
             // 
-            this.textSHA.BackColor = System.Drawing.Color.White;
-            this.textSHA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textSHA.Location = new System.Drawing.Point(99, 36);
-            this.textSHA.Name = "textSHA";
-            this.textSHA.Size = new System.Drawing.Size(122, 23);
-            this.textSHA.TabIndex = 2;
-            this.textSHA.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textSHA_PopUp);
-            this.textSHA.Validating += new System.ComponentModel.CancelEventHandler(this.textSHA_Validating);
+            this.txtShade.BackColor = System.Drawing.Color.White;
+            this.txtShade.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShade.Location = new System.Drawing.Point(99, 36);
+            this.txtShade.Name = "txtShade";
+            this.txtShade.Size = new System.Drawing.Size(122, 23);
+            this.txtShade.TabIndex = 2;
+            this.txtShade.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textSHA_PopUp);
+            this.txtShade.Validating += new System.ComponentModel.CancelEventHandler(this.textSHA_Validating);
             // 
-            // textBox2
+            // txtRefnoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(267, 8);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(148, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtRefnoEnd.BackColor = System.Drawing.Color.White;
+            this.txtRefnoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoEnd.Location = new System.Drawing.Point(267, 8);
+            this.txtRefnoEnd.Name = "txtRefnoEnd";
+            this.txtRefnoEnd.Size = new System.Drawing.Size(148, 23);
+            this.txtRefnoEnd.TabIndex = 1;
+            this.txtRefnoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtRefnoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
             // 
-            // textBox1
+            // txtRefnoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(99, 7);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(148, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtRefnoStart.BackColor = System.Drawing.Color.White;
+            this.txtRefnoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoStart.Location = new System.Drawing.Point(99, 7);
+            this.txtRefnoStart.Name = "txtRefnoStart";
+            this.txtRefnoStart.Size = new System.Drawing.Size(148, 23);
+            this.txtRefnoStart.TabIndex = 0;
+            this.txtRefnoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtRefnoStart.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
-            // label5
+            // labelLocation
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 125);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Location";
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(16, 125);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(80, 23);
+            this.labelLocation.TabIndex = 4;
+            this.labelLocation.Text = "Location";
             // 
-            // label4
+            // labelThreadItem
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 96);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(80, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Thread Item";
+            this.labelThreadItem.Lines = 0;
+            this.labelThreadItem.Location = new System.Drawing.Point(16, 96);
+            this.labelThreadItem.Name = "labelThreadItem";
+            this.labelThreadItem.Size = new System.Drawing.Size(80, 23);
+            this.labelThreadItem.TabIndex = 3;
+            this.labelThreadItem.Text = "Thread Item";
             // 
-            // label3
+            // labelType
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 65);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(16, 65);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(80, 23);
+            this.labelType.TabIndex = 2;
+            this.labelType.Text = "Type";
             // 
-            // label2
+            // labelShade
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(16, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Shade";
+            this.labelShade.Lines = 0;
+            this.labelShade.Location = new System.Drawing.Point(16, 36);
+            this.labelShade.Name = "labelShade";
+            this.labelShade.Size = new System.Drawing.Size(80, 23);
+            this.labelShade.TabIndex = 1;
+            this.labelShade.Text = "Shade";
             // 
-            // label1
+            // labelRefno
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(16, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Refno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(16, 8);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(80, 23);
+            this.labelRefno.TabIndex = 0;
+            this.labelRefno.Text = "Refno";
             // 
             // R21
             // 
@@ -274,19 +274,19 @@
         private Win.UI.Panel panel1;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
-        private Win.UI.TextBox textLOC2;
-        private Win.UI.TextBox textLOC1;
-        private Win.UI.TextBox textITEM;
-        private Win.UI.TextBox textTYPE;
-        private Win.UI.TextBox textSHA;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.Label label8;
+        private Win.UI.TextBox txtLocationEnd;
+        private Win.UI.TextBox txtLocationStart;
+        private Win.UI.TextBox txtThreadItem;
+        private Win.UI.TextBox txtType;
+        private Win.UI.TextBox txtShade;
+        private Win.UI.TextBox txtRefnoEnd;
+        private Win.UI.TextBox txtRefnoStart;
+        private Win.UI.Label labelLocation;
+        private Win.UI.Label labelThreadItem;
+        private Win.UI.Label labelType;
+        private Win.UI.Label labelShade;
+        private Win.UI.Label labelRefno;
+        private Win.UI.Label labelM;
         private Class.comboMDivision comboMDivision;
     }
 }

@@ -32,10 +32,10 @@ namespace Sci.Production.Thread
             base.OnFormLoaded();
             string sql = string.Format(@"Select 1 as sel,a.*,'' as description,'' as colordesc,'' as threadtypeid,0 as threadtex,'' as category,'' as localsuppid , '' as supp, 0 as newconevar,0 as UsedConevar from threadInventory_Detail a WITH (NOLOCK) where 1!=1", keyword);
             DBProxy.Current.Select("Production", sql, out gridTable);
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = gridTable;
+            this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridDetail.DataSource = gridTable;
             
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -49,21 +49,21 @@ namespace Sci.Production.Thread
                 .Numeric("ThreadTex", header: "Tex", width: Widths.AnsiChars(5), integer_places: 3, iseditingreadonly: true)
                 .Text("category", header: "Category", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true);
-            this.grid1.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string threadlocation1 = this.txtthreadlocation1.Text, threadlocation2 = this.txtthreadlocation2.Text;
-            string thradrefno1 = txtlocalitem1.Text, thradrefno2 = txtlocalitem2.Text;
-            string color1 = txtthreadcolor1.Text, color2 = txtthreadcolor2.Text;
-            string allpart = checkBox1.Value;
-            int rand = (int)numericBox1.Value;
+            string threadlocation1 = this.txtthreadlocationStart.Text, threadlocation2 = this.txtthreadlocationEnd.Text;
+            string thradrefno1 = txtlocalitemStart.Text, thradrefno2 = txtlocalitemEnd.Text;
+            string color1 = txtthreadcolorStart.Text, color2 = txtthreadcolorEnd.Text;
+            string allpart = checkAllThread.Value;
+            int rand = (int)numCountOfRadom.Value;
             if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2) && allpart == "False")
             {
                 MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
-                this.txtlocalitem1.Focus();
+                this.txtlocalitemStart.Focus();
                 return;
             }
             string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
@@ -158,7 +158,7 @@ namespace Sci.Production.Thread
                     {
                         gridTable = dt;
                     }
-                    this.grid1.DataSource = gridTable;
+                    this.gridDetail.DataSource = gridTable;
                 }
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace Sci.Production.Thread
 
         private void button1_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridDetail.ValidateControl();
             if (MyUtility.Check.Empty(gridTable)|| gridTable.Rows.Count == 0) return;
 
             DataRow[] dr2 = gridTable.Select("Sel= 1");

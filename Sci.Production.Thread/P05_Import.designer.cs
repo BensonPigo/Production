@@ -28,133 +28,133 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.gridDetail = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtlocalitem2 = new Sci.Production.Class.txtlocalitem();
+            this.txtlocalitemEnd = new Sci.Production.Class.txtlocalitem();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtthreadcolor2 = new Sci.Production.Class.txtthreadcolor();
+            this.txtthreadcolorEnd = new Sci.Production.Class.txtthreadcolor();
             this.label8 = new Sci.Win.UI.Label();
-            this.txtthreadcolor1 = new Sci.Production.Class.txtthreadcolor();
-            this.label7 = new Sci.Win.UI.Label();
-            this.txtthreadlocation2 = new Sci.Production.Class.txtthreadlocation();
-            this.txtthreadlocation1 = new Sci.Production.Class.txtthreadlocation();
-            this.txtlocalitem1 = new Sci.Production.Class.txtlocalitem();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.label5 = new Sci.Win.UI.Label();
+            this.txtthreadcolorStart = new Sci.Production.Class.txtthreadcolor();
+            this.labelColor = new Sci.Win.UI.Label();
+            this.txtthreadlocationEnd = new Sci.Production.Class.txtthreadlocation();
+            this.txtthreadlocationStart = new Sci.Production.Class.txtthreadlocation();
+            this.txtlocalitemStart = new Sci.Production.Class.txtlocalitem();
+            this.checkAllThread = new Sci.Win.UI.CheckBox();
+            this.numCountOfRadom = new Sci.Win.UI.NumericBox();
+            this.labelCountOfRadom = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.labelLocation = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labelRefno = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button3
+            // btnQuery
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(750, 13);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Query";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(750, 13);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 7;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnClose);
+            this.panel2.Controls.Add(this.btnImport);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 376);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(840, 44);
             this.panel2.TabIndex = 11;
             // 
-            // button2
+            // btnClose
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(750, 7);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 8;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(750, 7);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 8;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnImport
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(664, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Import";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(664, 7);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.button1_Click);
             // 
-            // grid1
+            // gridDetail
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 81);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(840, 295);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 81);
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.Size = new System.Drawing.Size(840, 295);
+            this.gridDetail.TabIndex = 0;
+            this.gridDetail.TabStop = false;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtlocalitem2);
-            this.panel1.Controls.Add(this.txtthreadcolor2);
+            this.panel1.Controls.Add(this.txtlocalitemEnd);
+            this.panel1.Controls.Add(this.txtthreadcolorEnd);
             this.panel1.Controls.Add(this.label8);
-            this.panel1.Controls.Add(this.txtthreadcolor1);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.txtthreadlocation2);
-            this.panel1.Controls.Add(this.txtthreadlocation1);
-            this.panel1.Controls.Add(this.txtlocalitem1);
-            this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Controls.Add(this.numericBox1);
-            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.txtthreadcolorStart);
+            this.panel1.Controls.Add(this.labelColor);
+            this.panel1.Controls.Add(this.txtthreadlocationEnd);
+            this.panel1.Controls.Add(this.txtthreadlocationStart);
+            this.panel1.Controls.Add(this.txtlocalitemStart);
+            this.panel1.Controls.Add(this.checkAllThread);
+            this.panel1.Controls.Add(this.numCountOfRadom);
+            this.panel1.Controls.Add(this.labelCountOfRadom);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.labelLocation);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.labelRefno);
+            this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(840, 81);
             this.panel1.TabIndex = 10;
             // 
-            // txtlocalitem2
+            // txtlocalitemEnd
             // 
-            this.txtlocalitem2.BackColor = System.Drawing.Color.White;
-            this.txtlocalitem2.CategoryObjectName = this.label6;
-            this.txtlocalitem2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtlocalitem2.LocalSuppObjectName = null;
-            this.txtlocalitem2.Location = new System.Drawing.Point(265, 17);
-            this.txtlocalitem2.Name = "txtlocalitem2";
-            this.txtlocalitem2.Size = new System.Drawing.Size(150, 23);
-            this.txtlocalitem2.TabIndex = 1;
+            this.txtlocalitemEnd.BackColor = System.Drawing.Color.White;
+            this.txtlocalitemEnd.CategoryObjectName = this.label6;
+            this.txtlocalitemEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtlocalitemEnd.LocalSuppObjectName = null;
+            this.txtlocalitemEnd.Location = new System.Drawing.Point(265, 17);
+            this.txtlocalitemEnd.Name = "txtlocalitemEnd";
+            this.txtlocalitemEnd.Size = new System.Drawing.Size(150, 23);
+            this.txtlocalitemEnd.TabIndex = 1;
             // 
             // label6
             // 
@@ -167,15 +167,15 @@
             this.label6.Text = "Thread";
             this.label6.Visible = false;
             // 
-            // txtthreadcolor2
+            // txtthreadcolorEnd
             // 
-            this.txtthreadcolor2.BackColor = System.Drawing.Color.White;
-            this.txtthreadcolor2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtthreadcolor2.IsSupportSytsemContextMenu = false;
-            this.txtthreadcolor2.Location = new System.Drawing.Point(200, 49);
-            this.txtthreadcolor2.Name = "txtthreadcolor2";
-            this.txtthreadcolor2.Size = new System.Drawing.Size(90, 23);
-            this.txtthreadcolor2.TabIndex = 5;
+            this.txtthreadcolorEnd.BackColor = System.Drawing.Color.White;
+            this.txtthreadcolorEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtthreadcolorEnd.IsSupportSytsemContextMenu = false;
+            this.txtthreadcolorEnd.Location = new System.Drawing.Point(200, 49);
+            this.txtthreadcolorEnd.Name = "txtthreadcolorEnd";
+            this.txtthreadcolorEnd.Size = new System.Drawing.Size(90, 23);
+            this.txtthreadcolorEnd.TabIndex = 5;
             // 
             // label8
             // 
@@ -188,96 +188,96 @@
             this.label8.Text = "~";
             this.label8.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtthreadcolor1
+            // txtthreadcolorStart
             // 
-            this.txtthreadcolor1.BackColor = System.Drawing.Color.White;
-            this.txtthreadcolor1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtthreadcolor1.IsSupportSytsemContextMenu = false;
-            this.txtthreadcolor1.Location = new System.Drawing.Point(90, 49);
-            this.txtthreadcolor1.Name = "txtthreadcolor1";
-            this.txtthreadcolor1.Size = new System.Drawing.Size(90, 23);
-            this.txtthreadcolor1.TabIndex = 4;
+            this.txtthreadcolorStart.BackColor = System.Drawing.Color.White;
+            this.txtthreadcolorStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtthreadcolorStart.IsSupportSytsemContextMenu = false;
+            this.txtthreadcolorStart.Location = new System.Drawing.Point(90, 49);
+            this.txtthreadcolorStart.Name = "txtthreadcolorStart";
+            this.txtthreadcolorStart.Size = new System.Drawing.Size(90, 23);
+            this.txtthreadcolorStart.TabIndex = 4;
             // 
-            // label7
+            // labelColor
             // 
-            this.label7.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(13, 49);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 26;
-            this.label7.Text = "Color";
+            this.labelColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelColor.Lines = 0;
+            this.labelColor.Location = new System.Drawing.Point(13, 49);
+            this.labelColor.Name = "labelColor";
+            this.labelColor.Size = new System.Drawing.Size(75, 23);
+            this.labelColor.TabIndex = 26;
+            this.labelColor.Text = "Color";
             // 
-            // txtthreadlocation2
+            // txtthreadlocationEnd
             // 
-            this.txtthreadlocation2.BackColor = System.Drawing.Color.White;
-            this.txtthreadlocation2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtthreadlocation2.IsSupportSytsemContextMenu = false;
-            this.txtthreadlocation2.Location = new System.Drawing.Point(629, 17);
-            this.txtthreadlocation2.Name = "txtthreadlocation2";
-            this.txtthreadlocation2.Size = new System.Drawing.Size(90, 23);
-            this.txtthreadlocation2.TabIndex = 3;
+            this.txtthreadlocationEnd.BackColor = System.Drawing.Color.White;
+            this.txtthreadlocationEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtthreadlocationEnd.IsSupportSytsemContextMenu = false;
+            this.txtthreadlocationEnd.Location = new System.Drawing.Point(629, 17);
+            this.txtthreadlocationEnd.Name = "txtthreadlocationEnd";
+            this.txtthreadlocationEnd.Size = new System.Drawing.Size(90, 23);
+            this.txtthreadlocationEnd.TabIndex = 3;
             // 
-            // txtthreadlocation1
+            // txtthreadlocationStart
             // 
-            this.txtthreadlocation1.BackColor = System.Drawing.Color.White;
-            this.txtthreadlocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtthreadlocation1.IsSupportSytsemContextMenu = false;
-            this.txtthreadlocation1.Location = new System.Drawing.Point(519, 17);
-            this.txtthreadlocation1.Name = "txtthreadlocation1";
-            this.txtthreadlocation1.Size = new System.Drawing.Size(90, 23);
-            this.txtthreadlocation1.TabIndex = 2;
+            this.txtthreadlocationStart.BackColor = System.Drawing.Color.White;
+            this.txtthreadlocationStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtthreadlocationStart.IsSupportSytsemContextMenu = false;
+            this.txtthreadlocationStart.Location = new System.Drawing.Point(519, 17);
+            this.txtthreadlocationStart.Name = "txtthreadlocationStart";
+            this.txtthreadlocationStart.Size = new System.Drawing.Size(90, 23);
+            this.txtthreadlocationStart.TabIndex = 2;
             // 
-            // txtlocalitem1
+            // txtlocalitemStart
             // 
-            this.txtlocalitem1.BackColor = System.Drawing.Color.White;
-            this.txtlocalitem1.CategoryObjectName = this.label6;
-            this.txtlocalitem1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtlocalitem1.LocalSuppObjectName = null;
-            this.txtlocalitem1.Location = new System.Drawing.Point(90, 17);
-            this.txtlocalitem1.Name = "txtlocalitem1";
-            this.txtlocalitem1.Size = new System.Drawing.Size(150, 23);
-            this.txtlocalitem1.TabIndex = 0;
+            this.txtlocalitemStart.BackColor = System.Drawing.Color.White;
+            this.txtlocalitemStart.CategoryObjectName = this.label6;
+            this.txtlocalitemStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtlocalitemStart.LocalSuppObjectName = null;
+            this.txtlocalitemStart.Location = new System.Drawing.Point(90, 17);
+            this.txtlocalitemStart.Name = "txtlocalitemStart";
+            this.txtlocalitemStart.Size = new System.Drawing.Size(150, 23);
+            this.txtlocalitemStart.TabIndex = 0;
             // 
-            // checkBox1
+            // checkAllThread
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(612, 49);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(92, 21);
-            this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "All Thread";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkAllThread.AutoSize = true;
+            this.checkAllThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkAllThread.Location = new System.Drawing.Point(612, 49);
+            this.checkAllThread.Name = "checkAllThread";
+            this.checkAllThread.Size = new System.Drawing.Size(92, 21);
+            this.checkAllThread.TabIndex = 8;
+            this.checkAllThread.Text = "All Thread";
+            this.checkAllThread.UseVisualStyleBackColor = true;
             // 
-            // numericBox1
+            // numCountOfRadom
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(548, 49);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numCountOfRadom.BackColor = System.Drawing.Color.White;
+            this.numCountOfRadom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCountOfRadom.Location = new System.Drawing.Point(548, 49);
+            this.numCountOfRadom.Name = "numCountOfRadom";
+            this.numCountOfRadom.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(51, 23);
-            this.numericBox1.TabIndex = 6;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numCountOfRadom.Size = new System.Drawing.Size(51, 23);
+            this.numCountOfRadom.TabIndex = 6;
+            this.numCountOfRadom.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // label5
+            // labelCountOfRadom
             // 
-            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(437, 49);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(108, 23);
-            this.label5.TabIndex = 18;
-            this.label5.Text = "Count of Radom";
+            this.labelCountOfRadom.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelCountOfRadom.Lines = 0;
+            this.labelCountOfRadom.Location = new System.Drawing.Point(437, 49);
+            this.labelCountOfRadom.Name = "labelCountOfRadom";
+            this.labelCountOfRadom.Size = new System.Drawing.Size(108, 23);
+            this.labelCountOfRadom.TabIndex = 18;
+            this.labelCountOfRadom.Text = "Count of Radom";
             // 
             // label1
             // 
@@ -290,15 +290,15 @@
             this.label1.Text = "~";
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label3
+            // labelLocation
             // 
-            this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(436, 17);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "Location";
+            this.labelLocation.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(436, 17);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.Size = new System.Drawing.Size(75, 23);
+            this.labelLocation.TabIndex = 14;
+            this.labelLocation.Text = "Location";
             // 
             // label4
             // 
@@ -311,27 +311,27 @@
             this.label4.Text = "~";
             this.label4.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label2
+            // labelRefno
             // 
-            this.label2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(12, 17);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Refno";
+            this.labelRefno.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(12, 17);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelRefno.TabIndex = 5;
+            this.labelRefno.Text = "Refno";
             // 
             // P05_Import
             // 
             this.ClientSize = new System.Drawing.Size(840, 420);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.gridDetail);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label6);
             this.Name = "P05_Import";
             this.Text = "Import from Thread stock";
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -340,27 +340,27 @@
 
         #endregion
 
-        private Win.UI.Button button3;
+        private Win.UI.Button btnQuery;
         private Win.UI.Panel panel2;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnImport;
+        private Win.UI.Grid gridDetail;
         private Win.UI.Panel panel1;
-        private Win.UI.Label label2;
+        private Win.UI.Label labelRefno;
         private Win.UI.Label label4;
         private Win.UI.Label label1;
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label5;
-        private Production.Class.txtlocalitem txtlocalitem1;
+        private Win.UI.Label labelLocation;
+        private Win.UI.CheckBox checkAllThread;
+        private Win.UI.NumericBox numCountOfRadom;
+        private Win.UI.Label labelCountOfRadom;
+        private Production.Class.txtlocalitem txtlocalitemStart;
         private Win.UI.Label label6;
-        private Class.txtthreadlocation txtthreadlocation2;
-        private Class.txtthreadlocation txtthreadlocation1;
-        private Win.UI.Label label7;
-        private Class.txtthreadcolor txtthreadcolor2;
+        private Class.txtthreadlocation txtthreadlocationEnd;
+        private Class.txtthreadlocation txtthreadlocationStart;
+        private Win.UI.Label labelColor;
+        private Class.txtthreadcolor txtthreadcolorEnd;
         private Win.UI.Label label8;
-        private Class.txtthreadcolor txtthreadcolor1;
-        private Class.txtlocalitem txtlocalitem2;
+        private Class.txtthreadcolor txtthreadcolorStart;
+        private Class.txtlocalitem txtlocalitemEnd;
     }
 }

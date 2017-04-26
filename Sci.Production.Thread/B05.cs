@@ -27,11 +27,11 @@ namespace Sci.Production.Thread
             comboBox1_RowSource2.Add("ThreadColor", "Thread Color");
             comboBox1_RowSource2.Add("Location", "Thread Location");
 
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.DataSource = new BindingSource(comboBox1_RowSource2, null);
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
+            comboThreadColorLocation.ValueMember = "Key";
+            comboThreadColorLocation.DisplayMember = "Value";
+            comboThreadColorLocation.DataSource = new BindingSource(comboBox1_RowSource2, null);
+            dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
         }
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -94,9 +94,9 @@ namespace Sci.Production.Thread
             DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
             grid1.DataSource = gridTb; //因重新Generator 所以要重給
             detailgridbs.Filter = ""; //清空Filter
-            dateRange1.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
-            dateRange1.TextBox2.Text = DateTime.Now.ToShortDateString();
-            transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
+            dateTransactionDate.TextBox1.Text = DateTime.Now.AddDays(-180).ToShortDateString();
+            dateTransactionDate.TextBox2.Text = DateTime.Now.ToShortDateString();
+            transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
             OnDetailGridRowChanged();
         }
         protected override void OnDetailGridRowChanged()
@@ -211,7 +211,7 @@ namespace Sci.Production.Thread
         private void button3_Click(object sender, EventArgs e)
         {
             gridTb.Clear();
-            transrecord(dateRange1.TextBox1.Text, dateRange1.TextBox2.Text);
+            transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
             this.grid1.DataSource = gridTb;
             OnDetailGridRowChanged();
         }
@@ -219,8 +219,8 @@ namespace Sci.Production.Thread
         private void button1_Click(object sender, EventArgs e)
         {
             //移到指定那筆
-            string refno = textBox1.Text;
-            string filter = comboBox1.Text;
+            string refno = txtThreadColorLocation.Text;
+            string filter = comboThreadColorLocation.Text;
             if(filter =="Thread Color")
                 detailgridbs.Filter = string.Format("ThreadColorid = '{0}'", refno);
             if (filter == "Thread Location")

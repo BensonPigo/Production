@@ -238,7 +238,7 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
-                this.dateBox1.Focus();
+                this.dateDate.Focus();
                 return false;
             }
             foreach (DataRow dr in this.DetailDatas)
@@ -284,7 +284,7 @@ namespace Sci.Production.Thread
         protected override void OnDetailUIConvertToUpdate()
         {
             base.OnDetailUIConvertToUpdate();
-            dateBox1.ReadOnly = true;
+            dateDate.ReadOnly = true;
         }
         protected override void ClickConfirm()
         {
@@ -348,7 +348,7 @@ namespace Sci.Production.Thread
         private void button2_Click(object sender, EventArgs e)
         {
             //移到指定那筆
-            string refno = textBox1.Text;
+            string refno = txtRefnoLocation.Text;
             int index = detailgridbs.Find("Refno", refno);
             if (index == -1)
             {

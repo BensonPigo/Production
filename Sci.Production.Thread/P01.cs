@@ -75,8 +75,8 @@ where b.Id = a.OperationId and a.id='{0}'", CurrentDetailData["id"]);
             //    P01_Detail.ShowDialog();
             //}});
             #endregion
-            button1.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
-            button1.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            btnGenerate.Enabled = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
+            btnGenerate.Visible = Sci.Production.PublicPrg.Prgs.GetAuthority(loginID, "P01.Thread Color Combination", "CanEdit");
 
         }
 
