@@ -238,10 +238,19 @@ a.Id
 ,p.SizeUnit
 ,dbo.Getlocation(fi.ukey) [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
-,isnull((select sum(Issue_Detail.qty) from dbo.issue WITH (NOLOCK) inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id where Issue.type = 'B' and Issue.Status='Confirmed' and issue.id!=a.Id and Issue_Detail.FtyInventoryUkey = a.FtyInventoryUkey),0.00) [accu_issue]
+,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
+                         from dbo.issue WITH (NOLOCK) 
+                         inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                         where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.Id 
+                                and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
+                                and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
 ,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size WITH (NOLOCK) where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
 ,a.Ukey
-,isnull((select inqty-outqty+adjustqty from dbo.ftyinventory WITH (NOLOCK) where ukey = a.ftyinventoryukey),0.00) as balanceqty
+,balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
+                        from dbo.ftyinventory FI WITH (NOLOCK) 
+                        where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                    ,0.00)
 from dbo.Issue_Detail a WITH (NOLOCK) 
 left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
 left join dbo.FtyInventory FI on a.Poid = Fi.Poid and a.Seq1 = fi.seq1 and a.seq2 = fi.seq2 
