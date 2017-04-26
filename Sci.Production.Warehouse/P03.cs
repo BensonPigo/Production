@@ -528,6 +528,11 @@ where ROW_NUMBER_D =1
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        private void gridMaterialStatus_Sorted(object sender, EventArgs e)
+        {
+            ChangeDetailColor();
+        }
     }
 }
 
