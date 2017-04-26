@@ -23,7 +23,7 @@ namespace Sci.Production.Planning
             //this.textBoxSp1.Text = orderid;
             //this.textBoxSp2.Text = orderid;
 
-            dateRangeApvDate.Enabled = false;
+            dateApproveDate.Enabled = false;
             btnUnApprove.Enabled = false;
         }
         
@@ -32,9 +32,9 @@ namespace Sci.Production.Planning
         {
             base.OnFormLoaded();
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridBatchApprove.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridBatchApprove.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridBatchApprove)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("factoryid", header: "Factory", iseditingreadonly: true) //1
                 .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))//2
@@ -51,11 +51,11 @@ namespace Sci.Production.Planning
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            String sp_b = this.textBoxSp1.Text;
-            String sp_e = this.textBoxSp2.Text;
-            String factory = this.txtfactory1.Text;
-            String artworktype = this.txtartworktype_fty1.Text;
-            bool chkApprove = checkBox3.Checked;
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            String factory = this.txtfactory.Text;
+            String artworktype = this.txtartworktype_ftyArtworkType.Text;
+            bool chkApprove = checkOnlyAprrovedData.Checked;
 
             string inline_b, inline_e, sewinline_b, sewinline_e, delivery_b, delivery_e,approve_b,approve_e;
             inline_b = null;
@@ -68,14 +68,14 @@ namespace Sci.Production.Planning
             approve_e = null;
 
             
-            if (dateRangeInline.Value1 != null) {inline_b = this.dateRangeInline.Text1;}
-            if (dateRangeInline.Value2 != null) { inline_e = this.dateRangeInline.Text2; }
+            if (dateSubprocessInline.Value1 != null) {inline_b = this.dateSubprocessInline.Text1;}
+            if (dateSubprocessInline.Value2 != null) { inline_e = this.dateSubprocessInline.Text2; }
             if (dateRangeSewInLine.Value1 != null) {sewinline_b = this.dateRangeSewInLine.Text1;}
             if (dateRangeSewInLine.Value2 != null) { sewinline_e = this.dateRangeSewInLine.Text2; }
-            if (dateRangeSciDelivery.Value1 != null) {delivery_b = this.dateRangeSciDelivery.Text1;}
-            if (dateRangeSciDelivery.Value2 != null) { delivery_e = this.dateRangeSciDelivery.Text2; }
-            if (dateRangeApvDate.Value1 != null) {approve_b = this.dateRangeApvDate.Text1;}
-            if (dateRangeApvDate.Value2 != null){ approve_e = this.dateRangeApvDate.Text2; }
+            if (dateSCIDelivery.Value1 != null) {delivery_b = this.dateSCIDelivery.Text1;}
+            if (dateSCIDelivery.Value2 != null) { delivery_e = this.dateSCIDelivery.Text2; }
+            if (dateApproveDate.Value1 != null) {approve_b = this.dateApproveDate.Text1;}
+            if (dateApproveDate.Value2 != null){ approve_e = this.dateApproveDate.Text2; }
 
             if (chkApprove && (MyUtility.Check.Empty(approve_b) || MyUtility.Check.Empty(approve_e)))
             {
@@ -90,7 +90,7 @@ namespace Sci.Production.Planning
                 MyUtility.Check.Empty(artworktype) )
             {
                 MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
-                textBoxSp1.Focus();
+                txtSPNoStart.Focus();
                 return;
             }
             else
@@ -175,7 +175,7 @@ where ods.finished=0 and ods.isforecast = 0
                 }
                 else { ShowErr(strSQLCmd, result); }
             }
-            this.grid1.AutoResizeColumns();
+            this.gridBatchApprove.AutoResizeColumns();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -188,17 +188,17 @@ where ods.finished=0 and ods.isforecast = 0
         {
             if (((CheckBox)sender).Checked)
             {
-                dateRangeApvDate.Enabled = true;
+                dateApproveDate.Enabled = true;
                 btnApprove.Enabled = false;
                 btnUnApprove.Enabled = true;
-                dateRangeApvDate.TextBox1.Value = DateTime.Now;
-                dateRangeApvDate.TextBox2.Value = DateTime.Now;
+                dateApproveDate.TextBox1.Value = DateTime.Now;
+                dateApproveDate.TextBox2.Value = DateTime.Now;
             }
             else
             {
-                dateRangeApvDate.Enabled = false;
-                dateRangeApvDate.TextBox1.Value=null;
-                dateRangeApvDate.TextBox2.Value = null;
+                dateApproveDate.Enabled = false;
+                dateApproveDate.TextBox1.Value=null;
+                dateApproveDate.TextBox2.Value = null;
                 btnApprove.Enabled = true;
                 btnUnApprove.Enabled = false;
             }
@@ -208,7 +208,7 @@ where ods.finished=0 and ods.isforecast = 0
         private void btnApprove_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridBatchApprove.ValidateControl();
 
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
 
@@ -256,7 +256,7 @@ where ods.finished=0 and ods.isforecast = 0
         private void btnUnApprove_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridBatchApprove.ValidateControl();
 
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
 

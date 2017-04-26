@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.sewingDateRange = new Sci.Win.UI.DateRange();
-            this.label14 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.sciDeliveryRange = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.dateSewingDate = new Sci.Win.UI.DateRange();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.labelM = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.dateSciDelivery = new Sci.Win.UI.DateRange();
+            this.labelSciDelivery = new Sci.Win.UI.Label();
+            this.labelSewingDate = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -53,115 +53,115 @@
             this.close.Location = new System.Drawing.Point(430, 84);
             this.close.TabIndex = 6;
             // 
-            // sewingDateRange
+            // dateSewingDate
             // 
-            this.sewingDateRange.IsRequired = false;
-            this.sewingDateRange.Location = new System.Drawing.Point(111, 48);
-            this.sewingDateRange.Name = "sewingDateRange";
-            this.sewingDateRange.Size = new System.Drawing.Size(280, 23);
-            this.sewingDateRange.TabIndex = 1;
+            this.dateSewingDate.IsRequired = false;
+            this.dateSewingDate.Location = new System.Drawing.Point(111, 48);
+            this.dateSewingDate.Name = "dateSewingDate";
+            this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingDate.TabIndex = 1;
             // 
-            // label14
+            // labelFactory
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(9, 114);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(98, 23);
-            this.label14.TabIndex = 132;
-            this.label14.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(9, 114);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(98, 23);
+            this.labelFactory.TabIndex = 132;
+            this.labelFactory.Text = "Factory";
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(111, 114);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 3;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(111, 114);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 3;
             // 
-            // label4
+            // labelM
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 81);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 134;
-            this.label4.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(9, 81);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(98, 23);
+            this.labelM.TabIndex = 134;
+            this.labelM.Text = "M";
             // 
-            // txtMdivision1
+            // txtMdivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(111, 81);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 2;
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(111, 81);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 2;
             // 
-            // sciDeliveryRange
+            // dateSciDelivery
             // 
-            this.sciDeliveryRange.IsRequired = false;
-            this.sciDeliveryRange.Location = new System.Drawing.Point(111, 12);
-            this.sciDeliveryRange.Name = "sciDeliveryRange";
-            this.sciDeliveryRange.Size = new System.Drawing.Size(280, 23);
-            this.sciDeliveryRange.TabIndex = 0;
+            this.dateSciDelivery.IsRequired = false;
+            this.dateSciDelivery.Location = new System.Drawing.Point(111, 12);
+            this.dateSciDelivery.Name = "dateSciDelivery";
+            this.dateSciDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSciDelivery.TabIndex = 0;
             // 
-            // label2
+            // labelSciDelivery
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 12);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.RectStyle.BorderWidth = 1F;
-            this.label2.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label2.RectStyle.ExtBorderWidth = 1F;
-            this.label2.Size = new System.Drawing.Size(98, 23);
-            this.label2.TabIndex = 136;
-            this.label2.Text = "Sci Delivery";
-            this.label2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSciDelivery.Lines = 0;
+            this.labelSciDelivery.Location = new System.Drawing.Point(9, 12);
+            this.labelSciDelivery.Name = "labelSciDelivery";
+            this.labelSciDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSciDelivery.RectStyle.BorderWidth = 1F;
+            this.labelSciDelivery.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelSciDelivery.RectStyle.ExtBorderWidth = 1F;
+            this.labelSciDelivery.Size = new System.Drawing.Size(98, 23);
+            this.labelSciDelivery.TabIndex = 136;
+            this.labelSciDelivery.Text = "Sci Delivery";
+            this.labelSciDelivery.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSciDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label1
+            // labelSewingDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 48);
-            this.label1.Name = "label1";
-            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.RectStyle.BorderWidth = 1F;
-            this.label1.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label1.RectStyle.ExtBorderWidth = 1F;
-            this.label1.Size = new System.Drawing.Size(98, 23);
-            this.label1.TabIndex = 137;
-            this.label1.Text = "Sewing Date";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSewingDate.Lines = 0;
+            this.labelSewingDate.Location = new System.Drawing.Point(9, 48);
+            this.labelSewingDate.Name = "labelSewingDate";
+            this.labelSewingDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.RectStyle.BorderWidth = 1F;
+            this.labelSewingDate.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelSewingDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelSewingDate.Size = new System.Drawing.Size(98, 23);
+            this.labelSewingDate.TabIndex = 137;
+            this.labelSewingDate.Text = "Sewing Date";
+            this.labelSewingDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R16
             // 
             this.ClientSize = new System.Drawing.Size(522, 230);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.sciDeliveryRange);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.sewingDateRange);
+            this.Controls.Add(this.labelSewingDate);
+            this.Controls.Add(this.labelSciDelivery);
+            this.Controls.Add(this.dateSciDelivery);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.dateSewingDate);
             this.DefaultControl = "sciDeliveryRange";
             this.DefaultControlForEdit = "sciDeliveryRange";
             this.IsSupportToPrint = false;
             this.Name = "R16";
             this.Text = "R16. Critical Activity Report";
-            this.Controls.SetChildIndex(this.sewingDateRange, 0);
+            this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label14, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.txtMdivision1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.sciDeliveryRange, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.dateSciDelivery, 0);
+            this.Controls.SetChildIndex(this.labelSciDelivery, 0);
+            this.Controls.SetChildIndex(this.labelSewingDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -169,13 +169,13 @@
 
         #endregion
 
-        private Win.UI.DateRange sewingDateRange;
-        private Win.UI.Label label14;
-        private Class.txtfactory txtfactory1;
-        private Win.UI.Label label4;
-        private Class.txtMdivision txtMdivision1;
-        private Win.UI.DateRange sciDeliveryRange;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
+        private Win.UI.DateRange dateSewingDate;
+        private Win.UI.Label labelFactory;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label labelM;
+        private Class.txtMdivision txtMdivision;
+        private Win.UI.DateRange dateSciDelivery;
+        private Win.UI.Label labelSciDelivery;
+        private Win.UI.Label labelSewingDate;
     }
 }

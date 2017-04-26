@@ -35,7 +35,7 @@ namespace Sci.Production.Planning
                 MyUtility.Msg.WarningBox("No Quot. data can't be copied, Please add quot. detail first!");
                 return true;
             }
-            DataRow dr = grid1.GetDataRow<DataRow>(grid1.GetSelectedRowIndex());
+            DataRow dr = gridArtworkType.GetDataRow<DataRow>(gridArtworkType.GetSelectedRowIndex());
             var frm = new Sci.Production.Planning.B03_Copy(dr);
             frm.ShowDialog(this);
             this.RenewData();
@@ -58,7 +58,7 @@ namespace Sci.Production.Planning
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
-                detailgridbs.Filter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+                detailgridbs.Filter = "ukey=" + gridArtworkType.GetDataRow(gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
                 return false;
             }
             return base.ClickSaveBefore();
@@ -75,10 +75,10 @@ namespace Sci.Production.Planning
         {
             detailgridbs.Filter = "";
             base.OnDetailGridInsert(index);
-            if (grid1.GetSelectedRowIndex() >= 0)
+            if (gridArtworkType.GetSelectedRowIndex() >= 0)
             {
-                CurrentDetailData["ukey"] = grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
-                detailgridbs.Filter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+                CurrentDetailData["ukey"] = gridArtworkType.GetDataRow(gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
+                detailgridbs.Filter = "ukey=" + gridArtworkType.GetDataRow(gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
             }
         }
 
@@ -166,7 +166,7 @@ namespace Sci.Production.Planning
             col_PriceApv.DisplayMember = "Value";
 
             #region 欄位設定
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridArtworkType)
             //.Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //0
             .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(16), iseditingreadonly: true)  //0
             .Text("article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)  //1
@@ -183,7 +183,7 @@ namespace Sci.Production.Planning
 
             #endregion 欄位設定
 
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridArtworkType.DataSource = listControlBindingSource1;
         }
 
         //寫明細撈出的sql command
@@ -206,7 +206,7 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
             base.OnDetailEntered();
             listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = style_artwork;
-            this.grid1.AutoResizeColumns();
+            this.gridArtworkType.AutoResizeColumns();
             //this.detailgrid.AutoResizeColumns();
         }
 
@@ -217,9 +217,9 @@ LEFT JOIN ArtworkType B WITH (NOLOCK) ON t.ArtworkTypeID=B.ID where styleukey={0
 
         private void filter_detailgrid()
         {
-            if (grid1.GetSelectedRowIndex() >= 0)
+            if (gridArtworkType.GetSelectedRowIndex() >= 0)
             {
-                detailgridbs.Filter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
+                detailgridbs.Filter = "ukey=" + gridArtworkType.GetDataRow(gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
                 //((DataTable)detailgridbs.DataSource).DefaultView.RowFilter = "ukey=" + grid1.GetDataRow(grid1.GetSelectedRowIndex())["ukey"].ToString();
             }
         }

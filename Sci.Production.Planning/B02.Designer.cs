@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.labelBeginStitch = new Sci.Win.UI.Label();
+            this.labelEndStitch = new Sci.Win.UI.Label();
+            this.labelBatchNumber = new Sci.Win.UI.Label();
+            this.numBeginStitch = new Sci.Win.UI.NumericBox();
+            this.numEndStitch = new Sci.Win.UI.NumericBox();
+            this.numBatchNumber = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,12 +48,12 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.numericBox3);
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.numBatchNumber);
+            this.detailcont.Controls.Add(this.numEndStitch);
+            this.detailcont.Controls.Add(this.numBeginStitch);
+            this.detailcont.Controls.Add(this.labelBatchNumber);
+            this.detailcont.Controls.Add(this.labelEndStitch);
+            this.detailcont.Controls.Add(this.labelBeginStitch);
             this.detailcont.Size = new System.Drawing.Size(834, 357);
             // 
             // detailbtm
@@ -62,7 +62,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(676, 395);
+            this.browse.Size = new System.Drawing.Size(834, 395);
             // 
             // tabs
             // 
@@ -82,124 +82,124 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelBeginStitch
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(23, 20);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(105, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Begin Stitch";
+            this.labelBeginStitch.Lines = 0;
+            this.labelBeginStitch.Location = new System.Drawing.Point(23, 20);
+            this.labelBeginStitch.Name = "labelBeginStitch";
+            this.labelBeginStitch.Size = new System.Drawing.Size(105, 23);
+            this.labelBeginStitch.TabIndex = 2;
+            this.labelBeginStitch.Text = "Begin Stitch";
             // 
-            // label4
+            // labelEndStitch
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(23, 53);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(105, 23);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "End Stitch";
+            this.labelEndStitch.Lines = 0;
+            this.labelEndStitch.Location = new System.Drawing.Point(23, 53);
+            this.labelEndStitch.Name = "labelEndStitch";
+            this.labelEndStitch.Size = new System.Drawing.Size(105, 23);
+            this.labelEndStitch.TabIndex = 3;
+            this.labelEndStitch.Text = "End Stitch";
             // 
-            // label5
+            // labelBatchNumber
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(23, 86);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(105, 23);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Batch Number";
+            this.labelBatchNumber.Lines = 0;
+            this.labelBatchNumber.Location = new System.Drawing.Point(23, 86);
+            this.labelBatchNumber.Name = "labelBatchNumber";
+            this.labelBatchNumber.Size = new System.Drawing.Size(105, 23);
+            this.labelBatchNumber.TabIndex = 4;
+            this.labelBatchNumber.Text = "Batch Number";
             // 
-            // numericBox1
+            // numBeginStitch
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BeginStitch", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(131, 20);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numBeginStitch.BackColor = System.Drawing.Color.White;
+            this.numBeginStitch.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BeginStitch", true));
+            this.numBeginStitch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBeginStitch.Location = new System.Drawing.Point(131, 20);
+            this.numBeginStitch.Maximum = new decimal(new int[] {
             9999999,
             0,
             0,
             0});
-            this.numericBox1.MaxLength = 7;
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numBeginStitch.MaxLength = 7;
+            this.numBeginStitch.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numBeginStitch.Name = "numBeginStitch";
+            this.numBeginStitch.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 0;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numBeginStitch.Size = new System.Drawing.Size(100, 23);
+            this.numBeginStitch.TabIndex = 0;
+            this.numBeginStitch.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox1_Validating);
+            this.numBeginStitch.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox1_Validating);
             // 
-            // numericBox2
+            // numEndStitch
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EndStitch", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(131, 53);
-            this.numericBox2.Maximum = new decimal(new int[] {
+            this.numEndStitch.BackColor = System.Drawing.Color.White;
+            this.numEndStitch.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EndStitch", true));
+            this.numEndStitch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numEndStitch.Location = new System.Drawing.Point(131, 53);
+            this.numEndStitch.Maximum = new decimal(new int[] {
             9999999,
             0,
             0,
             0});
-            this.numericBox2.MaxLength = 7;
-            this.numericBox2.Minimum = new decimal(new int[] {
+            this.numEndStitch.MaxLength = 7;
+            this.numEndStitch.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numEndStitch.Name = "numEndStitch";
+            this.numEndStitch.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 1;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numEndStitch.Size = new System.Drawing.Size(100, 23);
+            this.numEndStitch.TabIndex = 1;
+            this.numEndStitch.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox2_Validating);
+            this.numEndStitch.Validating += new System.ComponentModel.CancelEventHandler(this.numericBox2_Validating);
             // 
-            // numericBox3
+            // numBatchNumber
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.White;
-            this.numericBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BatchNo", true));
-            this.numericBox3.DecimalPlaces = 1;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox3.Location = new System.Drawing.Point(131, 86);
-            this.numericBox3.Maximum = new decimal(new int[] {
+            this.numBatchNumber.BackColor = System.Drawing.Color.White;
+            this.numBatchNumber.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BatchNo", true));
+            this.numBatchNumber.DecimalPlaces = 1;
+            this.numBatchNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBatchNumber.Location = new System.Drawing.Point(131, 86);
+            this.numBatchNumber.Maximum = new decimal(new int[] {
             999,
             0,
             0,
             65536});
-            this.numericBox3.MaxLength = 4;
-            this.numericBox3.Minimum = new decimal(new int[] {
+            this.numBatchNumber.MaxLength = 4;
+            this.numBatchNumber.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             65536});
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
+            this.numBatchNumber.Name = "numBatchNumber";
+            this.numBatchNumber.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox3.Size = new System.Drawing.Size(100, 23);
-            this.numericBox3.TabIndex = 2;
-            this.numericBox3.Value = new decimal(new int[] {
+            this.numBatchNumber.Size = new System.Drawing.Size(100, 23);
+            this.numBatchNumber.TabIndex = 2;
+            this.numBatchNumber.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -231,11 +231,11 @@
 
         #endregion
 
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label labelBatchNumber;
+        private Win.UI.Label labelEndStitch;
+        private Win.UI.Label labelBeginStitch;
+        private Win.UI.NumericBox numBatchNumber;
+        private Win.UI.NumericBox numEndStitch;
+        private Win.UI.NumericBox numBeginStitch;
     }
 }

@@ -41,14 +41,14 @@ namespace Sci.Production.Planning
             EditMode = true;
             print.Visible = false;
 
-            rdAGC.CheckedChanged += rdRportType_CheckedChanged;
-            rdFactory.CheckedChanged += rdRportType_CheckedChanged;
-            rdMDP.CheckedChanged += rdRportType_CheckedChanged;
+            radioAGC.CheckedChanged += rdRportType_CheckedChanged;
+            radioFactory.CheckedChanged += rdRportType_CheckedChanged;
+            radioMDP.CheckedChanged += rdRportType_CheckedChanged;
         }
 
         void rdRportType_CheckedChanged(object sender, EventArgs e)
         {
-            panelByType.Visible = rdMDP.Checked;
+            panelByType.Visible = radioMDP.Checked;
         }
 
         protected override void OnFormLoaded()
@@ -71,8 +71,8 @@ namespace Sci.Production.Planning
 
         void setGrid()
         {
-            this.grid1.IsEditingReadOnly = true;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridAdidasKPIReport.IsEditingReadOnly = true;
+            Helper.Controls.Grid.Generator(this.gridAdidasKPIReport)
               .Text("KPIItem", header: "KPIItem", width: Widths.AnsiChars(5), iseditingreadonly: true)
               .Text("XlsColumn", header: "XlsColumn", width: Widths.AnsiChars(5), iseditingreadonly: false)
               .Numeric("Target", header: "Target", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: false)
@@ -96,10 +96,10 @@ namespace Sci.Production.Planning
 
             decYear = numYear.Value;
             decMonth = numMonth.Value;
-            intReportType = rdAGC.Checked ? 1 : rdFactory.Checked ? 2 : 3;
-            intByType = rdByAGC.Checked ? 1 : rdByFactory.Checked ? 2 : 3;
-            intSourceType = rdAdidas.Checked ? 1 : rdReebok.Checked ? 2 : 3;
-            boDetail = chkDetail.Checked;
+            intReportType = radioAGC.Checked ? 1 : radioFactory.Checked ? 2 : 3;
+            intByType = radioByAGC.Checked ? 1 : radioByFactory.Checked ? 2 : 3;
+            intSourceType = radioAdidas.Checked ? 1 : radioReebok.Checked ? 2 : 3;
+            boDetail = checkDetail.Checked;
 
             return true;
         }
@@ -165,8 +165,8 @@ namespace Sci.Production.Planning
         {
             string strYear = decYear.ToString("0000");
             string strMonth = decMonth.ToString("00");
-            string strReportType = rdAGC.Checked ? rdAGC.Text : rdFactory.Checked ? rdFactory.Text : rdMDP.Text;
-            string strSourceType = rdAdidas.Checked ? rdAdidas.Text : rdReebok.Checked ? rdReebok.Text : rdAll.Text;
+            string strReportType = radioAGC.Checked ? radioAGC.Text : radioFactory.Checked ? radioFactory.Text : radioMDP.Text;
+            string strSourceType = radioAdidas.Checked ? radioAdidas.Text : radioReebok.Checked ? radioReebok.Text : radioAll.Text;
 
             if (intReportType == 1 || intReportType == 2)
             {
@@ -364,12 +364,12 @@ namespace Sci.Production.Planning
             id_to_AdidasKPITarget = dt_source.ToDictionaryList((x) => x.Val<string>("Description"));
 
             bindingSource1.DataSource = dt_source;
-            grid1.DataSource = bindingSource1;
+            gridAdidasKPIReport.DataSource = bindingSource1;
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            grid1.IsEditingReadOnly = false;
+            gridAdidasKPIReport.IsEditingReadOnly = false;
             btnUndo.Visible = true;
             btnSave.Visible = true;
             btnEdit.Visible = false;
@@ -381,7 +381,7 @@ namespace Sci.Production.Planning
             DualResult result;
             ITableSchema dt_schema;
             bool rtn;
-            grid1.EndEdit();
+            gridAdidasKPIReport.EndEdit();
             bindingSource1.EndEdit();
             result = DBProxy.Current.GetTableSchema(null, "AdidasKPITarget", out dt_schema);
             foreach (DataRow dr in dt_source.Rows)
@@ -395,7 +395,7 @@ namespace Sci.Production.Planning
             ShowInfo(string.Format("Update Completed!", dt_source.Rows.Count));
             RefreshData();
 
-            grid1.IsEditingReadOnly = true;
+            gridAdidasKPIReport.IsEditingReadOnly = true;
             btnUndo.Visible = false;
             btnSave.Visible = false;
             btnEdit.Visible = true;
@@ -404,12 +404,12 @@ namespace Sci.Production.Planning
 
         private void btnUndo_Click(object sender, EventArgs e)
         {
-            grid1.IsEditingReadOnly = true;
+            gridAdidasKPIReport.IsEditingReadOnly = true;
             btnUndo.Visible = false;
             btnSave.Visible = false;
             btnEdit.Visible = true;
 
-            grid1.CancelEdit();
+            gridAdidasKPIReport.CancelEdit();
             RefreshData();
         }
        

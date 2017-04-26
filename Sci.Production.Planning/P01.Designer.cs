@@ -28,37 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label10 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.label14 = new Sci.Win.UI.Label();
-            this.label15 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
-            this.displayBox2 = new Sci.Win.UI.DisplayBox();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
-            this.displayBox4 = new Sci.Win.UI.DisplayBox();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.dateBox2 = new Sci.Win.UI.DateBox();
-            this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.dateBox4 = new Sci.Win.UI.DateBox();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.FirstCut_DateBox = new Sci.Win.UI.DateBox();
-            this.numericBox_cutqty = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox_NeedPerDay = new Sci.Win.UI.NumericBox();
-            this.displayBox5 = new Sci.Win.UI.DisplayBox();
-            this.button_batchApprove = new Sci.Win.UI.Button();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelStyleNo = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelDestination = new Sci.Win.UI.Label();
+            this.labelSewingInlineDate = new Sci.Win.UI.Label();
+            this.labelSewingOfflineDate = new Sci.Win.UI.Label();
+            this.labelSCIDeliveryDate = new Sci.Win.UI.Label();
+            this.labelBuyerDeliveryDate = new Sci.Win.UI.Label();
+            this.labelPPICMR = new Sci.Win.UI.Label();
+            this.labelSewingLine = new Sci.Win.UI.Label();
+            this.labelNeededPerDay = new Sci.Win.UI.Label();
+            this.labelFirstCutDate = new Sci.Win.UI.Label();
+            this.labelCutQty = new Sci.Win.UI.Label();
+            this.labelOrderQty = new Sci.Win.UI.Label();
+            this.displaySPNo = new Sci.Win.UI.DisplayBox();
+            this.displayStyleNo = new Sci.Win.UI.DisplayBox();
+            this.displaySeason = new Sci.Win.UI.DisplayBox();
+            this.displayBrand = new Sci.Win.UI.DisplayBox();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.dateSewingInlineDate = new Sci.Win.UI.DateBox();
+            this.dateSewingOfflineDate = new Sci.Win.UI.DateBox();
+            this.dateSCIDeliveryDate = new Sci.Win.UI.DateBox();
+            this.dateBuyerDeliveryDate = new Sci.Win.UI.DateBox();
+            this.txtuserPPICMR = new Sci.Production.Class.txtuser();
+            this.dateFirstCutDate = new Sci.Win.UI.DateBox();
+            this.numCutQty = new Sci.Win.UI.NumericBox();
+            this.numOrderQty = new Sci.Win.UI.NumericBox();
+            this.numNeedPerDay = new Sci.Win.UI.NumericBox();
+            this.displaySewingLine = new Sci.Win.UI.DisplayBox();
+            this.btnBatchApprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,68 +75,68 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.displayBox5);
-            this.masterpanel.Controls.Add(this.numericBox_NeedPerDay);
-            this.masterpanel.Controls.Add(this.numericBox2);
-            this.masterpanel.Controls.Add(this.numericBox_cutqty);
-            this.masterpanel.Controls.Add(this.txtuser1);
-            this.masterpanel.Controls.Add(this.txtcountry1);
-            this.masterpanel.Controls.Add(this.displayBox4);
-            this.masterpanel.Controls.Add(this.displayBox3);
-            this.masterpanel.Controls.Add(this.displayBox2);
-            this.masterpanel.Controls.Add(this.displayBox1);
-            this.masterpanel.Controls.Add(this.label15);
-            this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.label13);
-            this.masterpanel.Controls.Add(this.label12);
-            this.masterpanel.Controls.Add(this.label11);
-            this.masterpanel.Controls.Add(this.label10);
-            this.masterpanel.Controls.Add(this.label9);
-            this.masterpanel.Controls.Add(this.label8);
-            this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.label4);
-            this.masterpanel.Controls.Add(this.label3);
-            this.masterpanel.Controls.Add(this.label2);
-            this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.FirstCut_DateBox);
-            this.masterpanel.Controls.Add(this.dateBox4);
-            this.masterpanel.Controls.Add(this.dateBox3);
-            this.masterpanel.Controls.Add(this.dateBox2);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.displaySewingLine);
+            this.masterpanel.Controls.Add(this.numNeedPerDay);
+            this.masterpanel.Controls.Add(this.numOrderQty);
+            this.masterpanel.Controls.Add(this.numCutQty);
+            this.masterpanel.Controls.Add(this.txtuserPPICMR);
+            this.masterpanel.Controls.Add(this.txtcountryDestination);
+            this.masterpanel.Controls.Add(this.displayBrand);
+            this.masterpanel.Controls.Add(this.displaySeason);
+            this.masterpanel.Controls.Add(this.displayStyleNo);
+            this.masterpanel.Controls.Add(this.displaySPNo);
+            this.masterpanel.Controls.Add(this.labelOrderQty);
+            this.masterpanel.Controls.Add(this.labelCutQty);
+            this.masterpanel.Controls.Add(this.labelFirstCutDate);
+            this.masterpanel.Controls.Add(this.labelNeededPerDay);
+            this.masterpanel.Controls.Add(this.labelSewingLine);
+            this.masterpanel.Controls.Add(this.labelPPICMR);
+            this.masterpanel.Controls.Add(this.labelBuyerDeliveryDate);
+            this.masterpanel.Controls.Add(this.labelSCIDeliveryDate);
+            this.masterpanel.Controls.Add(this.labelSewingOfflineDate);
+            this.masterpanel.Controls.Add(this.labelSewingInlineDate);
+            this.masterpanel.Controls.Add(this.labelDestination);
+            this.masterpanel.Controls.Add(this.labelBrand);
+            this.masterpanel.Controls.Add(this.labelSeason);
+            this.masterpanel.Controls.Add(this.labelStyleNo);
+            this.masterpanel.Controls.Add(this.labelSPNo);
+            this.masterpanel.Controls.Add(this.dateFirstCutDate);
+            this.masterpanel.Controls.Add(this.dateBuyerDeliveryDate);
+            this.masterpanel.Controls.Add(this.dateSCIDeliveryDate);
+            this.masterpanel.Controls.Add(this.dateSewingOfflineDate);
+            this.masterpanel.Controls.Add(this.dateSewingInlineDate);
             this.masterpanel.Size = new System.Drawing.Size(1000, 191);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.FirstCut_DateBox, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label11, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label12, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label13, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label14, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label15, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox4, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtcountry1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox_cutqty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numericBox_NeedPerDay, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSewingInlineDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSewingOfflineDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateSCIDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateFirstCutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelStyleNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSewingInlineDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSewingOfflineDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSCIDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelBuyerDeliveryDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelPPICMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSewingLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNeededPerDay, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelFirstCutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelOrderQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySPNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayStyleNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtcountryDestination, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserPPICMR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numCutQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numNeedPerDay, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displaySewingLine, 0);
             // 
             // detailpanel
             // 
@@ -158,15 +158,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1000, 667);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
             // 
             // detail
             // 
@@ -203,342 +203,342 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(428, 13);
             // 
-            // label1
+            // labelSPNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(14, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(14, 12);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(110, 23);
+            this.labelSPNo.TabIndex = 1;
+            this.labelSPNo.Text = "SP#";
             // 
-            // label2
+            // labelStyleNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(14, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Style#";
+            this.labelStyleNo.Lines = 0;
+            this.labelStyleNo.Location = new System.Drawing.Point(14, 44);
+            this.labelStyleNo.Name = "labelStyleNo";
+            this.labelStyleNo.Size = new System.Drawing.Size(110, 23);
+            this.labelStyleNo.TabIndex = 2;
+            this.labelStyleNo.Text = "Style#";
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(14, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(14, 76);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(110, 23);
+            this.labelSeason.TabIndex = 3;
+            this.labelSeason.Text = "Season";
             // 
-            // label4
+            // labelBrand
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(14, 110);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(110, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(14, 110);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(110, 23);
+            this.labelBrand.TabIndex = 4;
+            this.labelBrand.Text = "Brand";
             // 
-            // label5
+            // labelDestination
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(14, 144);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(110, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Destination";
+            this.labelDestination.Lines = 0;
+            this.labelDestination.Location = new System.Drawing.Point(14, 144);
+            this.labelDestination.Name = "labelDestination";
+            this.labelDestination.Size = new System.Drawing.Size(110, 23);
+            this.labelDestination.TabIndex = 5;
+            this.labelDestination.Text = "Destination";
             // 
-            // label6
+            // labelSewingInlineDate
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(318, 12);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(130, 23);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Sewing Inline Date";
+            this.labelSewingInlineDate.Lines = 0;
+            this.labelSewingInlineDate.Location = new System.Drawing.Point(318, 12);
+            this.labelSewingInlineDate.Name = "labelSewingInlineDate";
+            this.labelSewingInlineDate.Size = new System.Drawing.Size(130, 23);
+            this.labelSewingInlineDate.TabIndex = 6;
+            this.labelSewingInlineDate.Text = "Sewing Inline Date";
             // 
-            // label7
+            // labelSewingOfflineDate
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(318, 44);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(130, 23);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Sewing Offline Date";
+            this.labelSewingOfflineDate.Lines = 0;
+            this.labelSewingOfflineDate.Location = new System.Drawing.Point(318, 44);
+            this.labelSewingOfflineDate.Name = "labelSewingOfflineDate";
+            this.labelSewingOfflineDate.Size = new System.Drawing.Size(130, 23);
+            this.labelSewingOfflineDate.TabIndex = 7;
+            this.labelSewingOfflineDate.Text = "Sewing Offline Date";
             // 
-            // label8
+            // labelSCIDeliveryDate
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(318, 76);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(130, 23);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "SCI Delivery Date";
+            this.labelSCIDeliveryDate.Lines = 0;
+            this.labelSCIDeliveryDate.Location = new System.Drawing.Point(318, 76);
+            this.labelSCIDeliveryDate.Name = "labelSCIDeliveryDate";
+            this.labelSCIDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.labelSCIDeliveryDate.TabIndex = 8;
+            this.labelSCIDeliveryDate.Text = "SCI Delivery Date";
             // 
-            // label9
+            // labelBuyerDeliveryDate
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(318, 110);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(130, 23);
-            this.label9.TabIndex = 9;
-            this.label9.Text = "Buyer Delivery Date";
+            this.labelBuyerDeliveryDate.Lines = 0;
+            this.labelBuyerDeliveryDate.Location = new System.Drawing.Point(318, 110);
+            this.labelBuyerDeliveryDate.Name = "labelBuyerDeliveryDate";
+            this.labelBuyerDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.labelBuyerDeliveryDate.TabIndex = 9;
+            this.labelBuyerDeliveryDate.Text = "Buyer Delivery Date";
             // 
-            // label10
+            // labelPPICMR
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(318, 144);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(68, 23);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "PPIC MR";
+            this.labelPPICMR.Lines = 0;
+            this.labelPPICMR.Location = new System.Drawing.Point(318, 144);
+            this.labelPPICMR.Name = "labelPPICMR";
+            this.labelPPICMR.Size = new System.Drawing.Size(68, 23);
+            this.labelPPICMR.TabIndex = 10;
+            this.labelPPICMR.Text = "PPIC MR";
             // 
-            // label11
+            // labelSewingLine
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(640, 12);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(130, 23);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "Sewing Line#";
+            this.labelSewingLine.Lines = 0;
+            this.labelSewingLine.Location = new System.Drawing.Point(640, 12);
+            this.labelSewingLine.Name = "labelSewingLine";
+            this.labelSewingLine.Size = new System.Drawing.Size(130, 23);
+            this.labelSewingLine.TabIndex = 11;
+            this.labelSewingLine.Text = "Sewing Line#";
             // 
-            // label12
+            // labelNeededPerDay
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(640, 44);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(130, 23);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Needed Per Day";
+            this.labelNeededPerDay.Lines = 0;
+            this.labelNeededPerDay.Location = new System.Drawing.Point(640, 44);
+            this.labelNeededPerDay.Name = "labelNeededPerDay";
+            this.labelNeededPerDay.Size = new System.Drawing.Size(130, 23);
+            this.labelNeededPerDay.TabIndex = 12;
+            this.labelNeededPerDay.Text = "Needed Per Day";
             // 
-            // label13
+            // labelFirstCutDate
             // 
-            this.label13.Lines = 0;
-            this.label13.Location = new System.Drawing.Point(640, 76);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(130, 23);
-            this.label13.TabIndex = 13;
-            this.label13.Text = "First Cut Date";
+            this.labelFirstCutDate.Lines = 0;
+            this.labelFirstCutDate.Location = new System.Drawing.Point(640, 76);
+            this.labelFirstCutDate.Name = "labelFirstCutDate";
+            this.labelFirstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.labelFirstCutDate.TabIndex = 13;
+            this.labelFirstCutDate.Text = "First Cut Date";
             // 
-            // label14
+            // labelCutQty
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(640, 110);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(130, 23);
-            this.label14.TabIndex = 14;
-            this.label14.Text = "Cut Qty";
+            this.labelCutQty.Lines = 0;
+            this.labelCutQty.Location = new System.Drawing.Point(640, 110);
+            this.labelCutQty.Name = "labelCutQty";
+            this.labelCutQty.Size = new System.Drawing.Size(130, 23);
+            this.labelCutQty.TabIndex = 14;
+            this.labelCutQty.Text = "Cut Qty";
             // 
-            // label15
+            // labelOrderQty
             // 
-            this.label15.Lines = 0;
-            this.label15.Location = new System.Drawing.Point(640, 144);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(130, 23);
-            this.label15.TabIndex = 15;
-            this.label15.Text = "Order Qty";
+            this.labelOrderQty.Lines = 0;
+            this.labelOrderQty.Location = new System.Drawing.Point(640, 144);
+            this.labelOrderQty.Name = "labelOrderQty";
+            this.labelOrderQty.Size = new System.Drawing.Size(130, 23);
+            this.labelOrderQty.TabIndex = 15;
+            this.labelOrderQty.Text = "Order Qty";
             // 
-            // displayBox1
+            // displaySPNo
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(127, 12);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(137, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displaySPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySPNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
+            this.displaySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySPNo.Location = new System.Drawing.Point(127, 12);
+            this.displaySPNo.Name = "displaySPNo";
+            this.displaySPNo.Size = new System.Drawing.Size(137, 23);
+            this.displaySPNo.TabIndex = 0;
             // 
-            // displayBox2
+            // displayStyleNo
             // 
-            this.displayBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "styleid", true));
-            this.displayBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox2.Location = new System.Drawing.Point(127, 44);
-            this.displayBox2.Name = "displayBox2";
-            this.displayBox2.Size = new System.Drawing.Size(137, 23);
-            this.displayBox2.TabIndex = 1;
+            this.displayStyleNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "styleid", true));
+            this.displayStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStyleNo.Location = new System.Drawing.Point(127, 44);
+            this.displayStyleNo.Name = "displayStyleNo";
+            this.displayStyleNo.Size = new System.Drawing.Size(137, 23);
+            this.displayStyleNo.TabIndex = 1;
             // 
-            // displayBox3
+            // displaySeason
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(127, 76);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(137, 23);
-            this.displayBox3.TabIndex = 2;
+            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "seasonid", true));
+            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySeason.Location = new System.Drawing.Point(127, 76);
+            this.displaySeason.Name = "displaySeason";
+            this.displaySeason.Size = new System.Drawing.Size(137, 23);
+            this.displaySeason.TabIndex = 2;
             // 
-            // displayBox4
+            // displayBrand
             // 
-            this.displayBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
-            this.displayBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox4.Location = new System.Drawing.Point(127, 110);
-            this.displayBox4.Name = "displayBox4";
-            this.displayBox4.Size = new System.Drawing.Size(137, 23);
-            this.displayBox4.TabIndex = 3;
+            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "brandid", true));
+            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBrand.Location = new System.Drawing.Point(127, 110);
+            this.displayBrand.Name = "displayBrand";
+            this.displayBrand.Size = new System.Drawing.Size(137, 23);
+            this.displayBrand.TabIndex = 3;
             // 
-            // txtcountry1
+            // txtcountryDestination
             // 
-            this.txtcountry1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "dest", true));
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Enabled = false;
-            this.txtcountry1.Location = new System.Drawing.Point(127, 144);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(178, 22);
-            this.txtcountry1.TabIndex = 4;
-            this.txtcountry1.TextBox1Binding = "";
+            this.txtcountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "dest", true));
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Enabled = false;
+            this.txtcountryDestination.Location = new System.Drawing.Point(127, 144);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(178, 22);
+            this.txtcountryDestination.TabIndex = 4;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
-            // dateBox1
+            // dateSewingInlineDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewinline", true));
-            this.dateBox1.IsSupportEditMode = false;
-            this.dateBox1.Location = new System.Drawing.Point(451, 12);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.ReadOnly = true;
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 5;
+            this.dateSewingInlineDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewinline", true));
+            this.dateSewingInlineDate.IsSupportEditMode = false;
+            this.dateSewingInlineDate.Location = new System.Drawing.Point(451, 12);
+            this.dateSewingInlineDate.Name = "dateSewingInlineDate";
+            this.dateSewingInlineDate.ReadOnly = true;
+            this.dateSewingInlineDate.Size = new System.Drawing.Size(130, 23);
+            this.dateSewingInlineDate.TabIndex = 5;
             // 
-            // dateBox2
+            // dateSewingOfflineDate
             // 
-            this.dateBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewoffline", true));
-            this.dateBox2.IsSupportEditMode = false;
-            this.dateBox2.Location = new System.Drawing.Point(451, 44);
-            this.dateBox2.Name = "dateBox2";
-            this.dateBox2.ReadOnly = true;
-            this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 6;
+            this.dateSewingOfflineDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewoffline", true));
+            this.dateSewingOfflineDate.IsSupportEditMode = false;
+            this.dateSewingOfflineDate.Location = new System.Drawing.Point(451, 44);
+            this.dateSewingOfflineDate.Name = "dateSewingOfflineDate";
+            this.dateSewingOfflineDate.ReadOnly = true;
+            this.dateSewingOfflineDate.Size = new System.Drawing.Size(130, 23);
+            this.dateSewingOfflineDate.TabIndex = 6;
             // 
-            // dateBox3
+            // dateSCIDeliveryDate
             // 
-            this.dateBox3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "scidelivery", true));
-            this.dateBox3.IsSupportEditMode = false;
-            this.dateBox3.Location = new System.Drawing.Point(451, 76);
-            this.dateBox3.Name = "dateBox3";
-            this.dateBox3.ReadOnly = true;
-            this.dateBox3.Size = new System.Drawing.Size(130, 23);
-            this.dateBox3.TabIndex = 7;
+            this.dateSCIDeliveryDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "scidelivery", true));
+            this.dateSCIDeliveryDate.IsSupportEditMode = false;
+            this.dateSCIDeliveryDate.Location = new System.Drawing.Point(451, 76);
+            this.dateSCIDeliveryDate.Name = "dateSCIDeliveryDate";
+            this.dateSCIDeliveryDate.ReadOnly = true;
+            this.dateSCIDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.dateSCIDeliveryDate.TabIndex = 7;
             // 
-            // dateBox4
+            // dateBuyerDeliveryDate
             // 
-            this.dateBox4.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "buyerdelivery", true));
-            this.dateBox4.IsSupportEditMode = false;
-            this.dateBox4.Location = new System.Drawing.Point(451, 110);
-            this.dateBox4.Name = "dateBox4";
-            this.dateBox4.ReadOnly = true;
-            this.dateBox4.Size = new System.Drawing.Size(130, 23);
-            this.dateBox4.TabIndex = 8;
+            this.dateBuyerDeliveryDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "buyerdelivery", true));
+            this.dateBuyerDeliveryDate.IsSupportEditMode = false;
+            this.dateBuyerDeliveryDate.Location = new System.Drawing.Point(451, 110);
+            this.dateBuyerDeliveryDate.Name = "dateBuyerDeliveryDate";
+            this.dateBuyerDeliveryDate.ReadOnly = true;
+            this.dateBuyerDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.dateBuyerDeliveryDate.TabIndex = 8;
             // 
-            // txtuser1
+            // txtuserPPICMR
             // 
-            this.txtuser1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "mchandle", true));
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Enabled = false;
-            this.txtuser1.Location = new System.Drawing.Point(389, 143);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(248, 23);
-            this.txtuser1.TabIndex = 9;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtuserPPICMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "mchandle", true));
+            this.txtuserPPICMR.DisplayBox1Binding = "";
+            this.txtuserPPICMR.Enabled = false;
+            this.txtuserPPICMR.Location = new System.Drawing.Point(389, 143);
+            this.txtuserPPICMR.Name = "txtuserPPICMR";
+            this.txtuserPPICMR.Size = new System.Drawing.Size(248, 23);
+            this.txtuserPPICMR.TabIndex = 9;
+            this.txtuserPPICMR.TextBox1Binding = "";
             // 
-            // FirstCut_DateBox
+            // dateFirstCutDate
             // 
-            this.FirstCut_DateBox.IsSupportEditMode = false;
-            this.FirstCut_DateBox.Location = new System.Drawing.Point(773, 76);
-            this.FirstCut_DateBox.Name = "FirstCut_DateBox";
-            this.FirstCut_DateBox.ReadOnly = true;
-            this.FirstCut_DateBox.Size = new System.Drawing.Size(130, 23);
-            this.FirstCut_DateBox.TabIndex = 12;
+            this.dateFirstCutDate.IsSupportEditMode = false;
+            this.dateFirstCutDate.Location = new System.Drawing.Point(773, 76);
+            this.dateFirstCutDate.Name = "dateFirstCutDate";
+            this.dateFirstCutDate.ReadOnly = true;
+            this.dateFirstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateFirstCutDate.TabIndex = 12;
             // 
-            // numericBox_cutqty
+            // numCutQty
             // 
-            this.numericBox_cutqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox_cutqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox_cutqty.IsSupportEditMode = false;
-            this.numericBox_cutqty.Location = new System.Drawing.Point(773, 110);
-            this.numericBox_cutqty.Name = "numericBox_cutqty";
-            this.numericBox_cutqty.NullValue = new decimal(new int[] {
+            this.numCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCutQty.IsSupportEditMode = false;
+            this.numCutQty.Location = new System.Drawing.Point(773, 110);
+            this.numCutQty.Name = "numCutQty";
+            this.numCutQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox_cutqty.ReadOnly = true;
-            this.numericBox_cutqty.Size = new System.Drawing.Size(100, 23);
-            this.numericBox_cutqty.TabIndex = 13;
-            this.numericBox_cutqty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "qty", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(773, 143);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 14;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numCutQty.ReadOnly = true;
+            this.numCutQty.Size = new System.Drawing.Size(100, 23);
+            this.numCutQty.TabIndex = 13;
+            this.numCutQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox_NeedPerDay
+            // numOrderQty
             // 
-            this.numericBox_NeedPerDay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox_NeedPerDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox_NeedPerDay.IsSupportEditMode = false;
-            this.numericBox_NeedPerDay.Location = new System.Drawing.Point(773, 44);
-            this.numericBox_NeedPerDay.Name = "numericBox_NeedPerDay";
-            this.numericBox_NeedPerDay.NullValue = new decimal(new int[] {
+            this.numOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "qty", true));
+            this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOrderQty.IsSupportEditMode = false;
+            this.numOrderQty.Location = new System.Drawing.Point(773, 143);
+            this.numOrderQty.Name = "numOrderQty";
+            this.numOrderQty.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox_NeedPerDay.ReadOnly = true;
-            this.numericBox_NeedPerDay.Size = new System.Drawing.Size(100, 23);
-            this.numericBox_NeedPerDay.TabIndex = 11;
-            this.numericBox_NeedPerDay.Value = new decimal(new int[] {
+            this.numOrderQty.ReadOnly = true;
+            this.numOrderQty.Size = new System.Drawing.Size(100, 23);
+            this.numOrderQty.TabIndex = 14;
+            this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // displayBox5
+            // numNeedPerDay
             // 
-            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox5.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewline", true));
-            this.displayBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox5.Location = new System.Drawing.Point(773, 12);
-            this.displayBox5.Name = "displayBox5";
-            this.displayBox5.Size = new System.Drawing.Size(137, 23);
-            this.displayBox5.TabIndex = 10;
+            this.numNeedPerDay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNeedPerDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNeedPerDay.IsSupportEditMode = false;
+            this.numNeedPerDay.Location = new System.Drawing.Point(773, 44);
+            this.numNeedPerDay.Name = "numNeedPerDay";
+            this.numNeedPerDay.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numNeedPerDay.ReadOnly = true;
+            this.numNeedPerDay.Size = new System.Drawing.Size(100, 23);
+            this.numNeedPerDay.TabIndex = 11;
+            this.numNeedPerDay.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // button_batchApprove
+            // displaySewingLine
             // 
-            this.button_batchApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_batchApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button_batchApprove.Location = new System.Drawing.Point(869, 2);
-            this.button_batchApprove.Name = "button_batchApprove";
-            this.button_batchApprove.Size = new System.Drawing.Size(132, 31);
-            this.button_batchApprove.TabIndex = 31;
-            this.button_batchApprove.Text = "Batch Approve";
-            this.button_batchApprove.UseVisualStyleBackColor = true;
-            this.button_batchApprove.Click += new System.EventHandler(this.button_batchApprove_Click);
+            this.displaySewingLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sewline", true));
+            this.displaySewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySewingLine.Location = new System.Drawing.Point(773, 12);
+            this.displaySewingLine.Name = "displaySewingLine";
+            this.displaySewingLine.Size = new System.Drawing.Size(137, 23);
+            this.displaySewingLine.TabIndex = 10;
+            // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchApprove.Location = new System.Drawing.Point(869, 2);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(132, 31);
+            this.btnBatchApprove.TabIndex = 31;
+            this.btnBatchApprove.Text = "Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.button_batchApprove_Click);
             // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 729);
-            this.Controls.Add(this.button_batchApprove);
+            this.Controls.Add(this.btnBatchApprove);
             this.DefaultOrder = "id";
             this.GridAlias = "order_tmscost";
             this.IsSupportCopy = false;
@@ -552,7 +552,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "orders";
             this.Controls.SetChildIndex(this.tabs, 0);
-            this.Controls.SetChildIndex(this.button_batchApprove, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -574,36 +574,36 @@
 
         #endregion
 
-        private Win.UI.NumericBox numericBox_NeedPerDay;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox_cutqty;
-        private Win.UI.DateBox FirstCut_DateBox;
-        private Class.txtuser txtuser1;
-        private Win.UI.DateBox dateBox4;
-        private Win.UI.DateBox dateBox3;
-        private Win.UI.DateBox dateBox2;
-        private Win.UI.DateBox dateBox1;
-        private Class.txtcountry txtcountry1;
-        private Win.UI.DisplayBox displayBox4;
-        private Win.UI.DisplayBox displayBox3;
-        private Win.UI.DisplayBox displayBox2;
-        private Win.UI.DisplayBox displayBox1;
-        private Win.UI.Label label15;
-        private Win.UI.Label label14;
-        private Win.UI.Label label13;
-        private Win.UI.Label label12;
-        private Win.UI.Label label11;
-        private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label8;
-        private Win.UI.Label label7;
-        private Win.UI.Label label6;
-        private Win.UI.Label label5;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox displayBox5;
-        private Win.UI.Button button_batchApprove;
+        private Win.UI.NumericBox numNeedPerDay;
+        private Win.UI.NumericBox numOrderQty;
+        private Win.UI.NumericBox numCutQty;
+        private Win.UI.DateBox dateFirstCutDate;
+        private Class.txtuser txtuserPPICMR;
+        private Win.UI.DateBox dateBuyerDeliveryDate;
+        private Win.UI.DateBox dateSCIDeliveryDate;
+        private Win.UI.DateBox dateSewingOfflineDate;
+        private Win.UI.DateBox dateSewingInlineDate;
+        private Class.txtcountry txtcountryDestination;
+        private Win.UI.DisplayBox displayBrand;
+        private Win.UI.DisplayBox displaySeason;
+        private Win.UI.DisplayBox displayStyleNo;
+        private Win.UI.DisplayBox displaySPNo;
+        private Win.UI.Label labelOrderQty;
+        private Win.UI.Label labelCutQty;
+        private Win.UI.Label labelFirstCutDate;
+        private Win.UI.Label labelNeededPerDay;
+        private Win.UI.Label labelSewingLine;
+        private Win.UI.Label labelPPICMR;
+        private Win.UI.Label labelBuyerDeliveryDate;
+        private Win.UI.Label labelSCIDeliveryDate;
+        private Win.UI.Label labelSewingOfflineDate;
+        private Win.UI.Label labelSewingInlineDate;
+        private Win.UI.Label labelDestination;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelStyleNo;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.DisplayBox displaySewingLine;
+        private Win.UI.Button btnBatchApprove;
     }
 }

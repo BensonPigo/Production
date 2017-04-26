@@ -32,42 +32,42 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
             //grid2.AutoGenerateColumns = true;
 
-            dateRange1.Value1 = DateTime.Today.AddMonths(1);
-            dateRange1.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
+            dateSewingInline.Value1 = DateTime.Today.AddMonths(1);
+            dateSewingInline.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
 
             Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
             di_inhouseOsp.Add("", "All");
             di_inhouseOsp.Add("O", "OSP");
             di_inhouseOsp.Add("I", "InHouse");
 
-            comboBox1.DataSource = new BindingSource(di_inhouseOsp, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.SelectedIndex = 2;  //inhouse
+            comboOSPInHouse.DataSource = new BindingSource(di_inhouseOsp, null);
+            comboOSPInHouse.ValueMember = "Key";
+            comboOSPInHouse.DisplayMember = "Value";
+            comboOSPInHouse.SelectedIndex = 2;  //inhouse
 
             di_inhouseOsp2.Add("O", "OSP");
             di_inhouseOsp2.Add("I", "InHouse");
 
-            comboBox3.DataSource = new BindingSource(di_inhouseOsp2, null);
-            comboBox3.ValueMember = "Key";
-            comboBox3.DisplayMember = "Value";
-            comboBox3.SelectedIndex = 1;  //inhouse
+            comboInHouseOSP.DataSource = new BindingSource(di_inhouseOsp2, null);
+            comboInHouseOSP.ValueMember = "Key";
+            comboInHouseOSP.DisplayMember = "Value";
+            comboInHouseOSP.SelectedIndex = 1;  //inhouse
 
-            grid1.RowPostPaint += (s, e) =>
+            gridFactoryID.RowPostPaint += (s, e) =>
             {
                 //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
                 //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                DataRow dr = gridFactoryID.GetDataRow(e.RowIndex);
+                if (gridFactoryID.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
                 int i = e.RowIndex;
                 switch (int.Parse(dr["err"].ToString()))
                 {
                     case 1:
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
+                        gridFactoryID.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
                         break;
                     case 2:
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
+                        gridFactoryID.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
                         break;
                 }
                
@@ -77,9 +77,9 @@ namespace Sci.Production.Planning
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex < 0) return;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridFactoryID.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                string colnm = this.grid1.Columns[e.ColumnIndex].DataPropertyName;
+                string colnm = this.gridFactoryID.Columns[e.ColumnIndex].DataPropertyName;
                 string expression = colnm + " = '" + ddr[colnm].ToString().TrimEnd() + "'";
                 DataRow[] drfound = dt.Select(expression);
 
@@ -92,9 +92,9 @@ namespace Sci.Production.Planning
                 }
             };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridFactoryID.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridFactoryID.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     this.sum_checkedqty();
                 }
@@ -139,7 +139,7 @@ namespace Sci.Production.Planning
             {
 
                 if (e.RowIndex < 0) return;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridFactoryID.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
                 string sqlcmd = "";
                 if (MyUtility.Check.Empty(ddr["inhouseosp"]))
@@ -165,7 +165,7 @@ namespace Sci.Production.Planning
             {
                 string Code = e.FormattedValue.ToString();//抓到當下的cell值
                 string sqlcmd = ""; DataTable dt;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                DataRow ddr = gridFactoryID.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
                 if (ddr["inhouseosp"].ToString() == "O")
                     sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                 if (ddr["inhouseosp"].ToString() == "I")
@@ -204,9 +204,9 @@ namespace Sci.Production.Planning
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridFactoryID.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridFactoryID.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridFactoryID)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
                 .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
@@ -234,17 +234,17 @@ namespace Sci.Production.Planning
                  .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true)
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
-            grid1.Columns["inhouseosp"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["localSuppid"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["ArtworkInLine"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["ArtworkOffLine"].DefaultCellStyle.BackColor = Color.Pink;
+            gridFactoryID.Columns["inhouseosp"].DefaultCellStyle.BackColor = Color.Pink;
+            gridFactoryID.Columns["localSuppid"].DefaultCellStyle.BackColor = Color.Pink;
+            gridFactoryID.Columns["ArtworkInLine"].DefaultCellStyle.BackColor = Color.Pink;
+            gridFactoryID.Columns["ArtworkOffLine"].DefaultCellStyle.BackColor = Color.Pink;
            // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
-            this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
+            this.gridFactoryID.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
             col_inhouseosp.DisplayMember = "Value";
 
-            Helper.Controls.Grid.Generator(this.grid2)
+            Helper.Controls.Grid.Generator(this.gridSupplier)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6))
                 .Numeric("totalqty", header: "M Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
                 .Numeric("balance", header: "Balance M", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 3, iseditingreadonly: true)
@@ -258,7 +258,7 @@ namespace Sci.Production.Planning
                 if (null != this.dtData)
                 {
                     this.dtData.DefaultView.Sort = "factoryID,seasonID,styleID";
-                    grid1.DataSource = dtData;
+                    gridFactoryID.DataSource = dtData;
 
                 }
             }
@@ -267,7 +267,7 @@ namespace Sci.Production.Planning
                 if (null != this.dtData)
                 {
                     this.dtData.DefaultView.Sort = "seasonID,styleID";
-                    grid1.DataSource = dtData;
+                    gridFactoryID.DataSource = dtData;
 
                 }
             }
@@ -277,7 +277,7 @@ namespace Sci.Production.Planning
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            numericBox4.Value = 0;
+            numCheckedQty.Value = 0;
           //  DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid,inline_b,inline_e;
             sewinline_b = null;
@@ -287,47 +287,47 @@ namespace Sci.Production.Planning
             inline_b = null;
             inline_e = null;
 
-            styleid = txtstyle1.Text;
-            seasonid = txtseason1.Text;
-            localsuppid = txtsubcon1.TextBox1.Text;
-            factoryid = txtmfactory1.Text;
-            inhouseosp = comboBox1.SelectedValue.ToString();
+            styleid = txtstyle.Text;
+            seasonid = txtseason.Text;
+            localsuppid = txtsubconSupplier.TextBox1.Text;
+            factoryid = txtmfactory.Text;
+            inhouseosp = comboOSPInHouse.SelectedValue.ToString();
 
-            if (dateRange1.Value1 != null) {sewinline_b = this.dateRange1.Text1;}
-            if (dateRange1.Value2 != null) { sewinline_e = this.dateRange1.Text2; }
+            if (dateSewingInline.Value1 != null) {sewinline_b = this.dateSewingInline.Text1;}
+            if (dateSewingInline.Value2 != null) { sewinline_e = this.dateSewingInline.Text2; }
 
-            if (dateRange2.Value1 != null) {sciDelivery_b = this.dateRange2.Text1;}
-            if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
+            if (dateSCIDelivery.Value1 != null) {sciDelivery_b = this.dateSCIDelivery.Text1;}
+            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
 
-            if (dateRange3.Value1 != null) { inline_b = this.dateRange3.Text1; }
-            if (dateRange3.Value2 != null) { inline_e = this.dateRange3.Text2; }
+            if (dateInlineDate.Value1 != null) { inline_b = this.dateInlineDate.Text1; }
+            if (dateInlineDate.Value2 != null) { inline_e = this.dateInlineDate.Text2; }
 
             if ((sewinline_b == null && sewinline_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > or < Sewing Inline Date > can't be empty!!");
-                dateRange2.Focus1();
+                dateSCIDelivery.Focus1();
                 return;
             }
 
-            if (MyUtility.Check.Empty(numericBox2.Text))
+            if (MyUtility.Check.Empty(numEfficiency.Text))
             {
                 MyUtility.Msg.WarningBox("Efficiency can't be empty!!");
-                numericBox2.Focus();
+                numEfficiency.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(numericBox1.Text))
+            if (MyUtility.Check.Empty(numHeads.Text))
             {
                 MyUtility.Msg.WarningBox("Heads# can't be empty!!");
-                numericBox1.Focus();
+                numHeads.Focus();
                 return;
             }
 
-            if (MyUtility.Check.Empty(numericBox3.Text))
+            if (MyUtility.Check.Empty(numWorkHours.Text))
             {
                 MyUtility.Msg.WarningBox("Work hours can't be empty!!");
-                numericBox3.Focus();
+                numWorkHours.Focus();
                 return;
             }
             string orderby = "";
@@ -379,7 +379,7 @@ namespace Sci.Production.Planning
  FROM (Orders a WITH (NOLOCK) inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID) 
 inner join SewingSchedule c WITH (NOLOCK) on a.id = c.OrderID
 inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
- where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'" + orderby, numericBox1.Text, numericBox3.Text, numericBox2.Text, Sci.Env.User.Keyword);
+ where a.Finished = 0 AND a.Category !='M' and b.ArtworkTypeID = 'EMBROIDERY'  and factory.mdivisionid='{3}'" + orderby, numHeads.Text, numWorkHours.Text, numEfficiency.Text, Sci.Env.User.Keyword);
 
             if (!(MyUtility.Check.Empty(styleid)))
             {sqlcmd += string.Format(@" and a.StyleID = '{0}'", styleid);}
@@ -419,7 +419,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
                 dtData.Columns.Add("ttlStitch", typeof(decimal));
                 dtData.Columns["ttlStitch"].Expression = "alloqty * qty";
                 dtData.Columns.Add("target", typeof(decimal));
-                dtData.Columns["target"].Expression = this.numericBox1.Text + " * " + this.numericBox3.Text + " * batchno";
+                dtData.Columns["target"].Expression = this.numHeads.Text + " * " + this.numWorkHours.Text + " * batchno";
                 //dtData.Columns["totalqty"].Expression = "round(alloqty / (heads * workhours * batchno) * 100 / eff,3)";
                 grid2_generate();
             }
@@ -434,8 +434,8 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
                 }
                 this.HideWaitMessage();
             }
-            this.grid1.AutoResizeColumns();
-            this.grid2.AutoResizeColumns();
+            this.gridFactoryID.AutoResizeColumns();
+            this.gridSupplier.AutoResizeColumns();
         }
     
         //close
@@ -497,7 +497,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
 
             foreach (var item in drfound)
             {
-                item["inhouseosp"] = this.comboBox3.SelectedValue.ToString();
+                item["inhouseosp"] = this.comboInHouseOSP.SelectedValue.ToString();
             }
         }
 
@@ -509,8 +509,8 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             DataRow[] drfound = dt.Select("selected = 1");
             foreach (var item in drfound)
             {
-                item["localsuppid"] = txtsubcon2.TextBox1.Text;
-                item["suppnm"] = txtsubcon2.DisplayBox1.Text;
+                item["localsuppid"] = txtsubconLocalSuppid.TextBox1.Text;
+                item["suppnm"] = txtsubconLocalSuppid.DisplayBox1.Text;
             }
         }
 
@@ -518,7 +518,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         private void button2_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("id", textBox1.Text.TrimEnd());
+            int index = listControlBindingSource1.Find("id", txtLocateForSPNo.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -531,20 +531,20 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(totalqty)", "selected = 1");
             if (MyUtility.Check.Empty(localPrice.ToString()))
-                this.numericBox4.Value = 0;
+                this.numCheckedQty.Value = 0;
             else
-                this.numericBox4.Value = decimal.Parse(localPrice.ToString());
+                this.numCheckedQty.Value = decimal.Parse(localPrice.ToString());
         }
 
         //Filter empty Supp ID , In Line
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.Filter = "";
-            if (checkBox4.Checked && checkBox3.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
+            if (checkSuppID.Checked && checkInLine.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
             else
             {
-                if (checkBox4.Checked) listControlBindingSource1.Filter = " localsuppid ='' ";
-                if (checkBox3.Checked) listControlBindingSource1.Filter = "ArtworkInLine is null";
+                if (checkSuppID.Checked) listControlBindingSource1.Filter = " localsuppid ='' ";
+                if (checkInLine.Checked) listControlBindingSource1.Filter = "ArtworkInLine is null";
             }
             grid2_generate();
         }
@@ -572,7 +572,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
                            Totaltms = grouprows.Sum(r => r.Field<decimal?>("totaltms").GetValueOrDefault(0))
                        }).ToList();
             bs1.AddRange(bs2);
-            grid2.DataSource = bs1;
+            gridSupplier.DataSource = bs1;
             //grid2.AutoResizeColumns();
             
         }
@@ -700,9 +700,9 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
 
             foreach (var item in drfound)
             {
-                if (null != dateBox1.Value)
+                if (null != dateArtworkInLine.Value)
                 {
-                    item["artworkinline"] = dateBox1.Value;
+                    item["artworkinline"] = dateArtworkInLine.Value;
                 }
                 else
                     item["artworkinline"] = DBNull.Value;
@@ -717,9 +717,9 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             DataRow[] drfound = dt.Select("selected = 1");
             foreach (var item in drfound)
             {
-                if (null != dateBox2.Value)
+                if (null != dateArtworkOffLine.Value)
                 {
-                    item["artworkoffline"] = dateBox2.Value;
+                    item["artworkoffline"] = dateArtworkOffLine.Value;
                 }
                 else
                     item["artworkoffline"] = DBNull.Value;
@@ -730,7 +730,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         private void button6_Click_1(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("Styleid", textBox2.Text.TrimEnd());
+            int index = listControlBindingSource1.Find("Styleid", txtLocateForStyleNo.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else

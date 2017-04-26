@@ -33,8 +33,8 @@ namespace Sci.Production.Planning
             InitializeComponent();
             EditMode = true;
             print.Visible = false;
-            txtFactory1.Text = Sci.Env.User.Factory;
-            dateRange1.Select();
+            txtFactory.Text = Sci.Env.User.Factory;
+            dateFactoryKPIDate.Select();
         }
 
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -72,15 +72,15 @@ namespace Sci.Production.Planning
                                    LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                    LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
                                    WHERE 1= 1 ";
-                if (dateRange1.Value1 != null)
-                    strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                if (dateRange1.Value2 != null)
-                    strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                if (dateFactoryKPIDate.Value1 != null)
+                    strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                if (dateFactoryKPIDate.Value2 != null)
+                    strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                 else  //factory有值
-                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                 strSQL += @" GROUP BY A1.FACTORYID, A3.ALIAS, A1.QTY,A4.ShipQty,A5.ShipQty  
                              ORDER BY  A1.FACTORYID, A3.ALIAS 
@@ -125,15 +125,15 @@ namespace Sci.Production.Planning
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
                                                                                                 WHERE 1= 1 ";
-                if (dateRange1.Value1 != null)
-                    strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                if (dateRange1.Value2 != null)
-                    strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                if (dateFactoryKPIDate.Value1 != null)
+                    strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                if (dateFactoryKPIDate.Value2 != null)
+                    strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                 else  //factory有值
-                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                    strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                 strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
@@ -146,7 +146,7 @@ namespace Sci.Production.Planning
                 #endregion Fail Order List by SP
 
                 //有勾選
-                if (checkBox1.Checked)
+                if (checkExportDetailData.Checked)
                 {
                     #region Order Detail
                     strSQL = @" SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.BRANDID AS E
@@ -181,15 +181,15 @@ namespace Sci.Production.Planning
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
                                                 WHERE 1= 1 ";
-                    if (dateRange1.Value1 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateRange1.Value2 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value1 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value2 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
@@ -216,15 +216,15 @@ namespace Sci.Production.Planning
                                                 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
                                                 WHERE 1= 1 ";
-                    if (dateRange1.Value1 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateRange1.Value2 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value1 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value2 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtPullOut);
                     if (!result) return result;
@@ -251,15 +251,15 @@ namespace Sci.Production.Planning
                                 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate > A1.FtyKPI 
                                 WHERE 1= 1 ";
-                    if (dateRange1.Value1 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateRange1.Value2 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value1 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value2 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                     result = DBProxy.Current.Select(null, strSQL, null, out gdtFailDetail);
                     if (!result) return result;
@@ -299,15 +299,15 @@ namespace Sci.Production.Planning
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
                                                 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
                                                                                                 WHERE 1= 1 ";
-                    if (dateRange1.Value1 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateRange1.Value1.Value.ToString("yyyy-MM-dd"));
-                    if (dateRange1.Value2 != null)
-                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateRange1.Value2.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value1 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    if (dateFactoryKPIDate.Value2 != null)
+                        strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
 
-                    if (MyUtility.Check.Empty(txtFactory1.Text)) //factory沒值
+                    if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
-                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory1.Text);
+                        strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                     strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
@@ -425,7 +425,7 @@ namespace Sci.Production.Planning
                     excel.ActiveWindow.FreezePanes = true;
                 }
 
-                if (checkBox1.Checked)
+                if (checkExportDetailData.Checked)
                 {
                     if ((gdtOrderDetail != null) && (gdtOrderDetail.Rows.Count > 0))
                     {

@@ -62,7 +62,7 @@ namespace Sci.Production.Planning
                 ShowErr("Year can't be  blank");
                 return false;
             }
-            if (rdHalfMonth.Checked)
+            if (radioSemimonthlyReport.Checked)
             {
                 if (numMonth.Text == "")
                 {
@@ -71,25 +71,25 @@ namespace Sci.Production.Planning
                 }
             }
 
-            if (!chkOrder.Checked && !chkForecast.Checked && !chkFty.Checked)
+            if (!checkOrder.Checked && !checkForecast.Checked && !checkFty.Checked)
             {
                 ShowErr("Order, Forecast , Fty Local Order must select one at least ");
                 return false;
             }
 
-            ReportType = rdMonth.Checked ? 1 : 2;
-            BrandID = txtBrand1.Text;
-            ArtWorkType = cbReportType.SelectedValue.ToString();
-            isSCIDelivery = (cbDateType.SelectedItem.ToString() == "SCI Delivery") ? true : false;
+            ReportType = radioMonthlyReport.Checked ? 1 : 2;
+            BrandID = txtBrand.Text;
+            ArtWorkType = comboReport.SelectedValue.ToString();
+            isSCIDelivery = (comboDate.SelectedItem.ToString() == "SCI Delivery") ? true : false;
 
             M = txtM.Text;
             Fty = txtFactory.Text;
 
             intYear = Convert.ToInt32(numYear.Value);
             intMonth = Convert.ToInt32(numMonth.Value);
-            SourceStr = (chkOrder.Checked ? "Order," : "")
-                + (chkForecast.Checked ? "Forecast," : "")
-                + (chkFty.Checked ? "Fty Local Order," : "");            
+            SourceStr = (checkOrder.Checked ? "Order," : "")
+                + (checkForecast.Checked ? "Forecast," : "")
+                + (checkFty.Checked ? "Fty Local Order," : "");            
             return true;
         }
 
@@ -98,30 +98,30 @@ namespace Sci.Production.Planning
             base.OnFormLoaded();
             if (IsFormClosed) return;
 
-            lbMonth.Visible = false;
+            labelMonth.Visible = false;
             numMonth.Visible = false;
 
-            chkOrder.Checked = true;
-            chkForecast.Checked = true;
-            chkFty.Checked = true;
+            checkOrder.Checked = true;
+            checkForecast.Checked = true;
+            checkFty.Checked = true;
 
             numYear.Value = currentTime.Year;
             numMonth.Value = currentTime.Month;
             numMonth.Visible = false;
 
-            cbDateType.Add("SCI Delivery", "S");
-            cbDateType.Add("Buyer Delivery", "B");
-            cbDateType.SelectedIndex = 0;
+            comboDate.Add("SCI Delivery", "S");
+            comboDate.Add("Buyer Delivery", "B");
+            comboDate.SelectedIndex = 0;
 
             #region 取得 Report 資料
             string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', ' ', '0000' order by SEQ";
             DataTable dt_ref = null;
             DualResult result = DBProxy.Current.Select(null, sql, out dt_ref);
 
-            cbReportType.DataSource = dt_ref;
-            cbReportType.DisplayMember = "NAME";
-            cbReportType.ValueMember = "ID";
-            cbReportType.SelectedValue = "SEWING";
+            comboReport.DataSource = dt_ref;
+            comboReport.DisplayMember = "NAME";
+            comboReport.ValueMember = "ID";
+            comboReport.SelectedValue = "SEWING";
             #endregion
 
         }
@@ -129,7 +129,7 @@ namespace Sci.Production.Planning
 
         protected override Ict.DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            if (rdMonth.Checked || rdHalfMonth.Checked)
+            if (radioMonthlyReport.Checked || radioSemimonthlyReport.Checked)
             {
                 DualResult result = Result.True;
                 try
@@ -138,7 +138,7 @@ namespace Sci.Production.Planning
                     
                     if (ArtWorkType == "All")
                     {
-                        DataTable dt = (DataTable)cbReportType.DataSource;
+                        DataTable dt = (DataTable)comboReport.DataSource;
                         ArtworkLis = dt.AsEnumerable()
                             .Where(row => row.Field<string>("ID") != "All")
                             .Select(row => row.Field<string>("ID").ToString()).ToList();
@@ -321,7 +321,7 @@ namespace Sci.Production.Planning
                     if (this.txtM.Text.Empty()) { WorkWheres.Add(" w.FactoryID ='" + Fty + "'"); }
 
                 }
-                if (!this.txtBrand1.Text.Empty())
+                if (!this.txtBrand.Text.Empty())
                 {
                     LoadingWheres.Add("o.BrandID = '" + BrandID + "'");
                 }
@@ -1235,7 +1235,7 @@ namespace Sci.Production.Planning
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region raProductionStatus
-            if (raProductionStatus.Checked == true)
+            if (radioProductionStatus.Checked == true)
             {
                 if (dt == null || dt.Rows.Count == 0)
                 {
@@ -1288,10 +1288,10 @@ namespace Sci.Production.Planning
 
         private void rdMonth_CheckedChanged(object sender, EventArgs e)
         {
-            lbMonth.Visible = !rdMonth.Checked;
-            numMonth.Visible = !rdMonth.Checked;
+            labelMonth.Visible = !radioMonthlyReport.Checked;
+            numMonth.Visible = !radioMonthlyReport.Checked;
 
-            if (rdMonth.Checked)
+            if (radioMonthlyReport.Checked)
             {
                 numMonth.Value = 0;
             }
@@ -1299,10 +1299,10 @@ namespace Sci.Production.Planning
 
         private void rdHalfMonth_CheckedChanged(object sender, EventArgs e)
         {
-            lbMonth.Visible = rdHalfMonth.Checked;
-            numMonth.Visible = rdHalfMonth.Checked;
+            labelMonth.Visible = radioSemimonthlyReport.Checked;
+            numMonth.Visible = radioSemimonthlyReport.Checked;
 
-            if (rdHalfMonth.Checked)
+            if (radioSemimonthlyReport.Checked)
             {
                 numMonth.Value = System.DateTime.Today.Month;
             }
@@ -1311,16 +1311,16 @@ namespace Sci.Production.Planning
 
         private void raProductionStatus_CheckedChanged(object sender, EventArgs e)
         {
-            lbMonth.Visible = raProductionStatus.Checked;
-            numMonth.Visible = raProductionStatus.Checked;
-            lbDateType.Visible = !raProductionStatus.Checked;
-            cbDateType.Visible = !raProductionStatus.Checked;
-            lbReportType.Visible = !raProductionStatus.Checked;
-            cbReportType.Visible = !raProductionStatus.Checked;
-            lbSource.Visible = !raProductionStatus.Checked;
-            chkOrder.Visible = !raProductionStatus.Checked;
-            chkForecast.Visible = !raProductionStatus.Checked;
-            chkFty.Visible = !raProductionStatus.Checked;
+            labelMonth.Visible = radioProductionStatus.Checked;
+            numMonth.Visible = radioProductionStatus.Checked;
+            labelDate.Visible = !radioProductionStatus.Checked;
+            comboDate.Visible = !radioProductionStatus.Checked;
+            labelReport.Visible = !radioProductionStatus.Checked;
+            comboReport.Visible = !radioProductionStatus.Checked;
+            labelSource.Visible = !radioProductionStatus.Checked;
+            checkOrder.Visible = !radioProductionStatus.Checked;
+            checkForecast.Visible = !radioProductionStatus.Checked;
+            checkFty.Visible = !radioProductionStatus.Checked;
         }
     }
 }

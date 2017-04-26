@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
-            this.raProductionStatus = new Sci.Win.UI.RadioButton();
+            this.radioProductionStatus = new Sci.Win.UI.RadioButton();
             this.txtFactory = new Sci.Production.Class.txtfactory();
             this.txtM = new Sci.Production.Class.txtMdivision();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.lbM = new Sci.Win.UI.Label();
-            this.chkFty = new Sci.Win.UI.CheckBox();
-            this.chkForecast = new Sci.Win.UI.CheckBox();
-            this.chkOrder = new Sci.Win.UI.CheckBox();
-            this.cbReportType = new Sci.Win.UI.ComboBox();
-            this.cbDateType = new Sci.Win.UI.ComboBox();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.checkFty = new Sci.Win.UI.CheckBox();
+            this.checkForecast = new Sci.Win.UI.CheckBox();
+            this.checkOrder = new Sci.Win.UI.CheckBox();
+            this.comboReport = new Sci.Win.UI.ComboBox();
+            this.comboDate = new Sci.Win.UI.ComboBox();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear = new System.Windows.Forms.NumericUpDown();
-            this.lbMonth = new Sci.Win.UI.Label();
-            this.lbSource = new Sci.Win.UI.Label();
-            this.lbReportType = new Sci.Win.UI.Label();
-            this.lbDateType = new Sci.Win.UI.Label();
-            this.lbBrand = new Sci.Win.UI.Label();
-            this.lbYear = new Sci.Win.UI.Label();
-            this.rdHalfMonth = new System.Windows.Forms.RadioButton();
-            this.rdMonth = new System.Windows.Forms.RadioButton();
+            this.labelMonth = new Sci.Win.UI.Label();
+            this.labelSource = new Sci.Win.UI.Label();
+            this.labelReport = new Sci.Win.UI.Label();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelYear = new Sci.Win.UI.Label();
+            this.radioSemimonthlyReport = new System.Windows.Forms.RadioButton();
+            this.radioMonthlyReport = new System.Windows.Forms.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
             this.radioGroup2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
@@ -73,45 +73,45 @@
             // 
             // radioGroup2
             // 
-            this.radioGroup2.Controls.Add(this.raProductionStatus);
+            this.radioGroup2.Controls.Add(this.radioProductionStatus);
             this.radioGroup2.Controls.Add(this.txtFactory);
             this.radioGroup2.Controls.Add(this.txtM);
-            this.radioGroup2.Controls.Add(this.lbFactory);
-            this.radioGroup2.Controls.Add(this.lbM);
-            this.radioGroup2.Controls.Add(this.chkFty);
-            this.radioGroup2.Controls.Add(this.chkForecast);
-            this.radioGroup2.Controls.Add(this.chkOrder);
-            this.radioGroup2.Controls.Add(this.cbReportType);
-            this.radioGroup2.Controls.Add(this.cbDateType);
-            this.radioGroup2.Controls.Add(this.txtBrand1);
+            this.radioGroup2.Controls.Add(this.labelFactory);
+            this.radioGroup2.Controls.Add(this.labelM);
+            this.radioGroup2.Controls.Add(this.checkFty);
+            this.radioGroup2.Controls.Add(this.checkForecast);
+            this.radioGroup2.Controls.Add(this.checkOrder);
+            this.radioGroup2.Controls.Add(this.comboReport);
+            this.radioGroup2.Controls.Add(this.comboDate);
+            this.radioGroup2.Controls.Add(this.txtBrand);
             this.radioGroup2.Controls.Add(this.numMonth);
             this.radioGroup2.Controls.Add(this.numYear);
-            this.radioGroup2.Controls.Add(this.lbMonth);
-            this.radioGroup2.Controls.Add(this.lbSource);
-            this.radioGroup2.Controls.Add(this.lbReportType);
-            this.radioGroup2.Controls.Add(this.lbDateType);
-            this.radioGroup2.Controls.Add(this.lbBrand);
-            this.radioGroup2.Controls.Add(this.lbYear);
-            this.radioGroup2.Controls.Add(this.rdHalfMonth);
-            this.radioGroup2.Controls.Add(this.rdMonth);
+            this.radioGroup2.Controls.Add(this.labelMonth);
+            this.radioGroup2.Controls.Add(this.labelSource);
+            this.radioGroup2.Controls.Add(this.labelReport);
+            this.radioGroup2.Controls.Add(this.labelDate);
+            this.radioGroup2.Controls.Add(this.labelBrand);
+            this.radioGroup2.Controls.Add(this.labelYear);
+            this.radioGroup2.Controls.Add(this.radioSemimonthlyReport);
+            this.radioGroup2.Controls.Add(this.radioMonthlyReport);
             this.radioGroup2.Location = new System.Drawing.Point(12, 14);
             this.radioGroup2.Name = "radioGroup2";
             this.radioGroup2.Size = new System.Drawing.Size(348, 385);
             this.radioGroup2.TabIndex = 0;
             this.radioGroup2.TabStop = false;
             // 
-            // raProductionStatus
+            // radioProductionStatus
             // 
-            this.raProductionStatus.AutoSize = true;
-            this.raProductionStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.raProductionStatus.Location = new System.Drawing.Point(17, 76);
-            this.raProductionStatus.Name = "raProductionStatus";
-            this.raProductionStatus.Size = new System.Drawing.Size(130, 21);
-            this.raProductionStatus.TabIndex = 18;
-            this.raProductionStatus.TabStop = true;
-            this.raProductionStatus.Text = "Prouction Status";
-            this.raProductionStatus.UseVisualStyleBackColor = true;
-            this.raProductionStatus.CheckedChanged += new System.EventHandler(this.raProductionStatus_CheckedChanged);
+            this.radioProductionStatus.AutoSize = true;
+            this.radioProductionStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioProductionStatus.Location = new System.Drawing.Point(17, 76);
+            this.radioProductionStatus.Name = "radioProductionStatus";
+            this.radioProductionStatus.Size = new System.Drawing.Size(130, 21);
+            this.radioProductionStatus.TabIndex = 18;
+            this.radioProductionStatus.TabStop = true;
+            this.radioProductionStatus.Text = "Prouction Status";
+            this.radioProductionStatus.UseVisualStyleBackColor = true;
+            this.radioProductionStatus.CheckedChanged += new System.EventHandler(this.raProductionStatus_CheckedChanged);
             // 
             // txtFactory
             // 
@@ -131,93 +131,93 @@
             this.txtM.Size = new System.Drawing.Size(94, 23);
             this.txtM.TabIndex = 5;
             // 
-            // lbFactory
+            // labelFactory
             // 
-            this.lbFactory.Lines = 0;
-            this.lbFactory.Location = new System.Drawing.Point(64, 207);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(83, 23);
-            this.lbFactory.TabIndex = 17;
-            this.lbFactory.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(64, 207);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(83, 23);
+            this.labelFactory.TabIndex = 17;
+            this.labelFactory.Text = "Factory";
             // 
-            // lbM
+            // labelM
             // 
-            this.lbM.Lines = 0;
-            this.lbM.Location = new System.Drawing.Point(64, 172);
-            this.lbM.Name = "lbM";
-            this.lbM.Size = new System.Drawing.Size(83, 23);
-            this.lbM.TabIndex = 16;
-            this.lbM.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(64, 172);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(83, 23);
+            this.labelM.TabIndex = 16;
+            this.labelM.Text = "M";
             // 
-            // chkFty
+            // checkFty
             // 
-            this.chkFty.AutoSize = true;
-            this.chkFty.Checked = true;
-            this.chkFty.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkFty.Location = new System.Drawing.Point(150, 355);
-            this.chkFty.Name = "chkFty";
-            this.chkFty.Size = new System.Drawing.Size(125, 21);
-            this.chkFty.TabIndex = 11;
-            this.chkFty.Text = "Fty Local Order";
-            this.chkFty.UseVisualStyleBackColor = true;
+            this.checkFty.AutoSize = true;
+            this.checkFty.Checked = true;
+            this.checkFty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkFty.Location = new System.Drawing.Point(150, 355);
+            this.checkFty.Name = "checkFty";
+            this.checkFty.Size = new System.Drawing.Size(125, 21);
+            this.checkFty.TabIndex = 11;
+            this.checkFty.Text = "Fty Local Order";
+            this.checkFty.UseVisualStyleBackColor = true;
             // 
-            // chkForecast
+            // checkForecast
             // 
-            this.chkForecast.AutoSize = true;
-            this.chkForecast.Checked = true;
-            this.chkForecast.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkForecast.Location = new System.Drawing.Point(150, 328);
-            this.chkForecast.Name = "chkForecast";
-            this.chkForecast.Size = new System.Drawing.Size(82, 21);
-            this.chkForecast.TabIndex = 10;
-            this.chkForecast.Text = "Forecast";
-            this.chkForecast.UseVisualStyleBackColor = true;
+            this.checkForecast.AutoSize = true;
+            this.checkForecast.Checked = true;
+            this.checkForecast.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkForecast.Location = new System.Drawing.Point(150, 328);
+            this.checkForecast.Name = "checkForecast";
+            this.checkForecast.Size = new System.Drawing.Size(82, 21);
+            this.checkForecast.TabIndex = 10;
+            this.checkForecast.Text = "Forecast";
+            this.checkForecast.UseVisualStyleBackColor = true;
             // 
-            // chkOrder
+            // checkOrder
             // 
-            this.chkOrder.AutoSize = true;
-            this.chkOrder.Checked = true;
-            this.chkOrder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkOrder.Location = new System.Drawing.Point(150, 304);
-            this.chkOrder.Name = "chkOrder";
-            this.chkOrder.Size = new System.Drawing.Size(64, 21);
-            this.chkOrder.TabIndex = 9;
-            this.chkOrder.Text = "Order";
-            this.chkOrder.UseVisualStyleBackColor = true;
+            this.checkOrder.AutoSize = true;
+            this.checkOrder.Checked = true;
+            this.checkOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOrder.Location = new System.Drawing.Point(150, 304);
+            this.checkOrder.Name = "checkOrder";
+            this.checkOrder.Size = new System.Drawing.Size(64, 21);
+            this.checkOrder.TabIndex = 9;
+            this.checkOrder.Text = "Order";
+            this.checkOrder.UseVisualStyleBackColor = true;
             // 
-            // cbReportType
+            // comboReport
             // 
-            this.cbReportType.BackColor = System.Drawing.Color.White;
-            this.cbReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbReportType.FormattingEnabled = true;
-            this.cbReportType.IsSupportUnselect = true;
-            this.cbReportType.Location = new System.Drawing.Point(150, 270);
-            this.cbReportType.Name = "cbReportType";
-            this.cbReportType.Size = new System.Drawing.Size(190, 24);
-            this.cbReportType.TabIndex = 8;
+            this.comboReport.BackColor = System.Drawing.Color.White;
+            this.comboReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReport.FormattingEnabled = true;
+            this.comboReport.IsSupportUnselect = true;
+            this.comboReport.Location = new System.Drawing.Point(150, 270);
+            this.comboReport.Name = "comboReport";
+            this.comboReport.Size = new System.Drawing.Size(190, 24);
+            this.comboReport.TabIndex = 8;
             // 
-            // cbDateType
+            // comboDate
             // 
-            this.cbDateType.BackColor = System.Drawing.Color.White;
-            this.cbDateType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbDateType.FormattingEnabled = true;
-            this.cbDateType.IsSupportUnselect = true;
-            this.cbDateType.Location = new System.Drawing.Point(150, 239);
-            this.cbDateType.Name = "cbDateType";
-            this.cbDateType.Size = new System.Drawing.Size(190, 24);
-            this.cbDateType.TabIndex = 7;
+            this.comboDate.BackColor = System.Drawing.Color.White;
+            this.comboDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDate.FormattingEnabled = true;
+            this.comboDate.IsSupportUnselect = true;
+            this.comboDate.Location = new System.Drawing.Point(150, 239);
+            this.comboDate.Name = "comboDate";
+            this.comboDate.Size = new System.Drawing.Size(190, 24);
+            this.comboDate.TabIndex = 7;
             // 
-            // txtBrand1
+            // txtBrand
             // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(150, 138);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(94, 23);
-            this.txtBrand1.TabIndex = 4;
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(150, 138);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(94, 23);
+            this.txtBrand.TabIndex = 4;
             // 
             // numMonth
             // 
@@ -258,85 +258,85 @@
             0,
             0});
             // 
-            // lbMonth
+            // labelMonth
             // 
-            this.lbMonth.Lines = 0;
-            this.lbMonth.Location = new System.Drawing.Point(241, 105);
-            this.lbMonth.Name = "lbMonth";
-            this.lbMonth.Size = new System.Drawing.Size(46, 23);
-            this.lbMonth.TabIndex = 7;
-            this.lbMonth.Text = "Month";
+            this.labelMonth.Lines = 0;
+            this.labelMonth.Location = new System.Drawing.Point(241, 105);
+            this.labelMonth.Name = "labelMonth";
+            this.labelMonth.Size = new System.Drawing.Size(46, 23);
+            this.labelMonth.TabIndex = 7;
+            this.labelMonth.Text = "Month";
             // 
-            // lbSource
+            // labelSource
             // 
-            this.lbSource.Lines = 0;
-            this.lbSource.Location = new System.Drawing.Point(64, 302);
-            this.lbSource.Name = "lbSource";
-            this.lbSource.Size = new System.Drawing.Size(83, 23);
-            this.lbSource.TabIndex = 6;
-            this.lbSource.Text = "Source";
+            this.labelSource.Lines = 0;
+            this.labelSource.Location = new System.Drawing.Point(64, 302);
+            this.labelSource.Name = "labelSource";
+            this.labelSource.Size = new System.Drawing.Size(83, 23);
+            this.labelSource.TabIndex = 6;
+            this.labelSource.Text = "Source";
             // 
-            // lbReportType
+            // labelReport
             // 
-            this.lbReportType.Lines = 0;
-            this.lbReportType.Location = new System.Drawing.Point(64, 270);
-            this.lbReportType.Name = "lbReportType";
-            this.lbReportType.Size = new System.Drawing.Size(83, 23);
-            this.lbReportType.TabIndex = 5;
-            this.lbReportType.Text = "Report";
+            this.labelReport.Lines = 0;
+            this.labelReport.Location = new System.Drawing.Point(64, 270);
+            this.labelReport.Name = "labelReport";
+            this.labelReport.Size = new System.Drawing.Size(83, 23);
+            this.labelReport.TabIndex = 5;
+            this.labelReport.Text = "Report";
             // 
-            // lbDateType
+            // labelDate
             // 
-            this.lbDateType.Lines = 0;
-            this.lbDateType.Location = new System.Drawing.Point(64, 239);
-            this.lbDateType.Name = "lbDateType";
-            this.lbDateType.Size = new System.Drawing.Size(83, 23);
-            this.lbDateType.TabIndex = 4;
-            this.lbDateType.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(64, 239);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(83, 23);
+            this.labelDate.TabIndex = 4;
+            this.labelDate.Text = "Date";
             // 
-            // lbBrand
+            // labelBrand
             // 
-            this.lbBrand.Lines = 0;
-            this.lbBrand.Location = new System.Drawing.Point(64, 138);
-            this.lbBrand.Name = "lbBrand";
-            this.lbBrand.Size = new System.Drawing.Size(83, 23);
-            this.lbBrand.TabIndex = 3;
-            this.lbBrand.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(64, 138);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(83, 23);
+            this.labelBrand.TabIndex = 3;
+            this.labelBrand.Text = "Brand";
             // 
-            // lbYear
+            // labelYear
             // 
-            this.lbYear.Lines = 0;
-            this.lbYear.Location = new System.Drawing.Point(64, 105);
-            this.lbYear.Name = "lbYear";
-            this.lbYear.Size = new System.Drawing.Size(83, 23);
-            this.lbYear.TabIndex = 2;
-            this.lbYear.Text = "Year";
+            this.labelYear.Lines = 0;
+            this.labelYear.Location = new System.Drawing.Point(64, 105);
+            this.labelYear.Name = "labelYear";
+            this.labelYear.Size = new System.Drawing.Size(83, 23);
+            this.labelYear.TabIndex = 2;
+            this.labelYear.Text = "Year";
             // 
-            // rdHalfMonth
+            // radioSemimonthlyReport
             // 
-            this.rdHalfMonth.AutoSize = true;
-            this.rdHalfMonth.ForeColor = System.Drawing.Color.Red;
-            this.rdHalfMonth.Location = new System.Drawing.Point(17, 49);
-            this.rdHalfMonth.Name = "rdHalfMonth";
-            this.rdHalfMonth.Size = new System.Drawing.Size(153, 21);
-            this.rdHalfMonth.TabIndex = 1;
-            this.rdHalfMonth.TabStop = true;
-            this.rdHalfMonth.Text = "Semimonthly Report";
-            this.rdHalfMonth.UseVisualStyleBackColor = true;
-            this.rdHalfMonth.CheckedChanged += new System.EventHandler(this.rdHalfMonth_CheckedChanged);
+            this.radioSemimonthlyReport.AutoSize = true;
+            this.radioSemimonthlyReport.ForeColor = System.Drawing.Color.Red;
+            this.radioSemimonthlyReport.Location = new System.Drawing.Point(17, 49);
+            this.radioSemimonthlyReport.Name = "radioSemimonthlyReport";
+            this.radioSemimonthlyReport.Size = new System.Drawing.Size(153, 21);
+            this.radioSemimonthlyReport.TabIndex = 1;
+            this.radioSemimonthlyReport.TabStop = true;
+            this.radioSemimonthlyReport.Text = "Semimonthly Report";
+            this.radioSemimonthlyReport.UseVisualStyleBackColor = true;
+            this.radioSemimonthlyReport.CheckedChanged += new System.EventHandler(this.rdHalfMonth_CheckedChanged);
             // 
-            // rdMonth
+            // radioMonthlyReport
             // 
-            this.rdMonth.AutoSize = true;
-            this.rdMonth.Checked = true;
-            this.rdMonth.ForeColor = System.Drawing.Color.Red;
-            this.rdMonth.Location = new System.Drawing.Point(17, 22);
-            this.rdMonth.Name = "rdMonth";
-            this.rdMonth.Size = new System.Drawing.Size(122, 21);
-            this.rdMonth.TabIndex = 0;
-            this.rdMonth.TabStop = true;
-            this.rdMonth.Text = "Monthly Report";
-            this.rdMonth.UseVisualStyleBackColor = true;
+            this.radioMonthlyReport.AutoSize = true;
+            this.radioMonthlyReport.Checked = true;
+            this.radioMonthlyReport.ForeColor = System.Drawing.Color.Red;
+            this.radioMonthlyReport.Location = new System.Drawing.Point(17, 22);
+            this.radioMonthlyReport.Name = "radioMonthlyReport";
+            this.radioMonthlyReport.Size = new System.Drawing.Size(122, 21);
+            this.radioMonthlyReport.TabIndex = 0;
+            this.radioMonthlyReport.TabStop = true;
+            this.radioMonthlyReport.Text = "Monthly Report";
+            this.radioMonthlyReport.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -379,27 +379,27 @@
         #endregion
 
         private Win.UI.RadioGroup radioGroup2;
-        private System.Windows.Forms.RadioButton rdMonth;
+        private System.Windows.Forms.RadioButton radioMonthlyReport;
         private System.Windows.Forms.NumericUpDown numYear;
-        private Win.UI.Label lbMonth;
-        private Win.UI.Label lbSource;
-        private Win.UI.Label lbReportType;
-        private Win.UI.Label lbDateType;
-        private Win.UI.Label lbBrand;
-        private Win.UI.Label lbYear;
-        private System.Windows.Forms.RadioButton rdHalfMonth;
-        private Class.txtbrand txtBrand1;
+        private Win.UI.Label labelMonth;
+        private Win.UI.Label labelSource;
+        private Win.UI.Label labelReport;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelYear;
+        private System.Windows.Forms.RadioButton radioSemimonthlyReport;
+        private Class.txtbrand txtBrand;
         private System.Windows.Forms.NumericUpDown numMonth;
-        private Win.UI.CheckBox chkFty;
-        private Win.UI.CheckBox chkForecast;
-        private Win.UI.CheckBox chkOrder;
-        private Win.UI.ComboBox cbReportType;
-        private Win.UI.ComboBox cbDateType;
+        private Win.UI.CheckBox checkFty;
+        private Win.UI.CheckBox checkForecast;
+        private Win.UI.CheckBox checkOrder;
+        private Win.UI.ComboBox comboReport;
+        private Win.UI.ComboBox comboDate;
         private Win.UI.Label label1;
-        private Win.UI.Label lbFactory;
-        private Win.UI.Label lbM;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelM;
         private Class.txtfactory txtFactory;
         private Class.txtMdivision txtM;
-        private Win.UI.RadioButton raProductionStatus;
+        private Win.UI.RadioButton radioProductionStatus;
     }
 }

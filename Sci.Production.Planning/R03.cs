@@ -25,13 +25,13 @@ namespace Sci.Production.Planning
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            style = txtstyle1.Text;
-            brand = txtbrand1.Text;
-            season = txtseason1.Text;
-            smr = txttpeuser_canedit1.TextBox1.Text;
-            subcon = txtsubcon1.TextBox1.Text;
-            sciDate1 = dateRange1.Value1;
-            sciDate2 = dateRange1.Value2;
+            style = txtstyle.Text;
+            brand = txtbrand.Text;
+            season = txtseason.Text;
+            smr = txttpeuser_caneditSMR.TextBox1.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
+            sciDate1 = dateSCIDelivery.Value1;
+            sciDate2 = dateSCIDelivery.Value2;
 
             return base.ValidateInput();
         }

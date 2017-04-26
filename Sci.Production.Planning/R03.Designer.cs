@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.txttpeuser_canedit1 = new Sci.Production.Class.txttpeuser_canedit();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.labelStyle = new Sci.Win.UI.Label();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.labelSMR = new Sci.Win.UI.Label();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txttpeuser_caneditSMR = new Sci.Production.Class.txttpeuser_canedit();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -57,131 +57,131 @@
             this.close.Location = new System.Drawing.Point(422, 84);
             this.close.TabIndex = 8;
             // 
-            // label1
+            // labelStyle
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(13, 12);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(83, 23);
+            this.labelStyle.TabIndex = 94;
+            this.labelStyle.Text = "Style";
             // 
-            // label2
+            // labelBrand
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(13, 48);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(83, 23);
+            this.labelBrand.TabIndex = 95;
+            this.labelBrand.Text = "Brand";
             // 
-            // label3
+            // labelSeason
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(13, 84);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(83, 23);
+            this.labelSeason.TabIndex = 96;
+            this.labelSeason.Text = "Season";
             // 
-            // label4
+            // labelSMR
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 121);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 23);
-            this.label4.TabIndex = 97;
-            this.label4.Text = "SMR";
+            this.labelSMR.Lines = 0;
+            this.labelSMR.Location = new System.Drawing.Point(13, 121);
+            this.labelSMR.Name = "labelSMR";
+            this.labelSMR.Size = new System.Drawing.Size(83, 23);
+            this.labelSMR.TabIndex = 97;
+            this.labelSMR.Text = "SMR";
             // 
-            // label5
+            // labelSupplier
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 157);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(83, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(13, 157);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(83, 23);
+            this.labelSupplier.TabIndex = 98;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // label6
+            // labelSCIDelivery
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 193);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(83, 23);
-            this.label6.TabIndex = 99;
-            this.label6.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(13, 193);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(83, 23);
+            this.labelSCIDelivery.TabIndex = 99;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(100, 12);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 0;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(100, 12);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 0;
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(100, 48);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(80, 23);
-            this.txtbrand1.TabIndex = 1;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(100, 48);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(80, 23);
+            this.txtbrand.TabIndex = 1;
             // 
-            // txtseason1
+            // txtseason
             // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(100, 84);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 2;
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(100, 84);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(80, 23);
+            this.txtseason.TabIndex = 2;
             // 
-            // txttpeuser_canedit1
+            // txttpeuser_caneditSMR
             // 
-            this.txttpeuser_canedit1.DisplayBox1Binding = "";
-            this.txttpeuser_canedit1.Location = new System.Drawing.Point(100, 121);
-            this.txttpeuser_canedit1.Name = "txttpeuser_canedit1";
-            this.txttpeuser_canedit1.Size = new System.Drawing.Size(300, 23);
-            this.txttpeuser_canedit1.TabIndex = 3;
-            this.txttpeuser_canedit1.TextBox1Binding = "";
+            this.txttpeuser_caneditSMR.DisplayBox1Binding = "";
+            this.txttpeuser_caneditSMR.Location = new System.Drawing.Point(100, 121);
+            this.txttpeuser_caneditSMR.Name = "txttpeuser_caneditSMR";
+            this.txttpeuser_caneditSMR.Size = new System.Drawing.Size(300, 23);
+            this.txttpeuser_caneditSMR.TabIndex = 3;
+            this.txttpeuser_caneditSMR.TextBox1Binding = "";
             // 
-            // txtsubcon1
+            // txtsubconSupplier
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = true;
-            this.txtsubcon1.Location = new System.Drawing.Point(100, 157);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 4;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = true;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(100, 157);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconSupplier.TabIndex = 4;
+            this.txtsubconSupplier.TextBox1Binding = "";
             // 
-            // dateRange1
+            // dateSCIDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(100, 193);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 5;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(100, 193);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 5;
             // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(514, 252);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.txtsubcon1);
-            this.Controls.Add(this.txttpeuser_canedit1);
-            this.Controls.Add(this.txtseason1);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.txtstyle1);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.txtsubconSupplier);
+            this.Controls.Add(this.txttpeuser_caneditSMR);
+            this.Controls.Add(this.txtseason);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.txtstyle);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.labelSupplier);
+            this.Controls.Add(this.labelSMR);
+            this.Controls.Add(this.labelSeason);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelStyle);
             this.DefaultControl = "txtstyle1";
             this.IsSupportToPrint = false;
             this.Name = "R03";
@@ -189,18 +189,18 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.txtstyle1, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
-            this.Controls.SetChildIndex(this.txtseason1, 0);
-            this.Controls.SetChildIndex(this.txttpeuser_canedit1, 0);
-            this.Controls.SetChildIndex(this.txtsubcon1, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.labelStyle, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.labelSeason, 0);
+            this.Controls.SetChildIndex(this.labelSMR, 0);
+            this.Controls.SetChildIndex(this.labelSupplier, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.txtstyle, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.txtseason, 0);
+            this.Controls.SetChildIndex(this.txttpeuser_caneditSMR, 0);
+            this.Controls.SetChildIndex(this.txtsubconSupplier, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,17 +208,17 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
-        private Class.txtstyle txtstyle1;
-        private Class.txtbrand txtbrand1;
-        private Class.txtseason txtseason1;
-        private Class.txttpeuser_canedit txttpeuser_canedit1;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelSeason;
+        private Win.UI.Label labelSMR;
+        private Win.UI.Label labelSupplier;
+        private Win.UI.Label labelSCIDelivery;
+        private Class.txtstyle txtstyle;
+        private Class.txtbrand txtbrand;
+        private Class.txtseason txtseason;
+        private Class.txttpeuser_canedit txttpeuser_caneditSMR;
+        private Class.txtsubcon txtsubconSupplier;
+        private Win.UI.DateRange dateSCIDelivery;
     }
 }

@@ -42,9 +42,9 @@ FROM DBO.Style_Artwork WITH (NOLOCK) WHERE StyleUkey={1} and ukey!= {0}", data["
                 else { ShowErr(strSQLCmd, result); }
 
 
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCopyTo.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridCopyTo.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCopyTo)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("Ukey", header: "Ukey", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
             .Text("artworktypeid", header: "Artwork Type", width: Widths.AnsiChars(16), iseditingreadonly: true)  //2
@@ -71,7 +71,7 @@ FROM DBO.Style_Artwork WITH (NOLOCK) WHERE StyleUkey={1} and ukey!= {0}", data["
         private void btnApprove_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
-            grid1.ValidateControl();
+            gridCopyTo.ValidateControl();
 
             DataTable dtImport = (DataTable)listControlBindingSource1.DataSource;
 

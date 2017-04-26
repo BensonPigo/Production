@@ -30,46 +30,46 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P02));
-            this.button2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.txtLocateForSPNo = new Sci.Win.UI.TextBox();
+            this.labelLocateForSPNo = new Sci.Win.UI.Label();
+            this.checkPrice = new Sci.Win.UI.CheckBox();
+            this.dateSewingInline = new Sci.Win.UI.DateRange();
+            this.labelSewingInline = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button7 = new Sci.Win.UI.Button();
-            this.comboBox3 = new Sci.Win.UI.ComboBox();
-            this.txtsubcon2 = new Sci.Production.Class.txtsubcon();
-            this.button4 = new Sci.Win.UI.Button();
-            this.button3 = new Sci.Win.UI.Button();
+            this.btnCheckData = new Sci.Win.UI.Button();
+            this.comboinhouseOsp2 = new Sci.Win.UI.ComboBox();
+            this.txtsubconLocalSuppid = new Sci.Production.Class.txtsubcon();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.labelCheckedQty = new Sci.Win.UI.Label();
+            this.displayCheckedQty = new Sci.Win.UI.DisplayBox();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridPrintingQuickAdjust = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.label12 = new Sci.Win.UI.Label();
-            this.checkBox4 = new Sci.Win.UI.CheckBox();
-            this.checkBox3 = new Sci.Win.UI.CheckBox();
-            this.grid2 = new Sci.Win.UI.Grid();
+            this.labelFilterEmpty = new Sci.Win.UI.Label();
+            this.checkSuppID = new Sci.Win.UI.CheckBox();
+            this.checkInLine = new Sci.Win.UI.CheckBox();
+            this.gridSupplier = new Sci.Win.UI.Grid();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
-            this.label11 = new Sci.Win.UI.Label();
-            this.txtstyle1 = new Sci.Production.Class.txtstyle();
-            this.label2 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.label10 = new Sci.Win.UI.Label();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
-            this.label9 = new Sci.Win.UI.Label();
-            this.button5 = new Sci.Win.UI.Button();
-            this.txtseason1 = new Sci.Production.Class.txtseason();
-            this.button6 = new Sci.Win.UI.Button();
-            this.label8 = new Sci.Win.UI.Label();
+            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.labelOSPInHouse = new Sci.Win.UI.Label();
+            this.comboOSPInHouse = new Sci.Win.UI.ComboBox();
+            this.labelSupplier = new Sci.Win.UI.Label();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.labelSeason = new Sci.Win.UI.Label();
+            this.btnUpdateInline = new Sci.Win.UI.Button();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.btnSetDefaultSuppFromStyle = new Sci.Win.UI.Button();
+            this.labelStyle = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -78,165 +78,165 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPrintingQuickAdjust)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSupplier)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button2
+            // btnFind
             // 
-            this.button2.Location = new System.Drawing.Point(277, 369);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Find";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnFind.Location = new System.Drawing.Point(277, 369);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(80, 30);
+            this.btnFind.TabIndex = 3;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Location = new System.Drawing.Point(6, 237);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Location = new System.Drawing.Point(6, 237);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 8;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // txtLocateForSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(126, 373);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(145, 23);
-            this.textBox1.TabIndex = 2;
+            this.txtLocateForSPNo.BackColor = System.Drawing.Color.White;
+            this.txtLocateForSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocateForSPNo.Location = new System.Drawing.Point(126, 373);
+            this.txtLocateForSPNo.Name = "txtLocateForSPNo";
+            this.txtLocateForSPNo.Size = new System.Drawing.Size(145, 23);
+            this.txtLocateForSPNo.TabIndex = 2;
             // 
-            // label4
+            // labelLocateForSPNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(14, 373);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(109, 23);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "Locate for SP#";
+            this.labelLocateForSPNo.Lines = 0;
+            this.labelLocateForSPNo.Location = new System.Drawing.Point(14, 373);
+            this.labelLocateForSPNo.Name = "labelLocateForSPNo";
+            this.labelLocateForSPNo.Size = new System.Drawing.Size(109, 23);
+            this.labelLocateForSPNo.TabIndex = 4;
+            this.labelLocateForSPNo.Text = "Locate for SP#";
             // 
-            // checkBox1
+            // checkPrice
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(246, 161);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(83, 21);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Price > 0";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkPrice.AutoSize = true;
+            this.checkPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkPrice.Location = new System.Drawing.Point(246, 161);
+            this.checkPrice.Name = "checkPrice";
+            this.checkPrice.Size = new System.Drawing.Size(83, 21);
+            this.checkPrice.TabIndex = 6;
+            this.checkPrice.Text = "Price > 0";
+            this.checkPrice.UseVisualStyleBackColor = true;
             // 
-            // dateRange1
+            // dateSewingInline
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(120, 102);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateSewingInline.IsRequired = false;
+            this.dateSewingInline.Location = new System.Drawing.Point(120, 102);
+            this.dateSewingInline.Name = "dateSewingInline";
+            this.dateSewingInline.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingInline.TabIndex = 3;
             // 
-            // label1
+            // labelSewingInline
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(7, 102);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Sewing Inline";
+            this.labelSewingInline.Lines = 0;
+            this.labelSewingInline.Location = new System.Drawing.Point(7, 102);
+            this.labelSewingInline.Name = "labelSewingInline";
+            this.labelSewingInline.Size = new System.Drawing.Size(109, 23);
+            this.labelSewingInline.TabIndex = 14;
+            this.labelSewingInline.Text = "Sewing Inline";
             // 
-            // dateRange2
+            // dateSCIDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(120, 73);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 2;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(120, 73);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 2;
             // 
-            // label3
+            // labelSCIDelivery
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(7, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 23);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "SCI  Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(7, 73);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(109, 23);
+            this.labelSCIDelivery.TabIndex = 13;
+            this.labelSCIDelivery.Text = "SCI  Delivery";
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button7);
-            this.panel3.Controls.Add(this.comboBox3);
-            this.panel3.Controls.Add(this.txtsubcon2);
-            this.panel3.Controls.Add(this.button4);
-            this.panel3.Controls.Add(this.button3);
+            this.panel3.Controls.Add(this.btnCheckData);
+            this.panel3.Controls.Add(this.comboinhouseOsp2);
+            this.panel3.Controls.Add(this.txtsubconLocalSuppid);
+            this.panel3.Controls.Add(this.btnClose);
+            this.panel3.Controls.Add(this.btnSave);
             this.panel3.Controls.Add(this.pictureBox2);
             this.panel3.Controls.Add(this.pictureBox1);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.displayBox1);
+            this.panel3.Controls.Add(this.labelCheckedQty);
+            this.panel3.Controls.Add(this.displayCheckedQty);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 616);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1234, 45);
             this.panel3.TabIndex = 0;
             // 
-            // button7
+            // btnCheckData
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(959, 8);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(96, 30);
-            this.button7.TabIndex = 3;
-            this.button7.Text = "Check Data";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.btnCheckData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCheckData.Location = new System.Drawing.Point(959, 8);
+            this.btnCheckData.Name = "btnCheckData";
+            this.btnCheckData.Size = new System.Drawing.Size(96, 30);
+            this.btnCheckData.TabIndex = 3;
+            this.btnCheckData.Text = "Check Data";
+            this.btnCheckData.UseVisualStyleBackColor = true;
+            this.btnCheckData.Click += new System.EventHandler(this.button7_Click);
             // 
-            // comboBox3
+            // comboinhouseOsp2
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.White;
-            this.comboBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.IsSupportUnselect = true;
-            this.comboBox3.Location = new System.Drawing.Point(367, 15);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 24);
-            this.comboBox3.TabIndex = 1;
+            this.comboinhouseOsp2.BackColor = System.Drawing.Color.White;
+            this.comboinhouseOsp2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboinhouseOsp2.FormattingEnabled = true;
+            this.comboinhouseOsp2.IsSupportUnselect = true;
+            this.comboinhouseOsp2.Location = new System.Drawing.Point(367, 15);
+            this.comboinhouseOsp2.Name = "comboinhouseOsp2";
+            this.comboinhouseOsp2.Size = new System.Drawing.Size(121, 24);
+            this.comboinhouseOsp2.TabIndex = 1;
             // 
-            // txtsubcon2
+            // txtsubconLocalSuppid
             // 
-            this.txtsubcon2.DisplayBox1Binding = "";
-            this.txtsubcon2.IsIncludeJunk = false;
-            this.txtsubcon2.Location = new System.Drawing.Point(610, 15);
-            this.txtsubcon2.Name = "txtsubcon2";
-            this.txtsubcon2.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon2.TabIndex = 2;
-            this.txtsubcon2.TextBox1Binding = "";
+            this.txtsubconLocalSuppid.DisplayBox1Binding = "";
+            this.txtsubconLocalSuppid.IsIncludeJunk = false;
+            this.txtsubconLocalSuppid.Location = new System.Drawing.Point(610, 15);
+            this.txtsubconLocalSuppid.Name = "txtsubconLocalSuppid";
+            this.txtsubconLocalSuppid.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconLocalSuppid.TabIndex = 2;
+            this.txtsubconLocalSuppid.TextBox1Binding = "";
             // 
-            // button4
+            // btnClose
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(1143, 8);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "Close";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(1143, 8);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 5;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button3
+            // btnSave
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(1059, 8);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(1059, 8);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 4;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button3_Click);
             // 
             // pictureBox2
             // 
@@ -260,23 +260,23 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // label5
+            // labelCheckedQty
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(25, 12);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 23);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "Checked Qty";
+            this.labelCheckedQty.Lines = 0;
+            this.labelCheckedQty.Location = new System.Drawing.Point(25, 12);
+            this.labelCheckedQty.Name = "labelCheckedQty";
+            this.labelCheckedQty.Size = new System.Drawing.Size(88, 23);
+            this.labelCheckedQty.TabIndex = 1;
+            this.labelCheckedQty.Text = "Checked Qty";
             // 
-            // displayBox1
+            // displayCheckedQty
             // 
-            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox1.Location = new System.Drawing.Point(116, 12);
-            this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(100, 23);
-            this.displayBox1.TabIndex = 0;
+            this.displayCheckedQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCheckedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCheckedQty.Location = new System.Drawing.Point(116, 12);
+            this.displayCheckedQty.Name = "displayCheckedQty";
+            this.displayCheckedQty.Size = new System.Drawing.Size(100, 23);
+            this.displayCheckedQty.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -286,260 +286,260 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.grid1);
+            this.splitContainer1.Panel1.Controls.Add(this.gridPrintingQuickAdjust);
             this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer1.Panel2.Controls.Add(this.grid2);
-            this.splitContainer1.Panel2.Controls.Add(this.button2);
-            this.splitContainer1.Panel2.Controls.Add(this.textBox1);
-            this.splitContainer1.Panel2.Controls.Add(this.label4);
+            this.splitContainer1.Panel2.Controls.Add(this.gridSupplier);
+            this.splitContainer1.Panel2.Controls.Add(this.btnFind);
+            this.splitContainer1.Panel2.Controls.Add(this.txtLocateForSPNo);
+            this.splitContainer1.Panel2.Controls.Add(this.labelLocateForSPNo);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Size = new System.Drawing.Size(1234, 616);
             this.splitContainer1.SplitterDistance = 800;
             this.splitContainer1.TabIndex = 0;
             // 
-            // grid1
+            // gridPrintingQuickAdjust
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridPrintingQuickAdjust.AllowUserToAddRows = false;
+            this.gridPrintingQuickAdjust.AllowUserToDeleteRows = false;
+            this.gridPrintingQuickAdjust.AllowUserToResizeRows = false;
+            this.gridPrintingQuickAdjust.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(3, 3);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(794, 610);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
-            this.grid1.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid1_ColumnDividerDoubleClick);
+            this.gridPrintingQuickAdjust.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPrintingQuickAdjust.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridPrintingQuickAdjust.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPrintingQuickAdjust.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPrintingQuickAdjust.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPrintingQuickAdjust.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPrintingQuickAdjust.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPrintingQuickAdjust.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPrintingQuickAdjust.Location = new System.Drawing.Point(3, 3);
+            this.gridPrintingQuickAdjust.Name = "gridPrintingQuickAdjust";
+            this.gridPrintingQuickAdjust.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPrintingQuickAdjust.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPrintingQuickAdjust.RowTemplate.Height = 24;
+            this.gridPrintingQuickAdjust.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPrintingQuickAdjust.Size = new System.Drawing.Size(794, 610);
+            this.gridPrintingQuickAdjust.TabIndex = 0;
+            this.gridPrintingQuickAdjust.TabStop = false;
+            this.gridPrintingQuickAdjust.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid1_ColumnDividerDoubleClick);
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.checkBox4);
-            this.groupBox1.Controls.Add(this.checkBox3);
+            this.groupBox1.Controls.Add(this.labelFilterEmpty);
+            this.groupBox1.Controls.Add(this.checkSuppID);
+            this.groupBox1.Controls.Add(this.checkInLine);
             this.groupBox1.Location = new System.Drawing.Point(9, 304);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(410, 60);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
-            // label12
+            // labelFilterEmpty
             // 
-            this.label12.Lines = 0;
-            this.label12.Location = new System.Drawing.Point(7, 23);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(109, 23);
-            this.label12.TabIndex = 2;
-            this.label12.Text = "Filter empty";
+            this.labelFilterEmpty.Lines = 0;
+            this.labelFilterEmpty.Location = new System.Drawing.Point(7, 23);
+            this.labelFilterEmpty.Name = "labelFilterEmpty";
+            this.labelFilterEmpty.Size = new System.Drawing.Size(109, 23);
+            this.labelFilterEmpty.TabIndex = 2;
+            this.labelFilterEmpty.Text = "Filter empty";
             // 
-            // checkBox4
+            // checkSuppID
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox4.Location = new System.Drawing.Point(130, 25);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(101, 21);
-            this.checkBox4.TabIndex = 0;
-            this.checkBox4.Text = "< Supp ID >";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkSuppID.AutoSize = true;
+            this.checkSuppID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSuppID.Location = new System.Drawing.Point(130, 25);
+            this.checkSuppID.Name = "checkSuppID";
+            this.checkSuppID.Size = new System.Drawing.Size(101, 21);
+            this.checkSuppID.TabIndex = 0;
+            this.checkSuppID.Text = "< Supp ID >";
+            this.checkSuppID.UseVisualStyleBackColor = true;
+            this.checkSuppID.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
-            // checkBox3
+            // checkInLine
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox3.Location = new System.Drawing.Point(244, 25);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(93, 21);
-            this.checkBox3.TabIndex = 1;
-            this.checkBox3.Text = "< In Line >";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkInLine.AutoSize = true;
+            this.checkInLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkInLine.Location = new System.Drawing.Point(244, 25);
+            this.checkInLine.Name = "checkInLine";
+            this.checkInLine.Size = new System.Drawing.Size(93, 21);
+            this.checkInLine.TabIndex = 1;
+            this.checkInLine.Text = "< In Line >";
+            this.checkInLine.UseVisualStyleBackColor = true;
+            this.checkInLine.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
-            // grid2
+            // gridSupplier
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridSupplier.AllowUserToAddRows = false;
+            this.gridSupplier.AllowUserToDeleteRows = false;
+            this.gridSupplier.AllowUserToResizeRows = false;
+            this.gridSupplier.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(9, 405);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(409, 205);
-            this.grid2.TabIndex = 17;
-            this.grid2.TabStop = false;
-            this.grid2.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid2_ColumnDividerDoubleClick);
+            this.gridSupplier.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSupplier.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.gridSupplier.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSupplier.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSupplier.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSupplier.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSupplier.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSupplier.Location = new System.Drawing.Point(9, 405);
+            this.gridSupplier.Name = "gridSupplier";
+            this.gridSupplier.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSupplier.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSupplier.RowTemplate.Height = 24;
+            this.gridSupplier.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSupplier.Size = new System.Drawing.Size(409, 205);
+            this.gridSupplier.TabIndex = 17;
+            this.gridSupplier.TabStop = false;
+            this.gridSupplier.ColumnDividerDoubleClick += new System.Windows.Forms.DataGridViewColumnDividerDoubleClickEventHandler(this.grid2_ColumnDividerDoubleClick);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.txtmfactory1);
-            this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.txtstyle1);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Controls.Add(this.dateRange1);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.comboBox1);
-            this.groupBox2.Controls.Add(this.dateRange2);
-            this.groupBox2.Controls.Add(this.label10);
-            this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Controls.Add(this.txtsubcon1);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.label9);
-            this.groupBox2.Controls.Add(this.button5);
-            this.groupBox2.Controls.Add(this.txtseason1);
-            this.groupBox2.Controls.Add(this.button6);
-            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.txtmfactory);
+            this.groupBox2.Controls.Add(this.labelFactory);
+            this.groupBox2.Controls.Add(this.txtstyle);
+            this.groupBox2.Controls.Add(this.labelOSPInHouse);
+            this.groupBox2.Controls.Add(this.checkPrice);
+            this.groupBox2.Controls.Add(this.dateSewingInline);
+            this.groupBox2.Controls.Add(this.labelSewingInline);
+            this.groupBox2.Controls.Add(this.comboOSPInHouse);
+            this.groupBox2.Controls.Add(this.dateSCIDelivery);
+            this.groupBox2.Controls.Add(this.labelSupplier);
+            this.groupBox2.Controls.Add(this.btnQuery);
+            this.groupBox2.Controls.Add(this.txtsubconSupplier);
+            this.groupBox2.Controls.Add(this.labelSCIDelivery);
+            this.groupBox2.Controls.Add(this.labelSeason);
+            this.groupBox2.Controls.Add(this.btnUpdateInline);
+            this.groupBox2.Controls.Add(this.txtseason);
+            this.groupBox2.Controls.Add(this.btnSetDefaultSuppFromStyle);
+            this.groupBox2.Controls.Add(this.labelStyle);
             this.groupBox2.Location = new System.Drawing.Point(9, 8);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(410, 292);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
-            // txtmfactory1
+            // txtmfactory
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(119, 189);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 7;
+            this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.Location = new System.Drawing.Point(119, 189);
+            this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtmfactory.TabIndex = 7;
             // 
-            // label11
+            // labelFactory
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(7, 189);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(109, 23);
-            this.label11.TabIndex = 17;
-            this.label11.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(7, 189);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(109, 23);
+            this.labelFactory.TabIndex = 17;
+            this.labelFactory.Text = "Factory";
             // 
-            // txtstyle1
+            // txtstyle
             // 
-            this.txtstyle1.BackColor = System.Drawing.Color.White;
-            this.txtstyle1.BrandObjectName = null;
-            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(87, 15);
-            this.txtstyle1.Name = "txtstyle1";
-            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 0;
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = null;
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(87, 15);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 0;
             // 
-            // label2
+            // labelOSPInHouse
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(7, 159);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 23);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "OSP/InHouse";
+            this.labelOSPInHouse.Lines = 0;
+            this.labelOSPInHouse.Location = new System.Drawing.Point(7, 159);
+            this.labelOSPInHouse.Name = "labelOSPInHouse";
+            this.labelOSPInHouse.Size = new System.Drawing.Size(109, 23);
+            this.labelOSPInHouse.TabIndex = 16;
+            this.labelOSPInHouse.Text = "OSP/InHouse";
             // 
-            // comboBox1
+            // comboOSPInHouse
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(119, 159);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboOSPInHouse.BackColor = System.Drawing.Color.White;
+            this.comboOSPInHouse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOSPInHouse.FormattingEnabled = true;
+            this.comboOSPInHouse.IsSupportUnselect = true;
+            this.comboOSPInHouse.Location = new System.Drawing.Point(119, 159);
+            this.comboOSPInHouse.Name = "comboOSPInHouse";
+            this.comboOSPInHouse.Size = new System.Drawing.Size(121, 24);
+            this.comboOSPInHouse.TabIndex = 5;
             // 
-            // label10
+            // labelSupplier
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(7, 131);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(109, 23);
-            this.label10.TabIndex = 15;
-            this.label10.Text = "Supplier";
+            this.labelSupplier.Lines = 0;
+            this.labelSupplier.Location = new System.Drawing.Point(7, 131);
+            this.labelSupplier.Name = "labelSupplier";
+            this.labelSupplier.Size = new System.Drawing.Size(109, 23);
+            this.labelSupplier.TabIndex = 15;
+            this.labelSupplier.Text = "Supplier";
             // 
-            // txtsubcon1
+            // txtsubconSupplier
             // 
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(120, 130);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon1.TabIndex = 4;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(120, 130);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtsubconSupplier.TabIndex = 4;
+            this.txtsubconSupplier.TextBox1Binding = "";
             // 
-            // label9
+            // labelSeason
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(7, 44);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "Season";
+            this.labelSeason.Lines = 0;
+            this.labelSeason.Location = new System.Drawing.Point(7, 44);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
+            this.labelSeason.TabIndex = 12;
+            this.labelSeason.Text = "Season";
             // 
-            // button5
+            // btnUpdateInline
             // 
-            this.button5.Location = new System.Drawing.Point(100, 237);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(106, 30);
-            this.button5.TabIndex = 10;
-            this.button5.Text = "Update Inline";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnUpdateInline.Location = new System.Drawing.Point(100, 237);
+            this.btnUpdateInline.Name = "btnUpdateInline";
+            this.btnUpdateInline.Size = new System.Drawing.Size(106, 30);
+            this.btnUpdateInline.TabIndex = 10;
+            this.btnUpdateInline.Text = "Update Inline";
+            this.btnUpdateInline.UseVisualStyleBackColor = true;
+            this.btnUpdateInline.Click += new System.EventHandler(this.button5_Click);
             // 
-            // txtseason1
+            // txtseason
             // 
-            this.txtseason1.BackColor = System.Drawing.Color.White;
-            this.txtseason1.BrandObjectName = null;
-            this.txtseason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason1.Location = new System.Drawing.Point(87, 44);
-            this.txtseason1.Name = "txtseason1";
-            this.txtseason1.Size = new System.Drawing.Size(80, 23);
-            this.txtseason1.TabIndex = 1;
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(87, 44);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(80, 23);
+            this.txtseason.TabIndex = 1;
             // 
-            // button6
+            // btnSetDefaultSuppFromStyle
             // 
-            this.button6.Location = new System.Drawing.Point(222, 237);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(179, 43);
-            this.button6.TabIndex = 9;
-            this.button6.Text = "Set Default Supp from Style";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.btnSetDefaultSuppFromStyle.Location = new System.Drawing.Point(222, 237);
+            this.btnSetDefaultSuppFromStyle.Name = "btnSetDefaultSuppFromStyle";
+            this.btnSetDefaultSuppFromStyle.Size = new System.Drawing.Size(179, 43);
+            this.btnSetDefaultSuppFromStyle.TabIndex = 9;
+            this.btnSetDefaultSuppFromStyle.Text = "Set Default Supp from Style";
+            this.btnSetDefaultSuppFromStyle.UseVisualStyleBackColor = true;
+            this.btnSetDefaultSuppFromStyle.Click += new System.EventHandler(this.button6_Click);
             // 
-            // label8
+            // labelStyle
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(7, 15);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(75, 23);
-            this.label8.TabIndex = 11;
-            this.label8.Text = "Style";
+            this.labelStyle.Lines = 0;
+            this.labelStyle.Location = new System.Drawing.Point(7, 15);
+            this.labelStyle.Name = "labelStyle";
+            this.labelStyle.Size = new System.Drawing.Size(75, 23);
+            this.labelStyle.TabIndex = 11;
+            this.labelStyle.Text = "Style";
             // 
             // P02
             // 
@@ -562,10 +562,10 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPrintingQuickAdjust)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSupplier)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -575,44 +575,44 @@
         #endregion
 
         private Win.UI.Panel panel3;
-        private Win.UI.Button button2;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label4;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label3;
-        private Win.UI.Button button4;
-        private Win.UI.Button button3;
+        private Win.UI.Button btnFind;
+        private Win.UI.Button btnQuery;
+        private Win.UI.TextBox txtLocateForSPNo;
+        private Win.UI.Label labelLocateForSPNo;
+        private Win.UI.CheckBox checkPrice;
+        private Win.UI.DateRange dateSewingInline;
+        private Win.UI.Label labelSewingInline;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
         private Win.UI.PictureBox pictureBox2;
         private Win.UI.PictureBox pictureBox1;
-        private Win.UI.Label label5;
-        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label labelCheckedQty;
+        private Win.UI.DisplayBox displayCheckedQty;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridPrintingQuickAdjust;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.CheckBox checkBox4;
-        private Win.UI.CheckBox checkBox3;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label10;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.Label label9;
-        private Class.txtseason txtseason1;
-        private Class.txtstyle txtstyle1;
-        private Win.UI.Label label8;
-        private Win.UI.Button button6;
-        private Win.UI.Button button5;
-        private Win.UI.Grid grid2;
-        private Win.UI.Label label11;
-        private Win.UI.Label label2;
-        private Win.UI.Label label12;
+        private Win.UI.CheckBox checkSuppID;
+        private Win.UI.CheckBox checkInLine;
+        private Win.UI.ComboBox comboOSPInHouse;
+        private Win.UI.Label labelSupplier;
+        private Class.txtsubcon txtsubconSupplier;
+        private Win.UI.Label labelSeason;
+        private Class.txtseason txtseason;
+        private Class.txtstyle txtstyle;
+        private Win.UI.Label labelStyle;
+        private Win.UI.Button btnSetDefaultSuppFromStyle;
+        private Win.UI.Button btnUpdateInline;
+        private Win.UI.Grid gridSupplier;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelOSPInHouse;
+        private Win.UI.Label labelFilterEmpty;
         private Win.UI.GroupBox groupBox2;
-        private Win.UI.ComboBox comboBox3;
-        private Class.txtsubcon txtsubcon2;
-        private Win.UI.Button button7;
-        private Class.txtmfactory txtmfactory1;
+        private Win.UI.ComboBox comboinhouseOsp2;
+        private Class.txtsubcon txtsubconLocalSuppid;
+        private Win.UI.Button btnCheckData;
+        private Class.txtmfactory txtmfactory;
     }
 }

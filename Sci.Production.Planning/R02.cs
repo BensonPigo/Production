@@ -27,46 +27,46 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 1;  //Bulk
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
+            comboCategory.SelectedIndex = 1;  //Bulk
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) &&
-                MyUtility.Check.Empty(dateRange2.Value1) &&
-                MyUtility.Check.Empty(dateRange4.Value1) &&
-                MyUtility.Check.Empty(dateRange3.Value1) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) &&
+                MyUtility.Check.Empty(dateInLineDate.Value1) &&
+                MyUtility.Check.Empty(dateBuyerDelivery.Value1) &&
+                MyUtility.Check.Empty(dateCutInline.Value1) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) || MyUtility.Check.Empty(txtSPNoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Buyer Delivery > & < SCI Delivery > & < In Line > & < Cut Inline > & < SP# > can't be empty!!");
                 return false;
             }
 
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateRange1.Value1;
-            sciDelivery2 = dateRange1.Value2;
-            buyerDelivery1 = dateRange2.Value1;
-            buyerDelivery2 = dateRange2.Value2;
-            sewinline1 = dateRange4.Value1;
-            sewinline2 = dateRange4.Value2;
-            cutinline1 = dateRange3.Value1;
-            cutinline2 = dateRange3.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
+            buyerDelivery1 = dateInLineDate.Value1;
+            buyerDelivery2 = dateInLineDate.Value2;
+            sewinline1 = dateBuyerDelivery.Value1;
+            sewinline2 = dateBuyerDelivery.Value2;
+            cutinline1 = dateCutInline.Value1;
+            cutinline2 = dateCutInline.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
             #endregion
 
             strMinDate = GetMinOrMax("Min", sciDelivery1, buyerDelivery1, sewinline1, cutinline1);
             strMaxDate = GetMinOrMax("Max", sciDelivery2, buyerDelivery2, sewinline2, cutinline2);
             strDateRange = strMinDate + "~" + strMaxDate;
 
-            subcons = txtMultiSubcon1.Subcons;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            selectindex = cbxCategory.SelectedIndex;
-            artworktype = txtartworktype_fty1.Text;
+            subcons = txtMultiSubconSubcon.Subcons;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            selectindex = comboCategory.SelectedIndex;
+            artworktype = txtartworktype_ftySubProcess.Text;
             
             return base.ValidateInput();
         }
@@ -233,7 +233,7 @@ left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,Farm
 			on n.ArtworkPo_DetailUkey =  artwork_quot.po_detailukey
 )
 "));
-            if (checkBox1.Checked)
+            if (checkIncludeFarmOutInDate.Checked)
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
 ,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.Oven,k.Wash,k.Wash,k.Mockup
@@ -298,7 +298,7 @@ order by k.FactoryID,k.ID");
                 return false;
             }
 
-            if (checkBox1.Checked)
+            if (checkIncludeFarmOutInDate.Checked)
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Planning_R02_Detail.xltx");
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R02_Detail.xltx"); //預先開啟excel app

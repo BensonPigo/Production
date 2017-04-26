@@ -36,12 +36,12 @@ namespace Sci.Production.Planning
         //欄位檢核
         protected override bool ValidateInput()
         {
-            if (txtBrand1.Text.Trim() == "")
+            if (txtBrand.Text.Trim() == "")
             {
                 ShowErr("Brand can't be  blank");
                 return false;
             }
-            if (txtSeason1.Text.Trim() == "")
+            if (txtSeason.Text.Trim() == "")
             {
                 ShowErr("Season can't be  blank");
                 return false;
@@ -63,8 +63,8 @@ namespace Sci.Production.Planning
             SQL.GetConnection(out con);
 
             #region tmpData1
-            if (txtBrand1.Text != "") where += string.Format(" and O.BrandID = '{0}' ", txtBrand1.Text);
-            if (txtSeason1.Text != "") where += string.Format(" and SeasonID =  '{0}' ", txtSeason1.Text);
+            if (txtBrand.Text != "") where += string.Format(" and O.BrandID = '{0}' ", txtBrand.Text);
+            if (txtSeason.Text != "") where += string.Format(" and SeasonID =  '{0}' ", txtSeason.Text);
             SqlData1 = string.Format(@"Select O.ID , O.CPU , O.Cpu * {1} / 60 as SMV , O.CPU * {1} as TMS , O.FactoryID , O.BrandAreaCode , 
                                                 O.Qty , O.StyleID , F.CountryID
                                         From Orders O WITH (NOLOCK)
@@ -98,7 +98,7 @@ namespace Sci.Production.Planning
             #endregion
 
             #region tmpData3
-            if (rbRegionNo.Checked)
+            if (radioRegionNo.Checked)
             {
                 select = " AGCCode ";
                 GroupBy = " AGCCode ";
@@ -133,7 +133,7 @@ from (
             #endregion
 
             #region tmpEFFIC
-            if (rbRegionNo.Checked)
+            if (radioRegionNo.Checked)
             {
                 select = "AGCCode";
                 GroupBy = "AGCCode";
@@ -207,7 +207,7 @@ order by c.data", select);
             #endregion
 
             #region tmpStyleDetail
-            if (rbRegionNo.Checked)
+            if (radioRegionNo.Checked)
                 GroupBy = " AGCCode ";
             else
                 GroupBy = " Factory ";
@@ -267,13 +267,13 @@ order by tmpData2.OrderID";
             SaveXltReportCls.xltRptTable xrt4 = new SaveXltReportCls.xltRptTable(tmpOrderDetail);
 
             #region 抬頭
-            if (rbRegionNo.Checked)
+            if (radioRegionNo.Checked)
             {
-                title = "Season =" + txtSeason1.Text + "   , Brand =" + txtBrand1.Text + "    , Grouping by Region No";
+                title = "Season =" + txtSeason.Text + "   , Brand =" + txtBrand.Text + "    , Grouping by Region No";
             }
             else
             {
-                title = "Season =" + txtSeason1.Text + "   , Brand =" + txtBrand1.Text + "    , Grouping by Factory Code";
+                title = "Season =" + txtSeason.Text + "   , Brand =" + txtBrand.Text + "    , Grouping by Factory Code";
             }
             #endregion 
 
@@ -287,7 +287,7 @@ order by tmpData2.OrderID";
             sxrc.dicDatas.Add("##StyleDetail", xrt3);
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
             sxrc.dicDatas.Add("##title", title);
-            sxrc.dicDatas.Add("##Fty Code", txtSeason1.Text + "_historical data");
+            sxrc.dicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
 
             //Microsoft.Office.Interop.Excel.Application excel = sxrc.ExcelApp;
 

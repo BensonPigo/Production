@@ -25,51 +25,51 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 1;  //Bulk
-            MyUtility.Tool.SetupCombox(cbxOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
-            cbxOrderBy.SelectedIndex = 0;
-            dateRangeBuyerDelivery.Select();
-            dateRangeBuyerDelivery.Value1 = DateTime.Now;
-            dateRangeBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
+            comboCategory.SelectedIndex = 1;  //Bulk
+            MyUtility.Tool.SetupCombox(comboOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
+            comboOrderBy.SelectedIndex = 0;
+            dateBuyerDelivery.Select();
+            dateBuyerDelivery.Value1 = DateTime.Now;
+            dateBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRangeSciDelivery.Value1) &&
-                MyUtility.Check.Empty(dateRangeCustRqsDate.Value1) &&
-                MyUtility.Check.Empty(dateRangeBuyerDelivery.Value1) &&
-                MyUtility.Check.Empty(dateRangeCutOffDate.Value1) &&
-                MyUtility.Check.Empty(dateRangePlanDate.Value1) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) || MyUtility.Check.Empty(txtSpno2.Text)))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) &&
+                MyUtility.Check.Empty(dateCustRQSDate.Value1) &&
+                MyUtility.Check.Empty(dateBuyerDelivery.Value1) &&
+                MyUtility.Check.Empty(dateCutOffDate.Value1) &&
+                MyUtility.Check.Empty(datePlanDate.Value1) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) || MyUtility.Check.Empty(txtSPNoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Buyer Delivery > & < SCI Delivery > & < Cust RQS Date > & < Cut Off Date > & < Plan Date > & < SP# > can't be empty!!");
                 return false;
             }
 
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateRangeSciDelivery.Value1;
-            sciDelivery2 = dateRangeSciDelivery.Value2;
-            CustRqsDate1 = dateRangeCustRqsDate.Value1;
-            CustRqsDate2 = dateRangeCustRqsDate.Value2;
-            BuyerDelivery1 = dateRangeBuyerDelivery.Value1;
-            BuyerDelivery2 = dateRangeBuyerDelivery.Value2;
-            CutOffDate1 = dateRangeCutOffDate.Value1;
-            CutOffDate2 = dateRangeCutOffDate.Value2;
-            planDate1 = dateRangePlanDate.Value1;
-            planDate2 = dateRangePlanDate.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
+            CustRqsDate1 = dateCustRQSDate.Value1;
+            CustRqsDate2 = dateCustRQSDate.Value2;
+            BuyerDelivery1 = dateBuyerDelivery.Value1;
+            BuyerDelivery2 = dateBuyerDelivery.Value2;
+            CutOffDate1 = dateCutOffDate.Value1;
+            CutOffDate2 = dateCutOffDate.Value2;
+            planDate1 = datePlanDate.Value1;
+            planDate2 = datePlanDate.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
             #endregion
-            brandid = txtbrand1.Text;
-            custcd = txtcustcd1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            selectindex = cbxCategory.SelectedIndex;
-            orderby = cbxOrderBy.SelectedValue.ToString();
-            isArtwork = chkbArtowk.Checked;
+            brandid = txtbrand.Text;
+            custcd = txtCustCD.Text;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            selectindex = comboCategory.SelectedIndex;
+            orderby = comboOrderBy.SelectedValue.ToString();
+            isArtwork = checkIncludeArtowkData.Checked;
             if (isArtwork)
             {
                 DualResult result;

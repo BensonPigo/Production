@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtFactory1 = new Sci.Production.Class.txtfactory();
-            this.txtCountry1 = new Sci.Production.Class.txtcountry();
+            this.radioBulk = new Sci.Win.UI.RadioButton();
+            this.radioSample = new Sci.Win.UI.RadioButton();
+            this.dateFactoryKPIDate = new Sci.Win.UI.DateRange();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelCountry = new Sci.Win.UI.Label();
+            this.checkExportDetailData = new Sci.Win.UI.CheckBox();
+            this.labelFactoryKPIDate = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelType = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtCountry = new Sci.Production.Class.txtcountry();
             this.SuspendLayout();
             // 
             // print
@@ -57,147 +57,147 @@
             this.close.Location = new System.Drawing.Point(445, 84);
             this.close.TabIndex = 9;
             // 
-            // radioButton1
+            // radioBulk
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(139, 17);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(53, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Bulk";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioBulk.AutoSize = true;
+            this.radioBulk.Checked = true;
+            this.radioBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBulk.Location = new System.Drawing.Point(139, 17);
+            this.radioBulk.Name = "radioBulk";
+            this.radioBulk.Size = new System.Drawing.Size(53, 21);
+            this.radioBulk.TabIndex = 0;
+            this.radioBulk.TabStop = true;
+            this.radioBulk.Text = "Bulk";
+            this.radioBulk.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioSample
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(226, 17);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(73, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Sample";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioSample.AutoSize = true;
+            this.radioSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSample.Location = new System.Drawing.Point(226, 17);
+            this.radioSample.Name = "radioSample";
+            this.radioSample.Size = new System.Drawing.Size(73, 21);
+            this.radioSample.TabIndex = 1;
+            this.radioSample.TabStop = true;
+            this.radioSample.Text = "Sample";
+            this.radioSample.UseVisualStyleBackColor = true;
             // 
-            // dateRange1
+            // dateFactoryKPIDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(139, 55);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 2;
+            this.dateFactoryKPIDate.IsRequired = false;
+            this.dateFactoryKPIDate.Location = new System.Drawing.Point(139, 55);
+            this.dateFactoryKPIDate.Name = "dateFactoryKPIDate";
+            this.dateFactoryKPIDate.Size = new System.Drawing.Size(280, 23);
+            this.dateFactoryKPIDate.TabIndex = 2;
             // 
-            // label2
+            // labelFactory
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(18, 91);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 98;
-            this.label2.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(18, 91);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(75, 23);
+            this.labelFactory.TabIndex = 98;
+            this.labelFactory.Text = "Factory";
             // 
-            // label3
+            // labelCountry
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(18, 133);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 99;
-            this.label3.Text = "Country ";
-            this.label3.Visible = false;
+            this.labelCountry.Lines = 0;
+            this.labelCountry.Location = new System.Drawing.Point(18, 133);
+            this.labelCountry.Name = "labelCountry";
+            this.labelCountry.Size = new System.Drawing.Size(75, 23);
+            this.labelCountry.TabIndex = 99;
+            this.labelCountry.Text = "Country ";
+            this.labelCountry.Visible = false;
             // 
-            // checkBox1
+            // checkExportDetailData
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(278, 90);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(141, 21);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Export Detail Data";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkExportDetailData.AutoSize = true;
+            this.checkExportDetailData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkExportDetailData.Location = new System.Drawing.Point(278, 90);
+            this.checkExportDetailData.Name = "checkExportDetailData";
+            this.checkExportDetailData.Size = new System.Drawing.Size(141, 21);
+            this.checkExportDetailData.TabIndex = 6;
+            this.checkExportDetailData.Text = "Export Detail Data";
+            this.checkExportDetailData.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // labelFactoryKPIDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(18, 55);
-            this.label1.Name = "label1";
-            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.RectStyle.BorderWidth = 1F;
-            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label1.RectStyle.ExtBorderWidth = 1F;
-            this.label1.Size = new System.Drawing.Size(118, 23);
-            this.label1.TabIndex = 103;
-            this.label1.Text = "Factory KPI Date";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelFactoryKPIDate.Lines = 0;
+            this.labelFactoryKPIDate.Location = new System.Drawing.Point(18, 55);
+            this.labelFactoryKPIDate.Name = "labelFactoryKPIDate";
+            this.labelFactoryKPIDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelFactoryKPIDate.RectStyle.BorderWidth = 1F;
+            this.labelFactoryKPIDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelFactoryKPIDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelFactoryKPIDate.Size = new System.Drawing.Size(118, 23);
+            this.labelFactoryKPIDate.TabIndex = 103;
+            this.labelFactoryKPIDate.Text = "Factory KPI Date";
+            this.labelFactoryKPIDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelFactoryKPIDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label4
+            // labelM
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(344, 133);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 104;
-            this.label4.Text = "M";
-            this.label4.Visible = false;
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(344, 133);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(75, 23);
+            this.labelM.TabIndex = 104;
+            this.labelM.Text = "M";
+            this.labelM.Visible = false;
             // 
-            // label5
+            // labelType
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(18, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 105;
-            this.label5.Text = "Type";
+            this.labelType.Lines = 0;
+            this.labelType.Location = new System.Drawing.Point(18, 19);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(75, 23);
+            this.labelType.TabIndex = 105;
+            this.labelType.Text = "Type";
             // 
-            // txtMdivision1
+            // txtMdivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(422, 133);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 3;
-            this.txtMdivision1.Visible = false;
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(422, 133);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 3;
+            this.txtMdivision.Visible = false;
             // 
-            // txtFactory1
+            // txtFactory
             // 
-            this.txtFactory1.BackColor = System.Drawing.Color.White;
-            this.txtFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory1.Location = new System.Drawing.Point(96, 91);
-            this.txtFactory1.Name = "txtFactory1";
-            this.txtFactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory1.TabIndex = 4;
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.Location = new System.Drawing.Point(96, 91);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory.TabIndex = 4;
             // 
-            // txtCountry1
+            // txtCountry
             // 
-            this.txtCountry1.DisplayBox1Binding = "";
-            this.txtCountry1.Location = new System.Drawing.Point(96, 133);
-            this.txtCountry1.Name = "txtCountry1";
-            this.txtCountry1.Size = new System.Drawing.Size(232, 38);
-            this.txtCountry1.TabIndex = 5;
-            this.txtCountry1.TextBox1Binding = "";
-            this.txtCountry1.Visible = false;
+            this.txtCountry.DisplayBox1Binding = "";
+            this.txtCountry.Location = new System.Drawing.Point(96, 133);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.Size = new System.Drawing.Size(232, 38);
+            this.txtCountry.TabIndex = 5;
+            this.txtCountry.TextBox1Binding = "";
+            this.txtCountry.Visible = false;
             // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(537, 199);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtFactory1);
-            this.Controls.Add(this.txtCountry1);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.labelType);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelFactoryKPIDate);
+            this.Controls.Add(this.txtFactory);
+            this.Controls.Add(this.txtCountry);
+            this.Controls.Add(this.checkExportDetailData);
+            this.Controls.Add(this.labelCountry);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.dateFactoryKPIDate);
+            this.Controls.Add(this.radioSample);
+            this.Controls.Add(this.radioBulk);
             this.DefaultControl = "dateRange1";
             this.DefaultControlForEdit = "dateRange1";
             this.Name = "R17";
@@ -205,18 +205,18 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.radioButton1, 0);
-            this.Controls.SetChildIndex(this.radioButton2, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.txtCountry1, 0);
-            this.Controls.SetChildIndex(this.txtFactory1, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.txtMdivision1, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.radioBulk, 0);
+            this.Controls.SetChildIndex(this.radioSample, 0);
+            this.Controls.SetChildIndex(this.dateFactoryKPIDate, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.labelCountry, 0);
+            this.Controls.SetChildIndex(this.checkExportDetailData, 0);
+            this.Controls.SetChildIndex(this.txtCountry, 0);
+            this.Controls.SetChildIndex(this.txtFactory, 0);
+            this.Controls.SetChildIndex(this.labelFactoryKPIDate, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.labelType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -224,17 +224,17 @@
 
         #endregion
 
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.CheckBox checkBox1;
-        private Class.txtcountry txtCountry1;
-        private Class.txtfactory txtFactory1;
-        private Win.UI.Label label1;
-        private Win.UI.Label label4;
-        private Class.txtMdivision txtMdivision1;
-        private Win.UI.Label label5;
+        private Win.UI.RadioButton radioBulk;
+        private Win.UI.RadioButton radioSample;
+        private Win.UI.DateRange dateFactoryKPIDate;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelCountry;
+        private Win.UI.CheckBox checkExportDetailData;
+        private Class.txtcountry txtCountry;
+        private Class.txtfactory txtFactory;
+        private Win.UI.Label labelFactoryKPIDate;
+        private Win.UI.Label labelM;
+        private Class.txtMdivision txtMdivision;
+        private Win.UI.Label labelType;
     }
 }

@@ -26,28 +26,28 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 1;  //Bulk
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
+            comboCategory.SelectedIndex = 1;  //Bulk
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox(" < SCI Delivery > can't be empty!!");
                 return false;
             }
 
             #region -- 必輸的條件 --
-            sciDelivery1 = dateRange1.Value1;
-            sciDelivery2 = dateRange1.Value2;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
             #endregion
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            selectindex = cbxCategory.SelectedIndex;
-            months = numericUpDown1.Value;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            selectindex = comboCategory.SelectedIndex;
+            months = numNewStyleBaseOn.Value;
 
             DualResult result;
             if (!(result = DBProxy.Current.Select("", "select id from dbo.artworktype WITH (NOLOCK) where istms=1 or isprice= 1 order by seq", out dtArtworkType)))
@@ -150,7 +150,7 @@ Where 1=1 "));
                     sqlCmd.Append(@" and o.Category = 'M' ");
                     break;
             }
-            condition.Append(string.Format(@"    Category : {0}", cbxCategory.Items[selectindex]));
+            condition.Append(string.Format(@"    Category : {0}", comboCategory.Items[selectindex]));
 
             #endregion
 
@@ -187,7 +187,7 @@ where 1=1"
             {
                 sqlCmd.Append(" and o.FtyGroup = @factory");
             }
-            if (numericUpDown1.Value != 0)
+            if (numNewStyleBaseOn.Value != 0)
             {
                 sqlCmd.Append(string.Format(@" and  dateadd(month,{0},o2.SciDelivery ) < so.OutputDate", -months));
                 condition.Append(string.Format(@"    New Style base on {0} month(s)", months));

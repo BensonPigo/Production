@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label14 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.cbbArtworkType = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.labelSewingDate = new Sci.Win.UI.Label();
+            this.dateSewingDate = new Sci.Win.UI.DateRange();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.labelM = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.comboArtworkType = new Sci.Win.UI.ComboBox();
+            this.labelArtworkType = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -53,112 +53,112 @@
             this.close.Location = new System.Drawing.Point(430, 84);
             this.close.TabIndex = 6;
             // 
-            // label3
+            // labelSewingDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 12);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.RectStyle.BorderWidth = 1F;
-            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label3.RectStyle.ExtBorderWidth = 1F;
-            this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Sewing Date";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSewingDate.Lines = 0;
+            this.labelSewingDate.Location = new System.Drawing.Point(13, 12);
+            this.labelSewingDate.Name = "labelSewingDate";
+            this.labelSewingDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.RectStyle.BorderWidth = 1F;
+            this.labelSewingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSewingDate.RectStyle.ExtBorderWidth = 1F;
+            this.labelSewingDate.Size = new System.Drawing.Size(98, 23);
+            this.labelSewingDate.TabIndex = 96;
+            this.labelSewingDate.Text = "Sewing Date";
+            this.labelSewingDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSewingDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // dateRange1
+            // dateSewingDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(115, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateSewingDate.IsRequired = false;
+            this.dateSewingDate.Location = new System.Drawing.Point(115, 12);
+            this.dateSewingDate.Name = "dateSewingDate";
+            this.dateSewingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingDate.TabIndex = 0;
             // 
-            // label14
+            // labelFactory
             // 
-            this.label14.Lines = 0;
-            this.label14.Location = new System.Drawing.Point(13, 78);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(98, 23);
-            this.label14.TabIndex = 132;
-            this.label14.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 78);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(98, 23);
+            this.labelFactory.TabIndex = 132;
+            this.labelFactory.Text = "Factory";
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(115, 78);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 2;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(115, 78);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 2;
             // 
-            // label4
+            // labelM
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 45);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 134;
-            this.label4.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 45);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(98, 23);
+            this.labelM.TabIndex = 134;
+            this.labelM.Text = "M";
             // 
-            // txtMdivision1
+            // txtMdivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(115, 45);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 1;
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(115, 45);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 1;
             // 
-            // cbbArtworkType
+            // comboArtworkType
             // 
-            this.cbbArtworkType.BackColor = System.Drawing.Color.White;
-            this.cbbArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbbArtworkType.FormattingEnabled = true;
-            this.cbbArtworkType.IsSupportUnselect = true;
-            this.cbbArtworkType.Location = new System.Drawing.Point(115, 111);
-            this.cbbArtworkType.Name = "cbbArtworkType";
-            this.cbbArtworkType.Size = new System.Drawing.Size(121, 24);
-            this.cbbArtworkType.TabIndex = 3;
+            this.comboArtworkType.BackColor = System.Drawing.Color.White;
+            this.comboArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboArtworkType.FormattingEnabled = true;
+            this.comboArtworkType.IsSupportUnselect = true;
+            this.comboArtworkType.Location = new System.Drawing.Point(115, 111);
+            this.comboArtworkType.Name = "comboArtworkType";
+            this.comboArtworkType.Size = new System.Drawing.Size(121, 24);
+            this.comboArtworkType.TabIndex = 3;
             // 
-            // label1
+            // labelArtworkType
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(14, 112);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(98, 23);
-            this.label1.TabIndex = 136;
-            this.label1.Text = "Artwork Type";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(14, 112);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(98, 23);
+            this.labelArtworkType.TabIndex = 136;
+            this.labelArtworkType.Text = "Artwork Type";
             // 
             // R18
             // 
             this.ClientSize = new System.Drawing.Size(522, 230);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.cbbArtworkType);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.labelArtworkType);
+            this.Controls.Add(this.comboArtworkType);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.dateSewingDate);
+            this.Controls.Add(this.labelSewingDate);
             this.DefaultControl = "dateRange1";
             this.DefaultControlForEdit = "dateRange1";
             this.IsSupportToPrint = false;
             this.Name = "R18";
             this.Text = "R18. Heat Transfer Machine Forecast";
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.labelSewingDate, 0);
+            this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label14, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.txtMdivision1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.cbbArtworkType, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.comboArtworkType, 0);
+            this.Controls.SetChildIndex(this.labelArtworkType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -166,13 +166,13 @@
 
         #endregion
 
-        private Win.UI.Label label3;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label14;
-        private Class.txtfactory txtfactory1;
-        private Win.UI.Label label4;
-        private Class.txtMdivision txtMdivision1;
-        private Win.UI.ComboBox cbbArtworkType;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelSewingDate;
+        private Win.UI.DateRange dateSewingDate;
+        private Win.UI.Label labelFactory;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label labelM;
+        private Class.txtMdivision txtMdivision;
+        private Win.UI.ComboBox comboArtworkType;
+        private Win.UI.Label labelArtworkType;
     }
 }

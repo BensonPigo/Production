@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
+            this.labelDate = new Sci.Win.UI.Label();
+            this.labelArtworkType = new Sci.Win.UI.Label();
+            this.labelFtySupp = new Sci.Win.UI.Label();
+            this.labelCapacity = new Sci.Win.UI.Label();
+            this.labelHeads = new Sci.Win.UI.Label();
+            this.dateDate = new Sci.Win.UI.DateBox();
+            this.comboArtworkType = new Sci.Win.UI.ComboBox();
+            this.numCapacity = new Sci.Win.UI.NumericBox();
+            this.numHeads = new Sci.Win.UI.NumericBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radiobyMonth = new Sci.Win.UI.RadioButton();
+            this.radiobyDay = new Sci.Win.UI.RadioButton();
             this.label25 = new Sci.Win.UI.Label();
-            this.txtsubcon1 = new Sci.Production.Class.txtsubcon();
+            this.txtsubconFtySupp = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -59,16 +59,16 @@
             // 
             this.detailcont.Controls.Add(this.label25);
             this.detailcont.Controls.Add(this.radioPanel1);
-            this.detailcont.Controls.Add(this.numericBox2);
-            this.detailcont.Controls.Add(this.numericBox1);
-            this.detailcont.Controls.Add(this.txtsubcon1);
-            this.detailcont.Controls.Add(this.comboBox1);
-            this.detailcont.Controls.Add(this.dateBox1);
-            this.detailcont.Controls.Add(this.label7);
-            this.detailcont.Controls.Add(this.label3);
-            this.detailcont.Controls.Add(this.label4);
-            this.detailcont.Controls.Add(this.label5);
-            this.detailcont.Controls.Add(this.label6);
+            this.detailcont.Controls.Add(this.numHeads);
+            this.detailcont.Controls.Add(this.numCapacity);
+            this.detailcont.Controls.Add(this.txtsubconFtySupp);
+            this.detailcont.Controls.Add(this.comboArtworkType);
+            this.detailcont.Controls.Add(this.dateDate);
+            this.detailcont.Controls.Add(this.labelHeads);
+            this.detailcont.Controls.Add(this.labelDate);
+            this.detailcont.Controls.Add(this.labelArtworkType);
+            this.detailcont.Controls.Add(this.labelFtySupp);
+            this.detailcont.Controls.Add(this.labelCapacity);
             this.detailcont.Size = new System.Drawing.Size(831, 357);
             this.detailcont.TabIndex = 1;
             // 
@@ -78,7 +78,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(776, 395);
+            this.browse.Size = new System.Drawing.Size(831, 395);
             // 
             // tabs
             // 
@@ -98,130 +98,130 @@
             // 
             this.lbleditby.Location = new System.Drawing.Point(423, 13);
             // 
-            // label3
+            // labelDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(16, 16);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(107, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Date";
+            this.labelDate.Lines = 0;
+            this.labelDate.Location = new System.Drawing.Point(16, 16);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(107, 23);
+            this.labelDate.TabIndex = 4;
+            this.labelDate.Text = "Date";
             // 
-            // label4
+            // labelArtworkType
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(16, 48);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(107, 23);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "ArtworkType";
+            this.labelArtworkType.Lines = 0;
+            this.labelArtworkType.Location = new System.Drawing.Point(16, 48);
+            this.labelArtworkType.Name = "labelArtworkType";
+            this.labelArtworkType.Size = new System.Drawing.Size(107, 23);
+            this.labelArtworkType.TabIndex = 5;
+            this.labelArtworkType.Text = "ArtworkType";
             // 
-            // label5
+            // labelFtySupp
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(16, 80);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(107, 23);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Fty / Supp";
+            this.labelFtySupp.Lines = 0;
+            this.labelFtySupp.Location = new System.Drawing.Point(16, 80);
+            this.labelFtySupp.Name = "labelFtySupp";
+            this.labelFtySupp.Size = new System.Drawing.Size(107, 23);
+            this.labelFtySupp.TabIndex = 6;
+            this.labelFtySupp.Text = "Fty / Supp";
             // 
-            // label6
+            // labelCapacity
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(16, 112);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(107, 23);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Capacity (unit)";
+            this.labelCapacity.Lines = 0;
+            this.labelCapacity.Location = new System.Drawing.Point(16, 112);
+            this.labelCapacity.Name = "labelCapacity";
+            this.labelCapacity.Size = new System.Drawing.Size(107, 23);
+            this.labelCapacity.TabIndex = 7;
+            this.labelCapacity.Text = "Capacity (unit)";
             // 
-            // label7
+            // labelHeads
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(16, 144);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(107, 23);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "# of Heads";
+            this.labelHeads.Lines = 0;
+            this.labelHeads.Location = new System.Drawing.Point(16, 144);
+            this.labelHeads.Name = "labelHeads";
+            this.labelHeads.Size = new System.Drawing.Size(107, 23);
+            this.labelHeads.TabIndex = 8;
+            this.labelHeads.Text = "# of Heads";
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
-            this.dateBox1.Location = new System.Drawing.Point(126, 16);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
-            this.dateBox1.Validated += new System.EventHandler(this.dateBox1_Validated);
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "issuedate", true));
+            this.dateDate.Location = new System.Drawing.Point(126, 16);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 0;
+            this.dateDate.Validated += new System.EventHandler(this.dateBox1_Validated);
             // 
-            // comboBox1
+            // comboArtworkType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "artworktypeid", true));
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(126, 48);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(159, 24);
-            this.comboBox1.TabIndex = 1;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboArtworkType.BackColor = System.Drawing.Color.White;
+            this.comboArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "artworktypeid", true));
+            this.comboArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboArtworkType.FormattingEnabled = true;
+            this.comboArtworkType.IsSupportUnselect = true;
+            this.comboArtworkType.Location = new System.Drawing.Point(126, 48);
+            this.comboArtworkType.Name = "comboArtworkType";
+            this.comboArtworkType.Size = new System.Drawing.Size(159, 24);
+            this.comboArtworkType.TabIndex = 1;
+            this.comboArtworkType.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // numericBox1
+            // numCapacity
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "capacity", true));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(126, 112);
-            this.numericBox1.Maximum = new decimal(new int[] {
+            this.numCapacity.BackColor = System.Drawing.Color.White;
+            this.numCapacity.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "capacity", true));
+            this.numCapacity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCapacity.Location = new System.Drawing.Point(126, 112);
+            this.numCapacity.Maximum = new decimal(new int[] {
             9999999,
             0,
             0,
             0});
-            this.numericBox1.MaxLength = 7;
-            this.numericBox1.Minimum = new decimal(new int[] {
+            this.numCapacity.MaxLength = 7;
+            this.numCapacity.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
+            this.numCapacity.Name = "numCapacity";
+            this.numCapacity.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(100, 23);
-            this.numericBox1.TabIndex = 3;
-            this.numericBox1.Value = new decimal(new int[] {
+            this.numCapacity.Size = new System.Drawing.Size(100, 23);
+            this.numCapacity.TabIndex = 3;
+            this.numCapacity.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numericBox2
+            // numHeads
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "heads", true));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(126, 144);
-            this.numericBox2.Maximum = new decimal(new int[] {
+            this.numHeads.BackColor = System.Drawing.Color.White;
+            this.numHeads.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "heads", true));
+            this.numHeads.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numHeads.Location = new System.Drawing.Point(126, 144);
+            this.numHeads.Maximum = new decimal(new int[] {
             99,
             0,
             0,
             0});
-            this.numericBox2.MaxLength = 2;
-            this.numericBox2.Minimum = new decimal(new int[] {
+            this.numHeads.MaxLength = 2;
+            this.numHeads.Minimum = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
+            this.numHeads.Name = "numHeads";
+            this.numHeads.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numericBox2.Size = new System.Drawing.Size(100, 23);
-            this.numericBox2.TabIndex = 4;
-            this.numericBox2.Value = new decimal(new int[] {
+            this.numHeads.Size = new System.Drawing.Size(100, 23);
+            this.numHeads.TabIndex = 4;
+            this.numHeads.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -229,8 +229,8 @@
             // 
             // radioPanel1
             // 
-            this.radioPanel1.Controls.Add(this.radioButton2);
-            this.radioPanel1.Controls.Add(this.radioButton1);
+            this.radioPanel1.Controls.Add(this.radiobyMonth);
+            this.radioPanel1.Controls.Add(this.radiobyDay);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "unit", true));
             this.radioPanel1.Location = new System.Drawing.Point(247, 112);
             this.radioPanel1.Name = "radioPanel1";
@@ -238,32 +238,32 @@
             this.radioPanel1.TabIndex = 5;
             this.radioPanel1.Validated += new System.EventHandler(this.radioPanel1_Validated);
             // 
-            // radioButton2
+            // radiobyMonth
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(77, 3);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(84, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "by month";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "2";
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.radiobyMonth.AutoSize = true;
+            this.radiobyMonth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobyMonth.Location = new System.Drawing.Point(77, 3);
+            this.radiobyMonth.Name = "radiobyMonth";
+            this.radiobyMonth.Size = new System.Drawing.Size(84, 21);
+            this.radiobyMonth.TabIndex = 1;
+            this.radiobyMonth.TabStop = true;
+            this.radiobyMonth.Text = "by month";
+            this.radiobyMonth.UseVisualStyleBackColor = true;
+            this.radiobyMonth.Value = "2";
+            this.radiobyMonth.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
-            // radioButton1
+            // radiobyDay
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(3, 2);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(68, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "by day";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "1";
+            this.radiobyDay.AutoSize = true;
+            this.radiobyDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radiobyDay.Location = new System.Drawing.Point(3, 2);
+            this.radiobyDay.Name = "radiobyDay";
+            this.radiobyDay.Size = new System.Drawing.Size(68, 21);
+            this.radiobyDay.TabIndex = 0;
+            this.radiobyDay.TabStop = true;
+            this.radiobyDay.Text = "by day";
+            this.radiobyDay.UseVisualStyleBackColor = true;
+            this.radiobyDay.Value = "1";
             // 
             // label25
             // 
@@ -275,16 +275,16 @@
             this.label25.TabIndex = 5;
             this.label25.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // txtsubcon1
+            // txtsubconFtySupp
             // 
-            this.txtsubcon1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ftysupp", true));
-            this.txtsubcon1.DisplayBox1Binding = "";
-            this.txtsubcon1.IsIncludeJunk = false;
-            this.txtsubcon1.Location = new System.Drawing.Point(126, 80);
-            this.txtsubcon1.Name = "txtsubcon1";
-            this.txtsubcon1.Size = new System.Drawing.Size(159, 23);
-            this.txtsubcon1.TabIndex = 2;
-            this.txtsubcon1.TextBox1Binding = "";
+            this.txtsubconFtySupp.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ftysupp", true));
+            this.txtsubconFtySupp.DisplayBox1Binding = "";
+            this.txtsubconFtySupp.IsIncludeJunk = false;
+            this.txtsubconFtySupp.Location = new System.Drawing.Point(126, 80);
+            this.txtsubconFtySupp.Name = "txtsubconFtySupp";
+            this.txtsubconFtySupp.Size = new System.Drawing.Size(159, 23);
+            this.txtsubconFtySupp.TabIndex = 2;
+            this.txtsubconFtySupp.TextBox1Binding = "";
             // 
             // B01
             // 
@@ -315,18 +315,18 @@
         #endregion
 
         private Win.UI.RadioPanel radioPanel1;
-        private Win.UI.RadioButton radioButton2;
-        private Win.UI.RadioButton radioButton1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox1;
-        private Class.txtsubcon txtsubcon1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Label label7;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.Label label6;
+        private Win.UI.RadioButton radiobyMonth;
+        private Win.UI.RadioButton radiobyDay;
+        private Win.UI.NumericBox numHeads;
+        private Win.UI.NumericBox numCapacity;
+        private Class.txtsubcon txtsubconFtySupp;
+        private Win.UI.ComboBox comboArtworkType;
+        private Win.UI.DateBox dateDate;
+        private Win.UI.Label labelHeads;
+        private Win.UI.Label labelDate;
+        private Win.UI.Label labelArtworkType;
+        private Win.UI.Label labelFtySupp;
+        private Win.UI.Label labelCapacity;
         private Win.UI.Label label25;
     }
 }

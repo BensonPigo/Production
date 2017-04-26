@@ -24,30 +24,30 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
-            cbxCategory.SelectedIndex = 1;  //Bulk
-            dateRange1.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
-            dateRange1.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
+            comboCategory.SelectedIndex = 1;  //Bulk
+            dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
+            dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 MyUtility.Msg.WarningBox(" < SCI Delivery > can't be empty!!");
                 return false;
             }
 
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateRange1.Value1;
-            sciDelivery2 = dateRange1.Value2;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
 
             #endregion
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            selectindex = cbxCategory.SelectedIndex;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            selectindex = comboCategory.SelectedIndex;
 
             return base.ValidateInput();
         }

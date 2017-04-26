@@ -27,8 +27,8 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
         }
 
         // 驗證輸入條件
@@ -45,20 +45,20 @@ namespace Sci.Production.Planning
             //    MyUtility.Msg.WarningBox(" < Sewing Date > can't be empty!!");
             //    return false;
             //}
-            if (MyUtility.Check.Empty(sciDeliveryRange.Value1) && MyUtility.Check.Empty(sewingDateRange.Value1))
+            if (MyUtility.Check.Empty(dateSciDelivery.Value1) && MyUtility.Check.Empty(dateSewingDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > & < Sewing Date > can't be empty!!");
                 return false;
             }
 
             #region -- 必輸的條件 --
-            sciDelivery1 = sciDeliveryRange.Value1;
-            sciDelivery2 = sciDeliveryRange.Value2;
-            sewingDate1 = sewingDateRange.Value1;
-            sewingDate2 = sewingDateRange.Value2;
+            sciDelivery1 = dateSciDelivery.Value1;
+            sciDelivery2 = dateSciDelivery.Value2;
+            sewingDate1 = dateSewingDate.Value1;
+            sewingDate2 = dateSewingDate.Value2;
             #endregion
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
 
             return base.ValidateInput();
         }

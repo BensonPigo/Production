@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.rbFactoryCode = new Sci.Win.UI.RadioButton();
-            this.rbRegionNo = new Sci.Win.UI.RadioButton();
+            this.radioFactoryCode = new Sci.Win.UI.RadioButton();
+            this.radioRegionNo = new Sci.Win.UI.RadioButton();
             this.lbGroupingby = new Sci.Win.UI.Label();
             this.lbSeason = new Sci.Win.UI.Label();
             this.lbBrand = new Sci.Win.UI.Label();
-            this.txtBrand1 = new Sci.Production.Class.txtbrand();
-            this.txtSeason1 = new Sci.Production.Class.txtseason();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.txtSeason = new Sci.Production.Class.txtseason();
             this.SuspendLayout();
             // 
             // print
@@ -52,29 +52,29 @@
             this.close.Location = new System.Drawing.Point(397, 84);
             this.close.TabIndex = 7;
             // 
-            // rbFactoryCode
+            // radioFactoryCode
             // 
-            this.rbFactoryCode.AutoSize = true;
-            this.rbFactoryCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rbFactoryCode.Location = new System.Drawing.Point(225, 85);
-            this.rbFactoryCode.Name = "rbFactoryCode";
-            this.rbFactoryCode.Size = new System.Drawing.Size(110, 21);
-            this.rbFactoryCode.TabIndex = 4;
-            this.rbFactoryCode.Text = "Factory Code";
-            this.rbFactoryCode.UseVisualStyleBackColor = true;
+            this.radioFactoryCode.AutoSize = true;
+            this.radioFactoryCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioFactoryCode.Location = new System.Drawing.Point(225, 85);
+            this.radioFactoryCode.Name = "radioFactoryCode";
+            this.radioFactoryCode.Size = new System.Drawing.Size(110, 21);
+            this.radioFactoryCode.TabIndex = 4;
+            this.radioFactoryCode.Text = "Factory Code";
+            this.radioFactoryCode.UseVisualStyleBackColor = true;
             // 
-            // rbRegionNo
+            // radioRegionNo
             // 
-            this.rbRegionNo.AutoSize = true;
-            this.rbRegionNo.Checked = true;
-            this.rbRegionNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rbRegionNo.Location = new System.Drawing.Point(123, 85);
-            this.rbRegionNo.Name = "rbRegionNo";
-            this.rbRegionNo.Size = new System.Drawing.Size(91, 21);
-            this.rbRegionNo.TabIndex = 3;
-            this.rbRegionNo.TabStop = true;
-            this.rbRegionNo.Text = "Region no";
-            this.rbRegionNo.UseVisualStyleBackColor = true;
+            this.radioRegionNo.AutoSize = true;
+            this.radioRegionNo.Checked = true;
+            this.radioRegionNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioRegionNo.Location = new System.Drawing.Point(123, 85);
+            this.radioRegionNo.Name = "radioRegionNo";
+            this.radioRegionNo.Size = new System.Drawing.Size(91, 21);
+            this.radioRegionNo.TabIndex = 3;
+            this.radioRegionNo.TabStop = true;
+            this.radioRegionNo.Text = "Region no";
+            this.radioRegionNo.UseVisualStyleBackColor = true;
             // 
             // lbGroupingby
             // 
@@ -112,32 +112,32 @@
             this.lbBrand.TextStyle.BorderColor = System.Drawing.Color.White;
             this.lbBrand.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // txtBrand1
+            // txtBrand
             // 
-            this.txtBrand1.BackColor = System.Drawing.Color.White;
-            this.txtBrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand1.Location = new System.Drawing.Point(123, 12);
-            this.txtBrand1.Name = "txtBrand1";
-            this.txtBrand1.Size = new System.Drawing.Size(153, 23);
-            this.txtBrand1.TabIndex = 0;
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(123, 12);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(153, 23);
+            this.txtBrand.TabIndex = 0;
             // 
-            // txtSeason1
+            // txtSeason
             // 
-            this.txtSeason1.BackColor = System.Drawing.Color.White;
-            this.txtSeason1.BrandObjectName = null;
-            this.txtSeason1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason1.Location = new System.Drawing.Point(123, 50);
-            this.txtSeason1.Name = "txtSeason1";
-            this.txtSeason1.Size = new System.Drawing.Size(80, 23);
-            this.txtSeason1.TabIndex = 2;
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.BrandObjectName = null;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(123, 50);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(80, 23);
+            this.txtSeason.TabIndex = 2;
             // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(489, 157);
-            this.Controls.Add(this.txtSeason1);
-            this.Controls.Add(this.txtBrand1);
-            this.Controls.Add(this.rbFactoryCode);
-            this.Controls.Add(this.rbRegionNo);
+            this.Controls.Add(this.txtSeason);
+            this.Controls.Add(this.txtBrand);
+            this.Controls.Add(this.radioFactoryCode);
+            this.Controls.Add(this.radioRegionNo);
             this.Controls.Add(this.lbGroupingby);
             this.Controls.Add(this.lbSeason);
             this.Controls.Add(this.lbBrand);
@@ -151,10 +151,10 @@
             this.Controls.SetChildIndex(this.lbBrand, 0);
             this.Controls.SetChildIndex(this.lbSeason, 0);
             this.Controls.SetChildIndex(this.lbGroupingby, 0);
-            this.Controls.SetChildIndex(this.rbRegionNo, 0);
-            this.Controls.SetChildIndex(this.rbFactoryCode, 0);
-            this.Controls.SetChildIndex(this.txtBrand1, 0);
-            this.Controls.SetChildIndex(this.txtSeason1, 0);
+            this.Controls.SetChildIndex(this.radioRegionNo, 0);
+            this.Controls.SetChildIndex(this.radioFactoryCode, 0);
+            this.Controls.SetChildIndex(this.txtBrand, 0);
+            this.Controls.SetChildIndex(this.txtSeason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,12 +162,12 @@
 
         #endregion
 
-        private Win.UI.RadioButton rbFactoryCode;
-        private Win.UI.RadioButton rbRegionNo;
+        private Win.UI.RadioButton radioFactoryCode;
+        private Win.UI.RadioButton radioRegionNo;
         private Win.UI.Label lbGroupingby;
         private Win.UI.Label lbSeason;
         private Win.UI.Label lbBrand;
-        private Class.txtbrand txtBrand1;
-        private Class.txtseason txtSeason1;
+        private Class.txtbrand txtBrand;
+        private Class.txtseason txtSeason;
     }
 }

@@ -29,21 +29,21 @@ namespace Sci.Production.Planning
             if (String.IsNullOrWhiteSpace(CurrentMaintain["BeginStitch"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Begin Stitch > can not be empty!");
-                this.numericBox1.Focus();
+                this.numBeginStitch.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EndStitch"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< End Stitch > can not be empty!");
-                this.numericBox2.Focus();
+                this.numEndStitch.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Batchno"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Batch Number > can not be empty!");
-                this.numericBox3.Focus();
+                this.numBatchNumber.Focus();
                 return false;
             }
 
@@ -79,11 +79,11 @@ namespace Sci.Production.Planning
 
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             sp3.ParameterName = "@OldBegin";
-            sp3.Value = this.numericBox1.OldValue;
+            sp3.Value = this.numBeginStitch.OldValue;
 
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
             sp4.ParameterName = "@OldEnd";
-            sp4.Value = this.numericBox2.OldValue;
+            sp4.Value = this.numEndStitch.OldValue;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -107,14 +107,14 @@ namespace Sci.Production.Planning
 
         private void numericBox1_Validating(object sender, CancelEventArgs e)
         {
-            string Value = this.numericBox1.Text;
-            if (Value != this.numericBox1.OldValue.ToString()) BeginEndChange = true;
+            string Value = this.numBeginStitch.Text;
+            if (Value != this.numBeginStitch.OldValue.ToString()) BeginEndChange = true;
         }
 
         private void numericBox2_Validating(object sender, CancelEventArgs e)
         {
-            string Value = this.numericBox2.Text;
-            if (Value != this.numericBox2.OldValue.ToString()) BeginEndChange = true;
+            string Value = this.numEndStitch.Text;
+            if (Value != this.numEndStitch.OldValue.ToString()) BeginEndChange = true;
         }
 
 

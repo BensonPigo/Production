@@ -30,15 +30,15 @@ namespace Sci.Production.Planning
         {
 
             base.OnFormLoaded();
-            txtstyle1.Select();
+            txtstyle.Select();
           //  grid2.AutoGenerateColumns = true;
-            Helper.Controls.Grid.Generator(this.grid2)
+            Helper.Controls.Grid.Generator(this.gridSupplier)
                .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(20))
                .Numeric("totalqty", header: "TotalQty", width: Widths.AnsiChars(8), integer_places: 8, iseditingreadonly: true);
             
-            this.checkBox1.Checked = true;
-            dateRange2.Value1 = DateTime.Today.AddMonths(1);
-            dateRange2.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
+            this.checkPrice.Checked = true;
+            dateSCIDelivery.Value1 = DateTime.Today.AddMonths(1);
+            dateSCIDelivery.Value2 = DateTime.Today.AddMonths(2).AddDays(-1);
            
             Dictionary<string, string> di_inhouseOsp = new Dictionary<string, string>();
             di_inhouseOsp.Add("", "All");
@@ -49,31 +49,31 @@ namespace Sci.Production.Planning
             di_inhouseOsp2.Add("O", "OSP");
             di_inhouseOsp2.Add("I", "InHouse");
 
-            comboBox1.DataSource = new BindingSource(di_inhouseOsp, null);
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
-            comboBox1.SelectedIndex = 1;  //OSP
+            comboOSPInHouse.DataSource = new BindingSource(di_inhouseOsp, null);
+            comboOSPInHouse.ValueMember = "Key";
+            comboOSPInHouse.DisplayMember = "Value";
+            comboOSPInHouse.SelectedIndex = 1;  //OSP
 
-            comboBox3.DataSource = new BindingSource(di_inhouseOsp2, null);
-            comboBox3.ValueMember = "Key";
-            comboBox3.DisplayMember = "Value";
-            comboBox3.SelectedIndex = 0;  //OSP
+            comboinhouseOsp2.DataSource = new BindingSource(di_inhouseOsp2, null);
+            comboinhouseOsp2.ValueMember = "Key";
+            comboinhouseOsp2.DisplayMember = "Value";
+            comboinhouseOsp2.SelectedIndex = 0;  //OSP
 
-            grid1.RowPostPaint += (s, e) =>
+            gridPrintingQuickAdjust.RowPostPaint += (s, e) =>
             {
                 //DataGridViewRow dvr = detailgrid.Rows[e.RowIndex];
                 //DataRow dr = ((DataRowView)dvr.DataBoundItem).Row;
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (grid1.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
+                DataRow dr = gridPrintingQuickAdjust.GetDataRow(e.RowIndex);
+                if (gridPrintingQuickAdjust.Rows.Count <= e.RowIndex || e.RowIndex < 0) return;
 
                 int i = e.RowIndex;
                 switch (int.Parse(dr["err"].ToString()))
                 {
                     case 1:
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
+                        gridPrintingQuickAdjust.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(255, 220, 255);
                         break;
                     case 2:
-                        grid1.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
+                        gridPrintingQuickAdjust.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 0);
                         break;
                 }
                
@@ -83,9 +83,9 @@ namespace Sci.Production.Planning
             ts1.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.RowIndex < 0) return;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridPrintingQuickAdjust.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-                string colnm = this.grid1.Columns[e.ColumnIndex].DataPropertyName;
+                string colnm = this.gridPrintingQuickAdjust.Columns[e.ColumnIndex].DataPropertyName;
                 string expression = colnm + " = '" + ddr[colnm].ToString().TrimEnd() + "'";
                 DataRow[] drfound = dt.Select(expression);
 
@@ -98,9 +98,9 @@ namespace Sci.Production.Planning
                 }
             };
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridPrintingQuickAdjust.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                if (gridPrintingQuickAdjust.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     this.sum_checkedqty();
                 }
@@ -144,7 +144,7 @@ namespace Sci.Production.Planning
             {
 
                 if (e.RowIndex < 0) return;
-                DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow ddr = gridPrintingQuickAdjust.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
                 string sqlcmd = "";
                 if (MyUtility.Check.Empty(ddr["inhouseosp"]))
@@ -171,7 +171,7 @@ namespace Sci.Production.Planning
             {
                string Code = e.FormattedValue.ToString();//抓到當下的cell值
                    string sqlcmd = ""; DataTable dt;
-                   DataRow ddr = grid1.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
+                   DataRow ddr = gridPrintingQuickAdjust.GetDataRow<DataRow>(e.RowIndex);//抓到當下的row
                    if (ddr["inhouseosp"].ToString() == "O")
                        sqlcmd = "select id,abb from localsupp WITH (NOLOCK) where junk = 0 and IsFactory = 0 order by ID";
                    if (ddr["inhouseosp"].ToString() == "I")
@@ -210,11 +210,11 @@ namespace Sci.Production.Planning
             Ict.Win.UI.DataGridViewComboBoxColumn col_inhouseosp;
            
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridPrintingQuickAdjust.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridPrintingQuickAdjust.DataSource = listControlBindingSource1;
            
            
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridPrintingQuickAdjust)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("FactoryID", header: "Fac", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true).Get(out col_Fty)
                 .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), settings: ts1, iseditingreadonly: true).Get(out col_style)
@@ -239,11 +239,11 @@ namespace Sci.Production.Planning
                  .Text("msg", header: "Error Message", width: Widths.AnsiChars(20), settings: ts1, iseditingreadonly: true)
                   ;
             #region 可編輯欄位變色
-            grid1.Columns["inhouseosp"].DefaultCellStyle.BackColor = Color.Pink;
-            grid1.Columns["localSuppid"].DefaultCellStyle.BackColor = Color.Pink;
+            gridPrintingQuickAdjust.Columns["inhouseosp"].DefaultCellStyle.BackColor = Color.Pink;
+            gridPrintingQuickAdjust.Columns["localSuppid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
           // foreach (DataGridViewColumn col in grid1.Columns) { col.SortMode = DataGridViewColumnSortMode.NotSortable; } //關掉header排序
-           this.grid1.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
+           this.gridPrintingQuickAdjust.ColumnHeaderMouseClick += grid1_ColumnHeaderMouseClick;
                            
             col_inhouseosp.DataSource = new BindingSource(di_inhouseOsp2, null);
             col_inhouseosp.ValueMember = "Key";
@@ -258,7 +258,7 @@ namespace Sci.Production.Planning
                 if (null != this.dtData) 
                 {
                     this.dtData.DefaultView.Sort = "factoryID,seasonID,styleID";
-                    grid1.DataSource = dtData;
+                    gridPrintingQuickAdjust.DataSource = dtData;
 
                 }
             }
@@ -267,7 +267,7 @@ namespace Sci.Production.Planning
                 if (null != this.dtData)
                 {
                     this.dtData.DefaultView.Sort = "seasonID,styleID";
-                    grid1.DataSource = dtData;
+                    gridPrintingQuickAdjust.DataSource = dtData;
 
                 }
             }
@@ -283,24 +283,24 @@ namespace Sci.Production.Planning
             sciDelivery_b = null;
             sciDelivery_e = null;
             bool chkprice;
-            chkprice = checkBox1.Checked;
-            styleid = txtstyle1.Text;
-            seasonid = txtseason1.Text;
-            localsuppid = txtsubcon1.TextBox1.Text;
-            factoryid = txtmfactory1.Text;
-            inhouseosp = comboBox1.SelectedValue.ToString();
+            chkprice = checkPrice.Checked;
+            styleid = txtstyle.Text;
+            seasonid = txtseason.Text;
+            localsuppid = txtsubconSupplier.TextBox1.Text;
+            factoryid = txtmfactory.Text;
+            inhouseosp = comboOSPInHouse.SelectedValue.ToString();
 
-            if (dateRange1.Value1 != null) sewinline_b = this.dateRange1.Text1;
-            if (dateRange1.Value2 != null) { sewinline_e = this.dateRange1.Text2; }
+            if (dateSewingInline.Value1 != null) sewinline_b = this.dateSewingInline.Text1;
+            if (dateSewingInline.Value2 != null) { sewinline_e = this.dateSewingInline.Text2; }
 
-            if (dateRange2.Value1 != null) sciDelivery_b = this.dateRange2.Text1;
-            if (dateRange2.Value2 != null) { sciDelivery_e = this.dateRange2.Text2; }
+            if (dateSCIDelivery.Value1 != null) sciDelivery_b = this.dateSCIDelivery.Text1;
+            if (dateSCIDelivery.Value2 != null) { sciDelivery_e = this.dateSCIDelivery.Text2; }
 
             if ((sewinline_b == null && sewinline_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null))
             {
                 MyUtility.Msg.WarningBox("< SCI Delivery > or < Sewing Inline Date > can't be empty!!");
-                dateRange2.Focus1();
+                dateSCIDelivery.Focus1();
                 return;
             }
             string orderby = "";
@@ -374,8 +374,8 @@ namespace Sci.Production.Planning
             {
                 ShowErr(sqlcmd, result);
             }
-            this.displayBox1.Clear();
-            this.grid1.AutoResizeColumns();
+            this.displayCheckedQty.Clear();
+            this.gridPrintingQuickAdjust.AutoResizeColumns();
             this.HideWaitMessage();
         }
         
@@ -439,7 +439,7 @@ namespace Sci.Production.Planning
 
             foreach (var item in drfound)
             {
-                item["inhouseosp"] = this.comboBox3.SelectedValue.ToString();
+                item["inhouseosp"] = this.comboinhouseOsp2.SelectedValue.ToString();
             }
         }
 
@@ -451,8 +451,8 @@ namespace Sci.Production.Planning
             DataRow[] drfound = dt.Select("selected = 1");
             foreach (var item in drfound)
             {
-                item["localsuppid"] = txtsubcon2.TextBox1.Text;
-                item["suppnm"] = txtsubcon2.DisplayBox1.Text;
+                item["localsuppid"] = txtsubconLocalSuppid.TextBox1.Text;
+                item["suppnm"] = txtsubconLocalSuppid.DisplayBox1.Text;
             }
         }
 
@@ -460,7 +460,7 @@ namespace Sci.Production.Planning
         private void button2_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            int index = listControlBindingSource1.Find("id", textBox1.Text.TrimEnd());
+            int index = listControlBindingSource1.Find("id", txtLocateForSPNo.Text.TrimEnd());
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
@@ -472,18 +472,18 @@ namespace Sci.Production.Planning
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(totalqty)", "selected = 1");
-            this.displayBox1.Value = localPrice.ToString();
+            this.displayCheckedQty.Value = localPrice.ToString();
         }
 
         //Filter empty Supp ID , In Line
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.Filter = "";
-            if (checkBox4.Checked && checkBox3.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
+            if (checkSuppID.Checked && checkInLine.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
             else
             {
-                if (checkBox4.Checked) listControlBindingSource1.Filter = " localsuppid ='' ";
-                if (checkBox3.Checked) listControlBindingSource1.Filter = "ArtworkInLine is null";
+                if (checkSuppID.Checked) listControlBindingSource1.Filter = " localsuppid ='' ";
+                if (checkInLine.Checked) listControlBindingSource1.Filter = "ArtworkInLine is null";
             }
             grid2_generate();
         }
@@ -507,7 +507,7 @@ namespace Sci.Production.Planning
                            TotalQty =  grouprows.Sum(r => (r.Field<int>("OrderQty") - r.Field<int>("qaqty")) * r.Field<decimal>("qty"))
                        }).ToList();
             bs1.AddRange(bs2);
-            grid2.DataSource = bs1;
+            gridSupplier.DataSource = bs1;
            
          //   grid2.AutoResizeColumns();
         }
@@ -631,24 +631,24 @@ namespace Sci.Production.Planning
         private void grid1_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
         {
             //Auto Resize the columns to fit the data
-            foreach (DataGridViewColumn column in grid1.Columns)
+            foreach (DataGridViewColumn column in gridPrintingQuickAdjust.Columns)
             {
-                grid1.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                int widthCol = grid1.Columns[column.Index].Width;
-                grid1.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                grid1.Columns[column.Index].Width = widthCol;
+                gridPrintingQuickAdjust.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                int widthCol = gridPrintingQuickAdjust.Columns[column.Index].Width;
+                gridPrintingQuickAdjust.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                gridPrintingQuickAdjust.Columns[column.Index].Width = widthCol;
             }
         }
 
         private void grid2_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
         {
             //Auto Resize the columns to fit the data
-            foreach (DataGridViewColumn column in grid2.Columns)
+            foreach (DataGridViewColumn column in gridSupplier.Columns)
             {
-                grid2.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                int widthCol = grid2.Columns[column.Index].Width;
-                grid2.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                grid2.Columns[column.Index].Width = widthCol;
+                gridSupplier.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                int widthCol = gridSupplier.Columns[column.Index].Width;
+                gridSupplier.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                gridSupplier.Columns[column.Index].Width = widthCol;
                 
             }
         }

@@ -81,12 +81,12 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             if (!(CurrentMaintain == null))
             {
                 result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(qty),0) as cutqty from cuttingOutput_detail_detail WITH (NOLOCK) where CuttingID='{0}'", CurrentMaintain["id"]), out dr, null);
-                if (result) numericBox_cutqty.Value = (decimal)dr[0];
+                if (result) numCutQty.Value = (decimal)dr[0];
                 dr = null;
                 result = MyUtility.Check.Seek(string.Format(@"select isnull(sum(workday),0) as workday from sewingschedule WITH (NOLOCK) where orderid ='{0}'", CurrentMaintain["id"]), out dr, null);
-                if (result) numericBox_NeedPerDay.Value = decimal.Parse(dr[0].ToString());
+                if (result) numNeedPerDay.Value = decimal.Parse(dr[0].ToString());
             }
-            button_batchApprove.Enabled = !this.EditMode;
+            btnBatchApprove.Enabled = !this.EditMode;
             this.detailgrid.AutoResizeColumns();
 
             DataTable CutDate_dt;
@@ -98,7 +98,7 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             DualResult res;
             res = DBProxy.Current.Select(null, cmd, out CutDate_dt);
             if (CutDate_dt.Rows.Count == 0) { return; }
-            FirstCut_DateBox.Value = MyUtility.Convert.GetDate(CutDate_dt.Rows[0]["FirstCutDate"].ToString());
+            dateFirstCutDate.Value = MyUtility.Convert.GetDate(CutDate_dt.Rows[0]["FirstCutDate"].ToString());
 
         }
         // grid 加工填值

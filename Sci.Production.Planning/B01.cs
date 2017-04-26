@@ -34,9 +34,9 @@ namespace Sci.Production.Planning
             dr[0] = "Bonding (Hand)";
             dt.Rows.Add(dr);
 
-            this.comboBox1.DataSource = dt;
-            this.comboBox1.DisplayMember = "Value";
-            this.comboBox1.ValueMember = "Value";
+            this.comboArtworkType.DataSource = dt;
+            this.comboArtworkType.DisplayMember = "Value";
+            this.comboArtworkType.ValueMember = "Value";
         }
         //新增資料預設
         protected override void ClickNewAfter()
@@ -51,34 +51,34 @@ namespace Sci.Production.Planning
             if (String.IsNullOrWhiteSpace(CurrentMaintain["issuedate"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Date > can not be empty!");
-                this.dateBox1.Focus();
+                this.dateDate.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["artworktypeid"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Artwork Type > can not be empty!");
-                this.comboBox1.Focus();
+                this.comboArtworkType.Focus();
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["ftysupp"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Fty / Supp > can not be empty!");
-                this.txtsubcon1.Focus();
+                this.txtsubconFtySupp.Focus();
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["heads"]) && CurrentMaintain["artworktypeid"].ToString() == "Embroidery")
             {
                 MyUtility.Msg.WarningBox("< # of Heads > can not be empty!");
-                this.numericBox2.Focus();
+                this.numHeads.Focus();
                 return false;
             }
 
 
 
-            if (radioButton2.Checked == true)
+            if (radiobyMonth.Checked == true)
             {
                 int yy = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Year;
                 int mm = DateTime.Parse(CurrentMaintain["issuedate"].ToString()).Month;
@@ -93,22 +93,22 @@ namespace Sci.Production.Planning
         //combo下拉控制其它物件
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (null == this.comboBox1.SelectedValue) return;
-            switch(this.comboBox1.SelectedValue.ToString().TrimEnd())
+            if (null == this.comboArtworkType.SelectedValue) return;
+            switch(this.comboArtworkType.SelectedValue.ToString().TrimEnd())
             {
                 case "Bonding (Hand)":
-                    this.label6.Text = "Capacity (Person):";
+                    this.labelCapacity.Text = "Capacity (Person):";
                     this.label25.Text = "(Calculate by employee)";
                     break;
                 case "Embroidery":
-                    this.label7.Visible = true;
-                    this.numericBox2.Visible = true;
+                    this.labelHeads.Visible = true;
+                    this.numHeads.Visible = true;
                     break;
                 default:
-                    this.label6.Text = "Capacity (Unit)";
+                    this.labelCapacity.Text = "Capacity (Unit)";
                     this.label25.Text = "(Calculate by machine)";
-                    this.label7.Visible = false;
-                    this.numericBox2.Visible = false;
+                    this.labelHeads.Visible = false;
+                    this.numHeads.Visible = false;
                     break;
 
             }
@@ -122,18 +122,18 @@ namespace Sci.Production.Planning
             switch (CurrentMaintain["artworktypeid"].ToString().TrimEnd())
             {
                 case "Bonding (Hand)":
-                    this.label6.Text = "Capacity (Person):";
+                    this.labelCapacity.Text = "Capacity (Person):";
                     this.label25.Text = "(Calculate by employee)";
                     break;
                 case "Embroidery":
-                    this.label7.Visible = true;
-                    this.numericBox2.Visible = true;
+                    this.labelHeads.Visible = true;
+                    this.numHeads.Visible = true;
                     break;
                 default:
-                    this.label6.Text = "Capacity (Unit)";
+                    this.labelCapacity.Text = "Capacity (Unit)";
                     this.label25.Text = "(Calculate by machine)";
-                    this.label7.Visible = false;
-                    this.numericBox2.Visible = false;
+                    this.labelHeads.Visible = false;
+                    this.numHeads.Visible = false;
                     break;
 
             }

@@ -27,12 +27,12 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbArtworkType,1,1,"HT(UA),HT(Non-UA)");
-            cbbArtworkType.SelectedIndex = 0;
-            dateRange1.Value1 = DateTime.Now.Date;
-            dateRange1.Value2 = DateTime.Now.Date.AddMonths(2);
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboArtworkType,1,1,"HT(UA),HT(Non-UA)");
+            comboArtworkType.SelectedIndex = 0;
+            dateSewingDate.Value1 = DateTime.Now.Date;
+            dateSewingDate.Value2 = DateTime.Now.Date.AddMonths(2);
         }
 
         // 驗證輸入條件
@@ -45,12 +45,12 @@ namespace Sci.Production.Planning
             //}
 
             #region -- 必輸的條件 --
-            sewingDate1 = dateRange1.Value1;
-            sewingDate2 = dateRange1.Value2;
+            sewingDate1 = dateSewingDate.Value1;
+            sewingDate2 = dateSewingDate.Value2;
             #endregion
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            selectindex = cbbArtworkType.SelectedIndex;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            selectindex = comboArtworkType.SelectedIndex;
 
             DualResult result;
             string sql = string.Format(@"with expend_date as 
@@ -163,7 +163,7 @@ AND Order_TmsCost.TMS > 0
                     sqlCmd.Append(@" AND orders.BrandID != 'U.ARMOUR' ");
                     break;
             }
-            condition.Append(string.Format(@"    Category : {0}", cbbArtworkType.SelectedText));
+            condition.Append(string.Format(@"    Category : {0}", comboArtworkType.SelectedText));
 
             #endregion
 
@@ -265,7 +265,7 @@ pivot
             MyUtility.Excel.CopyToXls(printData, "", "Planning_R18.xltx", 1, true, null, objApp);      // 將datatable copy to excel
             objApp.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheet.Name = cbbArtworkType.SelectedValue.ToString();
+            objSheet.Name = comboArtworkType.SelectedValue.ToString();
             //objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
             Excel.Range range = null;
             for (int i = 0; i < dtDateList.Rows.Count; i++)  //列印動態欄位的表頭

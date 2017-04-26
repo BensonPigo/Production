@@ -29,22 +29,22 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.lbRemark = new Sci.Win.UI.Label();
             this.panelSourceType = new Sci.Win.UI.Panel();
-            this.rdAll = new System.Windows.Forms.RadioButton();
-            this.rdReebok = new System.Windows.Forms.RadioButton();
-            this.rdAdidas = new System.Windows.Forms.RadioButton();
+            this.radioAll = new System.Windows.Forms.RadioButton();
+            this.radioReebok = new System.Windows.Forms.RadioButton();
+            this.radioAdidas = new System.Windows.Forms.RadioButton();
             this.panelByType = new Sci.Win.UI.Panel();
-            this.rdByAll = new System.Windows.Forms.RadioButton();
-            this.rdByFactory = new System.Windows.Forms.RadioButton();
-            this.rdByAGC = new System.Windows.Forms.RadioButton();
-            this.chkDetail = new Sci.Win.UI.CheckBox();
+            this.radioByAll = new System.Windows.Forms.RadioButton();
+            this.radioByFactory = new System.Windows.Forms.RadioButton();
+            this.radioByAGC = new System.Windows.Forms.RadioButton();
+            this.checkDetail = new Sci.Win.UI.CheckBox();
             this.panelReportType = new Sci.Win.UI.Panel();
-            this.rdMDP = new System.Windows.Forms.RadioButton();
-            this.rdFactory = new System.Windows.Forms.RadioButton();
-            this.rdAGC = new System.Windows.Forms.RadioButton();
+            this.radioMDP = new System.Windows.Forms.RadioButton();
+            this.radioFactory = new System.Windows.Forms.RadioButton();
+            this.radioAGC = new System.Windows.Forms.RadioButton();
             this.numMonth = new System.Windows.Forms.NumericUpDown();
             this.numYear = new System.Windows.Forms.NumericUpDown();
             this.lbSource = new Sci.Win.UI.Label();
@@ -52,7 +52,7 @@
             this.lbMonth = new Sci.Win.UI.Label();
             this.lbYear = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridAdidasKPIReport = new Sci.Win.UI.Grid();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnUndo = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
@@ -63,7 +63,7 @@
             this.panelReportType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAdidasKPIReport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,7 +87,7 @@
             this.radioGroup1.Controls.Add(this.lbRemark);
             this.radioGroup1.Controls.Add(this.panelSourceType);
             this.radioGroup1.Controls.Add(this.panelByType);
-            this.radioGroup1.Controls.Add(this.chkDetail);
+            this.radioGroup1.Controls.Add(this.checkDetail);
             this.radioGroup1.Controls.Add(this.panelReportType);
             this.radioGroup1.Controls.Add(this.numMonth);
             this.radioGroup1.Controls.Add(this.numYear);
@@ -114,152 +114,152 @@
             // 
             // panelSourceType
             // 
-            this.panelSourceType.Controls.Add(this.rdAll);
-            this.panelSourceType.Controls.Add(this.rdReebok);
-            this.panelSourceType.Controls.Add(this.rdAdidas);
+            this.panelSourceType.Controls.Add(this.radioAll);
+            this.panelSourceType.Controls.Add(this.radioReebok);
+            this.panelSourceType.Controls.Add(this.radioAdidas);
             this.panelSourceType.Location = new System.Drawing.Point(58, 207);
             this.panelSourceType.Name = "panelSourceType";
             this.panelSourceType.Size = new System.Drawing.Size(209, 26);
             this.panelSourceType.TabIndex = 9;
             // 
-            // rdAll
+            // radioAll
             // 
-            this.rdAll.AutoSize = true;
-            this.rdAll.ForeColor = System.Drawing.Color.Red;
-            this.rdAll.Location = new System.Drawing.Point(160, 2);
-            this.rdAll.Name = "rdAll";
-            this.rdAll.Size = new System.Drawing.Size(41, 21);
-            this.rdAll.TabIndex = 2;
-            this.rdAll.TabStop = true;
-            this.rdAll.Text = "All";
-            this.rdAll.UseVisualStyleBackColor = true;
+            this.radioAll.AutoSize = true;
+            this.radioAll.ForeColor = System.Drawing.Color.Red;
+            this.radioAll.Location = new System.Drawing.Point(160, 2);
+            this.radioAll.Name = "radioAll";
+            this.radioAll.Size = new System.Drawing.Size(41, 21);
+            this.radioAll.TabIndex = 2;
+            this.radioAll.TabStop = true;
+            this.radioAll.Text = "All";
+            this.radioAll.UseVisualStyleBackColor = true;
             // 
-            // rdReebok
+            // radioReebok
             // 
-            this.rdReebok.AutoSize = true;
-            this.rdReebok.ForeColor = System.Drawing.Color.Red;
-            this.rdReebok.Location = new System.Drawing.Point(78, 2);
-            this.rdReebok.Name = "rdReebok";
-            this.rdReebok.Size = new System.Drawing.Size(75, 21);
-            this.rdReebok.TabIndex = 1;
-            this.rdReebok.TabStop = true;
-            this.rdReebok.Text = "Reebok";
-            this.rdReebok.UseVisualStyleBackColor = true;
+            this.radioReebok.AutoSize = true;
+            this.radioReebok.ForeColor = System.Drawing.Color.Red;
+            this.radioReebok.Location = new System.Drawing.Point(78, 2);
+            this.radioReebok.Name = "radioReebok";
+            this.radioReebok.Size = new System.Drawing.Size(75, 21);
+            this.radioReebok.TabIndex = 1;
+            this.radioReebok.TabStop = true;
+            this.radioReebok.Text = "Reebok";
+            this.radioReebok.UseVisualStyleBackColor = true;
             // 
-            // rdAdidas
+            // radioAdidas
             // 
-            this.rdAdidas.AutoSize = true;
-            this.rdAdidas.Checked = true;
-            this.rdAdidas.ForeColor = System.Drawing.Color.Red;
-            this.rdAdidas.Location = new System.Drawing.Point(3, 2);
-            this.rdAdidas.Name = "rdAdidas";
-            this.rdAdidas.Size = new System.Drawing.Size(69, 21);
-            this.rdAdidas.TabIndex = 0;
-            this.rdAdidas.TabStop = true;
-            this.rdAdidas.Text = "Adidas";
-            this.rdAdidas.UseVisualStyleBackColor = true;
+            this.radioAdidas.AutoSize = true;
+            this.radioAdidas.Checked = true;
+            this.radioAdidas.ForeColor = System.Drawing.Color.Red;
+            this.radioAdidas.Location = new System.Drawing.Point(3, 2);
+            this.radioAdidas.Name = "radioAdidas";
+            this.radioAdidas.Size = new System.Drawing.Size(69, 21);
+            this.radioAdidas.TabIndex = 0;
+            this.radioAdidas.TabStop = true;
+            this.radioAdidas.Text = "Adidas";
+            this.radioAdidas.UseVisualStyleBackColor = true;
             // 
             // panelByType
             // 
-            this.panelByType.Controls.Add(this.rdByAll);
-            this.panelByType.Controls.Add(this.rdByFactory);
-            this.panelByType.Controls.Add(this.rdByAGC);
+            this.panelByType.Controls.Add(this.radioByAll);
+            this.panelByType.Controls.Add(this.radioByFactory);
+            this.panelByType.Controls.Add(this.radioByAGC);
             this.panelByType.Location = new System.Drawing.Point(191, 123);
             this.panelByType.Name = "panelByType";
             this.panelByType.Size = new System.Drawing.Size(111, 76);
             this.panelByType.TabIndex = 8;
             this.panelByType.Visible = false;
             // 
-            // rdByAll
+            // radioByAll
             // 
-            this.rdByAll.AutoSize = true;
-            this.rdByAll.ForeColor = System.Drawing.Color.Red;
-            this.rdByAll.Location = new System.Drawing.Point(2, 54);
-            this.rdByAll.Name = "rdByAll";
-            this.rdByAll.Size = new System.Drawing.Size(60, 21);
-            this.rdByAll.TabIndex = 2;
-            this.rdByAll.Text = "by All";
-            this.rdByAll.UseVisualStyleBackColor = true;
+            this.radioByAll.AutoSize = true;
+            this.radioByAll.ForeColor = System.Drawing.Color.Red;
+            this.radioByAll.Location = new System.Drawing.Point(2, 54);
+            this.radioByAll.Name = "radioByAll";
+            this.radioByAll.Size = new System.Drawing.Size(60, 21);
+            this.radioByAll.TabIndex = 2;
+            this.radioByAll.Text = "by All";
+            this.radioByAll.UseVisualStyleBackColor = true;
             // 
-            // rdByFactory
+            // radioByFactory
             // 
-            this.rdByFactory.AutoSize = true;
-            this.rdByFactory.ForeColor = System.Drawing.Color.Red;
-            this.rdByFactory.Location = new System.Drawing.Point(2, 31);
-            this.rdByFactory.Name = "rdByFactory";
-            this.rdByFactory.Size = new System.Drawing.Size(92, 21);
-            this.rdByFactory.TabIndex = 1;
-            this.rdByFactory.Text = "by Factory";
-            this.rdByFactory.UseVisualStyleBackColor = true;
+            this.radioByFactory.AutoSize = true;
+            this.radioByFactory.ForeColor = System.Drawing.Color.Red;
+            this.radioByFactory.Location = new System.Drawing.Point(2, 31);
+            this.radioByFactory.Name = "radioByFactory";
+            this.radioByFactory.Size = new System.Drawing.Size(92, 21);
+            this.radioByFactory.TabIndex = 1;
+            this.radioByFactory.Text = "by Factory";
+            this.radioByFactory.UseVisualStyleBackColor = true;
             // 
-            // rdByAGC
+            // radioByAGC
             // 
-            this.rdByAGC.AutoSize = true;
-            this.rdByAGC.Checked = true;
-            this.rdByAGC.ForeColor = System.Drawing.Color.Red;
-            this.rdByAGC.Location = new System.Drawing.Point(2, 6);
-            this.rdByAGC.Name = "rdByAGC";
-            this.rdByAGC.Size = new System.Drawing.Size(74, 21);
-            this.rdByAGC.TabIndex = 0;
-            this.rdByAGC.TabStop = true;
-            this.rdByAGC.Text = "by AGC";
-            this.rdByAGC.UseVisualStyleBackColor = true;
+            this.radioByAGC.AutoSize = true;
+            this.radioByAGC.Checked = true;
+            this.radioByAGC.ForeColor = System.Drawing.Color.Red;
+            this.radioByAGC.Location = new System.Drawing.Point(2, 6);
+            this.radioByAGC.Name = "radioByAGC";
+            this.radioByAGC.Size = new System.Drawing.Size(74, 21);
+            this.radioByAGC.TabIndex = 0;
+            this.radioByAGC.TabStop = true;
+            this.radioByAGC.Text = "by AGC";
+            this.radioByAGC.UseVisualStyleBackColor = true;
             // 
-            // chkDetail
+            // checkDetail
             // 
-            this.chkDetail.AutoSize = true;
-            this.chkDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkDetail.Location = new System.Drawing.Point(191, 72);
-            this.chkDetail.Name = "chkDetail";
-            this.chkDetail.Size = new System.Drawing.Size(123, 21);
-            this.chkDetail.TabIndex = 2;
-            this.chkDetail.Text = "List Detail Data";
-            this.chkDetail.UseVisualStyleBackColor = true;
+            this.checkDetail.AutoSize = true;
+            this.checkDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkDetail.Location = new System.Drawing.Point(191, 72);
+            this.checkDetail.Name = "checkDetail";
+            this.checkDetail.Size = new System.Drawing.Size(123, 21);
+            this.checkDetail.TabIndex = 2;
+            this.checkDetail.Text = "List Detail Data";
+            this.checkDetail.UseVisualStyleBackColor = true;
             // 
             // panelReportType
             // 
-            this.panelReportType.Controls.Add(this.rdMDP);
-            this.panelReportType.Controls.Add(this.rdFactory);
-            this.panelReportType.Controls.Add(this.rdAGC);
+            this.panelReportType.Controls.Add(this.radioMDP);
+            this.panelReportType.Controls.Add(this.radioFactory);
+            this.panelReportType.Controls.Add(this.radioAGC);
             this.panelReportType.Location = new System.Drawing.Point(58, 70);
             this.panelReportType.Name = "panelReportType";
             this.panelReportType.Size = new System.Drawing.Size(124, 80);
             this.panelReportType.TabIndex = 2;
             // 
-            // rdMDP
+            // radioMDP
             // 
-            this.rdMDP.AutoSize = true;
-            this.rdMDP.ForeColor = System.Drawing.Color.Red;
-            this.rdMDP.Location = new System.Drawing.Point(2, 53);
-            this.rdMDP.Name = "rdMDP";
-            this.rdMDP.Size = new System.Drawing.Size(103, 21);
-            this.rdMDP.TabIndex = 2;
-            this.rdMDP.Text = "MDP Report";
-            this.rdMDP.UseVisualStyleBackColor = true;
+            this.radioMDP.AutoSize = true;
+            this.radioMDP.ForeColor = System.Drawing.Color.Red;
+            this.radioMDP.Location = new System.Drawing.Point(2, 53);
+            this.radioMDP.Name = "radioMDP";
+            this.radioMDP.Size = new System.Drawing.Size(103, 21);
+            this.radioMDP.TabIndex = 2;
+            this.radioMDP.Text = "MDP Report";
+            this.radioMDP.UseVisualStyleBackColor = true;
             // 
-            // rdFactory
+            // radioFactory
             // 
-            this.rdFactory.AutoSize = true;
-            this.rdFactory.ForeColor = System.Drawing.Color.Red;
-            this.rdFactory.Location = new System.Drawing.Point(1, 29);
-            this.rdFactory.Name = "rdFactory";
-            this.rdFactory.Size = new System.Drawing.Size(120, 21);
-            this.rdFactory.TabIndex = 1;
-            this.rdFactory.Text = "Factory Report";
-            this.rdFactory.UseVisualStyleBackColor = true;
+            this.radioFactory.AutoSize = true;
+            this.radioFactory.ForeColor = System.Drawing.Color.Red;
+            this.radioFactory.Location = new System.Drawing.Point(1, 29);
+            this.radioFactory.Name = "radioFactory";
+            this.radioFactory.Size = new System.Drawing.Size(120, 21);
+            this.radioFactory.TabIndex = 1;
+            this.radioFactory.Text = "Factory Report";
+            this.radioFactory.UseVisualStyleBackColor = true;
             // 
-            // rdAGC
+            // radioAGC
             // 
-            this.rdAGC.AutoSize = true;
-            this.rdAGC.Checked = true;
-            this.rdAGC.ForeColor = System.Drawing.Color.Red;
-            this.rdAGC.Location = new System.Drawing.Point(1, 5);
-            this.rdAGC.Name = "rdAGC";
-            this.rdAGC.Size = new System.Drawing.Size(102, 21);
-            this.rdAGC.TabIndex = 0;
-            this.rdAGC.TabStop = true;
-            this.rdAGC.Text = "AGC Report";
-            this.rdAGC.UseVisualStyleBackColor = true;
+            this.radioAGC.AutoSize = true;
+            this.radioAGC.Checked = true;
+            this.radioAGC.ForeColor = System.Drawing.Color.Red;
+            this.radioAGC.Location = new System.Drawing.Point(1, 5);
+            this.radioAGC.Name = "radioAGC";
+            this.radioAGC.Size = new System.Drawing.Size(102, 21);
+            this.radioAGC.TabIndex = 0;
+            this.radioAGC.TabStop = true;
+            this.radioAGC.Text = "AGC Report";
+            this.radioAGC.UseVisualStyleBackColor = true;
             // 
             // numMonth
             // 
@@ -352,36 +352,36 @@
             this.label1.Text = "Paper Size A4";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // grid1
+            // gridAdidasKPIReport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(431, 12);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(351, 273);
-            this.grid1.TabIndex = 96;
-            this.grid1.TabStop = false;
+            this.gridAdidasKPIReport.AllowUserToAddRows = false;
+            this.gridAdidasKPIReport.AllowUserToDeleteRows = false;
+            this.gridAdidasKPIReport.AllowUserToResizeRows = false;
+            this.gridAdidasKPIReport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAdidasKPIReport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAdidasKPIReport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAdidasKPIReport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAdidasKPIReport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAdidasKPIReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAdidasKPIReport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAdidasKPIReport.Location = new System.Drawing.Point(431, 12);
+            this.gridAdidasKPIReport.Name = "gridAdidasKPIReport";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAdidasKPIReport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridAdidasKPIReport.RowHeadersVisible = false;
+            this.gridAdidasKPIReport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAdidasKPIReport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAdidasKPIReport.RowTemplate.Height = 24;
+            this.gridAdidasKPIReport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAdidasKPIReport.Size = new System.Drawing.Size(351, 273);
+            this.gridAdidasKPIReport.TabIndex = 96;
+            this.gridAdidasKPIReport.TabStop = false;
             // 
             // btnEdit
             // 
@@ -421,7 +421,7 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnUndo);
             this.Controls.Add(this.btnEdit);
-            this.Controls.Add(this.grid1);
+            this.Controls.Add(this.gridAdidasKPIReport);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup1);
             this.DefaultControl = "numYear";
@@ -434,7 +434,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.radioGroup1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.gridAdidasKPIReport, 0);
             this.Controls.SetChildIndex(this.btnEdit, 0);
             this.Controls.SetChildIndex(this.btnUndo, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
@@ -448,7 +448,7 @@
             this.panelReportType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMonth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAdidasKPIReport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -459,9 +459,9 @@
 
         private Win.UI.RadioGroup radioGroup1;
         private Win.UI.Panel panelReportType;
-        private System.Windows.Forms.RadioButton rdMDP;
-        private System.Windows.Forms.RadioButton rdFactory;
-        private System.Windows.Forms.RadioButton rdAGC;
+        private System.Windows.Forms.RadioButton radioMDP;
+        private System.Windows.Forms.RadioButton radioFactory;
+        private System.Windows.Forms.RadioButton radioAGC;
         private System.Windows.Forms.NumericUpDown numMonth;
         private System.Windows.Forms.NumericUpDown numYear;
         private Win.UI.Label lbSource;
@@ -469,17 +469,17 @@
         private Win.UI.Label lbMonth;
         private Win.UI.Label lbYear;
         private Win.UI.Panel panelByType;
-        private System.Windows.Forms.RadioButton rdByAll;
-        private System.Windows.Forms.RadioButton rdByFactory;
-        private System.Windows.Forms.RadioButton rdByAGC;
-        private Win.UI.CheckBox chkDetail;
+        private System.Windows.Forms.RadioButton radioByAll;
+        private System.Windows.Forms.RadioButton radioByFactory;
+        private System.Windows.Forms.RadioButton radioByAGC;
+        private Win.UI.CheckBox checkDetail;
         private Win.UI.Panel panelSourceType;
         private Win.UI.Label lbRemark;
-        private System.Windows.Forms.RadioButton rdAll;
-        private System.Windows.Forms.RadioButton rdReebok;
-        private System.Windows.Forms.RadioButton rdAdidas;
+        private System.Windows.Forms.RadioButton radioAll;
+        private System.Windows.Forms.RadioButton radioReebok;
+        private System.Windows.Forms.RadioButton radioAdidas;
         private Win.UI.Label label1;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridAdidasKPIReport;
         private Win.UI.Button btnEdit;
         private Win.UI.Button btnUndo;
         private Win.UI.Button btnSave;
