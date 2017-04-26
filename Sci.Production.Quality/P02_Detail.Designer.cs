@@ -63,6 +63,7 @@
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
+            this.BtnEdit = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.BtnEdit);
             this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Location = new System.Drawing.Point(0, 416);
             this.btmcont.Size = new System.Drawing.Size(669, 40);
@@ -78,29 +80,30 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
+            this.btmcont.Controls.SetChildIndex(this.BtnEdit, 0);
             // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(579, 5);
             this.undo.Text = "Close";
-            this.undo.Click += new System.EventHandler(this.undo_Click);
+            this.undo.Visible = false;
             // 
             // save
             // 
             this.save.Enabled = true;
             this.save.Location = new System.Drawing.Point(499, 5);
             this.save.Text = "Edit";
-            this.save.Click += new System.EventHandler(this.save_Click);
+            this.save.Visible = false;
             // 
             // left
             // 
             this.left.Enabled = true;
-            this.left.Visible = false;
+            this.left.Click += new System.EventHandler(this.left_Click);
             // 
             // right
             // 
             this.right.Enabled = true;
-            this.right.Visible = false;
+            this.right.Click += new System.EventHandler(this.right_Click);
             // 
             // btnAmend
             // 
@@ -115,6 +118,7 @@
             // txtInspectedQty
             // 
             this.txtInspectedQty.BackColor = System.Drawing.Color.White;
+            this.txtInspectedQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InspQty", true));
             this.txtInspectedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInspectedQty.Location = new System.Drawing.Point(112, 188);
             this.txtInspectedQty.Name = "txtInspectedQty";
@@ -123,73 +127,84 @@
             // 
             // txtUnit
             // 
-            this.txtUnit.BackColor = System.Drawing.Color.White;
-            this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtUnit.Location = new System.Drawing.Point(95, 125);
             this.txtUnit.Name = "txtUnit";
+            this.txtUnit.ReadOnly = true;
             this.txtUnit.Size = new System.Drawing.Size(144, 23);
             this.txtUnit.TabIndex = 115;
             // 
             // txtColor
             // 
-            this.txtColor.BackColor = System.Drawing.Color.White;
-            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtColor.Location = new System.Drawing.Point(328, 125);
             this.txtColor.Name = "txtColor";
+            this.txtColor.ReadOnly = true;
             this.txtColor.Size = new System.Drawing.Size(125, 23);
             this.txtColor.TabIndex = 114;
             // 
             // txtSize
             // 
-            this.txtSize.BackColor = System.Drawing.Color.White;
-            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSize.Location = new System.Drawing.Point(534, 125);
             this.txtSize.Name = "txtSize";
+            this.txtSize.ReadOnly = true;
             this.txtSize.Size = new System.Drawing.Size(119, 23);
             this.txtSize.TabIndex = 113;
             // 
             // txtArriveQty
             // 
-            this.txtArriveQty.BackColor = System.Drawing.Color.White;
-            this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtArriveQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ArriveQty", true));
+            this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtArriveQty.Location = new System.Drawing.Point(95, 94);
             this.txtArriveQty.Name = "txtArriveQty";
+            this.txtArriveQty.ReadOnly = true;
             this.txtArriveQty.Size = new System.Drawing.Size(144, 23);
             this.txtArriveQty.TabIndex = 112;
             // 
             // txtWKNO
             // 
-            this.txtWKNO.BackColor = System.Drawing.Color.White;
-            this.txtWKNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKNO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWKNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtWKNO.Location = new System.Drawing.Point(95, 60);
             this.txtWKNO.Name = "txtWKNO";
+            this.txtWKNO.ReadOnly = true;
             this.txtWKNO.Size = new System.Drawing.Size(144, 23);
             this.txtWKNO.TabIndex = 109;
             // 
             // txtRefno
             // 
-            this.txtRefno.BackColor = System.Drawing.Color.White;
-            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Refno", true));
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtRefno.Location = new System.Drawing.Point(328, 60);
             this.txtRefno.Name = "txtRefno";
+            this.txtRefno.ReadOnly = true;
             this.txtRefno.Size = new System.Drawing.Size(147, 23);
             this.txtRefno.TabIndex = 108;
             // 
             // txtSCIRefno
             // 
-            this.txtSCIRefno.BackColor = System.Drawing.Color.White;
-            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSCIRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SCIRefno", true));
+            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSCIRefno.Location = new System.Drawing.Point(328, 30);
             this.txtSCIRefno.Name = "txtSCIRefno";
+            this.txtSCIRefno.ReadOnly = true;
             this.txtSCIRefno.Size = new System.Drawing.Size(147, 23);
             this.txtSCIRefno.TabIndex = 107;
             // 
             // txtSEQ
             // 
-            this.txtSEQ.BackColor = System.Drawing.Color.White;
-            this.txtSEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSEQ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSEQ.Location = new System.Drawing.Point(95, 30);
             this.txtSEQ.Name = "txtSEQ";
+            this.txtSEQ.ReadOnly = true;
             this.txtSEQ.Size = new System.Drawing.Size(144, 23);
             this.txtSEQ.TabIndex = 106;
             // 
@@ -295,6 +310,7 @@
             // txtRejectedQty
             // 
             this.txtRejectedQty.BackColor = System.Drawing.Color.White;
+            this.txtRejectedQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RejectQty", true));
             this.txtRejectedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRejectedQty.Location = new System.Drawing.Point(113, 223);
             this.txtRejectedQty.Name = "txtRejectedQty";
@@ -322,6 +338,7 @@
             // txtRemark
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(340, 160);
             this.txtRemark.Name = "txtRemark";
@@ -340,6 +357,7 @@
             // txtInspector
             // 
             this.txtInspector.BackColor = System.Drawing.Color.White;
+            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inspector", true));
             this.txtInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInspector.Location = new System.Drawing.Point(115, 288);
             this.txtInspector.Name = "txtInspector";
@@ -368,6 +386,7 @@
             // 
             this.comboResult.BackColor = System.Drawing.Color.White;
             this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "result", true));
+            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Result", true));
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
@@ -379,6 +398,7 @@
             // editDefect
             // 
             this.editDefect.BackColor = System.Drawing.Color.White;
+            this.editDefect.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Defect", true));
             this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editDefect.Location = new System.Drawing.Point(340, 32);
             this.editDefect.Multiline = true;
@@ -402,6 +422,7 @@
             // 
             // dateInspectDate
             // 
+            this.dateInspectDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
             this.dateInspectDate.Location = new System.Drawing.Point(103, 101);
             this.dateInspectDate.Name = "dateInspectDate";
             this.dateInspectDate.Size = new System.Drawing.Size(145, 23);
@@ -410,23 +431,34 @@
             // btnClose
             // 
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(413, 5);
+            this.btnClose.Location = new System.Drawing.Point(579, 5);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 135;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Visible = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // txtsupplier
             // 
+            this.txtsupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Suppid", true));
             this.txtsupplier.DisplayBox1Binding = "";
             this.txtsupplier.Location = new System.Drawing.Point(328, 94);
             this.txtsupplier.Name = "txtsupplier";
             this.txtsupplier.Size = new System.Drawing.Size(214, 23);
             this.txtsupplier.TabIndex = 134;
             this.txtsupplier.TextBox1Binding = "";
+            // 
+            // BtnEdit
+            // 
+            this.BtnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnEdit.Location = new System.Drawing.Point(499, 5);
+            this.BtnEdit.Name = "BtnEdit";
+            this.BtnEdit.Size = new System.Drawing.Size(80, 30);
+            this.BtnEdit.TabIndex = 136;
+            this.BtnEdit.Text = "Edit";
+            this.BtnEdit.UseVisualStyleBackColor = true;
+            this.BtnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // P02_Detail
             // 
@@ -460,7 +492,6 @@
             this.Controls.Add(this.labelUnit);
             this.Controls.Add(this.labelInspectedQty);
             this.Controls.Add(this.panel1);
-            this.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "defect", true));
             this.Name = "P02_Detail";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "Accessory Inspection- SP+SEQ+Detail";
@@ -541,6 +572,7 @@
         private Class.txtsupplier txtsupplier;
         private Win.UI.DateBox dateInspectDate;
         private Win.UI.Button btnClose;
+        private Win.UI.Button BtnEdit;
 
     }
 }

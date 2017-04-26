@@ -20,7 +20,6 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;        
         private bool canedit;
         private string id;
-      
 
         public P02_Detail(bool CanEdit, string airID)
         {
@@ -29,10 +28,19 @@ namespace Sci.Production.Quality
             this.comboResult.ReadOnly = false;            
             canedit = CanEdit;
             btn_status(id);
-            button_enable(canedit);
+            button_enable(canedit);            
            
             string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
             DataRow dr;
+            if (MyUtility.Check.Seek(air_cmd, out dr))
+            {
+                txtSEQ.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
+            }
+            else
+            {
+                txtSEQ.Text = "";
+            }
+
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("Pass", "Pass");
@@ -48,26 +56,12 @@ namespace Sci.Production.Quality
             {
                 if (dtPoSuppDetail.Rows.Count != 0)
                 {
-                    txtSCIRefno.Text = dtPoSuppDetail.Rows[0]["SCIRefno"].ToString();
-                    txtRefno.Text = dtPoSuppDetail.Rows[0]["Refno"].ToString();                   
+                  
                     txtUnit.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
                     txtSize.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
                     txtColor.Text = dtPoSuppDetail.Rows[0]["ColorID"].ToString();
                 }
 
-            }
-            DataTable dtSupplier;
-            DBProxy.Current.Select(null, string.Format(@"select a.Suppid,b.AbbEN from AIR a WITH (NOLOCK) inner join Supp b WITH (NOLOCK) on a.Suppid=b.ID
-                                  where a.ID='{0}'", id), out dtSupplier);
-            if (dtSupplier.Rows.Count != 0)
-            {
-                txtsupplier.TextBox1.Text = dtSupplier.Rows[0]["Suppid"].ToString();
-                txtsupplier.DisplayBox1.Text = dtSupplier.Rows[0]["AbbEN"].ToString();
-            }
-            else
-            {
-                txtsupplier.TextBox1.Text = "";
-                txtsupplier.DisplayBox1.Text = "";
             }
             //串接table Receiving
             DataTable dtRec;
@@ -85,179 +79,17 @@ namespace Sci.Production.Quality
                 
             }
 
-            if (MyUtility.Check.Seek(air_cmd, out dr))
-            {
-                txtSEQ.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
-                txtInspectedQty.Text = dr["inspQty"].ToString();
-                txtRejectedQty.Text = dr["REjectQty"].ToString();
-                dateInspectDate.Value = MyUtility.Convert.GetDate(dr["inspdate"]);                  
-                txtInspector.Text = dr["inspector"].ToString();
-                txtRemark.Text = dr["remark"].ToString();
-                comboResult.SelectedValue = dr["Result"].ToString();                
-                this.editDefect.Text = dr["Defect"].ToString();
-                this.txtArriveQty.Text = dr["ArriveQty"].ToString();
-            }
-            else
-            {
-                txtSEQ.Text = "";
-                txtInspectedQty.Text = "";
-                txtRejectedQty.Text = "";
-                dateInspectDate.Text = "";
-                txtInspector.Text = "";
-                txtRemark.Text = "";
-                this.comboResult.DisplayMember = "";
-                this.editDefect.Text = "";
-                this.txtArriveQty.Text = "";
-            }
+
+
 
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            button_enable(canedit);
-
+            button_enable(canedit);            
         }
-        // 上下筆
-        //public DualResult Set(bool canedit, IList<DataRow> dtList, DataRow current)
-        //{
-        //    private void Bind(int pos)
-        //    {
-        //        virtual protected void OnAttaching(DataRow data)
-        //    }
-        //}
         
-
-        private void save_Click(object sender, EventArgs e)
-        {
-            string strSqlcmd = "";
-            this.btnAmend.Enabled = false;
-
-            DualResult result;
-            DataTable dt;
-            strSqlcmd = string.Format("Select * from AIR WITH (NOLOCK) where ID='{0}' ", id);          
-            if (result = DBProxy.Current.Select(null, strSqlcmd, null, out dt))
-            {
-                if (dt.Rows.Count > 0)
-                {
-                    if (this.save.Text == "Save")
-                    {
-                        if (MyUtility.Check.Empty(txtInspectedQty.Text))
-                        {
-                            MyUtility.Msg.InfoBox("<Inspected> can not be null");
-                            this.txtInspectedQty.Focus();
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(comboResult.SelectedValue))
-                        {
-                            MyUtility.Msg.InfoBox("<Result> can not be null");
-                            this.comboResult.Focus();
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(dateInspectDate))
-                        {
-                            MyUtility.Msg.InfoBox("<Inspdate> can not be null");
-                            this.dateInspectDate.Focus();
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(txtInspector))
-                        {
-                            MyUtility.Msg.InfoBox("<Inspector> can not be null");
-                            this.txtInspector.Focus();
-                            return;
-
-                        }
-                        if ((txtRejectedQty.Text != "0.00" || txtRejectedQty.Text != "") && (MyUtility.Check.Empty(editDefect)))
-                        {
-                            MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
-                            this.editDefect.Focus();
-                            return;
-                        }                        
-                        if (( !MyUtility.Check.Empty(editDefect.Text)) && (this.txtRejectedQty.Text == "0.00"))
-                        {
-                            MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
-                            this.txtRejectedQty.Focus();
-                            return;
-                        }
-                        if ((this.comboResult.Text.ToString() == "Fail") && (this.txtRejectedQty.Text == "0.00" || MyUtility.Check.Empty(editDefect)))
-                        {
-                            MyUtility.Msg.InfoBox("When <Result> is Fail then <Rejected Qty> can not be empty !");
-                            this.txtRejectedQty.Focus();
-                            return;
-                        }
-                        string updatesql = "";
-                        #region  寫入實體Table Encode
-                        updatesql = string.Format(
-                        "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.txtInspectedQty.Text, this.txtRejectedQty.Text,string.Format("{0:yyyy-MM-dd}",dateInspectDate.Value) , txtInspector.Text, comboResult.Text, editDefect.Text, txtRemark.Text,  id);
-                        DualResult upResult;
-                        TransactionScope _transactionscope = new TransactionScope();
-                        using (_transactionscope)
-                        {
-                            try
-                            {
-                                if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
-                                {
-                                    _transactionscope.Dispose();
-
-                                    return;
-                                }
-                                _transactionscope.Complete();
-                                _transactionscope.Dispose();
-                                MyUtility.Msg.WarningBox("Successfully");
-                                this.btnAmend.Text = "Encode";
-                                this.save.Text = "Edit";
-                                this.btnAmend.Enabled = true;
-                               
-                            }
-                            catch (Exception ex)
-                            {
-                                _transactionscope.Dispose();
-                                ShowErr("Commit transaction error.", ex);
-                                return;
-                            }
-                        }
-                        #endregion
-                        this.txtInspectedQty.ReadOnly = true;
-                        this.txtRejectedQty.ReadOnly = true;
-                        this.dateInspectDate.ReadOnly = true;
-                        this.txtInspector.ReadOnly = true;
-                        this.comboResult.ReadOnly = true;
-                        this.txtRemark.ReadOnly = true;
-                        this.editDefect.ReadOnly = true;
-                        this.undo.Text = "Close";
-                        return;
-                    }
-                    else
-                    {
-                        if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
-                        {
-                            MyUtility.Msg.InfoBox("It's already Confirmed");
-                            this.btnAmend.Enabled = true;
-                            return;
-                        }
-                        if (dt.Rows[0]["Status"].ToString().Trim() != "Confirmed")
-                        {
-                            this.txtInspectedQty.ReadOnly = false;
-                            this.txtRejectedQty.ReadOnly = false;
-                            this.dateInspectDate.ReadOnly = false;
-                            this.txtInspector.ReadOnly = false;
-                            this.comboResult.ReadOnly = false;
-                            this.txtRemark.ReadOnly = false;
-                            this.editDefect.ReadOnly = false;
-                            this.save.Text = "Save";
-                            this.undo.Text = "Undo";
-                            
-                            return;
-                        }
-                    }
-                }
-            }
-         
-        }
-
-               
-
         private void Encode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
@@ -293,9 +125,9 @@ namespace Sci.Production.Quality
                             _transactionscope1.Complete();
                             _transactionscope1.Dispose();
                             btn_status(id);
-                            this.save.Text = "Edit";
+                            this.BtnEdit.Text = "Edit";
                             this.btnAmend.Text = "Encode";
-                            this.save.Enabled = true;
+                            this.BtnEdit.Enabled = true;
                         }
                         catch (Exception ex)
                         {
@@ -306,9 +138,7 @@ namespace Sci.Production.Quality
                     }
 
                     #endregion
-                }
-                
-               
+                }   
             }
 
             else
@@ -341,7 +171,6 @@ namespace Sci.Production.Quality
 
                     }
                 }
-
                 #region  寫入實體Table Encode
                 updatesql = string.Format(
                 "Update Air set Status = 'Confirmed',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
@@ -362,8 +191,8 @@ namespace Sci.Production.Quality
                         _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Successfully");
                         this.btnAmend.Text = "Amend";
-                        this.save.Text = "Edit";
-                        this.save.Enabled = false;
+                        this.BtnEdit.Text = "Edit";
+                        this.BtnEdit.Enabled = false;
                         
                         btn_status(this.id);
                     }
@@ -376,8 +205,6 @@ namespace Sci.Production.Quality
                 }
                 #endregion
             }
-
-
         }
                 
         private void editBox1_MouseDown(object sender, MouseEventArgs e)
@@ -400,12 +227,13 @@ namespace Sci.Production.Quality
         private void button_enable(bool canedit)
         {
             // Visable
-            this.save.Visible = (bool)canedit ;
-            this.undo.Visible = (bool)canedit ;
+            //this.BtnEdit.Visible = true;
+            //this.BtnEdit.Visible = (bool)canedit;
+            this.BtnEdit.Visible = (bool)canedit;
             this.btnAmend.Visible = (bool)canedit;
-            this.btnClose.Visible = !(bool)canedit;
             // Enable
-            save.Enabled = this.btnAmend.Text.ToString() == "Encode" ? true : false;
+            BtnEdit.Enabled = this.btnAmend.Text.ToString() == "Encode" ? true : false;
+            
 
         }
        
@@ -432,17 +260,211 @@ namespace Sci.Production.Quality
             this.Close();
         }
 
-        private void undo_Click(object sender, EventArgs e)
+        private void ChangeData()
         {
-            if (this.undo.Text=="Undo")
+            id = this.CurrentData["Id"].ToString();
+            string air_cmd = string.Format("select * from air WITH (NOLOCK) where id='{0}'", id);
+    
+            DataTable dt;
+            DBProxy.Current.Select(null, air_cmd, out dt);
+            if (!MyUtility.Check.Empty(dt) || dt.Rows.Count > 0)
             {
-                return;
+                txtSEQ.Text = dt.Rows[0]["SEQ1"].ToString() + " - " + dt.Rows[0]["SEQ2"].ToString();
+                if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
+                {
+                    this.btnAmend.Text = "Amend";
+                }
+                else
+                {
+                    this.btnAmend.Text = "Encode";
+                }
             }
             else
             {
-                this.Close();
+                txtSEQ.Text = "";
             }
-                
+
+            //設定combox下拉選項
+            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            comboBox1_RowSource.Add("Pass", "Pass");
+            comboBox1_RowSource.Add("Fail", "Fail");
+            comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
+            comboResult.ValueMember = "Key";
+            comboResult.DisplayMember = "Value";
+
+            // 串接table Po_Supp_Detail
+            DataTable dtPoSuppDetail;
+            Ict.DualResult pstResult;
+            if (pstResult = DBProxy.Current.Select(null, string.Format(
+@"select a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec 
+from PO_Supp_Detail a WITH (NOLOCK) 
+left join AIR b WITH (NOLOCK) on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 
+where b.ID='{0}'", id), out dtPoSuppDetail))
+            {
+                if (dtPoSuppDetail.Rows.Count != 0)
+                {               
+                    txtUnit.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
+                    txtSize.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
+                    txtColor.Text = dtPoSuppDetail.Rows[0]["ColorID"].ToString();
+                }
+
+            }
+            //串接table Receiving
+            DataTable dtRec;
+            Ict.DualResult wknoResult;
+            if (wknoResult = DBProxy.Current.Select(null, string.Format(
+@"select * 
+from Receiving a WITH (NOLOCK) 
+left join AIR b WITH (NOLOCK) on a.Id=b.ReceivingID 
+where b.ID='{0}' ", id), out dtRec))
+            {
+                if (dtRec.Rows.Count > 0)
+                {
+                    txtWKNO.Text = dtRec.Rows[0]["exportid"].ToString();
+                }
+                else
+                {
+                    txtWKNO.Text = "";
+                }
+            }
+           
+        }
+
+        private void right_Click(object sender, EventArgs e)
+        {
+            ChangeData();
+        }
+
+        private void left_Click(object sender, EventArgs e)
+        {
+            ChangeData();
+        }
+
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            string strSqlcmd = "";
+            this.btnAmend.Enabled = false;
+
+            DualResult result;
+            DataTable dt;
+            strSqlcmd = string.Format("Select * from AIR WITH (NOLOCK) where ID='{0}' ", id);
+            if (result = DBProxy.Current.Select(null, strSqlcmd, null, out dt))
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    if (this.BtnEdit.Text == "Save")
+                    {
+                        if (MyUtility.Check.Empty(txtInspectedQty.Text))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspected> can not be null");
+                            this.txtInspectedQty.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(comboResult.SelectedValue))
+                        {
+                            MyUtility.Msg.InfoBox("<Result> can not be null");
+                            this.comboResult.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(dateInspectDate))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspdate> can not be null");
+                            this.dateInspectDate.Focus();
+                            return;
+                        }
+                        if (MyUtility.Check.Empty(txtInspector))
+                        {
+                            MyUtility.Msg.InfoBox("<Inspector> can not be null");
+                            this.txtInspector.Focus();
+                            return;
+
+                        }
+                        if ((txtRejectedQty.Text != "0.00" || txtRejectedQty.Text != "") && (MyUtility.Check.Empty(editDefect)))
+                        {
+                            MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
+                            this.editDefect.Focus();
+                            return;
+                        }
+                        if ((!MyUtility.Check.Empty(editDefect.Text)) && (this.txtRejectedQty.Text == "0.00"))
+                        {
+                            MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
+                            this.txtRejectedQty.Focus();
+                            return;
+                        }
+                        if ((this.comboResult.Text.ToString() == "Fail") && (this.txtRejectedQty.Text == "0.00" || MyUtility.Check.Empty(editDefect)))
+                        {
+                            MyUtility.Msg.InfoBox("When <Result> is Fail then <Rejected Qty> can not be empty !");
+                            this.txtRejectedQty.Focus();
+                            return;
+                        }
+                        string updatesql = "";
+                        #region  寫入實體Table Encode
+                        updatesql = string.Format(
+                        "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
+                        this.txtInspectedQty.Text, this.txtRejectedQty.Text, string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value), txtInspector.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
+                        DualResult upResult;
+                        TransactionScope _transactionscope = new TransactionScope();
+                        using (_transactionscope)
+                        {
+                            try
+                            {
+                                if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
+                                {
+                                    _transactionscope.Dispose();
+
+                                    return;
+                                }
+                                _transactionscope.Complete();
+                                _transactionscope.Dispose();
+                                MyUtility.Msg.WarningBox("Successfully");
+                                this.btnAmend.Text = "Encode";
+                                this.BtnEdit.Text = "Edit";
+                                this.btnAmend.Enabled = true;
+
+                            }
+                            catch (Exception ex)
+                            {
+                                _transactionscope.Dispose();
+                                ShowErr("Commit transaction error.", ex);
+                                return;
+                            }
+                        }
+                        #endregion
+                        this.txtInspectedQty.ReadOnly = true;
+                        this.txtRejectedQty.ReadOnly = true;
+                        this.dateInspectDate.ReadOnly = true;
+                        this.txtInspector.ReadOnly = true;
+                        this.comboResult.ReadOnly = true;
+                        this.txtRemark.ReadOnly = true;
+                        this.editDefect.ReadOnly = true;
+                        this.btnClose.Text = "Close";
+                        return;
+                    }
+                    else
+                    {
+                        if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
+                        {
+                            MyUtility.Msg.InfoBox("It's already Confirmed");
+                            this.btnAmend.Enabled = true;
+                            return;
+                        }
+                        if (dt.Rows[0]["Status"].ToString().Trim() != "Confirmed")
+                        {
+                            this.txtInspectedQty.ReadOnly = false;
+                            this.txtRejectedQty.ReadOnly = false;
+                            this.dateInspectDate.ReadOnly = false;
+                            this.txtInspector.ReadOnly = false;
+                            this.comboResult.ReadOnly = false;
+                            this.txtRemark.ReadOnly = false;
+                            this.editDefect.ReadOnly = false;
+                            this.BtnEdit.Text = "Save";
+                            this.btnClose.Text = "Undo";
+
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
     }

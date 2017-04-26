@@ -52,25 +52,25 @@ namespace Sci.Production.Quality
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,
                 (
-				select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
-				) AS Inspector,
+				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
+				) AS Inspector2,a.Inspector,
                 a.Remark,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
                 (
-                Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
+                    Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
                 ) as weavetypeid,
                 c.ID AS ReceivingID,c.whseArrival,
                 (
-                Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                    Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Colorid,
                 (
-                Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                    Select d.SizeSpec from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as Size,
                 (
-                Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
+                    Select d.StockUnit from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
                 ) as unit,
                 (
-                Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
+                    Select AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id
                 ) as SuppEn
 	                From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                 Where a.poid='{0}' order by seq1,seq2  ", masterID);
@@ -91,24 +91,21 @@ namespace Sci.Production.Quality
                
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                // 有疑問!!!!
+                
                 P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-                //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
-                DoForm.Dispose();
+                DoForm.Close();
                 this.RenewData();
             };
             detail_Int.CellMouseDoubleClick += (s, e) =>
             {
                 var dr = this.CurrentDetailData;
-                if (dr == null) return;
-                // 有疑問!!!!
+                if (dr == null) return;                
                 P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
-                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-                //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+                DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
-                DoForm.Dispose();
+                DoForm.Close();
                 this.RenewData();
             };
 
@@ -134,7 +131,7 @@ namespace Sci.Production.Quality
                 .Text("defect", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: detail)
                 .Text("Inspdate", header: "Insp. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
-                .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
+                .Text("Inspector2", header: "Inspector", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail   )            
                 .Text("ReplacementID", header: "1st ReplacementID", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
@@ -143,7 +140,7 @@ namespace Sci.Production.Quality
             detailgrid.Columns["defect"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["Result"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["Inspdate"].DefaultCellStyle.BackColor = Color.LemonChiffon;
-            detailgrid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.LemonChiffon;
+            detailgrid.Columns["inspector2"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             #endregion
            
@@ -353,14 +350,14 @@ namespace Sci.Production.Quality
 
         private void ModifyDetail()
         {
+            if (!IsSupportEdit) return;
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
-            P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
-            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
-            //var frm = new Sci.Production.Quality.P02_Detail(false,this.CurrentDetailData["ID"].ToString(),dr);
+            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString());
+            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                        
             DoForm.ShowDialog(this);
-            DoForm.Dispose();
+            DoForm.Close();
             this.RenewData();
             this.OnDetailEntered();
             // 固定滑鼠指向位置,避免被renew影響
