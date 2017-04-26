@@ -66,58 +66,57 @@ namespace Sci.Production.PPIC
             StringBuilder sqlCmd = new StringBuilder();
             StringBuilder sqlCondition = new StringBuilder();
             sqlCondition.Append(string.Format(@"where l.FabricType = '{0}' ", (reportType == 0 ? "F" : "A")));
-
             if (!MyUtility.Check.Empty(date1))
-            {
-                sqlCondition.Append(string.Format(@" and l.ApvDate >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
-            }
+                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) >= '{0}'", Convert.ToDateTime(date1).ToString("d")));
             if (!MyUtility.Check.Empty(date2))
-            {
-                sqlCondition.Append(string.Format(@" and l.ApvDate <= '{0}'", Convert.ToDateTime(date2).ToString("d")));
-            }
+                sqlCondition.Append(string.Format(" and convert(date,l.ApvDate) <= '{0}'", Convert.ToDateTime(date2).ToString("d")));
             if (!MyUtility.Check.Empty(mDivision))
-            {
                 sqlCondition.Append(string.Format(" and l.MDivisionID = '{0}'", mDivision));
-            }
             if (!MyUtility.Check.Empty(factory))
-            {
                 sqlCondition.Append(string.Format(" and l.FactoryID = '{0}'", factory));
-            }
 
-            sqlCmd.Append(string.Format(@"select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID,isnull(s.SewingCell,'') as SewingCell,
-isnull(o.StyleID,'') as StyleID,l.OrderID,ld.Seq1+' '+ld.Seq2 as Seq,isnull(c.Name,'') as ColorName,
-isnull(psd.Refno,'') as Refno,l.ApvDate,ld.RejectQty,ld.RequestQty,ld.IssueQty,
-IIF(l.Status= 'Received',l.EditDate,null) as FinishedDate,IIF(l.Type='R','Replacement','Lacking') as Type,
-concat(ld.PPICReasonID,isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'')) as Description,
-IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N') as OnTime
+            sqlCmd.Append(string.Format(@"
+select distinct l.MDivisionID,l.FactoryID,l.ID,l.SewingLineID
+	,[SewingCell] = isnull(s.SewingCell,'')
+	,[StyleID] = isnull(o.StyleID,'')
+	,l.OrderID
+	,[Seq] = concat(ld.Seq1,' ',ld.Seq2)
+	,[ColorName] = isnull(c.Name,'')
+	,[Refno] = isnull(psd.Refno,'')
+	,l.ApvDate
+	,ld.RejectQty
+	,ld.RequestQty
+	,ld.IssueQty
+	,[FinishedDate] = IIF(l.Status= 'Received',l.EditDate,null)
+	,[Type] = IIF(l.Type='R','Replacement','Lacking')
+	,[Description] = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
+	,[OnTime] = IIF(l.Status = 'Received',IIF(DATEDIFF(ss,l.ApvDate,l.EditDate) <= 10800,'Y','N'),'N')
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
 left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
 left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = psd.ColorID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
 {0} 
 order by l.MDivisionID,l.FactoryID,l.ID", sqlCondition.ToString()));
-
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
-            }
-            
+            }            
             //有資料的話才繼續撈資料
             if (printData.Rows.Count > 0)
             {
                 sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"select distinct ld.PPICReasonID,
-isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description
+                sqlCmd.Append(string.Format(@"
+select distinct ld.PPICReasonID,Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID)
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
+left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
 {0}
 order by PPICReasonID,Description", sqlCondition.ToString()));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out reasonData);
@@ -127,34 +126,39 @@ order by PPICReasonID,Description", sqlCondition.ToString()));
                     return failResult;
                 }
 
-                pivotContent = MyUtility.GetValue.Lookup(string.Format(@"select '['+Description+']'+','
-from (
-select distinct ld.PPICReasonID+
-isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
-{0}) a
+                pivotContent = MyUtility.GetValue.Lookup(string.Format(@"
+select concat('[',Description,']',',')
+from 
+(
+	select distinct Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),PPICReasonID) 
+	from Lack l WITH (NOLOCK) 
+	inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+	left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+	left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+	{0}
+) a
 order by Description
 for xml path('')", sqlCondition.ToString()));
 
                 sqlCmd.Clear();
-                sqlCmd.Append(string.Format(@"with tmpData
-as (
-select l.MDivisionID,l.FactoryID,ld.PPICReasonID+
-isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),'') as Description,
-IIF(l.FabricType = 'F',sum(ld.RejectQty),sum(ld.RequestQty)) as RequestQty
-from Lack l WITH (NOLOCK) 
-inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
-left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and ld.PPICReasonID = pr.ID
-left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and ld.PPICReasonID = pr1.ID
-{0}
-group by l.MDivisionID,l.FactoryID,ld.PPICReasonID+isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),''),l.FabricType)
-select  distinct *
+                sqlCmd.Append(string.Format(@"
+with tmpData as (
+	select l.MDivisionID,l.FactoryID
+		,Description = isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),ld.PPICReasonID)
+		,RequestQty = IIF(l.FabricType = 'F',sum(ld.RejectQty),sum(ld.RequestQty))
+	from Lack l WITH (NOLOCK) 
+	inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
+	left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
+	left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+	{0}
+	group by l.MDivisionID,l.FactoryID,isnull(IIF(l.FabricType = 'F',pr.Description,pr1.Description),ld.PPICReasonID),l.FabricType
+)
+select distinct *
 from tmpData
-PIVOT (SUM(RequestQty)
-FOR Description IN ({1})
+PIVOT 
+(
+	SUM(RequestQty)
+	FOR Description IN ({1})
 ) a
 order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring(0, pivotContent.Length - 1)));
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out pivotData);
@@ -186,58 +190,19 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             excel.DisplayAlerts = false;
+
+            excel.Visible = true;
+            for (int i = 0; i < pivotData.Rows.Count; i++)
+            {
+                if (i > 0)
+                {
+                    Microsoft.Office.Interop.Excel.Worksheet worksheet2 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2]);
+                    Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
+                    worksheet2.Copy(worksheetn);
+                }
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            //Summary -- Header
-            if (reasonData.Rows.Count > 8)
-            {
-                //新增填Raseon欄位
-                for (int i = 9; i <= reasonData.Rows.Count; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("L:L", Type.Missing).EntireColumn;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                }
-            }
-            else if (reasonData.Rows.Count < 8)
-            {
-                string columnEng = PublicPrg.Prgs.GetExcelEnglishColumnName(reasonData.Rows.Count + 5);
-                //刪除多的Raseon欄位
-                for (int i = 1; i <= 8 - reasonData.Rows.Count; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rngToDelete = worksheet.get_Range(string.Format("{0}:{0}", columnEng), Type.Missing).EntireColumn;
-                    rngToDelete.Delete(Type.Missing);
-                }
-            }
-            int count = 4;
-            foreach (DataRow dr in reasonData.Rows)
-            {
-                count++;
-                worksheet.Cells[1, count] = MyUtility.Convert.GetString(dr["Description"]);
-                worksheet.Cells[11, count] = string.Format("=SUM({0}2:{0}10)",PublicPrg.Prgs.GetExcelEnglishColumnName(count));
-            }
-
-          //  Summary -- Content
-            int row = 1;
-            foreach (DataRow dr in pivotData.Rows)
-            {
-                row++;
-                worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["MDivisionID"]);
-                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["FactoryID"]);
-                for (int i = 0; i < reasonData.Rows.Count; i++)
-                {
-                    worksheet.Cells[row, i+5] = MyUtility.Convert.GetDecimal(dr[i+2]);
-                }
-            }
-
-            //刪除Summary多出來的資料行
-            for (int i = pivotData.Rows.Count + 2; i <= 10; i++)
-            {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[pivotData.Rows.Count + 2, Type.Missing];
-                rng.Select();
-                //rng.Delete(Type.Missing);
-                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
-            }
-
             //填各工廠的明細資料
             string xlsFactory = "";
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
@@ -315,11 +280,75 @@ order by MDivisionID,FactoryID", sqlCondition.ToString(), pivotContent.Substring
                 worksheet.Cells[4, 5] = string.Format("=COUNTIF(O7:O{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
                 worksheet.Cells[3, 15] = string.Format("=SUM(J7:J{0})", MyUtility.Convert.GetString(ttlCount + 6));
             }
-            for (int i = xlsSheet+1; i <= 10; i++)
+            for (int i = 2; i < xlsSheet + 1; i++)
             {
-                worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet + 1];
-                worksheet.Delete();
+                worksheet = excel.ActiveWorkbook.Worksheets[i];
+                worksheet.Rows.AutoFit();
             }
+
+            worksheet = excel.ActiveWorkbook.Worksheets[1];
+            //Summary -- Header
+            if (reasonData.Rows.Count > 8)
+            {
+                //新增填Raseon欄位
+                for (int i = 9; i <= reasonData.Rows.Count; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("L:L", Type.Missing).EntireColumn;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                }
+            }
+            else if (reasonData.Rows.Count < 8)
+            {
+                string columnEng = PublicPrg.Prgs.GetExcelEnglishColumnName(reasonData.Rows.Count + 5);
+                //刪除多的Raseon欄位
+                for (int i = 1; i <= 8 - reasonData.Rows.Count; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToDelete = worksheet.get_Range(string.Format("{0}:{0}", columnEng), Type.Missing).EntireColumn;
+                    rngToDelete.Delete(Type.Missing);
+                }
+            }
+            //  Summary -- Content
+            int row = 2;
+            foreach (DataRow dr in pivotData.Rows)
+            {
+                row++;
+                worksheet = excel.ActiveWorkbook.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[row, Type.Missing];
+                rng.Insert(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                worksheet.Cells[row, 1] = MyUtility.Convert.GetString(dr["MDivisionID"]);
+                worksheet.Cells[row, 2] = MyUtility.Convert.GetString(dr["FactoryID"]);
+                worksheet.Cells[row, 3] = string.Format("={0}!E3", MyUtility.Convert.GetString(dr["FactoryID"]));
+                worksheet.Cells[row, 4] = string.Format("={0}!E4", MyUtility.Convert.GetString(dr["FactoryID"]));
+                for (int i = 0; i < reasonData.Rows.Count; i++)
+                {
+                    worksheet.Cells[row, i + 5] = MyUtility.Convert.GetDecimal(dr[i + 2]);
+                }
+                worksheet.Cells[row, 5 + reasonData.Rows.Count] = string.Format("=SUM({0}!J7:J1048576)", MyUtility.Convert.GetString(dr["FactoryID"]));
+                worksheet.Cells[row, 6 + reasonData.Rows.Count] = string.Format("=SUM({0}!K7:K1048576)", MyUtility.Convert.GetString(dr["FactoryID"]));
+                if (reportType == 0)
+                {
+                worksheet.Cells[row, 7 + reasonData.Rows.Count] = string.Format("={0}!P3", MyUtility.Convert.GetString(dr["FactoryID"]));
+                worksheet.Cells[row, 8 + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
+                }
+                else
+                {
+                    worksheet.Cells[row, 7 + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
+                }
+            }
+            //刪除Summary多出來的資料行
+            ((Microsoft.Office.Interop.Excel.Range)worksheet.Rows[2, Type.Missing]).Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+
+            int count = 4;
+            foreach (DataRow dr in reasonData.Rows)
+            {
+                count++;
+                worksheet.Cells[1, count] = MyUtility.Convert.GetString(dr["Description"]);
+            }
+            for (int i = 3; i <= reasonData.Rows.Count+(reportType == 0 ? 7:6); i++)
+            {
+                worksheet.Cells[row, i] = string.Format("=SUM({0}2:{0}{1})", PublicPrg.Prgs.GetExcelEnglishColumnName(i), row - 1);                
+            }
+            worksheet.Cells[row, (reportType == 0 ? 8 : 7) + reasonData.Rows.Count] = string.Format("=D{0}/C{0}", row);
             this.HideWaitMessage();
             excel.Visible = true;
             return true;
