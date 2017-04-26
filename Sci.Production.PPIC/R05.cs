@@ -55,20 +55,20 @@ namespace Sci.Production.PPIC
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
 select distinct 
-l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,l.FabricType,
-Refno = isnull(psd.Refno,''),
-NETQty1 = isnull(psd.NETQty,0),
-POUnit = isnull(psd.POUnit,''),
-StockUnit = isnull(psd.StockUnit,''),
-OutputSeq1,OutputSeq2,SCIRefno,
-NETQty2 = isnull(psd2.NETQty,0),
-INVPOUnit = isnull(psd2.POUnit,''),
-INVStockUnit = isnull(psd2.StockUnit,''),
-f.MtlTypeID,
-[INQTY] = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ISnull(mpd7.InQty ,0 ),
-IS7 = IIF(ld.Seq1 LIKE'7_',1,0),
-c1 = isnull(c1.c1,1),
-c2 = isnull(c2.c2,1)
+    l.MDivisionID,l.FactoryID,l.POID,ld.Seq1,ld.Seq2,l.FabricType,
+    Refno = isnull(psd.Refno,''),
+    NETQty1 = isnull(psd.NETQty,0),
+    POUnit = isnull(psd.POUnit,''),
+    StockUnit = isnull(psd.StockUnit,''),
+    OutputSeq1,OutputSeq2,SCIRefno,
+    NETQty2 = isnull(psd2.NETQty,0),
+    INVPOUnit = isnull(psd2.POUnit,''),
+    INVStockUnit = isnull(psd2.StockUnit,''),
+    f.MtlTypeID,
+    [INQTY] = isnull(mpd.InQty,0)+isnull(mpd2.InQty ,0)+ISnull(mpd7.InQty ,0 ),
+    IS7 = IIF(ld.Seq1 LIKE'7_',1,0),
+    c1 = isnull(c1.c1,1),
+    c2 = isnull(c2.c2,1)
 into #tmpData
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on ld.ID = l.ID	
