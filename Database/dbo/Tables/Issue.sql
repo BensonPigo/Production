@@ -15,6 +15,7 @@
     [EditName]     VARCHAR (10)  CONSTRAINT [DF_Issue_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME      NULL,
     [OrderId]      VARCHAR (13)  CONSTRAINT [DF_Issue_OrderId] DEFAULT ('') NULL,
+    [Combo] BIT NULL DEFAULT ('0'), 
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
