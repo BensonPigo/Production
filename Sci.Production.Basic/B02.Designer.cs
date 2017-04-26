@@ -432,6 +432,7 @@
             // txtSMTPIP
             // 
             this.txtSMTPIP.BackColor = System.Drawing.Color.White;
+            this.txtSMTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSMTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Mailserver", true));
             this.txtSMTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSMTPIP.Location = new System.Drawing.Point(97, 201);
@@ -451,6 +452,7 @@
             // txtSendFrom
             // 
             this.txtSendFrom.BackColor = System.Drawing.Color.White;
+            this.txtSendFrom.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSendFrom.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Sendfrom", true));
             this.txtSendFrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSendFrom.Location = new System.Drawing.Point(97, 230);
@@ -470,6 +472,7 @@
             // txtEmailID
             // 
             this.txtEmailID.BackColor = System.Drawing.Color.White;
+            this.txtEmailID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailID", true));
             this.txtEmailID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtEmailID.Location = new System.Drawing.Point(97, 259);
@@ -489,6 +492,7 @@
             // txtEmailPassword
             // 
             this.txtEmailPassword.BackColor = System.Drawing.Color.White;
+            this.txtEmailPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmailPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EmailPwd", true));
             this.txtEmailPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtEmailPassword.Location = new System.Drawing.Point(440, 259);
@@ -508,6 +512,7 @@
             // txtFTPIP
             // 
             this.txtFTPIP.BackColor = System.Drawing.Color.White;
+            this.txtFTPIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
             this.txtFTPIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFTPIP.Location = new System.Drawing.Point(97, 288);
@@ -527,6 +532,7 @@
             // txtFTPID
             // 
             this.txtFTPID.BackColor = System.Drawing.Color.White;
+            this.txtFTPID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
             this.txtFTPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFTPID.Location = new System.Drawing.Point(97, 317);
@@ -546,6 +552,7 @@
             // txtFTPPassword
             // 
             this.txtFTPPassword.BackColor = System.Drawing.Color.White;
+            this.txtFTPPassword.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtFTPPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
             this.txtFTPPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFTPPassword.Location = new System.Drawing.Point(440, 317);
@@ -574,6 +581,7 @@
             // txtSketchFilesPath
             // 
             this.txtSketchFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtSketchFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtSketchFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PicPath", true));
             this.txtSketchFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSketchFilesPath.Location = new System.Drawing.Point(133, 356);
@@ -584,6 +592,7 @@
             // txtCilpFilesPath
             // 
             this.txtCilpFilesPath.BackColor = System.Drawing.Color.White;
+            this.txtCilpFilesPath.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtCilpFilesPath.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ClipPath", true));
             this.txtCilpFilesPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCilpFilesPath.Location = new System.Drawing.Point(133, 385);
