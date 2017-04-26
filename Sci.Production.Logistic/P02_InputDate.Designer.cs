@@ -33,10 +33,10 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.labelReceiveDate = new Sci.Win.UI.Label();
+            this.dateReceiveDate = new Sci.Win.UI.DateBox();
+            this.btnOK = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // shapeContainer1
@@ -89,53 +89,53 @@
             this.lineShape1.Y1 = 12;
             this.lineShape1.Y2 = 12;
             // 
-            // label1
+            // labelReceiveDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(47, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Receive Date";
+            this.labelReceiveDate.Lines = 0;
+            this.labelReceiveDate.Location = new System.Drawing.Point(47, 40);
+            this.labelReceiveDate.Name = "labelReceiveDate";
+            this.labelReceiveDate.Size = new System.Drawing.Size(90, 23);
+            this.labelReceiveDate.TabIndex = 1;
+            this.labelReceiveDate.Text = "Receive Date";
             // 
-            // dateBox1
+            // dateReceiveDate
             // 
-            this.dateBox1.Location = new System.Drawing.Point(141, 40);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 2;
+            this.dateReceiveDate.Location = new System.Drawing.Point(141, 40);
+            this.dateReceiveDate.Name = "dateReceiveDate";
+            this.dateReceiveDate.Size = new System.Drawing.Size(130, 23);
+            this.dateReceiveDate.TabIndex = 2;
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(149, 107);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnOK.Location = new System.Drawing.Point(149, 107);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(80, 30);
+            this.btnOK.TabIndex = 3;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // btnCancel
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(240, 106);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(240, 106);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // P02_InputDate
             // 
-            this.AcceptButton = this.button1;
-            this.CancelButton = this.button2;
+            this.AcceptButton = this.btnOK;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(334, 143);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.dateBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.dateReceiveDate);
+            this.Controls.Add(this.labelReceiveDate);
             this.Controls.Add(this.shapeContainer1);
             this.Name = "P02_InputDate";
             this.Text = "Input Date";
@@ -150,9 +150,9 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Win.UI.Label label1;
-        private Win.UI.DateBox dateBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Button button2;
+        private Win.UI.Label labelReceiveDate;
+        private Win.UI.DateBox dateReceiveDate;
+        private Win.UI.Button btnOK;
+        private Win.UI.Button btnCancel;
     }
 }

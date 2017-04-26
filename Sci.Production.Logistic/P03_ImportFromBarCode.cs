@@ -32,17 +32,17 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
 
             listControlBindingSource1.DataSource = filelists;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridFileList.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridFileList)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Button("Get File", null, header: "Get File", width: Widths.AnsiChars(13), onclick: eh_getfile);
 
             listControlBindingSource2.DataSource = grid2Data;
-            this.grid2.DataSource = listControlBindingSource2;
-            this.grid2.IsEditingReadOnly = true;
+            this.gridLocationNo.DataSource = listControlBindingSource2;
+            this.gridLocationNo.IsEditingReadOnly = true;
 
-            Helper.Controls.Grid.Generator(this.grid2)
+            Helper.Controls.Grid.Generator(this.gridLocationNo)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                 .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13))
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13))
@@ -312,17 +312,17 @@ namespace Sci.Production.Logistic
         private void button5_Click(object sender, EventArgs e)
         {
             //檢查Return Date不可為空值，若為空值則出訊息告知且不做任何動作
-            if (MyUtility.Check.Empty(this.dateBox1.Value))
+            if (MyUtility.Check.Empty(this.dateReturnDate.Value))
             {
                 MyUtility.Msg.WarningBox("Return date can't empty!");
                 return;
             }
 
             //將Append、Delete、Import Data這三個按鈕都改成Disable，Cancel按鈕的字樣改成Close
-            this.button1.Enabled = false;
-            this.button2.Enabled = false;
-            this.button3.Enabled = false;
-            this.button6.Text = "Close";
+            this.btnAppend.Enabled = false;
+            this.btnDelete.Enabled = false;
+            this.btnImportData.Enabled = false;
+            this.btnCancel.Text = "Close";
 
             string newID = "";
             string sqlInsertMaster, sqlInsertDetail;
@@ -331,7 +331,7 @@ namespace Sci.Production.Logistic
             {
                 if (MyUtility.Check.Empty(dr["ID"]))
                 {
-                    newID = MyUtility.GetValue.GetID(dr["MDivisionID"].ToString().Trim() + "CN", "ClogReturn", Convert.ToDateTime(this.dateBox1.Value), 2, "Id", null);
+                    newID = MyUtility.GetValue.GetID(dr["MDivisionID"].ToString().Trim() + "CN", "ClogReturn", Convert.ToDateTime(this.dateReturnDate.Value), 2, "Id", null);
                     if (MyUtility.Check.Empty(newID))
                     {
                         MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -353,7 +353,7 @@ namespace Sci.Production.Logistic
 
                             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
                             sp2.ParameterName = "@returnDate";
-                            sp2.Value = this.dateBox1.Value;
+                            sp2.Value = this.dateReturnDate.Value;
 
                             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
                             sp3.ParameterName = "@mdivisionid";
@@ -437,7 +437,7 @@ namespace Sci.Production.Logistic
                                 transactionScope.Complete();
                                 transactionScope.Dispose();
                                 dr["ID"] = newID;
-                                dr["ReturnDate"] = this.dateBox1.Value;
+                                dr["ReturnDate"] = this.dateReturnDate.Value;
                             }
                             else
                             {
@@ -460,7 +460,7 @@ namespace Sci.Production.Logistic
         // Cancel, Close
         private void button6_Click(object sender, EventArgs e)
         {
-            if (this.button6.Text == "Cancel")
+            if (this.btnCancel.Text == "Cancel")
             {
                 DialogResult = System.Windows.Forms.DialogResult.Cancel;
             }

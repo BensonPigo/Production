@@ -29,9 +29,9 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.grid1.DataSource = listControlBindingSource1;
-            this.grid1.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCartonReturn.DataSource = listControlBindingSource1;
+            this.gridCartonReturn.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridCartonReturn)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3),iseditable:true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PackingListId", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -50,10 +50,10 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.dateBox1.Value))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.dateReceiveDate.Value))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
-                this.textBox1.Focus();
+                this.txtSPNo.Focus();
                 return;
             }
             StringBuilder sqlCmd = new StringBuilder();
@@ -64,24 +64,24 @@ namespace Sci.Production.Logistic
                                            and b.CTNQty = 1
                                            and b.ReceiveDate is not null
                                            and a.Dest = c.ID");
-            if (!MyUtility.Check.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'",this.textBox1.Text.Trim()));
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'",this.txtSPNo.Text.Trim()));
             }
 
-            if (!MyUtility.Check.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and b.ID = '{0}'",this.textBox2.Text.Trim()));
+                sqlCmd.Append(string.Format(" and b.ID = '{0}'",this.txtPackID.Text.Trim()));
             }
 
-            if (!MyUtility.Check.Empty(this.dateBox1.Value))
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value))
             {
-                sqlCmd.Append(string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateBox1.Text).ToString("d")));
+                sqlCmd.Append(string.Format(" and b.ReceiveDate = '{0}'",Convert.ToDateTime(this.dateReceiveDate.Text).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
-                sqlCmd.Append(string.Format(" and a.CustPONo = '{0}'",this.textBox3.Text.Trim()));
+                sqlCmd.Append(string.Format(" and a.CustPONo = '{0}'",this.txtPONo.Text.Trim()));
             }
 
             DataTable selectDataTable1;
@@ -99,7 +99,7 @@ namespace Sci.Production.Logistic
         //Save，將有勾選的資料回寫回上一層的Detail
         private void button2_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridCartonReturn.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;
             if (gridData.Rows.Count == 0)

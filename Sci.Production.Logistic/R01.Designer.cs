@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label4 = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.comboM = new Sci.Win.UI.ComboBox();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBrand = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -50,103 +50,103 @@
             // 
             this.close.Location = new System.Drawing.Point(425, 84);
             // 
-            // txtbrand1
+            // txtbrand
             // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(110, 120);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(98, 23);
-            this.txtbrand1.TabIndex = 99;
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(110, 120);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(98, 23);
+            this.txtbrand.TabIndex = 99;
             // 
-            // comboBox1
+            // comboM
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(110, 83);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(75, 24);
-            this.comboBox1.TabIndex = 98;
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(110, 83);
+            this.comboM.Name = "comboM";
+            this.comboM.Size = new System.Drawing.Size(75, 24);
+            this.comboM.TabIndex = 98;
             // 
-            // dateRange1
+            // dateBuyerDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(110, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 97;
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(110, 12);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 97;
             // 
-            // label3
+            // labelBrand
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 120);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Brand";
+            this.labelBrand.Lines = 0;
+            this.labelBrand.Location = new System.Drawing.Point(9, 120);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(97, 23);
+            this.labelBrand.TabIndex = 96;
+            this.labelBrand.Text = "Brand";
             // 
-            // label2
+            // labelM
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(9, 84);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 23);
-            this.label2.TabIndex = 95;
-            this.label2.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(9, 84);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(97, 23);
+            this.labelM.TabIndex = 95;
+            this.labelM.Text = "M";
             // 
-            // label1
+            // labelBuyerDelivery
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 12);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(97, 23);
+            this.labelBuyerDelivery.TabIndex = 94;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
-            // dateRange2
+            // dateSCIDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(110, 48);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 101;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(110, 48);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 101;
             // 
-            // label4
+            // labelSCIDelivery
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(9, 48);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(97, 23);
-            this.label4.TabIndex = 100;
-            this.label4.Text = "SCI Delivery";
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 48);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(97, 23);
+            this.labelSCIDelivery.TabIndex = 100;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(517, 179);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtbrand1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.comboM);
+            this.Controls.Add(this.dateBuyerDelivery);
+            this.Controls.Add(this.labelBrand);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.labelBuyerDelivery);
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Carton Status Report";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.txtbrand1, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelBrand, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -154,14 +154,14 @@
 
         #endregion
 
-        private Class.txtbrand txtbrand1;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label4;
+        private Class.txtbrand txtbrand;
+        private Win.UI.ComboBox comboM;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.Label labelBrand;
+        private Win.UI.Label labelM;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.Label labelSCIDelivery;
 
     }
 }

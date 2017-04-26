@@ -24,9 +24,9 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridReturnDate.IsEditingReadOnly = true;
+            this.gridReturnDate.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridReturnDate)
                 .Date("ReturnDate", header: "Return Date")
                 .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15))
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
@@ -55,21 +55,21 @@ left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateReturnDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and cr.ReturnDate >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and cr.ReturnDate >= '{0}'", Convert.ToDateTime(dateReturnDate.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateReturnDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and cr.ReturnDate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and cr.ReturnDate <= '{0}'", Convert.ToDateTime(dateReturnDate.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(textBox1.Text)));
+                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(textBox2.Text)));
+                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
             sqlCmd.Append(" order by cr.ReturnDate,cr.PackingListID,cr.OrderID,cr.AddDate");
             DataTable gridData;

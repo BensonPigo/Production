@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.labelCode = new Sci.Win.UI.Label();
+            this.txtCodeStart = new Sci.Win.UI.TextBox();
+            this.txtCodeEnd = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
@@ -46,32 +46,32 @@
             // 
             this.close.Location = new System.Drawing.Point(297, 84);
             // 
-            // label1
+            // labelCode
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(29, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(42, 23);
-            this.label1.TabIndex = 94;
-            this.label1.Text = "Code:";
+            this.labelCode.Lines = 0;
+            this.labelCode.Location = new System.Drawing.Point(29, 48);
+            this.labelCode.Name = "labelCode";
+            this.labelCode.Size = new System.Drawing.Size(42, 23);
+            this.labelCode.TabIndex = 94;
+            this.labelCode.Text = "Code:";
             // 
-            // textBox1
+            // txtCodeStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(75, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(80, 23);
-            this.textBox1.TabIndex = 95;
+            this.txtCodeStart.BackColor = System.Drawing.Color.White;
+            this.txtCodeStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCodeStart.Location = new System.Drawing.Point(75, 48);
+            this.txtCodeStart.Name = "txtCodeStart";
+            this.txtCodeStart.Size = new System.Drawing.Size(80, 23);
+            this.txtCodeStart.TabIndex = 95;
             // 
-            // textBox2
+            // txtCodeEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(179, 48);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(80, 23);
-            this.textBox2.TabIndex = 96;
+            this.txtCodeEnd.BackColor = System.Drawing.Color.White;
+            this.txtCodeEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCodeEnd.Location = new System.Drawing.Point(179, 48);
+            this.txtCodeEnd.Name = "txtCodeEnd";
+            this.txtCodeEnd.Size = new System.Drawing.Size(80, 23);
+            this.txtCodeEnd.TabIndex = 96;
             // 
             // label2
             // 
@@ -91,19 +91,18 @@
             // 
             this.ClientSize = new System.Drawing.Size(389, 151);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label1);
-            this.EditMode = true;
+            this.Controls.Add(this.txtCodeEnd);
+            this.Controls.Add(this.txtCodeStart);
+            this.Controls.Add(this.labelCode);
             this.IsSupportToExcel = false;
             this.Name = "B01_Print";
             this.Text = "Print";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.textBox2, 0);
+            this.Controls.SetChildIndex(this.labelCode, 0);
+            this.Controls.SetChildIndex(this.txtCodeStart, 0);
+            this.Controls.SetChildIndex(this.txtCodeEnd, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -112,9 +111,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.Label labelCode;
+        private Win.UI.TextBox txtCodeStart;
+        private Win.UI.TextBox txtCodeEnd;
         private Win.UI.Label label2;
     }
 }

@@ -21,21 +21,21 @@ namespace Sci.Production.Logistic
             InitializeComponent();
             DataTable mDivision;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(comboBox1, 1, mDivision);
-            comboBox1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboM, 1, mDivision);
+            comboM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            po1 = textBox1.Text;
-            po2 = textBox2.Text;
-            sp1 = textBox3.Text;
-            sp2 = textBox4.Text;
-            brand = txtbrand1.Text;
-            mDivision = comboBox1.Text;
-            location1 = txtcloglocation1.Text;
-            location2 = txtcloglocation2.Text;
+            po1 = txtPONoStart.Text;
+            po2 = txtPONoEnd.Text;
+            sp1 = txtSPNoStart.Text;
+            sp2 = txtSPNoEnd.Text;
+            brand = txtbrand.Text;
+            mDivision = comboM.Text;
+            location1 = txtcloglocationLocationStart.Text;
+            location2 = txtcloglocationLocationEnd.Text;
 
             return base.ValidateInput();
         }

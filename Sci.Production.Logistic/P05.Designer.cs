@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.txtPackID = new Sci.Win.UI.TextBox();
+            this.labelPackID = new Sci.Win.UI.Label();
+            this.dateReceiveDate = new Sci.Win.UI.DateRange();
+            this.labelReceiveDate = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridReceiveDate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,155 +71,155 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.button1);
-            this.panel3.Controls.Add(this.textBox2);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.dateRange1);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.btnToExcel);
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.txtSPNo);
+            this.panel3.Controls.Add(this.labelSPNo);
+            this.panel3.Controls.Add(this.txtPackID);
+            this.panel3.Controls.Add(this.labelPackID);
+            this.panel3.Controls.Add(this.dateReceiveDate);
+            this.panel3.Controls.Add(this.labelReceiveDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(719, 80);
             this.panel3.TabIndex = 3;
             // 
-            // button3
+            // btnToExcel
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(626, 44);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "To Excel";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(626, 44);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
+            this.btnToExcel.TabIndex = 7;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button1
+            // btnQuery
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(626, 7);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Query";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(626, 7);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 6;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox2
+            // txtSPNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(279, 49);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(130, 23);
-            this.textBox2.TabIndex = 5;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(279, 49);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNo.TabIndex = 5;
             // 
-            // label3
+            // labelSPNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(240, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "SP#";
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(240, 49);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.Size = new System.Drawing.Size(35, 23);
+            this.labelSPNo.TabIndex = 4;
+            this.labelSPNo.Text = "SP#";
             // 
-            // textBox1
+            // txtPackID
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(67, 49);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(130, 23);
-            this.textBox1.TabIndex = 3;
+            this.txtPackID.BackColor = System.Drawing.Color.White;
+            this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackID.Location = new System.Drawing.Point(67, 49);
+            this.txtPackID.Name = "txtPackID";
+            this.txtPackID.Size = new System.Drawing.Size(130, 23);
+            this.txtPackID.TabIndex = 3;
             // 
-            // label2
+            // labelPackID
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(7, 49);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Pack ID";
+            this.labelPackID.Lines = 0;
+            this.labelPackID.Location = new System.Drawing.Point(7, 49);
+            this.labelPackID.Name = "labelPackID";
+            this.labelPackID.Size = new System.Drawing.Size(56, 23);
+            this.labelPackID.TabIndex = 2;
+            this.labelPackID.Text = "Pack ID";
             // 
-            // dateRange1
+            // dateReceiveDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(100, 13);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 1;
+            this.dateReceiveDate.IsRequired = false;
+            this.dateReceiveDate.Location = new System.Drawing.Point(100, 13);
+            this.dateReceiveDate.Name = "dateReceiveDate";
+            this.dateReceiveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReceiveDate.TabIndex = 1;
             // 
-            // label1
+            // labelReceiveDate
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(7, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Receive Date";
+            this.labelReceiveDate.Lines = 0;
+            this.labelReceiveDate.Location = new System.Drawing.Point(7, 13);
+            this.labelReceiveDate.Name = "labelReceiveDate";
+            this.labelReceiveDate.Size = new System.Drawing.Size(89, 23);
+            this.labelReceiveDate.TabIndex = 0;
+            this.labelReceiveDate.Text = "Receive Date";
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 407);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(719, 47);
             this.panel4.TabIndex = 4;
             // 
-            // button2
+            // btnClose
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(627, 9);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(627, 9);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.grid1);
+            this.panel5.Controls.Add(this.gridReceiveDate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 80);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(719, 327);
             this.panel5.TabIndex = 5;
             // 
-            // grid1
+            // gridReceiveDate
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(719, 327);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
+            this.gridReceiveDate.AllowUserToAddRows = false;
+            this.gridReceiveDate.AllowUserToDeleteRows = false;
+            this.gridReceiveDate.AllowUserToResizeRows = false;
+            this.gridReceiveDate.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridReceiveDate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridReceiveDate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridReceiveDate.DataSource = this.listControlBindingSource1;
+            this.gridReceiveDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridReceiveDate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridReceiveDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridReceiveDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridReceiveDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridReceiveDate.Location = new System.Drawing.Point(0, 0);
+            this.gridReceiveDate.Name = "gridReceiveDate";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiveDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridReceiveDate.RowTemplate.Height = 24;
+            this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridReceiveDate.Size = new System.Drawing.Size(719, 327);
+            this.gridReceiveDate.TabIndex = 0;
+            this.gridReceiveDate.TabStop = false;
             // 
             // P05
             // 
@@ -241,7 +241,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -252,18 +252,18 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
-        private Win.UI.Label label2;
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label1;
+        private Win.UI.Label labelPackID;
+        private Win.UI.DateRange dateReceiveDate;
+        private Win.UI.Label labelReceiveDate;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
+        private Win.UI.Grid gridReceiveDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label3;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Button button1;
-        private Win.UI.TextBox textBox2;
-        private Win.UI.Button button2;
-        private Win.UI.Button button3;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.TextBox txtPackID;
+        private Win.UI.Button btnQuery;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnToExcel;
     }
 }

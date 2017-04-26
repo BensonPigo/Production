@@ -55,9 +55,9 @@ order by r.cDate", masterData["Dest"].ToString(), masterData["ID"].ToString());
 
 
             //設定Grid1的顯示欄位
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridCertifiedFactoryAudit.IsEditingReadOnly = true;
+            this.gridCertifiedFactoryAudit.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridCertifiedFactoryAudit)
                 .Date("cDate",header: "Audit date", width: Widths.AnsiChars(10))
                 .Text("SewingLineID", header: "Line#", width: Widths.AnsiChars(2))
                 .Text("SewingCell", header: "Cell#", width: Widths.AnsiChars(2))
@@ -72,9 +72,9 @@ order by r.cDate", masterData["Dest"].ToString(), masterData["ID"].ToString());
 
 
             //設定Grid2的顯示欄位
-            this.grid2.IsEditingReadOnly = true;
-            this.grid2.DataSource = listControlBindingSource2;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridRightFirstTime.IsEditingReadOnly = true;
+            this.gridRightFirstTime.DataSource = listControlBindingSource2;
+            Helper.Controls.Grid.Generator(this.gridRightFirstTime)
                 .Date("cDate",header: "Date", width: Widths.AnsiChars(10))
                 .Text("SewingLineID", header: "Line#", width: Widths.AnsiChars(2))
                 .Text("SewingCell", header: "Cell#", width: Widths.AnsiChars(2))

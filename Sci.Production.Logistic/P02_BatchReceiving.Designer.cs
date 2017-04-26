@@ -28,132 +28,163 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.button1 = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
+            this.components = new System.ComponentModel.Container();
+            this.labelTransferClogNo = new Sci.Win.UI.Label();
+            this.txtTransferClogNoStart = new Sci.Win.UI.TextBox();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.labelTTLCTN = new Sci.Win.UI.Label();
+            this.numTTLCTN = new Sci.Win.UI.NumericBox();
+            this.labelReceivedCTN = new Sci.Win.UI.Label();
+            this.numReceivedCTN = new Sci.Win.UI.NumericBox();
+            this.labelNotYetReceivedCTN = new Sci.Win.UI.Label();
+            this.numNotYetReceivedCTN = new Sci.Win.UI.NumericBox();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label5 = new Sci.Win.UI.Label();
-            this.button2 = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.ListControlBindingSource();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.button3 = new Sci.Win.UI.Button();
-            this.button4 = new Sci.Win.UI.Button();
-            this.label6 = new Sci.Win.UI.Label();
-            this.numericBox4 = new Sci.Win.UI.NumericBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.labelLocationNo = new Sci.Win.UI.Label();
+            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
+            this.bindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridCartonReceiving = new Sci.Win.UI.Grid();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.labelNoOfSelected = new Sci.Win.UI.Label();
+            this.numNoOfSelected = new Sci.Win.UI.NumericBox();
+            this.txtTransferClogNoEnd = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtcloglocation1 = new Sci.Production.Class.txtcloglocation();
+            this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.panel4 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCartonReceiving)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // labelTransferClogNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(22, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Transfer Clog No";
+            this.labelTransferClogNo.Lines = 0;
+            this.labelTransferClogNo.Location = new System.Drawing.Point(22, 16);
+            this.labelTransferClogNo.Name = "labelTransferClogNo";
+            this.labelTransferClogNo.Size = new System.Drawing.Size(111, 23);
+            this.labelTransferClogNo.TabIndex = 0;
+            this.labelTransferClogNo.Text = "Transfer Clog No";
             // 
-            // textBox1
+            // txtTransferClogNoStart
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(137, 16);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 23);
-            this.textBox1.TabIndex = 1;
+            this.txtTransferClogNoStart.BackColor = System.Drawing.Color.White;
+            this.txtTransferClogNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferClogNoStart.Location = new System.Drawing.Point(137, 16);
+            this.txtTransferClogNoStart.Name = "txtTransferClogNoStart";
+            this.txtTransferClogNoStart.Size = new System.Drawing.Size(120, 23);
+            this.txtTransferClogNoStart.TabIndex = 1;
             // 
-            // button1
+            // btnFind
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(413, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Find";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFind.Location = new System.Drawing.Point(413, 12);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(80, 30);
+            this.btnFind.TabIndex = 2;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label2
+            // labelTTLCTN
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(22, 49);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "TTL CTN";
+            this.labelTTLCTN.Lines = 0;
+            this.labelTTLCTN.Location = new System.Drawing.Point(22, 49);
+            this.labelTTLCTN.Name = "labelTTLCTN";
+            this.labelTTLCTN.Size = new System.Drawing.Size(64, 23);
+            this.labelTTLCTN.TabIndex = 3;
+            this.labelTTLCTN.Text = "TTL CTN";
             // 
-            // numericBox1
+            // numTTLCTN
             // 
-            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox1.IsSupportEditMode = false;
-            this.numericBox1.Location = new System.Drawing.Point(90, 49);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.ReadOnly = true;
-            this.numericBox1.Size = new System.Drawing.Size(70, 23);
-            this.numericBox1.TabIndex = 4;
+            this.numTTLCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTLCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTLCTN.IsSupportEditMode = false;
+            this.numTTLCTN.Location = new System.Drawing.Point(90, 49);
+            this.numTTLCTN.Name = "numTTLCTN";
+            this.numTTLCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTLCTN.ReadOnly = true;
+            this.numTTLCTN.Size = new System.Drawing.Size(70, 23);
+            this.numTTLCTN.TabIndex = 4;
+            this.numTTLCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // label3
+            // labelReceivedCTN
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(212, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 23);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Received CTN";
+            this.labelReceivedCTN.Lines = 0;
+            this.labelReceivedCTN.Location = new System.Drawing.Point(212, 49);
+            this.labelReceivedCTN.Name = "labelReceivedCTN";
+            this.labelReceivedCTN.Size = new System.Drawing.Size(97, 23);
+            this.labelReceivedCTN.TabIndex = 5;
+            this.labelReceivedCTN.Text = "Received CTN";
             // 
-            // numericBox2
+            // numReceivedCTN
             // 
-            this.numericBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox2.IsSupportEditMode = false;
-            this.numericBox2.Location = new System.Drawing.Point(313, 49);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.ReadOnly = true;
-            this.numericBox2.Size = new System.Drawing.Size(70, 23);
-            this.numericBox2.TabIndex = 6;
+            this.numReceivedCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numReceivedCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numReceivedCTN.IsSupportEditMode = false;
+            this.numReceivedCTN.Location = new System.Drawing.Point(313, 49);
+            this.numReceivedCTN.Name = "numReceivedCTN";
+            this.numReceivedCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numReceivedCTN.ReadOnly = true;
+            this.numReceivedCTN.Size = new System.Drawing.Size(70, 23);
+            this.numReceivedCTN.TabIndex = 6;
+            this.numReceivedCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // label4
+            // labelNotYetReceivedCTN
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(429, 49);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(139, 23);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Not yet received CTN";
+            this.labelNotYetReceivedCTN.Lines = 0;
+            this.labelNotYetReceivedCTN.Location = new System.Drawing.Point(429, 49);
+            this.labelNotYetReceivedCTN.Name = "labelNotYetReceivedCTN";
+            this.labelNotYetReceivedCTN.Size = new System.Drawing.Size(139, 23);
+            this.labelNotYetReceivedCTN.TabIndex = 7;
+            this.labelNotYetReceivedCTN.Text = "Not yet received CTN";
             // 
-            // numericBox3
+            // numNotYetReceivedCTN
             // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(572, 49);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(70, 23);
-            this.numericBox3.TabIndex = 8;
+            this.numNotYetReceivedCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNotYetReceivedCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNotYetReceivedCTN.IsSupportEditMode = false;
+            this.numNotYetReceivedCTN.Location = new System.Drawing.Point(572, 49);
+            this.numNotYetReceivedCTN.Name = "numNotYetReceivedCTN";
+            this.numNotYetReceivedCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numNotYetReceivedCTN.ReadOnly = true;
+            this.numNotYetReceivedCTN.Size = new System.Drawing.Size(70, 23);
+            this.numNotYetReceivedCTN.TabIndex = 8;
+            this.numNotYetReceivedCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // lineShape5
             // 
@@ -195,103 +226,111 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
-            // label5
+            // labelLocationNo
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(22, 89);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 23);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Location No";
+            this.labelLocationNo.Lines = 0;
+            this.labelLocationNo.Location = new System.Drawing.Point(22, 89);
+            this.labelLocationNo.Name = "labelLocationNo";
+            this.labelLocationNo.Size = new System.Drawing.Size(81, 23);
+            this.labelLocationNo.TabIndex = 10;
+            this.labelLocationNo.Text = "Location No";
             // 
-            // button2
+            // btnUpdateAllLocation
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button2.Location = new System.Drawing.Point(203, 85);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(163, 30);
-            this.button2.TabIndex = 12;
-            this.button2.Text = "Update All Location";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(203, 85);
+            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
+            this.btnUpdateAllLocation.Size = new System.Drawing.Size(163, 30);
+            this.btnUpdateAllLocation.TabIndex = 12;
+            this.btnUpdateAllLocation.Text = "Update All Location";
+            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.button2_Click);
             // 
-            // grid1
+            // gridCartonReceiving
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.AutoGenerateColumns = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.bindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowHeadersVisible = false;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(676, 326);
-            this.grid1.TabIndex = 13;
-            this.grid1.TabStop = false;
+            this.gridCartonReceiving.AllowUserToAddRows = false;
+            this.gridCartonReceiving.AllowUserToDeleteRows = false;
+            this.gridCartonReceiving.AllowUserToResizeRows = false;
+            this.gridCartonReceiving.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridCartonReceiving.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridCartonReceiving.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCartonReceiving.DataSource = this.bindingSource1;
+            this.gridCartonReceiving.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridCartonReceiving.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridCartonReceiving.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridCartonReceiving.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridCartonReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridCartonReceiving.Location = new System.Drawing.Point(0, 0);
+            this.gridCartonReceiving.Name = "gridCartonReceiving";
+            this.gridCartonReceiving.RowHeadersVisible = false;
+            this.gridCartonReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridCartonReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridCartonReceiving.RowTemplate.Height = 24;
+            this.gridCartonReceiving.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridCartonReceiving.Size = new System.Drawing.Size(676, 326);
+            this.gridCartonReceiving.TabIndex = 13;
+            this.gridCartonReceiving.TabStop = false;
             // 
-            // button3
+            // btnSave
             // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button3.Location = new System.Drawing.Point(508, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 30);
-            this.button3.TabIndex = 16;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSave.Location = new System.Drawing.Point(508, 7);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 16;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
+            // btnCancel
             // 
-            this.button4.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button4.Location = new System.Drawing.Point(594, 6);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 30);
-            this.button4.TabIndex = 17;
-            this.button4.Text = "Cancel";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(594, 6);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 17;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // labelNoOfSelected
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(65, 6);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(94, 23);
-            this.label6.TabIndex = 18;
-            this.label6.Text = "No of selected";
+            this.labelNoOfSelected.Lines = 0;
+            this.labelNoOfSelected.Location = new System.Drawing.Point(65, 6);
+            this.labelNoOfSelected.Name = "labelNoOfSelected";
+            this.labelNoOfSelected.Size = new System.Drawing.Size(94, 23);
+            this.labelNoOfSelected.TabIndex = 18;
+            this.labelNoOfSelected.Text = "No of selected";
             // 
-            // numericBox4
+            // numNoOfSelected
             // 
-            this.numericBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox4.IsSupportEditMode = false;
-            this.numericBox4.Location = new System.Drawing.Point(163, 6);
-            this.numericBox4.Name = "numericBox4";
-            this.numericBox4.ReadOnly = true;
-            this.numericBox4.Size = new System.Drawing.Size(70, 23);
-            this.numericBox4.TabIndex = 19;
+            this.numNoOfSelected.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numNoOfSelected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numNoOfSelected.IsSupportEditMode = false;
+            this.numNoOfSelected.Location = new System.Drawing.Point(163, 6);
+            this.numNoOfSelected.Name = "numNoOfSelected";
+            this.numNoOfSelected.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numNoOfSelected.ReadOnly = true;
+            this.numNoOfSelected.Size = new System.Drawing.Size(70, 23);
+            this.numNoOfSelected.TabIndex = 19;
+            this.numNoOfSelected.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // textBox2
+            // txtTransferClogNoEnd
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(276, 16);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 23);
-            this.textBox2.TabIndex = 20;
+            this.txtTransferClogNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtTransferClogNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferClogNoEnd.Location = new System.Drawing.Point(276, 16);
+            this.txtTransferClogNoEnd.Name = "txtTransferClogNoEnd";
+            this.txtTransferClogNoEnd.Size = new System.Drawing.Size(120, 23);
+            this.txtTransferClogNoEnd.TabIndex = 20;
             // 
             // label7
             // 
@@ -306,7 +345,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.grid1);
+            this.panel1.Controls.Add(this.gridCartonReceiving);
             this.panel1.Controls.Add(this.panel5);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(13, 122);
@@ -324,10 +363,10 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.label6);
-            this.panel2.Controls.Add(this.button3);
-            this.panel2.Controls.Add(this.button4);
-            this.panel2.Controls.Add(this.numericBox4);
+            this.panel2.Controls.Add(this.labelNoOfSelected);
+            this.panel2.Controls.Add(this.btnSave);
+            this.panel2.Controls.Add(this.btnCancel);
+            this.panel2.Controls.Add(this.numNoOfSelected);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 448);
             this.panel2.Name = "panel2";
@@ -336,20 +375,20 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.label1);
-            this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.txtcloglocation1);
-            this.panel3.Controls.Add(this.button1);
+            this.panel3.Controls.Add(this.labelTTLCTN);
+            this.panel3.Controls.Add(this.labelTransferClogNo);
+            this.panel3.Controls.Add(this.txtTransferClogNoStart);
+            this.panel3.Controls.Add(this.txtcloglocationLocationNo);
+            this.panel3.Controls.Add(this.btnFind);
             this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.numericBox1);
-            this.panel3.Controls.Add(this.textBox2);
-            this.panel3.Controls.Add(this.label3);
-            this.panel3.Controls.Add(this.button2);
-            this.panel3.Controls.Add(this.numericBox2);
-            this.panel3.Controls.Add(this.label5);
-            this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.numericBox3);
+            this.panel3.Controls.Add(this.numTTLCTN);
+            this.panel3.Controls.Add(this.txtTransferClogNoEnd);
+            this.panel3.Controls.Add(this.labelReceivedCTN);
+            this.panel3.Controls.Add(this.btnUpdateAllLocation);
+            this.panel3.Controls.Add(this.numReceivedCTN);
+            this.panel3.Controls.Add(this.labelLocationNo);
+            this.panel3.Controls.Add(this.labelNotYetReceivedCTN);
+            this.panel3.Controls.Add(this.numNotYetReceivedCTN);
             this.panel3.Controls.Add(this.shapeContainer2);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
@@ -357,15 +396,16 @@
             this.panel3.Size = new System.Drawing.Size(702, 122);
             this.panel3.TabIndex = 24;
             // 
-            // txtcloglocation1
+            // txtcloglocationLocationNo
             // 
-            this.txtcloglocation1.BackColor = System.Drawing.Color.White;
-            this.txtcloglocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcloglocation1.IsSupportSytsemContextMenu = false;
-            this.txtcloglocation1.Location = new System.Drawing.Point(107, 89);
-            this.txtcloglocation1.Name = "txtcloglocation1";
-            this.txtcloglocation1.Size = new System.Drawing.Size(80, 23);
-            this.txtcloglocation1.TabIndex = 11;
+            this.txtcloglocationLocationNo.BackColor = System.Drawing.Color.White;
+            this.txtcloglocationLocationNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcloglocationLocationNo.IsSupportSytsemContextMenu = false;
+            this.txtcloglocationLocationNo.Location = new System.Drawing.Point(107, 89);
+            this.txtcloglocationLocationNo.MDivisionObjectName = null;
+            this.txtcloglocationLocationNo.Name = "txtcloglocationLocationNo";
+            this.txtcloglocationLocationNo.Size = new System.Drawing.Size(80, 23);
+            this.txtcloglocationLocationNo.TabIndex = 11;
             // 
             // shapeContainer2
             // 
@@ -392,8 +432,8 @@
             // 
             // P02_BatchReceiving
             // 
-            this.AcceptButton = this.button3;
-            this.CancelButton = this.button4;
+            this.AcceptButton = this.btnSave;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(702, 490);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel4);
@@ -402,7 +442,7 @@
             this.Name = "P02_BatchReceiving";
             this.Text = "Carton Receiving - Batch Receive";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCartonReceiving)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -414,31 +454,31 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Button button1;
-        private Win.UI.Label label2;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.Label label3;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.Label label4;
-        private Win.UI.NumericBox numericBox3;
+        private Win.UI.Label labelTransferClogNo;
+        private Win.UI.TextBox txtTransferClogNoStart;
+        private Win.UI.Button btnFind;
+        private Win.UI.Label labelTTLCTN;
+        private Win.UI.NumericBox numTTLCTN;
+        private Win.UI.Label labelReceivedCTN;
+        private Win.UI.NumericBox numReceivedCTN;
+        private Win.UI.Label labelNotYetReceivedCTN;
+        private Win.UI.NumericBox numNotYetReceivedCTN;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Win.UI.Label label5;
+        private Win.UI.Label labelLocationNo;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape5;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
-        private Class.txtcloglocation txtcloglocation1;
-        private Win.UI.Button button2;
+        private Class.txtcloglocation txtcloglocationLocationNo;
+        private Win.UI.Button btnUpdateAllLocation;
         //private Win.UI.BindingSource bindingSource1;
         private Win.UI.ListControlBindingSource bindingSource1;
-        private Win.UI.Grid grid1;
-        private Win.UI.Button button3;
-        private Win.UI.Button button4;
-        private Win.UI.Label label6;
-        private Win.UI.NumericBox numericBox4;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.Grid gridCartonReceiving;
+        private Win.UI.Button btnSave;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Label labelNoOfSelected;
+        private Win.UI.NumericBox numNoOfSelected;
+        private Win.UI.TextBox txtTransferClogNoEnd;
         private Win.UI.Label label7;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;

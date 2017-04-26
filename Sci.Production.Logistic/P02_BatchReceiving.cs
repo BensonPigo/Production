@@ -29,18 +29,18 @@ namespace Sci.Production.Logistic
         {
             base.OnFormLoaded();
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridCartonReceiving.CellValueChanged += (s, e) =>
                 {
-                    if (grid1.Columns[e.ColumnIndex].Name == col_chk.Name)
+                    if (gridCartonReceiving.Columns[e.ColumnIndex].Name == col_chk.Name)
                     {
-                        this.numericBox4.Value = grid1.GetCheckeds(col_chk).Count;
+                        this.numNoOfSelected.Value = gridCartonReceiving.GetCheckeds(col_chk).Count;
                     }
                 };
 
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = bindingSource1;
+            this.gridCartonReceiving.IsEditingReadOnly = false;
+            this.gridCartonReceiving.DataSource = bindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridCartonReceiving)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -57,10 +57,10 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1) && MyUtility.Check.Empty(this.textBox2))
+            if (MyUtility.Check.Empty(this.txtTransferClogNoStart) && MyUtility.Check.Empty(this.txtTransferClogNoEnd))
             {
                 MyUtility.Msg.WarningBox("< Transfer Clog No > can not be empty!");
-                this.textBox1.Focus();
+                this.txtTransferClogNoStart.Focus();
                 return;
             }
 
@@ -69,9 +69,9 @@ namespace Sci.Production.Logistic
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@id1";
-            sp1.Value = textBox1.Text;
+            sp1.Value = txtTransferClogNoStart.Text;
             sp2.ParameterName = "@id2";
-            sp2.Value = textBox2.Text;
+            sp2.Value = txtTransferClogNoEnd.Text;
             sp3.ParameterName = "@mdivisionid";
             sp3.Value = Sci.Env.User.Keyword;
 
@@ -102,14 +102,14 @@ namespace Sci.Production.Logistic
             bindingSource1.DataSource = selectDataTable1;
             if (selectResult = DBProxy.Current.Select(null, selectCommand2, cmds, out selectDataTable2))
             {
-                this.numericBox1.Text = selectDataTable2.Rows[0]["TTLCTN"].ToString();
+                this.numTTLCTN.Text = selectDataTable2.Rows[0]["TTLCTN"].ToString();
             }
             if (selectResult = DBProxy.Current.Select(null, selectCommand3, cmds, out selectDataTable3))
             {
-                this.numericBox2.Text = selectDataTable3.Rows[0]["ReceivedCTN"].ToString();
+                this.numReceivedCTN.Text = selectDataTable3.Rows[0]["ReceivedCTN"].ToString();
             }
-            this.numericBox3.Value = this.numericBox1.Value - this.numericBox2.Value;
-            this.numericBox4.Value = 0;
+            this.numNotYetReceivedCTN.Value = this.numTTLCTN.Value - this.numReceivedCTN.Value;
+            this.numNoOfSelected.Value = 0;
         }
 
         //組撈Grid資料的SQL
@@ -131,10 +131,10 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   {3})) as a 
 left join Orders b WITH (NOLOCK) On a.OrderID = b.ID 
 left join Country c WITH (NOLOCK) On b.Dest = c.ID",
- MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.Id <= @id2",
- MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and TransferToClogId <= @id2");
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.Id <= @id2",
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and TransferToClogId <= @id2");
         }
 
         //組算TTL CTN的SQL
@@ -155,10 +155,10 @@ from ((Select a.Id as TransferToClogId, PackingListId, OrderId, CTNStartNo
 	   and a.TransferToClogId >= '{2}' 
 	   and a.TransferToClogId <= '{3}' 
 	   and b.Status = 'Confirmed')) as result",
- MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.Id >= @id1",
- MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.Id <= @id2", 
- MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Id >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.Id <= @id2", 
+ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
         }
 
         //組算Received CTN的SQL
@@ -180,14 +180,14 @@ from ((Select a.TransferToClogId, a.PackingListId, a.OrderId, a.CTNStartNo
 	   {0}
 	   {1}
 	   and b.Status = 'Confirmed')) as result",
-MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
- MyUtility.Check.Empty(this.textBox2.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
+MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.TransferToClogId >= @id1",
+ MyUtility.Check.Empty(this.txtTransferClogNoEnd.Text.Trim()) ? "" : " and a.TransferToClogId <= @id2");
         }
 
         //Update All Location
         private void button2_Click(object sender, EventArgs e)
         {
-            string location = this.txtcloglocation1.Text.Trim();
+            string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.bindingSource1.Position;     //記錄目前指標位置
             DataTable dt = (DataTable)bindingSource1.DataSource;
             foreach (DataRow currentRecord in dt.Rows)
@@ -195,17 +195,17 @@ MyUtility.Check.Empty(this.textBox1.Text.Trim()) ? "" : " and a.TransferToClogId
                 currentRecord["ClogLocationId"] = location;
             }
             this.bindingSource1.Position = pos;
-            grid1.SuspendLayout();
-            this.grid1.DataSource = null;
-            this.grid1.DataSource = bindingSource1;
+            gridCartonReceiving.SuspendLayout();
+            this.gridCartonReceiving.DataSource = null;
+            this.gridCartonReceiving.DataSource = bindingSource1;
             this.bindingSource1.Position = pos;
-            grid1.ResumeLayout();
+            gridCartonReceiving.ResumeLayout();
         }
 
         //Save，將有勾選的資料回寫回上一層的Detail
         private void button3_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
+            this.gridCartonReceiving.ValidateControl();
             bindingSource1.EndEdit();
             DataTable gridData = (DataTable)bindingSource1.DataSource;
 

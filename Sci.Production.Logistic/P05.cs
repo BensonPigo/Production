@@ -24,9 +24,9 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = true;
-            this.grid1.DataSource = listControlBindingSource1;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridReceiveDate.IsEditingReadOnly = true;
+            this.gridReceiveDate.DataSource = listControlBindingSource1;
+            Helper.Controls.Grid.Generator(this.gridReceiveDate)
                 .Date("ReceiveDate", header: "Receive Date")
                 .Text("PackingListID", header: "Pack ID", width: Widths.Auto())
                 .Text("OrderID", header: "SP#", width: Widths.Auto())
@@ -57,21 +57,21 @@ left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = cr.PackingListID and pd
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateRange1.Value1))
+            if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(dateReceiveDate.Value1).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(dateRange1.Value2))
+            if (!MyUtility.Check.Empty(dateReceiveDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(dateReceiveDate.Value2).ToString("d")));
             }
-            if (!MyUtility.Check.Empty(textBox1.Text))
+            if (!MyUtility.Check.Empty(txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(textBox1.Text)));
+                sqlCmd.Append(string.Format(" and cr.PackingListID = '{0}'", MyUtility.Convert.GetString(txtPackID.Text)));
             }
-            if (!MyUtility.Check.Empty(textBox2.Text))
+            if (!MyUtility.Check.Empty(txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(textBox2.Text)));
+                sqlCmd.Append(string.Format(" and cr.OrderID = '{0}'", MyUtility.Convert.GetString(txtSPNo.Text)));
             }
             sqlCmd.Append(" order by cr.ReceiveDate,cr.PackingListID,cr.OrderID,cr.AddDate");
             DataTable gridData;
@@ -81,7 +81,7 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
             }
             listControlBindingSource1.DataSource = gridData;
-            grid1.AutoResizeColumns();
+            gridReceiveDate.AutoResizeColumns();
         }
 
         //Close

@@ -44,28 +44,28 @@ namespace Sci.Production.Logistic
             comboBox1_RowSource.Add("4", "Color");
             comboBox1_RowSource.Add("5", "Size");
             comboxbs1 = new BindingSource(comboBox1_RowSource, null);
-            comboBox1.DataSource = comboxbs1;
-            comboBox1.ValueMember = "Key";
-            comboBox1.DisplayMember = "Value";
+            comboFilter.DataSource = comboxbs1;
+            comboFilter.ValueMember = "Key";
+            comboFilter.DisplayMember = "Value";
 
             comboxbs2 = new BindingSource(comboBox2_RowSource1, null);
-            comboBox2.DataSource = comboxbs2;
+            comboFilter2.DataSource = comboxbs2;
 
             comboBox3_RowSource.Add("CFA");
             comboBox3_RowSource.Add("INSPECTOR");
             comboxbs3 = new BindingSource(comboBox3_RowSource, null);
-            comboBox3.DataSource = comboxbs3;
+            comboRequestby.DataSource = comboxbs3;
 
 
             //Grid設定
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridPackID.IsEditingReadOnly = false;
+            this.gridPackID.DataSource = listControlBindingSource1;
 
-            this.grid1.CellValueChanged += (s, e) =>
+            this.gridPackID.CellValueChanged += (s, e) =>
             {
-                if (grid1.Columns[e.ColumnIndex].DataPropertyName == col_location.DataPropertyName)
+                if (gridPackID.Columns[e.ColumnIndex].DataPropertyName == col_location.DataPropertyName)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridPackID.GetDataRow<DataRow>(e.RowIndex);
                     dr["Selected"] = 1;
                 }
             };
@@ -75,7 +75,7 @@ namespace Sci.Production.Logistic
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.gridPackID.GetDataRow<DataRow>(e.RowIndex);
                     if (e.FormattedValue.ToString() != dr["Remark"].ToString())
                     {
                         dr["Remark"] = e.FormattedValue.ToString();
@@ -84,7 +84,7 @@ namespace Sci.Production.Logistic
                 }
             };
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridPackID)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 //.Text("TransferToClogID", header: "Trans. Slip#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -103,10 +103,10 @@ namespace Sci.Production.Logistic
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text) && MyUtility.Check.Empty(this.textBox4.Text) && MyUtility.Check.Empty(this.textBox7.Text) && MyUtility.Check.Empty(this.textBox8.Text))
+            if (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text) && MyUtility.Check.Empty(this.txtPackIDStart.Text) && MyUtility.Check.Empty(this.txtPackIDEnd.Text) && MyUtility.Check.Empty(this.txtPONoStart.Text) && MyUtility.Check.Empty(this.txtPONoEnd.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
-                this.textBox1.Focus();
+                this.txtSPNoStart.Focus();
                 return;
             }
 
@@ -128,22 +128,22 @@ from (
 	  and b.OrderID = c.ID
 	  and c.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
             #region 組條件
-            if (!MyUtility.Check.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and c.ID >= '{0}'", this.textBox1.Text));
+                sqlCmd.Append(string.Format(" and c.ID >= '{0}'", this.txtSPNoStart.Text));
             }
-            if (!MyUtility.Check.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and c.ID <= '{0}'", this.textBox2.Text));
+                sqlCmd.Append(string.Format(" and c.ID <= '{0}'", this.txtSPNoEnd.Text));
             }
 
-            if (!MyUtility.Check.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.txtPackIDStart.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.textBox3.Text));
+                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.txtPackIDStart.Text));
             }
-            if (!MyUtility.Check.Empty(this.textBox4.Text))
+            if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.textBox4.Text));
+                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.txtPackIDEnd.Text));
             }
 
             //if (!MyUtility.Check.Empty(this.textBox5.Text))
@@ -155,13 +155,13 @@ from (
             //    sqlCmd.Append(string.Format(" and b.TransferToClogID <= '{0}'", this.textBox6.Text));
             //}
 
-            if (!MyUtility.Check.Empty(this.textBox7.Text))
+            if (!MyUtility.Check.Empty(this.txtPONoStart.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo >= '{0}'", this.textBox7.Text));
+                sqlCmd.Append(string.Format(" and c.CustPONo >= '{0}'", this.txtPONoStart.Text));
             }
-            if (!MyUtility.Check.Empty(this.textBox8.Text))
+            if (!MyUtility.Check.Empty(this.txtPONoEnd.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo <= '{0}'", this.textBox8.Text));
+                sqlCmd.Append(string.Format(" and c.CustPONo <= '{0}'", this.txtPONoEnd.Text));
             }
             #endregion
             sqlCmd.Append(") d");
@@ -216,7 +216,7 @@ from (
         //Update All Location
         private void button2_Click(object sender, EventArgs e)
         {
-            string location = this.txtcloglocation1.Text.Trim();
+            string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt))
@@ -232,18 +232,18 @@ from (
                 }
             }
             this.listControlBindingSource1.Position = pos;
-            grid1.SuspendLayout();
-            this.grid1.DataSource = null;
-            this.grid1.DataSource = listControlBindingSource1;
+            gridPackID.SuspendLayout();
+            this.gridPackID.DataSource = null;
+            this.gridPackID.DataSource = listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
-            grid1.ResumeLayout();
+            gridPackID.ResumeLayout();
         }
 
         //Save
         private void button4_Click(object sender, EventArgs e)
         {
-            this.grid1.ValidateControl();
-            this.grid1.EndEdit();
+            this.gridPackID.ValidateControl();
+            this.gridPackID.EndEdit();
             listControlBindingSource1.EndEdit();
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(detailData))
@@ -343,14 +343,14 @@ from (
             #endregion
 
             //更新成功後，將畫面上的資料都清空
-            this.textBox1.Text = "";
-            this.textBox2.Text = "";
-            this.textBox3.Text = "";
-            this.textBox4.Text = "";            
-            this.textBox7.Text = "";
-            this.textBox8.Text = "";
-            this.comboBox1.SelectedValue = "1";
-            this.comboBox2.SelectedIndex = -1;
+            this.txtSPNoStart.Text = "";
+            this.txtSPNoEnd.Text = "";
+            this.txtPackIDStart.Text = "";
+            this.txtPackIDEnd.Text = "";            
+            this.txtPONoStart.Text = "";
+            this.txtPONoEnd.Text = "";
+            this.comboFilter.SelectedValue = "1";
+            this.comboFilter2.SelectedIndex = -1;
 
             string sqlCmd = @"select 0 as selected,  b.ID, b.OrderID, c.CustPONo, b.CTNStartNo, b.Article, b.Color, b.SizeCode, b.QtyPerCTN, b.ShipQty, b.ClogLocationId, b.Remark
                                            from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) where 1=0";
@@ -368,51 +368,51 @@ from (
         //Filter
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex != -1)
+            if (comboFilter.SelectedIndex != -1)
             {
-                this.comboBox2.Enabled = true;
-                switch (comboBox1.SelectedValue.ToString())
+                this.comboFilter2.Enabled = true;
+                switch (comboFilter.SelectedValue.ToString())
                 {
                     case "1":
-                        this.comboBox2.Enabled = false;
-                        comboBox2.DataSource = comboBox2_RowSource1;
+                        this.comboFilter2.Enabled = false;
+                        comboFilter2.DataSource = comboBox2_RowSource1;
                         if (gridData != null)
                         {
                             gridData.DefaultView.RowFilter = "";
                         }
                         break;
                     case "2":
-                        comboBox2.DataSource = comboBox2_RowSource2;
-                        comboBox2.SelectedIndex = -1;
+                        comboFilter2.DataSource = comboBox2_RowSource2;
+                        comboFilter2.SelectedIndex = -1;
                         if (gridData != null)
                         {
                             gridData.DefaultView.RowFilter = "";
                         }
                         break;
                     case "3":
-                        comboBox2.DataSource = comboBox2_RowSource3;
-                        comboBox2.SelectedIndex = -1;
+                        comboFilter2.DataSource = comboBox2_RowSource3;
+                        comboFilter2.SelectedIndex = -1;
                         {
                             gridData.DefaultView.RowFilter = "";
                         }
                         break;
                     case "4":
-                        comboBox2.DataSource = comboBox2_RowSource4;
-                        comboBox2.SelectedIndex = -1;
+                        comboFilter2.DataSource = comboBox2_RowSource4;
+                        comboFilter2.SelectedIndex = -1;
                         {
                             gridData.DefaultView.RowFilter = "";
                         }
                         break;
                     case "5":
-                        comboBox2.DataSource = comboBox2_RowSource5;
-                        comboBox2.SelectedIndex = -1;
+                        comboFilter2.DataSource = comboBox2_RowSource5;
+                        comboFilter2.SelectedIndex = -1;
                         {
                             gridData.DefaultView.RowFilter = "";
                         }
                         break;
                     default:
-                        this.comboBox2.Enabled = false;
-                        comboBox2.DataSource = comboBox2_RowSource1;
+                        this.comboFilter2.Enabled = false;
+                        comboFilter2.DataSource = comboBox2_RowSource1;
                         break;
                 }
             }
@@ -421,29 +421,29 @@ from (
         //第二個Filter
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedIndex != -1)
+            if (comboFilter2.SelectedIndex != -1)
             {
-                switch (comboBox1.SelectedValue.ToString())
+                switch (comboFilter.SelectedValue.ToString())
                 {
                     case "1":
                         break;
                     case "2":
-                        gridData.DefaultView.RowFilter = "CTNStartNo = '"+comboBox2.SelectedValue.ToString() +"'";
+                        gridData.DefaultView.RowFilter = "CTNStartNo = '"+comboFilter2.SelectedValue.ToString() +"'";
                         break;
                     case "3":
-                        comboBox2.DataSource = comboBox2_RowSource3;
-                        gridData.DefaultView.RowFilter = "Article  = '" + comboBox2.SelectedValue.ToString() + "'";
+                        comboFilter2.DataSource = comboBox2_RowSource3;
+                        gridData.DefaultView.RowFilter = "Article  = '" + comboFilter2.SelectedValue.ToString() + "'";
                         break;
                     case "4":
-                        comboBox2.DataSource = comboBox2_RowSource4;
-                        gridData.DefaultView.RowFilter = "Color = '" + comboBox2.SelectedValue.ToString() + "'";
+                        comboFilter2.DataSource = comboBox2_RowSource4;
+                        gridData.DefaultView.RowFilter = "Color = '" + comboFilter2.SelectedValue.ToString() + "'";
                         break;
                     case "5":
-                        comboBox2.DataSource = comboBox2_RowSource5;
-                        gridData.DefaultView.RowFilter = "SizeCode = '" + comboBox2.SelectedValue.ToString() + "'";
+                        comboFilter2.DataSource = comboBox2_RowSource5;
+                        gridData.DefaultView.RowFilter = "SizeCode = '" + comboFilter2.SelectedValue.ToString() + "'";
                         break;
                     default:
-                        comboBox2.DataSource = comboBox2_RowSource1;
+                        comboFilter2.DataSource = comboBox2_RowSource1;
                         gridData.DefaultView.RowFilter = "";
                         break;
                 }
@@ -481,7 +481,7 @@ from (
                 rd.ReportResource = reportresource;
                 rd.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("Report_UpdateLocation", Report_UpdateLocation));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("title", MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword))));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(comboBox3.SelectedValue)));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("request", MyUtility.Convert.GetString(comboRequestby.SelectedValue)));
                 
                 using (var frm = new Sci.Win.Subs.ReportView(rd))
                 {

@@ -26,7 +26,7 @@ namespace Sci.Production.Logistic
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.textBox1.ReadOnly = true;
+            this.txtCode.ReadOnly = true;
         }
 
         protected override bool ClickSaveBefore()
@@ -34,14 +34,14 @@ namespace Sci.Production.Logistic
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.textBox1.Focus();
+                this.txtCode.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
-                this.textBox2.Focus();
+                this.txtDescription.Focus();
                 return false;
             }
             return base.ClickSaveBefore();

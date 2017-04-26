@@ -15,19 +15,19 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
             this.Text = captionName;
-            this.label1.Text = lableName;
+            this.labelReceiveDate.Text = lableName;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.dateBox1.Text))
+            if (MyUtility.Check.Empty(this.dateReceiveDate.Text))
             {
                 MyUtility.Msg.WarningBox("Date can't be empty!");
-                this.dateBox1.Focus();
+                this.dateReceiveDate.Focus();
                 return;
             }
 
-            returnDate = Convert.ToDateTime(this.dateBox1.Text);
+            returnDate = Convert.ToDateTime(this.dateReceiveDate.Text);
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }

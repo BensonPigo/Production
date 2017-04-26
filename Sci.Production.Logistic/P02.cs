@@ -28,12 +28,12 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
             TextBox a = new TextBox();
             a.Text = Sci.Env.User.Keyword;
-            this.txtcloglocation1.MDivisionObjectName=a;
+            this.txtcloglocationLocationNo.MDivisionObjectName=a;
 
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = listControlBindingSource1;
+            this.gridImport.IsEditingReadOnly = false;
+            this.gridImport.DataSource = listControlBindingSource1;
 
-            Helper.Controls.Grid.Generator(this.grid1)
+            Helper.Controls.Grid.Generator(this.gridImport)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -53,7 +53,7 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.textBox1.Text) && MyUtility.Check.Empty(this.textBox2.Text) && MyUtility.Check.Empty(this.textBox3.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -69,17 +69,17 @@ namespace Sci.Production.Logistic
                                                          and b.ReceiveDate is null
                                                          and c.Dest = d.ID 
                                                          and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
-            if (!MyUtility.Check.Empty(this.textBox1.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.textBox1.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(this.textBox2.Text))
+            if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
-                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.textBox2.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(this.textBox3.Text))
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.textBox3.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
 
             DataTable selectDataTable;
@@ -196,7 +196,7 @@ namespace Sci.Production.Logistic
         private void button3_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
-            this.grid1.ValidateControl();
+            this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dt))
@@ -284,7 +284,7 @@ where a.Selected = 1", out selectData);
         //Update All Location
         private void button5_Click(object sender, EventArgs e)
         {
-            string location = this.txtcloglocation1.Text.Trim();
+            string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;     //記錄目前指標位置
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
@@ -298,16 +298,16 @@ where a.Selected = 1", out selectData);
                 currentRecord["ClogLocationId"] = location;
             }
             this.listControlBindingSource1.Position = pos;
-            grid1.SuspendLayout();
-            this.grid1.DataSource = null;
-            this.grid1.DataSource = listControlBindingSource1;
+            gridImport.SuspendLayout();
+            this.gridImport.DataSource = null;
+            this.gridImport.DataSource = listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
-            grid1.ResumeLayout();
+            gridImport.ResumeLayout();
         }
 
         private void ControlButton4Text(string showText)
         {
-            button4.Text = showText;
+            btnClose.Text = showText;
         }
     }
 }

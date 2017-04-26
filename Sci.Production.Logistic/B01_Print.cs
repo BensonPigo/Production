@@ -20,15 +20,15 @@ namespace Sci.Production.Logistic
         {
             InitializeComponent();
             masterData = MasterData;
-            textBox1.Text = MyUtility.Convert.GetString(masterData["ID"]);
-            textBox2.Text = MyUtility.Convert.GetString(masterData["ID"]);
+            txtCodeStart.Text = MyUtility.Convert.GetString(masterData["ID"]);
+            txtCodeEnd.Text = MyUtility.Convert.GetString(masterData["ID"]);
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            code1 = textBox1.Text;
-            code2 = textBox2.Text;
+            code1 = txtCodeStart.Text;
+            code2 = txtCodeEnd.Text;
 
             return base.ValidateInput();
         }
