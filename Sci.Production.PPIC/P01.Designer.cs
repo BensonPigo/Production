@@ -2314,7 +2314,7 @@
             this.txtModel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtModel.Location = new System.Drawing.Point(278, 251);
             this.txtModel.Name = "txtModel";
-            this.txtModel.Size = new System.Drawing.Size(51, 21);
+            this.txtModel.Size = new System.Drawing.Size(100, 21);
             this.txtModel.TabIndex = 15;
             // 
             // dateKPIDel
