@@ -26,10 +26,13 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             StringBuilder selectCommand1 = new StringBuilder();
-            selectCommand1.Append(string.Format(@"select a.poid, a.seq1,a.seq2
-,sum(b.Qty * isnull(c.Rate,1)) as useqty 
-,sum(a.StockQty) as stockqty
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
+            selectCommand1.Append(string.Format(@"
+select  a.poid
+        , a.seq1
+        , a.seq2
+        , Round(sum(b.Qty * isnull(c.RateValue,1)), 2) as useqty 
+        , sum(a.StockQty) as stockqty
+        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 left join po_supp_detail b WITH (NOLOCK) on a.PoId = b.id and a.seq1 = b.seq1 and a.seq2 = b.SEQ2
 left join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
