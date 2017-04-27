@@ -204,8 +204,8 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
             // 
             // btnFindNow
             // 
@@ -217,7 +217,7 @@
             this.btnFindNow.TabIndex = 9;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtSPNoStart
             // 
@@ -279,7 +279,7 @@
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -291,7 +291,7 @@
             this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // groupBox2
             // 
@@ -319,7 +319,7 @@
             this.btnToExcel.TabIndex = 2;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button4_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // P01_BatchCreate
             // 

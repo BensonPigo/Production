@@ -510,7 +510,7 @@ namespace Sci.Production.Subcon
         }
 
         //batch import
-        private void button4_Click(object sender, EventArgs e)
+        private void btnBatchImport_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             if (dr["localsuppid"] == DBNull.Value)
@@ -548,7 +548,7 @@ namespace Sci.Production.Subcon
         }
 
         //Special Record
-        private void button5_Click(object sender, EventArgs e)
+        private void btnSpecialRecord_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             if (dr["artworktypeid"] == DBNull.Value)
@@ -565,7 +565,7 @@ namespace Sci.Production.Subcon
         }
 
         // batch create
-        private void button3_Click(object sender, EventArgs e)
+        private void btnBatchCreate_Click(object sender, EventArgs e)
         {
             if (this.EditMode) return;
             var frm = new Sci.Production.Subcon.P01_BatchCreate("P01");
@@ -573,12 +573,12 @@ namespace Sci.Production.Subcon
             ReloadDatas();
         }
 
-        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
 
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;

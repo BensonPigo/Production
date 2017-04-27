@@ -195,13 +195,13 @@ namespace Sci.Production.Subcon
         }
 
         //改變artworktype時，控制可輸入的欄位
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             
         }
 
         //計算cbm相關欄位的valid事件
-        private void textBox3_Validated(object sender, EventArgs e)
+        private void comboCartonDimension_Validated(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(this.numL.Text)
                || string.IsNullOrWhiteSpace(numW.Text)
@@ -212,7 +212,7 @@ namespace Sci.Production.Subcon
             getCBM();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuotationRecord_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             var frm = new Sci.Production.Subcon.B01_Quotation( this.IsSupportEdit, dr);
@@ -247,7 +247,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnPaymentHistory_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             var frm = new Sci.Production.Subcon.B01_History(dr);
@@ -255,7 +255,7 @@ namespace Sci.Production.Subcon
             this.RenewData();
         }
 
-        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
         {
             CurrentMaintain["category"] = txtartworktype_ftyCategory.Text;
             switch (this.txtartworktype_ftyCategory.Text.Trim())
@@ -303,7 +303,7 @@ namespace Sci.Production.Subcon
         }
 
         //[Thread Type]右鍵開窗
-        private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtThreadType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || txtThreadType.ReadOnly == true) return;
@@ -314,7 +314,7 @@ namespace Sci.Production.Subcon
         }
 
         //[Thread Type]檢核
-        private void textBox8_Validating(object sender, CancelEventArgs e)
+        private void txtThreadType_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtThreadType.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtThreadType.OldValue)

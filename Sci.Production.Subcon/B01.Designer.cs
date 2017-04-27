@@ -157,8 +157,8 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(209, 23);
             this.txtartworktype_ftyCategory.TabIndex = 2;
-            this.txtartworktype_ftyCategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyCategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyCategory_Validating);
+            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
             // 
             // labelCategory
             // 
@@ -415,7 +415,7 @@
             this.comboCartonDimension.Name = "comboCartonDimension";
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
             this.comboCartonDimension.TabIndex = 3;
-            this.comboCartonDimension.Validated += new System.EventHandler(this.textBox3_Validated);
+            this.comboCartonDimension.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // txtThreadType
             // 
@@ -426,8 +426,8 @@
             this.txtThreadType.Name = "txtThreadType";
             this.txtThreadType.Size = new System.Drawing.Size(100, 23);
             this.txtThreadType.TabIndex = 1;
-            this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox8_PopUp);
-            this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
+            this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtThreadType_PopUp);
+            this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.txtThreadType_Validating);
             // 
             // txtAccountNo
             // 
@@ -565,7 +565,7 @@
             0,
             0,
             0});
-            this.numH.Validated += new System.EventHandler(this.textBox3_Validated);
+            this.numH.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // numCBM
             // 
@@ -630,7 +630,7 @@
             0,
             0,
             0});
-            this.numW.Validated += new System.EventHandler(this.textBox3_Validated);
+            this.numW.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // numL
             // 
@@ -663,7 +663,7 @@
             0,
             0,
             0});
-            this.numL.Validated += new System.EventHandler(this.textBox3_Validated);
+            this.numL.Validated += new System.EventHandler(this.comboCartonDimension_Validated);
             // 
             // groupBox2
             // 
@@ -837,7 +837,7 @@
             this.btnQuotationRecord.TabIndex = 12;
             this.btnQuotationRecord.Text = "Quotation Record";
             this.btnQuotationRecord.UseVisualStyleBackColor = true;
-            this.btnQuotationRecord.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuotationRecord.Click += new System.EventHandler(this.btnQuotationRecord_Click);
             // 
             // btnPaymentHistory
             // 
@@ -849,7 +849,7 @@
             this.btnPaymentHistory.TabIndex = 13;
             this.btnPaymentHistory.Text = "Payment History";
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
-            this.btnPaymentHistory.Click += new System.EventHandler(this.button2_Click);
+            this.btnPaymentHistory.Click += new System.EventHandler(this.btnPaymentHistory_Click);
             // 
             // txtSubconSupplier
             // 

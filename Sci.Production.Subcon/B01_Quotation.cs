@@ -115,7 +115,7 @@ namespace Sci.Production.Subcon
         }
 
         //Encode button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnApprove_Click(object sender, EventArgs e)
         {
             
             var suppid = "";

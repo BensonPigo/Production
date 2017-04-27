@@ -48,7 +48,7 @@ namespace Sci.Production.Subcon
                  .Text("abb", header: "Supplier Abb.", width: Widths.AnsiChars(15));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

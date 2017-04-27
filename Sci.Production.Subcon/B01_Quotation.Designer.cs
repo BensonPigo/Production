@@ -488,7 +488,7 @@
             this.btnApprove.TabIndex = 15;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.button1_Click);
+            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
             // 
             // B01_Quotation
             // 

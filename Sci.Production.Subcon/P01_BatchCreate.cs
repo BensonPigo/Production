@@ -49,7 +49,7 @@ namespace Sci.Production.Subcon
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             string apvdate_b, apvdate_e, sciDelivery_b, sciDelivery_e, Inline_b, Inline_e, artworktype;
             apvdate_b = null;
@@ -280,13 +280,13 @@ Order_TmsCost.ApvDate
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // Create
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             string issuedate, delivery;
@@ -616,13 +616,13 @@ Order_TmsCost.ApvDate
             }
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
 
         }
 
         //excel
-        private void button4_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(dt);
@@ -630,7 +630,7 @@ Order_TmsCost.ApvDate
             //MyUtility.Excel.CopyToXls(dt, "");
         }
 
-        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
             isArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype WITH (NOLOCK) where id = '{0}'"
                 , ((Sci.Production.Class.txtartworktype_fty)sender).Text), null);

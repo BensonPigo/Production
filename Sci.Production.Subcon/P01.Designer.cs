@@ -177,15 +177,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1079, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1073, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1073, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -391,7 +391,7 @@
             this.btnBatchImport.TabIndex = 9;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.button4_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
             // 
             // btnSpecialRecord
             // 
@@ -402,7 +402,7 @@
             this.btnSpecialRecord.TabIndex = 10;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
-            this.btnSpecialRecord.Click += new System.EventHandler(this.button5_Click);
+            this.btnSpecialRecord.Click += new System.EventHandler(this.btnSpecialRecord_Click);
             // 
             // displayPONo
             // 
@@ -581,7 +581,7 @@
             this.btnBatchCreate.TabIndex = 0;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.button3_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
             // 
             // dateApproveDate
             // 
@@ -636,8 +636,8 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 5;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
             // 
             // txtsubconSupplier
             // 
