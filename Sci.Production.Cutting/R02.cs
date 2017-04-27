@@ -668,6 +668,10 @@ where 1 = 1
                         continue;
                     
                     Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[i + 1];   // 取得工作表
+                    foreach (DataRow dr in printData[i].Rows)
+                    {
+                        dr["Fab Desc1"] = dr["Fab Desc1"].ToString().Trim();
+                    }
                     MyUtility.Excel.CopyToXls(printData[i], tmpFile, "Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx", headerRow: 5, excelApp: objApp, wSheet: objSheets, showExcel: boolshowexcel, showSaveMsg: false);//將datatable copy to excel
 
                     for (int j = 0; j < printData[i].Rows.Count; j++)
@@ -692,6 +696,24 @@ where 1 = 1
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
+                    objSheets.get_Range("A1").ColumnWidth = 14.25;
+                    objSheets.get_Range("B1").ColumnWidth = 14;
+                    objSheets.get_Range("C1").ColumnWidth = 7.88;
+                    objSheets.get_Range("D1").ColumnWidth = 14.75;
+                    objSheets.get_Range("E1").ColumnWidth = 8.5;
+                    objSheets.get_Range("F1").ColumnWidth = 15.25;
+                    objSheets.get_Range("G1").ColumnWidth = 8.75;
+                    objSheets.get_Range("H1").ColumnWidth = 7.38;
+                    objSheets.get_Range("I1").ColumnWidth = 9;
+                    objSheets.get_Range("J1").ColumnWidth = 12.13;
+                    objSheets.get_Range("K1").ColumnWidth = 11.75;
+                    objSheets.get_Range("L1").ColumnWidth = 14;
+                    objSheets.get_Range("M1").ColumnWidth = 8.13;
+                    objSheets.get_Range("N1").ColumnWidth = 12.25;
+                    objSheets.get_Range("O1").ColumnWidth = 12.13;
+                    objSheets.get_Range("P1").ColumnWidth = 50;
+                    objSheets.get_Range("Q1").ColumnWidth = 41;
+                    objSheets.Rows.AutoFit();
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                    
                 }
                 if (!boolsend) objApp.Visible = true;
@@ -749,6 +771,24 @@ where 1 = 1
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
+                    objSheets.get_Range("A1").ColumnWidth = 15.75;
+                    objSheets.get_Range("B1").ColumnWidth = 11.75;
+                    objSheets.get_Range("C1").ColumnWidth = 8.25;
+                    objSheets.get_Range("D1").ColumnWidth = 15.38;
+                    objSheets.get_Range("E1").ColumnWidth = 9.13;
+                    objSheets.get_Range("F1").ColumnWidth = 15.25;
+                    objSheets.get_Range("G1").ColumnWidth = 8.75;
+                    objSheets.get_Range("H1").ColumnWidth = 7.38;
+                    objSheets.get_Range("I1").ColumnWidth = 9;
+                    objSheets.get_Range("J1").ColumnWidth = 11.88;
+                    objSheets.get_Range("K1").ColumnWidth = 12.38;
+                    objSheets.get_Range("L1").ColumnWidth = 13.5;
+                    objSheets.get_Range("M1").ColumnWidth = 8;
+                    objSheets.get_Range("N1").ColumnWidth = 12.75;
+                    objSheets.get_Range("O1").ColumnWidth = 12;
+                    objSheets.get_Range("P1").ColumnWidth = 12.88;
+                    objSheets.get_Range("Q1").ColumnWidth = 41;
+                    objSheets.Rows.AutoFit();
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets); //釋放sheet                     
                 }
                 if (!boolsend)
@@ -800,8 +840,8 @@ where 1 = 1
                     objSheets.Columns[12].ColumnWidth = 13;
                     objSheets.Columns[13].ColumnWidth = 15;
                     objSheets.Columns[14].ColumnWidth = 10;
-                    objSheets.Columns[15].ColumnWidth = 18;
-                    objSheets.Columns[16].ColumnWidth = 40;
+                    objSheets.Columns[15].ColumnWidth = 20;
+                    objSheets.Columns[16].ColumnWidth = 41;
                     if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet                    
                 }
                 if (!boolsend) objApp.Visible = true;
