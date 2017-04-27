@@ -176,6 +176,10 @@ where 1=1
             }
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R05_CuttingMonthlyForecast.xltx"); //預先開啟excel app
+            foreach (DataRow dr in printData.Rows)
+            {
+                dr["Fab Desc"] = dr["Fab Desc"].ToString().Trim();
+            }
             MyUtility.Excel.CopyToXls(printData, "", "Cutting_R05_CuttingMonthlyForecast.xltx", 2, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[1, 2] = string.Format(@"{0} ~ {1}", Convert.ToDateTime(Est_CutDate1).ToString("d"), Convert.ToDateTime(Est_CutDate2).ToString("d"));// 條件字串寫入excel
@@ -183,7 +187,10 @@ where 1=1
             objSheets.Cells[1, 8] = factory.ToString();   // 條件字串寫入excel
             objSheets.Columns[8].ColumnWidth = 13.5;
             objSheets.Columns[14].ColumnWidth = 12.85;
+            objSheets.Columns[15].ColumnWidth = 13.5;
             objSheets.Columns[17].ColumnWidth = 11;
+            objSheets.Columns[19].ColumnWidth = 67;
+            objSheets.Rows.AutoFit();
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
