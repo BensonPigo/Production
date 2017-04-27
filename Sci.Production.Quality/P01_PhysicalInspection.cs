@@ -546,7 +546,7 @@ Where DetailUkey = {15};",
                     string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
                     string content = "Please Approve and Check Fabric Inspection";
                     ToExcel(true);
-                    var email = new MailTo(Sci.Env.User.MailAddress, mailto, "", subject, excelFile, content, true, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, "", subject, excelFile, content, true, true);
                     email.ShowDialog(this);
                 }
                 #endregion
@@ -659,7 +659,7 @@ Where DetailUkey = {15};",
                 string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
                 string content = "Please see attached file ,Fabric Inspection Report";
                 ToExcel(true);
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailCC, subject, excelFile, content, true, true);
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, true, true);
                 email.ShowDialog(this);
             }
             #endregion

@@ -1095,7 +1095,7 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
                 //產生Excel
                 ToExcel(true);
 
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, excelFile, content.ToString(), visibleForm, visibleForm);
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, excelFile, content.ToString(), visibleForm, visibleForm);
                 email.ShowDialog(this);
 
                 //刪除Excel File

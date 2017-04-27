@@ -519,7 +519,7 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             string mailcc = "";
             string subject = "Garment Test - Style #:" + displayStyle.Text + ", Season :" + displaySeason.Text;
             string content = "Garment Test - Style #:" + displayStyle.Text + ", Season :" + displaySeason.Text + " had been sent, please receive and confirm";
-            var email = new MailTo(Sci.Env.User.MailAddress, mailto, mailcc, subject, null, content.ToString(), false, true);
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, null, content.ToString(), false, true);
             email.ShowDialog(this);            
           
         }

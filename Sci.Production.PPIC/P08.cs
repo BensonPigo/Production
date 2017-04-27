@@ -656,7 +656,7 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                     totalFile = excelFile + allFile.ToString();
                 }
 
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, totalFile, content.ToString(), false, true);
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, totalFile, content.ToString(), false, true);
                 email.ShowDialog(this);
 
                 //刪除Excel File

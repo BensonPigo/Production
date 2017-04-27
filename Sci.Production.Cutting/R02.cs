@@ -859,7 +859,7 @@ where 1 = 1
             string CcAddress = MyUtility.Convert.GetString(maildt.Rows[0]["CcAddress"]);
             string Subject = MyUtility.Convert.GetString(maildt.Rows[0]["Subject"]) +"-"+ CuttingDate;
 
-            var email = new MailTo(Sci.Env.User.MailAddress, ToAddress, CcAddress,
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, ToAddress, CcAddress,
                 Subject,
                 tmpFile,
                 "\r\nFilter as below description:\r\nCutting Date: " + CuttingDate + "\r\nCut Cell: " + cutcell + "\r\nM: " + MD, false, true);

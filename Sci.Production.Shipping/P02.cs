@@ -1400,7 +1400,7 @@ When first applicant's team leader approval, anyone can not do any modification.
  MyUtility.Check.Empty(CurrentMaintain["ShipDate"]) ? "" : Convert.ToDateTime(CurrentMaintain["ShipDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                 #endregion
 
-                var email = new MailTo(Sci.Env.User.MailAddress, mailto, cc, subject, "", content.ToString(), false, false);
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, cc, subject, "", content.ToString(), false, false);
                 email.ShowDialog(this);
             }
         }
