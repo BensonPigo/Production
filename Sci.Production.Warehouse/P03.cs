@@ -307,13 +307,13 @@ m.ukey,f.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 --,a.ApQty
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
-	            SELECT isnull(Qty, 0.00) as invtQty
-	            FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
-	            INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
-	            WHERE Invtrans.InventoryPOID = a.id
-	            and InventorySeq1 = a.Seq1
-	            and InventorySeq2 = a.seq2
-	            and Type in (1, 4)
+	            SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
+	            FROM InvTrans inv WITH (NOLOCK)
+                inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
+	            WHERE   inv.InventoryPOID = a.id
+	                    and inv.InventorySeq1 = a.Seq1
+	                    and inv.InventorySeq2 = a.seq2
+	                    and inv.Type in (1, 4)
             )tmp), 0.00)
 ,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
@@ -373,13 +373,13 @@ select m.ukey,f.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
 --,a.ApQty
 --,a.InputQty
 ,InputQty = isnull((select sum(invtQty) from (
-	            SELECT isnull(Qty, 0.00) as invtQty
-	            FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
-	            INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
-	            WHERE Invtrans.InventoryPOID = m.poid
-	            and InventorySeq1 = m.Seq1
-	            and InventorySeq2 = m.seq2
-	            and Type in (1, 4)
+	            SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
+	            FROM InvTrans inv WITH (NOLOCK)
+                inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
+	            WHERE   inv.InventoryPOID = m.poid
+	                    and inv.InventorySeq1 = m.Seq1
+	                    and inv.InventorySeq2 = m.seq2
+	                    and inv.Type in (1, 4)
             )tmp), 0.00)
 ,a.POUnit,iif(a.Complete='1','Y','N') as Complete
 ,a.FinalETA,m.InQty,a.StockUnit
@@ -412,7 +412,7 @@ select m.ukey,f.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
                 ,1,1,'')
 from dbo.MDivisionPoDetail m WITH (NOLOCK) 
 inner join Orders o on o.poid = m.poid
-left join  PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
+left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
 left join supp s WITH (NOLOCK) on s.id = b.suppid
