@@ -336,13 +336,21 @@ from(
 	                                                and inv.InventorySeq2 = a.seq2
 	                                                and inv.Type in (1, 4)
                                          )tmp), 0.00)
-                    , a.POUnit,iif(a.Complete='1','Y','N') as Complete
-                    , a.FinalETA,m.InQty,a.StockUnit
+                    , a.POUnit
+                    , iif(a.Complete='1','Y','N') as Complete
+                    , a.FinalETA
+                    , m.InQty
+                    , a.StockUnit
                     , iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
                     , iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
                     , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
-                    , m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
-                    , s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+                    , m.LInvQty
+                    , m.LObQty
+                    , m.ALocation
+                    , m.BLocation 
+                    , s.ThirdCountry
+                    , a.junk
+                    , fabric.BomTypeCalculate
 --,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
@@ -392,7 +400,9 @@ from(
                     , b.SuppID
                     , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
                     , substring(convert(varchar, a.eta, 101),1,5) as eta
-                    , substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
+                    , substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA
+                    , a.Refno
+                    , a.SCIRefno
                     , a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     , a.ColorID
@@ -415,7 +425,8 @@ from(
 	                                                and inv.InventorySeq2 = m.seq2
 	                                                and inv.Type in (1, 4)
                                         )tmp), 0.00)
-                    , a.POUnit,iif(a.Complete='1','Y','N') as Complete
+                    , a.POUnit
+                    , iif(a.Complete='1','Y','N') as Complete
                     , a.FinalETA
                     , m.InQty
                     , a.StockUnit
