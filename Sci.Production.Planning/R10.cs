@@ -193,7 +193,9 @@ namespace Sci.Production.Planning
                     sheetStart = 5; //起始位置
                     int ArtWorkStart = 2;
 
+
 #if DEBUG
+                sxrc.ExcelApp.Visible = true;
 #endif
 
                     foreach (string art in ArtworkLis)
@@ -694,7 +696,7 @@ namespace Sci.Production.Planning
 
                 //CountryID FILL Rate
                 lisPercent.Add(sheetStart.ToString());
-                setFormulaToRow(wks, sheetStart, string.Format("{0} FILL Rate", CountryID), string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]));
+                setFormulaToRow(wks, sheetStart, string.Format("{0} FILL Rate", CountryID), string.Format("=IF({{0}}{1}>0,{{0}}{0}/{{0}}{1},0)", sheetStart - 3, lisCtyIdx[lisCtyIdx.Count - 1]));
                 sheetStart += 1;
 
                 //CountryID Output()
