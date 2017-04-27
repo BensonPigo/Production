@@ -318,15 +318,15 @@ from(
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     , a.ColorID
                     , a.SizeSpec
-                    , ROUND(a.UsedQty,4) unitqty
-                    , Qty = isnull(A.Qty, 0)
-                    , A.NETQty
-                    , [useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
-                    , shipQty = isnull(a.ShipQty, 0)
-                    , a.ShipFOC
+                    , ROUND(a.UsedQty, 4) unitqty
+                    , Qty = Round(isnull(A.Qty * unit.RateValue, 0), 2)
+                    , NetQty = Round(A.NETQty * unit.RateValue, 2)
+                    , [useqty] = Round((isnull(A.NETQty,0)+isnull(A.lossQty,0)) * unit.RateValue, 2)
+                    , shipQty = Round(isnull(a.ShipQty, 0) * unit.RateValue, 2)
+                    , ShipFOC = Round(a.ShipFOC * unit.RateValue, 2)
 --,a.ApQty
 --,a.InputQty
-                    , InputQty = isnull((select sum(invtQty) 
+                    , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
                                             SELECT  isnull(Qty, 0.00) * unit.RateValue as invtQty
 	                                        FROM InvTrans inv WITH (NOLOCK)
@@ -380,6 +380,7 @@ from(
                                     ,1,1,'')
             from Orders WITH (NOLOCK) 
             inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+            left join View_Unitrate unit on a.POUnit = unit.From_U and a.StockUnit = To_U
 	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
             left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
@@ -407,16 +408,16 @@ from(
                     , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
                     , a.ColorID
                     , a.SizeSpec
-                    , ROUND(a.UsedQty,4) unitqty
-                    , Qty = isnull(A.Qty, 0)
-                    , A.NETQty
-                    , isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty 
-                    , ShipQty = isnull(a.ShipQty, 0)
-                    , a.ShipFOC
+                    , ROUND(a.UsedQty, 4) unitqty
+                    , Qty = Round(isnull(A.Qty * unit.RateValue, 0), 2)
+                    , NetQty = Round(A.NETQty * unit.RateValue, 2)
+                    , useqty = Round((isnull(A.NETQty,0)+isnull(A.lossQty,0)) * unit.RateValue, 2)
+                    , ShipQty = Round(isnull(a.ShipQty, 0) * unit.RateValue, 2)
+                    , ShipFOC = Round(a.ShipFOC * unit.RateValue, 2)
 --,a.ApQty
 --,a.InputQty
-                    , InputQty = isnull((select sum(invtQty) 
-                                        from (
+                    , InputQty = isnull((select Round(sum(invtQty), 2)
+                                         from (
 	                                        SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
 	                                        FROM InvTrans inv WITH (NOLOCK)
                                             inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
@@ -465,6 +466,7 @@ from(
         from dbo.MDivisionPoDetail m WITH (NOLOCK) 
         inner join Orders o on o.poid = m.poid
         left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
+        left join View_Unitrate unit on a.POUnit = unit.From_U and a.StockUnit = To_U
         left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
