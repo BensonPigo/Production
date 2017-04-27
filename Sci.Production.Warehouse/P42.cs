@@ -348,7 +348,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
-            this.displayCheckedQty.Value = localPrice.ToString();
+            this.displayCheckedQty.Value = MyUtility.Convert.GetDecimal(localPrice).ToString("F2");            
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
