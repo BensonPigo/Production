@@ -148,9 +148,9 @@ select distinct
 	[Estimate Total# of Cuttings (C+D)] = d1.ct + d2.ct,
 	[Actual Total# of Cuttings on schedule] = d3.ct,
 	[Actual Total# of Backlog] = d4.ct,
-	[Actual Total# of Cutting early schedule] = d5.ct,
-	[Actual Total# of Cuttings (F+G+H)]= d3.ct+d4.ct+d5.ct,
-	[BCS Rating % (F+G) / E] = iif(d1.ct+d2.ct = 0, 0, (Round( CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3)))
+	[Actual Total# of Cutting early schedule] = isnull(d5.ct,0),
+	[Actual Total# of Cuttings (F+G+H)]= d3.ct+d4.ct+isnull(d5.ct,0),
+	[BCS Rating % (F+G) / E] = iif(d1.ct+d2.ct = 0, 0, (Round( 100*CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3)))
 from #DateRanges as dr 
 outer apply(select distinct wo.MDivisionId from #tmpWO as WO) as M
 outer apply(
@@ -258,9 +258,9 @@ select DISTINCT
 	[Estimate Total# of Cuttings (D+E)] = d1.ct + d2.ct,
 	[Actual Total# of Cuttings on schedule] = d3.ct,
 	[Actual Total# of Backlog] = d4.ct,
-	[Actual Total# of Cutting early schedule] = d5.ct,
-	[Actual Total# of Cuttings (G+H+I)]= d3.ct+d4.ct+d5.ct,
-	[BCS Rating % (G+H) / F] = iif((d1.ct+d2.ct)=0,0, Round( CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3))
+	[Actual Total# of Cutting early schedule] = isnull(d5.ct,0),
+	[Actual Total# of Cuttings (G+H+I)]= d3.ct+d4.ct+isnull(d5.ct,0),
+	[BCS Rating % (G+H) / F] = iif((d1.ct+d2.ct)=0,0, Round( 100*CAST((d3.ct+d4.ct) as float) / CAST((d1.ct+d2.ct) as float),3))
 from #DateRanges as dr 
 outer apply(select distinct wo.MDivisionId from #tmpWO as WO) as M
 outer apply(select distinct cc.ccid from #tmpWO as cc)as M2
@@ -441,8 +441,13 @@ order by wo.MDivisionID, wo.CutCellID, wo.OrderID, wo.CutRef, wo.Cutno
             if (radioByDetail.Checked)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R04_Cutting BCS Report ByDetail.xltx"); //預先開啟excel app
+                
                 MyUtility.Excel.CopyToXls(printData, "", "Cutting_R04_Cutting BCS Report ByDetail.xltx", 2, true, null, objApp);// 將datatable copy to excel
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                objSheets.get_Range("J1").ColumnWidth = 13;
+                objSheets.get_Range("M1").ColumnWidth = 7;
+                objSheets.get_Range("N1").ColumnWidth = 25.25;
+                objSheets.Rows.AutoFit();
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp            
             }
