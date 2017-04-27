@@ -789,18 +789,25 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
-,a.Roll
-,a.Dyelot
-,(select sum(b.Qty * isnull(c.RateValue,1)) as useqty from po_supp_detail b WITH (NOLOCK) inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
-where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
-,a.StockQty
-,a.StockUnit
-,a.StockType
-,a.Location
-,a.ukey
+            this.DetailSelectCommand = string.Format(@"
+select  a.id
+        , a.PoId
+        , a.Seq1
+        , a.Seq2
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+        , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
+        , a.Roll
+        , a.Dyelot
+        , ( select Round(sum(b.Qty * isnull(c.RateValue,1)), 2) as useqty 
+            from po_supp_detail b WITH (NOLOCK) 
+            inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
+            where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
+        , a.StockQty
+        , a.StockUnit
+        , a.StockType
+        , a.Location
+        , a.ukey 
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
 
