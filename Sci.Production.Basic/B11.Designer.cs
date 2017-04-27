@@ -195,7 +195,6 @@
             this.labelLabel.Name = "labelLabel";
             this.labelLabel.Size = new System.Drawing.Size(116, 23);
             this.labelLabel.TabIndex = 6;
-            this.labelLabel.Text = "";
             // 
             // labelPaymentTerm
             // 
@@ -411,7 +410,7 @@
             this.btnShippingMark.TabIndex = 17;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.button1_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
             // 
             // txtPaytermarSample
             // 

@@ -59,7 +59,7 @@ namespace Sci.Production.Basic
             return base.ClickSaveBefore();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCapacityWorkday_Click(object sender, EventArgs e)
         {
             Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(CurrentMaintain);
             callNextForm.ShowDialog(this);

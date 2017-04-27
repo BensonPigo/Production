@@ -176,7 +176,7 @@
             this.comboYearMonth.Name = "comboYearMonth";
             this.comboYearMonth.Size = new System.Drawing.Size(90, 24);
             this.comboYearMonth.TabIndex = 0;
-            this.comboYearMonth.Validated += new System.EventHandler(this.comboBox1_Validated);
+            this.comboYearMonth.Validated += new System.EventHandler(this.comboYearMonth_Validated);
             // 
             // btnRefersh
             // 
@@ -187,7 +187,7 @@
             this.btnRefersh.TabIndex = 1;
             this.btnRefersh.Text = "Refresh";
             this.btnRefersh.UseVisualStyleBackColor = true;
-            this.btnRefersh.Click += new System.EventHandler(this.button1_Click);
+            this.btnRefersh.Click += new System.EventHandler(this.btnRefersh_Click);
             // 
             // tableLayoutPanel1
             // 

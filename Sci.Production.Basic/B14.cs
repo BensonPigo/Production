@@ -62,7 +62,7 @@ namespace Sci.Production.Basic
             return base.ClickSaveBefore();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMachine_Click(object sender, EventArgs e)
         {
             Sci.Production.Basic.B14_Machine callNextForm = new Sci.Production.Basic.B14_Machine(CurrentMaintain);
             callNextForm.ShowDialog(this);

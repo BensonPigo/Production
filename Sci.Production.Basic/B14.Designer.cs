@@ -400,7 +400,7 @@
             this.btnMachine.TabIndex = 17;
             this.btnMachine.Text = "Machine";
             this.btnMachine.UseVisualStyleBackColor = true;
-            this.btnMachine.Click += new System.EventHandler(this.button1_Click);
+            this.btnMachine.Click += new System.EventHandler(this.btnMachine_Click);
             // 
             // editMachineID
             // 

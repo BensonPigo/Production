@@ -42,7 +42,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccept_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtDescription.Text))
             {

@@ -374,7 +374,7 @@
             this.btnCapacityWorkday.TabIndex = 14;
             this.btnCapacityWorkday.Text = "Capacity / Work day";
             this.btnCapacityWorkday.UseVisualStyleBackColor = true;
-            this.btnCapacityWorkday.Click += new System.EventHandler(this.button1_Click);
+            this.btnCapacityWorkday.Click += new System.EventHandler(this.btnCapacityWorkday_Click);
             // 
             // checkUseSBTS
             // 

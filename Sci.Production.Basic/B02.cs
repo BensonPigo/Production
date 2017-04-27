@@ -24,7 +24,7 @@ namespace Sci.Production.Basic
         }
 
         //取Sketch目錄的路徑
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSketchFilesPath_Click(object sender, EventArgs e)
         {
             string dir = getDir();
             if (!MyUtility.Check.Empty(dir))
@@ -34,7 +34,7 @@ namespace Sci.Production.Basic
         }
 
         //取Clip目錄的路徑
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCilpFilesPath_Click(object sender, EventArgs e)
         {
             string dir = getDir();
             if (!MyUtility.Check.Empty(dir))
@@ -51,7 +51,7 @@ namespace Sci.Production.Basic
         }
 
         //Mail To
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMailTo_Click(object sender, EventArgs e)
         {
             Sci.Production.Basic.B02_MailTo callNextForm = new Sci.Production.Basic.B02_MailTo(this.IsSupportEdit, null, null, null);
             callNextForm.ShowDialog(this);

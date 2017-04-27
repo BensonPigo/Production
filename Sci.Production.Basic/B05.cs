@@ -119,12 +119,12 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void comboBox1_Validated(object sender, EventArgs e)
+        private void comboYearMonth_Validated(object sender, EventArgs e)
         {
             this.btnRefersh.PerformClick();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRefersh_Click(object sender, EventArgs e)
         {
             this.ShowDate(this.comboYearMonth.Text);
         }

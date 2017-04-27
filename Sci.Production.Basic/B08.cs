@@ -20,7 +20,7 @@ namespace Sci.Production.Basic
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnProdFabricType_Click(object sender, EventArgs e)
         {
             //sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();

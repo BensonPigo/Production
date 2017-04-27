@@ -19,7 +19,7 @@ namespace Sci.Production.Basic
             InitializeComponent();
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtProdTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox prodText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
             prodText.Text = item.GetSelectedString();
         }
 
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtFabricTypeTopButtomInnerOuter_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox fabricText = (Sci.Win.UI.TextBox)sender;
             Sci.Win.Tools.SelectItem item;
@@ -43,7 +43,7 @@ namespace Sci.Production.Basic
             fabricText.Text = item.GetSelectedString();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtProdTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
@@ -79,7 +79,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtFabricTypeTopButtomInnerOuter_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox fabricTextValue = (Sci.Win.UI.TextBox)sender;
             if (!MyUtility.Check.Empty(fabricTextValue.Text) && fabricTextValue.Text != fabricTextValue.OldValue)

@@ -107,17 +107,17 @@ namespace Sci.Production.Basic
             listControlBindingSource2.DataSource = selectDataTable2;
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboCapacityYear_SelectedIndexChanged(object sender, EventArgs e)
         {
                 CapacityFilter();
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboArtwork_SelectedIndexChanged(object sender, EventArgs e)
         {
                 CapacityFilter();
         }
 
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboWorkdayYear_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboWorkdayYear.SelectedIndex != -1)
             {

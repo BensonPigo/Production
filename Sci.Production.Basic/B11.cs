@@ -49,7 +49,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnShippingMark_Click(object sender, EventArgs e)
         {
             Sci.Production.Basic.B11_ShippingMark callNextForm = new Sci.Production.Basic.B11_ShippingMark(false, CurrentMaintain);
             callNextForm.ShowDialog(this);
