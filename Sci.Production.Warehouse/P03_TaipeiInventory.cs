@@ -44,7 +44,7 @@ FROM (
 			    when '6' then '6:Return'
 			 end as typename 
             , inv.ConfirmDate
-            , isnull(inv.Qty, 0.00) * unit.RateValue inqty
+            , Round(isnull(inv.Qty, 0.00) * unit.RateValue, 2) inqty
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
@@ -82,7 +82,7 @@ FROM (
 			  end as typename
             , inv.ConfirmDate
             , 0 inqty
-            , isnull(inv.Qty, 0.00) * unit.RateValue Allocated
+            , Round(isnull(inv.Qty, 0.00) * unit.RateValue, 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , case inv.type 
@@ -118,8 +118,8 @@ FROM (
 			    when '6' then '6:Return'
 			  end as typename
             , inv.ConfirmDate
-            , iif(inv.Qty >= 0, inv.Qty, 0) * unit.RateValue inqty
-            , iif(inv.Qty < 0, -inv.Qty, 0) * unit.RateValue Allocated
+            , Round(iif(inv.Qty >= 0, inv.Qty, 0) * unit.RateValue, 2) inqty
+            , Round(iif(inv.Qty < 0, -inv.Qty, 0) * unit.RateValue, 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , case inv.type 
