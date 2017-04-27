@@ -29,67 +29,122 @@ namespace Sci.Production.Warehouse
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string selectCommand1 = string.Format(@"SELECT *, 
-sum(TMP.inqty + TMP.Allocated) over ( order by ID,SEQ,sum(TMP.inqty + TMP.Allocated) desc ) as [balance]
+            string selectCommand1 = string.Format(@"
+SELECT  *, 
+        sum(TMP.inqty - TMP.Allocated) over ( order by ID,SEQ,sum(TMP.inqty - TMP.Allocated) desc ) as [balance]
 FROM (
-SELECT invtrans.ID,Type,case Type 
-			when '1' then '1:Input'
-			when '2' then '2:Output'
-			when '3' then '3:Transfer In'
-			when '4' then '4:Adjust'
-			when '5' then '5:Obsolescene'
-			when '6' then '6:Return'
-			end as typename , ConfirmDate, isnull(Qty, 0.00) inqty,0 Allocated, TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
-                                                                        , concat(seq70poid,'-',seq70seq1,'-',seq70seq2) as seq70
-                                                                        , case type when '3' then TransferFactory else FactoryID end as factoryid, invtransreason.ReasonEN
-                                                                        ,case type when '3' then 2 else 1 end AS SEQ
-                                                                        ,invtrans.remark
-                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
-																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
-                                                                        WHERE Invtrans.InventoryPOID ='{0}'
-                                                                        and InventorySeq1 = '{1}'
-                                                                        and InventorySeq2 = '{2}' 
-																		and Type in (1)
-union
-SELECT invtrans.ID,Type,case Type 
-			when '1' then '1:Input'
-			when '2' then '2:Output'
-			when '3' then '3:Transfer In'
-			when '4' then '4:Adjust'
-			when '5' then '5:Obsolescene'
-			when '6' then '6:Return'
-			end as typename , ConfirmDate, 0 inqty,isnull(Qty, 0.00) Allocated, TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
-                                                                        , concat(seq70poid,'-',seq70seq1,'-',seq70seq2) as seq70
-                                                                        , case type when '3' then TransferFactory else FactoryID end as factoryid, invtransreason.ReasonEN
-                                                                        ,case type when '3' then 2 else 1 end AS SEQ
-                                                                        ,invtrans.remark
-                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
-																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
-                                                                        WHERE Invtrans.InventoryPOID ='{0}'
-                                                                        and InventorySeq1 = '{1}'
-                                                                        and InventorySeq2 = '{2}' 
-																		and Type in (4)
---SELECT invtrans.ID, Type,case Type 
---			when '1' then '1:Input'
---			when '2' then '2:Output'
---			when '3' then '3:Transfer Out'
---			when '4' then '4:Adjust'
---			when '5' then '5:Obsolescene'
---			when '6' then '6:Return'
---			end as typename, ConfirmDate, 0 inqty,Qty outqty, TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
---                                                                        , concat(seq70poid,'-',seq70seq1,'-',seq70seq2) as seq70
---                                                                        ,  case type when '3' then FactoryID else FactoryID end as FactoryID
---                                                                        , invtransreason.ReasonEN
---                                                                        ,case type when '3' then 1 else 2 end AS SEQ
---                                                                        ,invtrans.remark
---                                                                        FROM InvTrans WITH (NOLOCK) left join invtransReason WITH (NOLOCK) on invtrans.reasonid = invtransreason.id
---																		INNER JOIN TPEPASS1 WITH (NOLOCK) ON Invtrans.ConfirmHandle = TPEPASS1.ID
---                                                                        WHERE Invtrans.InventoryPOID ='{0}'
---                                                                        and InventorySeq1 = '{1}'
---                                                                        and InventorySeq2 = '{2}'
---																		and type in (2,3,5)
-                                                                        ) TMP 
-                                                                        GROUP BY TMP.ID,TMP.TYPE,TMP.typename,TMP.ConfirmDate,TMP.ConfirmHandle,TMP.factoryid,TMP.seq70,TMP.ReasonEN,TMP.SEQ,TMP.inqty,TMP.Allocated,tmp.remark "
+    SELECT  inv.ID
+            ,inv.Type
+            ,case inv.Type 
+			    when '1' then '1:Input'
+			    when '2' then '2:Output'
+			    when '3' then '3:Transfer In'
+			    when '4' then '4:Adjust'
+			    when '5' then '5:Obsolescene'
+			    when '6' then '6:Return'
+			 end as typename 
+            , inv.ConfirmDate
+            , isnull(inv.Qty, 0.00) * unit.RateValue inqty
+            , 0 Allocated
+            , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , case inv.type 
+                when '3' then inv.TransferFactory 
+                else inv.FactoryID 
+              end as factoryid
+            , invtransreason.ReasonEN
+            , case inv.type 
+                when '3' then 2 
+                else 1 
+              end AS SEQ
+            , inv.remark
+            , inv.ukey
+    FROM InvTrans Inv WITH (NOLOCK) 
+    inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
+    inner join dbo.View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = To_U
+    left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
+    INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    WHERE   inv.InventoryPOID ='{0}'
+            and inv.InventorySeq1 = '{1}'
+            and inv.InventorySeq2 = '{2}' 
+			and inv.Type in (1, 3, 6)             
+                                                                         
+    union
+    SELECT  inv.ID
+            , inv.Type
+            , case inv.Type 
+			    when '1' then '1:Input'
+			    when '2' then '2:Output'
+			    when '3' then '3:Transfer Out'
+			    when '4' then '4:Adjust'
+			    when '5' then '5:Obsolescene'
+			    when '6' then '6:Return'
+			  end as typename
+            , inv.ConfirmDate
+            , 0 inqty
+            , isnull(inv.Qty, 0.00) * unit.RateValue Allocated
+            , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , case inv.type 
+                when '3' then inv.FactoryID 
+                else inv.FactoryID 
+              end as FactoryID
+            , invtransreason.ReasonEN
+            , case inv.type 
+                when '3' then 1 
+                else 2 
+              end AS SEQ
+            , inv.remark
+            , inv.ukey
+    FROM InvTrans inv WITH (NOLOCK) 
+    inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
+    inner join View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = unit.To_U
+    left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
+	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    WHERE   inv.InventoryPOID ='{0}'
+            and inv.InventorySeq1 = '{1}'
+            and inv.InventorySeq2 = '{2}'
+			and inv.type in (2, 3, 5)    
+
+    union 
+    SELECT  inv.ID
+            , inv.Type
+            , case inv.Type 
+			    when '1' then '1:Input'
+			    when '2' then '2:Output'
+			    when '3' then '3:Transfer Out'
+			    when '4' then '4:Adjust'
+			    when '5' then '5:Obsolescene'
+			    when '6' then '6:Return'
+			  end as typename
+            , inv.ConfirmDate
+            , iif(inv.Qty >= 0, inv.Qty, 0) * unit.RateValue inqty
+            , iif(inv.Qty < 0, -inv.Qty, 0) * unit.RateValue Allocated
+            , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
+            , case inv.type 
+                when '3' then inv.FactoryID 
+                else inv.FactoryID 
+              end as FactoryID
+            , invtransreason.ReasonEN
+            , case inv.type 
+                when '3' then 1 
+                else 2 
+              end AS SEQ
+            , inv.remark
+            , inv.ukey
+    FROM InvTrans inv WITH (NOLOCK) 
+    inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
+    inner join View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = unit.To_U
+    left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
+	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    WHERE   inv.InventoryPOID ='{0}'
+            and inv.InventorySeq1 = '{1}'
+            and inv.InventorySeq2 = '{2}'
+			and inv.type in (4)    
+) TMP 
+GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
+            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey "
                                                 , dr["id"].ToString()
                                                 , dr["seq1"].ToString()
                                                 , dr["seq2"].ToString());
@@ -118,9 +173,9 @@ SELECT invtrans.ID,Type,case Type
                  .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
                  .Date("confirmdate", header: "Date", width: Widths.AnsiChars(10))
                  .Text("confirmhandle", header: "Handle", width: Widths.AnsiChars(20))
-                 .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
-                 .Numeric("Allocated", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
-                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 0)
+                 .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                 .Numeric("Allocated", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
+                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
                   .Text("seq70", header: "Use for SP#", width: Widths.AnsiChars(20))
                   .Text("ReasonEN", header: "Reason", width: Widths.AnsiChars(60))
                  ;
