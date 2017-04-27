@@ -114,7 +114,7 @@ BEGIN
 	Using (select a.*,b.factoryid as Tfactoryid from Production.dbo.MockupOrder a  WITH (NOLOCK)
 		inner join Trade_To_Pms.dbo.MockupOrder b WITH (NOLOCK) on a.id=b.id
 		where a.SCIDelivery >=@Odate_s
-		and b.factoryID in (select id from @Sayfty)) as s
+		and b.factoryID not in (select id from @Sayfty)) as s
 	on t.orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
 		when matched then
 			update set
@@ -132,7 +132,7 @@ BEGIN
 		
 		delete a 
 		from Production.dbo.MockupOrder a
-		inner join Trade_To_Pms.dbo.MockupOrder b on a.id=b.id and a.FactoryID in (select id from @Sayfty)
+		inner join Trade_To_Pms.dbo.MockupOrder b on a.id=b.id and a.FactoryID not in (select id from @Sayfty)
 		where a.SCIDelivery >=@Odate_s
 	
 	drop table #tempMO
