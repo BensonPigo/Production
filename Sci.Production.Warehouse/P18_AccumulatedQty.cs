@@ -136,25 +136,24 @@ namespace Sci.Production.Warehouse
 	group by  A.PoId,A.Seq1,A.Seq2,X.Q
 )
 
-select z.POID,z.Seq1,z.Seq2
-,requestqty = sum(z.requestqty) 
-* isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
-		(
-			select distinct unitID
-			from Invtrans B WITH (NOLOCK) 
-			where B.InventoryPoId = z.PoId 
-			and B.InventorySeq1 = z.Seq1 
-			and B.InventorySeq2 = z.Seq2 
-			and B.FactoryId = '{2}'
-		) 
-		and v.TO_U = z.stockunit),1)
-,qty
-,z.stockunit
-,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
+select  z.POID
+        , z.Seq1
+        , z.Seq2
+        , requestqty = Round(sum(z.requestqty) * isnull((select v.Ratevalue 
+                                                        from dbo.View_Unitrate v 
+                                                        where v.FROM_U = (  select distinct unitID
+			                                                                from Invtrans B WITH (NOLOCK) 
+			                                                                where   B.InventoryPoId = z.PoId 
+			                                                                        and B.InventorySeq1 = z.Seq1 
+			                                                                        and B.InventorySeq2 = z.Seq2 
+			                                                                        and B.FactoryId = '{2}') 
+		                                                      and v.TO_U = z.stockunit),1)
+                            , 2)
+        ,qty
+        ,z.stockunit
+        ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z 
-
 group by z.POID,z.Seq1,z.Seq2,qty,z.stockunit
-
             ", dr["id"].ToString(), dr["mdivisionid"].ToString(), dr["fromftyid"].ToString()));
 
             DataTable selectDataTable1;
