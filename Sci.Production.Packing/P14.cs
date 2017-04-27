@@ -14,6 +14,7 @@ namespace Sci.Production.Packing
 {
     public partial class P14 : Sci.Win.Tems.QueryForm
     {
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,28 +26,30 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
 
             //Grid設定
-            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetail.IsEditingReadOnly = false;
             this.gridDetail.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridDetail)
-                .Date("TransferDate", header: "Transfer Date")
-                .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15))
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15))
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6))
-                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15))
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10))
-                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15))
-                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15))
-                .Text("Dest", header: "Destination", width: Widths.AnsiChars(20))
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5))
-                .Date("BuyerDelivery", header: "Buyer Delivery")
-                .DateTime("AddDate",header: "Create Date");
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
+                .Date("TransferDate", header: "Transfer Date",iseditable:false)
+                .Text("PackingListID", header: "Pack ID", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
+                .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditable: false)
+                .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
+                .DateTime("AddDate", header: "Create Date", iseditable: false);
         }
 
         //Query
         private void button1_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,
+            sqlCmd.Append(string.Format(@"
+select 1 as selected,t.TransferDate,t.PackingListID,t.OrderID,t.CTNStartNo,
 isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1,
 isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest, isnull(o.FactoryID,'') as FactoryID, convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery,t.AddDate
 from TransferToClog t WITH (NOLOCK) 
@@ -94,15 +97,27 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         //To Excel
         private void button3_Click(object sender, EventArgs e)
         {
-            button1_Click(null, null);
+            this.gridDetail.ValidateControl();
+            listControlBindingSource1.EndEdit();
+            //button1_Click(null, null);
             DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
-
-
             if (ExcelTable == null || ExcelTable.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
+            //如果沒勾選資料,會跳訊息
+            DataRow[] SelectedData = ExcelTable.Select("Selected = 1");
+            if (SelectedData.Length==0)
+            {
+                MyUtility.Msg.WarningBox("Checked item first before click ToExcel");
+                return;
+            }
+            //將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
+            DataTable selectData = null;
+            MyUtility.Tool.ProcessWithDatatable(ExcelTable, @"Selected,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate",
+             @"select TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate from #tmp where selected=1", out selectData, "#tmp");
+            
             //
             
             //bool result = MyUtility.Excel.CopyToXls(k, "", xltfile: "Packing_P14_TransferSlip.xltx", headerRow: 3);
@@ -115,7 +130,7 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             date2 = (!MyUtility.Check.Empty(dateTransferDate.Value2)) ? dateTransferDate.Text1 : null;
             packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
             SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
-            P14_Print_OrderList frm = new P14_Print_OrderList(ExcelTable, date1, date2, packID, SPNo);
+            P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo);
             frm.ShowDialog();
         }
 
