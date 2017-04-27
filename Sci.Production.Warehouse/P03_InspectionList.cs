@@ -44,17 +44,11 @@ namespace Sci.Production.Warehouse
 	  when a.Nonphysical=1 then  'N/A' else '' 
 	  end AS [Physical]
 ,a.PhysicalDate
-,CASE when a.Weight = 'P' then 'Pass' 
-		when a.Weight = 'F' then 'Fail' 
-		when a.nonWeight=1 then  'N/A' else '' end  AS [Weight]
+,[Weight]=IIF(a.nonWeight=1,'N/A',a.Weight)	
 ,a.WeightDate
-,CASE when a.ShadeBond = 'P' then 'Pass' 
-		when a.ShadeBond = 'F' then 'Fail' 
-		when a.nonShadebond=1 then  'N/A' else '' end AS [ShadeBond]
+,[ShadeBond]=IIF(a.nonShadebond=1,'N/A',a.ShadeBond)		
 ,a.ShadeBondDate
-,CASE when a.Continuity = 'P' then 'Pass' 
-		when a.Continuity = 'F' then 'Fail' 
-		when a.nonContinuity=1 then  'N/A' else '' end AS [Continuity]
+,[Continuity]=IIF(a.nonContinuity=1,'N/A',a.Continuity)		
 ,a.ContinuityDate
 ,a.id
  from dbo.FIR a WITH (NOLOCK) inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
@@ -200,23 +194,11 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 ,iif(c.InvNo = '' or c.InvNo is null,c.ETA,(select export.eta from dbo.export WITH (NOLOCK) where export.id= c.exportid )) as [ETA]
 ,b.ArriveQty
 ,a.ReceiveSampleDate
-,CASE WHEN a.[Crocking] = 'P' THEN 'Pass'
-WHEN A.[Crocking] = 'F' THEN 'Failed'
-WHEN A.[Crocking] = 'N' THEN 'N/A'
-ELSE ''
-END AS [Crocking]
+,a.[Crocking]
 ,a.CrockingDate
-,CASE WHEN a.Heat = 'P' THEN 'Pass'
-WHEN A.Heat = 'F' THEN 'Failed'
-WHEN A.Heat = 'N' THEN 'N/A'
-ELSE ''
-END AS [Heat]
+,a.Heat
 ,a.HeatDate
-,CASE WHEN a.[Wash] = 'P' THEN 'Pass'
-WHEN A.[Wash] = 'F' THEN 'Failed'
-WHEN A.[Wash] = 'N' THEN 'N/A'
-ELSE ''
-END AS [Wash]
+,a.[Wash]
 ,a.WashDate
 ,a.id
 from dbo.FIR_Laboratory a WITH (NOLOCK) 
@@ -258,7 +240,7 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                 #endregion
                 //設定gridFir_Laboratory的顯示欄位
                 this.gridFir_Laboratory.IsEditingReadOnly = true;
-                this.gridFir_Laboratory.DataSource = bsAIR_FIR;
+                this.gridFir_Laboratory.DataSource = bsFIR_Laboratory;
                 Helper.Controls.Grid.Generator(this.gridFir_Laboratory)
                     //.Text("MDivisionID", header: "M", width: Widths.AnsiChars(5))
                      .Text("InvNo", header: "Invoice#", width: Widths.AnsiChars(20))
