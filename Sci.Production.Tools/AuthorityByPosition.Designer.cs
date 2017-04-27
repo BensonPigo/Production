@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(836, 52);
+            this.gridicon.Location = new System.Drawing.Point(966, 52);
             // 
             // refresh
             // 
@@ -145,7 +145,7 @@
             this.btnModifyHistory.TabIndex = 16;
             this.btnModifyHistory.Text = "Modify History";
             this.btnModifyHistory.UseVisualStyleBackColor = true;
-            this.btnModifyHistory.Click += new System.EventHandler(this.button1_Click);
+            this.btnModifyHistory.Click += new System.EventHandler(this.btnModifyHistory_Click);
             // 
             // comboMenuFilter
             // 
@@ -157,7 +157,7 @@
             this.comboMenuFilter.Name = "comboMenuFilter";
             this.comboMenuFilter.Size = new System.Drawing.Size(236, 24);
             this.comboMenuFilter.TabIndex = 15;
-            this.comboMenuFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboMenuFilter.SelectedIndexChanged += new System.EventHandler(this.comboMenuFilter_SelectedIndexChanged);
             // 
             // labelMenuFilter
             // 
@@ -210,7 +210,7 @@
             this.txtPosition.Name = "txtPosition";
             this.txtPosition.Size = new System.Drawing.Size(176, 23);
             this.txtPosition.TabIndex = 10;
-            this.txtPosition.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtPosition.Validating += new System.ComponentModel.CancelEventHandler(this.txtPosition_Validating);
             // 
             // labelPosition
             // 

@@ -111,7 +111,7 @@ namespace Sci.Production.Tools
              this.gridPositionAuthority.DataSource = listControlBindingSource1;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             if (!(result = DBProxy.Current.GetTableSchema(null, "Pass2", out itsPass2)))
             {
@@ -208,12 +208,12 @@ namespace Sci.Production.Tools
             DialogResult = DialogResult.OK;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnUndo_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnReadonly_Click(object sender, EventArgs e)
         {
             this.checkNew.Checked = false;
             this.checkEdit.Checked = false;
@@ -232,7 +232,7 @@ namespace Sci.Production.Tools
             this.checkJunk.Checked = false;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnAllControl_Click(object sender, EventArgs e)
         {
             this.checkNew.Checked = this.checkNew.Enabled;
             this.checkEdit.Checked = this.checkEdit.Enabled;

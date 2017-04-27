@@ -280,7 +280,7 @@ namespace Sci.Production.Tools
         }
 
         // 檢查Position是否重複
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtPosition_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Seek(string.Format("SELECT ID FROM Pass0 WHERE ID = '{0}'", this.txtPosition.Text)))
             {
@@ -517,7 +517,7 @@ namespace Sci.Production.Tools
         }
 
         // Modify History
-        private void button1_Click(object sender, EventArgs e)
+        private void btnModifyHistory_Click(object sender, EventArgs e)
         {
             if (CurrentMaintain == null) return;
             Sci.Production.Tools.AuthorityByPosition_History frm = new Sci.Production.Tools.AuthorityByPosition_History(true, CurrentMaintain["ID"].ToString(), null, null);
@@ -525,7 +525,7 @@ namespace Sci.Production.Tools
         }
 
         // ComboBox SelectChange
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboMenuFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             //if (this.EditMode)
             //{

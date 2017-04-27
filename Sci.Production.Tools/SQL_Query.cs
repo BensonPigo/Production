@@ -26,7 +26,7 @@ namespace Sci.Production.Tools
             this.gridSQLQuery.AutoGenerateColumns = true;
         }
 
-        private void Query_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.DataSource = null;
             

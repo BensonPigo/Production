@@ -65,7 +65,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void ok_Click(object sender, EventArgs e)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
 
             DataTable dtFactory;
@@ -115,7 +115,7 @@ namespace Sci.Production.Tools
             }
         }
 
-        private void exit_Click(object sender, EventArgs e)
+        private void btnExit_Click(object sender, EventArgs e)
         {
 
             this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
