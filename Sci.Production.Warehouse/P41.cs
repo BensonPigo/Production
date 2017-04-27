@@ -47,8 +47,7 @@ namespace Sci.Production.Warehouse
             this.gridEmbAppliqueQuery.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridEmbAppliqueQuery.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridEmbAppliqueQuery)
-                .Text("", width: Widths.AnsiChars(2), iseditable: false)
-                .Text("Mdivisionid", header: "M", width: Widths.AnsiChars(5),  iseditingreadonly: true)
+                .Text("FactoryId", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -99,7 +98,7 @@ namespace Sci.Production.Warehouse
             }
 
             string sqlcmd
-                = string.Format(@"select c.mdivisionid,c.POID,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq,a.EachConsApv
+                = string.Format(@"select B.FactoryID,c.POID,concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) as seq,a.EachConsApv
 ,(SELECT MAX(FinalETA) FROM 
 	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail WITH (NOLOCK) 
 		WHERE PO_Supp_Detail.ID = B.ID 
@@ -123,7 +122,7 @@ namespace Sci.Production.Warehouse
 	,b.stockunit	
     ,B.SEQ1
     ,B.SEQ2
-    ,c.TapeInline,c.TapeOffline			
+    ,c.TapeInline,c.TapeOffline		    	
 from dbo.orders a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
@@ -136,7 +135,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY c.mdivisionid,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit,B.FactoryID";
             //20161220 CheckBox 選項用 checkBoxs_Status() 取代
 //            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
 //	(SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
