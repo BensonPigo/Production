@@ -106,7 +106,7 @@ namespace Sci.Production.Warehouse
             this.gridCuttingTapeQuickAdjust.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridCuttingTapeQuickAdjust)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
-                .Text("MdivisionID", header: "M", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
                  .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
                  .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
@@ -160,7 +160,7 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd
                 = string.Format(@"
-select 0 as Selected,c.MdivisionId,c.POID,a.EachConsApv
+select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID
 ,(select max(FinalETA) from 
 	(select po_supp_detail.FinalETA from PO_Supp_Detail WITH (NOLOCK) 
 		WHERE PO_Supp_Detail.ID = B.ID 
@@ -194,7 +194,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY c.MdivisionID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
 //20161215 CheckBox 選項用 checkBoxs_Status() 取代
 //            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
 //	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
@@ -218,7 +218,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
 //		AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
 //	) tmp) is not null";
 //            }
-            sqlcmd += @" ORDER BY c.MdivisionID,c.POID";
+            sqlcmd += @" ORDER BY b.FactoryID,c.POID";
             Ict.DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
             {
