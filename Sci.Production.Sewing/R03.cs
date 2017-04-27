@@ -59,21 +59,22 @@ namespace Sci.Production.Sewing
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組撈基礎資料的SQL
-            sqlCmd.Append(@"with tmp1stData
-as (
-select 
-o.ID,o.ProgramID,o.StyleID,o.SeasonID,o.BrandID,o.MDivisionID,o.FactoryID,
-o.CdCodeID,o.CPU,o.POID,so.SewingLineID,so.Manpower,sod.WorkHour,sod.QAQty,
-o.CPUFactor,isnull(sl.Rate/100,0) as Rate,s.Description as StyleDesc,c.Description as CDDesc,
-s.ModularParent,s.CPUAdjusted
-from Orders o WITH (NOLOCK) 
-inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
-inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
-inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
-inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
-left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
-where o.LocalOrder = 0
-and so.Shift <> 'O'
+            sqlCmd.Append(@"
+with tmp1stData as (
+    select 
+        o.ID,o.ProgramID,o.StyleID,o.SeasonID,o.BrandID,o.MDivisionID,o.FactoryID,o.CdCodeID,o.CPU,o.POID,so.SewingLineID,so.Manpower,sod.WorkHour,sod.QAQty,o.CPUFactor
+        ,Rate = isnull(sl.Rate/100,0) 
+        ,StyleDesc = s.Description
+        ,CDDesc = c.Description
+        ,s.ModularParent,s.CPUAdjusted
+    from Orders o WITH (NOLOCK) 
+    inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
+    inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
+    inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
+    inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
+    left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
+    where o.LocalOrder = 0
+    and so.Shift <> 'O'
 ");
             
             if (!MyUtility.Check.Empty(output1))
@@ -140,36 +141,36 @@ and so.Shift <> 'O'
             }
 
             sqlCmd.Append(@"
-),
-tmp2ndData
-as (
-Select ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID, 
-Round(CPU*CPUFactor*Rate*QAQty,3) as CPUOutput, SewingLineID, Manpower*WorkHour as ManHour, 
-QAQty*Rate as RateOutput,ModularParent,CPUAdjusted 
-from tmp1stData
-),
-tmp3rdData
-as (
-Select ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID,
-SewingLineID,ModularParent,CPUAdjusted,Sum(CPUOutput) as TotalCPU, Sum(ManHour) as TtlManhour, Sum(RateOutput) as Output 
-from tmp2ndData 
-group by ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID,
-SewingLineID,ModularParent,CPUAdjusted
-),
-");
+),tmp2ndData as (
+    Select ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID
+        ,CPUOutput = Round(CPU * CPUFactor * Rate * QAQty,3), SewingLineID
+        ,ManHour = Manpower * WorkHour 
+        ,RateOutput = QAQty * Rate
+        ,ModularParent,CPUAdjusted 
+    from tmp1stData
+),tmp3rdData as (
+    Select ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID,SewingLineID,ModularParent,CPUAdjusted
+        ,TotalCPU = Sum(CPUOutput)
+        ,TtlManhour = Sum(ManHour)
+        ,Output = Sum(RateOutput)  
+    from tmp2ndData 
+    group by ProgramID, StyleID, SeasonID, BrandID, MDivisionID, FactoryID, CdCodeID, StyleDesc, CDDesc, POID,SewingLineID,ModularParent,CPUAdjusted
+),");
             #endregion
 
             string querySql;
             DualResult result;
 
             # region By Factory
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select MDivisionID, FactoryID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by MDivisionID, FactoryID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select MDivisionID, FactoryID,TtlQty = sum(Output),TtlCPU = SUM(TotalCPU),TtlManhour = SUM(TtlManhour)
+    from tmp3rdData
+    group by MDivisionID, FactoryID
 )
-select MDivisionID, FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+select MDivisionID, FactoryID, TtlQty, TtlCPU, TtlManhour
+    ,PPH = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
+    ,EFF = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2))
 from tmp4thData
 Order by MDivisionID,FactoryID", sqlCmd.ToString());
             result = DBProxy.Current.Select(null, querySql, out Factory);
@@ -181,11 +182,11 @@ Order by MDivisionID,FactoryID", sqlCmd.ToString());
             #endregion
 
             # region By Brand
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select BrandID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by BrandID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select BrandID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by BrandID
 )
 select BrandID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -199,11 +200,11 @@ Order by BrandID", sqlCmd.ToString());
             #endregion
 
             # region By Brand-Factory
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select BrandID,MDivisionID,FactoryID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by BrandID,MDivisionID,FactoryID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select BrandID,MDivisionID,FactoryID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by BrandID,MDivisionID,FactoryID
 )
 select BrandID,MDivisionID,FactoryID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -217,11 +218,11 @@ Order by BrandID,MDivisionID,FactoryID", sqlCmd.ToString());
             #endregion
 
             # region By Style
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by StyleID,ModularParent,CPUAdjusted,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
 )
 select StyleID,ModularParent,[CPUAdjusted] = CPUAdjusted*100,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -235,11 +236,12 @@ Order by StyleID,SeasonID", sqlCmd.ToString());
             #endregion
 
             # region By CD
-            querySql = string.Format(@"{0}tmp4thData
+            querySql = string.Format(@"
+{0}tmp4thData
 as (
-select CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by CdCodeID,CDDesc
+    select CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by CdCodeID,CDDesc
 )
 select CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -253,11 +255,11 @@ Order by CdCodeID", sqlCmd.ToString());
             #endregion
 
             # region By Factory-Line
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select MDivisionID,FactoryID,SewingLineID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by MDivisionID,FactoryID,SewingLineID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select MDivisionID,FactoryID,SewingLineID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by MDivisionID,FactoryID,SewingLineID
 )
 select MDivisionID,FactoryID,SewingLineID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -271,11 +273,11 @@ Order by MDivisionID,FactoryID,SewingLineID", sqlCmd.ToString());
             #endregion
 
             # region By Brand-Factory-CD
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc
 )
 select BrandID,MDivisionID,FactoryID,CdCodeID,CDDesc, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -289,11 +291,11 @@ Order by BrandID,MDivisionID,FactoryID,CdCodeID", sqlCmd.ToString());
             #endregion
 
             # region By PO Combo
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID
 )
 select POID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID,ProgramID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
@@ -307,11 +309,11 @@ Order by POID,StyleID,BrandID,CdCodeID,SeasonID", sqlCmd.ToString());
             #endregion
 
             # region By Program
-            querySql = string.Format(@"{0}tmp4thData
-as (
-select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-from tmp3rdData
-group by ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
+            querySql = string.Format(@"
+{0}tmp4thData as (
+    select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from tmp3rdData
+    group by ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID
 )
 select ProgramID,StyleID,BrandID,CdCodeID,CDDesc,StyleDesc,SeasonID, TtlQty, TtlCPU, TtlManhour, IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH, IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 from tmp4thData
