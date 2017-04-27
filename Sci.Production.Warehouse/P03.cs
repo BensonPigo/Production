@@ -273,159 +273,200 @@ namespace Sci.Production.Warehouse
             string sqlcmd
                 = string.Format(@"
 ;WITH QA AS (
-	Select POID,SEQ1,SEQ2,CASE 
-	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
-	else a.result
-	END as [Result] from dbo.FIR a WITH (NOLOCK) where a.POID LIKE @sp1 
-	and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
-	or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
-	UNION ALL
-	Select POID,SEQ1,SEQ2,a.result as [Result] 
-	from dbo.AIR a WITH (NOLOCK) where a.POID LIKE @sp1 and a.Result !=''
+	Select  POID
+            , SEQ1
+            , SEQ2
+            , CASE 
+	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	            else a.result
+	          END as [Result] 
+    from dbo.FIR a WITH (NOLOCK) 
+    where   a.POID LIKE @sp1 
+	        and (a.ContinuityEncode = 1 or a.PhysicalEncode = 1 or a.ShadebondEncode =1 or a.WeightEncode = 1 
+	        or (a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1))
+	
+    UNION ALL
+	Select  POID
+            , SEQ1
+            , SEQ2
+            , a.result as [Result] 
+	from dbo.AIR a WITH (NOLOCK) 
+    where   a.POID LIKE @sp1 
+            and a.Result !=''
 ) 
-
 select *
 from(
-select ROW_NUMBER() over (partition by mdivisionid,id,seq1,seq2 order by mdivisionid,id,seq1,seq2,len_D) as ROW_NUMBER_D,*
-from (
-select *,-len(description) as len_D from (
-select 
-m.ukey,f.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
-,[SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
-,[eta] = substring(convert(varchar, a.eta, 101),1,5)
-,[RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
-,a.Refno,a.SCIRefno
-,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
-, iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-,a.ColorID,a.SizeSpec
-,ROUND(a.UsedQty,4) unitqty
-,Qty = isnull(A.Qty, 0)
-,A.NETQty
-,[useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
-,shipQty = isnull(a.ShipQty, 0)
-,a.ShipFOC
+    select  ROW_NUMBER() over (partition by mdivisionid,id,seq1,seq2 order by mdivisionid,id,seq1,seq2,len_D) as ROW_NUMBER_D
+            ,*
+    from (
+        select  *
+                , -len(description) as len_D 
+        from (
+            select  m.ukey
+                    , f.mdivisionid
+                    , a.id
+                    , a.seq1
+                    , a.seq2
+                    , b.SuppID
+                    , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
+                    , [eta] = substring(convert(varchar, a.eta, 101),1,5)
+                    , [RevisedETA] = substring(convert(varchar,a.RevisedETA, 101),1,5)
+                    , a.Refno
+                    , a.SCIRefno
+                    , a.FabricType 
+                    , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+                    , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+                    , a.ColorID
+                    , a.SizeSpec
+                    , ROUND(a.UsedQty,4) unitqty
+                    , Qty = isnull(A.Qty, 0)
+                    , A.NETQty
+                    , [useqty] = isnull(A.NETQty,0)+isnull(A.lossQty,0)
+                    , shipQty = isnull(a.ShipQty, 0)
+                    , a.ShipFOC
 --,a.ApQty
 --,a.InputQty
-,InputQty = isnull((select sum(invtQty) from (
-	            SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
-	            FROM InvTrans inv WITH (NOLOCK)
-                inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
-	            WHERE   inv.InventoryPOID = a.id
-	                    and inv.InventorySeq1 = a.Seq1
-	                    and inv.InventorySeq2 = a.seq2
-	                    and inv.Type in (1, 4)
-            )tmp), 0.00)
-,a.POUnit,iif(a.Complete='1','Y','N') as Complete
-,a.FinalETA,m.InQty,a.StockUnit
-,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
-,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
-,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
-,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+                    , InputQty = isnull((select sum(invtQty) 
+                                         from (
+                                            SELECT  isnull(Qty, 0.00) * unit.RateValue as invtQty
+	                                        FROM InvTrans inv WITH (NOLOCK)
+                                            inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
+	                                        WHERE   inv.InventoryPOID = a.id
+	                                                and inv.InventorySeq1 = a.Seq1
+	                                                and inv.InventorySeq2 = a.seq2
+	                                                and inv.Type in (1, 4)
+                                         )tmp), 0.00)
+                    , a.POUnit,iif(a.Complete='1','Y','N') as Complete
+                    , a.FinalETA,m.InQty,a.StockUnit
+                    , iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
+                    , iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
+                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+                    , m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
+                    , s.ThirdCountry,a.junk,fabric.BomTypeCalculate
 --,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
-,s.currencyid
-,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
-,(Select cast(tmp.Remark as nvarchar)+',' 
-  from (
-			select b1.remark 
-			from receiving a1 WITH (NOLOCK) 
-			inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
-			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
-			and b1.poid = a.id
-			and b1.seq1 = a.seq1
-			and b1.seq2 = a.seq2 group by b1.remark
-	   ) tmp 
-  for XML PATH('')
- ) as  Remark
-,[OrderIdList] = stuff((select concat(',', tmp.OrderID) 
-		                from (
-			                select orderID from po_supp_Detail_orderList e
-			                where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-		                ) tmp for xml path(''))
-                ,1,1,'')
-
-from Orders WITH (NOLOCK) inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
-	left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
-    left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
-	left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
-    left join supp s WITH (NOLOCK) on s.id = b.suppid
-    LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
-    --left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+                    , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
+                    , s.currencyid
+                    , stuff((select Concat('/',t.Result) from ( SELECT Result 
+                                                                FROM QA 
+                                                                where   poid = m.POID 
+                                                                        and seq1 = m.seq1 
+                                                                        and seq2 = m.seq2 
+                                                                )t for xml path('')),1,1,'') FIR
+                    ,(Select cast(tmp.Remark as nvarchar)+',' 
+                      from (
+			                    select b1.remark 
+			                    from receiving a1 WITH (NOLOCK) 
+			                    inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
+			                    where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
+			                    and b1.poid = a.id
+			                    and b1.seq1 = a.seq1
+			                    and b1.seq2 = a.seq2 group by b1.remark
+	                       ) tmp 
+                      for XML PATH('')
+                     ) as  Remark
+                    , [OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'')
+            from Orders WITH (NOLOCK) 
+            inner join PO_Supp_Detail a WITH (NOLOCK) on a.id = orders.poid
+	        left join dbo.MDivisionPoDetail m WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2
+            left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
+	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+            left join supp s WITH (NOLOCK) on s.id = b.suppid
+            LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
+--left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
 --where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
-where orders.id like @sp1 and a.junk <> 'true'
+            where orders.id like @sp1 and a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
-union
+            union
 
-select m.ukey,f.mdivisionid,a.id,a.seq1,a.seq2,b.SuppID
-,[SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
-,substring(convert(varchar, a.eta, 101),1,5) as eta
-,substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
-,a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
-    , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
-,a.ColorID,a.SizeSpec
-,ROUND(a.UsedQty,4) unitqty
-,Qty = isnull(A.Qty, 0)
-,A.NETQty,isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty 
-,ShipQty = isnull(a.ShipQty, 0)
-,a.ShipFOC
+            select  m.ukey
+                    , f.mdivisionid
+                    , a.id
+                    , a.seq1
+                    , a.seq2
+                    , b.SuppID
+                    , [SuppCountry] = (select CountryID from supp sup WITH (NOLOCK) where sup.ID = b.SuppID)
+                    , substring(convert(varchar, a.eta, 101),1,5) as eta
+                    , substring(convert(varchar,a.RevisedETA, 101),1,5) as RevisedETA,a.Refno,a.SCIRefno
+                    , a.FabricType , iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))) as fabrictype2
+                    , iif(a.FabricType='F',1,iif(a.FabricType='A',2,3)) as fabrictypeOrderby
+                    , a.ColorID
+                    , a.SizeSpec
+                    , ROUND(a.UsedQty,4) unitqty
+                    , Qty = isnull(A.Qty, 0)
+                    , A.NETQty
+                    , isnull(A.NETQty,0)+isnull(A.lossQty,0) useqty 
+                    , ShipQty = isnull(a.ShipQty, 0)
+                    , a.ShipFOC
 --,a.ApQty
 --,a.InputQty
-,InputQty = isnull((select sum(invtQty) from (
-	            SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
-	            FROM InvTrans inv WITH (NOLOCK)
-                inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
-	            WHERE   inv.InventoryPOID = m.poid
-	                    and inv.InventorySeq1 = m.Seq1
-	                    and inv.InventorySeq2 = m.seq2
-	                    and inv.Type in (1, 4)
-            )tmp), 0.00)
-,a.POUnit,iif(a.Complete='1','Y','N') as Complete
-,a.FinalETA,m.InQty,a.StockUnit
-,iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
-,iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-,iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
-,m.LInvQty,m.LObQty,m.ALocation,m.BLocation 
-,s.ThirdCountry,a.junk,fabric.BomTypeCalculate
+                    , InputQty = isnull((select sum(invtQty) 
+                                        from (
+	                                        SELECT isnull(Qty, 0.00) * unit.RateValue as invtQty
+	                                        FROM InvTrans inv WITH (NOLOCK)
+                                            inner join View_Unitrate unit on inv.UnitID = unit.From_U and a.StockUnit = unit.To_U
+	                                        WHERE   inv.InventoryPOID = m.poid
+	                                                and inv.InventorySeq1 = m.Seq1
+	                                                and inv.InventorySeq2 = m.seq2
+	                                                and inv.Type in (1, 4)
+                                        )tmp), 0.00)
+                    , a.POUnit,iif(a.Complete='1','Y','N') as Complete
+                    , a.FinalETA
+                    , m.InQty
+                    , a.StockUnit
+                    , iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
+                    , iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
+                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+                    , m.LInvQty
+                    , m.LObQty
+                    , m.ALocation
+                    , m.BLocation 
+                    , s.ThirdCountry
+                    , a.junk
+                    , fabric.BomTypeCalculate
 --,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
-,s.currencyid
-,stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
-,(Select cast(tmp.Remark as nvarchar)+',' 
-  from (
-			select b1.remark 
-			from receiving a1 WITH (NOLOCK) 
-			inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
-			where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
-			and b1.poid = a.id
-			and b1.seq1 = a.seq1
-			and b1.seq2 = a.seq2 group by b1.remark
-		) tmp 
-  for XML PATH('')
-) as  Remark
-,[OrderIdList] = stuff((select concat(',', tmp.OrderID) 
-		                from (
-			                select orderID from po_supp_Detail_orderList e
-			                where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-		                ) tmp for xml path(''))
-                ,1,1,'')
-from dbo.MDivisionPoDetail m WITH (NOLOCK) 
-inner join Orders o on o.poid = m.poid
-left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
-left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
-left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
-left join supp s WITH (NOLOCK) on s.id = b.suppid
-LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
+                    , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
+                    , s.currencyid
+                    , stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
+                    , (Select cast(tmp.Remark as nvarchar)+',' 
+                       from (
+			                    select b1.remark 
+			                    from receiving a1 WITH (NOLOCK) 
+			                    inner join receiving_detail b1 WITH (NOLOCK) on a1.id = b1.id 
+			                    where a1.status = 'Confirmed' and (b1.Remark is not null or b1.Remark !='')
+			                    and b1.poid = a.id
+			                    and b1.seq1 = a.seq1
+			                    and b1.seq2 = a.seq2 group by b1.remark
+		                    ) tmp 
+                       for XML PATH('')
+                     ) as  Remark
+                    , [OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+		                                     from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
+		                                     ) tmp for xml path(''))
+                                            ,1,1,'')
+        from dbo.MDivisionPoDetail m WITH (NOLOCK) 
+        inner join Orders o on o.poid = m.poid
+        left join PO_Supp_Detail a WITH (NOLOCK) on  m.POID = a.ID and m.seq1 = a.SEQ1 and m.Seq2 = a.Seq2 --and m.poid like @sp1  
+        left join fabric WITH (NOLOCK) on fabric.SCIRefno = a.scirefno
+        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
+        left join supp s WITH (NOLOCK) on s.id = b.suppid
+        LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
 --left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
-where 1=1 
-    AND a.id IS NOT NULL and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
-    and o.id like @sp1
-) as xxx
-) as xxx2
+        where   1=1 
+                AND a.id IS NOT NULL 
+                and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
+                and o.id like @sp1
+        ) as xxx
+    ) as xxx2
 ) as xxx3
-where ROW_NUMBER_D =1 
-      
+where ROW_NUMBER_D =1       
             "
             , Sci.Env.User.Keyword);
             #endregion
