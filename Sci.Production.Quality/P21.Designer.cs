@@ -123,7 +123,6 @@
             this.masterpanel.Controls.Add(this.labelDestination);
             this.masterpanel.Controls.Add(this.dateAuditDate);
             this.masterpanel.Size = new System.Drawing.Size(1037, 217);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateAuditDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelAuditDate, 0);
@@ -163,6 +162,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numSQR, 0);
             this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
@@ -183,15 +183,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1037, 588);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1031, 542);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1031, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 

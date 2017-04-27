@@ -54,12 +54,12 @@
             this.labelInspectDate = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.labelRemark = new Sci.Win.UI.Label();
-            this.txtInspector = new Sci.Win.UI.TextBox();
             this.labelInspector = new Sci.Win.UI.Label();
             this.labelResult = new Sci.Win.UI.Label();
             this.comboResult = new Sci.Win.UI.ComboBox();
             this.editDefect = new Sci.Win.UI.EditBox();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtInspector = new Sci.Production.Class.txtuser();
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
@@ -73,8 +73,8 @@
             // 
             this.btmcont.Controls.Add(this.BtnEdit);
             this.btmcont.Controls.Add(this.btnClose);
-            this.btmcont.Location = new System.Drawing.Point(0, 416);
-            this.btmcont.Size = new System.Drawing.Size(669, 40);
+            this.btmcont.Location = new System.Drawing.Point(0, 376);
+            this.btmcont.Size = new System.Drawing.Size(670, 40);
             this.btmcont.Controls.SetChildIndex(this.left, 0);
             this.btmcont.Controls.SetChildIndex(this.right, 0);
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
@@ -84,14 +84,14 @@
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(579, 5);
+            this.undo.Location = new System.Drawing.Point(580, 5);
             this.undo.Text = "Close";
             this.undo.Visible = false;
             // 
             // save
             // 
             this.save.Enabled = true;
-            this.save.Location = new System.Drawing.Point(499, 5);
+            this.save.Location = new System.Drawing.Point(500, 5);
             this.save.Text = "Edit";
             this.save.Visible = false;
             // 
@@ -107,9 +107,9 @@
             // 
             // btnAmend
             // 
-            this.btnAmend.Location = new System.Drawing.Point(499, 30);
+            this.btnAmend.Location = new System.Drawing.Point(532, 30);
             this.btnAmend.Name = "btnAmend";
-            this.btnAmend.Size = new System.Drawing.Size(91, 30);
+            this.btnAmend.Size = new System.Drawing.Size(117, 30);
             this.btnAmend.TabIndex = 117;
             this.btnAmend.Text = "Amend";
             this.btnAmend.UseVisualStyleBackColor = true;
@@ -128,6 +128,7 @@
             // txtUnit
             // 
             this.txtUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "unit", true));
             this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtUnit.Location = new System.Drawing.Point(95, 125);
             this.txtUnit.Name = "txtUnit";
@@ -138,6 +139,7 @@
             // txtColor
             // 
             this.txtColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtColor.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "colorid", true));
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtColor.Location = new System.Drawing.Point(328, 125);
             this.txtColor.Name = "txtColor";
@@ -148,6 +150,7 @@
             // txtSize
             // 
             this.txtSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSize.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "size", true));
             this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSize.Location = new System.Drawing.Point(534, 125);
             this.txtSize.Name = "txtSize";
@@ -169,6 +172,7 @@
             // txtWKNO
             // 
             this.txtWKNO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWKNO.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportID", true));
             this.txtWKNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtWKNO.Location = new System.Drawing.Point(95, 60);
             this.txtWKNO.Name = "txtWKNO";
@@ -238,7 +242,7 @@
             // labelRefno
             // 
             this.labelRefno.Lines = 0;
-            this.labelRefno.Location = new System.Drawing.Point(247, 60);
+            this.labelRefno.Location = new System.Drawing.Point(248, 60);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
             this.labelRefno.TabIndex = 98;
@@ -292,7 +296,7 @@
             // labelDefect
             // 
             this.labelDefect.Lines = 0;
-            this.labelDefect.Location = new System.Drawing.Point(236, 32);
+            this.labelDefect.Location = new System.Drawing.Point(237, 32);
             this.labelDefect.Name = "labelDefect";
             this.labelDefect.Size = new System.Drawing.Size(91, 23);
             this.labelDefect.TabIndex = 104;
@@ -312,9 +316,9 @@
             this.txtRejectedQty.BackColor = System.Drawing.Color.White;
             this.txtRejectedQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RejectQty", true));
             this.txtRejectedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRejectedQty.Location = new System.Drawing.Point(113, 223);
+            this.txtRejectedQty.Location = new System.Drawing.Point(112, 223);
             this.txtRejectedQty.Name = "txtRejectedQty";
-            this.txtRejectedQty.Size = new System.Drawing.Size(121, 23);
+            this.txtRejectedQty.Size = new System.Drawing.Size(124, 23);
             this.txtRejectedQty.TabIndex = 120;
             // 
             // labelRejectedQty
@@ -340,34 +344,24 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(340, 160);
+            this.txtRemark.Location = new System.Drawing.Point(332, 166);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(266, 23);
+            this.txtRemark.Size = new System.Drawing.Size(287, 23);
             this.txtRemark.TabIndex = 124;
             // 
             // labelRemark
             // 
             this.labelRemark.Lines = 0;
-            this.labelRemark.Location = new System.Drawing.Point(236, 160);
+            this.labelRemark.Location = new System.Drawing.Point(238, 166);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(91, 23);
             this.labelRemark.TabIndex = 123;
             this.labelRemark.Text = "Remark";
             // 
-            // txtInspector
-            // 
-            this.txtInspector.BackColor = System.Drawing.Color.White;
-            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Inspector", true));
-            this.txtInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInspector.Location = new System.Drawing.Point(115, 288);
-            this.txtInspector.Name = "txtInspector";
-            this.txtInspector.Size = new System.Drawing.Size(121, 23);
-            this.txtInspector.TabIndex = 126;
-            // 
             // labelInspector
             // 
             this.labelInspector.Lines = 0;
-            this.labelInspector.Location = new System.Drawing.Point(17, 288);
+            this.labelInspector.Location = new System.Drawing.Point(18, 288);
             this.labelInspector.Name = "labelInspector";
             this.labelInspector.Size = new System.Drawing.Size(91, 23);
             this.labelInspector.TabIndex = 125;
@@ -376,7 +370,7 @@
             // labelResult
             // 
             this.labelResult.Lines = 0;
-            this.labelResult.Location = new System.Drawing.Point(18, 318);
+            this.labelResult.Location = new System.Drawing.Point(18, 321);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(91, 23);
             this.labelResult.TabIndex = 127;
@@ -385,31 +379,32 @@
             // comboResult
             // 
             this.comboResult.BackColor = System.Drawing.Color.White;
-            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "result", true));
-            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Result", true));
+            this.comboResult.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Result1", true));
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(114, 316);
+            this.comboResult.Location = new System.Drawing.Point(112, 321);
             this.comboResult.Name = "comboResult";
             this.comboResult.Size = new System.Drawing.Size(121, 24);
             this.comboResult.TabIndex = 129;
             // 
             // editDefect
             // 
-            this.editDefect.BackColor = System.Drawing.Color.White;
+            this.editDefect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDefect.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Defect", true));
-            this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editDefect.Location = new System.Drawing.Point(340, 32);
+            this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDefect.Location = new System.Drawing.Point(331, 32);
             this.editDefect.Multiline = true;
             this.editDefect.Name = "editDefect";
-            this.editDefect.Size = new System.Drawing.Size(266, 105);
+            this.editDefect.ReadOnly = true;
+            this.editDefect.Size = new System.Drawing.Size(288, 92);
             this.editDefect.TabIndex = 132;
             this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.editBox1_MouseDown);
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.Border3DStyle.Raised;
+            this.panel1.Controls.Add(this.txtInspector);
             this.panel1.Controls.Add(this.dateInspectDate);
             this.panel1.Controls.Add(this.editDefect);
             this.panel1.Controls.Add(this.labelDefect);
@@ -417,13 +412,23 @@
             this.panel1.Controls.Add(this.txtRemark);
             this.panel1.Location = new System.Drawing.Point(10, 156);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(639, 234);
+            this.panel1.Size = new System.Drawing.Size(639, 209);
             this.panel1.TabIndex = 133;
+            // 
+            // txtInspector
+            // 
+            this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
+            this.txtInspector.DisplayBox1Binding = "";
+            this.txtInspector.Location = new System.Drawing.Point(102, 132);
+            this.txtInspector.Name = "txtInspector";
+            this.txtInspector.Size = new System.Drawing.Size(301, 23);
+            this.txtInspector.TabIndex = 135;
+            this.txtInspector.TextBox1Binding = "";
             // 
             // dateInspectDate
             // 
             this.dateInspectDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
-            this.dateInspectDate.Location = new System.Drawing.Point(103, 101);
+            this.dateInspectDate.Location = new System.Drawing.Point(102, 101);
             this.dateInspectDate.Name = "dateInspectDate";
             this.dateInspectDate.Size = new System.Drawing.Size(145, 23);
             this.dateInspectDate.TabIndex = 135;
@@ -462,11 +467,10 @@
             // 
             // P02_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(669, 456);
+            this.ClientSize = new System.Drawing.Size(670, 416);
             this.Controls.Add(this.txtsupplier);
             this.Controls.Add(this.comboResult);
             this.Controls.Add(this.labelResult);
-            this.Controls.Add(this.txtInspector);
             this.Controls.Add(this.labelInspector);
             this.Controls.Add(this.labelInspectDate);
             this.Controls.Add(this.txtRejectedQty);
@@ -522,7 +526,6 @@
             this.Controls.SetChildIndex(this.txtRejectedQty, 0);
             this.Controls.SetChildIndex(this.labelInspectDate, 0);
             this.Controls.SetChildIndex(this.labelInspector, 0);
-            this.Controls.SetChildIndex(this.txtInspector, 0);
             this.Controls.SetChildIndex(this.labelResult, 0);
             this.Controls.SetChildIndex(this.comboResult, 0);
             this.Controls.SetChildIndex(this.txtsupplier, 0);
@@ -563,7 +566,6 @@
         private Win.UI.Label labelInspectDate;
         private Win.UI.TextBox txtRemark;
         private Win.UI.Label labelRemark;
-        private Win.UI.TextBox txtInspector;
         private Win.UI.Label labelInspector;
         private Win.UI.Label labelResult;
         private Win.UI.ComboBox comboResult;
@@ -573,6 +575,7 @@
         private Win.UI.DateBox dateInspectDate;
         private Win.UI.Button btnClose;
         private Win.UI.Button BtnEdit;
+        private Class.txtuser txtInspector;
 
     }
 }

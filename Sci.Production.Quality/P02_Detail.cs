@@ -17,6 +17,14 @@ namespace Sci.Production.Quality
 {
     public partial class P02_Detail : Sci.Win.Subs.Input6A
     {
+        #region 改版原因事項
+        /*
+         使用Inpute6A理由: 可以使用切換上下筆的功能
+         *但是Inpute6A需要直接存進DB,只好手刻存檔以及Encode功能
+         *Inpute6A原始按鈕save and Undo功能不使用理由:1.更多可調整性,避免被底層綁死
+         *注意! P02_Detail WorkAlias沒有特別作用,所有的繫結資料(mtbs - )來源都是上一層的CurrentDetailData(detail GridView)   
+         */
+        #endregion
         private string loginID = Sci.Env.User.UserID;        
         private bool canedit;
         private string id;
@@ -24,8 +32,7 @@ namespace Sci.Production.Quality
         public P02_Detail(bool CanEdit, string airID)
         {
             InitializeComponent();
-            id = airID;            
-            this.comboResult.ReadOnly = false;            
+            id = airID;                          
             canedit = CanEdit;
             btn_status(id);
             button_enable(canedit);            
@@ -41,46 +48,12 @@ namespace Sci.Production.Quality
                 txtSEQ.Text = "";
             }
 
-
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             comboBox1_RowSource.Add("Pass", "Pass");
             comboBox1_RowSource.Add("Fail", "Fail");
             comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
             comboResult.ValueMember = "Key";
             comboResult.DisplayMember = "Value";
-
-            // 串接table Po_Supp_Detail
-            DataTable dtPoSuppDetail;
-            Ict.DualResult pstResult;
-            if (pstResult = DBProxy.Current.Select(null, string.Format("select B.SCIRefno,B.Refno,a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec from PO_Supp_Detail a WITH (NOLOCK) left join AIR b WITH (NOLOCK) on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 where b.ID='{0}'", id), out dtPoSuppDetail))
-            {
-                if (dtPoSuppDetail.Rows.Count != 0)
-                {
-                  
-                    txtUnit.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
-                    txtSize.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
-                    txtColor.Text = dtPoSuppDetail.Rows[0]["ColorID"].ToString();
-                }
-
-            }
-            //串接table Receiving
-            DataTable dtRec;
-            Ict.DualResult wknoResult;
-            if (wknoResult = DBProxy.Current.Select(null, string.Format("select * from Receiving a WITH (NOLOCK) left join AIR b WITH (NOLOCK) on a.Id=b.ReceivingID where b.ID='{0}' ", id), out dtRec))
-            {
-                if (dtRec.Rows.Count>0)
-                {
-                    txtWKNO.Text = dtRec.Rows[0]["exportid"].ToString();
-                }
-                else
-                {
-                    txtWKNO.Text = "";
-                }
-                
-            }
-
-
-
 
         }
 
@@ -209,26 +182,20 @@ namespace Sci.Production.Quality
                 
         private void editBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.editDefect.ReadOnly == true)
-            {
-                return;
-            }
+            if (this.BtnEdit.Text!="Save") return;
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
-                SelectItem2 item = new SelectItem2(sqlcmd, "15,12", null);
+                SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description","10,30", null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.editDefect.Text = item.GetSelectedString().Replace(",", "+");
-
 
             }
         }
         private void button_enable(bool canedit)
         {
             // Visable
-            //this.BtnEdit.Visible = true;
-            //this.BtnEdit.Visible = (bool)canedit;
             this.BtnEdit.Visible = (bool)canedit;
             this.btnAmend.Visible = (bool)canedit;
             // Enable
@@ -283,51 +250,7 @@ namespace Sci.Production.Quality
             {
                 txtSEQ.Text = "";
             }
-
-            //設定combox下拉選項
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("Pass", "Pass");
-            comboBox1_RowSource.Add("Fail", "Fail");
-            comboResult.DataSource = new BindingSource(comboBox1_RowSource, null);
-            comboResult.ValueMember = "Key";
-            comboResult.DisplayMember = "Value";
-
-            // 串接table Po_Supp_Detail
-            DataTable dtPoSuppDetail;
-            Ict.DualResult pstResult;
-            if (pstResult = DBProxy.Current.Select(null, string.Format(
-@"select a.ColorID,a.ColorID,a.StockUnit,a.SizeSpec 
-from PO_Supp_Detail a WITH (NOLOCK) 
-left join AIR b WITH (NOLOCK) on a.ID=b.POID and a.SEQ1=b.SEQ1 and a.SEQ2=b.SEQ2 
-where b.ID='{0}'", id), out dtPoSuppDetail))
-            {
-                if (dtPoSuppDetail.Rows.Count != 0)
-                {               
-                    txtUnit.Text = dtPoSuppDetail.Rows[0]["StockUnit"].ToString();
-                    txtSize.Text = dtPoSuppDetail.Rows[0]["sizespec"].ToString();
-                    txtColor.Text = dtPoSuppDetail.Rows[0]["ColorID"].ToString();
-                }
-
-            }
-            //串接table Receiving
-            DataTable dtRec;
-            Ict.DualResult wknoResult;
-            if (wknoResult = DBProxy.Current.Select(null, string.Format(
-@"select * 
-from Receiving a WITH (NOLOCK) 
-left join AIR b WITH (NOLOCK) on a.Id=b.ReceivingID 
-where b.ID='{0}' ", id), out dtRec))
-            {
-                if (dtRec.Rows.Count > 0)
-                {
-                    txtWKNO.Text = dtRec.Rows[0]["exportid"].ToString();
-                }
-                else
-                {
-                    txtWKNO.Text = "";
-                }
-            }
-           
+            button_enable(canedit);
         }
 
         private void right_Click(object sender, EventArgs e)
@@ -401,11 +324,11 @@ where b.ID='{0}' ", id), out dtRec))
                         #region  寫入實體Table Encode
                         updatesql = string.Format(
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = '{2}',Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
-                        this.txtInspectedQty.Text, this.txtRejectedQty.Text, string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value), txtInspector.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
+                        this.txtInspectedQty.Text, this.txtRejectedQty.Text, string.Format("{0:yyyy-MM-dd}", dateInspectDate.Value), txtInspector.TextBox1.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
                         DualResult upResult;
                         TransactionScope _transactionscope = new TransactionScope();
                         using (_transactionscope)
-                        {
+                        { 
                             try
                             {
                                 if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
@@ -433,15 +356,17 @@ where b.ID='{0}' ", id), out dtRec))
                         this.txtInspectedQty.ReadOnly = true;
                         this.txtRejectedQty.ReadOnly = true;
                         this.dateInspectDate.ReadOnly = true;
-                        this.txtInspector.ReadOnly = true;
+                        this.txtInspector.TextBox1.ReadOnly = true;
                         this.comboResult.ReadOnly = true;
                         this.txtRemark.ReadOnly = true;
-                        this.editDefect.ReadOnly = true;
+                        this.editDefect.ReadOnly = true;                        
                         this.btnClose.Text = "Close";
+                        this.EditMode = false;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
                         return;
                     }
                     else
                     {
+                        this.EditMode = true;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
                             MyUtility.Msg.InfoBox("It's already Confirmed");
@@ -453,10 +378,10 @@ where b.ID='{0}' ", id), out dtRec))
                             this.txtInspectedQty.ReadOnly = false;
                             this.txtRejectedQty.ReadOnly = false;
                             this.dateInspectDate.ReadOnly = false;
-                            this.txtInspector.ReadOnly = false;
+                            this.txtInspector.TextBox1.ReadOnly = false;
                             this.comboResult.ReadOnly = false;
                             this.txtRemark.ReadOnly = false;
-                            this.editDefect.ReadOnly = false;
+                            this.editDefect.ReadOnly = true;
                             this.BtnEdit.Text = "Save";
                             this.btnClose.Text = "Undo";
 
@@ -466,6 +391,5 @@ where b.ID='{0}' ", id), out dtRec))
                 }
             }
         }
-
     }
 }

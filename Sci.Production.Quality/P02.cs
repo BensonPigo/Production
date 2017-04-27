@@ -50,7 +50,7 @@ namespace Sci.Production.Quality
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
                 @"Select a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
-                ArriveQty,InspDeadline,Result,a.InspQty,a.RejectQty,a.Defect,a.Result,a.InspDate,
+                ArriveQty,InspDeadline,a.InspQty,a.RejectQty,a.Defect,a.Result,[Result1]=a.Result,a.InspDate,
                 (
 				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
 				) AS Inspector2,a.Inspector,
@@ -355,7 +355,8 @@ namespace Sci.Production.Quality
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
             P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString());
-            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                        
+            DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
+            DoForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
             DoForm.ShowDialog(this);
             DoForm.Close();
             this.RenewData();
@@ -389,33 +390,6 @@ namespace Sci.Production.Quality
                 return;
             }
         }
-
-        //private void modifyDetailToolStripMenuItem_Click(object sender, EventArgs e)
-        //{            
-        //    string currentID = CurrentDetailData["ID"].ToString();
-        //    var dr = this.CurrentDetailData; if (null == dr) return;
-        //    var frm = new Sci.Production.Quality.P02_Detail(IsSupportEdit, CurrentDetailData["ID"].ToString(), dr);            
-        //    frm.ShowDialog(this);
-        //    frm.Dispose();
-        //    this.RenewData();
-        //    this.OnDetailEntered();
-        //    // 固定滑鼠指向位置,避免被renew影響
-        //    int rowindex = 0;
-        //    for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
-        //    {
-        //        DataGridViewRow dvr = detailgrid.Rows[rIdx];
-        //        DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
-
-        //        if (row["ID"].ToString() == currentID)
-        //        {
-        //            rowindex = rIdx;
-        //            break;
-        //        }
-        //    }
-        //    detailgrid.SelectRowTo(rowindex);
-
-
-        //}
 
         protected override void OnDetailGridRowChanged()
         {
