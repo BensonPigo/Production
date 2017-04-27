@@ -1114,10 +1114,29 @@ Where a.id = '{0}'", masterID);
         {
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             List<string> listMsg = new List<string>();
+            List<string> listDyelot = new List<string>();
             foreach (DataRow row in DetailDatas)
             {
                 DataRow dr;
-                string sql = string.Format(@"
+                //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
+                if (row["fabrictype"].ToString().ToUpper() == "F")
+                {
+                    #region 先判斷 FtyInventory 是否有相同的 Roll & Dyelot
+                    string checkFtySql = string.Format(@"
+select  total = count(*)  
+		, Dyelot
+From dbo.FtyInventory Fty
+where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}'
+group by Dyelot
+", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"], row["toDyelot"], CurrentMaintain["id"]);
+                    if (MyUtility.Check.Seek(checkFtySql, null))
+                    {
+                        listDyelot.Add(row["toDyelot"].ToString());
+                    }
+                    else
+                    {
+                        #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
+                        string checkSql = string.Format(@"
 select 
 	total = sum(total)
 	, Dyelot = Dyelot
@@ -1165,61 +1184,55 @@ from(
 	group by Dyelot
 ) x
 group by Dyelot", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"], row["toDyelot"], CurrentMaintain["id"]);
-
-                if (MyUtility.Check.Seek(sql, out dr, null))
-                {
-                    if (Convert.ToInt32(dr[0]) > 0)
-                    {
-                        listMsg.Add(string.Format(@"
+                        if (MyUtility.Check.Seek(checkSql, out dr, null))
+                        {
+                            if (Convert.ToInt32(dr[0]) > 0)
+                            {
+                                listMsg.Add(string.Format(@"
 The Deylot of
-<ToSP#>:{0}, <ToSeq>:{1}, <ToRoll>:{2}
+<SP#>:{0}, <Seq>:{1}, <Roll>:{2}
 already exists, system will update the Qty for original Deylot <{3}>
-", row["toPoid"], row["toSeq1"].ToString() + " " + row["toSeq2"].ToString(), row["toRoll"], dr[1].ToString().Trim()));
+", row["toPoid"], row["toSeq1"].ToString() + " " + row["toSeq2"].ToString(), row["toRoll"], dr["Dyelot"].ToString().Trim()));
+                                listDyelot.Add(dr["Dyelot"].ToString().Trim());
+                            }
+                        }
+                        else
+                        {
+                            listDyelot.Add(row["toDyelot"].ToString().Trim());
+                        }
+                        #endregion
                     }
+                    #endregion
                 }
             }
 
+            #region 若上方判斷有 同 Roll 不同 Dyelot
             if (listMsg.Count > 0)
             {
                 DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
                 switch (Dr.ToString().ToUpper())
                 {
                     case "OK":
+                        int index = 0;
                         foreach (DataRow row in DetailDatas)
                         {
-                            DataTable dt;
-                            string strSql = string.Format(@"
-select  Roll
-        , Dyelot
-from FtyInventory
-where   Poid = '{0}'
-        and Seq1 = '{1}'
-        and Seq2 = '{2}'
-        and Roll = '{3}'
-", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"]);
-                            DualResult result = DBProxy.Current.Select(null, strSql, out dt);
-                            if (!result)
+                            if (row["FabricType"].EqualString("F"))
                             {
-                                MyUtility.Msg.WarningBox(result.Description);
-                            }
-
-                            if (dt != null && dt.Rows.Count > 0)
-                            {
+                                DualResult result;
                                 /**
-                                    * 如果在編輯模式下，直接改 Grid
-                                    * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
-                                    **/
-                                row["toRoll"] = dt.Rows[0]["Roll"];
-                                row["toDyelot"] = dt.Rows[0]["Dyelot"];
+                                * 如果在編輯模式下，直接改 Grid
+                                * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
+                                **/
+                                row["toDyelot"] = listDyelot[index++];
 
                                 if (this.EditMode != true)
                                 {
                                     result = DBProxy.Current.Execute(null, string.Format(@"
-Update RD
-set RD.Roll = '{0}'
-    , RD.Dyelot = '{1}'
-From Receiving_Detail RD
-where RD.Ukey = '{2}'", dt.Rows[0]["toRoll"], dt.Rows[0]["toDyelot"], row["Ukey"]));
+Update BB
+set BB.Roll = '{0}'
+    , BB.Dyelot = '{1}'
+From BorrowBack BB
+where BB.Ukey = '{2}'", row["toRoll"], row["toDyelot"], row["Ukey"]));
 
                                     if (!result)
                                     {
@@ -1233,6 +1246,7 @@ where RD.Ukey = '{2}'", dt.Rows[0]["toRoll"], dt.Rows[0]["toDyelot"], row["Ukey"
                         return false;
                 }
             }
+            #endregion
             return true;
         }
     }

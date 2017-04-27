@@ -1381,12 +1381,29 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
         {
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             List<string> listMsg = new List<string>();
+            List<string> listDyelot = new List<string>();
             foreach (DataRow row in DetailDatas)
             {
                 DataRow dr;
+                //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
                 if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
-                    string sql = string.Format(@"
+                    #region 先判斷 FtyInventory 是否有相同的 Roll & Dyelot
+                    string checkFtySql = string.Format(@"
+select  total = count(*)  
+		, Dyelot
+From dbo.FtyInventory Fty
+where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}'
+group by Dyelot
+", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
+                    if (MyUtility.Check.Seek(checkFtySql, null))
+                    {
+                        listDyelot.Add(row["dyelot"].ToString());
+                    }
+                    else
+                    {
+                        #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
+                        string checkSql = string.Format(@"
 select 
 	total = sum(total)
 	, Dyelot = Dyelot
@@ -1395,7 +1412,7 @@ from(
             , Dyelot
     from dbo.Receiving_Detail RD WITH (NOLOCK) 
     inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
-    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and RD.id !='{5}' and R.Status = 'Confirmed'
+    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and RD.ID != '{5}' and R.Status = 'Confirmed'
 	group by Dyelot
 
 	Union All
@@ -1434,78 +1451,68 @@ from(
 	group by Dyelot
 ) x
 group by Dyelot", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-
-                    if (MyUtility.Check.Seek(sql, out dr, null))
-                    {
-                        if (Convert.ToInt32(dr[0]) > 0)
+                        if (MyUtility.Check.Seek(checkSql, out dr, null))
                         {
-                            listMsg.Add(string.Format(@"
+                            if (Convert.ToInt32(dr[0]) > 0)
+                            {
+                                listMsg.Add(string.Format(@"
 The Deylot of
 <SP#>:{0}, <Seq>:{1}, <Roll>:{2}
 already exists, system will update the Qty for original Deylot <{3}>
-", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], dr[1].ToString().Trim()));
+", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], dr["Dyelot"].ToString().Trim()));
+                                listDyelot.Add(dr["Dyelot"].ToString().Trim());
+                            }
                         }
+                        else
+                        {
+                            listDyelot.Add(row["Dyelot"].ToString().Trim());
+                        }
+                        #endregion
                     }
+                    #endregion
                 }
             }
-
+            #region 若上方判斷有 同 Roll 不同 Dyelot
             if (listMsg.Count > 0)
             {
                 DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
                 switch (Dr.ToString().ToUpper())
                 {
                     case "OK":
+                        int index = 0;
                         foreach (DataRow row in DetailDatas)
                         {
                             if (row["FabricType"].EqualString("F"))
                             {
-                                DataTable dt;
-                                string strSql = string.Format(@"
-select  Roll
-        , Dyelot
-from FtyInventory
-where   Poid = '{0}'
-        and Seq1 = '{1}'
-        and Seq2 = '{2}'
-        and Roll = '{3}'
-", row["poid"], row["seq1"], row["seq2"], row["roll"]);
-                                DualResult result = DBProxy.Current.Select(null, strSql, out dt);
-                                if (!result)
-                                {
-                                    MyUtility.Msg.WarningBox(result.Description);
-                                }
+                                DualResult result;
+                                /**
+                                * 如果在編輯模式下，直接改 Grid
+                                * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
+                                **/
+                                row["Dyelot"] = listDyelot[index++];   
 
-                                if (dt != null && dt.Rows.Count > 0)
+                                if (this.EditMode != true)
                                 {
-                                    /**
-                                     * 如果在編輯模式下，直接改 Grid
-                                     * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
-                                     **/
-                                    row["Roll"] = dt.Rows[0]["Roll"];
-                                    row["Dyelot"] = dt.Rows[0]["Dyelot"];
-
-                                    if (this.EditMode != true)
-                                    {
-                                        result = DBProxy.Current.Execute(null, string.Format(@"
+                                    result = DBProxy.Current.Execute(null, string.Format(@"
 Update RD
 set RD.Roll = '{0}'
     , RD.Dyelot = '{1}'
 From Receiving_Detail RD
-where RD.Ukey = '{2}'", dt.Rows[0]["Roll"], dt.Rows[0]["Dyelot"], row["Ukey"]));
+where RD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
 
-                                        if (!result)
-                                        {
-                                            MyUtility.Msg.WarningBox(result.Description);
-                                        }
+                                    if (!result)
+                                    {
+                                        MyUtility.Msg.WarningBox(result.Description);
                                     }
                                 }
                             }
-                        }
+                        }                        
                         break;
                     case "CANCEL":
                         return false;
                 }
             }
+            #endregion 
             return true;
         }
     }
