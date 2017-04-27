@@ -143,17 +143,14 @@ with cte as (
             ,p.NETQty
             ,p.LossQty
             ,scrapqty = sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) 
-            ,location = stuff((select ',' + mtllocationid 
-                               from (select distinct mtllocationid 
-                                     from dbo.FtyInventory_Detail WITH (NOLOCK) 
-                                     where ukey = sd.FromFtyInventoryUkey) mtl 
-                               for xml path(''))
-                             , 1, 1, '') 
+            ,location = dbo.Getlocation(fi.ukey)
             ,s.IssueDate
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
+left join dbo.FtyInventory Fi on sd.FromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
+    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
 where s.Status = 'Confirmed' and s.type = '{0}'
 ", stocktype,fabrictype));
 
@@ -251,7 +248,7 @@ where s.Status = 'Confirmed' and s.type = '{0}'
             #endregion
 
             sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID
-  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate,FromFtyInventoryUkey)");
+  , o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty, p.NETQty, p.LossQty, s.IssueDate,fi.ukey)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
