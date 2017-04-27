@@ -298,8 +298,11 @@ namespace Sci.Production.Warehouse
 
                                 DataRow dr2;
                                 string sql = string.Format(@"
-select pd.fabrictype,pd.POUnit,pd.StockUnit,isnull(vu.RateValue,0)*{3} as stockqty 
-,(select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
+select  pd.fabrictype
+        , pd.POUnit
+        , pd.StockUnit
+        , Round(isnull(vu.RateValue,0) * {3}, 2) as stockqty 
+        , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
