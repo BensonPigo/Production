@@ -436,7 +436,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
             DataRow seekdr;
             if (MyUtility.Check.Seek("select * from mailto WITH (NOLOCK) where Id='004'", out seekdr))
             {
-                string mailFrom = Sci.Env.User.MailAddress;
+                string mailFrom = Sci.Env.Cfg.MailFrom;
                 string mailto = seekdr["ToAddress"].ToString();
                 string cc = seekdr["ccAddress"].ToString();
                 string content = seekdr["content"].ToString();
