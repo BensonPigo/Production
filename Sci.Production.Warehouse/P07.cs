@@ -1167,7 +1167,7 @@ Where a.id = '{0}' ", masterID);
 ,b.FabricType
 , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Qty+a.Foc as Actualqty
-, round((a.Qty+a.Foc)*v.rate,2) as stockqty
+, round((a.Qty+a.Foc)*v.RateValue,2) as stockqty
 , '' as dyelot
 , '' as remark
 , '' as location
