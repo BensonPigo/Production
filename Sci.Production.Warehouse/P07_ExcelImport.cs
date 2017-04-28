@@ -301,10 +301,9 @@ namespace Sci.Production.Warehouse
 select  pd.fabrictype
         , pd.POUnit
         , pd.StockUnit
-        , Round(isnull(vu.RateValue,0) * {3}, 2) as stockqty 
+        , Round(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, {3}), 2) as stockqty 
         , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join dbo.View_Unitrate vu on vu.FROM_U = pd.POUnit and vu.TO_U = pd.StockUnit
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
