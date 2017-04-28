@@ -131,7 +131,7 @@ namespace Sci.Production.Thread
             return true;
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtRefnoStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     Refno,
@@ -144,7 +144,7 @@ namespace Sci.Production.Thread
             txtRefnoStart.Text = item.GetSelectedString();
         }
 
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtRefnoEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     Refno,
@@ -157,7 +157,7 @@ namespace Sci.Production.Thread
             txtRefnoEnd.Text = item.GetSelectedString();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtRefnoStart_Validating(object sender, CancelEventArgs e)
         {
             
             if (txtRefnoStart.Text.ToString() == "") return;
@@ -172,7 +172,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtRefnoEnd_Validating(object sender, CancelEventArgs e)
         {
             if (txtRefnoEnd.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct Refno,
@@ -186,7 +186,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textSHA_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtShade_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select   distinct
                                         threadcolorid, 
@@ -198,7 +198,7 @@ namespace Sci.Production.Thread
             if (result == DialogResult.Cancel) { return; }
             txtShade.Text = item.GetSelectedString();
         }
-        private void textSHA_Validating(object sender, CancelEventArgs e)
+        private void txtShade_Validating(object sender, CancelEventArgs e)
         {
             if (txtShade.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct threadcolorid, 
@@ -211,7 +211,7 @@ namespace Sci.Production.Thread
                 txtShade.Text = "";
             }
         }
-        private void textTYPE_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     l.Category 
@@ -224,7 +224,7 @@ namespace Sci.Production.Thread
             txtType.Text = item.GetSelectedString();
         }
 
-        private void textTYPE_Validating(object sender, CancelEventArgs e)
+        private void txtType_Validating(object sender, CancelEventArgs e)
         {
             if (txtType.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct l.Category 
@@ -238,7 +238,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textITEM_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtThreadItem_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     l.ThreadTypeID
@@ -251,7 +251,7 @@ namespace Sci.Production.Thread
             txtThreadItem.Text = item.GetSelectedString();
         }
 
-        private void textITEM_Validating(object sender, CancelEventArgs e)
+        private void txtThreadItem_Validating(object sender, CancelEventArgs e)
         {
             if (txtThreadItem.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct l.Category 
@@ -265,7 +265,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textLOC1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtLocationStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     ThreadlocationID,
@@ -278,7 +278,7 @@ namespace Sci.Production.Thread
             txtLocationStart.Text = item.GetSelectedString();
         }
 
-        private void textLOC1_Validating(object sender, CancelEventArgs e)
+        private void txtLocationStart_Validating(object sender, CancelEventArgs e)
         {
             if (txtLocationStart.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct ThreadlocationID,
@@ -292,7 +292,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textLOC2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtLocationEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sql = @"select distinct 
                                     ThreadlocationID,
@@ -305,7 +305,7 @@ namespace Sci.Production.Thread
             txtLocationEnd.Text = item.GetSelectedString();
         }
 
-        private void textLOC2_Validating(object sender, CancelEventArgs e)
+        private void txtLocationEnd_Validating(object sender, CancelEventArgs e)
         {
             if (txtLocationEnd.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"select distinct ThreadlocationID,

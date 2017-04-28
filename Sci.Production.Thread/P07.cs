@@ -622,7 +622,7 @@ insert  ThreadStock (refno, mDivisionid, threadcolorid, threadlocationid, newcon
             this.OnDetailEntered();
             EnsureToolbarExt();
         }
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImportFromStock_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P07_import = new Sci.Production.Thread.P07_Import(detTable);

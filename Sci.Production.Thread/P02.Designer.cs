@@ -319,7 +319,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(108, 23);
             this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             // 
             // labelSP
             // 

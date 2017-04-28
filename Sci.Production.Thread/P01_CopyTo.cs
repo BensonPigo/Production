@@ -28,7 +28,7 @@ namespace Sci.Production.Thread
             this.master = master;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             string season = txtseason.Text;
             if (season == master["seasonid"].ToString())
@@ -195,7 +195,7 @@ namespace Sci.Production.Thread
             #endregion
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

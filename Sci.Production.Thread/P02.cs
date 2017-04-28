@@ -396,7 +396,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             return base.ClickEditBefore();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
             if (txtSP.OldValue == txtSP.Text) return;
             string id = txtSP.Text;

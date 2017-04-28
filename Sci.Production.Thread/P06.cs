@@ -345,7 +345,7 @@ namespace Sci.Production.Thread
             this.OnDetailEntered();
             EnsureToolbarExt();
         }
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             //移到指定那筆
             string refno = txtRefnoLocation.Text;

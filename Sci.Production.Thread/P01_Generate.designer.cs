@@ -56,8 +56,8 @@
             this.txtMachineType.Name = "txtMachineType";
             this.txtMachineType.Size = new System.Drawing.Size(150, 23);
             this.txtMachineType.TabIndex = 18;
-            this.txtMachineType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtMachineType.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtMachineType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtMachineType_PopUp);
+            this.txtMachineType.Validating += new System.ComponentModel.CancelEventHandler(this.txtMachineType_Validating);
             // 
             // btnFilter
             // 
@@ -68,7 +68,7 @@
             this.btnFilter.TabIndex = 2;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.button3_Click);
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // panel2
             // 
@@ -92,7 +92,7 @@
             this.btnBatchUpdate.TabIndex = 16;
             this.btnBatchUpdate.Text = "Batch update";
             this.btnBatchUpdate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdate.Click += new System.EventHandler(this.button4_Click);
+            this.btnBatchUpdate.Click += new System.EventHandler(this.btnBatchUpdate_Click);
             // 
             // labelThreadCombination
             // 
@@ -124,7 +124,7 @@
             this.btnClose.TabIndex = 8;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button2_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnGenerate
             // 
@@ -135,7 +135,7 @@
             this.btnGenerate.TabIndex = 0;
             this.btnGenerate.Text = "Generate";
             this.btnGenerate.UseVisualStyleBackColor = true;
-            this.btnGenerate.Click += new System.EventHandler(this.btn_Generate_Click);
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
             // gridDetail
             // 

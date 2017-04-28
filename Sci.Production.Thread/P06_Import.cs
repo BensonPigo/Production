@@ -53,7 +53,7 @@ namespace Sci.Production.Thread
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             string threadlocation1 = this.txtthreadlocationStart.Text, threadlocation2 = this.txtthreadlocationEnd.Text;
             string thradrefno1 = txtlocalitemStart.Text, thradrefno2 = txtlocalitemEnd.Text;
@@ -108,12 +108,12 @@ namespace Sci.Production.Thread
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
             if (MyUtility.Check.Empty(gridTable) || gridTable.Rows.Count == 0) return;

@@ -91,7 +91,7 @@ namespace Sci.Production.Thread
             gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFilter_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             if (MyUtility.Check.Empty(txtMachineType.Text))
@@ -105,13 +105,13 @@ namespace Sci.Production.Thread
         }
 
         //close
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
         
         //save到DB
-        private void btn_Generate_Click(object sender, EventArgs e)
+        private void btnGenerate_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             DataTable groupTable, operTable, gridTable3;
@@ -279,7 +279,7 @@ where S.Ukey = '{0}'", styleUkey);
             this.Close();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnBatchUpdate_Click(object sender, EventArgs e)
         {
 
             foreach (DataRowView dr in gridTable.DefaultView)
@@ -295,7 +295,7 @@ where S.Ukey = '{0}'", styleUkey);
             gridDetail.ValidateControl();
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtMachineType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"Select distinct d.MachineTypeID
             from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK) 
@@ -307,7 +307,7 @@ where S.Ukey = '{0}'", styleUkey);
             this.txtMachineType.Text = item.GetSelectedString();
         }
 
-        private  void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtMachineType_Validating(object sender, CancelEventArgs e)
         {
             base.OnValidating(e);
             string str = this.txtMachineType.Text;

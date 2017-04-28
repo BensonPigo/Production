@@ -229,7 +229,7 @@ namespace Sci.Production.Thread
             return true;
         }
 
-        private void textSHA_MouseDown(object sender, MouseEventArgs e)
+        private void txtShade_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -245,7 +245,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textTYPE_MouseDown(object sender, MouseEventArgs e)
+        private void txtType_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -261,7 +261,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textITEM_MouseDown(object sender, MouseEventArgs e)
+        private void txtThreadItem_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -277,7 +277,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        private void txtRefNoStart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -293,7 +293,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void textLOC1_MouseDown(object sender, MouseEventArgs e)
+        private void txtLocationStart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {

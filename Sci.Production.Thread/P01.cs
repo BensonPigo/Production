@@ -80,7 +80,7 @@ where b.Id = a.OperationId and a.id='{0}'", CurrentDetailData["id"]);
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnGenerate_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P01_Generate = new Sci.Production.Thread.P01_Generate(CurrentMaintain["Ukey"].ToString(), CurrentMaintain["id"].ToString(), CurrentMaintain["seasonid"].ToString(), CurrentMaintain["brandid"].ToString());

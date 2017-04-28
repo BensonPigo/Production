@@ -389,8 +389,8 @@ namespace Sci.Production.Thread
             this.OnDetailEntered();
             EnsureToolbarExt();
         }
- 
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnCopyBookQtyToInventoryQty_Click(object sender, EventArgs e)
         {
             foreach (DataRow dr in DetailDatas)
             {
@@ -401,7 +401,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             //移到指定那筆
             string refno = txtRefnoLocation.Text;
@@ -416,14 +416,14 @@ namespace Sci.Production.Thread
             { detailgridbs.Position = index; }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             DataTable detTable = ((DataTable)this.detailgridbs.DataSource);
             Form P05_import = new Sci.Production.Thread.P05_Import(detTable);
             P05_import.ShowDialog();
         }
 
-        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        private void comboForwardBack_SelectionChangeCommitted(object sender, EventArgs e)
         {
             if (comboForwardBack.SelectedValue.ToString() == comboForwardBack.OldValue.ToString()) return;
             DialogResult diresult = MyUtility.Msg.QuestionBox("The detail grid will be cleared, are you sure change type?");

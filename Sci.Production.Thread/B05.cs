@@ -208,7 +208,7 @@ namespace Sci.Production.Thread
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             gridTb.Clear();
             transrecord(dateTransactionDate.TextBox1.Text, dateTransactionDate.TextBox2.Text);
@@ -216,7 +216,7 @@ namespace Sci.Production.Thread
             OnDetailGridRowChanged();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFilter_Click(object sender, EventArgs e)
         {
             //移到指定那筆
             string refno = txtThreadColorLocation.Text;
@@ -228,7 +228,7 @@ namespace Sci.Production.Thread
             if (MyUtility.Check.Empty(refno)) detailgridbs.Filter = ""; //清空Filter
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnRecalculateStockQty_Click(object sender, EventArgs e)
         {
             initqty(DateTime.Now.ToShortDateString(), 1);
             OnRefreshClick();

@@ -149,7 +149,7 @@
             this.txtLocationEnd.Name = "txtLocationEnd";
             this.txtLocationEnd.Size = new System.Drawing.Size(113, 23);
             this.txtLocationEnd.TabIndex = 7;
-            this.txtLocationEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
+            this.txtLocationEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocationStart_MouseDown);
             // 
             // txtLocationStart
             // 
@@ -159,7 +159,7 @@
             this.txtLocationStart.Name = "txtLocationStart";
             this.txtLocationStart.Size = new System.Drawing.Size(113, 23);
             this.txtLocationStart.TabIndex = 6;
-            this.txtLocationStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textLOC1_MouseDown);
+            this.txtLocationStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocationStart_MouseDown);
             // 
             // txtThreadItem
             // 
@@ -169,7 +169,7 @@
             this.txtThreadItem.Name = "txtThreadItem";
             this.txtThreadItem.Size = new System.Drawing.Size(127, 23);
             this.txtThreadItem.TabIndex = 5;
-            this.txtThreadItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textITEM_MouseDown);
+            this.txtThreadItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtThreadItem_MouseDown);
             // 
             // txtType
             // 
@@ -179,7 +179,7 @@
             this.txtType.Name = "txtType";
             this.txtType.Size = new System.Drawing.Size(135, 23);
             this.txtType.TabIndex = 4;
-            this.txtType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textTYPE_MouseDown);
+            this.txtType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtType_MouseDown);
             // 
             // txtShade
             // 
@@ -189,7 +189,7 @@
             this.txtShade.Name = "txtShade";
             this.txtShade.Size = new System.Drawing.Size(122, 23);
             this.txtShade.TabIndex = 3;
-            this.txtShade.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textSHA_MouseDown);
+            this.txtShade.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtShade_MouseDown);
             // 
             // radioPanel1
             // 
@@ -232,7 +232,7 @@
             this.txtRefNoEnd.Name = "txtRefNoEnd";
             this.txtRefNoEnd.Size = new System.Drawing.Size(100, 23);
             this.txtRefNoEnd.TabIndex = 2;
-            this.txtRefNoEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.txtRefNoEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtRefNoStart_MouseDown);
             // 
             // txtRefNoStart
             // 
@@ -242,7 +242,7 @@
             this.txtRefNoStart.Name = "txtRefNoStart";
             this.txtRefNoStart.Size = new System.Drawing.Size(100, 23);
             this.txtRefNoStart.TabIndex = 1;
-            this.txtRefNoStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
+            this.txtRefNoStart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtRefNoStart_MouseDown);
             // 
             // dateDate
             // 
