@@ -68,7 +68,7 @@ namespace Sci.Production.Warehouse
             listControlBindingSource2.DataSource = grid2Data;
             gridPoid.DataSource = listControlBindingSource2;
 
-            gridPoid.IsEditingReadOnly = true;
+            gridPoid.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridPoid)
                 .Text("poid", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
@@ -82,7 +82,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("weight", header: "WeiKg")
                 .Numeric("actualWeight", header: "NetKg")
                 .Text("location", header: "Location", width: Widths.AnsiChars(8))
-                .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100));
+                .Text("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < gridPoid.ColumnCount; i++)
             {
