@@ -657,7 +657,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                             txttpeuserSMR.DisplayBox2.Text = "";
                             txttpeuserTask.DisplayBox1.Text = "";
                             txttpeuserTask.DisplayBox2.Text = "";
-                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} ShipModeList:<A/C>, it can't be created!", orderID));
+                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} The Air Pre-Paid is already created.", orderID));
                             txtSpNo.Text = "";
                             return;
                         }
