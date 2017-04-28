@@ -40,11 +40,8 @@ namespace Sci.Production.Quality
         protected override DualResult OnRequery()
         {
             mainDBQuery();
-            #region Encode Enable
             button_enable();
-            btnEncode.Text = MyUtility.Convert.GetBool(maindr["CrockingEncode"]) ? "Amend" : "Encode";
 
-            #endregion
             //表頭 資料設定
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["CrockingEncode"]);
             string fir_cmd = string.Format(
@@ -612,6 +609,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         {
             if (maindr == null) return;
             btnEncode.Enabled = this.CanEdit && !this.EditMode;
+            btnEncode.Text = MyUtility.Convert.GetBool(maindr["CrockingEncode"]) ? "Amend" : "Encode";
             this.btnToExcel.Enabled = !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }

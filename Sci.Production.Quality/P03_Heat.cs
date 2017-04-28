@@ -42,11 +42,7 @@ namespace Sci.Production.Quality
         protected override DualResult OnRequery()
         {
             mainDBQuery();//重新query maindr
-            #region Encode Enable
             button_enable();
-            btnEncode.Text = MyUtility.Convert.GetBool(maindr["HeatEncode"]) ? "Amend" : "Encode";
-
-            #endregion
             //表頭 資料設定           
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["HeatEncode"]);
            
@@ -253,14 +249,11 @@ where a.ID='{0}'"
                     }
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue)!=0)
                     {
-                        decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] +
-                           (decimal)dr["HorizontalTest3"]) / 3)
-                           - (decimal)dr["HorizontalOriginal"])
-                           / (decimal)dr["HorizontalOriginal"]*100;
-                        dr["HorizontalRate"] = Math.Round(newValue, 2);
+                        CalHorRate(dr);
                     }
                     else
                     {
+                        dr["HorizontalRate"] = 0;
                         return;
                     }
                    
@@ -288,47 +281,32 @@ where a.ID='{0}'"
                 }
                 if (MyUtility.Convert.GetDecimal(e.FormattedValue)!=0)
                 {
-                    decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
-                    dr["VerticalRate"] = Math.Round(newValue, 2);
+                    CalVerRate(dr);
                 }
                 else
                 {
+                    dr["VerticalRate"] = 0;
                     return;
                 }
             
             };
             HorTest1Cell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) != MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]))
+                    if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
-                        if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
-                        {
-                            MyUtility.Msg.InfoBox("<Horizontal 1> cannot over than 100 !");
-                            dr["HorizontalTest1"] = MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]);
-                        }
-                        else
-                        {
-                            dr["HorizontalTest1"] = e.FormattedValue;
-                        }                       
-                    }
-                    if ((decimal)dr["HorizontalOriginal"]!=0)
-                    {
-                        decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] +
-                          (decimal)dr["HorizontalTest3"]) / 3)
-                          - (decimal)dr["HorizontalOriginal"])
-                          / (decimal)dr["HorizontalOriginal"] * 100;
-                        dr["HorizontalRate"] = Math.Round(newValue, 2);
-                        decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
-                        dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
-                        
+                        MyUtility.Msg.InfoBox("<Horizontal 1> cannot over than 100 !");
+                        dr["HorizontalTest1"] = MyUtility.Convert.GetDecimal(dr["HorizontalTest1"]);
                     }
                     else
                     {
-                        return;
+                        dr["HorizontalTest1"] = e.FormattedValue;
                     }
-
-                };
+                }
+                CalHorRate(dr);
+            };
             HorTest2Cell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
@@ -344,21 +322,7 @@ where a.ID='{0}'"
                         dr["HorizontalTest2"] = e.FormattedValue;
                     }                   
                 }
-                if ((decimal)dr["HorizontalOriginal"] != 0)
-                {
-                    decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] +
-                          (decimal)dr["HorizontalTest3"]) / 3)
-                          - (decimal)dr["HorizontalOriginal"])
-                          / (decimal)dr["HorizontalOriginal"] * 100;
-                    dr["HorizontalRate"] = Math.Round(newValue, 2);
-                    decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
-                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
-                    
-                }
-                else
-                {
-                    return;
-                }
+                CalHorRate(dr);
             };
             HorTest3Cell.CellValidating += (s, e) =>
             {
@@ -375,24 +339,8 @@ where a.ID='{0}'"
                         dr["HorizontalTest3"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["HorizontalOriginal"] != 0)
-                {
-                    decimal newValue = ((((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] +
-                          (decimal)dr["HorizontalTest3"]) / 3)
-                          - (decimal)dr["HorizontalOriginal"])
-                          / (decimal)dr["HorizontalOriginal"] * 100;
-                    dr["HorizontalRate"] = Math.Round(newValue, 2);
-                    decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
-                    dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
-                    
-                }
-                else
-                {
-                    return;
-                }
-            };
-            
-          
+                CalHorRate(dr);
+            };  
             VirTest1Cell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
@@ -409,18 +357,7 @@ where a.ID='{0}'"
                         dr["VerticalTest1"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["VerticalOriginal"] != 0)
-                {
-                    decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
-                    dr["VerticalRate"] = Math.Round(newValue, 2);
-                    decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
-                    dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-                    
-                }
-                else
-                {
-                    return;
-                }
+                CalVerRate(dr);
             };
             VirTest2Cell.CellValidating += (s, e) =>
             {
@@ -438,18 +375,7 @@ where a.ID='{0}'"
                         dr["VerticalTest2"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["VerticalOriginal"] != 0)
-                {
-                    decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
-                    dr["VerticalRate"] = Math.Round(newValue, 2);
-                    decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
-                    dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-                    
-                }
-                else
-                {
-                    return;
-                }
+                CalVerRate(dr);
             };           
             VirTest3Cell.CellValidating += (s, e) =>
             {
@@ -467,18 +393,7 @@ where a.ID='{0}'"
                         dr["VerticalTest3"] = e.FormattedValue;
                     }
                 }
-                if ((decimal)dr["VerticalOriginal"] != 0)
-                {
-                    decimal newValue = ((((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
-                    dr["VerticalRate"] = Math.Round(newValue, 2);
-                    decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3) ;
-                    dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-                    
-                }
-                else
-                {
-                    return;
-                }
+                CalVerRate(dr);
             };
             LabTechCell.CellValidating += (s, e) =>
             {
@@ -832,20 +747,9 @@ where a.ID='{0}'"
             //return;
             if (maindr == null) return;
             btnEncode.Enabled = this.CanEdit && !this.EditMode;
+            btnEncode.Text = MyUtility.Convert.GetBool(maindr["HeatEncode"]) ? "Amend" : "Encode";
             this.btnToExcel.Enabled =  !this.EditMode;
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
-            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P03", "MenuDetail", "FormName");
-            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", loginID, "Pass1", "ID");
-            DataRow pass2_dr;
-            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
-            int lApprove = 0; //有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
-            int lCheck = 0;
-            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
-            {
-                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
-                lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
-            }
-
         }
         //maindr where id,poid重新query 
         private void mainDBQuery()
@@ -931,6 +835,45 @@ where a.ID='{0}'"
             if (excel != null) Marshal.FinalReleaseComObject(excel);          //釋放objApp
                 
 
+        }
+        /// <summary>
+        /// Calculation HorizontalRate Value
+        /// </summary>
+        /// <param name="dr">current dataRow</param>
+        private void CalHorRate(DataRow dr)
+        {
+            if (!MyUtility.Check.Empty(dr["HorizontalOriginal"]))
+            {
+                decimal newValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3 - (decimal)dr["HorizontalOriginal"]) / (decimal)dr["HorizontalOriginal"] * 100;
+                dr["HorizontalRate"] = Math.Round(newValue, 2);
+            }
+            else
+            {
+                dr["HorizontalRate"] = 0;
+                return;
+            }
+            decimal newAvgValue = (((decimal)dr["HorizontalTest1"] + (decimal)dr["HorizontalTest2"] + (decimal)dr["HorizontalTest3"]) / 3);
+            dr["Horizontal_Average"] = Math.Round(newAvgValue, 2);
+        }
+        /// <summary>
+        /// Calculation VerticalRate Value
+        /// </summary>
+        /// <param name="dr">current dataRow</param>
+        private void CalVerRate(DataRow dr)
+        {
+            if (!MyUtility.Check.Empty(dr["VerticalOriginal"]))
+            {
+                decimal newValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3 - (decimal)dr["VerticalOriginal"]) / (decimal)dr["VerticalOriginal"] * 100;
+                dr["VerticalRate"] = Math.Round(newValue, 2);
+
+            }
+            else
+            {
+                dr["VerticalRate"] = 0;
+                return;
+            }
+            decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
+            dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
         }
    
     }
