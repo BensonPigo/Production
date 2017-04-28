@@ -139,15 +139,14 @@ namespace Sci.Production.Warehouse
 select  z.POID
         , z.Seq1
         , z.Seq2
-        , requestqty = Round(sum(z.requestqty) * isnull((select v.Ratevalue 
-                                                        from dbo.View_Unitrate v 
-                                                        where v.FROM_U = (  select distinct unitID
-			                                                                from Invtrans B WITH (NOLOCK) 
-			                                                                where   B.InventoryPoId = z.PoId 
-			                                                                        and B.InventorySeq1 = z.Seq1 
-			                                                                        and B.InventorySeq2 = z.Seq2 
-			                                                                        and B.FactoryId = '{2}') 
-		                                                      and v.TO_U = z.stockunit),1)
+        , requestqty = Round(dbo.GetUnitQty((select distinct unitID
+			                                 from Invtrans B WITH (NOLOCK) 
+			                                 where   B.InventoryPoId = z.PoId 
+			                                         and B.InventorySeq1 = z.Seq1 
+			                                         and B.InventorySeq2 = z.Seq2 
+			                                         and B.FactoryId = '{2}') 
+                                             , z.stockunit
+                                             , sum(z.requestqty))
                             , 2)
         ,qty
         ,z.stockunit
