@@ -122,12 +122,31 @@ namespace Sci.Production.Warehouse
             
             #region -- SQL Command --
             StringBuilder sqlcmd = new StringBuilder();
-            sqlcmd.Append(@"select i.poid,i.seq1,i.seq2,i.BrandID,i.InputQty,i.OutputQty,i.Qty
-,case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
-,i.FactoryID,i.ETA
-,i.MtlTypeID,i.ProjectID,i.Deadline,i.Refno,i.Ukey,I.SCIRefno,I.UnitID POUNIT,DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
-,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=I.UnitID AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid)),1.0) RATE
- from inventory i WITH (NOLOCK) 
+            sqlcmd.Append(@"
+select  i.poid
+        , i.seq1
+        , i.seq2
+        , i.BrandID
+        , i.InputQty
+        , i.OutputQty
+        , i.Qty
+        , case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
+        , i.FactoryID
+        , i.ETA
+        , i.MtlTypeID
+        , i.ProjectID
+        , i.Deadline
+        , i.Refno
+        , i.Ukey
+        , I.SCIRefno
+        , I.UnitID POUNIT
+        , DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
+        , ISNULL((SELECT cast(V.RateValue as numeric) 
+                  FROM dbo.View_Unitrate V 
+                  WHERE   V.FROM_U=I.UnitID 
+                          AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid))
+                 , 1.0) RATE
+from inventory i WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
 left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
@@ -255,13 +274,13 @@ select i.poid,i.seq1,i.Seq2,t.id
                 MyUtility.Msg.WarningBox("qty > 0 Data not found!!");
             }
 
-            dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "InputQty * rate");
-            dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "OutputQty * rate");
-            dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Qty * rate");
+            dtTpeIventory.Columns.Add("InputQty_unit", typeof(decimal), "Convert(InputQty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(InputQty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
+            dtTpeIventory.Columns.Add("OutputQty_unit", typeof(decimal), "Convert(OutputQty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(OutputQty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
+            dtTpeIventory.Columns.Add("Qty_unit", typeof(decimal), "Convert(Qty * rate * 100, 'System.Int32') / 100.0 + iif(Convert(Qty * rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
             //dtTpeIventory.Columns.Add("Balance", typeof(decimal), "InputQty - OutputQty");
             dtTpeIventory.DefaultView.Sort="POID,SEQ1,SEQ2";
             dtTpeIventory.TableName = "dtTpeIventory";
-            
+
             dtInvtrans.TableName = "dtInvtrans";
             dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty");
             
@@ -271,8 +290,8 @@ select i.poid,i.seq1,i.Seq2,t.id
                 );
             data.Relations.Add(relation);
 
-            dtInvtrans.Columns.Add("qty_unit", typeof(decimal), "qty * parent.rate");
-            dtInvtrans.Columns.Add("running_total_unit", typeof(decimal), "running_total * parent.rate");
+            dtInvtrans.Columns.Add("qty_unit", typeof(decimal), "Convert(Qty * parent.rate * 100, 'System.Int32') / 100.0 + iif(Convert(Qty * parent.rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
+            dtInvtrans.Columns.Add("running_total_unit", typeof(decimal), "Convert(running_total * parent.rate * 100, 'System.Int32') / 100.0 + iif(Convert(running_total * parent.rate * 1000, 'System.Int32') % 10 >= 5, 0.01, 0)");
 
             bindingSource1.DataSource = data;
             bindingSource1.DataMember = "dtTpeIventory";
