@@ -1233,7 +1233,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             base.ClickJunk();
             if (!(PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Handle"])) || PublicPrg.Prgs.GetAuthority(MyUtility.Convert.GetString(CurrentMaintain["Manager"]))))
             {
-                MyUtility.Msg.WarningBox("You don't have permission to send.");
+                MyUtility.Msg.WarningBox("You don't have permission to Junk.");
                 return;
             }
 

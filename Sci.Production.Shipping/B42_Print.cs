@@ -29,13 +29,13 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(dateDate.Value1) && MyUtility.Check.Empty(dateDate.Value2))
             {
-                MyUtility.Msg.WarningBox("Date can empty!!");
+                MyUtility.Msg.WarningBox("Date can't be empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(txtCustomSPNoStart.Text) != MyUtility.Check.Empty(txtCustomSPNoEnd.Text))
             {
-                MyUtility.Msg.WarningBox("Custom SP# can empty!!");
+                MyUtility.Msg.WarningBox("Custom SP# can't be empty!!");
                 if (MyUtility.Check.Empty(txtCustomSPNoStart.Text))
                 {
                     txtCustomSPNoStart.Focus();
