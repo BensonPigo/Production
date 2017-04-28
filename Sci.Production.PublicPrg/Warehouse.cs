@@ -476,43 +476,46 @@ drop table #TmpSource
         }       
         #endregion
         #region -- SelePoItem --
-        public static string selePoItemSqlCmd = @"select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq, p.Refno, dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
-                                                    ,p.ColorID,p.FinalETA
-                                                    ,isnull(m.InQty, 0) as InQty
-                                                    ,p.pounit
-                                                    ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-                                                        ff.UsageUnit , 
-                                                        iif(mm.IsExtensionUnit > 0 , 
-                                                            iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-                                                                ff.UsageUnit , 
-                                                                uu.ExtensionUnit), 
-                                                            ff.UsageUnit)) as StockUnit
-                                                    ,isnull(m.OutQty, 0) as outQty
-                                                    ,isnull(m.AdjustQty, 0) as AdjustQty
-                                                    ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
-                                                    ,isnull(m.LInvQty, 0) as LInvQty
-                                                    ,p.fabrictype
-                                                    ,p.seq1
-                                                    ,p.seq2
-                                                    ,p.scirefno
-                                                    ,p.qty
-                                                    from dbo.PO_Supp_Detail p WITH (NOLOCK) 
-                                                    inner join Orders o on p.id = o.id
-                                                    inner join Factory f on o.FtyGroup = f.id
-                                                    left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
-                                                    inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
-                                                    inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
-                                                    inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
-                                                    inner join View_unitrate v on v.FROM_U = p.POUnit 
-	                                                    and v.TO_U = (
-	                                                    iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
-		                                                    ff.UsageUnit , 
-		                                                    iif(mm.IsExtensionUnit > 0 , 
-			                                                    iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
-				                                                    ff.UsageUnit , 
-				                                                    uu.ExtensionUnit), 
-			                                                    ff.UsageUnit)))
-                                                    where p.id ='{0}'";
+        public static string selePoItemSqlCmd = @"
+select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
+        , p.Refno   
+        , dbo.getmtldesc(p.id,p.seq1,p.seq2,2,0) as Description 
+        ,p.ColorID,p.FinalETA
+        ,isnull(m.InQty, 0) as InQty
+        ,p.pounit
+        ,iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+            ff.UsageUnit , 
+            iif(mm.IsExtensionUnit > 0 , 
+                iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+                    ff.UsageUnit , 
+                    uu.ExtensionUnit), 
+                ff.UsageUnit)) as StockUnit
+        ,isnull(m.OutQty, 0) as outQty
+        ,isnull(m.AdjustQty, 0) as AdjustQty
+        ,isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
+        ,isnull(m.LInvQty, 0) as LInvQty
+        ,p.fabrictype
+        ,p.seq1
+        ,p.seq2
+        ,p.scirefno
+        ,Qty = Round(p.qty * v.Ratevalue, 2)
+from dbo.PO_Supp_Detail p WITH (NOLOCK) 
+inner join Orders o on p.id = o.id
+inner join Factory f on o.FtyGroup = f.id
+left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
+inner join [dbo].[Fabric] ff WITH (NOLOCK) on p.SCIRefno= ff.SCIRefno
+inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
+inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
+inner join View_unitrate v on v.FROM_U = p.POUnit 
+	and v.TO_U = (
+	iif(mm.IsExtensionUnit is null or uu.ExtensionUnit = '', 
+		ff.UsageUnit , 
+		iif(mm.IsExtensionUnit > 0 , 
+			iif(uu.ExtensionUnit is null or uu.ExtensionUnit = '', 
+				ff.UsageUnit , 
+				uu.ExtensionUnit), 
+			ff.UsageUnit)))
+where p.id ='{0}'";
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
