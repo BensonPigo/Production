@@ -44,10 +44,19 @@ cross apply
 where f.MDivisionID ='{1}' AND X.taipei_qty > 0
 )
 
-select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
-,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
-,m.taipei_issue_date,m.taipei_qty,m.POUnit,accu_qty, m.trans_qty	
-from cte m left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+select  m.poid
+        , m.seq1
+        , m.seq2
+        , m.StockUnit
+        , dbo.GetUnitQty(POUnit, StockUnit, m.Qty) as poqty
+        , dbo.GetUnitQty(POUnit, StockUnit, m.InputQty) as inputQty
+        , dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
+        , m.taipei_issue_date
+        , m.taipei_qty
+        , m.POUnit
+        , accu_qty
+        , m.trans_qty	
+from cte m 
 cross apply
 (select isnull(sum(qty) ,0) as accu_qty
 	from (
