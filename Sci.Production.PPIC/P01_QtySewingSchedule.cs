@@ -25,18 +25,17 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable GridData,LocationData;
-            string sqlCmd = string.Format(@"with SewingData
-as
+            string sqlCmd = string.Format(@"with SewingData as
 (
-select sd.ComboType,sd.Article,sd.SizeCode,isnull(sum(sd.AlloQty),0) as AlloQty,isnull(oq.Qty,0) as Qty,oa.Seq as ArticleSeq,os.Seq as SizeCoseSeq
-,(select SewingLineID+',' from SewingSchedule_Detail WITH (NOLOCK) where OrderID = sd.OrderID and Article = sd.Article and SizeCode = sd.SizeCode for xml path('')) as Line
-from SewingSchedule_Detail sd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on sd.OrderID = o.ID
-left join Order_Qty oq WITH (NOLOCK) on sd.OrderID = oq.ID and sd.Article = oq.Article and sd.SizeCode = oq.SizeCode
-left join Order_Article oa WITH (NOLOCK) on sd.OrderID = oa.id and sd.Article = oa.Article
-left join Order_SizeCode os WITH (NOLOCK) on sd.OrderID = os.id and sd.SizeCode = os.SizeCode
-where sd.OrderID = '{0}'
-group by sd.OrderID,sd.ComboType,sd.Article,sd.SizeCode,oq.Qty,oa.Seq,os.Seq
+	select sd.ComboType,sd.Article,sd.SizeCode,isnull(sum(sd.AlloQty),0) as AlloQty,isnull(oq.Qty,0) as Qty,oa.Seq as ArticleSeq,os.Seq as SizeCoseSeq
+	,Line = (select DISTINCT SewingLineID + ',' from SewingSchedule_Detail WITH (NOLOCK) where OrderID = sd.OrderID and Article = sd.Article and SizeCode = sd.SizeCode for xml path('')	) 
+	from SewingSchedule_Detail sd WITH (NOLOCK) 
+	left join Orders o WITH (NOLOCK) on sd.OrderID = o.ID
+	left join Order_Qty oq WITH (NOLOCK) on sd.OrderID = oq.ID and sd.Article = oq.Article and sd.SizeCode = oq.SizeCode
+	left join Order_Article oa WITH (NOLOCK) on sd.OrderID = oa.id and sd.Article = oa.Article
+	left join Order_SizeCode os WITH (NOLOCK) on sd.OrderID = os.id and sd.SizeCode = os.SizeCode
+    where sd.OrderID = '{0}'
+    group by sd.OrderID,sd.ComboType,sd.Article,sd.SizeCode,oq.Qty,oa.Seq,os.Seq
 )
 select *
 from (select ComboType,Article,SizeCode,Qty,AlloQty,LEFT(Line,LEN(Line)-1) as Line,ArticleSeq,SizeCoseSeq from SewingData) b
