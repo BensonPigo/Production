@@ -268,8 +268,10 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             
             //SciDelivery OrigBuyerDelivery
             //CRDDate
-            dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["BuyerDelivery"].ToString() ? Color.Red : Color.Blue;
-            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
+            if (!MyUtility.Check.Empty(CurrentMaintain["SciDelivery"]))
+                dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["BuyerDelivery"].ToString() ? Color.Red : Color.Blue;
+            if (!MyUtility.Check.Empty(CurrentMaintain["CRDDate"]))
+                dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
         }
 
         protected override void ClickNewAfter()
