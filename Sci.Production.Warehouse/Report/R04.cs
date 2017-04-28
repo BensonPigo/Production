@@ -109,7 +109,7 @@ select  operation = case a.type
                         where id = iif((a.type='2' or a.type='6') , a.seq70poid    
                                                                   , a.InventoryPOID)) 
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
-        ,productionQty = Round((isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))* v.RateValue, 2)
+        ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
                             when '1' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty, 0-outqty)) 
                                                                                           from dbo.FtyInventory WITH (NOLOCK) 
@@ -125,7 +125,7 @@ select  operation = case a.type
         ,InventorySpSeq = a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 
         ,InventoryProjectID = (select ProjectID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
         ,InventoryFactoryID = (select FactoryID from dbo.orders WITH (NOLOCK) where id = a.InventoryPOID) 
-        ,MR_Input = Round(d.InputQty * v.RateValue, 2)
+        ,MR_Input = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, d.InputQty), 2)
         ,InventoryInQty = (select sum(inqty) 
                            from ftyinventory WITH (NOLOCK) 
                            where poid = a.InventoryPOID and seq1 = a.InventorySeq1 
@@ -133,7 +133,7 @@ select  operation = case a.type
         ,a.Refno
         ,b.ColorID
         ,b.SizeSpec
-        ,Qty = Round(a.Qty* v.RateValue, 2)
+        ,Qty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, a.Qty), 2)
         ,a.UnitID
         ,reason = a.ReasonID +'-'+(select ReasonEN from InvtransReason WITH (NOLOCK) where id = a.ReasonID) 
         ,handle = dbo.getTPEPass1((select PoHandle from Inventory WITH (NOLOCK) where Inventory.Ukey = a.InventoryUkey and Inventory.POID=d.ID and Inventory.Seq1=d.SEQ1 and Inventory.Seq2=d.SEQ2 and Inventory.MDivisionID=Factory.MDivisionID and (Inventory.FactoryID=orders.FactoryID or Inventory.FactoryID=a.TransferFactory ) and Inventory.UnitID=d.POUnit and Inventory.ProjectID=orders.ProjectID and Inventory.InventoryRefnoID=a.InventoryRefnoId)) 
@@ -142,7 +142,6 @@ inner join InventoryRefno b WITH (NOLOCK) on b.id = a.InventoryRefnoId
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.ID = a.InventoryPOID and d.SEQ1 = a.InventorySeq1 and d.seq2 =  a.InventorySeq2
 inner join Orders orders on d.id = orders.id
 inner join Factory factory on orders.FactoryID = factory.id
-inner join dbo.View_Unitrate v on v.FROM_U = d.POUnit and v.TO_U = d.StockUnit
 left join MDivisionPoDetail e WITH (NOLOCK) on e.POID = A.InventoryPOID AND E.SEQ1 = A.InventorySeq1 AND E.Seq2 = A.InventorySeq2
 where "
  ));
