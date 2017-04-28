@@ -295,13 +295,12 @@ WHERE   StockType='{0}'
             , pd.StockPOID
             , pd.StockSeq1
             , pd.StockSeq2
-            ,ROUND(x.taipei_qty*isnull(v.RateValue,1), 2) N'PoQty'
+            ,ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, x.taipei_qty), 2) N'PoQty'
             ,pd.POUnit
             ,pd.StockUnit
             ,InQty = isnull(xx.InQty,0)
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-    left join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
 
     outer apply(
