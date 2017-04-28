@@ -110,15 +110,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 667);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 621);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -167,7 +167,7 @@
             this.btnImportFromRealTime.Text = "Import From Real Time";
             this.btnImportFromRealTime.UseVisualStyleBackColor = true;
             this.btnImportFromRealTime.Visible = false;
-            this.btnImportFromRealTime.Click += new System.EventHandler(this.button2_Click);
+            this.btnImportFromRealTime.Click += new System.EventHandler(this.btnImportFromRealTime_Click);
             // 
             // labelID
             // 
@@ -295,7 +295,7 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 3;
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
             // 
             // P04
             // 

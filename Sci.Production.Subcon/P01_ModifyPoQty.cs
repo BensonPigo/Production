@@ -45,7 +45,7 @@ namespace Sci.Production.Subcon
             dr.RejectChanges();
             base.OnClosed(e);
         }
-        private void numericBox1_Validated(object sender, EventArgs e)
+        private void numPOQty_Validated(object sender, EventArgs e)
         {
             dr["poqty"] = ((Sci.Win.UI.NumericBox)sender).Value;
             if (((Sci.Win.UI.NumericBox)sender).Value > sum_order_qty)
@@ -62,7 +62,7 @@ namespace Sci.Production.Subcon
             dr["amount"] = Convert.ToDecimal(dr["poqty"]) * Convert.ToDecimal(dr["price"]);
         }
 
-        private void numericBox1_Validating(object sender, CancelEventArgs e)
+        private void numPOQty_Validating(object sender, CancelEventArgs e)
         {
             if (!(dr["apqty"] == DBNull.Value) && ((Sci.Win.UI.NumericBox)sender).Value < int.Parse(dr["apqty"].ToString()))
             {
@@ -72,7 +72,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             DualResult result, result2;
             DataTable dt_out;
@@ -151,7 +151,7 @@ namespace Sci.Production.Subcon
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             dr.RejectChanges();
             this.Close();

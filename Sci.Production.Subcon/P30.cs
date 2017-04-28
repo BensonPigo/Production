@@ -442,7 +442,7 @@ namespace Sci.Production.Subcon
         }
 
         // import thread or carton request
-        private void button4_Click(object sender, EventArgs e)
+        private void btnImportThread_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             if (MyUtility.Check.Empty(dr["localsuppid"]))
@@ -464,7 +464,7 @@ namespace Sci.Production.Subcon
             this.RenewData();
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;

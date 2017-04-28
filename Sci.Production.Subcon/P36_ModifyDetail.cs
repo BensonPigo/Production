@@ -15,7 +15,7 @@ namespace Sci.Production.Subcon
             InitializeComponent();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(txtSPNo.Text))
                 return;
@@ -38,7 +38,7 @@ namespace Sci.Production.Subcon
             }
         }
 
-        private void numericBox2_Validated(object sender, EventArgs e)
+        private void numAdditionChargeClaimAmt_Validated(object sender, EventArgs e)
         {
             CurrentData["total"] = decimal.Parse(CurrentData["amount"].ToString()) + decimal.Parse(CurrentData["addition"].ToString());
         }

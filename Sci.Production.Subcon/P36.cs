@@ -444,7 +444,7 @@ where id = '{4}'"
             showhis.ShowDialog();
         }
 
-        private void txtsubcon1_Validated(object sender, EventArgs e)
+        private void txtsubconSupplier_Validated(object sender, EventArgs e)
         {
             CurrentMaintain["CURRENCYID"] = MyUtility.GetValue.Lookup(string.Format(@"SELECT CurrencyID FROM DBO.LocalSupp WITH (NOLOCK) WHERE ID='{0}'", CurrentMaintain["LOCALSUPPID"]));
         }

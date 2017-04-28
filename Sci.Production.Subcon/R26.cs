@@ -516,7 +516,7 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
            return true; //return base.OnToExcel(report);
         }
 
-        private void txtartworktype_fty1_TextChanged(object sender, EventArgs e)
+        private void txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
         {
             checkShippingMark.Checked = false;
 
@@ -533,13 +533,13 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkShippingMark_CheckedChanged(object sender, EventArgs e)
         {
             if(comboReportType.Text == "PO Form")
                 toexcel.Enabled = checkShippingMark.Checked;
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboReportType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboReportType.Text == "PO List")
             {

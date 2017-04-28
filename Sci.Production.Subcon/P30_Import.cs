@@ -30,7 +30,7 @@ namespace Sci.Production.Subcon
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             String sp_b = this.txtSPNoStart.Text;
             String sp_e = this.txtSPNoEnd.Text;
@@ -298,13 +298,13 @@ and b.PurchaseQty > 0 and b.PoId =''
         }
 
         // close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             gridImport.ValidateControl();
@@ -350,7 +350,7 @@ and b.PurchaseQty > 0 and b.PoId =''
         }
 
         // To Excel
-        private void button4_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
 
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;

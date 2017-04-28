@@ -29,7 +29,7 @@ namespace Sci.Production.Subcon
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             String sp_b = this.txtSPNoStart.Text;
             String sp_e = this.txtSPNoEnd.Text;
@@ -163,14 +163,14 @@ namespace Sci.Production.Subcon
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             gridImportFromPO.ValidateControl();

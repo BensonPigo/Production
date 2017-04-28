@@ -169,7 +169,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(4892, 184);
+            this.gridicon.Location = new System.Drawing.Point(5017, 184);
             // 
             // refresh
             // 
@@ -720,7 +720,7 @@
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 2;
             this.txtsubconSupplier.TextBox1Binding = "";
-            this.txtsubconSupplier.Validated += new System.EventHandler(this.txtsubcon1_Validated);
+            this.txtsubconSupplier.Validated += new System.EventHandler(this.txtsubconSupplier_Validated);
             // 
             // txtuserSMR
             // 

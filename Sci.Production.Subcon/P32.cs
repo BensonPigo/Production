@@ -73,7 +73,7 @@ namespace Sci.Production.Subcon
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             
             if (sqlcmd != null)
@@ -279,7 +279,7 @@ namespace Sci.Production.Subcon
             this.grid2.AutoResizeColumns();
         }
 
-        private void btn_Close_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -294,7 +294,7 @@ namespace Sci.Production.Subcon
             orderid = parent["orderid"].ToString();
             listControlBindingSource2.Filter = " orderid = '"+ orderid+"'";
         }
-        private void btn_Excel_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dtGrid1);

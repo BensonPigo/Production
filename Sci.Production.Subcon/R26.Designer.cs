@@ -178,7 +178,7 @@
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 9;
-            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboReportType_SelectedIndexChanged);
             // 
             // txtsubconSupplier
             // 
@@ -200,7 +200,7 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(153, 23);
             this.txtartworktype_ftyCategory.TabIndex = 7;
-            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.txtartworktype_fty1_TextChanged);
+            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.txtartworktype_ftyCategory_TextChanged);
             // 
             // dateIssueDate
             // 
@@ -300,7 +300,7 @@
             this.checkShippingMark.TabIndex = 0;
             this.checkShippingMark.Text = "Shipping Mark";
             this.checkShippingMark.UseVisualStyleBackColor = true;
-            this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkShippingMark_CheckedChanged);
             // 
             // R26
             // 

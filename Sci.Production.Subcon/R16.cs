@@ -380,7 +380,7 @@ where po_qty > 0
 
         }
 
-        private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             dateIssueDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }

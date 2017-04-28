@@ -34,7 +34,7 @@ namespace Sci.Production.Subcon
             CurrentDetailData["qty"] = 0;
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;
@@ -699,7 +699,7 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
         }
 
         // P03_ImportFrom Real Time
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportFromRealTime_Click(object sender, EventArgs e)
         {
             //P03_Import TrimCardPrint = new P03_Import();
             //P03_Import.ShowDialog(this);

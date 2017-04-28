@@ -29,12 +29,12 @@ namespace Sci.Production.Subcon
             mtbs.DataSource = dtData;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Tool.CursorUpdateTable(dtData, "localdebit", null))
             {

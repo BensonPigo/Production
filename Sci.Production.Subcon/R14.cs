@@ -401,7 +401,7 @@ namespace Sci.Production.Subcon
 
         }
 
-        private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             dateAPDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }

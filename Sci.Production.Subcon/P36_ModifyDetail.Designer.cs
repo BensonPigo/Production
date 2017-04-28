@@ -85,7 +85,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(138, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // txtUnit
             // 
@@ -149,7 +149,7 @@
             0,
             0,
             0});
-            this.numClaimAmt.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numClaimAmt.Validated += new System.EventHandler(this.numAdditionChargeClaimAmt_Validated);
             // 
             // labelClaimAmt
             // 
@@ -181,7 +181,7 @@
             0,
             0,
             0});
-            this.numAdditionCharge.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numAdditionCharge.Validated += new System.EventHandler(this.numAdditionChargeClaimAmt_Validated);
             // 
             // labelAdditionCharge
             // 

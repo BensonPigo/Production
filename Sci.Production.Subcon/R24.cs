@@ -339,7 +339,7 @@ where ap_qty > 0
             return true;
         }
 
-        private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             dateAPDate.Enabled = !(comboStatus.SelectedIndex == 1);
             dateGLDate.Enabled = !(comboStatus.SelectedIndex == 1);

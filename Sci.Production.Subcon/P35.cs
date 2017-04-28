@@ -67,7 +67,7 @@ where lapd.id = '{0}'"
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;
@@ -550,7 +550,7 @@ where lapd.id = '{0}'"
         }
 
         // P35_Import
-        private void button4_Click(object sender, EventArgs e)
+        private void btnBatchImport_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             

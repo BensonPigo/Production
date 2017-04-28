@@ -351,7 +351,7 @@
             this.btnImportThread.TabIndex = 8;
             this.btnImportThread.Text = "Import Thread, Carton request";
             this.btnImportThread.UseVisualStyleBackColor = true;
-            this.btnImportThread.Click += new System.EventHandler(this.button4_Click);
+            this.btnImportThread.Click += new System.EventHandler(this.btnImportThread_Click);
             // 
             // displayID
             // 
@@ -547,7 +547,7 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(167, 23);
             this.txtartworktype_ftyCategory.TabIndex = 1;
-            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
             // 
             // txtsubconSupplier
             // 

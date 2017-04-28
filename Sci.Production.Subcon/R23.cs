@@ -297,7 +297,7 @@ where Po_qty > 0 {2}
             return true;
         }
 
-        private void cbbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             dateIssueDate.Enabled = !(comboStatus.SelectedIndex == 1);
         }

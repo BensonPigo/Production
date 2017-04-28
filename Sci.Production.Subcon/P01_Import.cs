@@ -42,7 +42,7 @@ namespace Sci.Production.Subcon
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             string apvdate_b, apvdate_e, sciDelivery_b, sciDelivery_e, Inline_b, Inline_e;
             apvdate_b = null;
@@ -191,14 +191,14 @@ namespace Sci.Production.Subcon
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;

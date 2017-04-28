@@ -47,7 +47,7 @@ namespace Sci.Production.Subcon
             
         }
 
-        private void txtartworktype_fty1_Validated(object sender, EventArgs e)
+        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
         {
             Production.Class.txtartworktype_fty o;
             o = (Production.Class.txtartworktype_fty)sender;
@@ -549,7 +549,7 @@ namespace Sci.Production.Subcon
         }
 
        // P10_ImportFromPO
-        private void button4_Click(object sender, EventArgs e)
+        private void btnImportFromPO_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
             if (MyUtility.Check.Empty(dr["localsuppid"]))
@@ -578,7 +578,7 @@ namespace Sci.Production.Subcon
             ReloadDatas();
         }
 
-        private void txtartworktype_fty1_Validating(object sender, CancelEventArgs e)
+        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
         {
             
         }

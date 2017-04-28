@@ -369,7 +369,7 @@
             this.btnImportFromPO.TabIndex = 9;
             this.btnImportFromPO.Text = "Import From PO#";
             this.btnImportFromPO.UseVisualStyleBackColor = true;
-            this.btnImportFromPO.Click += new System.EventHandler(this.button4_Click);
+            this.btnImportFromPO.Click += new System.EventHandler(this.btnImportFromPO_Click);
             // 
             // displayID
             // 
@@ -620,8 +620,8 @@
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 0;
-            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_fty1_Validating);
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_fty1_Validated);
+            this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
+            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
             // 
             // txtsubconSupplier
             // 
