@@ -86,7 +86,7 @@
             this.btnQuery.TabIndex = 2;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.Query_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // btnImport
             // 
@@ -97,7 +97,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.Import_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnClose
             // 
@@ -108,7 +108,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.Close_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // labelCutCell
             // 

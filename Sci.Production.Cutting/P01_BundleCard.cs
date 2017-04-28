@@ -48,7 +48,7 @@ Where a.id = b.id and a.POID = '{0}' order by BundleNo"
                 .DateTime("PrintDate", header: "PrintDate", width: Widths.AnsiChars(8), iseditingreadonly: true);
 
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

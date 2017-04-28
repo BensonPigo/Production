@@ -71,8 +71,8 @@
             this.txtSizeRatio = new Sci.Win.UI.TextBox();
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.txtColorID = new Sci.Win.UI.TextBox();
-            this.BtnGenerate = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnGenerate = new Sci.Win.UI.Button();
+            this.btnGarmentList = new Sci.Win.UI.Button();
             this.txtLineNo = new Sci.Win.UI.TextBox();
             this.labelFabPanelCode = new Sci.Win.UI.Label();
             this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
@@ -95,7 +95,7 @@
             this.masterpanel.Controls.Add(this.txtFabricPanelCode);
             this.masterpanel.Controls.Add(this.labelFabPanelCode);
             this.masterpanel.Controls.Add(this.txtLineNo);
-            this.masterpanel.Controls.Add(this.BtnGenerate);
+            this.masterpanel.Controls.Add(this.btnGenerate);
             this.masterpanel.Controls.Add(this.txtColorID);
             this.masterpanel.Controls.Add(this.txtArticle);
             this.masterpanel.Controls.Add(this.txtSizeRatio);
@@ -184,7 +184,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSizeRatio, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtColorID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.BtnGenerate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnGenerate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLineNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFabPanelCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFabricPanelCode, 0);
@@ -209,15 +209,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1027, 502);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1021, 456);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1021, 40);
             // 
             // detail
             // 
@@ -229,7 +229,7 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.button1);
+            this.detailbtm.Controls.Add(this.btnGarmentList);
             this.detailbtm.Location = new System.Drawing.Point(0, 464);
             this.detailbtm.Size = new System.Drawing.Size(1027, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -237,7 +237,7 @@
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.button1, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnGarmentList, 0);
             // 
             // browse
             // 
@@ -558,7 +558,7 @@
             0,
             0,
             0});
-            this.numBeginBundleGroup.Validated += new System.EventHandler(this.numericBox_Group_Validated);
+            this.numBeginBundleGroup.Validated += new System.EventHandler(this.numBeginBundleGroup_Validated);
             // 
             // displayPrintDate
             // 
@@ -614,7 +614,7 @@
             this.txtCutRef.Name = "txtCutRef";
             this.txtCutRef.Size = new System.Drawing.Size(73, 23);
             this.txtCutRef.TabIndex = 1;
-            this.txtCutRef.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Cutref_Validating);
+            this.txtCutRef.Validating += new System.ComponentModel.CancelEventHandler(this.txtCutRef_Validating);
             // 
             // txtSPNo
             // 
@@ -625,8 +625,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 2;
-            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox_orderid_PopUp);
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_orderid_Validating);
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNo_PopUp);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // txtItem
             // 
@@ -715,8 +715,8 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(73, 23);
             this.txtArticle.TabIndex = 12;
-            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox_Article_PopUp);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Article_Validating);
+            this.txtArticle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtArticle_PopUp);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
             // 
             // txtColorID
             // 
@@ -728,27 +728,27 @@
             this.txtColorID.Size = new System.Drawing.Size(73, 23);
             this.txtColorID.TabIndex = 13;
             // 
-            // BtnGenerate
+            // btnGenerate
             // 
-            this.BtnGenerate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.BtnGenerate.Location = new System.Drawing.Point(780, 191);
-            this.BtnGenerate.Name = "BtnGenerate";
-            this.BtnGenerate.Size = new System.Drawing.Size(80, 30);
-            this.BtnGenerate.TabIndex = 23;
-            this.BtnGenerate.Text = "Generate";
-            this.BtnGenerate.UseVisualStyleBackColor = true;
-            this.BtnGenerate.Click += new System.EventHandler(this.Generate_Button_Click);
+            this.btnGenerate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnGenerate.Location = new System.Drawing.Point(780, 191);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(80, 30);
+            this.btnGenerate.TabIndex = 23;
+            this.btnGenerate.Text = "Generate";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
-            // button1
+            // btnGarmentList
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(827, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(111, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Garment List";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnGarmentList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnGarmentList.Location = new System.Drawing.Point(827, 3);
+            this.btnGarmentList.Name = "btnGarmentList";
+            this.btnGarmentList.Size = new System.Drawing.Size(111, 30);
+            this.btnGarmentList.TabIndex = 2;
+            this.btnGarmentList.Text = "Garment List";
+            this.btnGarmentList.UseVisualStyleBackColor = true;
+            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
             // 
             // txtLineNo
             // 
@@ -759,8 +759,8 @@
             this.txtLineNo.Name = "txtLineNo";
             this.txtLineNo.Size = new System.Drawing.Size(73, 23);
             this.txtLineNo.TabIndex = 18;
-            this.txtLineNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLine_PopUp);
-            this.txtLineNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
+            this.txtLineNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLineNo_PopUp);
+            this.txtLineNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtLineNo_Validating);
             // 
             // labelFabPanelCode
             // 
@@ -860,8 +860,8 @@
         private Win.UI.TextBox txtSPNo;
         private Win.UI.TextBox txtCutRef;
         private Win.UI.NumericBox numQtyperBundleGroup;
-        private Win.UI.Button BtnGenerate;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnGenerate;
+        private Win.UI.Button btnGarmentList;
         private Win.UI.TextBox txtLineNo;
         private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.Label labelFabPanelCode;

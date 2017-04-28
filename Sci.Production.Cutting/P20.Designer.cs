@@ -356,7 +356,7 @@
             this.btnImportfromWorkOrder.TabIndex = 7;
             this.btnImportfromWorkOrder.Text = "Import from WorkOrder";
             this.btnImportfromWorkOrder.UseVisualStyleBackColor = true;
-            this.btnImportfromWorkOrder.Click += new System.EventHandler(this.button1_Click);
+            this.btnImportfromWorkOrder.Click += new System.EventHandler(this.btnImportfromWorkOrder_Click);
             // 
             // btnImportfromRealtimeBundleTracking
             // 

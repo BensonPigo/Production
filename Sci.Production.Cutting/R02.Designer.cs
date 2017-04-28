@@ -42,7 +42,7 @@
             this.labelCuttingDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.btn_sendmail = new Sci.Win.UI.Button();
+            this.btnSendMail = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,7 +107,7 @@
             this.radioByOneDayDetial.TabStop = true;
             this.radioByOneDayDetial.Text = "By one day detial";
             this.radioByOneDayDetial.UseVisualStyleBackColor = true;
-            this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.radioBtn_Byonedaydetial_CheckedChanged);
+            this.radioByOneDayDetial.CheckedChanged += new System.EventHandler(this.radioByOneDayDetial_CheckedChanged);
             // 
             // radioByDetail
             // 
@@ -174,7 +174,7 @@
             this.dateCuttingDate.Name = "dateCuttingDate";
             this.dateCuttingDate.Size = new System.Drawing.Size(280, 23);
             this.dateCuttingDate.TabIndex = 0;
-            this.dateCuttingDate.Leave += new System.EventHandler(this.Leave_CuttingDate);
+            this.dateCuttingDate.Leave += new System.EventHandler(this.dateCuttingDate_Leave);
             // 
             // labelType
             // 
@@ -221,22 +221,22 @@
             this.label4.TabIndex = 96;
             this.label4.Text = "Paper Size A4";
             // 
-            // btn_sendmail
+            // btnSendMail
             // 
-            this.btn_sendmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_sendmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btn_sendmail.Location = new System.Drawing.Point(446, 85);
-            this.btn_sendmail.Name = "btn_sendmail";
-            this.btn_sendmail.Size = new System.Drawing.Size(87, 30);
-            this.btn_sendmail.TabIndex = 3;
-            this.btn_sendmail.Text = "Send Mail";
-            this.btn_sendmail.UseVisualStyleBackColor = true;
-            this.btn_sendmail.Click += new System.EventHandler(this.btn_sendmail_Click);
+            this.btnSendMail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSendMail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSendMail.Location = new System.Drawing.Point(446, 85);
+            this.btnSendMail.Name = "btnSendMail";
+            this.btnSendMail.Size = new System.Drawing.Size(87, 30);
+            this.btnSendMail.TabIndex = 3;
+            this.btnSendMail.Text = "Send Mail";
+            this.btnSendMail.UseVisualStyleBackColor = true;
+            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
             // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(545, 250);
-            this.Controls.Add(this.btn_sendmail);
+            this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "dateR_CuttingDate";
@@ -248,7 +248,7 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.btn_sendmail, 0);
+            this.Controls.SetChildIndex(this.btnSendMail, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -272,7 +272,7 @@
         private Win.UI.TextBox txtCutCellEnd;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtCutCellStart;
-        private Win.UI.Button btn_sendmail;
+        private Win.UI.Button btnSendMail;
 
     }
 }

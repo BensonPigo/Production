@@ -16,12 +16,12 @@ namespace Sci.Production.Cutting
             InitializeComponent();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void Copy_Click(object sender, EventArgs e)
+        private void btnCopy_Click(object sender, EventArgs e)
         {
             copycutref = txtCutRef.Text;
             if (MyUtility.Check.Empty(copycutref))

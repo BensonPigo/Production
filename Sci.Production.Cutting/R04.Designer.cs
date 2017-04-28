@@ -99,7 +99,7 @@
             this.radioByDetail.TabIndex = 6;
             this.radioByDetail.Text = "By Detail";
             this.radioByDetail.UseVisualStyleBackColor = true;
-            this.radioByDetail.CheckedChanged += new System.EventHandler(this.radioBtn3_ByDetail_CheckedChanged);
+            this.radioByDetail.CheckedChanged += new System.EventHandler(this.radioByDetail_CheckedChanged);
             // 
             // radioByCutCell
             // 
@@ -111,7 +111,7 @@
             this.radioByCutCell.TabIndex = 5;
             this.radioByCutCell.Text = "By Cut Cell";
             this.radioByCutCell.UseVisualStyleBackColor = true;
-            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.radioBtn2_ByCutCell_CheckedChanged);
+            this.radioByCutCell.CheckedChanged += new System.EventHandler(this.radioByCutCell_CheckedChanged);
             // 
             // radioByM
             // 
@@ -125,7 +125,7 @@
             this.radioByM.TabStop = true;
             this.radioByM.Text = "By M";
             this.radioByM.UseVisualStyleBackColor = true;
-            this.radioByM.CheckedChanged += new System.EventHandler(this.radiobtn1_ByM_CheckedChanged);
+            this.radioByM.CheckedChanged += new System.EventHandler(this.radioByM_CheckedChanged);
             // 
             // comboM
             // 

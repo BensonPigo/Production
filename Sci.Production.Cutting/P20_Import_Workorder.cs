@@ -69,12 +69,12 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void Close_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void Query_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateEstCutDate.Value))
             {
@@ -116,7 +116,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             gridImport.ValidateControl();
             DataRow[] selDr = gridTable.Select("Sel=1","");

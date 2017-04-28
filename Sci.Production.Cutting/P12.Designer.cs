@@ -204,7 +204,7 @@
             this.btnQuery.TabIndex = 11;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // checkExtendAllParts
             // 
@@ -330,7 +330,7 @@
             this.btnBundleCard.TabIndex = 1;
             this.btnBundleCard.Text = "Bundle Card";
             this.btnBundleCard.UseVisualStyleBackColor = true;
-            this.btnBundleCard.Click += new System.EventHandler(this.button2_Click);
+            this.btnBundleCard.Click += new System.EventHandler(this.btnBundleCard_Click);
             // 
             // btnToExcel
             // 
@@ -341,7 +341,7 @@
             this.btnToExcel.TabIndex = 2;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // btnClose
             // 
@@ -352,7 +352,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // panel3
             // 

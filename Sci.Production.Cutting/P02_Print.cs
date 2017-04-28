@@ -48,7 +48,7 @@ namespace Sci.Production.Cutting
             return base.ValidateInput();
         }
 
-        private void Requ_ra_CheckedChanged(object sender, EventArgs e)
+        private void radioByCutplanId_CheckedChanged(object sender, EventArgs e)
         {
             txtCutRefNoStart.Text = radioByCutplanId.Checked ? cp : cr;
             txtCutRefNoEnd.Text = radioByCutplanId.Checked ? cp : cr;

@@ -39,7 +39,7 @@ namespace Sci.Production.Cutting
             .Text("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

@@ -230,7 +230,7 @@ namespace Sci.Production.Cutting
             base.OnDetailUIConvertToMaintain();
             txtCutplan.ReadOnly = true;
         }
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtCutplan_Validating(object sender, CancelEventArgs e)
         {
 
             if (!this.EditMode) return;
@@ -262,7 +262,7 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtCutplan_Validated(object sender, EventArgs e)
         {
             base.OnValidated(e);
             string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", txtCutplan.Text, keyWord);
@@ -400,7 +400,7 @@ namespace Sci.Production.Cutting
             return true;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSendMail_Click(object sender, EventArgs e)
         {
             //createfolder();
             if (!ToExcel(true))

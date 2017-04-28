@@ -79,7 +79,7 @@ namespace Sci.Production.Cutting
             };            
         }
 
-        private void button_Query_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             string cutsp = txtCuttingSPNo.Text;
@@ -152,7 +152,7 @@ namespace Sci.Production.Cutting
             this.gridDetail.AutoResizeColumns();
         }
 
-        private void dateBox_newestcutdate_Validating(object sender, CancelEventArgs e)
+        private void dateNewEstCutDate_Validating(object sender, CancelEventArgs e)
         {
             if (dateNewEstCutDate.Value != null && dateNewEstCutDate.Value < DateTime.Now)
             {
@@ -161,7 +161,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void button_update_Click(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             if (detailTb == null) return;
@@ -177,12 +177,12 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void button_close_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void button_save_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             string update = "";

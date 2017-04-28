@@ -322,8 +322,8 @@ namespace Sci.Production.Cutting
             #endregion
             return base.ClickEditBefore();
         }
-        
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnimport_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P04_Import();
@@ -426,7 +426,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
         //        Directory.CreateDirectory(Sci.Env.Cfg.ReportTempDir);
         //}
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSendMail_Click(object sender, EventArgs e)
         {
             //createfolder();
             if (!ToExcel(true))
@@ -481,7 +481,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
             return base.ClickPrint();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFabricIssueList_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P04_FabricIssueList(CurrentMaintain["ID"].ToString().Trim());

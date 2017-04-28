@@ -67,7 +67,7 @@
             this.btnUpdate.TabIndex = 8;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.button_update_Click);
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
             // txtCutRefNo
             // 
@@ -97,7 +97,7 @@
             this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button_Query_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // labelNewEstCutDate
             // 
@@ -114,7 +114,7 @@
             this.dateNewEstCutDate.Name = "dateNewEstCutDate";
             this.dateNewEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.dateNewEstCutDate.TabIndex = 7;
-            this.dateNewEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox_newestcutdate_Validating);
+            this.dateNewEstCutDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateNewEstCutDate_Validating);
             // 
             // dateSewingInline
             // 
@@ -280,7 +280,7 @@
             this.btnSave.TabIndex = 9;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button_save_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnClose
             // 
@@ -291,7 +291,7 @@
             this.btnClose.TabIndex = 10;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button_close_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // P03
             // 

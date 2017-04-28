@@ -179,14 +179,14 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
         }
 
         //Marker List
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMarkerList_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.Cutting.P01_MarkerList(false, CurrentMaintain["ID"].ToString(), null, null, "Order_Markerlist", this.CurrentMaintain);
             frm.ShowDialog(this);
         }
         //Each Cons.
-        private void button2_Click(object sender, EventArgs e)
+        private void btnEachCons_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.PublicForm.EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, true,true);
@@ -194,35 +194,35 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             this.OnDetailEntered();
         }
         //Button Bundle Card
-        private void button3_Click(object sender, EventArgs e)
+        private void btnBundleCard_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.Cutting.P01_BundleCard(CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
         //Cutpart Check
-        private void button8_Click(object sender, EventArgs e)
+        private void btnCutPartsCheck_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.Cutting.P01_Cutpartcheck(CurrentMaintain["ID"].ToString(), CurrentMaintain["WorkType"].ToString());
             frm.ShowDialog(this);
         }
         //Cutpart Check Summary
-        private void button7_Click(object sender, EventArgs e)
+        private void btnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
         //Quantity breakdown
-        private void button5_Click(object sender, EventArgs e)
+        private void btnQuantitybreakdown_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]), editPOCombo.Text);
             frm.ShowDialog(this);
         }
         //ColorComb
-        private void button12_Click(object sender, EventArgs e)
+        private void btnColorCombo_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");
@@ -230,7 +230,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             frm.ShowDialog(this);
         }
         //ProductionKit
-        private void button11_Click(object sender, EventArgs e)
+        private void btnProductionkit_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             var frm = new Sci.Production.PPIC.P01_ProductionKit(true, StyleUkey, null, null, null);
@@ -238,7 +238,7 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
             OnDetailEntered();
         }
         //Garment List
-        private void button9_Click(object sender, EventArgs e)
+        private void btnGarmentList_Click(object sender, EventArgs e)
         {
             if (null == this.CurrentMaintain) return;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["ID"].ToString(), "Orders", "ID");

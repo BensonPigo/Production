@@ -309,7 +309,7 @@
             0,
             0,
             0});
-            this.numNoOfBundle.Validated += new System.EventHandler(this.numericBox_noBundle_Validated);
+            this.numNoOfBundle.Validated += new System.EventHandler(this.numNoOfBundle_Validated);
             // 
             // labelTotalQty
             // 

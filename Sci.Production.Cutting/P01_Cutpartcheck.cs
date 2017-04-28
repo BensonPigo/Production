@@ -153,7 +153,7 @@ namespace Sci.Production.Cutting
                 .Numeric("CutQty", header: "Cut Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("Variance", header: "Variance", width: Widths.AnsiChars(7), iseditingreadonly: true);
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

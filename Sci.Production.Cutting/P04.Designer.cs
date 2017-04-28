@@ -285,7 +285,7 @@
             this.btnimport.Text = "import";
             this.btnimport.UseVisualStyleBackColor = true;
             this.btnimport.Visible = false;
-            this.btnimport.Click += new System.EventHandler(this.button1_Click);
+            this.btnimport.Click += new System.EventHandler(this.btnimport_Click);
             // 
             // displayCutCell
             // 
@@ -315,7 +315,7 @@
             this.btnSendMail.TabIndex = 20;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
-            this.btnSendMail.Click += new System.EventHandler(this.button2_Click);
+            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
             // 
             // btnFabricIssueList
             // 
@@ -325,7 +325,7 @@
             this.btnFabricIssueList.TabIndex = 21;
             this.btnFabricIssueList.Text = "Fabric issue list";
             this.btnFabricIssueList.UseVisualStyleBackColor = true;
-            this.btnFabricIssueList.Click += new System.EventHandler(this.button3_Click);
+            this.btnFabricIssueList.Click += new System.EventHandler(this.btnFabricIssueList_Click);
             // 
             // P04
             // 

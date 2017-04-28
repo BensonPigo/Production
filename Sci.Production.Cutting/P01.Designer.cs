@@ -554,7 +554,7 @@
             this.btnMarkerList.TabIndex = 23;
             this.btnMarkerList.Text = "Marker List";
             this.btnMarkerList.UseVisualStyleBackColor = true;
-            this.btnMarkerList.Click += new System.EventHandler(this.button1_Click);
+            this.btnMarkerList.Click += new System.EventHandler(this.btnMarkerList_Click);
             // 
             // btnEachCons
             // 
@@ -565,7 +565,7 @@
             this.btnEachCons.TabIndex = 24;
             this.btnEachCons.Text = "Each Cons.";
             this.btnEachCons.UseVisualStyleBackColor = true;
-            this.btnEachCons.Click += new System.EventHandler(this.button2_Click);
+            this.btnEachCons.Click += new System.EventHandler(this.btnEachCons_Click);
             // 
             // btnBundleCard
             // 
@@ -576,7 +576,7 @@
             this.btnBundleCard.TabIndex = 25;
             this.btnBundleCard.Text = "Bundle Card";
             this.btnBundleCard.UseVisualStyleBackColor = true;
-            this.btnBundleCard.Click += new System.EventHandler(this.button3_Click);
+            this.btnBundleCard.Click += new System.EventHandler(this.btnBundleCard_Click);
             // 
             // btnQuantitybreakdown
             // 
@@ -587,7 +587,7 @@
             this.btnQuantitybreakdown.TabIndex = 28;
             this.btnQuantitybreakdown.Text = "Quantity breakdown";
             this.btnQuantitybreakdown.UseVisualStyleBackColor = true;
-            this.btnQuantitybreakdown.Click += new System.EventHandler(this.button5_Click);
+            this.btnQuantitybreakdown.Click += new System.EventHandler(this.btnQuantitybreakdown_Click);
             // 
             // btnCutPartsCheckSummary
             // 
@@ -598,7 +598,7 @@
             this.btnCutPartsCheckSummary.TabIndex = 27;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.button7_Click);
+            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.btnCutPartsCheckSummary_Click);
             // 
             // btnCutPartsCheck
             // 
@@ -609,7 +609,7 @@
             this.btnCutPartsCheck.TabIndex = 26;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheck.Click += new System.EventHandler(this.button8_Click);
+            this.btnCutPartsCheck.Click += new System.EventHandler(this.btnCutPartsCheck_Click);
             // 
             // btnGarmentList
             // 
@@ -620,7 +620,7 @@
             this.btnGarmentList.TabIndex = 31;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.button9_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
             // 
             // btnProductionkit
             // 
@@ -631,7 +631,7 @@
             this.btnProductionkit.TabIndex = 30;
             this.btnProductionkit.Text = "Production kit";
             this.btnProductionkit.UseVisualStyleBackColor = true;
-            this.btnProductionkit.Click += new System.EventHandler(this.button11_Click);
+            this.btnProductionkit.Click += new System.EventHandler(this.btnProductionkit_Click);
             // 
             // btnColorCombo
             // 
@@ -642,7 +642,7 @@
             this.btnColorCombo.TabIndex = 29;
             this.btnColorCombo.Text = "Color Combo";
             this.btnColorCombo.UseVisualStyleBackColor = true;
-            this.btnColorCombo.Click += new System.EventHandler(this.button12_Click);
+            this.btnColorCombo.Click += new System.EventHandler(this.btnColorCombo_Click);
             // 
             // dateEarliestSewingOffline
             // 

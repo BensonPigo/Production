@@ -585,8 +585,8 @@ namespace Sci.Production.Cutting
             EnsureToolbarExt();
             #endregion
         }
-        
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnImportfromWorkOrder_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             DataTable dt = (DataTable)detailgridbs.DataSource;

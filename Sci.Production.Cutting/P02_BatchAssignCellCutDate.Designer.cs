@@ -94,7 +94,7 @@
             this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(996, 338);
             this.gridBatchAssignCellEstCutDate.TabIndex = 0;
             this.gridBatchAssignCellEstCutDate.TabStop = false;
-            this.gridBatchAssignCellEstCutDate.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_CellContentClick);
+            this.gridBatchAssignCellEstCutDate.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridBatchAssignCellEstCutDate_CellContentClick);
             // 
             // btnClose
             // 
@@ -106,7 +106,7 @@
             this.btnClose.TabIndex = 15;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // labelSPNo
             // 
@@ -270,7 +270,7 @@
             this.btnFilter.TabIndex = 9;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.filter_button_Click);
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // labelBatchUpdateEstCutCell
             // 
@@ -313,7 +313,7 @@
             this.btnBatchUpdateEstCutCell.TabIndex = 11;
             this.btnBatchUpdateEstCutCell.Text = "Batch update Cut Cell";
             this.btnBatchUpdateEstCutCell.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateEstCutCell.Click += new System.EventHandler(this.batchcutcell_button_Click);
+            this.btnBatchUpdateEstCutCell.Click += new System.EventHandler(this.btnBatchUpdateEstCutCell_Click);
             // 
             // btnBatchUpdateEstCutDate
             // 
@@ -323,7 +323,7 @@
             this.btnBatchUpdateEstCutDate.TabIndex = 13;
             this.btnBatchUpdateEstCutDate.Text = "Batch update Est. Cut Date";
             this.btnBatchUpdateEstCutDate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.batchestcutdate_button_Click);
+            this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.btnBatchUpdateEstCutDate_Click);
             // 
             // shapeContainer1
             // 
@@ -374,7 +374,7 @@
             this.btnConfirm.TabIndex = 14;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
-            this.btnConfirm.Click += new System.EventHandler(this.btn_Confirm_Click);
+            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
             // P02_BatchAssignCellCutDate
             // 

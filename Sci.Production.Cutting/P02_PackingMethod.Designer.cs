@@ -118,7 +118,7 @@
             this.btnBreakdown.TabIndex = 103;
             this.btnBreakdown.Text = "Breakdown";
             this.btnBreakdown.UseVisualStyleBackColor = true;
-            this.btnBreakdown.Click += new System.EventHandler(this.button1_Click);
+            this.btnBreakdown.Click += new System.EventHandler(this.btnBreakdown_Click);
             // 
             // editpacking
             // 

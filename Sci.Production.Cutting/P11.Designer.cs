@@ -46,8 +46,8 @@
             this.label7 = new Sci.Win.UI.Label();
             this.btnGarmentList = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.button_LefttoRight = new Sci.Win.UI.Button();
-            this.button_RighttoLeft = new Sci.Win.UI.Button();
+            this.btn_LefttoRight = new Sci.Win.UI.Button();
+            this.btn_RighttoLeft = new Sci.Win.UI.Button();
             this.numNoOfBundle = new Sci.Win.UI.NumericBox();
             this.label_TotalCutOutput = new Sci.Win.UI.Label();
             this.labelNoOfBundle = new Sci.Win.UI.Label();
@@ -59,27 +59,27 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.txtCutref = new Sci.Win.UI.TextBox();
             this.labelCutref = new Sci.Win.UI.Label();
-            this.Cutpart_grid = new Sci.Win.UI.Grid();
+            this.gridCutpart = new Sci.Win.UI.Grid();
             this.art_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.insertIntoRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ArticleSize_grid = new Sci.Win.UI.Grid();
-            this.AllPart_grid = new Sci.Win.UI.Grid();
+            this.gridArticleSize = new Sci.Win.UI.Grid();
+            this.gridAllPart = new Sci.Win.UI.Grid();
             this.allpart_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.allpart_insert = new System.Windows.Forms.ToolStripMenuItem();
             this.allpart_delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.Qty_grid = new Sci.Win.UI.Grid();
-            this.CutRef_grid = new Sci.Win.UI.Grid();
+            this.gridQty = new Sci.Win.UI.Grid();
+            this.gridCutRef = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelGroup = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Cutpart_grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ArticleSize_grid)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AllPart_grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).BeginInit();
             this.allpart_contextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Qty_grid)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CutRef_grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQty)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCutRef)).BeginInit();
             this.SuspendLayout();
             // 
             // radioWithcuto
@@ -127,7 +127,7 @@
             this.btnClose.TabIndex = 16;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.Close_Button_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnBatchCreate
             // 
@@ -138,7 +138,7 @@
             this.btnBatchCreate.TabIndex = 15;
             this.btnBatchCreate.Text = "Batch Create";
             this.btnBatchCreate.UseVisualStyleBackColor = true;
-            this.btnBatchCreate.Click += new System.EventHandler(this.BatchCreate_Button_Click);
+            this.btnBatchCreate.Click += new System.EventHandler(this.btnBatchCreate_Click);
             // 
             // label_TotalQty
             // 
@@ -162,7 +162,7 @@
             this.btnCopy_to_same_Cutref.TabIndex = 12;
             this.btnCopy_to_same_Cutref.Text = "Copy Cutpart/Artwork to same CutRef#";
             this.btnCopy_to_same_Cutref.UseVisualStyleBackColor = true;
-            this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.copy_to_same_Cutref_Click);
+            this.btnCopy_to_same_Cutref.Click += new System.EventHandler(this.btnCopy_to_same_Cutref_Click);
             // 
             // btnCopy_to_other_Cutref
             // 
@@ -173,7 +173,7 @@
             this.btnCopy_to_other_Cutref.TabIndex = 13;
             this.btnCopy_to_other_Cutref.Text = "Copy Cutpart/Artwork to other CutRef#";
             this.btnCopy_to_other_Cutref.UseVisualStyleBackColor = true;
-            this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.copy_to_other_Cutref_Click);
+            this.btnCopy_to_other_Cutref.Click += new System.EventHandler(this.btnCopy_to_other_Cutref_Click);
             // 
             // btnColorComb
             // 
@@ -184,7 +184,7 @@
             this.btnColorComb.TabIndex = 8;
             this.btnColorComb.Text = "Color Comb";
             this.btnColorComb.UseVisualStyleBackColor = true;
-            this.btnColorComb.Click += new System.EventHandler(this.button1_Click);
+            this.btnColorComb.Click += new System.EventHandler(this.btnColorComb_Click);
             // 
             // numTotalPart
             // 
@@ -231,7 +231,7 @@
             this.btnGarmentList.TabIndex = 7;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
-            this.btnGarmentList.Click += new System.EventHandler(this.button3_Click);
+            this.btnGarmentList.Click += new System.EventHandler(this.btnGarmentList_Click);
             // 
             // label5
             // 
@@ -245,27 +245,27 @@
             this.label5.Text = "All Parts Detail";
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // button_LefttoRight
+            // btn_LefttoRight
             // 
-            this.button_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_LefttoRight.Location = new System.Drawing.Point(605, 415);
-            this.button_LefttoRight.Name = "button_LefttoRight";
-            this.button_LefttoRight.Size = new System.Drawing.Size(38, 30);
-            this.button_LefttoRight.TabIndex = 9;
-            this.button_LefttoRight.Text = ">";
-            this.button_LefttoRight.UseVisualStyleBackColor = true;
-            this.button_LefttoRight.Click += new System.EventHandler(this.button_LefttoRight_Click);
+            this.btn_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
+            this.btn_LefttoRight.Location = new System.Drawing.Point(605, 415);
+            this.btn_LefttoRight.Name = "btn_LefttoRight";
+            this.btn_LefttoRight.Size = new System.Drawing.Size(38, 30);
+            this.btn_LefttoRight.TabIndex = 9;
+            this.btn_LefttoRight.Text = ">";
+            this.btn_LefttoRight.UseVisualStyleBackColor = true;
+            this.btn_LefttoRight.Click += new System.EventHandler(this.btn_LefttoRight_Click);
             // 
-            // button_RighttoLeft
+            // btn_RighttoLeft
             // 
-            this.button_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_RighttoLeft.Location = new System.Drawing.Point(605, 484);
-            this.button_RighttoLeft.Name = "button_RighttoLeft";
-            this.button_RighttoLeft.Size = new System.Drawing.Size(38, 30);
-            this.button_RighttoLeft.TabIndex = 10;
-            this.button_RighttoLeft.Text = "<";
-            this.button_RighttoLeft.UseVisualStyleBackColor = true;
-            this.button_RighttoLeft.Click += new System.EventHandler(this.button_RighttoLeft_Click);
+            this.btn_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
+            this.btn_RighttoLeft.Location = new System.Drawing.Point(605, 484);
+            this.btn_RighttoLeft.Name = "btn_RighttoLeft";
+            this.btn_RighttoLeft.Size = new System.Drawing.Size(38, 30);
+            this.btn_RighttoLeft.TabIndex = 10;
+            this.btn_RighttoLeft.Text = "<";
+            this.btn_RighttoLeft.UseVisualStyleBackColor = true;
+            this.btn_RighttoLeft.Click += new System.EventHandler(this.btn_RighttoLeft_Click);
             // 
             // numNoOfBundle
             // 
@@ -286,7 +286,7 @@
             0,
             0,
             0});
-            this.numNoOfBundle.Validated += new System.EventHandler(this.numericBox_noofbundle_Validated);
+            this.numNoOfBundle.Validated += new System.EventHandler(this.numNoOfBundle_Validated);
             // 
             // label_TotalCutOutput
             // 
@@ -392,21 +392,21 @@
             this.labelCutref.TabIndex = 80;
             this.labelCutref.Text = "Cutref#";
             // 
-            // Cutpart_grid
+            // gridCutpart
             // 
-            this.Cutpart_grid.AllowUserToAddRows = false;
-            this.Cutpart_grid.AllowUserToDeleteRows = false;
-            this.Cutpart_grid.AllowUserToResizeRows = false;
-            this.Cutpart_grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.Cutpart_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.Cutpart_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Cutpart_grid.ContextMenuStrip = this.art_contextMenuStrip;
-            this.Cutpart_grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.Cutpart_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.Cutpart_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.Cutpart_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.Cutpart_grid.Location = new System.Drawing.Point(160, 346);
-            this.Cutpart_grid.Name = "Cutpart_grid";
+            this.gridCutpart.AllowUserToAddRows = false;
+            this.gridCutpart.AllowUserToDeleteRows = false;
+            this.gridCutpart.AllowUserToResizeRows = false;
+            this.gridCutpart.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridCutpart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridCutpart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCutpart.ContextMenuStrip = this.art_contextMenuStrip;
+            this.gridCutpart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridCutpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridCutpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridCutpart.Location = new System.Drawing.Point(160, 346);
+            this.gridCutpart.Name = "gridCutpart";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -414,14 +414,14 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Cutpart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.Cutpart_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.Cutpart_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.Cutpart_grid.RowTemplate.Height = 24;
-            this.Cutpart_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.Cutpart_grid.Size = new System.Drawing.Size(439, 230);
-            this.Cutpart_grid.TabIndex = 79;
-            this.Cutpart_grid.TabStop = false;
+            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridCutpart.RowTemplate.Height = 24;
+            this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridCutpart.Size = new System.Drawing.Size(439, 230);
+            this.gridCutpart.TabIndex = 79;
+            this.gridCutpart.TabStop = false;
             // 
             // art_contextMenuStrip
             // 
@@ -445,20 +445,20 @@
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.deleteRecordToolStripMenuItem_Click);
             // 
-            // ArticleSize_grid
+            // gridArticleSize
             // 
-            this.ArticleSize_grid.AllowUserToAddRows = false;
-            this.ArticleSize_grid.AllowUserToDeleteRows = false;
-            this.ArticleSize_grid.AllowUserToResizeRows = false;
-            this.ArticleSize_grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.ArticleSize_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.ArticleSize_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ArticleSize_grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.ArticleSize_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.ArticleSize_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.ArticleSize_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.ArticleSize_grid.Location = new System.Drawing.Point(417, 38);
-            this.ArticleSize_grid.Name = "ArticleSize_grid";
+            this.gridArticleSize.AllowUserToAddRows = false;
+            this.gridArticleSize.AllowUserToDeleteRows = false;
+            this.gridArticleSize.AllowUserToResizeRows = false;
+            this.gridArticleSize.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridArticleSize.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridArticleSize.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridArticleSize.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridArticleSize.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridArticleSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridArticleSize.Location = new System.Drawing.Point(417, 38);
+            this.gridArticleSize.Name = "gridArticleSize";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -466,31 +466,31 @@
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ArticleSize_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.ArticleSize_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.ArticleSize_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.ArticleSize_grid.RowTemplate.Height = 24;
-            this.ArticleSize_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ArticleSize_grid.Size = new System.Drawing.Size(580, 267);
-            this.ArticleSize_grid.TabIndex = 20;
-            this.ArticleSize_grid.TabStop = false;
-            this.ArticleSize_grid.SelectionChanged += new System.EventHandler(this.ArticleSize_grid_SelectionChanged);
+            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridArticleSize.RowTemplate.Height = 24;
+            this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridArticleSize.Size = new System.Drawing.Size(580, 267);
+            this.gridArticleSize.TabIndex = 20;
+            this.gridArticleSize.TabStop = false;
+            this.gridArticleSize.SelectionChanged += new System.EventHandler(this.gridArticleSize_SelectionChanged);
             // 
-            // AllPart_grid
+            // gridAllPart
             // 
-            this.AllPart_grid.AllowUserToAddRows = false;
-            this.AllPart_grid.AllowUserToDeleteRows = false;
-            this.AllPart_grid.AllowUserToResizeRows = false;
-            this.AllPart_grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.AllPart_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.AllPart_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.AllPart_grid.ContextMenuStrip = this.allpart_contextMenuStrip;
-            this.AllPart_grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.AllPart_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.AllPart_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.AllPart_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.AllPart_grid.Location = new System.Drawing.Point(646, 346);
-            this.AllPart_grid.Name = "AllPart_grid";
+            this.gridAllPart.AllowUserToAddRows = false;
+            this.gridAllPart.AllowUserToDeleteRows = false;
+            this.gridAllPart.AllowUserToResizeRows = false;
+            this.gridAllPart.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAllPart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAllPart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAllPart.ContextMenuStrip = this.allpart_contextMenuStrip;
+            this.gridAllPart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAllPart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAllPart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAllPart.Location = new System.Drawing.Point(646, 346);
+            this.gridAllPart.Name = "gridAllPart";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -498,14 +498,14 @@
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.AllPart_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.AllPart_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.AllPart_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.AllPart_grid.RowTemplate.Height = 24;
-            this.AllPart_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.AllPart_grid.Size = new System.Drawing.Size(353, 230);
-            this.AllPart_grid.TabIndex = 76;
-            this.AllPart_grid.TabStop = false;
+            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAllPart.RowTemplate.Height = 24;
+            this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAllPart.Size = new System.Drawing.Size(353, 230);
+            this.gridAllPart.TabIndex = 76;
+            this.gridAllPart.TabStop = false;
             // 
             // allpart_contextMenuStrip
             // 
@@ -529,20 +529,20 @@
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.allpart_delete_Click);
             // 
-            // Qty_grid
+            // gridQty
             // 
-            this.Qty_grid.AllowUserToAddRows = false;
-            this.Qty_grid.AllowUserToDeleteRows = false;
-            this.Qty_grid.AllowUserToResizeRows = false;
-            this.Qty_grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.Qty_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.Qty_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Qty_grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.Qty_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.Qty_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.Qty_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.Qty_grid.Location = new System.Drawing.Point(8, 346);
-            this.Qty_grid.Name = "Qty_grid";
+            this.gridQty.AllowUserToAddRows = false;
+            this.gridQty.AllowUserToDeleteRows = false;
+            this.gridQty.AllowUserToResizeRows = false;
+            this.gridQty.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQty.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQty.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQty.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQty.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQty.Location = new System.Drawing.Point(8, 346);
+            this.gridQty.Name = "gridQty";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -550,29 +550,29 @@
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Qty_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.Qty_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.Qty_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.Qty_grid.RowTemplate.Height = 24;
-            this.Qty_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.Qty_grid.Size = new System.Drawing.Size(148, 230);
-            this.Qty_grid.TabIndex = 77;
-            this.Qty_grid.TabStop = false;
+            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQty.RowTemplate.Height = 24;
+            this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQty.Size = new System.Drawing.Size(148, 230);
+            this.gridQty.TabIndex = 77;
+            this.gridQty.TabStop = false;
             // 
-            // CutRef_grid
+            // gridCutRef
             // 
-            this.CutRef_grid.AllowUserToAddRows = false;
-            this.CutRef_grid.AllowUserToDeleteRows = false;
-            this.CutRef_grid.AllowUserToResizeRows = false;
-            this.CutRef_grid.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.CutRef_grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.CutRef_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.CutRef_grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.CutRef_grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.CutRef_grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.CutRef_grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.CutRef_grid.Location = new System.Drawing.Point(8, 38);
-            this.CutRef_grid.Name = "CutRef_grid";
+            this.gridCutRef.AllowUserToAddRows = false;
+            this.gridCutRef.AllowUserToDeleteRows = false;
+            this.gridCutRef.AllowUserToResizeRows = false;
+            this.gridCutRef.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridCutRef.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridCutRef.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridCutRef.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridCutRef.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridCutRef.Location = new System.Drawing.Point(8, 38);
+            this.gridCutRef.Name = "gridCutRef";
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -580,15 +580,15 @@
             dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.CutRef_grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            this.CutRef_grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.CutRef_grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.CutRef_grid.RowTemplate.Height = 24;
-            this.CutRef_grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CutRef_grid.Size = new System.Drawing.Size(399, 267);
-            this.CutRef_grid.TabIndex = 22;
-            this.CutRef_grid.TabStop = false;
-            this.CutRef_grid.SelectionChanged += new System.EventHandler(this.CutRef_grid_SelectionChanged);
+            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridCutRef.RowTemplate.Height = 24;
+            this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridCutRef.Size = new System.Drawing.Size(399, 267);
+            this.gridCutRef.TabIndex = 22;
+            this.gridCutRef.TabStop = false;
+            this.gridCutRef.SelectionChanged += new System.EventHandler(this.gridCutRef_SelectionChanged);
             // 
             // btnQuery
             // 
@@ -599,7 +599,7 @@
             this.btnQuery.TabIndex = 3;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.Query_button_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // labelGroup
             // 
@@ -630,8 +630,8 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.btnGarmentList);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button_LefttoRight);
-            this.Controls.Add(this.button_RighttoLeft);
+            this.Controls.Add(this.btn_LefttoRight);
+            this.Controls.Add(this.btn_RighttoLeft);
             this.Controls.Add(this.numNoOfBundle);
             this.Controls.Add(this.label_TotalCutOutput);
             this.Controls.Add(this.labelNoOfBundle);
@@ -643,21 +643,21 @@
             this.Controls.Add(this.labelEstCutDate);
             this.Controls.Add(this.txtCutref);
             this.Controls.Add(this.labelCutref);
-            this.Controls.Add(this.Cutpart_grid);
-            this.Controls.Add(this.ArticleSize_grid);
-            this.Controls.Add(this.AllPart_grid);
-            this.Controls.Add(this.Qty_grid);
-            this.Controls.Add(this.CutRef_grid);
+            this.Controls.Add(this.gridCutpart);
+            this.Controls.Add(this.gridArticleSize);
+            this.Controls.Add(this.gridAllPart);
+            this.Controls.Add(this.gridQty);
+            this.Controls.Add(this.gridCutRef);
             this.DefaultControl = "Cutref_textBox";
             this.DefaultControlForEdit = "Cutref_textBox";
             this.EditMode = true;
             this.Name = "P11";
             this.Text = "P11.Batch Create Bundle Card";
-            this.Controls.SetChildIndex(this.CutRef_grid, 0);
-            this.Controls.SetChildIndex(this.Qty_grid, 0);
-            this.Controls.SetChildIndex(this.AllPart_grid, 0);
-            this.Controls.SetChildIndex(this.ArticleSize_grid, 0);
-            this.Controls.SetChildIndex(this.Cutpart_grid, 0);
+            this.Controls.SetChildIndex(this.gridCutRef, 0);
+            this.Controls.SetChildIndex(this.gridQty, 0);
+            this.Controls.SetChildIndex(this.gridAllPart, 0);
+            this.Controls.SetChildIndex(this.gridArticleSize, 0);
+            this.Controls.SetChildIndex(this.gridCutpart, 0);
             this.Controls.SetChildIndex(this.labelCutref, 0);
             this.Controls.SetChildIndex(this.txtCutref, 0);
             this.Controls.SetChildIndex(this.labelEstCutDate, 0);
@@ -669,8 +669,8 @@
             this.Controls.SetChildIndex(this.labelNoOfBundle, 0);
             this.Controls.SetChildIndex(this.label_TotalCutOutput, 0);
             this.Controls.SetChildIndex(this.numNoOfBundle, 0);
-            this.Controls.SetChildIndex(this.button_RighttoLeft, 0);
-            this.Controls.SetChildIndex(this.button_LefttoRight, 0);
+            this.Controls.SetChildIndex(this.btn_RighttoLeft, 0);
+            this.Controls.SetChildIndex(this.btn_LefttoRight, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.btnGarmentList, 0);
             this.Controls.SetChildIndex(this.label7, 0);
@@ -686,13 +686,13 @@
             this.Controls.SetChildIndex(this.labelGroup, 0);
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Cutpart_grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
             this.art_contextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ArticleSize_grid)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AllPart_grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).EndInit();
             this.allpart_contextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Qty_grid)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CutRef_grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQty)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridCutRef)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -713,8 +713,8 @@
         private Win.UI.Label label7;
         private Win.UI.Button btnGarmentList;
         private Win.UI.Label label5;
-        private Win.UI.Button button_LefttoRight;
-        private Win.UI.Button button_RighttoLeft;
+        private Win.UI.Button btn_LefttoRight;
+        private Win.UI.Button btn_RighttoLeft;
         private Win.UI.NumericBox numNoOfBundle;
         private Win.UI.Label label_TotalCutOutput;
         private Win.UI.Label labelNoOfBundle;
@@ -726,11 +726,11 @@
         private Win.UI.Label labelEstCutDate;
         private Win.UI.TextBox txtCutref;
         private Win.UI.Label labelCutref;
-        private Win.UI.Grid Cutpart_grid;
-        private Win.UI.Grid ArticleSize_grid;
-        private Win.UI.Grid AllPart_grid;
-        private Win.UI.Grid Qty_grid;
-        private Win.UI.Grid CutRef_grid;
+        private Win.UI.Grid gridCutpart;
+        private Win.UI.Grid gridArticleSize;
+        private Win.UI.Grid gridAllPart;
+        private Win.UI.Grid gridQty;
+        private Win.UI.Grid gridCutRef;
         private Win.UI.Button btnQuery;
         private Win.UI.ContextMenuStrip allpart_contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem allpart_insert;

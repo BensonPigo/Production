@@ -198,7 +198,7 @@ content, false, false);
                 return;
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBatchUpdate_Click(object sender, EventArgs e)
         {
             grid.ValidateControl();
             if (MyUtility.Check.Empty(dateReleaseDate.Value)) return;

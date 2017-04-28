@@ -31,9 +31,9 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, "Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             comboM.Text = Sci.Env.User.Keyword;
-        }         
-        
-        private void radioBtn_Byonedaydetial_CheckedChanged(object sender, EventArgs e)
+        }
+
+        private void radioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
         {
             dateCuttingDate.Control2.Visible = !radioByOneDayDetial.Checked;
             if (radioByOneDayDetial.Checked)
@@ -42,7 +42,7 @@ namespace Sci.Production.Cutting
                 dateCuttingDate.Value2 = dateCuttingDate.Value1;
         }
 
-        private void Leave_CuttingDate(object sender, EventArgs e)
+        private void dateCuttingDate_Leave(object sender, EventArgs e)
         {
             if (radioBySummary.Checked || radioByDetail.Checked)
                 if (MyUtility.Check.Empty(dateCuttingDate.Value2))
@@ -862,8 +862,8 @@ where 1 = 1
             boolsend = false;
             return true;
         }
-        
-        private void btn_sendmail_Click(object sender, EventArgs e)
+
+        private void btnSendMail_Click(object sender, EventArgs e)
         {
             tmpFile = Path.Combine(Sci.Env.Cfg.ReportTempDir, Guid.NewGuid() + ".xlsx");//設定存檔路徑字串
             boolshowexcel = false;

@@ -464,7 +464,7 @@ namespace Sci.Production.Cutting
         }
 
 
-        private void textBox_Cutref_Validating(object sender, CancelEventArgs e)
+        private void txtCutRef_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
             if (txtCutRef.Text == "")
@@ -553,7 +553,7 @@ namespace Sci.Production.Cutting
             
         }
 
-        private void textBox_orderid_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void txtSPNo_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["Cutref"]) || MyUtility.Check.Empty(CurrentMaintain["POID"])) return;
             Sci.Win.Tools.SelectItem item;
@@ -569,7 +569,7 @@ namespace Sci.Production.Cutting
             txtSPNo.Text = item.GetSelectedString();
         }
 
-        private void textBox_orderid_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
             string newvalue = txtSPNo.Text;
@@ -659,7 +659,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnGarmentList_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
@@ -716,7 +716,7 @@ namespace Sci.Production.Cutting
             #endregion 
         }
 
-        private void numericBox_Group_Validated(object sender, EventArgs e)
+        private void numBeginBundleGroup_Validated(object sender, EventArgs e)
         {
             decimal no = (decimal)numBeginBundleGroup.Value;
             decimal oldvalue = (decimal)numBeginBundleGroup.OldValue;
@@ -727,7 +727,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void Generate_Button_Click(object sender, EventArgs e)
+        private void btnGenerate_Click(object sender, EventArgs e)
         {
             DataTable dt = ((DataTable)detailgridbs.DataSource);           
             detailgrid.ValidateControl();
@@ -749,7 +749,7 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void textBox_Article_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string selectCommand;
             Sci.Win.Tools.SelectItem item;
@@ -778,7 +778,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void textBox_Article_Validating(object sender, CancelEventArgs e)
+        private void txtArticle_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
             string newvalue = txtArticle.Text;
@@ -820,7 +820,7 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void txtLine_PopUp(object sender, TextBoxPopUpEventArgs e)
+        private void txtLineNo_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
             string sql = string.Format(@"Select ID,FactoryID,Description  From SewingLine WITH (NOLOCK) 
@@ -831,7 +831,7 @@ namespace Sci.Production.Cutting
             txtLineNo.Text = item.GetSelectedString();
         }
 
-        private void txtLine_Validating(object sender, CancelEventArgs e)
+        private void txtLineNo_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
             string newvalue = txtLineNo.Text;

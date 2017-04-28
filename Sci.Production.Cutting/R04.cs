@@ -27,8 +27,8 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             comboM.Text = Sci.Env.User.Keyword;
         }
-        
-        private void radiobtn1_ByM_CheckedChanged(object sender, EventArgs e)
+
+        private void radioByM_CheckedChanged(object sender, EventArgs e)
         {
             if (radioByM.Checked)
             {
@@ -39,7 +39,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void radioBtn2_ByCutCell_CheckedChanged(object sender, EventArgs e)
+        private void radioByCutCell_CheckedChanged(object sender, EventArgs e)
         {
             if (radioByCutCell.Checked)
             {
@@ -49,7 +49,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void radioBtn3_ByDetail_CheckedChanged(object sender, EventArgs e)
+        private void radioByDetail_CheckedChanged(object sender, EventArgs e)
         {
             if (radioByDetail.Checked)
             {

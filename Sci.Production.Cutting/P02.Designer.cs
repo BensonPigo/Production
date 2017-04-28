@@ -191,7 +191,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5041, 561);
+            this.refresh.Location = new System.Drawing.Point(5433, 561);
             // 
             // detailgridcont
             // 
@@ -200,7 +200,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(1415, 2867);
             // 
             // detail2
             // 
@@ -467,7 +467,7 @@
             this.btnBatchAssignCellEstCutDate.TabIndex = 17;
             this.btnBatchAssignCellEstCutDate.Text = "Batch assign Cell/Est. Cut Date";
             this.btnBatchAssignCellEstCutDate.UseVisualStyleBackColor = true;
-            this.btnBatchAssignCellEstCutDate.Click += new System.EventHandler(this.Batchassign_Click);
+            this.btnBatchAssignCellEstCutDate.Click += new System.EventHandler(this.btnBatchAssignCellEstCutDate_Click);
             // 
             // btnQuantityBreakdown
             // 
@@ -583,7 +583,7 @@
             this.txtMarkerLengthE.Name = "txtMarkerLengthE";
             this.txtMarkerLengthE.Size = new System.Drawing.Size(121, 23);
             this.txtMarkerLengthE.TabIndex = 9;
-            this.txtMarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_MarkerLengthE_Validating);
+            this.txtMarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.txtMarkerLengthE_MarkerLengthE_Validating);
             // 
             // numUnitCons
             // 
@@ -609,7 +609,7 @@
             0,
             0,
             0});
-            this.numUnitCons.Validated += new System.EventHandler(this.numericBox_UnitCons_Validated);
+            this.numUnitCons.Validated += new System.EventHandler(this.numUnitCons_UnitCons_Validated);
             // 
             // numCons
             // 
@@ -1017,7 +1017,7 @@
             this.btnPatternPanel.TabIndex = 18;
             this.btnPatternPanel.Text = "PatternPanel";
             this.btnPatternPanel.UseVisualStyleBackColor = true;
-            this.btnPatternPanel.Click += new System.EventHandler(this.button1_Click);
+            this.btnPatternPanel.Click += new System.EventHandler(this.btnPatternPanel_Click);
             // 
             // labelPatternPanel
             // 
@@ -1047,7 +1047,7 @@
             this.numMarkerLengthY.Size = new System.Drawing.Size(34, 23);
             this.numMarkerLengthY.TabIndex = 8;
             this.numMarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numMarkerLengthY.Validated += new System.EventHandler(this.numericBox_MarkerLengthY_Validated);
+            this.numMarkerLengthY.Validated += new System.EventHandler(this.numMarkerLengthY_MarkerLengthY_Validated);
             // 
             // txtCutCell
             // 

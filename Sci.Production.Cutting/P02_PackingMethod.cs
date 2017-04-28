@@ -56,7 +56,7 @@ Where cuttingsp = '{0}'"
             return Result.True;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBreakdown_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(ODT.Rows[0]);
             callNextForm.ShowDialog(this);

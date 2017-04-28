@@ -58,7 +58,7 @@ namespace Sci.Production.Cutting
 
             Linecell.EditingMouseDown += (s, e) =>
             {
-                 DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem sele;
@@ -73,7 +73,7 @@ namespace Sci.Production.Cutting
             };
             Linecell.CellValidating += (s, e) =>
             {
-                DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 string line = e.FormattedValue.ToString();
                 string oldvalue = dr["Sewingline"].ToString();
                 if (oldvalue == line) return;
@@ -85,7 +85,7 @@ namespace Sci.Production.Cutting
             };
             Cellcell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem sele;
@@ -98,7 +98,7 @@ namespace Sci.Production.Cutting
             };
             Cellcell.CellValidating += (s, e) =>
             {
-                DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 string cell = e.FormattedValue.ToString();
                 string oldvalue = dr["SewingCell"].ToString();
                 if (oldvalue == cell) return;
@@ -110,7 +110,7 @@ namespace Sci.Production.Cutting
             };
             Qtycell.CellValidating += (s, e) =>
             {
-                DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 int rowcount = qtyTb.Select(string.Format("iden='{0}'", dr["iden"]), "").Length;
                 int newcount = Convert.ToInt16(e.FormattedValue);
                 numNoOfBundle.Value = newcount;
@@ -119,7 +119,7 @@ namespace Sci.Production.Cutting
             };
             QtySizecell.CellValidating += (s, e) =>
             {
-                DataRow dr = Qty_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridQty.GetDataRow(e.RowIndex);
                 dr["Qty"] = e.FormattedValue;
                 dr.EndEdit();
                 int qty = MyUtility.Convert.GetInt(qtyTb.Compute("Sum(Qty)", string.Format("iden ='{0}'", dr["iden"])));
@@ -129,7 +129,7 @@ namespace Sci.Production.Cutting
 
             patterncell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = Cutpart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS") return;
                 if (e.Button == MouseButtons.Right)
                 {
@@ -159,7 +159,7 @@ namespace Sci.Production.Cutting
             };
             patterncell.CellValidating += (s, e) =>
             {
-                DataRow dr = Cutpart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode) return;
@@ -187,7 +187,7 @@ namespace Sci.Production.Cutting
             };
             patterncell2.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = AllPart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridAllPart.GetDataRow(e.RowIndex);
                 if (e.Button == MouseButtons.Right)
                 {
 
@@ -207,7 +207,7 @@ namespace Sci.Production.Cutting
             };
             subcell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = Cutpart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS") return;
                 if (e.Button == MouseButtons.Right)
                 {
@@ -224,7 +224,7 @@ namespace Sci.Production.Cutting
             };
             partQtyCell.CellValidating += (s, e) =>
             {
-                DataRow dr = Cutpart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridCutpart.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Parts"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
@@ -234,7 +234,7 @@ namespace Sci.Production.Cutting
             };
             partQtyCell2.CellValidating += (s, e) =>
             {
-                DataRow dr = AllPart_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridAllPart.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Parts"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
@@ -244,7 +244,7 @@ namespace Sci.Production.Cutting
 
             chcutref.CellValidating += (s, e) =>
             {
-                DataRow dr = CutRef_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Cutref='{0}'", dr["Cutref"]));
@@ -255,16 +255,16 @@ namespace Sci.Production.Cutting
                 }
                 dr["sel"] = newvalue;
                 dr.EndEdit();
-                ArticleSize_grid.Refresh();
+                gridArticleSize.Refresh();
             };
             charticle.CellValidating += (s, e) =>
             {
-                DataRow dr = ArticleSize_grid.GetDataRow(e.RowIndex);
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 dr["sel"] = newvalue;
                 dr.EndEdit();
 
-                DataRow selectDr = ((DataRowView)CutRef_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+                DataRow selectDr = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
 
                 DataRow[] ArtAry = ArticleSizeTb.Select(string.Format("Sel=1 and Cutref='{0}'", dr["Cutref"]));
                 if (ArtAry.Length == 0)
@@ -275,9 +275,9 @@ namespace Sci.Production.Cutting
                 {
                     selectDr["Sel"] = 1;
                 }
-                CutRef_grid.Refresh();
+                gridCutRef.Refresh();
             };
-            CutRef_grid.CellClick += (s, e) =>
+            gridCutRef.CellClick += (s, e) =>
             {
                 if (e.RowIndex != -1) return; //判斷是Header
                 if (e.ColumnIndex != 0) return;//判斷是Sel 欄位
@@ -286,10 +286,10 @@ namespace Sci.Production.Cutting
                 {
                     dr["Sel"] = sel;
                 }
-                ArticleSize_grid.Refresh();
+                gridArticleSize.Refresh();
                 
             };
-            ArticleSize_grid.CellClick += (s, e) =>
+            gridArticleSize.CellClick += (s, e) =>
             {
                 if (e.RowIndex != -1) return; //判斷是Header
                 if (e.ColumnIndex != 0) return;//判斷是Sel 欄位
@@ -300,13 +300,13 @@ namespace Sci.Production.Cutting
                 {
                     dr[0]["Sel"] = sel;
                 }
-                CutRef_grid.Refresh();
+                gridCutRef.Refresh();
             };
             #endregion
             
             #region 左上一Grid
-            this.CutRef_grid.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Helper.Controls.Grid.Generator(CutRef_grid)
+            this.gridCutRef.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            Helper.Controls.Grid.Generator(gridCutRef)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: chcutref)
            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
            .Text("POID", header: "POID", width: Widths.AnsiChars(11), iseditingreadonly: true)
@@ -314,13 +314,13 @@ namespace Sci.Production.Cutting
            .Text("PatternPanel", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
            .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true);
-            CutRef_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            CutRef_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridCutRef.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridCutRef.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
 
             #endregion
             #region 右上一Grid
-            this.ArticleSize_grid.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(ArticleSize_grid)
+            this.gridArticleSize.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridArticleSize)
            .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings:charticle)
            .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -331,57 +331,57 @@ namespace Sci.Production.Cutting
            .Numeric("Qty", header: "No of Bundle", width: Widths.AnsiChars(3), integer_places: 3,settings: Qtycell)
            .Numeric("Cutoutput", header: "CutOutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
            .Numeric("TotalParts", header: "Total Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
-            ArticleSize_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            ArticleSize_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            ArticleSize_grid.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns["SewingLine"].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns["SewingCell"].DefaultCellStyle.BackColor = Color.Pink;
-            ArticleSize_grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridArticleSize.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.Columns["SewingLine"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.Columns["SewingCell"].DefaultCellStyle.BackColor = Color.Pink;
+            gridArticleSize.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
             #region 左下一 Qty
-            this.Qty_grid.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(Qty_grid)
+            this.gridQty.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(gridQty)
            .Numeric("No", header: "No", width: Widths.AnsiChars(3), integer_places: 2, iseditingreadonly: true)
            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), integer_places: 3, settings: QtySizecell);
-            Qty_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Qty_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Qty_grid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            gridQty.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridQty.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridQty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region Cutpart-Pattern 下中
-            Cutpart_grid.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.Cutpart_grid)
+            gridCutpart.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridCutpart)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3,settings:partQtyCell);
-            Cutpart_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Cutpart_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            Cutpart_grid.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
-            Cutpart_grid.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            Cutpart_grid.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
-            Cutpart_grid.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
+            gridCutpart.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridCutpart.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridCutpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            gridCutpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            gridCutpart.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
+            gridCutpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
 
             #region AllPart_grid 右下一
-            this.AllPart_grid.IsEditingReadOnly = false;
-            Helper.Controls.Grid.Generator(this.AllPart_grid)
+            this.gridAllPart.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.gridAllPart)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell2)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell2);
-            AllPart_grid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            AllPart_grid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            AllPart_grid.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            AllPart_grid.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
+            gridAllPart.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridAllPart.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            gridAllPart.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            gridAllPart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            gridAllPart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            gridAllPart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
         }
 
-        private void Query_button_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Query");
             DBProxy.Current.DefaultTimeout = 300;
@@ -524,16 +524,16 @@ namespace Sci.Production.Cutting
             }
             #endregion 
 
-            CutRef_grid.DataSource = CutRefTb;
-            ArticleSize_grid.DataSource = ArticleSizeTb;
-            Qty_grid.DataSource = qtyTb;
-            AllPart_grid.DataSource = allpartTb;
-            Cutpart_grid.DataSource = patternTb;
+            gridCutRef.DataSource = CutRefTb;
+            gridArticleSize.DataSource = ArticleSizeTb;
+            gridQty.DataSource = qtyTb;
+            gridAllPart.DataSource = allpartTb;
+            gridCutpart.DataSource = patternTb;
 
-            this.CutRef_grid.AutoResizeColumns();
-            this.ArticleSize_grid.AutoResizeColumns();
-            this.Cutpart_grid.AutoResizeColumns();
-            this.AllPart_grid.AutoResizeColumns();
+            this.gridCutRef.AutoResizeColumns();
+            this.gridArticleSize.AutoResizeColumns();
+            this.gridCutpart.AutoResizeColumns();
+            this.gridAllPart.AutoResizeColumns();
             
             this.HideWaitMessage();
             
@@ -667,7 +667,7 @@ namespace Sci.Production.Cutting
             DBProxy.Current.DefaultTimeout = 0;
         }
 
-        private void CutRef_grid_SelectionChanged(object sender, EventArgs e)
+        private void gridCutRef_SelectionChanged(object sender, EventArgs e)
         {
             changeRow();
 
@@ -678,23 +678,23 @@ namespace Sci.Production.Cutting
             DataRow selectDr_Cutref;
             DataRow selectDr_Artsize;
             if (CutRefTb.Rows.Count == 0) return;
-            if (CutRef_grid.GetSelectedRowIndex() == -1)
+            if (gridCutRef.GetSelectedRowIndex() == -1)
             {
                 selectDr_Cutref = CutRefTb.Rows[0];
             }
             else
             {
-                selectDr_Cutref = ((DataRowView)CutRef_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+                selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
             ArticleSizeTb.DefaultView.RowFilter = string.Format("Cutref ='{0}'", selectDr_Cutref["Cutref"]);
             if (ArticleSizeTb.Rows.Count == 0) return;
-            if (ArticleSize_grid.GetSelectedRowIndex() == -1)
+            if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
                 selectDr_Artsize = ArticleSizeTb.Rows[0];
             }
             else
             {
-                selectDr_Artsize = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+                selectDr_Artsize = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
            
             
@@ -768,22 +768,22 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void numericBox_noofbundle_Validated(object sender, EventArgs e)
+        private void numNoOfBundle_Validated(object sender, EventArgs e)
         {
 
             int oldcount = Convert.ToInt16(numNoOfBundle.OldValue);
             int newcount = Convert.ToInt16(numNoOfBundle.Value);
             if (ArticleSizeTb == null) return;
             if (ArticleSizeTb.Rows.Count == 0) return;
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr["Qty"] = newcount;
             distSizeQty(oldcount, newcount, selectDr);
         }
 
-        private void button_LefttoRight_Click(object sender, EventArgs e)
+        private void btn_LefttoRight_Click(object sender, EventArgs e)
         {
             gridvalid();
-            DataRow selectartDr = ((DataRowView)Cutpart_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectartDr = ((DataRowView)gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS") return;
             string art = selectartDr["art"].ToString();
@@ -830,12 +830,12 @@ namespace Sci.Production.Cutting
             calpart();
         }
 
-        private void button_RighttoLeft_Click(object sender, EventArgs e)
+        private void btn_RighttoLeft_Click(object sender, EventArgs e)
         {
             gridvalid();
             if (patternTb.Rows.Count == 0) return;
-            DataRow selectartDr = ((DataRowView)Cutpart_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
-            DataRow selectallparteDr = ((DataRowView)AllPart_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectartDr = ((DataRowView)gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectallparteDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
 
             DataRow[] checkdr = allpartTb.Select("sel=1");
             #region 確認有勾選
@@ -872,15 +872,15 @@ namespace Sci.Production.Cutting
 
         public void gridvalid()
         {
-            ArticleSize_grid.ValidateControl();
-            Qty_grid.ValidateControl();
-            Cutpart_grid.ValidateControl();
-            AllPart_grid.ValidateControl();
+            gridArticleSize.ValidateControl();
+            gridQty.ValidateControl();
+            gridCutpart.ValidateControl();
+            gridAllPart.ValidateControl();
         }
 
         public void calpart() //計算Parts,TotalParts
         {
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             int allpart = MyUtility.Convert.GetInt(allpartTb.Compute("Sum(Parts)", string.Format("iden={0}", selectDr["iden"])));
             DataRow[] allpartdr = patternTb.Select(string.Format("PatternCode='ALLPARTS' and iden={0}",selectDr["iden"]));
             if (allpartdr.Length > 0)
@@ -895,7 +895,7 @@ namespace Sci.Production.Cutting
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)//新增下中
         {
             gridvalid();
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow ndr = patternTb.NewRow();
             ndr["iden"] = selectDr["iden"];
             patternTb.Rows.Add(ndr);
@@ -904,7 +904,7 @@ namespace Sci.Production.Cutting
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)//刪除下中
         {
             gridvalid();
-            DataRow selectDr = ((DataRowView)Cutpart_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             if (selectDr["PatternCode"].ToString() == "ALLPARTS") return;
             selectDr.Delete();
         }
@@ -912,7 +912,7 @@ namespace Sci.Production.Cutting
         private void allpart_insert_Click(object sender, EventArgs e) //新增右下
         {
             gridvalid();
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow ndr = allpartTb.NewRow();
             ndr["iden"] = selectDr["iden"];
             allpartTb.Rows.Add(ndr);
@@ -921,31 +921,31 @@ namespace Sci.Production.Cutting
         private void allpart_delete_Click(object sender, EventArgs e)//刪除右下
         {
             gridvalid();
-            DataRow selectDr = ((DataRowView)AllPart_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnGarmentList_Click(object sender, EventArgs e)
         {
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
     new Sci.Production.PublicForm.GarmentList(ukey,null);
             callNextForm.ShowDialog(this);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnColorComb_Click(object sender, EventArgs e)
         {
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.ColorCombination callNextForm =
             new Sci.Production.PublicForm.ColorCombination(selectDr["poid"].ToString(), ukey);
             callNextForm.ShowDialog(this);
         }
 
-        private void copy_to_same_Cutref_Click(object sender, EventArgs e)
+        private void btnCopy_to_same_Cutref_Click(object sender, EventArgs e)
         {
-            DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string cutref = selectDr["Cutref"].ToString();
             int iden = Convert.ToInt16(selectDr["iden"]);
             DataRow[] ArtDrAy = ArticleSizeTb.Select(string.Format("Cutref='{0}' and iden<>{1}",cutref,iden));
@@ -992,24 +992,24 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void ArticleSize_grid_SelectionChanged(object sender, EventArgs e)
+        private void gridArticleSize_SelectionChanged(object sender, EventArgs e)
         {
             changeRow();
         }
 
-        private void Close_Button_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void copy_to_other_Cutref_Click(object sender, EventArgs e)
+        private void btnCopy_to_other_Cutref_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Cutting.P11_copytocutref();
             frm.ShowDialog(this);
             if (!MyUtility.Check.Empty(frm.copycutref))
             {
                 string copycutref = frm.copycutref;
-                DataRow selectDr = ((DataRowView)ArticleSize_grid.GetSelecteds(SelectedSort.Index)[0]).Row;
+                DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
                 string cutref = selectDr["Cutref"].ToString();
                 int iden = Convert.ToInt16(selectDr["iden"]);
                 DataRow[] ArtDrAy = ArticleSizeTb.Select(string.Format("Cutref='{0}'", copycutref));
@@ -1061,7 +1061,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void BatchCreate_Button_Click(object sender, EventArgs e)
+        private void btnBatchCreate_Click(object sender, EventArgs e)
         {
             DataRow[] CutrefAy = CutRefTb.Select("Sel=1");
             if (CutrefAy.Length == 0)

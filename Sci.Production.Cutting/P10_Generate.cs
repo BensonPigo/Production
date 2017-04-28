@@ -501,7 +501,7 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void numericBox_noBundle_Validated(object sender, EventArgs e)
+        private void numNoOfBundle_Validated(object sender, EventArgs e)
         {
             int newvalue = (int)numNoOfBundle.Value;
             int oldvalue = (int)numNoOfBundle.OldValue;

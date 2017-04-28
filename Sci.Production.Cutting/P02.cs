@@ -1525,7 +1525,7 @@ order by id,article,sizecode"
             this.OnDetailEntered();
         }
 
-        private void Batchassign_Click(object sender, EventArgs e)
+        private void btnBatchAssignCellEstCutDate_Click(object sender, EventArgs e)
         {
             gridValid();
             grid.ValidateControl();
@@ -1713,7 +1713,7 @@ order by id,article,sizecode"
         }
 
         #region MarkerLengt驗證/UnitCons/Cons計算
-        private void numericBox_MarkerLengthY_Validated(object sender, EventArgs e)
+        private void numMarkerLengthY_MarkerLengthY_Validated(object sender, EventArgs e)
         {
             if (numMarkerLengthY.Text.Trim() == "") return;
             if (numMarkerLengthY.OldValue == numMarkerLengthY.Text) return;
@@ -1724,7 +1724,7 @@ order by id,article,sizecode"
             cal_Cons(true, true);
         }
 
-        private void textBox_MarkerLengthE_Validating(object sender, CancelEventArgs e)
+        private void txtMarkerLengthE_MarkerLengthE_Validating(object sender, CancelEventArgs e)
         {
             if (txtMarkerLengthE.OldValue == txtMarkerLengthE.Text) return;
 
@@ -1732,7 +1732,7 @@ order by id,article,sizecode"
             cal_Cons(true, true);
         }
 
-        private void numericBox_UnitCons_Validated(object sender, EventArgs e)
+        private void numUnitCons_UnitCons_Validated(object sender, EventArgs e)
         {
             cal_Cons(false, true);
         }
@@ -2069,7 +2069,7 @@ order by id,article,sizecode"
             callNextForm.ShowDialog(this);
         }
         //PatternPanel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnPatternPanel_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentDetailData; if (null == dr) return;
             var frm = new Sci.Production.Cutting.P02_PatternPanel(!this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);

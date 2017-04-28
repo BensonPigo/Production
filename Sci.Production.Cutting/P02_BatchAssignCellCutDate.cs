@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
             curTb.Columns.Add("Sel", typeof(bool));
 
             gridsetup();
-            filter_button_Click(null,null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
+            btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
         }
      
@@ -122,7 +122,7 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void filter_button_Click(object sender, EventArgs e)
+        private void btnFilter_Click(object sender, EventArgs e)
         {
             string sp = txtSPNo.Text;
             string article = txtArticle.Text;
@@ -147,13 +147,13 @@ namespace Sci.Production.Cutting
             gridBatchAssignCellEstCutDate.DataSource = curTb;
             
         }
-       
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void batchcutcell_button_Click(object sender, EventArgs e)
+        private void btnBatchUpdateEstCutCell_Click(object sender, EventArgs e)
         {
             string cell = txtCell2.Text;
             foreach (DataRow dr in curTb.Rows)
@@ -168,7 +168,7 @@ namespace Sci.Production.Cutting
 
         }
 
-        private void batchestcutdate_button_Click(object sender, EventArgs e)
+        private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)
         {
             string cdate =""; 
                 if(!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
@@ -194,12 +194,12 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void grid1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void gridBatchAssignCellEstCutDate_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
 
-        private void btn_Confirm_Click(object sender, EventArgs e)
+        private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
             string cell = txtCell2.Text;string cdate = ""; 

@@ -72,8 +72,8 @@ namespace Sci.Production.Cutting
                 ;
 
         }
-        
-        private void button1_Click(object sender, EventArgs e)
+
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data processing, please wait...");
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
@@ -335,8 +335,8 @@ namespace Sci.Production.Cutting
             
             this.HideWaitMessage();
         }
-        
-        private void button2_Click(object sender, EventArgs e)
+
+        private void btnBundleCard_Click(object sender, EventArgs e)
         {
             #region report
 
@@ -439,7 +439,7 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             #region excel
             bool checkone = false;
@@ -472,7 +472,7 @@ namespace Sci.Production.Cutting
             #endregion
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }        
