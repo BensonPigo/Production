@@ -100,7 +100,7 @@ select  d.FactoryID
         ,c.ColorID
         ,c.SizeSpec
         ,c.StockUnit
-        ,shipqty = (b.qty + b.foc)  * v.RateValue 
+        ,shipqty = Round((b.qty + b.foc)  * v.RateValue, 2)
         ,over1 = iif ((b.qty + b.foc)  * v.RateValue > isnull(x.qty,0),'V','') 
         ,received_qty = isnull(x.qty,0) 
         ,over2 = iif ((b.qty + b.foc)  * v.RateValue < isnull(x.qty,0),'V','') 
