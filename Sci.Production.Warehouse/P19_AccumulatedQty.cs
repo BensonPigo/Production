@@ -80,6 +80,7 @@ select  PoId
 			                                                                        and B.InventorySeq2 = z.Seq2 
 			                                                                        and B.FactoryId = '{2}') 
 		                                                        and v.TO_U = z.stockunit),1)
+                            , 2)
         ,Qty,stockunit
         ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z
