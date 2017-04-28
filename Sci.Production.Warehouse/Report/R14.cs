@@ -100,14 +100,16 @@ select  d.FactoryID
         ,c.ColorID
         ,c.SizeSpec
         ,c.StockUnit
-        ,shipqty = Round((b.qty + b.foc)  * v.RateValue, 2)
-        ,over1 = iif ((b.qty + b.foc)  * v.RateValue > isnull(x.qty,0),'V','') 
+        ,shipqty = v.ShipQty
+        ,over1 = iif (v.ShipQty > isnull(x.qty,0),'V','') 
         ,received_qty = isnull(x.qty,0) 
-        ,over2 = iif ((b.qty + b.foc)  * v.RateValue < isnull(x.qty,0),'V','') 
+        ,over2 = iif (v.ShipQty < isnull(x.qty,0),'V','') 
 from dbo.export A WITH (NOLOCK) 
 inner join dbo.export_detail B WITH (NOLOCK) ON B.ID = A.ID
 inner join dbo.PO_Supp_Detail c WITH (NOLOCK) on c.ID = b.PoID and c.seq1 = b.seq1 and c.seq2 =  b.seq2 
-inner join dbo.View_Unitrate v on v.FROM_U = c.POUnit and v.TO_U = c.StockUnit
+outer apply (
+    select ShipQty = Round(dbo.GetUnitQty(c.POUnit, c.StockUnit, (b.qty + b.foc)), 2)
+) v
 outer apply ( 
     select sum(b1.StockQty) qty 
     from dbo.Receiving a1 WITH (NOLOCK) 
