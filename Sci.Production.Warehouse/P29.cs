@@ -278,41 +278,77 @@ WHERE   StockType='{0}'
 
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
-            sqlcmd.Append(string.Format(@";with cte
-as
-(
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete,f.MDivisionID,rtrim(o.id) poid,o.Category,o.FtyGroup,o.CFMDate,o.CutInLine,o.ProjectID,o.FactoryID 
-,rtrim(pd.seq1) seq1,pd.seq2,pd.StockPOID,pd.StockSeq1,pd.StockSeq2
-,ROUND(x.taipei_qty*isnull(v.RateValue,1),2,1) N'PoQty'
-,pd.POUnit,pd.StockUnit
-,InQty = isnull(xx.InQty,0)
-from dbo.orders o WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-left join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
-outer apply
-(select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.stockpoID and fi.Seq1 = pd.stockSeq1 and fi.Seq2 = pd.stockSeq2 and fi.StockType = 'I' 
-	and fid.MtlLocationID is null and fi.Lock = 0 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
-) y--Detail有MD為null數量,沒有則為0,沒資料也為0
-outer apply(
-	select count(1) cnt from FtyInventory fi WITH (NOLOCK) left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
-	where  fi.POID = pd.ID and fi.Seq1 = pd.Seq1 and fi.Seq2 = pd.Seq2 and fi.StockType = 'B'
-) yz--Detail資料數量
-cross apply
-(
-select sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
- from dbo.Invtrans i WITH (NOLOCK) 
- where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 and (i.type=2 or i.type=6)
-)x -- 需要轉的數量
-cross apply
-(
-	select sum(s2.Qty) as InQty 
-    from dbo.SubTransfer s1 WITH (NOLOCK) 
-    inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
-	where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' and s2.ToPOID = pd.id and s2.ToSeq1 = pd.seq1 and s2.ToSeq2 = pd.seq2 
-) xx --已轉的數量
-where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
+            sqlcmd.Append(string.Format(@"
+;with cte as (
+    select  convert(bit,0) as selected
+            , iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete
+            , f.MDivisionID
+            , rtrim(o.id) poid
+            , o.Category
+            , o.FtyGroup
+            , o.CFMDate
+            , o.CutInLine
+            , o.ProjectID
+            , o.FactoryID 
+            , rtrim(pd.seq1) seq1
+            , pd.seq2
+            , pd.StockPOID
+            , pd.StockSeq1
+            , pd.StockSeq2
+            ,ROUND(x.taipei_qty*isnull(v.RateValue,1), 2) N'PoQty'
+            ,pd.POUnit
+            ,pd.StockUnit
+            ,InQty = isnull(xx.InQty,0)
+    from dbo.orders o WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
+    left join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
+    inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
+
+    outer apply(
+        select  count(1) cnt 
+        from FtyInventory fi WITH (NOLOCK) 
+        left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
+	    where   fi.POID = pd.stockpoID 
+                and fi.Seq1 = pd.stockSeq1 
+                and fi.Seq2 = pd.stockSeq2 
+                and fi.StockType = 'I' 
+	            and fid.MtlLocationID is null 
+                and fi.Lock = 0 
+                and fi.InQty - fi.OutQty + fi.AdjustQty > 0
+    ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
+
+    outer apply(
+	    select  count(1) cnt 
+        from FtyInventory fi WITH (NOLOCK) 
+        left join FtyInventory_Detail fid WITH (NOLOCK) on fid.Ukey = fi.Ukey 
+	    where   fi.POID = pd.ID 
+                and fi.Seq1 = pd.Seq1 
+                and fi.Seq2 = pd.Seq2 
+                and fi.StockType = 'B'
+    ) yz--Detail資料數量
+
+    cross apply(
+        select  sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+        from dbo.Invtrans i WITH (NOLOCK) 
+        where   i.InventoryPOID = pd.StockPOID 
+                and i.InventorySeq1 = pd.StockSeq1 
+                and i.PoID = pd.ID 
+                and i.InventorySeq2 = pd.StockSeq2 
+                and (i.type=2 or i.type=6)
+    )x -- 需要轉的數量
+
+    cross apply(
+	    select sum(s2.Qty) as InQty 
+        from dbo.SubTransfer s1 WITH (NOLOCK) 
+        inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
+	    where   s1.type ='B' 
+                and s1.Status ='Confirmed' 
+                and s2.ToStockType = 'B' 
+                and s2.ToPOID = pd.id 
+                and s2.ToSeq1 = pd.seq1 
+                and s2.ToSeq2 = pd.seq2 
+    ) xx --已轉的數量
+    where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
 
             #region -- 條件 --
             switch (selectindex)
@@ -355,28 +391,39 @@ where pd.seq1 like '7%' and f.MDivisionID = '{0}'", Env.User.Keyword));
                 sqlcmd.Append(string.Format(@" and o.CFMDate between '{0}' and '{1}'", OrderCfmDate_b, OrderCfmDate_e));
             }
             #endregion
-            sqlcmd.Append(@")
-select *,0.00 qty into #tmp from cte
+            sqlcmd.Append(@"
+)
+select  *
+        , 0.00 qty 
+into #tmp 
+from cte
 where PoQty > InQty
 
-select * from #tmp order by poid,seq1,seq2 ;
+select * 
+from #tmp 
+order by poid,seq1,seq2 ;
 
-select 
-convert(bit,0) as selected,
-fi.Ukey FromFtyInventoryUkey,
-o.FactoryID FromFactoryID,
-fi.POID FromPoid,
-fi.Seq1 FromSeq1,
-fi.Seq2 Fromseq2,
-fi.Roll FromRoll,
-fi.Dyelot FromDyelot,
-fi.StockType FromStockType,
-fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty,
-0.00 as Qty,
-t.FactoryID  toFactoryID ,rtrim(t.poID) topoid,rtrim(t.seq1) toseq1,t.seq2 toseq2, fi.Roll toRoll, fi.Dyelot toDyelot,'B' tostocktype 
-,dbo.Getlocation(fi.ukey) fromlocation
-,'' tolocation
-,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
+select  convert(bit,0) as selected
+        , fi.Ukey FromFtyInventoryUkey
+        , o.FactoryID FromFactoryID
+        , fi.POID FromPoid
+        , fi.Seq1 FromSeq1
+        , fi.Seq2 Fromseq2
+        , fi.Roll FromRoll
+        , fi.Dyelot FromDyelot
+        , fi.StockType FromStockType
+        , fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty
+        , 0.00 as Qty
+        , t.FactoryID  toFactoryID 
+        , rtrim(t.poID) topoid
+        , rtrim(t.seq1) toseq1
+        , t.seq2 toseq2
+        , fi.Roll toRoll
+        , fi.Dyelot toDyelot
+        ,'B' tostocktype 
+        , dbo.Getlocation(fi.ukey) fromlocation
+        , '' tolocation
+        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.StockPOID and fi.seq1 = t.StockSeq1 and fi.Seq2 = t.StockSeq2
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
