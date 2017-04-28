@@ -268,8 +268,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             
             //SciDelivery OrigBuyerDelivery
             //CRDDate
-            dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["OrigBuyerDelivery"].ToString() ? Color.Red : Color.Blue;
-            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["OrigBuyerDelivery"]) ? Color.Red : Color.Blue;
+            dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["dateBuyerDel"].ToString() ? Color.Red : Color.Blue;
+            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["dateBuyerDel"]) ? Color.Red : Color.Blue;
         }
 
         protected override void ClickNewAfter()
@@ -779,7 +779,7 @@ Tel: +886 2 8751-0228 Fax: +886 2 8752-4101' as AbbEN --依規格
 ,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
 ,sty.Description as descripition
 ,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
-,o.Qty * o.CMPPrice / 12 as amount
+,amount = IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor)
 ,o.packing ,o.label ,o.packing2
 ,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
 +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
