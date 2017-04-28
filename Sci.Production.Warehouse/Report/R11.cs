@@ -142,7 +142,7 @@ with cte as (
             ,p.Qty
             ,p.NETQty
             ,p.LossQty
-            ,scrapqty = sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit) 
+            ,scrapqty = Round(sum(sd.Qty) * (select vu.RateValue from dbo.View_Unitrate vu where vu.FROM_U = p.StockUnit and vu.TO_U = p.POUnit), 2)
             ,location = dbo.Getlocation(fi.ukey)
             ,s.IssueDate
 from dbo.orders o WITH (NOLOCK) 
