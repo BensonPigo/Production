@@ -28,7 +28,7 @@ namespace Sci.Production.PPIC
             from Style_ProductionKits sp WITH (NOLOCK) 
             left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
             where sp.ReceiveDate is null
-            and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
+            --and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
             DBProxy.Current.Select("", factoryCmd.ToString(), out facData);
             facData.Rows.Add(new string[] { "" });
             facData.DefaultView.Sort = "factoryid";
@@ -142,8 +142,7 @@ isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where I
 iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-where sp.ReceiveDate is null and sp.SendDate is null
-and sp.MDivisionID = '{0}' ", Sci.Env.User.Keyword));
+where sp.ReceiveDate is null and sp.SendDate is null "));
             
             if (!MyUtility.Check.Empty(txtStyleNo.Text))
             {
