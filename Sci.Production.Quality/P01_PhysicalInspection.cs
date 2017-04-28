@@ -476,8 +476,8 @@ Where DetailUkey = {15};",
             #endregion
             return upResult;
         }
-        
-        private void encode_button_Click(object sender, EventArgs e)
+
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql ="";
             if (MyUtility.Check.Empty(CurrentData) && this.btnEncode.Text=="Encode")
@@ -597,7 +597,7 @@ Where DetailUkey = {15};",
             OnRequery();
         }
 
-        private void approve_button_Click(object sender, EventArgs e)
+        private void btnApprove_Click(object sender, EventArgs e)
         {
             string updatesql = "";
 
@@ -690,8 +690,8 @@ Where DetailUkey = {15};",
                 btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(maindr["Result"]);
             }
         }
-        
-        private void button3_Click(object sender, EventArgs e)
+
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             ToExcel(false);
         }

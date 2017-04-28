@@ -62,8 +62,8 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
             button_enable(canedit);            
         }
-        
-        private void Encode_Click(object sender, EventArgs e)
+
+        private void btnAmend_Click(object sender, EventArgs e)
         {
             string updatesql = "";
             string updatesql1 = "";
@@ -98,9 +98,9 @@ namespace Sci.Production.Quality
                             _transactionscope1.Complete();
                             _transactionscope1.Dispose();
                             btn_status(id);
-                            this.BtnEdit.Text = "Edit";
+                            this.btnEdit.Text = "Edit";
                             this.btnAmend.Text = "Encode";
-                            this.BtnEdit.Enabled = true;
+                            this.btnEdit.Enabled = true;
                         }
                         catch (Exception ex)
                         {
@@ -164,8 +164,8 @@ namespace Sci.Production.Quality
                         _transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Successfully");
                         this.btnAmend.Text = "Amend";
-                        this.BtnEdit.Text = "Edit";
-                        this.BtnEdit.Enabled = false;
+                        this.btnEdit.Text = "Edit";
+                        this.btnEdit.Enabled = false;
                         
                         btn_status(this.id);
                     }
@@ -179,10 +179,10 @@ namespace Sci.Production.Quality
                 #endregion
             }
         }
-                
-        private void editBox1_MouseDown(object sender, MouseEventArgs e)
+
+        private void editDefect_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.BtnEdit.Text!="Save") return;
+            if (this.btnEdit.Text!="Save") return;
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
@@ -196,10 +196,10 @@ namespace Sci.Production.Quality
         private void button_enable(bool canedit)
         {
             // Visable
-            this.BtnEdit.Visible = (bool)canedit;
+            this.btnEdit.Visible = (bool)canedit;
             this.btnAmend.Visible = (bool)canedit;
             // Enable
-            BtnEdit.Enabled = this.btnAmend.Text.ToString() == "Encode" ? true : false;
+            btnEdit.Enabled = this.btnAmend.Text.ToString() == "Encode" ? true : false;
             
 
         }
@@ -263,7 +263,7 @@ namespace Sci.Production.Quality
             ChangeData();
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        private void btnEdit_Click(object sender, EventArgs e)
         {
             string strSqlcmd = "";
             this.btnAmend.Enabled = false;
@@ -275,7 +275,7 @@ namespace Sci.Production.Quality
             {
                 if (dt.Rows.Count > 0)
                 {
-                    if (this.BtnEdit.Text == "Save")
+                    if (this.btnEdit.Text == "Save")
                     {
                         if (MyUtility.Check.Empty(txtInspectedQty.Text))
                         {
@@ -341,7 +341,7 @@ namespace Sci.Production.Quality
                                 _transactionscope.Dispose();
                                 MyUtility.Msg.WarningBox("Successfully");
                                 this.btnAmend.Text = "Encode";
-                                this.BtnEdit.Text = "Edit";
+                                this.btnEdit.Text = "Edit";
                                 this.btnAmend.Enabled = true;
 
                             }
@@ -382,7 +382,7 @@ namespace Sci.Production.Quality
                             this.comboResult.ReadOnly = false;
                             this.txtRemark.ReadOnly = false;
                             this.editDefect.ReadOnly = true;
-                            this.BtnEdit.Text = "Save";
+                            this.btnEdit.Text = "Save";
                             this.btnClose.Text = "Undo";
 
                             return;

@@ -251,7 +251,7 @@ namespace Sci.Production.Quality
         //}
         #endregion
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             SetView(maindr);
             this.Close();
@@ -261,7 +261,7 @@ namespace Sci.Production.Quality
         {
             base.OnFormClosed(e);
         }
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnEdit_Click(object sender, EventArgs e)
         {
             if (this.btnEdit.Text == "Edit")
             {

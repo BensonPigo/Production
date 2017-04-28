@@ -396,7 +396,7 @@ namespace Sci.Production.Quality
             contextMenuStrip();
             base.OnDetailGridRowChanged();
         }
-        private void button1_Click_1(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆

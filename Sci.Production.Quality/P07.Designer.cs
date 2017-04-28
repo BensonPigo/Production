@@ -464,7 +464,7 @@
             this.btnBatchUpdateNA.TabIndex = 117;
             this.btnBatchUpdateNA.Text = "Batch update N/A";
             this.btnBatchUpdateNA.UseVisualStyleBackColor = true;
-            this.btnBatchUpdateNA.Click += new System.EventHandler(this.btnBatchUpdate_Click);
+            this.btnBatchUpdateNA.Click += new System.EventHandler(this.btnBatchUpdateNA_Click);
             // 
             // editRemark
             // 

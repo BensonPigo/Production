@@ -129,7 +129,7 @@
             this.radioSummybyDateandStyle.TabIndex = 19;
             this.radioSummybyDateandStyle.Text = "Summy by Date & Style";
             this.radioSummybyDateandStyle.UseVisualStyleBackColor = true;
-            this.radioSummybyDateandStyle.CheckedChanged += new System.EventHandler(this.radiobtn_SummybyDateandStyle_CheckedChanged);
+            this.radioSummybyDateandStyle.CheckedChanged += new System.EventHandler(this.radioSummybyDateandStyle_CheckedChanged);
             // 
             // radioSummybyStyle
             // 
@@ -141,7 +141,7 @@
             this.radioSummybyStyle.TabIndex = 18;
             this.radioSummybyStyle.Text = "Summy by Style";
             this.radioSummybyStyle.UseVisualStyleBackColor = true;
-            this.radioSummybyStyle.CheckedChanged += new System.EventHandler(this.radiobtn_SummybyStyle_CheckedChanged);
+            this.radioSummybyStyle.CheckedChanged += new System.EventHandler(this.radioSummybyStyle_CheckedChanged);
             // 
             // radioSummybySP
             // 
@@ -153,7 +153,7 @@
             this.radioSummybySP.TabIndex = 17;
             this.radioSummybySP.Text = "Summy by SP#";
             this.radioSummybySP.UseVisualStyleBackColor = true;
-            this.radioSummybySP.CheckedChanged += new System.EventHandler(this.radioBtn_SummybySP_CheckedChanged);
+            this.radioSummybySP.CheckedChanged += new System.EventHandler(this.radioSummybySP_CheckedChanged);
             // 
             // radioDetail
             // 
@@ -165,7 +165,7 @@
             this.radioDetail.TabIndex = 16;
             this.radioDetail.Text = "Detail";
             this.radioDetail.UseVisualStyleBackColor = true;
-            this.radioDetail.CheckedChanged += new System.EventHandler(this.radioBtn_Detail_CheckedChanged);
+            this.radioDetail.CheckedChanged += new System.EventHandler(this.radioDetail_CheckedChanged);
             // 
             // radioAllData
             // 
@@ -177,7 +177,7 @@
             this.radioAllData.TabIndex = 15;
             this.radioAllData.Text = "All Data";
             this.radioAllData.UseVisualStyleBackColor = true;
-            this.radioAllData.CheckedChanged += new System.EventHandler(this.radiobtn_AllData_CheckedChanged);
+            this.radioAllData.CheckedChanged += new System.EventHandler(this.radioAllData_CheckedChanged);
             // 
             // radioPerCell
             // 
@@ -189,7 +189,7 @@
             this.radioPerCell.TabIndex = 14;
             this.radioPerCell.Text = "PerCell";
             this.radioPerCell.UseVisualStyleBackColor = true;
-            this.radioPerCell.CheckedChanged += new System.EventHandler(this.radiobtn_PerCell_CheckedChanged);
+            this.radioPerCell.CheckedChanged += new System.EventHandler(this.radioPerCell_CheckedChanged);
             // 
             // radioPerLine
             // 
@@ -203,7 +203,7 @@
             this.radioPerLine.TabStop = true;
             this.radioPerLine.Text = "Per Line";
             this.radioPerLine.UseVisualStyleBackColor = true;
-            this.radioPerLine.CheckedChanged += new System.EventHandler(this.radiobtn_PerLine_CheckedChanged);
+            this.radioPerLine.CheckedChanged += new System.EventHandler(this.radioPerLine_CheckedChanged);
             // 
             // txtCell
             // 

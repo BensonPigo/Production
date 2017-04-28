@@ -486,7 +486,7 @@ namespace Sci.Production.Quality
           
         }
 
-        private void SP_Text_Validated(object sender, EventArgs e)
+        private void txtSP_Validated(object sender, EventArgs e)
         {
             DataTable dt;
             DualResult result;

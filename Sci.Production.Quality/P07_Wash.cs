@@ -250,7 +250,7 @@ namespace Sci.Production.Quality
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnEdit_Click(object sender, EventArgs e)
         {
             if (btnEdit.Text == "Edit")
             {

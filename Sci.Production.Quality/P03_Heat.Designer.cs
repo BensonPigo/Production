@@ -98,7 +98,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "ToExcel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.ToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // editDescription
             // 
@@ -169,7 +169,7 @@
             this.btnEncode.TabIndex = 182;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Clicked += new System.EventHandler(this.encode_button_Click);
+            this.btnEncode.Clicked += new System.EventHandler(this.btnEncode_Click);
             // 
             // txtResult
             // 
@@ -436,7 +436,7 @@
             this.Name = "P03_Heat";
             this.Text = "Heat Test";
             this.WorkAlias = "FIR_Laboratory_Heat";
-            this.Click += new System.EventHandler(this.encode_button_Click);
+            this.Click += new System.EventHandler(this.btnEncode_Click);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.labelSP, 0);

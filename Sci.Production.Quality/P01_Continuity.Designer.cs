@@ -348,7 +348,7 @@
             this.btnApprove.TabIndex = 127;
             this.btnApprove.Text = "Approve";
             this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.approve_button_Click);
+            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
             // 
             // btnEncode
             // 
@@ -358,7 +358,7 @@
             this.btnEncode.TabIndex = 128;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.encode_button_Click);
+            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
             // 
             // labelApprover
             // 
@@ -388,7 +388,7 @@
             this.btnToExcel.TabIndex = 132;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // displayResult
             // 
@@ -439,7 +439,7 @@
             this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textID.Location = new System.Drawing.Point(1026, 131);
+            this.textID.Location = new System.Drawing.Point(985, 131);
             this.textID.Name = "textID";
             this.textID.Size = new System.Drawing.Size(78, 21);
             this.textID.TabIndex = 134;
@@ -461,7 +461,7 @@
             this.btnPrintFormatReport.TabIndex = 133;
             this.btnPrintFormatReport.Text = "Print Format Report";
             this.btnPrintFormatReport.UseVisualStyleBackColor = true;
-            this.btnPrintFormatReport.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrintFormatReport.Click += new System.EventHandler(this.btnPrintFormatReport_Click);
             // 
             // P01_Continuity
             // 

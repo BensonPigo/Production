@@ -82,7 +82,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.ToExcel_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // dateTestDate
             // 
@@ -101,7 +101,7 @@
             this.btnEncode.TabIndex = 110;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Click += new System.EventHandler(this.encode_btn_Click);
+            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
             // 
             // txtRemark
             // 
@@ -111,7 +111,6 @@
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(315, 23);
             this.txtRemark.TabIndex = 108;
-            this.txtRemark.TextChanged += new System.EventHandler(this.TextChanged);
             // 
             // txtuserInspector
             // 
@@ -121,7 +120,7 @@
             this.txtuserInspector.Size = new System.Drawing.Size(296, 23);
             this.txtuserInspector.TabIndex = 106;
             this.txtuserInspector.TextBox1Binding = "";
-            this.txtuserInspector.Validating += new System.ComponentModel.CancelEventHandler(this.txtuser1_Validating);
+            this.txtuserInspector.Validating += new System.ComponentModel.CancelEventHandler(this.txtuserInspector_Validating);
             // 
             // comboResult
             // 
@@ -144,9 +143,8 @@
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(123, 23);
             this.txtArticle.TabIndex = 102;
-            this.txtArticle.TextChanged += new System.EventHandler(this.TextChanged);
-            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.article_MouseDown);
-            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.article_Validating);
+            this.txtArticle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtArticle_MouseDown);
+            this.txtArticle.Validating += new System.ComponentModel.CancelEventHandler(this.txtArticle_Validating);
             // 
             // txtNoofTest
             // 

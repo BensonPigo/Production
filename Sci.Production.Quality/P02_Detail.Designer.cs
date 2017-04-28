@@ -63,7 +63,7 @@
             this.dateInspectDate = new Sci.Win.UI.DateBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
-            this.BtnEdit = new Sci.Win.UI.Button();
+            this.btnEdit = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -71,7 +71,7 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.BtnEdit);
+            this.btmcont.Controls.Add(this.btnEdit);
             this.btmcont.Controls.Add(this.btnClose);
             this.btmcont.Location = new System.Drawing.Point(0, 376);
             this.btmcont.Size = new System.Drawing.Size(670, 40);
@@ -80,7 +80,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnClose, 0);
-            this.btmcont.Controls.SetChildIndex(this.BtnEdit, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnEdit, 0);
             // 
             // undo
             // 
@@ -113,7 +113,7 @@
             this.btnAmend.TabIndex = 117;
             this.btnAmend.Text = "Amend";
             this.btnAmend.UseVisualStyleBackColor = true;
-            this.btnAmend.Click += new System.EventHandler(this.Encode_Click);
+            this.btnAmend.Click += new System.EventHandler(this.btnAmend_Click);
             // 
             // txtInspectedQty
             // 
@@ -399,7 +399,7 @@
             this.editDefect.ReadOnly = true;
             this.editDefect.Size = new System.Drawing.Size(288, 92);
             this.editDefect.TabIndex = 132;
-            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.editBox1_MouseDown);
+            this.editDefect.MouseDown += new System.Windows.Forms.MouseEventHandler(this.editDefect_MouseDown);
             // 
             // panel1
             // 
@@ -454,16 +454,16 @@
             this.txtsupplier.TabIndex = 134;
             this.txtsupplier.TextBox1Binding = "";
             // 
-            // BtnEdit
+            // btnEdit
             // 
-            this.BtnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnEdit.Location = new System.Drawing.Point(499, 5);
-            this.BtnEdit.Name = "BtnEdit";
-            this.BtnEdit.Size = new System.Drawing.Size(80, 30);
-            this.BtnEdit.TabIndex = 136;
-            this.BtnEdit.Text = "Edit";
-            this.BtnEdit.UseVisualStyleBackColor = true;
-            this.BtnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
+            this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEdit.Location = new System.Drawing.Point(499, 5);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(80, 30);
+            this.btnEdit.TabIndex = 136;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // P02_Detail
             // 
@@ -574,7 +574,7 @@
         private Class.txtsupplier txtsupplier;
         private Win.UI.DateBox dateInspectDate;
         private Win.UI.Button btnClose;
-        private Win.UI.Button BtnEdit;
+        private Win.UI.Button btnEdit;
         private Class.txtuser txtInspector;
 
     }

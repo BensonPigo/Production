@@ -616,7 +616,7 @@ where a.ID='{0}'",
             return base.ClickSave();
         }
 
-        private void InspectStage_combo_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboInspectionStage_SelectedIndexChanged(object sender, EventArgs e)
         {
            
             switch (comboInspectionStage.Text)
@@ -646,7 +646,7 @@ where a.ID='{0}'",
             }
         }
 
-        private void SP_text_Validated(object sender, EventArgs e)
+        private void txtSP_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSP.Text))
             {
@@ -669,14 +669,14 @@ where a.ID='{0}'", txtSP.Text);
                     this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                 }
             }
-        }   
+        }
 
-        private void Garment_text_TextChanged(object sender, EventArgs e)
+        private void numGarmentOutput_TextChanged(object sender, EventArgs e)
         {
             this.numGarmentOutput.MaxLength = 3;
         }
 
-        private void SP_text_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
            if (MyUtility.Check.Empty(this.txtSP.Text))
                 {

@@ -287,7 +287,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
-        private void encode_button_Click(object sender, EventArgs e)
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql ="";
             if (MyUtility.Check.Empty(CurrentData) && this.btnEncode.Text=="Encode")
@@ -408,7 +408,7 @@ namespace Sci.Production.Quality
             OnRequery();
         }
 
-        private void approve_button_Click(object sender, EventArgs e)
+        private void btnApprove_Click(object sender, EventArgs e)
         {
             string updatesql = "";
 
@@ -505,7 +505,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             ToExcel(false);
         }
@@ -586,8 +586,8 @@ namespace Sci.Production.Quality
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             return true;
         }
- 
-        private void btn_Print_Click(object sender, EventArgs e)
+
+        private void btnPrintFormatReport_Click(object sender, EventArgs e)
         {
             DataTable dt_title;
             DataTable dt_Exp;

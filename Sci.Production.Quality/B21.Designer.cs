@@ -117,7 +117,7 @@
             this.txtDefectcode.Name = "txtDefectcode";
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
             this.txtDefectcode.TabIndex = 0;
-            this.txtDefectcode.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtDefectcode.Validated += new System.EventHandler(this.txtDefectcode_Validated);
             // 
             // txtDefectType
             // 

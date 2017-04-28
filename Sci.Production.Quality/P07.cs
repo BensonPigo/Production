@@ -436,7 +436,7 @@ namespace Sci.Production.Quality
         }
 
         //[Batch update N/A]
-        private void btnBatchUpdate_Click(object sender, EventArgs e)
+        private void btnBatchUpdateNA_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;           
             if (MyUtility.Check.Empty(comboOvenWashBoth.SelectedValue2))

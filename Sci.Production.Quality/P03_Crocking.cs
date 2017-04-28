@@ -497,7 +497,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
         }
 
-        private void encode_button_Click(object sender, EventArgs e)
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
             if (MyUtility.Check.Empty(CurrentData))
@@ -614,7 +614,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
-        private void ToExcelBtn_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] { "Roll", "Dyelot", "DryScale", "WetScale", "Result", "InspDate", "Inspector", "Remark", "Last update" };

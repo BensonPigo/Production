@@ -27,7 +27,7 @@ namespace Sci.Production.Quality
             ComboFactory.Text = Sci.Env.User.Keyword;
         }
 
-        private void radiobtn_PerLine_CheckedChanged(object sender, EventArgs e)
+        private void radioPerLine_CheckedChanged(object sender, EventArgs e)
         {
             if (radioPerLine.Checked)
             {
@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radiobtn_PerCell_CheckedChanged(object sender, EventArgs e)
+        private void radioPerCell_CheckedChanged(object sender, EventArgs e)
         {
             if (radioPerCell.Checked)
             {
@@ -45,7 +45,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radiobtn_AllData_CheckedChanged(object sender, EventArgs e)
+        private void radioAllData_CheckedChanged(object sender, EventArgs e)
         {
             if (radioAllData.Checked)
             {
@@ -54,15 +54,15 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radioBtn_Detail_CheckedChanged(object sender, EventArgs e)
+        private void radioDetail_CheckedChanged(object sender, EventArgs e)
         {
             if (radioDetail.Checked)
             {
                 txtDefectCode.Enabled = txtDefectType.Enabled = true;
             }
         }
-        
-        private void radioBtn_SummybySP_CheckedChanged(object sender, EventArgs e)
+
+        private void radioSummybySP_CheckedChanged(object sender, EventArgs e)
         {
             if (radioSummybySP.Checked)
             {
@@ -70,7 +70,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radiobtn_SummybyStyle_CheckedChanged(object sender, EventArgs e)
+        private void radioSummybyStyle_CheckedChanged(object sender, EventArgs e)
         {
             if (radioSummybyStyle.Checked)
             {
@@ -78,7 +78,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void radiobtn_SummybyDateandStyle_CheckedChanged(object sender, EventArgs e)
+        private void radioSummybyDateandStyle_CheckedChanged(object sender, EventArgs e)
         {
             if (radioSummybyDateandStyle.Checked)
             {

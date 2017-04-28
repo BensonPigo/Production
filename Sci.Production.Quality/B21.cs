@@ -86,9 +86,9 @@ namespace Sci.Production.Quality
              }
 
              return base.ClickSaveBefore();
-         }         
-        
-         private void textBox1_Validated(object sender, EventArgs e)
+         }
+
+         private void txtDefectcode_Validated(object sender, EventArgs e)
          {
              if (this.txtDefectcode.Text != "")
              {

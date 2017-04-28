@@ -638,7 +638,7 @@ where a.ID='{0}'"
             }
             return upResult;
         }
-        private void encode_button_Click(object sender, EventArgs e)
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = "";
             if (MyUtility.Check.Empty(CurrentData))
@@ -780,7 +780,7 @@ where a.ID='{0}'"
           
         }
 
-        private void ToExcel_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] 

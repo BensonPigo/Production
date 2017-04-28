@@ -413,7 +413,7 @@ where a.id=b.POID and a.fabrictype='A'
         }
 
         // Button Finished
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFinished_Click(object sender, EventArgs e)
         {
             if (this.btnFinished.Text=="Finished")
             {
@@ -474,13 +474,13 @@ where a.id=b.POID and a.fabrictype='A'
             int b = tab.Rows.Count;
         }
 
-        private void button20_Click(object sender, EventArgs e)
+        private void btnFabricInspectionList_Click(object sender, EventArgs e)
         {
             Sci.Production.Quality.P01 callNextForm = new Sci.Production.Quality.P01(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);
         }
 
-        private void button21_Click(object sender, EventArgs e)
+        private void btnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
             Sci.Production.Quality.P02 callNextForm = new Sci.Production.Quality.P02(MyUtility.Convert.GetString(this.txtSP.Text));
             callNextForm.ShowDialog(this);

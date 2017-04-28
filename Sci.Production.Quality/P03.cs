@@ -389,7 +389,7 @@ order by a.seq1,a.seq2,a.Refno "
             return Result.True;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             DataTable detDtb = (DataTable)detailgridbs.DataSource;
             //移到指定那筆

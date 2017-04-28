@@ -863,7 +863,7 @@ SET IDENTITY_INSERT oven off";
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
-        private void article_MouseDown(object sender, MouseEventArgs e)
+        private void txtArticle_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.EditMode == false) return;
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -885,7 +885,7 @@ SET IDENTITY_INSERT oven off";
             }
         }
 
-        private void article_Validating(object sender, CancelEventArgs e)
+        private void txtArticle_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode || this.txtArticle.Text.Empty()) { return; }
             DualResult dresult;
@@ -917,7 +917,7 @@ SET IDENTITY_INSERT oven off";
         }
 #endregion
 
-        private void encode_btn_Click(object sender, EventArgs e)
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             DataTable dt =(DataTable)gridbs.DataSource;            
             bool result = true;
@@ -981,8 +981,8 @@ SET IDENTITY_INSERT oven off";
             }
             OnRequery();
         }
-         
-        private void ToExcel_Click(object sender, EventArgs e)
+
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] { "OvenGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result","Remark" };
@@ -1071,7 +1071,7 @@ SET IDENTITY_INSERT oven off";
             isModify = true;
         }
 
-        private void txtuser1_Validating(object sender, CancelEventArgs e)
+        private void txtuserInspector_Validating(object sender, CancelEventArgs e)
         {
             isModify = true;
         }

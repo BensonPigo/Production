@@ -32,8 +32,8 @@ namespace Sci.Production.Quality
                 e.Cancel = true;
                 return;
             }
-        }       
-        private void numericBox1_TextChanged(object sender, EventArgs e)
+        }
+        private void numWeight_TextChanged(object sender, EventArgs e)
         {
             this.numWeight.MaxLength = 2;
         }

@@ -900,7 +900,7 @@ namespace Sci.Production.Quality
         //}
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
-        private void article_MouseDown(object sender, MouseEventArgs e)
+        private void txtArticle_MouseDown(object sender, MouseEventArgs e)
         {
             if (this.EditMode == false) return;
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -922,7 +922,7 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void article_Validating(object sender, CancelEventArgs e)
+        private void txtArticle_Validating(object sender, CancelEventArgs e)
         {
             DualResult dresult;
             DataTable dt;
@@ -958,7 +958,7 @@ namespace Sci.Production.Quality
 
         #endregion
 
-        private void encode_btn_Click(object sender, EventArgs e)
+        private void btnEncode_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             bool result = true;
@@ -1023,9 +1023,9 @@ namespace Sci.Production.Quality
             OnRequery();
         }
 
-      
 
-        private void ToExcel_Click(object sender, EventArgs e)
+
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] { "ColorFastnessGroup", "SEQ", "Roll", "Dyelot", "SCIRefno", "Colorid", "Supplier", "Changescale", "StainingScale", "Result", "Remark" };
@@ -1104,7 +1104,7 @@ namespace Sci.Production.Quality
             isModify = true;
         }
 
-        private void txtuser1_Validating(object sender, CancelEventArgs e)
+        private void txtuserInspector_Validating(object sender, CancelEventArgs e)
         {
             isModify = true;
         }

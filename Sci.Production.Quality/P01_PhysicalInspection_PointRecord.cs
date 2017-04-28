@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
 
         }
 
-        private void button1_Click(object sender, EventArgs e) //OK
+        private void btnOK_Click(object sender, EventArgs e) //OK
         {
             gridPhysicalInspection.ValidateControl();
             int totalPoint = MyUtility.Convert.GetInt(defRecord.Compute("Sum(Points)", ""));
