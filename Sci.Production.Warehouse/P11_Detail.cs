@@ -55,10 +55,11 @@ namespace Sci.Production.Warehouse
                 usedqty = 1;
             }
 
-            parentData["qty"] = this.CurrentSubDetailDatas
-                    .AsEnumerable()
-                    .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
-                    .Sum(row => Convert.ToDecimal(row["Qty"].ToString())) * usedqty * Rate;
+            parentData["qty"] = Math.Round(this.CurrentSubDetailDatas
+                                            .AsEnumerable()
+                                            .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
+                                            .Sum(row => Convert.ToDecimal(row["Qty"].ToString())) * usedqty * Rate
+                                            , 2);
             
             
         }
