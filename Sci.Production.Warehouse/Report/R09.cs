@@ -129,7 +129,10 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.se
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-inner join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
+
+outer apply (
+    select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)
+) v
 
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
@@ -172,7 +175,10 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.se
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-left join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
+
+outer apply (
+    select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)
+) v
 
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
