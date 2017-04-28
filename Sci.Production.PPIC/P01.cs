@@ -268,8 +268,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             
             //SciDelivery OrigBuyerDelivery
             //CRDDate
-            dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["dateBuyerDel"].ToString() ? Color.Red : Color.Blue;
-            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["dateBuyerDel"]) ? Color.Red : Color.Blue;
+            dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["BuyerDelivery"].ToString() ? Color.Red : Color.Blue;
+            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
         }
 
         protected override void ClickNewAfter()
@@ -756,35 +756,35 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         private void button13_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data processing, please wait...");
-           // string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
+            // string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", _id) });
             string poid = CurrentMaintain["POID"].ToString();
             System.Data.DataTable rpt3;
             DualResult res = DBProxy.Current.Select("", @"
 declare @newLine varchar(10) = CHAR(13)+CHAR(10)
 Select IIF(fty.CountryID ='TW', 'STARPORT CORPORATION' , 'SPORTS CITY INTERNATIONAL') as Title
-,'11F, No.585, Ruiguang Rd. Neihu Dist,
-Taipei , Taiwan 11492 ( R.O.C.) 
-Tel: +886 2 8751-0228 Fax: +886 2 8752-4101' as AbbEN --依規格
-,o.ID
-,fty.NameEN as name
-,fty.AddressEN as AddressEN
-,fty.Tel
-,fty.Fax
-,o.CMPQRemark as remark
-,o.SeasonID
-,convert(varchar(10),o.BuyerDelivery,111) as delivery
-,cty.Alias as des
-,par.Description as terms
-,o.StyleID
-,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
-,sty.Description as descripition
-,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
-,amount = IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor)
-,o.packing ,o.label ,o.packing2
-,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
-+@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
-+@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
-+@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
+    ,'11F, No.585, Ruiguang Rd. Neihu Dist,
+    Taipei , Taiwan 11492 ( R.O.C.) 
+    Tel: +886 2 8751-0228 Fax: +886 2 8752-4101' as AbbEN --依規格
+    ,o.ID
+    ,fty.NameEN as name
+    ,fty.AddressEN as AddressEN
+    ,fty.Tel
+    ,fty.Fax
+    ,o.CMPQRemark as remark
+    ,o.SeasonID
+    ,convert(varchar(10),o.BuyerDelivery,111) as delivery
+    ,cty.Alias as des
+    ,par.Description as terms
+    ,o.StyleID
+    ,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
+    ,sty.Description as descripition
+    ,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
+    ,amount = format(round(IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor*o.qty),3),'0.000')
+    ,o.packing ,o.label ,o.packing2
+    ,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
+    +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
+    +@newLine+iif(MarkLeft<>'','(C) '+@newLine+MarkLeft,'')
+    +@newLine+iif(MarkRight<>'','(D) '+@newLine+MarkRight,'')
 from Orders o WITH (NOLOCK)  inner join Factory fty WITH (NOLOCK)  ON o.FactoryID = fty.ID
 LEFT join Country cty WITH (NOLOCK)  ON o.Dest = cty.ID
 LEFT JOIN PaytermAR par WITH (NOLOCK)  ON o.PayTermARID = par.ID
@@ -792,7 +792,7 @@ LEFT JOIN Style sty WITH (NOLOCK)  ON o.StyleUkey = sty.Ukey
 where o.Junk = 0 and o.POID= @POID order by o.ID
 ", new List<SqlParameter> { new SqlParameter("@ID", CurrentMaintain["ID"]), new SqlParameter("@POID", poid) }, out rpt3);
 
-            if (!res) return ;
+            if (!res) return;
 
             string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_CMPQ.xltx");
 
@@ -829,8 +829,8 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                 int la = row["AddressEN"].ToString().Length / l;
                 for (int i = 1; i <= la; i++)
                 {
-                    if (row["AddressEN"].ToString().Length> l * i)
-                    {                        
+                    if (row["AddressEN"].ToString().Length > l * i)
+                    {
                         wks.get_Range("A6").RowHeight = 16.5 * (i + 1);
                     }
                 }
@@ -851,7 +851,7 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
                 sxr.dicDatas.Add(sxr._v + "fabcom" + sIdx, tbl2);
                 sxr.dicDatas.Add(sxr._v + "acccom" + sIdx, tbl3);
 
-                sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltLongString(row["mark"].ToString()));
+                sxr.dicDatas.Add(sxr._v + "shipmark" + sIdx, new sxrc.xltLongString(row["mark"].ToString().Trim()));
                 sxr.dicDatas.Add(sxr._v + "paching" + sIdx, new sxrc.xltLongString(row["packing"].ToString()));
                 sxr.dicDatas.Add(sxr._v + "labelhantag" + sIdx, new sxrc.xltLongString(row["label"].ToString()));
                 string UserName;
@@ -860,11 +860,11 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
 
             }
 
-           
-                sxr.isProtect = true; //Excel 加密
-                sxr.Save();
-                this.HideWaitMessage();
-            }
+
+            sxr.isProtect = true; //Excel 加密
+            sxr.Save();
+            this.HideWaitMessage();
+        }
         void SetColumn1toText(sxrc.xltRptTable tbl)
         {
             sxrc.xlsColumnInfo c1 = new sxrc.xlsColumnInfo(1);
