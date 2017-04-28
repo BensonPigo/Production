@@ -781,7 +781,7 @@ Select IIF(fty.CountryID ='TW', 'STARPORT CORPORATION' , 'SPORTS CITY INTERNATIO
     ,format(o.Qty,'#,0.')+o.StyleUnit as QTY   --Format : 999,999
     ,sty.Description as descripition
     ,fty.CurrencyID+str( o.CMPPrice,5,2)  +'/'+o.CMPUnit as price
-    ,amount = format(round(IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor*o.qty),3),'0.000')
+    ,amount = concat(fty.CurrencyID,' ',format(round(IIF(O.LocalOrder=1,o.POprice * o.Qty,o.CPU*o.CPUFactor*o.qty),3),'0.000'))
     ,o.packing ,o.label ,o.packing2
     ,Mark=iif(MarkFront<>'','(A) '+@newLine+MarkFront,'')
     +@newLine+iif(MarkBack<>'','(B) '+@newLine+MarkBack,'')
