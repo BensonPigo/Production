@@ -49,12 +49,12 @@ namespace Sci.Production.Warehouse
 select	FromPOID
 		,fromseq1
 		,fromseq2 
-		,taipei_scrap = round(isnull(sum(i.Qty),0.00)*v.rate,2) 
+		,taipei_scrap = round(isnull(sum(i.Qty),0.00)*v.,2) 
 		,accu_qty = isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) 
 		,d.scrap_qty
 		,description = dbo.getMtlDesc(d.FromPOID,d.FromSeq1,d.FromSeq2,2,0) 
 		,p.StockUnit
-		,balance_qty = (round(isnull(sum(i.Qty),0.00)*v.rate,2) - isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) - d.scrap_qty)
+		,balance_qty = (round(isnull(sum(i.Qty),0.00)*v.RateValue,2) - isnull((select accu_qty from cte where cte.FromPOID = d.FromPOID and cte.FromSeq1 = d.FromSeq1 and cte.FromSeq2 = d.FromSeq2),0.00) - d.scrap_qty)
 from group_detail d WITH (NOLOCK) 
 LEFT join dbo.po_supp_detail p WITH (NOLOCK) on p.id = d.frompoid and p.seq1 = d.fromseq1 and p.seq2 = d.fromseq2
 LEFT join View_unitrate v on v.FROM_U = p.POUnit and v.TO_U = p.StockUnit
@@ -63,7 +63,7 @@ INNER join (
             inner join dbo.Factory WITH (NOLOCK) on i.FactoryID = factory.ID
 	  ) on I.InventoryPOID = d.FromPOID and i.InventorySeq1 = d.FromSeq1 and i.InventorySeq2 = d.FromSeq2 and  i.Type='5'
 where factory.MDivisionID='{1}'
-group by d.FromPOID,d.fromseq1,d.fromseq2,v.rate,p.StockUnit,d.scrap_qty", dr["id"], Sci.Env.User.Keyword));
+group by d.FromPOID,d.fromseq1,d.fromseq2,v.RateValue,p.StockUnit,d.scrap_qty", dr["id"], Sci.Env.User.Keyword));
 
             DataTable selectDataTable1;
             P24.ShowWaitMessage("Data Loading...");
