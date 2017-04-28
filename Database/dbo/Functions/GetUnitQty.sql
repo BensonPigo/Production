@@ -10,12 +10,9 @@ As
 Begin
 	Return (
 		select iif( @UnitFrom = @UnitTo 
-				, @Qty
-				, @Qty * (select RateValue 
-								  From dbo.Unit_Rate WITH (NOLOCK)
-								  Where UnitFrom = @UnitFrom
-								     And UnitTo = @UnitTo)
-							   ))
+					, @Qty
+					, @Qty * dbo.getUnitRate(@UnitFrom, @UnitTo))
+	)
 	/*
 
 	Declare @TransQty Numeric(15,4);
