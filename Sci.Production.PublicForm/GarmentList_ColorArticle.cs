@@ -53,7 +53,7 @@ from Pattern_GL_Article a WITH (NOLOCK),(SELECT DISTINCT PatternPanel FROM Order
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -30,12 +30,12 @@ namespace Sci.Production.PublicForm
 
         }
 
-        private void Cancel_But_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void OK_But_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             DataTable workorder; 
             string cmd="";

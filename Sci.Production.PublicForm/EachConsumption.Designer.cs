@@ -873,7 +873,7 @@
             this.btnSwitchtoWorkOrder.TabIndex = 12;
             this.btnSwitchtoWorkOrder.Text = "Switch to WorkOrder";
             this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
-            this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.button1_Click);
+            this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.btnSwitchtoWorkOrder_Click);
             // 
             // EachConsumption
             // 

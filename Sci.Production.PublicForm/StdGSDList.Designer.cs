@@ -128,7 +128,7 @@
             this.btnToExcel.TabIndex = 18;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // comboTypeFilter
             // 
@@ -140,7 +140,7 @@
             this.comboTypeFilter.Name = "comboTypeFilter";
             this.comboTypeFilter.Size = new System.Drawing.Size(121, 24);
             this.comboTypeFilter.TabIndex = 17;
-            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
             // 
             // labelTypeFilter
             // 

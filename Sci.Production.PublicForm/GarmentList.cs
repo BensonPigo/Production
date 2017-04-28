@@ -114,12 +114,12 @@ namespace Sci.Production.PublicForm
             }
 
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnArticleForFCode_Click(object sender, EventArgs e)
         {
             int idx = this.gridGarment.GetSelectedRowIndex();
             

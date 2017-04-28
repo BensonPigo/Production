@@ -190,7 +190,7 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
         }
 
         //Type Filter
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (gridData1 != null)
             {
@@ -233,7 +233,7 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
         }
 
         //To Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
            
             DataTable ExcelTable;

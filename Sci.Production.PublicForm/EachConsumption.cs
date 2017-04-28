@@ -173,7 +173,7 @@ namespace Sci.Production.PublicForm
             frm.ShowDialog(this);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSwitchtoWorkOrder_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentData; if (null == dr) return;
             var frm = new Sci.Production.PublicForm.EachConsumption_SwitchWorkOrder(dr["ID"].ToString());
