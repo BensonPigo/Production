@@ -407,7 +407,7 @@ delete from #tmp2 where qty = 0;
                         }
                     }
                     dr["Output"] = Output;
-                    dr["qty"] = SumQTY;
+                    dr["qty"] = Math.Round(SumQTY, 2);
                 }
                 if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
                 else dr["Selected"] = 0;
