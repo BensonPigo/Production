@@ -215,7 +215,7 @@ delete from #tmp2 where qty = 0;
 
 	select p.id as [poid], p.seq1, p.seq2, p.SCIRefno,dbo.getMtlDesc(p.id, p.seq1, p.seq2,2,0) [description] 
 	,p.ColorID, p.SizeSpec, p.Spec, p.Special, p.Remark , IIF ( p.UsedQty=0.0000, 1, p.UsedQty ) as UsedQty  
-    ,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=p.POUnit AND V.TO_U = p.StockUnit),1.0) as RATE 
+    ,dbo.GetUnitRate(p.POUnit, p.StockUnit) as RATE 
         into #tmpPO_supp_detail
 		from dbo.PO_Supp_Detail as p WITH (NOLOCK) 
 	inner join dbo.Fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
