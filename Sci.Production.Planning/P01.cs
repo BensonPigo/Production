@@ -357,7 +357,7 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
             CurrentDetailData["inhouseOSP"] = newValue;
         }
 
-        private void button_batchApprove_Click(object sender, EventArgs e)
+        private void btnBatchApprove_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Planning.P01_BatchApprove();
             frm.ShowDialog(this);

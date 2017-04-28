@@ -68,7 +68,7 @@ FROM DBO.Style_Artwork WITH (NOLOCK) WHERE StyleUkey={1} and ukey!= {0}", data["
         }
 
         //Commit
-        private void btnApprove_Click(object sender, EventArgs e)
+        private void btnCommit_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             gridCopyTo.ValidateControl();

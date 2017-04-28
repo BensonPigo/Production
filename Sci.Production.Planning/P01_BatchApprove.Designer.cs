@@ -169,7 +169,7 @@
             this.checkOnlyAprrovedData.TabIndex = 8;
             this.checkOnlyAprrovedData.Text = "Only Aprroved  Data";
             this.checkOnlyAprrovedData.UseVisualStyleBackColor = true;
-            this.checkOnlyAprrovedData.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.checkOnlyAprrovedData.CheckedChanged += new System.EventHandler(this.checkOnlyAprrovedData_CheckedChanged);
             // 
             // labelApproveDate
             // 

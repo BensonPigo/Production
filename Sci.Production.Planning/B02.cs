@@ -105,13 +105,13 @@ namespace Sci.Production.Planning
             return base.ClickSaveBefore();
         }
 
-        private void numericBox1_Validating(object sender, CancelEventArgs e)
+        private void numBeginStitch_Validating(object sender, CancelEventArgs e)
         {
             string Value = this.numBeginStitch.Text;
             if (Value != this.numBeginStitch.OldValue.ToString()) BeginEndChange = true;
         }
 
-        private void numericBox2_Validating(object sender, CancelEventArgs e)
+        private void numEndStitch_Validating(object sender, CancelEventArgs e)
         {
             string Value = this.numEndStitch.Text;
             if (Value != this.numEndStitch.OldValue.ToString()) BeginEndChange = true;

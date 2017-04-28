@@ -286,7 +286,7 @@ namespace Sci.Production.Planning
     
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             numCheckedQty.Value = 0;
            // DataTable dtData;
@@ -452,13 +452,13 @@ namespace Sci.Production.Planning
         }
 
         //close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             //MyUtility.Msg.WarningBox("Please select 'Check Data' first!", "Warnning");
             CheckData();
@@ -534,7 +534,7 @@ namespace Sci.Production.Planning
         }
 
         //Find SP#
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSPFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("id", txtLocateForSPNo.Text.TrimEnd());
@@ -556,7 +556,7 @@ namespace Sci.Production.Planning
         }
 
         //Filter empty Supp ID , In Line
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void checkSuppID_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.Filter = "";
             if (checkSuppID.Checked && checkInLine.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
@@ -633,7 +633,7 @@ namespace Sci.Production.Planning
         }
 
         //update inline
-        private void button5_Click(object sender, EventArgs e)
+        private void btnUpdateInline_Click(object sender, EventArgs e)
         {
             decimal stdq = 0m;
             int wkdays = 0;
@@ -669,7 +669,7 @@ namespace Sci.Production.Planning
         }
 
         //Check data
-        private void button7_Click(object sender, EventArgs e)
+        private void btnCheckData_Click(object sender, EventArgs e)
         {
             CheckData();
         }
@@ -749,7 +749,7 @@ namespace Sci.Production.Planning
         }
 
         //find Style#
-        private void button6_Click_1(object sender, EventArgs e)
+        private void btnStyleFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("Styleid", txtLocateForStyleNo.Text.TrimEnd());

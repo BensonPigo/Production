@@ -106,7 +106,7 @@
             this.btnCommit.TabIndex = 0;
             this.btnCommit.Text = "Commit";
             this.btnCommit.UseVisualStyleBackColor = true;
-            this.btnCommit.Click += new System.EventHandler(this.btnApprove_Click);
+            this.btnCommit.Click += new System.EventHandler(this.btnCommit_Click);
             // 
             // groupBox2
             // 

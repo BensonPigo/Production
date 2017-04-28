@@ -91,7 +91,7 @@ namespace Sci.Production.Planning
         }
 
         //combo下拉控制其它物件
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboArtworkType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (null == this.comboArtworkType.SelectedValue) return;
             switch(this.comboArtworkType.SelectedValue.ToString().TrimEnd())
@@ -139,7 +139,7 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void dateBox1_Validated(object sender, EventArgs e)
+       private void dateDate_Validated(object sender, EventArgs e)
         {
             if (CurrentMaintain["unit"].ToString() == "2")
             {
@@ -161,8 +161,8 @@ namespace Sci.Production.Planning
           
         }
 
-      
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+
+        private void radiobyMonth_CheckedChanged(object sender, EventArgs e)
         {
 
         }

@@ -184,7 +184,7 @@ where ods.finished=0 and ods.isforecast = 0
         }
 
         //check for approved data
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        private void checkOnlyAprrovedData_CheckedChanged(object sender, EventArgs e)
         {
             if (((CheckBox)sender).Checked)
             {

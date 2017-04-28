@@ -106,7 +106,7 @@
             this.btnSPFind.TabIndex = 3;
             this.btnSPFind.Text = "Find";
             this.btnSPFind.UseVisualStyleBackColor = true;
-            this.btnSPFind.Click += new System.EventHandler(this.button2_Click);
+            this.btnSPFind.Click += new System.EventHandler(this.btnSPFind_Click);
             // 
             // btnQuery
             // 
@@ -116,7 +116,7 @@
             this.btnQuery.TabIndex = 10;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtLocateForSPNo
             // 
@@ -258,7 +258,7 @@
             this.btnCheckData.TabIndex = 4;
             this.btnCheckData.Text = "Check Data";
             this.btnCheckData.UseVisualStyleBackColor = true;
-            this.btnCheckData.Click += new System.EventHandler(this.button7_Click);
+            this.btnCheckData.Click += new System.EventHandler(this.btnCheckData_Click);
             // 
             // comboInHouseOSP
             // 
@@ -290,7 +290,7 @@
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
@@ -301,7 +301,7 @@
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // pictureBox2
             // 
@@ -640,7 +640,7 @@
             this.btnStyleFind.TabIndex = 5;
             this.btnStyleFind.Text = "Find";
             this.btnStyleFind.UseVisualStyleBackColor = true;
-            this.btnStyleFind.Click += new System.EventHandler(this.button6_Click_1);
+            this.btnStyleFind.Click += new System.EventHandler(this.btnStyleFind_Click);
             // 
             // txtLocateForStyleNo
             // 
@@ -679,7 +679,7 @@
             this.checkSuppID.TabIndex = 0;
             this.checkSuppID.Text = "< Supp ID >";
             this.checkSuppID.UseVisualStyleBackColor = true;
-            this.checkSuppID.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkSuppID.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
             // 
             // checkInLine
             // 
@@ -691,7 +691,7 @@
             this.checkInLine.TabIndex = 1;
             this.checkInLine.Text = "< In Line >";
             this.checkInLine.UseVisualStyleBackColor = true;
-            this.checkInLine.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkInLine.CheckedChanged += new System.EventHandler(this.checkSuppID_CheckedChanged);
             // 
             // btnUpdateInline
             // 
@@ -701,7 +701,7 @@
             this.btnUpdateInline.TabIndex = 6;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;
-            this.btnUpdateInline.Click += new System.EventHandler(this.button5_Click);
+            this.btnUpdateInline.Click += new System.EventHandler(this.btnUpdateInline_Click);
             // 
             // gridFactoryID
             // 

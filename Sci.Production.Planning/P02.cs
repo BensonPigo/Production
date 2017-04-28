@@ -275,7 +275,7 @@ namespace Sci.Production.Planning
 
         DataTable dtData = null;
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, styleid, seasonid, localsuppid, inhouseosp, factoryid;
             sewinline_b = null;
@@ -381,13 +381,13 @@ namespace Sci.Production.Planning
         
 
         //close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             CheckData();
             DualResult result;
@@ -457,7 +457,7 @@ namespace Sci.Production.Planning
         }
 
         //Find SP#
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("id", txtLocateForSPNo.Text.TrimEnd());
@@ -476,7 +476,7 @@ namespace Sci.Production.Planning
         }
 
         //Filter empty Supp ID , In Line
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void checkSuppID_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.Filter = "";
             if (checkSuppID.Checked && checkInLine.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
@@ -513,7 +513,7 @@ namespace Sci.Production.Planning
         }
 
         //set default supplier from style
-        private void button6_Click(object sender, EventArgs e)
+        private void btnSetDefaultSuppFromStyle_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0) return;
@@ -548,7 +548,7 @@ namespace Sci.Production.Planning
         }
 
         //update inline
-        private void button5_Click(object sender, EventArgs e)
+        private void btnUpdateInline_Click(object sender, EventArgs e)
         {
             decimal stdq = 0m;
             int wkdays = 0;
@@ -584,7 +584,7 @@ namespace Sci.Production.Planning
         }
 
         //Check data
-        private void button7_Click(object sender, EventArgs e)
+        private void btnCheckData_Click(object sender, EventArgs e)
         {
             CheckData();
         }
@@ -628,7 +628,7 @@ namespace Sci.Production.Planning
             dt.DefaultView.Sort = "err desc";
         }
 
-        private void grid1_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
+        private void gridPrintingQuickAdjust_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
         {
             //Auto Resize the columns to fit the data
             foreach (DataGridViewColumn column in gridPrintingQuickAdjust.Columns)
@@ -640,7 +640,7 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void grid2_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
+        private void gridSupplier_ColumnDividerDoubleClick(object sender, DataGridViewColumnDividerDoubleClickEventArgs e)
         {
             //Auto Resize the columns to fit the data
             foreach (DataGridViewColumn column in gridSupplier.Columns)
