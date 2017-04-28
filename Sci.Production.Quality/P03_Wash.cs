@@ -134,7 +134,10 @@ where a.ID='{0}'"
                     dr["Vertical_Average"] = Math.Round(avgVertical, 2);
                 }
 
-                dr["Last update"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
+                string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
+                   MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
+                string Date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
+                dr["Last update"] = name + " - " + Date;
                 i++;
             }
 
@@ -171,7 +174,8 @@ where a.ID='{0}'"
                     {
                         return;
                     }
-                    e.EditingControl.Text = item.GetSelectedString();//將選取selectitem value帶入GridView
+                    dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
+                    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
             };
             LabTechCell.EditingMouseDown += (s, e) =>

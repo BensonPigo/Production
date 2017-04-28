@@ -107,7 +107,11 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 dr["poid"] = maindr["poid"];
                 dr["SEQ1"] = maindr["SEQ1"];
                 dr["SEQ2"] = maindr["SEQ2"];
-                dr["Last update"] = datas.Rows[i]["EditName"].ToString() + " - " + datas.Rows[i]["EditDate"].ToString();
+                string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
+                   MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
+                string Date=MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
+                dr["Last update"] = name + " - " + Date;
+            
                 i++;
             }
 
@@ -124,22 +128,23 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             #region grid MouseClickEvent
             Rollcell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    if (e.RowIndex == -1) return;
-                    if (this.EditMode == false) return;
-                    if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
                     {
-                        DataRow dr = grid.GetDataRow(e.RowIndex);
-                        string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
-                        SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
-                        DialogResult result = item.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-                        e.EditingControl.Text = item.GetSelectedString();//將選取selectitem value帶入GridView
+                        return;
                     }
-                };
+                    dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
+                    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
+                }
+            };
 
             dryScaleCell.EditingMouseDown += (s, e) =>
                 {
@@ -154,13 +159,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                         if (result == DialogResult.Cancel)
                         {
                             return;
-                        }
-                        e.EditingControl.Text = item1.GetSelectedString();
+                        }                        
                         dr["DryScale"] = item1.GetSelectedString();
                     }
-
                 };
-
 
             wetScaleCell.EditingMouseDown += (s, e) =>
             {
@@ -175,8 +177,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (result == DialogResult.Cancel)
                     {
                         return;
-                    }
-                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    }                    
                     dr["WetScale"] = item1.GetSelectedString();
                 }
 
@@ -194,8 +195,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (result == DialogResult.Cancel)
                     {
                         return;
-                    }
-                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    }                    
                     dr["Inspector"] = item1.GetSelectedString();
                 }
             };
