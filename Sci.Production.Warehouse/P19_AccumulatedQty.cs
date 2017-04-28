@@ -68,23 +68,23 @@ namespace Sci.Production.Warehouse
 	where  a.Id = '{0}'
 	GROUP BY A.PoId,A.Seq1,A.Seq2,x.q
 )
-select PoId,Seq1,Seq2,requestqty=sum(requestqty)
-* isnull((select v.Ratevalue from dbo.View_Unitrate v where v.FROM_U = 
-		(
-			select distinct unitID
-			from Invtrans B WITH (NOLOCK) 
-			where B.InventoryPoId = z.PoId 
-			and B.InventorySeq1 = z.Seq1 
-			and B.InventorySeq2 = z.Seq2 
-			and B.FactoryId = 'SPS'
-		) 
-		and v.TO_U = z.stockunit),1)
-,Qty,stockunit
-,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
+select  PoId
+        , Seq1
+        , Seq2
+        , requestqty = Round(sum(requestqty) * isnull(( select v.Ratevalue 
+                                                        from dbo.View_Unitrate v 
+                                                        where   v.FROM_U = (select distinct unitID
+			                                                                from Invtrans B WITH (NOLOCK) 
+			                                                                where   B.InventoryPoId = z.PoId 
+			                                                                        and B.InventorySeq1 = z.Seq1 
+			                                                                        and B.InventorySeq2 = z.Seq2 
+			                                                                        and B.FactoryId = '{2}') 
+		                                                        and v.TO_U = z.stockunit),1)
+        ,Qty,stockunit
+        ,[Description] = dbo.getmtldesc(Z.poid,Z.seq1,Z.seq2,2,0)
 from Z
-group by PoId,Seq1,Seq2,Qty,stockunit
-                ;
-", dr["id"].ToString(),Sci.Env.User.Keyword));
+group by PoId,Seq1,Seq2,Qty,stockunit;
+", dr["id"].ToString(), Sci.Env.User.Keyword, Sci.Env.User.Factory));
 
             DataTable selectDataTable1;
             P19.ShowWaitMessage("Data Loading...");
