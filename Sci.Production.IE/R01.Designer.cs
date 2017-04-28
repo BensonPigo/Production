@@ -99,8 +99,8 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(70, 23);
             this.txtFactory.TabIndex = 0;
-            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFactory_PopUp);
+            this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFactory_Validating);
             // 
             // txtStyle
             // 
@@ -110,8 +110,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(150, 23);
             this.txtStyle.TabIndex = 1;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.txtStyle_Validating);
             // 
             // txtSeason
             // 
@@ -121,8 +121,8 @@
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(80, 23);
             this.txtSeason.TabIndex = 2;
-            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeason_PopUp);
+            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeason_Validating);
             // 
             // comboTeam
             // 

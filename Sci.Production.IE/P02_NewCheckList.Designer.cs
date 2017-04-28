@@ -73,7 +73,7 @@
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // P02_NewCheckList
             // 

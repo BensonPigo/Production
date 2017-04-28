@@ -70,7 +70,7 @@ namespace Sci.Production.IE
         }
 
         //Brand
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK)	WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", txtBrand.Text, false, ",");
@@ -80,7 +80,7 @@ namespace Sci.Production.IE
             txtBrand.Text = item.GetSelectedString();
         }
 
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtBrand_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtBrand.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtBrand.OldValue)

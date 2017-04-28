@@ -74,7 +74,7 @@ namespace Sci.Production.IE
             return base.ClickSaveBefore();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboType.SelectedIndex != -1)
             {

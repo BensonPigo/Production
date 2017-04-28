@@ -254,8 +254,8 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
             this.txtBrand.TabIndex = 4;
-            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
-            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBrand_PopUp);
+            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.txtBrand_Validating);
             // 
             // B01
             // 

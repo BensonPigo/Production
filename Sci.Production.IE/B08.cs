@@ -273,7 +273,7 @@ namespace Sci.Production.IE
             txtSkill.BackColor = displayM.BackColor;
         }
 
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSkill_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {

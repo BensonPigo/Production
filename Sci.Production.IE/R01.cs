@@ -23,7 +23,7 @@ namespace Sci.Production.IE
         }
        
         //Factory
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
 
@@ -35,7 +35,7 @@ namespace Sci.Production.IE
         }
 
         //Style
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
 
@@ -47,7 +47,7 @@ namespace Sci.Production.IE
         }
 
         //Season
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 ORDER BY ID DESC";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10", txtSeason.Text, "Season");
@@ -198,7 +198,7 @@ inner join(
             excel.Visible = true;
             return true;
         }
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtFactory_Validating(object sender, CancelEventArgs e)
         {
             DataTable FactoryData; string fac = "";
             string sqlCmd = "select distinct FTYGroup from Factory WITH (NOLOCK) where Junk = 0 AND FTYGroup!=''";
@@ -221,7 +221,7 @@ inner join(
             }
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtStyle_Validating(object sender, CancelEventArgs e)
         {
             DataTable StyleData; string sty = "";
             string sqlCmd = "select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 order by ID";
@@ -244,7 +244,7 @@ inner join(
             }
         }
 
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void txtSeason_Validating(object sender, CancelEventArgs e)
         {
             DataTable SeasonData; string season = "";
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0";

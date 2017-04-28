@@ -62,7 +62,7 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
         }
 
         //To Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable;
             try

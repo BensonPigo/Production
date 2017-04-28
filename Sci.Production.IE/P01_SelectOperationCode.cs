@@ -59,7 +59,7 @@ namespace Sci.Production.IE
         }
 
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             StringBuilder filterCondition = new StringBuilder();
             if (!MyUtility.Check.Empty(txtID.Text))
@@ -97,7 +97,7 @@ namespace Sci.Production.IE
         }
 
         //Select
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSelect_Click(object sender, EventArgs e)
         {
             if (gridDetail.SelectedRows.Count == 0)
             {

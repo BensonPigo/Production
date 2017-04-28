@@ -41,7 +41,7 @@ namespace Sci.Production.IE
             this.picture2.ImageLocation = MyUtility.Check.Empty(CurrentMaintain["Picture2"]) ? null : destination_path + CurrentMaintain["Picture2"].ToString();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnPicture1Attach_Click(object sender, EventArgs e)
         {
             //呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
@@ -77,7 +77,7 @@ namespace Sci.Production.IE
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnPicture1Delete_Click(object sender, EventArgs e)
         {
             deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
@@ -115,7 +115,7 @@ namespace Sci.Production.IE
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnPicture2Attach_Click(object sender, EventArgs e)
         {
             //呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
@@ -151,7 +151,7 @@ namespace Sci.Production.IE
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnPicture2Delete_Click(object sender, EventArgs e)
         {
             deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)

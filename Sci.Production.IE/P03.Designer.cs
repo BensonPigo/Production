@@ -268,15 +268,16 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Location = new System.Drawing.Point(4, 24);
+            this.detail2.Size = new System.Drawing.Size(996, 661);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(990, 615);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(990, 40);
             // 
             // detail
             // 
@@ -399,7 +400,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(70, 21);
             this.txtFactory.TabIndex = 1;
-            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFactory_PopUp);
             // 
             // txtStyleComboType
             // 
@@ -413,7 +414,7 @@
             this.txtStyleComboType.ReadOnly = true;
             this.txtStyleComboType.Size = new System.Drawing.Size(26, 21);
             this.txtStyleComboType.TabIndex = 3;
-            this.txtStyleComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtStyleComboType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyleComboType_PopUp);
             // 
             // displaySeason
             // 
@@ -954,7 +955,7 @@
             0,
             0,
             0});
-            this.numOprtsIdeal.Validated += new System.EventHandler(this.numericBox13_Validated);
+            this.numOprtsIdeal.Validated += new System.EventHandler(this.numOprtsIdeal_Validated);
             // 
             // numNoOfHours
             // 
@@ -975,7 +976,7 @@
             0,
             0,
             0});
-            this.numNoOfHours.Validated += new System.EventHandler(this.numericBox14_Validated);
+            this.numNoOfHours.Validated += new System.EventHandler(this.numNoOfHours_Validated);
             // 
             // numNetAvailableTime
             // 
@@ -1223,7 +1224,7 @@
             this.btnNotHitTargetReason.TabIndex = 31;
             this.btnNotHitTargetReason.Text = "Not hit target reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
-            this.btnNotHitTargetReason.Click += new System.EventHandler(this.button1_Click);
+            this.btnNotHitTargetReason.Click += new System.EventHandler(this.btnNotHitTargetReason_Click);
             // 
             // btnCopyFromOtherLineMapping
             // 
@@ -1234,7 +1235,7 @@
             this.btnCopyFromOtherLineMapping.TabIndex = 32;
             this.btnCopyFromOtherLineMapping.Text = "Copy from other line mapping";
             this.btnCopyFromOtherLineMapping.UseVisualStyleBackColor = true;
-            this.btnCopyFromOtherLineMapping.Click += new System.EventHandler(this.button2_Click);
+            this.btnCopyFromOtherLineMapping.Click += new System.EventHandler(this.btnCopyFromOtherLineMapping_Click);
             // 
             // btnCopyFromGSD
             // 
@@ -1245,7 +1246,7 @@
             this.btnCopyFromGSD.TabIndex = 33;
             this.btnCopyFromGSD.Text = "Copy from GSD";
             this.btnCopyFromGSD.UseVisualStyleBackColor = true;
-            this.btnCopyFromGSD.Click += new System.EventHandler(this.button3_Click);
+            this.btnCopyFromGSD.Click += new System.EventHandler(this.btnCopyFromGSD_Click);
             // 
             // txtStyleID
             // 
@@ -1259,7 +1260,7 @@
             this.txtStyleID.ReadOnly = true;
             this.txtStyleID.Size = new System.Drawing.Size(120, 21);
             this.txtStyleID.TabIndex = 2;
-            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox7_PopUp);
+            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyleID_PopUp);
             // 
             // numTotalTimeDiff
             // 

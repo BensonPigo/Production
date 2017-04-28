@@ -27,7 +27,7 @@ namespace Sci.Production.IE
         }
 
         //Style
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
             string selectCommand;
@@ -43,13 +43,13 @@ namespace Sci.Production.IE
         }
 
         //Style
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtStyle_Validated(object sender, EventArgs e)
         {
             GetBrand();
         }
 
         //Brand
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,40,40", this.Text, false, ",");
@@ -60,7 +60,7 @@ namespace Sci.Production.IE
         }
 
         //Season
-        private void txtseason1_Validated(object sender, EventArgs e)
+        private void txtseason_Validated(object sender, EventArgs e)
         {
             GetBrand();
         }
@@ -101,7 +101,7 @@ namespace Sci.Production.IE
         }
 
         //OK
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtStyle.Text))
             {

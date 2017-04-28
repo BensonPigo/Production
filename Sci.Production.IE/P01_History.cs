@@ -114,7 +114,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         }
 
         //Status
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboStatus.SelectedIndex != -1)
             {
@@ -132,7 +132,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         }
 
         //Summary
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSummary_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_ArtworkSummary callNextForm;
             if (gridData.DefaultView.Count > 0)
@@ -148,7 +148,7 @@ order by IIF(Phase = 'Initial',1,iif(Phase = 'Prelim',2,iif(Phase = 'Estimate',3
         }
 
         //To Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_History_Print callNextForm = new Sci.Production.IE.P01_History_Print(masterData, MyUtility.Convert.GetString(comboStatus.SelectedValue), MyUtility.Convert.GetString(displayCD.Value), MyUtility.Convert.GetInt(numTotalSewingTimePc.Value), MyUtility.Convert.GetInt(numNumOfSewer.Value));
             DialogResult result = callNextForm.ShowDialog(this);

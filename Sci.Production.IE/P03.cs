@@ -613,19 +613,19 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         }
 
         //No. of Hours
-        private void numericBox14_Validated(object sender, EventArgs e)
+        private void numNoOfHours_Validated(object sender, EventArgs e)
         {
             CalculateValue(1);
         }
 
         //Ideal No. of Oprts
-        private void numericBox13_Validated(object sender, EventArgs e)
+        private void numOprtsIdeal_Validated(object sender, EventArgs e)
         {
             CalculateValue(0);
         }
 
         //Factory
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", txtFactory.Text);
             DialogResult result = item.ShowDialog();
@@ -634,7 +634,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         }
 
         //Style#
-        private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyleID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "select ID,SeasonID,BrandID,Description,CPU,Ukey from Style WITH (NOLOCK) where Junk = 0 order by ID,SeasonID";
 
@@ -677,7 +677,7 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
         }
 
         //Combo Type
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyleComboType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select Location from Style_Location WITH (NOLOCK) where StyleUkey = {0}", CurrentMaintain["StyleUKey"].ToString()), "2", "", "Combo Type");
             DialogResult returnResult = item.ShowDialog();
@@ -761,14 +761,14 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
         }
 
         //Not hit target reason
-        private void button1_Click(object sender, EventArgs e)
+        private void btnNotHitTargetReason_Click(object sender, EventArgs e)
         {
             //不使用MyUtility.Msg.InfoBox的原因為MyUtility.Msg.InfoBox都有MessageBoxIcon
             MessageBox.Show(MyUtility.GetValue.Lookup(string.Format("select Description from IEReason WITH (NOLOCK) where Type = 'LM' and ID = '{0}'", CurrentMaintain["IEReasonID"].ToString())).PadRight(60), caption: "Not hit target reason");
         }
 
         //Copy from other line mapping
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCopyFromOtherLineMapping_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P03_CopyFromOtherStyle callNextForm = new Sci.Production.IE.P03_CopyFromOtherStyle();
             DialogResult result = callNextForm.ShowDialog(this);
@@ -826,7 +826,7 @@ where ld.ID = {0} order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToStrin
         }
 
         //Copy from GSD
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCopyFromGSD_Click(object sender, EventArgs e)
         {
             //刪除現有表身資料
             foreach (DataRow dr in DetailDatas)

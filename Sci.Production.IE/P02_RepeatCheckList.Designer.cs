@@ -66,13 +66,13 @@
             // 
             this.btnToExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnToExcel.Location = new System.Drawing.Point(494, 8);
+            this.btnToExcel.Location = new System.Drawing.Point(494, 6);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
             this.btnToExcel.TabIndex = 95;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // P02_RepeatCheckList
             // 

@@ -89,7 +89,7 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(80, 23);
             this.txtBrand.TabIndex = 3;
-            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBrand_PopUp);
             // 
             // txtStyle
             // 
@@ -99,8 +99,8 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(130, 23);
             this.txtStyle.TabIndex = 0;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtStyle.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtStyle.Validated += new System.EventHandler(this.txtStyle_Validated);
             // 
             // txtseason
             // 
@@ -111,7 +111,7 @@
             this.txtseason.Name = "txtseason";
             this.txtseason.Size = new System.Drawing.Size(80, 23);
             this.txtseason.TabIndex = 2;
-            this.txtseason.Validated += new System.EventHandler(this.txtseason1_Validated);
+            this.txtseason.Validated += new System.EventHandler(this.txtseason_Validated);
             // 
             // comboStyle
             // 
@@ -132,7 +132,7 @@
             this.btnOK.TabIndex = 4;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 

@@ -599,7 +599,7 @@ namespace Sci.Production.IE
         }
 
         //Style
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             //sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -648,7 +648,7 @@ namespace Sci.Production.IE
         }
 
         //Brand
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "10,30,30", this.Text, false, ",");
@@ -659,21 +659,21 @@ namespace Sci.Production.IE
         }
 
         //Art. Sum
-        private void button5_Click(object sender, EventArgs e)
+        private void btnArtSum_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_ArtworkSummary callNextForm = new Sci.Production.IE.P01_ArtworkSummary("TimeStudy_Detail", Convert.ToInt64(CurrentMaintain["ID"]));
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         //Sketch
-        private void button6_Click(object sender, EventArgs e)
+        private void btnSketch_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_Sketch callNextForm = new Sci.Production.IE.P01_Sketch(CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         //New Version
-        private void button1_Click(object sender, EventArgs e)
+        private void btnNewVersion_Click(object sender, EventArgs e)
         {
             //將現有資料寫入TimeStudyHistory,TimeStudyHistory_History，並將現有資料的Version+1
             DialogResult confirmResult;
@@ -725,7 +725,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
         }
 
         //New Status
-        private void button2_Click(object sender, EventArgs e)
+        private void btnNewStatus_Click(object sender, EventArgs e)
         {
             if (CurrentMaintain["Phase"].ToString() == "Final")
             {
@@ -783,7 +783,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
         }
 
         //Copy from style std. GSD
-        private void button7_Click(object sender, EventArgs e)
+        private void btnCopyFromStyleStdGSD_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtStyle.Text) || MyUtility.Check.Empty(comboStyle.Text) || MyUtility.Check.Empty(txtBrand.Text) || MyUtility.Check.Empty(txtseason.Text))
             {
@@ -875,14 +875,14 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
         }
 
         //History
-        private void button3_Click(object sender, EventArgs e)
+        private void btnHistory_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_History callNextForm = new Sci.Production.IE.P01_History(CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         //Std. GSD List
-        private void button8_Click(object sender, EventArgs e)
+        private void btnStdGSDList_Click(object sender, EventArgs e)
         {
             //sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -947,7 +947,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
         }
 
         //Copy
-        private void button4_Click(object sender, EventArgs e)
+        private void btnCopy_Click(object sender, EventArgs e)
         {
             //將要Copy的資料記錄起來
             List<DataRow> listDr = new List<DataRow>();
@@ -1023,7 +1023,7 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void btnDel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;
 

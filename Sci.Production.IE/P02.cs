@@ -211,7 +211,7 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
         }
 
         //Time of First/Last Good Output
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtTimeOfFirstGoodOutput_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox prodTextValue = (Sci.Win.UI.TextBox)sender;
             if (EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
@@ -233,14 +233,14 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
         }
 
         //FTY GSD
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFTYGSD_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(CurrentMaintain["StyleID"].ToString(), MyUtility.GetValue.Lookup(string.Format("select BrandID from Orders WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString())), CurrentMaintain["SeasonID"].ToString(), CurrentMaintain["ComboType"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         //Check List
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCheckList_Click(object sender, EventArgs e)
         {
             if (CurrentMaintain["Type"].ToString() == "N")
             {
@@ -309,7 +309,7 @@ select @id,DaysBefore,BaseOn,ID from ChgOverCheckList where (UseFor = 'R' or Use
         }
 
         //Problem
-        private void button3_Click(object sender, EventArgs e)
+        private void btnProblem_Click(object sender, EventArgs e)
         {
             if (type == "1")
             {
