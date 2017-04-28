@@ -44,7 +44,7 @@ FROM (
 			    when '6' then '6:Return'
 			 end as typename 
             , inv.ConfirmDate
-            , Round(isnull(inv.Qty, 0.00) * unit.RateValue, 2) inqty
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, isnull(inv.Qty, 0.00)), 2) inqty
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
@@ -61,7 +61,6 @@ FROM (
             , inv.ukey
     FROM InvTrans Inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
-    inner join dbo.View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = To_U
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
     INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
@@ -82,7 +81,7 @@ FROM (
 			  end as typename
             , inv.ConfirmDate
             , 0 inqty
-            , Round(isnull(inv.Qty, 0.00) * unit.RateValue, 2) Allocated
+            , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , case inv.type 
@@ -98,7 +97,6 @@ FROM (
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
-    inner join View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = unit.To_U
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
@@ -118,8 +116,8 @@ FROM (
 			    when '6' then '6:Return'
 			  end as typename
             , inv.ConfirmDate
-            , Round(iif(inv.Qty >= 0, inv.Qty, 0) * unit.RateValue, 2) inqty
-            , Round(iif(inv.Qty < 0, -inv.Qty, 0) * unit.RateValue, 2) Allocated
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty >= 0, inv.Qty, 0)), 2) inqty
+            , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , case inv.type 
@@ -135,7 +133,6 @@ FROM (
             , inv.ukey
     FROM InvTrans inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
-    inner join View_Unitrate unit on inv.UnitID = unit.From_U and po.StockUnit = unit.To_U
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
 	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
