@@ -70,14 +70,16 @@ o.FactoryID
 ,g.Dest
 ,g.FCRDate
 ,o.CPU
-,CPUCost= (	select top 1 fcd.CpuCost 
-			from dbo.FtyShipper_Detail fd  
-			inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
-			where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate )
-,SubPSCost=(Select sum(ot.Price) 
+,isnull(cpucost.cpucost,0) as cpucost
+,SubPSCost=         ((Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = pd.OrderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0)))
+					where ot.ID = pd.OrderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
+                    +
+                    (Select Isnull(sum(ot.Price)*cpucost.cpucost,0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)))
 ,LocalPSCost= IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
 						(select sum(ot.Price) 
 						from Order_TmsCost ot
@@ -89,6 +91,13 @@ Left join PackingList p on g.ID = p.InvNo
 Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
 Left join Brand b on b.ID = o.BrandID
+outer apply
+(	
+    select top 1 fcd.CpuCost
+	from dbo.FtyShipper_Detail fd  
+	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
+	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate 
+) cpucost
 Where 1=1 ");
 
             if (!MyUtility.Check.Empty(FCR_date1))

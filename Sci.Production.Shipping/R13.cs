@@ -74,11 +74,16 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,o.FactoryID
 ,fd.ShipperID
 ,o.CPU
-,CPUCost= (select top 1 fcd.CpuCost from dbo.FSRCpuCost_Detail fcd where fcd.ShipperID=fd.ShipperID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate)
-,SubPSCost=(Select sum(ot.Price) 
+,isnull(cpucost.cpucost,0) as cpucost
+,SubPSCost=         ((Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0)))
+					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
+                    +
+                    (Select Isnull(sum(ot.Price)*cpucost.cpucost,0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)))
 ,LocalPSCost= Isnull(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
 						(select sum(ot.Price) 
 						from Order_TmsCost ot
@@ -88,6 +93,12 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 
 From Orders o
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+outer apply
+(
+    select top 1 fcd.CpuCost
+    from dbo.FSRCpuCost_Detail fcd 
+    where fcd.ShipperID=fd.ShipperID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
+) cpucost
 Where o.LocalOrder = 0 ");
 
             if (!MyUtility.Check.Empty(buyerDlv1))
