@@ -43,12 +43,20 @@ cross apply
 	) x
 )
 
-select m.poid,m.seq1,m.seq2,m.StockUnit,m.Qty*isnull(u.Rate,1) as poqty,m.InputQty*isnull(u.Rate,1) as inputQty
-,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
-,m.taipei_issue_date,m.taipei_qty*isnull(u.Rate,1) as taipei_qty
-,m.POUnit,accu_qty, m.trans_qty	
-,[balanceqty] = m.trans_qty + isnull(accu_qty,0) - isnull(m.taipei_qty,0)*isnull(u.Rate,1)
-from cte m left join Unit_Rate u on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+select  m.poid
+        , m.seq1
+        , m.seq2
+        , m.StockUnit
+        , dbo.GetUnitQty(POUnit, StockUnit, m.Qty) as poqty
+        , dbo.GetUnitQty(POUnit, StockUnit, m.InputQty) as inputQty
+        , dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
+        , m.taipei_issue_date
+        , dbo.GetUnitQty(POUnit, StockUnit, m.taipei_qty) as taipei_qty
+        , m.POUnit
+        , accu_qty
+        ,  m.trans_qty	
+        , [balanceqty] = m.trans_qty + isnull(accu_qty,0) - dbo.GetUnitQty(POUnit, StockUnit, isnull(m.taipei_qty,0))
+from cte m 
 cross apply
 (
 select sum(qty) accu_qty from (
