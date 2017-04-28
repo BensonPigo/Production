@@ -152,10 +152,18 @@ namespace Sci.Production.Warehouse
         {
             base.OnAttached();
             DataRow dr;
-            if (MyUtility.Check.Seek(string.Format(@"select *,concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq,dbo.getmtldesc(id,seq1,seq2,2,0) [description]
-,(select orderid+',' from (select orderid from dbo.po_supp_detail_orderlist WITH (NOLOCK) where id=po_supp_detail.id and seq1=po_supp_detail.seq1 and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist]
-,ISNULL((SELECT cast(V.RateValue as numeric) FROM dbo.View_Unitrate V WHERE V.FROM_U=po_supp_detail.POUnit AND V.TO_U = po_supp_detail.StockUnit),1.0) RATE 
-from dbo.po_supp_detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'"
+            if (MyUtility.Check.Seek(string.Format(@"
+select  *
+        , concat(Ltrim(Rtrim(seq1)), ' ', seq2) as seq
+        , dbo.getmtldesc(id,seq1,seq2,2,0) [description]
+        , (select orderid+',' from (select orderid 
+                                    from dbo.po_supp_detail_orderlist WITH (NOLOCK) 
+                                    where   id=po_supp_detail.id 
+                                            and seq1=po_supp_detail.seq1 
+                                            and seq2=po_supp_detail.seq2)t for xml path('')) [orderlist]
+        , dbo.GetUnitRate(po_supp_detail.POUnit, po_supp_detail.StockUnit) RATE 
+from dbo.po_supp_detail WITH (NOLOCK) 
+where id='{0}' and seq1='{1}' and seq2='{2}'"
                 , CurrentDetailData["poid"], CurrentDetailData["seq1"], CurrentDetailData["seq2"]), out dr))
             {
                 this.displySeqNo.Text = dr["seq"].ToString();
