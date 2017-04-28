@@ -307,13 +307,12 @@ WHERE   StockType='{0}'
             , pd.id stockpoid
             , pd.seq1 stockseq1
             , pd.seq2 stockseq2
-            , ROUND(xz.taipei_qty*isnull(v.RateValue,1),2) N'inputqty'
+            , ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) N'inputqty'
             , pd.POUnit
             , pd.StockUnit
             , isnull(x.accu_qty,0.00) accu_qty
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-    left  join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup"));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
