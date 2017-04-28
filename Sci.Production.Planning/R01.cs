@@ -182,8 +182,8 @@ select
 	[Total PCS/ Stitch],
 	[Unit],
 	[Total TMS],
-	[% Based on order allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P'),
-	[% Based Subprocess allocation] = format(convert(float,[Ttl. Order Qty])/convert(float,sum([Ttl. Order Qty])over(partition by m.[Artwork Type])),'P'),
+	[% Based on order allocation] = IIF([Order Allocation (Qty)] = 0,'0',format(convert(float,[Ttl. Order Qty])/convert(float,[Order Allocation (Qty)]),'P')),
+	[% Based Subprocess allocation] = IIF(sum([Ttl. Order Qty])over(partition by m.[Artwork Type]) = 0,'0',format(convert(float,[Ttl. Order Qty])/convert(float,sum([Ttl. Order Qty])over(partition by m.[Artwork Type])),'P')),
 	[o2] = 1
 into #lu
 from #ltm2 m left join #lts s on m.[Factory Name] = s.FactoryID and m.[Artwork Type] =s.[Artwork Type]
