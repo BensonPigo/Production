@@ -94,41 +94,35 @@ namespace Sci.Production.Warehouse
                 if (!MyUtility.Check.Empty(buyerDelivery2))
                     sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? "" : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDelivery2).ToString("d"));
 
-                sqlCmd.Append(string.Format(@";with cte as 
+                sqlCmd.Append(string.Format(@"
+;with cte as 
 (
-	select poid from dbo.orders o WITH (NOLOCK) 
-	where {0} group by POID
+	select poid 
+    from dbo.orders o WITH (NOLOCK) 
+	where {0} 
+    group by POID
 )
-select 
-distinct 
---a.POID, a.seq1, a.seq2, a.eta, A.Refno
---, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType
---, B.StockUnit
---,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
---,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
---, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
---,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
----------------------------------------------------------------------------
-FactoryID           = orders.FactoryID,
-SP					= a.POID, 
-SEQ					= concat(a.seq1, ' ', a.seq2),  
-ETA					= b.ShipETA,
-REF					= A.Refno, 
-MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
-PurchaseUnit		= B.StockUnit,
-Color				= B.ColorID, 
-StockLocation		= C.BLocation, 
-ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1),
-ArrivedQty			= isnull(C.InQty, 0), 
-ReleasedQty			= isnull(C.OutQty, 0), 
-AdjustQty			= isnull(C.AdjustQty, 0),
-StockInQty			= isnull(B.InputQty, 0) * isnull(v.RateValue, 1),
-StockAllocatedQty	= isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 
-StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1),
-InQty				= isnull(x.InQty, 0), 
-OutQty				= isnull(x.OutQty, 0), 
-AdjustQty			= isnull(x.AdjustQty, 0),
-BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
+select  distinct 
+        FactoryID           = orders.FactoryID,
+        SP					= a.POID, 
+        SEQ					= concat(a.seq1, ' ', a.seq2),  
+        ETA					= b.ShipETA,
+        REF					= A.Refno, 
+        MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
+        PurchaseUnit		= B.StockUnit,
+        Color				= B.ColorID, 
+        StockLocation		= C.BLocation, 
+        ShipQty				= Round((isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1), 2),
+        ArrivedQty			= isnull(C.InQty, 0), 
+        ReleasedQty			= isnull(C.OutQty, 0), 
+        AdjustQty			= isnull(C.AdjustQty, 0),
+        StockInQty			= Round(isnull(B.InputQty, 0) * isnull(v.RateValue, 1), 2),
+        StockAllocatedQty	= Round(isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 2), 
+        StockBalanceQty		= Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2),
+        InQty				= isnull(x.InQty, 0), 
+        OutQty				= isnull(x.OutQty, 0), 
+        AdjustQty			= isnull(x.AdjustQty, 0),
+        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from cte
 inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
@@ -136,51 +130,60 @@ inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.s
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 inner join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
-outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
-from dbo.FtyInventory m WITH (NOLOCK) 
-            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' ) x
+
+outer apply (
+    select  isnull(sum(m.InQty),0.00) InQty
+            , isnull(sum(m.OutQty),0.00) OutQty
+            , isnull(sum(m.AdjustQty),0.00) AdjustQty 
+    from dbo.FtyInventory m WITH (NOLOCK) 
+    where   m.POID = a.POID 
+            and m.seq1 = a.seq1 
+            and m.seq2 = a.seq2 
+            and StockType = 'I' 
+) x
 where b.InputQty > 0 ", sqlBuyerDelivery));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select 
---a.POID, a.seq1, a.seq2, a.eta,A.Refno
---, iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)) FabricType, B.StockUnit
---,B.ColorID, C.BLocation, (B.ShipQty+B.ShipFOC)*v.RateValue ShipQty
---,C.InQty, C.OutQty, C.AdjustQty ,B.InputQty*v.RateValue InputQty,B.OutputQty*v.RateValue OutputQty
---, (B.InputQty - B.OutputQty)*v.RateValue TaipeiBalance
---,x.InQty, x.OutQty, x.AdjustQty,x.InQty - x.OutQty + x.AdjustQty balance
----------------------------------------------------------------------------
-distinct 
-FactoryID           = orders.FactoryID,
-SP					= a.POID, 
-SEQ					= concat(a.seq1, ' ', a.seq2),  
-ETA					= b.ShipETA,
-REF					= A.Refno, 
-MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
-PurchaseUnit		= B.StockUnit,
-Color				= B.ColorID, 
-StockLocation		= C.BLocation, 
-ShipQty				= (isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1),
-ArrivedQty			= isnull(C.InQty, 0), 
-ReleasedQty			= isnull(C.OutQty, 0), 
-AdjustQty			= isnull(C.AdjustQty, 0) ,
-StockInQty			= isnull(B.InputQty, 0) * isnull(v.RateValue, 1),
-StockAllocatedQty	= isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 
-StockBalanceQty		= (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1),
-InQty				= isnull(x.InQty, 0), 
-OutQty				= isnull(x.OutQty, 0), 
-AdjustQty			= isnull(x.AdjustQty, 0),
-BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
+                sqlCmd.Append(string.Format(@"
+select  distinct 
+        FactoryID           = orders.FactoryID,
+        SP					= a.POID, 
+        SEQ					= concat(a.seq1, ' ', a.seq2),  
+        ETA					= b.ShipETA,
+        REF					= A.Refno, 
+        MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
+        PurchaseUnit		= B.StockUnit,
+        Color				= B.ColorID, 
+        StockLocation		= C.BLocation, 
+        ShipQty				= Round((isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * isnull(v.RateValue, 1), 2),
+        ArrivedQty			= isnull(C.InQty, 0), 
+        ReleasedQty			= isnull(C.OutQty, 0), 
+        AdjustQty			= isnull(C.AdjustQty, 0) ,
+        StockInQty			= Round(isnull(B.InputQty, 0) * isnull(v.RateValue, 1), 2),
+        StockAllocatedQty	= Round(isnull(B.OutputQty, 0) * isnull(v.RateValue, 1), 2), 
+        StockBalanceQty		= Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2),
+        InQty				= isnull(x.InQty, 0), 
+        OutQty				= isnull(x.OutQty, 0), 
+        AdjustQty			= isnull(x.AdjustQty, 0),
+        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
 from Inventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
 inner join Orders orders on c.poid = orders.id
 inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
 left join dbo.View_Unitrate v on v.FROM_U = b.POUnit and v.TO_U = b.StockUnit 
-outer apply (select isnull(sum(m.InQty),0.00) InQty,isnull(sum(m.OutQty),0.00) OutQty,isnull(sum(m.AdjustQty),0.00) AdjustQty 
-from dbo.FtyInventory m WITH (NOLOCK) 
-            where m.POID = a.POID and m.seq1 = a.seq1 and m.seq2 = a.seq2 and StockType = 'I' ) x
+
+outer apply (
+    select  isnull(sum(m.InQty),0.00) InQty
+            , isnull(sum(m.OutQty),0.00) OutQty
+            , isnull(sum(m.AdjustQty),0.00) AdjustQty 
+    from dbo.FtyInventory m WITH (NOLOCK) 
+    where   m.POID = a.POID 
+            and m.seq1 = a.seq1 
+            and m.seq2 = a.seq2 
+            and StockType = 'I' 
+) x
 where b.InputQty> 0"));
 
             }
@@ -266,12 +269,12 @@ where b.InputQty> 0"));
             if (filterIndex == 0)
             {
                 //sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
-                sqlCmd.Append(" and (isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)");
+                sqlCmd.Append(" and Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)");
             }
 
             if (filterIndex == 1)
             {
-                sqlCmd.Append(" and x.InQty < B.InputQty * isnull(v.RateValue, 1)");
+                sqlCmd.Append(" and x.InQty < Round(B.InputQty * isnull(v.RateValue, 1), 2)");
             }
             #endregion
 
