@@ -799,9 +799,8 @@ select  a.id
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as Description
         , a.Roll
         , a.Dyelot
-        , ( select Round(sum(b.Qty * isnull(c.RateValue,1)), 2) as useqty 
+        , ( select Round(sum(dbo.GetUnitQty(b.POUnit, StockUnit, b.Qty)), 2) as useqty 
             from po_supp_detail b WITH (NOLOCK) 
-            inner join View_Unitrate c on c.FROM_U = b.POUnit and c.TO_U = b.StockUnit
             where b.id= a.poid and b.seq1 = a.seq1 and b.seq2 = a.seq2) useqty
         , a.StockQty
         , a.StockUnit
