@@ -104,7 +104,7 @@
             this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtbrand
             // 
@@ -204,7 +204,7 @@
             this.btnEmptyNLCodetoExcel.TabIndex = 7;
             this.btnEmptyNLCodetoExcel.Text = "Empty NL Code (to Excel)";
             this.btnEmptyNLCodetoExcel.UseVisualStyleBackColor = true;
-            this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.button5_Click);
+            this.btnEmptyNLCodetoExcel.Click += new System.EventHandler(this.btnEmptyNLCodetoExcel_Click);
             // 
             // btnClose
             // 
@@ -224,7 +224,7 @@
             this.btnCreate.TabIndex = 5;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.button3_Click);
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // pictureBox2
             // 
@@ -261,8 +261,8 @@
             this.txtVNContractID.Name = "txtVNContractID";
             this.txtVNContractID.Size = new System.Drawing.Size(140, 23);
             this.txtVNContractID.TabIndex = 1;
-            this.txtVNContractID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtVNContractID.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtVNContractID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtVNContractID_PopUp);
+            this.txtVNContractID.Validating += new System.ComponentModel.CancelEventHandler(this.txtVNContractID_Validating);
             // 
             // btnAutoCustomSPNo
             // 
@@ -272,7 +272,7 @@
             this.btnAutoCustomSPNo.TabIndex = 0;
             this.btnAutoCustomSPNo.Text = "Auto Custom SP#";
             this.btnAutoCustomSPNo.UseVisualStyleBackColor = true;
-            this.btnAutoCustomSPNo.Click += new System.EventHandler(this.button2_Click);
+            this.btnAutoCustomSPNo.Click += new System.EventHandler(this.btnAutoCustomSPNo_Click);
             // 
             // panel5
             // 

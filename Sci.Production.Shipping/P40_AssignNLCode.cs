@@ -138,7 +138,7 @@ namespace Sci.Production.Shipping
         }
 
         //Save NL Code & Re-Calculate
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSaveNLCode_Click(object sender, EventArgs e)
         {
             this.gridBelowDataIsnoNLCode.ValidateControl();
             listControlBindingSource1.EndEdit();

@@ -69,7 +69,7 @@ namespace Sci.Production.Shipping
         }
 
         //Good's Description
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtGoodsDescription_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -90,7 +90,7 @@ order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: 
         }
 
         //Good's Description
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtGoodsDescription_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtGoodsDescription.OldValue != txtGoodsDescription.Text)
             {

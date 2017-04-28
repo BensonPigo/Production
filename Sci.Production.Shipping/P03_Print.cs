@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
         }
 
         //控制ETA & Factory可否輸入
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        private void radioListReport_CheckedChanged(object sender, EventArgs e)
         {
             if (radioListReport.Checked)
             {

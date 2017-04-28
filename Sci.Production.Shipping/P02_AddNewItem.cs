@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
         }
 
         //SP#
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
@@ -67,7 +67,7 @@ namespace Sci.Production.Shipping
         }
 
         //SP#
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSPNo_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
@@ -108,7 +108,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.
         }
 
         //Season
-        private void txtseason1_Validated(object sender, EventArgs e)
+        private void txtseason_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtseason.OldValue != txtseason.Text && !MyUtility.Check.Empty(txtseason.Text) && !MyUtility.Check.Empty(txtstyle.Text))
             {
@@ -117,7 +117,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.
         }
 
         //Style
-        private void txtstyle1_Validated(object sender, EventArgs e)
+        private void txtstyle_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtstyle.OldValue != txtstyle.Text && !MyUtility.Check.Empty(txtstyle.Text) && !MyUtility.Check.Empty(txtseason.Text))
             {
@@ -126,7 +126,7 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.
         }
 
         //CTN No.
-        private void textBox2_Validated(object sender, EventArgs e)
+        private void txtCTNNo_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {
@@ -231,7 +231,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         }
 
         //Team Leader
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtTeamLeader_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10,150", txtTeamLeader.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -240,7 +240,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         }
 
         //Team Leader
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtTeamLeader_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
             {
@@ -255,7 +255,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
         }
 
         //Team Leader
-        private void textBox4_Validated(object sender, EventArgs e)
+        private void txtTeamLeader_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtTeamLeader.OldValue != txtTeamLeader.Text)
             {

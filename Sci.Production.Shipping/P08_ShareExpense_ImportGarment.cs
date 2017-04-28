@@ -42,7 +42,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(comboDatafrom.SelectedValue) && MyUtility.Check.Empty(dateFCRDate.Value1) && MyUtility.Check.Empty(dateFCRDate.Value2) &&
                 MyUtility.Check.Empty(txtCountryDestination.TextBox1.Text) && MyUtility.Check.Empty(txtShipmode.SelectedValue) && MyUtility.Check.Empty(txtbrand.Text) &&
@@ -207,7 +207,7 @@ select * from PL");
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();

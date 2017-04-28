@@ -85,7 +85,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
         }
 
         //Pullout Date的Validating
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void datePulloutDate_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(datePulloutDate.Value) && datePulloutDate.OldValue != datePulloutDate.Value)
             {
@@ -157,7 +157,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(masterDate["ID"]));
         }
 
         //Save
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             IList<string> updateCmds = new List<string>();
             gridUpdatePulloutDate.ValidateControl();

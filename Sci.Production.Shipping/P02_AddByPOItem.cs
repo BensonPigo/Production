@@ -50,7 +50,7 @@ namespace Sci.Production.Shipping
         }
 
         //CTN No.
-        private void textBox2_Validated(object sender, EventArgs e)
+        private void txtCTNNo_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {
@@ -59,7 +59,7 @@ namespace Sci.Production.Shipping
         }
 
         //SP#
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
             {
@@ -109,7 +109,7 @@ for xml path('')) as ShipModeID");
         }
 
         //SP#
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSPNo_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtSPNo.OldValue != txtSPNo.Text)
             {
@@ -139,7 +139,7 @@ from Orders WITH (NOLOCK) where ID = '{0}'", txtSPNo.Text), out OrderData))
         }
 
         //Air PP No.
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtAirPPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtAirPPNo.OldValue != txtAirPPNo.Text)
             {

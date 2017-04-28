@@ -60,7 +60,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             //if (MyUtility.Check.Empty(dateRange1.Value1))
             //{
@@ -138,7 +138,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
             int dataRowCount = GridData.Rows.Count;
@@ -182,7 +182,7 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

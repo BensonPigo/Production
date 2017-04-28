@@ -42,7 +42,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateArrivePortDate.Value1) && MyUtility.Check.Empty(dateArrivePortDate.Value2) && MyUtility.Check.Empty(txtInvoiceNo.Text) && 
                 MyUtility.Check.Empty(txtBLNo.Text) && MyUtility.Check.Empty(txtWKNo.Text))
@@ -200,7 +200,7 @@ select * from FtyExportData");
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();

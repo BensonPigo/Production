@@ -341,7 +341,7 @@
             this.txtPortofLoading.ReadOnly = true;
             this.txtPortofLoading.Size = new System.Drawing.Size(185, 23);
             this.txtPortofLoading.TabIndex = 14;
-            this.txtPortofLoading.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
+            this.txtPortofLoading.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtPortofLoading_PopUp);
             // 
             // txtPortofDischarge
             // 
@@ -355,7 +355,7 @@
             this.txtPortofDischarge.ReadOnly = true;
             this.txtPortofDischarge.Size = new System.Drawing.Size(185, 23);
             this.txtPortofDischarge.TabIndex = 15;
-            this.txtPortofDischarge.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.txtPortofDischarge.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtPortofDischarge_PopUp);
             // 
             // displayPortofLoading
             // 
@@ -711,7 +711,7 @@
             this.btnExpenseData.TabIndex = 43;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.button1_Click);
+            this.btnExpenseData.Click += new System.EventHandler(this.btnExpenseData_Click);
             // 
             // btnImportData
             // 
@@ -723,7 +723,7 @@
             this.btnImportData.TabIndex = 12;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
-            this.btnImportData.Click += new System.EventHandler(this.button2_Click);
+            this.btnImportData.Click += new System.EventHandler(this.btnImportData_Click);
             // 
             // txtUserHandle
             // 

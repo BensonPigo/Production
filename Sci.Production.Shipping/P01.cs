@@ -383,7 +383,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
 
-        private void textBox8_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtResponsibilityJustifcation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {
@@ -408,7 +408,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Gross Weight(Kgs)
-        private void numericBox3_Validated(object sender, EventArgs e)
+        private void numGrossWeight_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && numGrossWeight.OldValue != numGrossWeight.Value)
             {
@@ -417,7 +417,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //V.Weight(Kgs)
-        private void numericBox4_Validated(object sender, EventArgs e)
+        private void numVWeight_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && numVWeight.OldValue != numVWeight.Value)
             {
@@ -426,7 +426,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Quotation(USD/Kgs)
-        private void numericBox6_Validated(object sender, EventArgs e)
+        private void numForwarderNQuotation_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && numForwarderNQuotation.OldValue != numForwarderNQuotation.Value)
             {
@@ -435,7 +435,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Factory
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkFactory_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -450,7 +450,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Subcon
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void checkSubcon_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -466,7 +466,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //SCI
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        private void checkSCI_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -480,7 +480,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Supplier
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void checkSupplier_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -494,7 +494,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //Buyer
-        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        private void checkBuyer_CheckedChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -538,7 +538,7 @@ values ('{0}','Status','','New','{1}',GETDATE())", MyUtility.Convert.GetString(C
         }
 
         //檢查輸入的SP#是否正確
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSpNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -707,7 +707,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
             }
         }
 
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSpNo_Validated(object sender, EventArgs e)
         {
             if (txtSpNo.OldValue == txtSpNo.Text)
             {
@@ -719,7 +719,7 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
         }
 
         //Seq按右鍵
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format(@"select oq.Seq,oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) ,(
 select Id,Seq from Order_QtyShip WITH (NOLOCK) where Id = '{0}' and 
@@ -1018,14 +1018,14 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
         }
 
         //Status update history
-        private void button6_Click(object sender, EventArgs e)
+        private void btnStatusUpdateHistory_Click(object sender, EventArgs e)
         {
             Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("AirPP_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", reasonType: "Air_Prepaid_unApprove", caption: "Status Update History");
             callNextForm.ShowDialog(this);
         }
 
         //Mail To
-        private void button5_Click(object sender, EventArgs e)
+        private void btnMailto_Click(object sender, EventArgs e)
         {
             SendMail(false);
         }
@@ -1114,21 +1114,21 @@ Remind:Please return the air pp request – approved  within 24hrs to avoid any 
         }
 
         //AirPP List
-        private void button2_Click(object sender, EventArgs e)
+        private void btnAirPPList_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P01_AirPPList callNextForm = new Sci.Production.Shipping.P01_AirPPList(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Q'ty B'down by Shipmode
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQtyBDownByShipmode_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), MyUtility.GetValue.Lookup(string.Format("select POID from Orders WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]))));
             callNextForm.ShowDialog(this);
         }
 
         //Q'ty B'down by Order
-        private void button3_Click(object sender, EventArgs e)
+        private void btnQtyBdownbyOrder_Click(object sender, EventArgs e)
         {
             string sqlCmd = string.Format(@"select o.POID,isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList
 from Orders o WITH (NOLOCK) 
@@ -1142,13 +1142,13 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
         }
 
         //GMT Export
-        private void button4_Click(object sender, EventArgs e)
+        private void btnGMTExport_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(MyUtility.Convert.GetString(CurrentMaintain["OrderID"]));
             callNextForm.ShowDialog(this);
         }
 
-        private void textBox8_Validating(object sender, CancelEventArgs e)
+        private void txtResponsibilityJustifcation_Validating(object sender, CancelEventArgs e)
         {
             string str = this.txtResponsibilityJustifcation.Text;
             DataRow dr;

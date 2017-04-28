@@ -199,7 +199,7 @@ namespace Sci.Production.Shipping
         }
 
         //Import Data
-        private void button1_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -276,7 +276,7 @@ namespace Sci.Production.Shipping
         }
 
         //Add New NL Code
-        private void button2_Click(object sender, EventArgs e)
+        private void btnAddNewNLCode_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.B43_AddNLCode callNextForm = new Sci.Production.Shipping.B43_AddNLCode(CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);

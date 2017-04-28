@@ -594,7 +594,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
         }
 
         //History
-        private void button2_Click(object sender, EventArgs e)
+        private void btnHistory_Click(object sender, EventArgs e)
         {
             //610: SHIPPING_P06_ReviseHistory_Revised History，出現錯誤訊息
             //Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("Pullout_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", reasonType: "Pullout_Delay", caption: "History Pullout Confirm/Unconfirm", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "Pullout");
@@ -603,7 +603,7 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
         }
 
         //Revised History
-        private void button3_Click(object sender, EventArgs e)
+        private void btnRevisedHistory_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P06_ReviseHistory callNextForm = new Sci.Production.Shipping.P06_ReviseHistory(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
@@ -944,7 +944,7 @@ from SummaryData
             return true;
         }
         //Revise from ship plan and FOC/LO packing list
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRevise_Click(object sender, EventArgs e)
         {
             //先Load第3層資料
             foreach (DataRow dr in ((DataTable)detailgridbs.DataSource).Rows)

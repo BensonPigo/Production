@@ -400,7 +400,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         }
 
         //Import
-        private void button4_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Convert.GetString(apData["SubType"]) == "OTHER" && MyUtility.Convert.GetString(apData["Type"])=="EXPORT")
             {
@@ -440,7 +440,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         }
 
         //Delete
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
@@ -466,7 +466,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         }
 
         //Edit / Save
-        private void button5_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             if (btnSave.Text == "Edit")
             {
@@ -649,7 +649,7 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
         }
 
         //Close / Undo
-        private void button6_Click(object sender, EventArgs e)
+        private void btnUndo_Click(object sender, EventArgs e)
         {
             if (btnUndo.Text == "Close")
             {
@@ -669,7 +669,7 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
         }
 
         //Re-Calculate
-        private void button7_Click(object sender, EventArgs e)
+        private void btnReCalculate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
             {
@@ -828,7 +828,7 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
         }
 
         //Append
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAppend_Click(object sender, EventArgs e)
         {            
             DataRow NewRow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
             NewRow["Blno"] = "";
@@ -841,7 +841,7 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(apData["ID"]));
 
         }
         //Delete All
-        private void button3_Click(object sender, EventArgs e)
+        private void btnDeleteAll_Click(object sender, EventArgs e)
         {
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Do you want to delete all this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)

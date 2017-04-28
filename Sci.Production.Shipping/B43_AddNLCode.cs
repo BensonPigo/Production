@@ -62,7 +62,7 @@ namespace Sci.Production.Shipping
         }
 
         //Append
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAppend_Click(object sender, EventArgs e)
         {
             DataTable datas = (DataTable)listControlBindingSource1.DataSource;
             var data = datas.NewRow();
@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
         }
 
         //Delete
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (listControlBindingSource1.Position != -1)
             {
@@ -80,7 +80,7 @@ namespace Sci.Production.Shipping
         }
 
         //Import from excel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImportFromExcel_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
@@ -152,7 +152,7 @@ namespace Sci.Production.Shipping
         }
 
         //Save
-        private void button4_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             this.gridAddNewNLCode.ValidateControl();
             listControlBindingSource1.EndEdit();

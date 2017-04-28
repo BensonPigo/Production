@@ -61,7 +61,7 @@ namespace Sci.Production.Shipping
         }
 
         //Find Now
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtFOCPL.Text))
             {
@@ -129,7 +129,7 @@ where pd.ID = '{0}'", txtFOCPL.Text);
         }
 
         //Update
-        private void button2_Click(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();

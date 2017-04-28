@@ -192,8 +192,8 @@
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(61, 23);
             this.txtForwarder.TabIndex = 4;
-            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtForwarder_PopUp);
+            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.txtForwarder_Validating);
             // 
             // displayBox1
             // 

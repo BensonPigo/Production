@@ -210,15 +210,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(990, 600);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(984, 554);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(984, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -719,7 +719,7 @@
             this.btnExpenseData.TabIndex = 42;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
-            this.btnExpenseData.Click += new System.EventHandler(this.button1_Click);
+            this.btnExpenseData.Click += new System.EventHandler(this.btnExpenseData_Click);
             // 
             // btnShippingMark
             // 
@@ -729,7 +729,7 @@
             this.btnShippingMark.TabIndex = 43;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.button2_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
             // 
             // labelLocateSPNo
             // 
@@ -781,7 +781,7 @@
             this.btnFind.TabIndex = 48;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button3_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txttpeuserHandle
             // 

@@ -228,8 +228,8 @@
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
             this.txtContractNo.TabIndex = 1;
-            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtContractNo_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtContractNo_Validating);
             // 
             // txtBLNO
             // 
@@ -240,8 +240,8 @@
             this.txtBLNO.Name = "txtBLNO";
             this.txtBLNO.Size = new System.Drawing.Size(200, 23);
             this.txtBLNO.TabIndex = 5;
-            this.txtBLNO.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
-            this.txtBLNO.Validated += new System.EventHandler(this.textBox2_Validated);
+            this.txtBLNO.Validating += new System.ComponentModel.CancelEventHandler(this.txtBLNO_Validating);
+            this.txtBLNO.Validated += new System.EventHandler(this.txtBLNO_Validated);
             // 
             // labelShipby
             // 
@@ -353,8 +353,8 @@
             this.txtWKNo.Name = "txtWKNo";
             this.txtWKNo.Size = new System.Drawing.Size(130, 23);
             this.txtWKNo.TabIndex = 4;
-            this.txtWKNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox4_Validating);
-            this.txtWKNo.Validated += new System.EventHandler(this.textBox4_Validated);
+            this.txtWKNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtWKNo_Validating);
+            this.txtWKNo.Validated += new System.EventHandler(this.txtWKNo_Validated);
             // 
             // P40
             // 

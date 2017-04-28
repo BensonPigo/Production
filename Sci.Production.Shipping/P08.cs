@@ -661,14 +661,14 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         }
 
         //Share Expense
-        private void button1_Click(object sender, EventArgs e)
+        private void btnShareExpense_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P08_ShareExpense callNextForm = new Sci.Production.Shipping.P08_ShareExpense(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Acct. Approve
-        private void button2_Click(object sender, EventArgs e)
+        private void btnAcctApprove_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format("select Accountant from ShippingAP WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])))))
             {
@@ -711,12 +711,12 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
         }
 
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        private void comboType_SelectedValueChanged(object sender, EventArgs e)
         {
             
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (base.CurrentMaintain == null)
                 return;

@@ -23,7 +23,7 @@ namespace Sci.Production.Shipping
         }
 
         //CTN No.
-        private void textBox2_Validated(object sender, EventArgs e)
+        private void txtCTNNo_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtCTNNo.OldValue != txtCTNNo.Text)
             {

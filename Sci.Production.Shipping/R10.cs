@@ -31,7 +31,7 @@ namespace Sci.Production.Shipping
             txtshipmode.SelectedIndex = -1;
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radioGarment_CheckedChanged(object sender, EventArgs e)
         {
             if (radioGarment.Checked)
             {
@@ -43,7 +43,7 @@ namespace Sci.Production.Shipping
             }
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        private void radioRowMaterial_CheckedChanged(object sender, EventArgs e)
         {
             if (radioRowMaterial.Checked)
             {

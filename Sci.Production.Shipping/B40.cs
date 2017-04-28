@@ -64,7 +64,7 @@ namespace Sci.Production.Shipping
         }
 
         //NL Code
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(@"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
@@ -79,7 +79,7 @@ order by NLCode", "5,11,8", this.Text, false, ",", headercaptions: "NL Code, HSC
         }
 
         //NL Code
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtNLCode_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtNLCode.OldValue != txtNLCode.Text)
             {

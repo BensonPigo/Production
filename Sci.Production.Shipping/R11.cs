@@ -31,7 +31,7 @@ namespace Sci.Production.Shipping
         }
 
         //Forwarder
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtForwarder_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
             selectCommand = @"select ID,Abb from LocalSupp WITH (NOLOCK) 
@@ -50,7 +50,7 @@ order by ID";
         }
 
         //Forwarder
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtForwarder_Validating(object sender, CancelEventArgs e)
         {
             if (txtForwarder.OldValue != txtForwarder.Text)
             {
@@ -84,7 +84,7 @@ where a.ID = '{0}'", txtForwarder.Text);
             }
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radioGarment_CheckedChanged(object sender, EventArgs e)
         {
             if (radioGarment.Checked)
             {

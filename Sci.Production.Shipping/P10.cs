@@ -394,14 +394,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         }
 
         //Import Data
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P10_ImportData callNextForm = new Sci.Production.Shipping.P10_ImportData(CurrentMaintain, (DataTable)detailgridbs.DataSource, (DataTable)listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
 
         //Update Pullout Date
-        private void button1_Click(object sender, EventArgs e)
+        private void btnUpdatePulloutDate_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P10_UpdatePulloutDate callNextForm = new Sci.Production.Shipping.P10_UpdatePulloutDate(CurrentMaintain);
             callNextForm.ShowDialog(this);

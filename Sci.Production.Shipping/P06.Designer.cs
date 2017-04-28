@@ -217,7 +217,7 @@
             this.btnRevise.TabIndex = 11;
             this.btnRevise.Text = "Revise from ship plan and FOC/LO packing list";
             this.btnRevise.UseVisualStyleBackColor = true;
-            this.btnRevise.Click += new System.EventHandler(this.button1_Click);
+            this.btnRevise.Click += new System.EventHandler(this.btnRevise_Click);
             // 
             // label6
             // 
@@ -243,7 +243,7 @@
             this.btnHistory.TabIndex = 13;
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
-            this.btnHistory.Click += new System.EventHandler(this.button2_Click);
+            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
             // 
             // btnRevisedHistory
             // 
@@ -254,7 +254,7 @@
             this.btnRevisedHistory.TabIndex = 3;
             this.btnRevisedHistory.Text = "Revised History";
             this.btnRevisedHistory.UseVisualStyleBackColor = true;
-            this.btnRevisedHistory.Click += new System.EventHandler(this.button3_Click);
+            this.btnRevisedHistory.Click += new System.EventHandler(this.btnRevisedHistory_Click);
             // 
             // labelSendtoSCI
             // 

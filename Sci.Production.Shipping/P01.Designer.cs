@@ -430,8 +430,8 @@
             this.txtSpNo.Name = "txtSpNo";
             this.txtSpNo.Size = new System.Drawing.Size(110, 21);
             this.txtSpNo.TabIndex = 0;
-            this.txtSpNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.txtSpNo.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSpNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSpNo_Validating);
+            this.txtSpNo.Validated += new System.EventHandler(this.txtSpNo_Validated);
             // 
             // displayStyleNo
             // 
@@ -503,7 +503,7 @@
             this.txtSeq.ReadOnly = true;
             this.txtSeq.Size = new System.Drawing.Size(25, 21);
             this.txtSeq.TabIndex = 1;
-            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtSeq.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq_PopUp);
             // 
             // labelCreatedate
             // 
@@ -716,7 +716,7 @@
             0,
             0,
             0});
-            this.numGrossWeight.Validated += new System.EventHandler(this.numericBox3_Validated);
+            this.numGrossWeight.Validated += new System.EventHandler(this.numGrossWeight_Validated);
             // 
             // numVWeight
             // 
@@ -749,7 +749,7 @@
             0,
             0,
             0});
-            this.numVWeight.Validated += new System.EventHandler(this.numericBox4_Validated);
+            this.numVWeight.Validated += new System.EventHandler(this.numVWeight_Validated);
             // 
             // numExchangeRate
             // 
@@ -866,7 +866,7 @@
             0,
             0,
             0});
-            this.numForwarderNQuotation.Validated += new System.EventHandler(this.numericBox6_Validated);
+            this.numForwarderNQuotation.Validated += new System.EventHandler(this.numForwarderNQuotation_Validated);
             // 
             // numForwarder1Quotation
             // 
@@ -1091,7 +1091,7 @@
             this.btnQtyBDownByShipmode.TabIndex = 59;
             this.btnQtyBDownByShipmode.Text = "Q\'ty B\'down by Shipmode";
             this.btnQtyBDownByShipmode.UseVisualStyleBackColor = true;
-            this.btnQtyBDownByShipmode.Click += new System.EventHandler(this.button1_Click);
+            this.btnQtyBDownByShipmode.Click += new System.EventHandler(this.btnQtyBDownByShipmode_Click);
             // 
             // btnAirPPList
             // 
@@ -1102,7 +1102,7 @@
             this.btnAirPPList.TabIndex = 60;
             this.btnAirPPList.Text = "Air PP List";
             this.btnAirPPList.UseVisualStyleBackColor = true;
-            this.btnAirPPList.Click += new System.EventHandler(this.button2_Click);
+            this.btnAirPPList.Click += new System.EventHandler(this.btnAirPPList_Click);
             // 
             // btnQtyBdownbyOrder
             // 
@@ -1113,7 +1113,7 @@
             this.btnQtyBdownbyOrder.TabIndex = 61;
             this.btnQtyBdownbyOrder.Text = "Q\'ty B\'down by Order";
             this.btnQtyBdownbyOrder.UseVisualStyleBackColor = true;
-            this.btnQtyBdownbyOrder.Click += new System.EventHandler(this.button3_Click);
+            this.btnQtyBdownbyOrder.Click += new System.EventHandler(this.btnQtyBdownbyOrder_Click);
             // 
             // btnGMTExport
             // 
@@ -1124,7 +1124,7 @@
             this.btnGMTExport.TabIndex = 62;
             this.btnGMTExport.Text = "GMT Export";
             this.btnGMTExport.UseVisualStyleBackColor = true;
-            this.btnGMTExport.Click += new System.EventHandler(this.button4_Click);
+            this.btnGMTExport.Click += new System.EventHandler(this.btnGMTExport_Click);
             // 
             // btnMailto
             // 
@@ -1135,7 +1135,7 @@
             this.btnMailto.TabIndex = 63;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
-            this.btnMailto.Click += new System.EventHandler(this.button5_Click);
+            this.btnMailto.Click += new System.EventHandler(this.btnMailto_Click);
             // 
             // labelResponsibilityJustifcation
             // 
@@ -1238,7 +1238,7 @@
             this.checkFactory.TabIndex = 16;
             this.checkFactory.Text = "Factory";
             this.checkFactory.UseVisualStyleBackColor = true;
-            this.checkFactory.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkFactory.CheckedChanged += new System.EventHandler(this.checkFactory_CheckedChanged);
             // 
             // checkSubcon
             // 
@@ -1251,7 +1251,7 @@
             this.checkSubcon.TabIndex = 19;
             this.checkSubcon.Text = "Subcon";
             this.checkSubcon.UseVisualStyleBackColor = true;
-            this.checkSubcon.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkSubcon.CheckedChanged += new System.EventHandler(this.checkSubcon_CheckedChanged);
             // 
             // checkSCI
             // 
@@ -1264,7 +1264,7 @@
             this.checkSCI.TabIndex = 23;
             this.checkSCI.Text = "SCI";
             this.checkSCI.UseVisualStyleBackColor = true;
-            this.checkSCI.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.checkSCI.CheckedChanged += new System.EventHandler(this.checkSCI_CheckedChanged);
             // 
             // checkSupplier
             // 
@@ -1277,7 +1277,7 @@
             this.checkSupplier.TabIndex = 25;
             this.checkSupplier.Text = "Supplier";
             this.checkSupplier.UseVisualStyleBackColor = true;
-            this.checkSupplier.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkSupplier.CheckedChanged += new System.EventHandler(this.checkSupplier_CheckedChanged);
             // 
             // checkBuyer
             // 
@@ -1290,7 +1290,7 @@
             this.checkBuyer.TabIndex = 27;
             this.checkBuyer.Text = "Buyer";
             this.checkBuyer.UseVisualStyleBackColor = true;
-            this.checkBuyer.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            this.checkBuyer.CheckedChanged += new System.EventHandler(this.checkBuyer_CheckedChanged);
             // 
             // labelFactoryRatio
             // 
@@ -1888,7 +1888,7 @@
             this.btnStatusUpdateHistory.TabIndex = 129;
             this.btnStatusUpdateHistory.Text = "Status update history";
             this.btnStatusUpdateHistory.UseVisualStyleBackColor = true;
-            this.btnStatusUpdateHistory.Click += new System.EventHandler(this.button6_Click);
+            this.btnStatusUpdateHistory.Click += new System.EventHandler(this.btnStatusUpdateHistory_Click);
             // 
             // displayTPEEditDate
             // 
@@ -1918,8 +1918,8 @@
             this.txtResponsibilityJustifcation.ReadOnly = true;
             this.txtResponsibilityJustifcation.Size = new System.Drawing.Size(32, 21);
             this.txtResponsibilityJustifcation.TabIndex = 15;
-            this.txtResponsibilityJustifcation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox8_PopUp);
-            this.txtResponsibilityJustifcation.Validating += new System.ComponentModel.CancelEventHandler(this.textBox8_Validating);
+            this.txtResponsibilityJustifcation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtResponsibilityJustifcation_PopUp);
+            this.txtResponsibilityJustifcation.Validating += new System.ComponentModel.CancelEventHandler(this.txtResponsibilityJustifcation_Validating);
             // 
             // txtsubcon3
             // 

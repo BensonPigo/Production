@@ -320,8 +320,8 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(100, 24);
             this.comboType.TabIndex = 0;
-            this.comboType.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            this.comboType.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
+            this.comboType.SelectedIndexChanged += new System.EventHandler(this.comboType_SelectedIndexChanged);
+            this.comboType.SelectedValueChanged += new System.EventHandler(this.comboType_SelectedValueChanged);
             // 
             // comboType2
             // 
@@ -591,7 +591,7 @@
             this.btnShareExpense.TabIndex = 38;
             this.btnShareExpense.Text = "Share Expense";
             this.btnShareExpense.UseVisualStyleBackColor = true;
-            this.btnShareExpense.Click += new System.EventHandler(this.button1_Click);
+            this.btnShareExpense.Click += new System.EventHandler(this.btnShareExpense_Click);
             // 
             // btnAcctApprove
             // 
@@ -601,7 +601,7 @@
             this.btnAcctApprove.TabIndex = 39;
             this.btnAcctApprove.Text = "Acct. Approve";
             this.btnAcctApprove.UseVisualStyleBackColor = true;
-            this.btnAcctApprove.Click += new System.EventHandler(this.button2_Click);
+            this.btnAcctApprove.Click += new System.EventHandler(this.btnAcctApprove_Click);
             // 
             // displayM
             // 

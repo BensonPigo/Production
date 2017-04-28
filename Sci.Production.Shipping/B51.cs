@@ -169,7 +169,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
         }
 
         //Import Data
-        private void button1_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))

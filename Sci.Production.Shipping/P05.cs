@@ -645,7 +645,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //Inv. Serial:移除空白值
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtInvSerial_Validated(object sender, EventArgs e)
         {
             this.txtInvSerial.Text = this.txtInvSerial.Text.ToString().Replace(" ", "");            
             CurrentMaintain["InvSerial"] = MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Replace(" ", "");
@@ -653,7 +653,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }   
 
         //檢查輸入的Inv. Date是否正確
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void dateInvDate_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateInvDate.Value))
             {
@@ -668,7 +668,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //輸入Brand後自動帶出Payment Term
-        private void txtbrand1_Validated(object sender, EventArgs e)
+        private void txtbrand_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && txtbrand.OldValue != txtbrand.Text)
             {
@@ -677,7 +677,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的FCR Date是否正確
-        private void dateBox2_Validating(object sender, CancelEventArgs e)
+        private void dateFCRDate_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateFCRDate.Value))
             {
@@ -699,7 +699,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //CustCD按右鍵
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtCustCD_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (this.EditMode)
             {
@@ -723,7 +723,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的CustCD是否正確
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtCustCD_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(txtCustCD.Text) && txtCustCD.OldValue != txtCustCD.Text)
             {
@@ -764,7 +764,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
         }
 
-        private void textBox4_Validated(object sender, EventArgs e)
+        private void txtCustCD_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(txtCustCD.Text) && txtCustCD.OldValue != txtCustCD.Text)
             {
@@ -799,7 +799,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的Cut-off Date是否正確
-        private void textBox6_Validating(object sender, CancelEventArgs e)
+        private void txtCutoffDate_Validating(object sender, CancelEventArgs e)
         {
             if ((txtCutoffDate.Text == "/  /     :  :"))
             {
@@ -833,7 +833,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
 
         //檢查輸入的ETD是否正確
 
-        private void dateBox5_Validating(object sender, CancelEventArgs e)
+        private void dateETD_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateETD.Value))
             {
@@ -848,7 +848,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //檢查輸入的ETA是否正確
-        private void dateBox6_Validating(object sender, CancelEventArgs e)
+        private void dateETA_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateETA.Value))
             {
@@ -887,28 +887,28 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         }
 
         //AirPP List
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAirPPList_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P05_AirPrePaidList callNextForm = new Sci.Production.Shipping.P05_AirPrePaidList(MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Expense Data
-        private void button2_Click(object sender, EventArgs e)
+        private void btnExpenseData_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "InvNo");
             callNextForm.ShowDialog(this);
         }
 
         // S/O Confirm History
-        private void button5_Click(object sender, EventArgs e)
+        private void btnH_Click(object sender, EventArgs e)
         {
             Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("GMTBooking_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "SOCFMDate", reasonType: "GMTBooking_SO", caption: "S/O Revised History");
             callNextForm.ShowDialog(this);
         }
 
         // S/O Confirm/UnConfirm
-        private void button4_Click(object sender, EventArgs e)
+        private void btnCFM_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["SOCFMDate"]))
             {
@@ -1023,14 +1023,14 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
         }
 
         //Container/Truck
-        private void button3_Click(object sender, EventArgs e)
+        private void btnContainerTruck_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P05_ContainerTruck callNextForm = new Sci.Production.Shipping.P05_ContainerTruck(this.IsSupportEdit, MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
         //Import from packing list
-        private void button6_Click(object sender, EventArgs e)
+        private void btnImportfrompackinglist_Click(object sender, EventArgs e)
         {
             //Brand, CustCD, Destination, Ship Mode不可以為空
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
@@ -1188,7 +1188,7 @@ left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq 
         }
 
         //Terminal/Whse#
-        private void textBox7_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtTerminalWhse_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             DataTable dt;
             string sqlCmd = string.Format(@"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
@@ -1208,7 +1208,7 @@ order by fwd.WhseNo", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), M
             CurrentMaintain["ForwarderWhse_DetailUKey"] = dr[0]["Ukey"];
         }
 
-        private void textBox7_Validating(object sender, CancelEventArgs e)
+        private void txtTerminalWhse_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(txtTerminalWhse.Text))
             {

@@ -99,7 +99,7 @@ namespace Sci.Production.Shipping
             return base.ClickPrint();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtCode_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(txtCode.Text) && txtCode.Text != txtCode.OldValue)
             {
@@ -122,14 +122,14 @@ namespace Sci.Production.Shipping
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCanvassRecord_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.B03_CanvassRecord callNextForm = new Sci.Production.Shipping.B03_CanvassRecord(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), CurrentMaintain);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnPaymentHistory_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.B03_PaymentHistory callNextForm = new Sci.Production.Shipping.B03_PaymentHistory(CurrentMaintain);
             callNextForm.ShowDialog(this);

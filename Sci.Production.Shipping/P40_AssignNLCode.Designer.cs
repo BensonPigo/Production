@@ -128,7 +128,7 @@
             this.btnSaveNLCode.TabIndex = 0;
             this.btnSaveNLCode.Text = "Save NL Code && Re-Calculate";
             this.btnSaveNLCode.UseVisualStyleBackColor = true;
-            this.btnSaveNLCode.Click += new System.EventHandler(this.button1_Click);
+            this.btnSaveNLCode.Click += new System.EventHandler(this.btnSaveNLCode_Click);
             // 
             // panel5
             // 

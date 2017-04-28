@@ -172,7 +172,7 @@ namespace Sci.Production.Shipping
         }
 
         //Append
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAppend_Click(object sender, EventArgs e)
         {
             DataRow newrow = ((DataTable)listControlBindingSource1.DataSource).NewRow();
             newrow["NLCode"] = "";
@@ -184,7 +184,7 @@ namespace Sci.Production.Shipping
         }
 
         //Delete
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (listControlBindingSource1.Position != -1)
             {
@@ -193,7 +193,7 @@ namespace Sci.Production.Shipping
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             gridConsumption.EndEdit();
             DataTable gridData = (DataTable)listControlBindingSource1.DataSource;

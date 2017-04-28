@@ -155,7 +155,7 @@
             this.radioGarment.TabStop = true;
             this.radioGarment.Text = "Garment";
             this.radioGarment.UseVisualStyleBackColor = true;
-            this.radioGarment.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioGarment.CheckedChanged += new System.EventHandler(this.radioGarment_CheckedChanged);
             // 
             // datePulloutDate
             // 
@@ -222,8 +222,8 @@
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(61, 23);
             this.txtForwarder.TabIndex = 109;
-            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtForwarder.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtForwarder_PopUp);
+            this.txtForwarder.Validating += new System.ComponentModel.CancelEventHandler(this.txtForwarder_Validating);
             // 
             // R11
             // 

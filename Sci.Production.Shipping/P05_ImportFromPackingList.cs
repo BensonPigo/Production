@@ -45,7 +45,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL語法
@@ -133,7 +133,7 @@ from PackData pd");
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();
@@ -207,7 +207,7 @@ and a.OrderID = b.OrderID", allPackID.ToString().Substring(0, allPackID.Length -
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

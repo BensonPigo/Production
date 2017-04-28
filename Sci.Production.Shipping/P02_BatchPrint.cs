@@ -21,7 +21,7 @@ namespace Sci.Production.Shipping
             masterData = MasterData;
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtReceiver_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select distinct Receiver from Express_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(masterData["ID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "20", txtReceiver.Text, false, ",");

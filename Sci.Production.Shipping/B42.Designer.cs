@@ -157,15 +157,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(927, 468);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(921, 422);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(921, 40);
             // 
             // detail
             // 
@@ -215,7 +215,7 @@
             this.btnCalculate.TabIndex = 55;
             this.btnCalculate.Text = "Calculate";
             this.btnCalculate.UseVisualStyleBackColor = true;
-            this.btnCalculate.Click += new System.EventHandler(this.button2_Click);
+            this.btnCalculate.Click += new System.EventHandler(this.btnCalculate_Click);
             // 
             // btnSketch
             // 
@@ -226,7 +226,7 @@
             this.btnSketch.TabIndex = 54;
             this.btnSketch.Text = "Sketch";
             this.btnSketch.UseVisualStyleBackColor = true;
-            this.btnSketch.Click += new System.EventHandler(this.button1_Click);
+            this.btnSketch.Click += new System.EventHandler(this.btnSketch_Click);
             // 
             // editSizeGroup
             // 
@@ -240,7 +240,7 @@
             this.editSizeGroup.ReadOnly = true;
             this.editSizeGroup.Size = new System.Drawing.Size(150, 39);
             this.editSizeGroup.TabIndex = 53;
-            this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox2_PopUp);
+            this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editSizeGroup_PopUp);
             // 
             // editColorway
             // 
@@ -254,7 +254,7 @@
             this.editColorway.ReadOnly = true;
             this.editColorway.Size = new System.Drawing.Size(204, 66);
             this.editColorway.TabIndex = 52;
-            this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editBox1_PopUp);
+            this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.editColorway_PopUp);
             // 
             // numBalanceQty
             // 
@@ -331,7 +331,7 @@
             this.txtSize.ReadOnly = true;
             this.txtSize.Size = new System.Drawing.Size(60, 23);
             this.txtSize.TabIndex = 4;
-            this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox4_PopUp);
+            this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSize_PopUp);
             // 
             // txtContractNo
             // 
@@ -342,8 +342,8 @@
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
             this.txtContractNo.TabIndex = 1;
-            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox3_PopUp);
-            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtContractNo_PopUp);
+            this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtContractNo_Validating);
             // 
             // comboCategory
             // 
@@ -389,7 +389,7 @@
             this.txtStyle.ReadOnly = true;
             this.txtStyle.Size = new System.Drawing.Size(150, 23);
             this.txtStyle.TabIndex = 42;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
             // 
             // txtCustomSPNo
             // 

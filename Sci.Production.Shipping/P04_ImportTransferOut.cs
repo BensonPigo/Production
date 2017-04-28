@@ -43,7 +43,7 @@ namespace Sci.Production.Shipping
         }
 
         //Qurey
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtTransferOutNo.Text))
             {
@@ -85,7 +85,7 @@ where td.ID = @id";
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridImport.ValidateControl();
             listControlBindingSource1.EndEdit();

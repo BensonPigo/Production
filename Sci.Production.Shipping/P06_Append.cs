@@ -17,7 +17,7 @@ namespace Sci.Production.Shipping
         }
 
         //OK
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(datePulloutDate.Value))
             {

@@ -52,7 +52,7 @@ left join AirPP a WITH (NOLOCK) on a.OrderID = p.OrderID and a.OrderShipmodeSeq 
         }
 
         //Close
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

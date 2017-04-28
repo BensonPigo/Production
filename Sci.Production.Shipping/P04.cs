@@ -137,7 +137,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Port of Loading按右鍵
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtPortofLoading_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", txtPortofLoading.Text);
@@ -151,7 +151,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Port of Discharge按右鍵
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtPortofDischarge_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = "select ID,CountryID from Port WITH (NOLOCK) where Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20,3", txtPortofDischarge.Text);
@@ -186,14 +186,14 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Expense Data
-        private void button1_Click(object sender, EventArgs e)
+        private void btnExpenseData_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["Type"]) == "3"?"InvNo":"WKNo");
             callNextForm.ShowDialog(this);
         }
 
         //Import Data
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             switch (CurrentMaintain["Type"].ToString())
             {

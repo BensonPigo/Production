@@ -138,7 +138,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Find
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             string poID = txtLocateSP.Text + txtLocateSP2.Text;
 
@@ -151,14 +151,14 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Expense Data
-        private void button1_Click(object sender, EventArgs e)
+        private void btnExpenseData_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(CurrentMaintain["ID"]), "WKNo");
             callNextForm.ShowDialog(this);
         }
 
         //Shipping Mark
-        private void button2_Click(object sender, EventArgs e)
+        private void btnShippingMark_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);

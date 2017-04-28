@@ -60,7 +60,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             #region 組SQL
             StringBuilder sqlCmd = new StringBuilder();
@@ -153,7 +153,7 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
         }
 
         //Import Data
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
             listControlBindingSource1.EndEdit();

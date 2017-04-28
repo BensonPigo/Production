@@ -211,7 +211,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
         }
 
         //Import from excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnImportfromExcel_Click(object sender, EventArgs e)
         {
             string excelFile = MyUtility.File.GetFile("Excel files (*.xlsx)|*.xlsx");
             if (MyUtility.Check.Empty(excelFile))

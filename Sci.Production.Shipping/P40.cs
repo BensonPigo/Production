@@ -312,7 +312,7 @@ namespace Sci.Production.Shipping
         }
 
         //Contract No.
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("select ID from VNContract WITH (NOLOCK) where StartDate <= {0} and EndDate >= {0} and Status = 'Confirmed'", MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'");
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", this.Text, false, ",");
@@ -322,7 +322,7 @@ namespace Sci.Production.Shipping
         }
 
         //Contract No.
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtContractNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(txtContractNo.Text) && txtContractNo.Text != txtContractNo.OldValue)
             {
@@ -347,7 +347,7 @@ namespace Sci.Production.Shipping
         }
 
         //B/L No.
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtBLNO_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -407,7 +407,7 @@ namespace Sci.Production.Shipping
         }
 
         //B/L No.
-        private void textBox2_Validated(object sender, EventArgs e)
+        private void txtBLNO_Validated(object sender, EventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
@@ -438,7 +438,7 @@ namespace Sci.Production.Shipping
         }
 
         //WK No.
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtWKNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -545,7 +545,7 @@ namespace Sci.Production.Shipping
         }
 
         //WK No.
-        private void textBox4_Validated(object sender, EventArgs e)
+        private void txtWKNo_Validated(object sender, EventArgs e)
         {
             if (EditMode)
             {

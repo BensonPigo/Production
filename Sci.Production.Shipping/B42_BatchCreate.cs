@@ -121,7 +121,7 @@ namespace Sci.Production.Shipping
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
@@ -582,7 +582,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         }
 
         //Auto Custom SP#
-        private void button2_Click(object sender, EventArgs e)
+        private void btnAutoCustomSPNo_Click(object sender, EventArgs e)
         {
             gridBatchCreate.ValidateControl();
             DataTable CustomSP;
@@ -617,7 +617,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         }
 
         //update Contract
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtVNContractID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
             DialogResult returnResult = item.ShowDialog();
@@ -626,7 +626,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         }
 
         //update Contract
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtVNContractID_Validating(object sender, CancelEventArgs e)
         {
             if (txtVNContractID.OldValue != txtVNContractID.Text)
             {
@@ -673,7 +673,7 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
         }
         
         //Create
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCreate_Click(object sender, EventArgs e)
         {
             gridBatchCreate.ValidateControl();
             #region 檢查必輸欄位
@@ -796,7 +796,7 @@ Values ('{0}','{1}','{2}','{3}',{4},{5});", newID, MyUtility.Convert.GetString(s
         }
 
         //Empty NL Code (to Excel)
-        private void button5_Click(object sender, EventArgs e)
+        private void btnEmptyNLCodetoExcel_Click(object sender, EventArgs e)
         {
             DataTable toExcelData;
             try

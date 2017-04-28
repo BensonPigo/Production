@@ -391,7 +391,7 @@ select * from FtyExportData");
         }
 
         //Forwarder
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtForwarder_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand;
             selectCommand = @"select ID,Abb from LocalSupp WITH (NOLOCK) 
@@ -410,7 +410,7 @@ order by ID";
         }
 
         //Forwarder
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtForwarder_Validating(object sender, CancelEventArgs e)
         {
             if (txtForwarder.OldValue != txtForwarder.Text)
             {

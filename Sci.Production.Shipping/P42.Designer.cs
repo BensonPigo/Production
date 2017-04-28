@@ -94,15 +94,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(913, 387);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(907, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(907, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -226,7 +226,7 @@
             this.btnImportfromExcel.TabIndex = 8;
             this.btnImportfromExcel.Text = "Import from excel";
             this.btnImportfromExcel.UseVisualStyleBackColor = true;
-            this.btnImportfromExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnImportfromExcel.Click += new System.EventHandler(this.btnImportfromExcel_Click);
             // 
             // P42
             // 

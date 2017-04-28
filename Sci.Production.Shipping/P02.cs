@@ -662,7 +662,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //From
-        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        private void comboFrom_SelectionChangeCommitted(object sender, EventArgs e)
         {
             CurrentMaintain["FromTag"] = comboFrom.SelectedValue;
             CurrentMaintain["FromSite"] = "";
@@ -673,7 +673,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //From Site
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtFrom_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["FromTag"]))
             {
@@ -704,7 +704,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //From Site
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtFrom_Validating(object sender, CancelEventArgs e)
         {
             if (txtFrom.OldValue != txtFrom.Text)
             {
@@ -785,7 +785,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //To
-        private void comboBox2_SelectionChangeCommitted(object sender, EventArgs e)
+        private void comboTO_SelectionChangeCommitted(object sender, EventArgs e)
         {
             CurrentMaintain["ToTag"] = comboTO.SelectedValue;
             CurrentMaintain["ToSite"] = MyUtility.Convert.GetString(comboTO.SelectedValue) == "1" ? "SCI" : "";
@@ -801,7 +801,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //To Site
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtTO_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ToTag"]))
             {
@@ -845,7 +845,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
         }
 
         //To Site
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtTO_Validating(object sender, CancelEventArgs e)
         {
             if (txtTO.OldValue != txtTO.Text)
             {
@@ -1021,7 +1021,7 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         }
 
         //ETD
-        private void dateBox2_Validating(object sender, CancelEventArgs e)
+        private void dateETD_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(dateETD.Value) && dateETD.OldValue != dateETD.Value)
             {
@@ -1036,7 +1036,7 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         }
 
         //ETA
-        private void dateBox3_Validating(object sender, CancelEventArgs e)
+        private void dateETA_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(dateETA.Value) && dateETA.OldValue != dateETA.Value)
             {
@@ -1064,7 +1064,7 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         }
 
         //Carrier
-        private void textBox5_KeyDown(object sender, KeyEventArgs e)
+        private void txtCarrier_KeyDown(object sender, KeyEventArgs e)
         {
             if (EditMode)
             {
@@ -1073,7 +1073,7 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         }
 
         //Carrier
-        private void textBox5_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtCarrier_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             CarrierPopup();
         }
@@ -1094,7 +1094,7 @@ left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
         }
 
         //B/L No.
-        private void textBox6_Validating(object sender, CancelEventArgs e)
+        private void txtBLNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(txtBLNo) && txtBLNo.OldValue != txtBLNo.Text)
             {
@@ -1113,7 +1113,7 @@ left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
         }
 
         //Carton Dimension && Weight
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCartonDimensionWeight_Click(object sender, EventArgs e)
         {
             if (null == CurrentMaintain) return;
 
@@ -1363,7 +1363,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
         }
 
         // Mail to
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMailto_Click(object sender, EventArgs e)
         {
             SendMail();
         }

@@ -181,7 +181,7 @@
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(140, 23);
             this.txtCode.TabIndex = 7;
-            this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.txtCode_Validating);
             // 
             // editDescription
             // 
@@ -271,7 +271,7 @@
             this.btnCanvassRecord.TabIndex = 16;
             this.btnCanvassRecord.Text = "Canvass Record";
             this.btnCanvassRecord.UseVisualStyleBackColor = true;
-            this.btnCanvassRecord.Click += new System.EventHandler(this.button1_Click);
+            this.btnCanvassRecord.Click += new System.EventHandler(this.btnCanvassRecord_Click);
             // 
             // btnPaymentHistory
             // 
@@ -283,7 +283,7 @@
             this.btnPaymentHistory.TabIndex = 17;
             this.btnPaymentHistory.Text = "Payment History";
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
-            this.btnPaymentHistory.Click += new System.EventHandler(this.button2_Click);
+            this.btnPaymentHistory.Click += new System.EventHandler(this.btnPaymentHistory_Click);
             // 
             // txtsubconSupplier
             // 

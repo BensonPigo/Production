@@ -385,7 +385,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Contract No.
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -397,7 +397,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Contract No.
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void txtContractNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && txtContractNo.OldValue != txtContractNo.Text && !MyUtility.Check.Empty(txtContractNo.Text))
             {
@@ -419,7 +419,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Style
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -436,7 +436,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Size
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSize_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -448,7 +448,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Color Way
-        private void editBox1_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        private void editColorway_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -460,7 +460,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Size Group
-        private void editBox2_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        private void editSizeGroup_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -472,14 +472,14 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         }
 
         //Sketch
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSketch_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01_Sketch callNextForm = new Sci.Production.IE.P01_Sketch(CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
         }
 
         //Calculate
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCalculate_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]) || MyUtility.Check.Empty(CurrentMaintain["Category"]) || MyUtility.Check.Empty(CurrentMaintain["SizeCode"]) || MyUtility.Check.Empty(editColorway.Text))
             {

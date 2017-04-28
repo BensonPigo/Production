@@ -126,7 +126,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button1_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // datePulloutDate
             // 
@@ -134,7 +134,7 @@
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(130, 23);
             this.datePulloutDate.TabIndex = 0;
-            this.datePulloutDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
+            this.datePulloutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePulloutDate_Validating);
             // 
             // panel5
             // 
