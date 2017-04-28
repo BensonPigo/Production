@@ -294,17 +294,27 @@ WHERE   StockType='{0}'
 
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
-            sqlcmd.Append(string.Format(@";with cte
-as
-(
-select convert(bit,0) as selected,iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete,rtrim(o.id) poid,o.Category,o.FtyGroup,o.FactoryID 
-,rtrim(pd.seq1) seq1,pd.seq2,pd.id stockpoid,pd.seq1 stockseq1,pd.seq2 stockseq2
-,ROUND(xz.taipei_qty*isnull(v.RateValue,1),2,1) N'inputqty',pd.POUnit,pd.StockUnit
-,isnull(x.accu_qty,0.00) accu_qty
-from dbo.orders o WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
-left  join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
-inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup"));
+            sqlcmd.Append(string.Format(@"
+;with cte as(
+    select  convert(bit,0) as selected
+            , iif(y.cnt >0 or yz.cnt=0 ,'Y','') complete
+            , rtrim(o.id) poid
+            , o.Category
+            , o.FtyGroup
+            , o.FactoryID 
+            , rtrim(pd.seq1) seq1
+            , pd.seq2
+            , pd.id stockpoid
+            , pd.seq1 stockseq1
+            , pd.seq2 stockseq2
+            , ROUND(xz.taipei_qty*isnull(v.RateValue,1),2) N'inputqty'
+            , pd.POUnit
+            , pd.StockUnit
+            , isnull(x.accu_qty,0.00) accu_qty
+    from dbo.orders o WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
+    left  join View_Unitrate v on v.FROM_U = pd.POUnit and v.TO_U = pd.StockUnit
+    inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup"));
             if (!(string.IsNullOrWhiteSpace(InputDate_b)))
             {
                 sqlcmd.Append(string.Format(@" cross apply
