@@ -51,7 +51,7 @@ namespace Sci.Production.PPIC
         }
 
         //Seq
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSEQ_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(txtSEQ.Text) && txtSEQ.OldValue != txtSEQ.Text)
             {
@@ -200,7 +200,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Invoice#
-        private void textBox6_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtInvoice_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -236,7 +236,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Total defect points
-        private void textBox7_Validated(object sender, EventArgs e)
+        private void txtTotalDefectPoints_Validated(object sender, EventArgs e)
         {
             if (EditMode && txtTotalDefectPoints.OldValue != txtTotalDefectPoints.Text)
             {
@@ -255,7 +255,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Replacement Request / Yds
-        private void numericBox6_Validated(object sender, EventArgs e)
+        private void numReplacementRequestYds_Validated(object sender, EventArgs e)
         {
             if (EditMode && numReplacementRequestYds.OldValue != numReplacementRequestYds.Value)
             {
@@ -266,7 +266,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //100% replacement / Yds
-        private void numericBox7_Validated(object sender, EventArgs e)
+        private void num100ReplacementYds_Validated(object sender, EventArgs e)
         {
             if (EditMode && num100ReplacementYds.OldValue != num100ReplacementYds.Value)
             {
@@ -277,7 +277,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Replacement Request / Yds
-        private void numericBox8_Validated(object sender, EventArgs e)
+        private void numNarrowReplacementRequestYds_Validated(object sender, EventArgs e)
         {
             if (EditMode && numNarrowReplacementRequestYds.OldValue != numNarrowReplacementRequestYds.Value)
             {
@@ -288,7 +288,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Replacement Request / Yds
-        private void numericBox9_Validated(object sender, EventArgs e)
+        private void numOtherReplacementRequestYds_Validated(object sender, EventArgs e)
         {
             if (EditMode && numOtherReplacementRequestYds.OldValue != numOtherReplacementRequestYds.Value)
             {
@@ -305,7 +305,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Reason
-        private void editBox2_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
+        private void editReason_PopUp(object sender, Win.UI.EditBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -322,7 +322,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Replacement Reason
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtReplacementReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {

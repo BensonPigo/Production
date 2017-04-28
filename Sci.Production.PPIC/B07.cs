@@ -76,7 +76,7 @@ namespace Sci.Production.PPIC
             this.txtSewingLine.ReadOnly = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBatchEdit_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.B07_BatchAdd callNextForm = new Sci.Production.PPIC.B07_BatchAdd(CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);

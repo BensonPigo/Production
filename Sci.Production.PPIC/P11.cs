@@ -543,7 +543,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         }
 
         //Type
-        private void comboBox1_Validated(object sender, EventArgs e)
+        private void comboType_Validated(object sender, EventArgs e)
         {
             if (EditMode)
             {
@@ -559,7 +559,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
         }
 
         //SP#
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {

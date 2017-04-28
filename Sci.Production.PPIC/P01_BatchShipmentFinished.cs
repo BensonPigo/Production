@@ -103,7 +103,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //Style#
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
             string sqlCmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
@@ -115,7 +115,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //Buyer
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,30,30@755,500", this.Text, false, ",");
@@ -127,7 +127,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //Style#
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtStyle_Validated(object sender, EventArgs e)
         {
             if (txtStyle.OldValue != txtStyle.Text)
             {
@@ -151,7 +151,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //Buyer
-        private void textBox2_Validated(object sender, EventArgs e)
+        private void txtBuyer_Validated(object sender, EventArgs e)
         {
             if (txtBuyer.OldValue != txtBuyer.Text)
             {
@@ -175,7 +175,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //Buyer Delivery
-        private void dateRange1_Validated(object sender, EventArgs e)
+        private void dateBuyerDelivery_Validated(object sender, EventArgs e)
         {
             if (dateBuyerDelivery.Value1 != dateBuyerDelivery.OldValue1)
             {
@@ -188,7 +188,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //update
-        private void button2_Click(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
             this.gridBatchShipmentFinished.ValidateControl();
             this.gridBatchShipmentFinished.EndEdit();
@@ -280,7 +280,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = o.MCHandle", Sci.Env.User.Keyword);
         }
 
         //To Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
             if (GridData.DefaultView.Count <= 0)

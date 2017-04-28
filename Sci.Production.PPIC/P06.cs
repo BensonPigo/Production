@@ -96,7 +96,7 @@ namespace Sci.Production.PPIC
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             #region 檢核
             DualResult result;
@@ -228,7 +228,7 @@ namespace Sci.Production.PPIC
         }
 
         //Find Now
-        private void button5_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("ID", txtLocateForSP.Text.ToString());
@@ -239,13 +239,13 @@ namespace Sci.Production.PPIC
         }
 
         //Quit without Save
-        private void button4_Click(object sender, EventArgs e)
+        private void btnQuitWithoutSave_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Save and Quit
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSaveAndQuit_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
@@ -299,7 +299,7 @@ namespace Sci.Production.PPIC
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
             {

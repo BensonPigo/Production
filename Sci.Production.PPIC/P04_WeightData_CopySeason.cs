@@ -21,7 +21,7 @@ namespace Sci.Production.PPIC
             styleUkey = StyleUkey;
         }
 
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtFromSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
             string sqlCmd = string.Format(@"select s.SeasonID from Style s WITH (NOLOCK) 
@@ -33,7 +33,7 @@ and exists (select 1 from Style_WeightData sw WITH (NOLOCK) where sw.StyleUkey =
             txtFromSeason.Text = item.GetSelectedString();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtFromSeason_Validating(object sender, CancelEventArgs e)
         {
             if (txtFromSeason.OldValue != txtFromSeason.Text)
             {
@@ -69,7 +69,7 @@ and s.SeasonID = @seasonid";
         }
 
         //OK
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             PPICP04CopySeason = txtFromSeason.Text;
             DialogResult = System.Windows.Forms.DialogResult.OK;

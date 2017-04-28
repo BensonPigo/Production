@@ -178,13 +178,13 @@ namespace Sci.Production.PPIC
         }
 
         //SMR
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSMR_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtSMR.Text = PopUpTPEUser(txtSMR.Text);
         }
 
         //MR
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtMR_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtMR.Text = PopUpTPEUser(txtMR.Text);
         }
@@ -199,7 +199,7 @@ namespace Sci.Production.PPIC
         }
 
         //SMR
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void txtSMR_Validating(object sender, CancelEventArgs e)
         {
             string textBox3Value = txtSMR.Text;
             if (textBox3Value!="")
@@ -258,7 +258,7 @@ namespace Sci.Production.PPIC
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
@@ -337,13 +337,13 @@ select *,iif(isnull(SewOutQty,0) >= Qty, tmpActSewOffLine, null) as ActSewOffLin
         }
 
         //Close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
@@ -480,7 +480,7 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable;
             try
@@ -610,7 +610,7 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
 
         }
             //MR
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtMR_Validating(object sender, CancelEventArgs e)
         {
             string textBox4Value = txtMR.Text;
             if (textBox4Value != "")

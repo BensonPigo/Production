@@ -36,7 +36,7 @@
             this.comboSMR = new Sci.Win.UI.ComboBox();
             this.checkMRnotSendYet = new Sci.Win.UI.CheckBox();
             this.checkFactorynotReceived = new Sci.Win.UI.CheckBox();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnViewDetail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -44,7 +44,7 @@
             // 
             // btmcont
             // 
-            this.btmcont.Controls.Add(this.button1);
+            this.btmcont.Controls.Add(this.btnViewDetail);
             this.btmcont.Location = new System.Drawing.Point(0, 453);
             this.btmcont.Size = new System.Drawing.Size(908, 44);
             this.btmcont.TabIndex = 5;
@@ -53,7 +53,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.button1, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnViewDetail, 0);
             // 
             // gridcont
             // 
@@ -109,7 +109,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(57, 24);
             this.comboFactory.TabIndex = 0;
-            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboFactory_SelectedIndexChanged);
             // 
             // labelMR
             // 
@@ -131,7 +131,7 @@
             this.comboMR.Name = "comboMR";
             this.comboMR.Size = new System.Drawing.Size(80, 24);
             this.comboMR.TabIndex = 1;
-            this.comboMR.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboMR.SelectedIndexChanged += new System.EventHandler(this.comboMR_SelectedIndexChanged);
             // 
             // labelSMR
             // 
@@ -153,7 +153,7 @@
             this.comboSMR.Name = "comboSMR";
             this.comboSMR.Size = new System.Drawing.Size(80, 24);
             this.comboSMR.TabIndex = 2;
-            this.comboSMR.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.comboSMR.SelectedIndexChanged += new System.EventHandler(this.comboSMR_SelectedIndexChanged);
             // 
             // checkMRnotSendYet
             // 
@@ -166,7 +166,7 @@
             this.checkMRnotSendYet.TabIndex = 3;
             this.checkMRnotSendYet.Text = "MR not send yet";
             this.checkMRnotSendYet.UseVisualStyleBackColor = true;
-            this.checkMRnotSendYet.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkMRnotSendYet.CheckedChanged += new System.EventHandler(this.checkMRnotSendYet_CheckedChanged);
             // 
             // checkFactorynotReceived
             // 
@@ -179,19 +179,19 @@
             this.checkFactorynotReceived.TabIndex = 4;
             this.checkFactorynotReceived.Text = "Factory not received";
             this.checkFactorynotReceived.UseVisualStyleBackColor = true;
-            this.checkFactorynotReceived.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkFactorynotReceived.CheckedChanged += new System.EventHandler(this.checkFactorynotReceived_CheckedChanged);
             // 
-            // button1
+            // btnViewDetail
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Location = new System.Drawing.Point(250, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(105, 34);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "View Detail";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnViewDetail.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnViewDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnViewDetail.Location = new System.Drawing.Point(250, 5);
+            this.btnViewDetail.Name = "btnViewDetail";
+            this.btnViewDetail.Size = new System.Drawing.Size(105, 34);
+            this.btnViewDetail.TabIndex = 3;
+            this.btnViewDetail.Text = "View Detail";
+            this.btnViewDetail.UseVisualStyleBackColor = true;
+            this.btnViewDetail.Click += new System.EventHandler(this.btnViewDetail_Click);
             // 
             // P01_ProductionKit
             // 
@@ -230,7 +230,7 @@
 
         #endregion
 
-        private Win.UI.Button button1;
+        private Win.UI.Button btnViewDetail;
         private Win.UI.Label labelFactory;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label labelMR;

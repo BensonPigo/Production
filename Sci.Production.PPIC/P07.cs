@@ -39,7 +39,7 @@ namespace Sci.Production.PPIC
         }
 
         //Download
-        private void button1_Click(object sender, EventArgs e)
+        private void btnDownload_Click(object sender, EventArgs e)
         {
             DataRow dr;
             MyUtility.Check.Seek(string.Format("select SQLServerName,APSDatabaseName from MDivision WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword), out dr);
@@ -70,7 +70,7 @@ namespace Sci.Production.PPIC
         }
 
         //Close
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

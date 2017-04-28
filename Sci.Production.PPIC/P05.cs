@@ -192,7 +192,7 @@ namespace Sci.Production.PPIC
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"with tempData
@@ -250,13 +250,13 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
         }
 
         //Quit or Quit without Save
-        private void button4_Click(object sender, EventArgs e)
+        private void btnQuitWithoutSave_Click(object sender, EventArgs e)
         {
             this.Close();
         }
         
         //Find Now
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("ID", txtLocateforSP.Text.ToString());
@@ -267,7 +267,7 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
         }
 
         //Save and Quit
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSaveAndQuit_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty((DataTable)listControlBindingSource1.DataSource))
             {
@@ -324,7 +324,7 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
         }
 
         //To Excel
-        private void button5_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
             {

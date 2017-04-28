@@ -33,13 +33,13 @@ namespace Sci.Production.PPIC
         }
 
         //Sewing Line
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
         }
 
         //Sewing Line
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
         }
@@ -212,13 +212,13 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtSewingLineStart.Text = "";
             txtSewingLineEnd.Text = "";
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSewingLineStart_Validating(object sender, CancelEventArgs e)
         {
             if (txtSewingLineStart.Text == txtSewingLineStart.OldValue) return;
             if (!MyUtility.Check.Empty(txtSewingLineStart.Text))
@@ -233,7 +233,7 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
             }
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtSewingLineEnd_Validating(object sender, CancelEventArgs e)
         {
             if (txtSewingLineEnd.Text == txtSewingLineEnd.OldValue) return;
             if (!MyUtility.Check.Empty(txtSewingLineEnd.Text))

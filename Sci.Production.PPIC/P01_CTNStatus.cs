@@ -131,19 +131,19 @@ order by p.ID,pd.Seq", orderID);
         }
 
         //Packing List ID
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboPackingListID_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetFilter();
         }
 
         //CTN#
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboCTN_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetFilter();
         }
 
         //Sort by
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSortby_SelectedIndexChanged(object sender, EventArgs e)
         {
             SortBy();
         }
@@ -203,7 +203,7 @@ order by p.ID,pd.Seq", orderID);
         }
 
         //Recompute
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRecompute_Click(object sender, EventArgs e)
         {
             bool prgResult = Prgs.UpdateOrdersCTN(orderID);
             if (!prgResult)

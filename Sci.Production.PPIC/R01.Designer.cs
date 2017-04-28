@@ -156,7 +156,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(72, 24);
             this.comboFactory.TabIndex = 1;
-            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.comboFactory_SelectedIndexChanged);
             // 
             // txtSewingLineStart
             // 
@@ -166,8 +166,8 @@
             this.txtSewingLineStart.Name = "txtSewingLineStart";
             this.txtSewingLineStart.Size = new System.Drawing.Size(41, 23);
             this.txtSewingLineStart.TabIndex = 2;
-            this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtSewingLineStart.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSewingLineStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLineStart_PopUp);
+            this.txtSewingLineStart.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLineStart_Validating);
             // 
             // label9
             // 
@@ -191,8 +191,8 @@
             this.txtSewingLineEnd.Name = "txtSewingLineEnd";
             this.txtSewingLineEnd.Size = new System.Drawing.Size(41, 23);
             this.txtSewingLineEnd.TabIndex = 3;
-            this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.txtSewingLineEnd.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLineEnd_PopUp);
+            this.txtSewingLineEnd.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLineEnd_Validating);
             // 
             // dateInlineAfter
             // 

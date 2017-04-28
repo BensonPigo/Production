@@ -407,7 +407,7 @@ namespace Sci.Production.PPIC
             }
         }
 
-        private void rarioButton_CheckedChanged(object sender, EventArgs e)
+        private void radioOriQty_CheckedChanged(object sender, EventArgs e)
         {
             if (radioQty.Checked)
             {

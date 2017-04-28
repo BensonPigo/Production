@@ -101,7 +101,7 @@
             this.btnRecompute.TabIndex = 3;
             this.btnRecompute.Text = "Recompute";
             this.btnRecompute.UseVisualStyleBackColor = true;
-            this.btnRecompute.Click += new System.EventHandler(this.button1_Click);
+            this.btnRecompute.Click += new System.EventHandler(this.btnRecompute_Click);
             // 
             // comboSortby
             // 
@@ -113,7 +113,7 @@
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.Size = new System.Drawing.Size(118, 24);
             this.comboSortby.TabIndex = 2;
-            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboSortby_SelectedIndexChanged);
             // 
             // labelSortby
             // 
@@ -134,7 +134,7 @@
             this.comboCTN.Name = "comboCTN";
             this.comboCTN.Size = new System.Drawing.Size(69, 24);
             this.comboCTN.TabIndex = 1;
-            this.comboCTN.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboCTN.SelectedIndexChanged += new System.EventHandler(this.comboCTN_SelectedIndexChanged);
             // 
             // labelCTN
             // 
@@ -155,7 +155,7 @@
             this.comboPackingListID.Name = "comboPackingListID";
             this.comboPackingListID.Size = new System.Drawing.Size(139, 24);
             this.comboPackingListID.TabIndex = 0;
-            this.comboPackingListID.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboPackingListID.SelectedIndexChanged += new System.EventHandler(this.comboPackingListID_SelectedIndexChanged);
             // 
             // labelPackingListID
             // 

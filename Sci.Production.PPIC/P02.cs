@@ -143,7 +143,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         }
 
         //Close
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -159,7 +159,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         //}
 
         //Factory
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        private void comboFactory_SelectedValueChanged(object sender, EventArgs e)
         {
             if (comboFactory.SelectedIndex < 0)
             {
@@ -172,7 +172,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         }
 
         //Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable;
             try
@@ -229,8 +229,8 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             objApp.get_Range("A" + Number, "U" + Number).Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
         }
-              
-        private void dateBox2_ValueChanged(object sender, EventArgs e)
+
+        private void dateUpdatedDate_ValueChanged(object sender, EventArgs e)
         {
             QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
         }

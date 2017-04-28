@@ -277,7 +277,7 @@
             this.comboType.Name = "comboType";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 0;
-            this.comboType.Validated += new System.EventHandler(this.comboBox1_Validated);
+            this.comboType.Validated += new System.EventHandler(this.comboType_Validated);
             // 
             // comboShift
             // 
@@ -356,7 +356,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 3;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // displayMasterSP
             // 

@@ -69,7 +69,7 @@ namespace Sci.Production.PPIC
             return base.ClickSaveBefore();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtLine_Validating(object sender, CancelEventArgs e)
         {
             //當輸入的值只有一個位元且介於0~9時，自動在此值前面補數字’0’
             if (!string.IsNullOrWhiteSpace(this.txtLine.Text) && this.txtLine.Text.Trim().Length == 1)

@@ -158,7 +158,7 @@
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(40, 23);
             this.txtLine.TabIndex = 1;
-            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtLine_Validating);
             // 
             // txtDescription
             // 

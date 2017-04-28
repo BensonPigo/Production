@@ -183,15 +183,15 @@ namespace Sci.Production.PPIC
             }
         }
 
-        private void rarioButton_CheckedChanged(object sender, EventArgs e)
+        private void radioOriQty_CheckedChanged(object sender, EventArgs e)
         {
-            if (rbQty.Checked)
+            if (radioQty.Checked)
             {
                 listControlBindingSource1.DataSource = grid1Data;
                 listControlBindingSource2.DataSource = grid2Data;
 
             }
-            else if (rbOriQty.Checked)
+            else if (radioOriQty.Checked)
             {
                 listControlBindingSource1.DataSource = grid1Data_OriQty;
                 listControlBindingSource2.DataSource = grid2Data_OriQty;

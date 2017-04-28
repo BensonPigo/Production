@@ -223,7 +223,7 @@ namespace Sci.Production.PPIC
             return base.ClickPrint();
         }
 
-        private void textBox6_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item;
             string sqlCmd = "select distinct ID from Season WITH (NOLOCK) where Junk = 0 order by ID desc";
@@ -235,7 +235,7 @@ namespace Sci.Production.PPIC
         }
 
         //Brand
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtBrand_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtBrand.OldValue != txtBrand.Text)
             {
@@ -262,7 +262,7 @@ namespace Sci.Production.PPIC
         }
 
         //Program
-        private void textBox3_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtProgram_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlCmd = string.Format("Select id,BrandID from Program WITH (NOLOCK) where BrandID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["BrandID"]));
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "12,8", this.Text, false, ",");
@@ -272,7 +272,7 @@ namespace Sci.Production.PPIC
         }
 
         //CD
-        private void txtcdcode1_Validated(object sender, EventArgs e)
+        private void txtcdcode_Validated(object sender, EventArgs e)
         {
             if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtcdcode.OldValue != txtcdcode.Text)
             {
@@ -292,7 +292,7 @@ namespace Sci.Production.PPIC
         }
 
         //No need PP Meeting
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void checkNoneedPPMeeting_CheckedChanged(object sender, EventArgs e)
         {  
            if (EditMode)
             {
@@ -302,7 +302,7 @@ namespace Sci.Production.PPIC
         }
 
         //TMS & Cost
-        private void button1_Click(object sender, EventArgs e)
+        private void btnTMSCost_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_TMSAndCost callNextForm = new Sci.Production.PPIC.P04_TMSAndCost((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
@@ -311,28 +311,28 @@ namespace Sci.Production.PPIC
         }
 
         //Std. GSD
-        private void button2_Click(object sender, EventArgs e)
+        private void btnStdGSD_Click(object sender, EventArgs e)
         {
             Sci.Production.PublicForm.StdGSDList callNextForm = new Sci.Production.PublicForm.StdGSDList(MyUtility.Convert.GetLong(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //FTY GSD
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFTYGSD_Click(object sender, EventArgs e)
         {
             Sci.Production.IE.P01 callNextForm = new Sci.Production.IE.P01(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["BrandID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]), null);
             callNextForm.ShowDialog(this);
         }
 
         //Production Kits
-        private void button4_Click(object sender, EventArgs e)
+        private void btnProductionKits_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_ProductionKit callNextForm = new Sci.Production.PPIC.P01_ProductionKit(true, MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Artwork
-        private void button5_Click(object sender, EventArgs e)
+        private void btnArtwork_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_Artwork callNextForm = new Sci.Production.PPIC.P04_Artwork((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]));
             callNextForm.ShowDialog(this);
@@ -341,14 +341,14 @@ namespace Sci.Production.PPIC
         }
 
         //Q'ty/Carton by CustCD
-        private void button6_Click(object sender, EventArgs e)
+        private void btnQtyCartonbyCustCD_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_QtyCartonByCustCD callNextForm = new Sci.Production.PPIC.P04_QtyCartonByCustCD(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //Weight data
-        private void button7_Click(object sender, EventArgs e)
+        private void btnWeightdata_Click(object sender, EventArgs e)
         {
             //自動新增不存在Style_WeightData的sIZE資料
             string insertCmd = string.Format(@"insert into Style_WeightData(StyleUkey,Article,SizeCode,AddName,AddDate)
@@ -372,35 +372,35 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Garment List
-        private void button8_Click(object sender, EventArgs e)
+        private void btnGarmentList_Click(object sender, EventArgs e)
         {
             Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(MyUtility.Convert.GetString(CurrentMaintain["Ukey"]),null);
             callNextForm.ShowDialog(this);
         }
 
         //Similar Style
-        private void button9_Click(object sender, EventArgs e)
+        private void btnSimilarStyle_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_SimilarStyle callNextForm = new Sci.Production.PPIC.P04_SimilarStyle(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //HS Code
-        private void button10_Click(object sender, EventArgs e)
+        private void btnHSCode_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_HSCode callNextForm = new Sci.Production.PPIC.P04_HSCode(MyUtility.Convert.GetString(CurrentMaintain["UKey"]));
             callNextForm.ShowDialog(this);
         }
 
         //Fty L/T
-        private void button15_Click(object sender, EventArgs e)
+        private void btnFtyLT_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_GarmentLeadTimeByFactory callNextForm = new Sci.Production.PPIC.P04_GarmentLeadTimeByFactory(false, MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null);
             callNextForm.ShowDialog(this);
         }
 
         //Picture1 Attach
-        private void button11_Click(object sender, EventArgs e)
+        private void btnPicture1Attach_Click(object sender, EventArgs e)
         {
             //呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
@@ -438,7 +438,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Picture1 Delete
-        private void button12_Click(object sender, EventArgs e)
+        private void btnPicture1Delete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture1 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
@@ -477,7 +477,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Picture2 Attach
-        private void button14_Click(object sender, EventArgs e)
+        private void btnPicture2Attach_Click(object sender, EventArgs e)
         {
             //呼叫File 選擇視窗
             OpenFileDialog file = new OpenFileDialog();
@@ -515,7 +515,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Picture2 Delete
-        private void button13_Click(object sender, EventArgs e)
+        private void btnPicture2Delete_Click(object sender, EventArgs e)
         {
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the < Picture2 >?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
@@ -554,7 +554,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Combo Type
-        private void button16_Click(object sender, EventArgs e)
+        private void btnComboType_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_ComboType callNextForm = new Sci.Production.PPIC.P04_ComboType((PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P04. Style Management", "CanEdit") && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE"), MyUtility.Convert.GetString(CurrentMaintain["UKey"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["StyleUnit"]));
             callNextForm.ShowDialog(this);
@@ -574,7 +574,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Style
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtStyleNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtStyleNo.OldValue != txtStyleNo.Text)
             {
@@ -591,7 +591,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Season
-        private void textBox6_Validating(object sender, CancelEventArgs e)
+        private void txtSeason_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtSeason.OldValue != txtSeason.Text)
             {
@@ -608,7 +608,7 @@ where a.Article is null", Sci.Env.User.UserID, MyUtility.Convert.GetString(Curre
         }
 
         //Program
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void txtProgram_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && MyUtility.Convert.GetString(CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && txtProgram.OldValue != txtProgram.Text)
             {

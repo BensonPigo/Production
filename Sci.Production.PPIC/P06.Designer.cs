@@ -99,7 +99,7 @@
             this.btnFindNow.TabIndex = 9;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button5_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtLocateForSP
             // 
@@ -130,7 +130,7 @@
             this.btnQuitWithoutSave.TabIndex = 7;
             this.btnQuitWithoutSave.Text = "Quit without Save";
             this.btnQuitWithoutSave.UseVisualStyleBackColor = true;
-            this.btnQuitWithoutSave.Click += new System.EventHandler(this.button4_Click);
+            this.btnQuitWithoutSave.Click += new System.EventHandler(this.btnQuitWithoutSave_Click);
             // 
             // btnSaveAndQuit
             // 
@@ -141,7 +141,7 @@
             this.btnSaveAndQuit.TabIndex = 6;
             this.btnSaveAndQuit.Text = "Save and Quit";
             this.btnSaveAndQuit.UseVisualStyleBackColor = true;
-            this.btnSaveAndQuit.Click += new System.EventHandler(this.button3_Click);
+            this.btnSaveAndQuit.Click += new System.EventHandler(this.btnSaveAndQuit_Click);
             // 
             // btnToExcel
             // 
@@ -151,7 +151,7 @@
             this.btnToExcel.TabIndex = 5;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button2_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // btnQuery
             // 
@@ -161,7 +161,7 @@
             this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // labelExpPoutDate
             // 

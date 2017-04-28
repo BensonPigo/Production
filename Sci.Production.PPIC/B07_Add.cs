@@ -18,7 +18,7 @@ namespace Sci.Production.PPIC
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             //檢查Date, Hours不可為空值
             if (MyUtility.Check.Empty(this.dateDate.Value1))

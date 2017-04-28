@@ -300,8 +300,8 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(120, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.txtSPNo.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
+            this.txtSPNo.Validated += new System.EventHandler(this.txtSPNo_Validated);
             // 
             // txttpeuserPOSMR
             // 
@@ -517,7 +517,7 @@
             this.btnMailto.TabIndex = 3;
             this.btnMailto.Text = "Mail to";
             this.btnMailto.UseVisualStyleBackColor = true;
-            this.btnMailto.Click += new System.EventHandler(this.button1_Click);
+            this.btnMailto.Click += new System.EventHandler(this.btnMailto_Click);
             // 
             // P09
             // 

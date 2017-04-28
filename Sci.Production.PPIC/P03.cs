@@ -84,7 +84,7 @@ namespace Sci.Production.PPIC
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
             listControlBindingSource1.EndEdit();
@@ -188,7 +188,7 @@ where sp.ReceiveDate is null and sp.SendDate is null "));
         }
 
         //Batch update
-        private void button2_Click(object sender, EventArgs e)
+        private void btnBatchUpdate_Click(object sender, EventArgs e)
         {
            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
@@ -204,7 +204,7 @@ where sp.ReceiveDate is null and sp.SendDate is null "));
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             SaveData();
         }
@@ -244,13 +244,13 @@ where sp.ReceiveDate is null and sp.SendDate is null "));
         }
 
         //Close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //View Detail
-        private void button5_Click(object sender, EventArgs e)
+        private void btnViewDetail_Click(object sender, EventArgs e)
         {
             this.gridProductionKitsConfirm.ValidateControl();
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();

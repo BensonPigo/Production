@@ -101,31 +101,31 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
         }
 
         //Factory
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboFactory_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataFilter();
         }
 
         //MR
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboMR_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataFilter();
         }
 
         //SMR
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSMR_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataFilter();
         }
 
         //MR not send yet
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkMRnotSendYet_CheckedChanged(object sender, EventArgs e)
         {
             DataFilter();
         }
 
         //Factory not received
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void checkFactorynotReceived_CheckedChanged(object sender, EventArgs e)
         {
             DataFilter();
         }
@@ -167,7 +167,7 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
         }
 
         //View Detail
-        private void button1_Click(object sender, EventArgs e)
+        private void btnViewDetail_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
             DoForm.Set(CanEdit, new List<DataRow>(((DataTable)gridbs.DataSource).Select(dataFilter)), grid.GetDataRow(grid.GetSelectedRowIndex())); DoForm.ShowDialog(this);

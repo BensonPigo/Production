@@ -43,7 +43,7 @@ namespace Sci.Production.PPIC
         }
 
         //Line#按右鍵開窗
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtLineNoStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.UI.TextBox sewingLineText = (Sci.Win.UI.TextBox)sender;
             string sql = "Select ID,Description From SewingLine WITH (NOLOCK) Where FactoryId = '" + Sci.Env.User.Factory + "' order by ID";
@@ -54,7 +54,7 @@ namespace Sci.Production.PPIC
         }
 
         //Line#檢查值輸入是否正確
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtLineNoStart_Validating(object sender, CancelEventArgs e)
         {
             Sci.Win.UI.TextBox sewingLineText = (Sci.Win.UI.TextBox)sender;
             if (!string.IsNullOrWhiteSpace(sewingLineText.Text) && sewingLineText.Text != sewingLineText.OldValue)
@@ -87,7 +87,7 @@ namespace Sci.Production.PPIC
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             //檢查Date不可為空值
             if (MyUtility.Check.Empty(this.dateDate.Value1))
@@ -229,7 +229,7 @@ Values('{0}','{1}','{2}','{3}','{4}','{5}',GETDATE());", currentRecord["ID"].ToS
         }
 
         //It's a holiday
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkItsAHoliday_CheckedChanged(object sender, EventArgs e)
         {
             if (checkItsAHoliday.Checked)
             {

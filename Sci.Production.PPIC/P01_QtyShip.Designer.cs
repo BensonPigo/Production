@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -43,8 +43,8 @@
             this.panel9 = new Sci.Win.UI.Panel();
             this.label1 = new Sci.Win.UI.Label();
             this.panel7 = new Sci.Win.UI.Panel();
-            this.rbOriQty = new System.Windows.Forms.RadioButton();
-            this.rbQty = new System.Windows.Forms.RadioButton();
+            this.radioOriQty = new System.Windows.Forms.RadioButton();
+            this.radioQty = new System.Windows.Forms.RadioButton();
             this.button1 = new Sci.Win.UI.Button();
             this.panel6 = new Sci.Win.UI.Panel();
             this.gridQtyBreakDownByShipmode = new Sci.Win.UI.Grid();
@@ -140,14 +140,14 @@
             this.gridQtyBreakDownbyArticleSizeDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownbyArticleSizeDetail.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBreakDownbyArticleSizeDetail.Name = "gridQtyBreakDownbyArticleSizeDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownbyArticleSizeDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownbyArticleSizeDetail.RowTemplate.Height = 24;
@@ -182,8 +182,8 @@
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.rbOriQty);
-            this.panel7.Controls.Add(this.rbQty);
+            this.panel7.Controls.Add(this.radioOriQty);
+            this.panel7.Controls.Add(this.radioQty);
             this.panel7.Controls.Add(this.button1);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel7.Location = new System.Drawing.Point(0, 411);
@@ -191,31 +191,31 @@
             this.panel7.Size = new System.Drawing.Size(815, 40);
             this.panel7.TabIndex = 1;
             // 
-            // rbOriQty
+            // radioOriQty
             // 
-            this.rbOriQty.AutoSize = true;
-            this.rbOriQty.ForeColor = System.Drawing.Color.Red;
-            this.rbOriQty.Location = new System.Drawing.Point(391, 10);
-            this.rbOriQty.Name = "rbOriQty";
-            this.rbOriQty.Size = new System.Drawing.Size(75, 21);
-            this.rbOriQty.TabIndex = 4;
-            this.rbOriQty.Text = "Ori. Qty";
-            this.rbOriQty.UseVisualStyleBackColor = true;
-            this.rbOriQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
+            this.radioOriQty.AutoSize = true;
+            this.radioOriQty.ForeColor = System.Drawing.Color.Red;
+            this.radioOriQty.Location = new System.Drawing.Point(391, 10);
+            this.radioOriQty.Name = "radioOriQty";
+            this.radioOriQty.Size = new System.Drawing.Size(75, 21);
+            this.radioOriQty.TabIndex = 4;
+            this.radioOriQty.Text = "Ori. Qty";
+            this.radioOriQty.UseVisualStyleBackColor = true;
+            this.radioOriQty.CheckedChanged += new System.EventHandler(this.radioOriQty_CheckedChanged);
             // 
-            // rbQty
+            // radioQty
             // 
-            this.rbQty.AutoSize = true;
-            this.rbQty.Checked = true;
-            this.rbQty.ForeColor = System.Drawing.Color.Red;
-            this.rbQty.Location = new System.Drawing.Point(319, 10);
-            this.rbQty.Name = "rbQty";
-            this.rbQty.Size = new System.Drawing.Size(48, 21);
-            this.rbQty.TabIndex = 3;
-            this.rbQty.TabStop = true;
-            this.rbQty.Text = "Qty";
-            this.rbQty.UseVisualStyleBackColor = true;
-            this.rbQty.CheckedChanged += new System.EventHandler(this.rarioButton_CheckedChanged);
+            this.radioQty.AutoSize = true;
+            this.radioQty.Checked = true;
+            this.radioQty.ForeColor = System.Drawing.Color.Red;
+            this.radioQty.Location = new System.Drawing.Point(319, 10);
+            this.radioQty.Name = "radioQty";
+            this.radioQty.Size = new System.Drawing.Size(48, 21);
+            this.radioQty.TabIndex = 3;
+            this.radioQty.TabStop = true;
+            this.radioQty.Text = "Qty";
+            this.radioQty.UseVisualStyleBackColor = true;
+            this.radioQty.CheckedChanged += new System.EventHandler(this.radioOriQty_CheckedChanged);
             // 
             // button1
             // 
@@ -254,14 +254,14 @@
             this.gridQtyBreakDownByShipmode.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakDownByShipmode.Location = new System.Drawing.Point(0, 0);
             this.gridQtyBreakDownByShipmode.Name = "gridQtyBreakDownByShipmode";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakDownByShipmode.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakDownByShipmode.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakDownByShipmode.RowTemplate.Height = 24;
@@ -314,7 +314,7 @@
         private Win.UI.Panel panel6;
         private Win.UI.Grid gridQtyBreakDownByShipmode;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private System.Windows.Forms.RadioButton rbOriQty;
-        private System.Windows.Forms.RadioButton rbQty;
+        private System.Windows.Forms.RadioButton radioOriQty;
+        private System.Windows.Forms.RadioButton radioQty;
     }
 }

@@ -140,7 +140,7 @@
             this.checkItsAHoliday.TabIndex = 5;
             this.checkItsAHoliday.Text = "It\'s a holiday";
             this.checkItsAHoliday.UseVisualStyleBackColor = true;
-            this.checkItsAHoliday.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkItsAHoliday.CheckedChanged += new System.EventHandler(this.checkItsAHoliday_CheckedChanged);
             // 
             // btnOK
             // 
@@ -151,7 +151,7 @@
             this.btnOK.TabIndex = 6;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.button1_Click);
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -185,8 +185,8 @@
             this.txtLineNoStart.Name = "txtLineNoStart";
             this.txtLineNoStart.Size = new System.Drawing.Size(40, 23);
             this.txtLineNoStart.TabIndex = 0;
-            this.txtLineNoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtLineNoStart.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLineNoStart.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLineNoStart_PopUp);
+            this.txtLineNoStart.Validating += new System.ComponentModel.CancelEventHandler(this.txtLineNoStart_Validating);
             // 
             // txtLineNoEnd
             // 
@@ -197,8 +197,8 @@
             this.txtLineNoEnd.Name = "txtLineNoEnd";
             this.txtLineNoEnd.Size = new System.Drawing.Size(40, 23);
             this.txtLineNoEnd.TabIndex = 1;
-            this.txtLineNoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
-            this.txtLineNoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtLineNoEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtLineNoStart_PopUp);
+            this.txtLineNoEnd.Validating += new System.ComponentModel.CancelEventHandler(this.txtLineNoStart_Validating);
             // 
             // B07_BatchAdd
             // 

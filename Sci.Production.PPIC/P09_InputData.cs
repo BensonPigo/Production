@@ -33,7 +33,7 @@ namespace Sci.Production.PPIC
         }
 
         //Seq
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSEQ_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(txtSEQ.Text) && txtSEQ.OldValue != txtSEQ.Text)
             {
@@ -181,7 +181,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         }
 
         //Invoice#
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtInvoice_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {

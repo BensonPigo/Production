@@ -91,7 +91,7 @@
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(87, 24);
             this.comboFactory.TabIndex = 2;
-            this.comboFactory.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
+            this.comboFactory.SelectedValueChanged += new System.EventHandler(this.comboFactory_SelectedValueChanged);
             // 
             // labelFactory
             // 
@@ -108,7 +108,7 @@
             this.dateUpdatedDate.Name = "dateUpdatedDate";
             this.dateUpdatedDate.Size = new System.Drawing.Size(110, 23);
             this.dateUpdatedDate.TabIndex = 1;
-            this.dateUpdatedDate.ValueChanged += new System.EventHandler(this.dateBox2_ValueChanged);
+            this.dateUpdatedDate.ValueChanged += new System.EventHandler(this.dateUpdatedDate_ValueChanged);
             // 
             // labelUpdatedDate
             // 
@@ -157,7 +157,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button2_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnExcel
             // 
@@ -168,7 +168,7 @@
             this.btnExcel.TabIndex = 0;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
-            this.btnExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
             // 
             // panel5
             // 

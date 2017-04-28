@@ -127,7 +127,7 @@
             this.btnViewDetail.TabIndex = 8;
             this.btnViewDetail.Text = "View Detail";
             this.btnViewDetail.UseVisualStyleBackColor = true;
-            this.btnViewDetail.Click += new System.EventHandler(this.button5_Click);
+            this.btnViewDetail.Click += new System.EventHandler(this.btnViewDetail_Click);
             // 
             // btnBatchUpdate
             // 
@@ -137,7 +137,7 @@
             this.btnBatchUpdate.TabIndex = 7;
             this.btnBatchUpdate.Text = "Batch update";
             this.btnBatchUpdate.UseVisualStyleBackColor = true;
-            this.btnBatchUpdate.Click += new System.EventHandler(this.button2_Click);
+            this.btnBatchUpdate.Click += new System.EventHandler(this.btnBatchUpdate_Click);
             // 
             // dateFactoryReceiveDate
             // 
@@ -165,7 +165,7 @@
             this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // dateSendDate
             // 
@@ -263,7 +263,7 @@
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
@@ -274,7 +274,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // panel5
             // 

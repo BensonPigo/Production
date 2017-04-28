@@ -242,7 +242,7 @@
             0,
             0,
             0});
-            this.numSewingQty.DoubleClick += new System.EventHandler(this.numericBox2_DoubleClick);
+            this.numSewingQty.DoubleClick += new System.EventHandler(this.numSewingQty_DoubleClick);
             // 
             // numSewingOrderQty
             // 
@@ -419,7 +419,7 @@
             0,
             0,
             0});
-            this.numCuttingQty.DoubleClick += new System.EventHandler(this.numericBox3_DoubleClick);
+            this.numCuttingQty.DoubleClick += new System.EventHandler(this.numCuttingQty_DoubleClick);
             // 
             // numOrderQty
             // 

@@ -347,7 +347,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         }
 
         //SP No.
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -389,7 +389,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         }
 
         //SP No.
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSPNo_Validated(object sender, EventArgs e)
         {
             
             if (EditMode && !MyUtility.Check.Empty(txtSPNo.Text) && txtSPNo.OldValue != txtSPNo.Text)
@@ -580,7 +580,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
         }
 
         //Mail to
-        private void button1_Click(object sender, EventArgs e)
+        private void btnMailto_Click(object sender, EventArgs e)
         {
             SendMail();
         }
