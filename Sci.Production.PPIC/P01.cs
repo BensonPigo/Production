@@ -265,12 +265,11 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             btnVASSHASInstruction.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["Packing2"]) ? Color.Blue : Color.Black;
             if (MyUtility.Check.Seek(CurrentMaintain["ID"].ToString(), "Order_EachCons", "ID")) btnEachCons.ForeColor = Color.Blue;
             else btnEachCons.ForeColor = Color.Black;
-
-
+            
             //SciDelivery OrigBuyerDelivery
             //CRDDate
             dateDetailsSCIDel.TextForeColor = CurrentMaintain["SciDelivery"].ToString() != CurrentMaintain["OrigBuyerDelivery"].ToString() ? Color.Red : Color.Blue;
-            dateOrigBuyerDel.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["OrigBuyerDelivery"]) ? Color.Red : Color.Blue;
+            dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(CurrentMaintain["OrigBuyerDelivery"]) ? Color.Red : Color.Blue;
         }
 
         protected override void ClickNewAfter()
