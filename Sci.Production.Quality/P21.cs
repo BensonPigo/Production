@@ -70,33 +70,24 @@ namespace Sci.Production.Quality
             List<SqlParameter> spam = new List<SqlParameter>();
             DataRow dr;
             string sql_cmd =
-            @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
+        @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
 		a.DefectQty,a.SewingLineID,a.Team,a.GarmentOutput,a.Stage,a.CFA,a.Shift,a.Result,a.Remark,a.Status,
 		b.StyleID,b.Dest,b.CustPONo,b.Qty	
-		 FROM [Production].[dbo].[Cfa] a WITH (NOLOCK) 
-        left join Orders b WITH (NOLOCK) on a.OrderID=b.ID where a.id=@id";
+		FROM [Production].[dbo].[Cfa] a WITH (NOLOCK) 
+        left join Orders b WITH (NOLOCK) on a.OrderID=b.ID 
+        where a.id=@id";
             spam.Add(new SqlParameter("@id", CurrentMaintain["ID"].ToString()));
 
             if (MyUtility.Check.Seek(sql_cmd,spam,out dr))
-            {
-                //this.Audit_Date.Text = Convert.ToDateTime(dr["cDate"]).ToShortDateString();
-                //this.SP_text.Text = dr["orderID"].ToString();
+            {                
                 this.txtStyle.Text = dr["StyleID"].ToString();
                 this.txtDestination.Text = dr["dest"].ToString();
-                //this.Factory_text.Text = dr["FactoryID"].ToString();
                 this.txtPO.Text = dr["custPONo"].ToString();
-                this.numOrderQty.Text = dr["qty"].ToString();
-                //this.InspectQty_text.Text = dr["InspectQty"].ToString();
-                //this.DefectsQty_text.Text = dr["DefectQty"].ToString();
-                //this.Line_text.Text = dr["SewingLineID"].ToString();
-                //this.Garment_text.Text = dr["GarmentOutput"].ToString();
-                //this.CFA1_text.Text = dr["CFA"].ToString();
-                //this.Remark_text.Text = dr["Remark"].ToString();                
+                this.numOrderQty.Text = dr["qty"].ToString();            
                
                 if (MyUtility.Check.Empty(this.numInspectQty.Text) || Convert.ToInt32(this.numInspectQty.Text)==0)
                 {
                     this.numInspectQty.Text = "0";
-                    
                 }
                 else
                 {
@@ -108,11 +99,12 @@ namespace Sci.Production.Quality
             }          
             else
             {
-                this.dateAuditDate.Text = "";         this.txtSP.Text = "";              this.txtStyle.Text ="";
-                this.txtDestination.Text = "";           this.txtFactory.Text = "";         this.txtPO.Text = "";
-                this.numOrderQty.Text = "0";      this.numInspectQty.Text = "0";      this.numDefectsQty.Text = "0";
-                this.txtsewingline.Text = "";          this.numGarmentOutput.Text = "";         this.txtuserCFA.Text = "";
-                this.numSQR.Text = "0";   this.txtRemark.Text = "";
+                this.txtStyle.Text ="";
+                this.txtDestination.Text = "";           
+                this.numOrderQty.Text = "0";
+                this.txtPO.Text = "";
+                this.numInspectQty.Text = "0";   
+                this.numSQR.Text = "0";   
             }            
             DataRow drStatus;
 
@@ -571,49 +563,6 @@ where a.ID='{0}'",
                 return false;
             }
             return base.ClickDeleteBefore();
-        }
-
-        protected override DualResult ClickSave()
-        {
-//            DualResult dresult;
-//            if (this.IsDetailInserting)
-//            {
-//                string insCmd = @"insert into cfa(id,OrderID,cDate,FactoryID,SewingLineID,InspectQty,DefectQty,Team,Shift,Result,GarmentOutput,
-//  Stage,CFA,Remark,Status,AddDate,AddName,MDivisionid)
-//  values(@id,@OrderID,@cDate,@FactoryID,@SewingLineID,@InspectQty,@DefectQty,@Team,@Shift,@Result,@GarmentOutput,
-//  @Stage,@CFA,@Remark,@Status,@AddDate,@AddName,@MDivisionid)";
-//                List<SqlParameter> spamIns = new List<SqlParameter>();
-
-//                spamIns.Add(new SqlParameter("@id", tmpId.ToString()));                
-//                spamIns.Add(new SqlParameter("@orderID", SP_text.Text));
-//                spamIns.Add(new SqlParameter("@cDate", Audit_Date.Text));
-//                spamIns.Add(new SqlParameter("@FactoryID", Audit_Date.Text));
-//                spamIns.Add(new SqlParameter("@SewingLineID", Audit_Date.Text));
-//                spamIns.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
-//                spamIns.Add(new SqlParameter("@line", Line_text.Text));
-//                spamIns.Add(new SqlParameter("@cfa", CFA1_text.Text));
-//                spamIns.Add(new SqlParameter("@Remark", Remark_text.Text));
-//                spamIns.Add(new SqlParameter("@id", CurrentMaintain["id"]));
-//                spamIns.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
-//            }
-
-//            string updCmd = "update Cfa set cDate=@cDate,OrderID=@orderID,InspectQty=@InsQty,SewingLineID=@line,CFA=@cfa,Remark=@Remark,DefectQty=@DefectQty where id=@id ";
-//            List<SqlParameter> spam = new List<SqlParameter>();
-//            spam.Add(new SqlParameter("@cDate", Audit_Date.Text));
-//            spam.Add(new SqlParameter("@orderID", SP_text.Text));
-//            spam.Add(new SqlParameter("@InsQty", InspectQty_text.Text));
-//            spam.Add(new SqlParameter("@line", Line_text.Text));
-//            spam.Add(new SqlParameter("@cfa", CFA1_text.Text));
-//            spam.Add(new SqlParameter("@Remark", Remark_text.Text));
-//            spam.Add(new SqlParameter("@id", CurrentMaintain["id"]));
-//            spam.Add(new SqlParameter("@DefectQty", DefectsQty_text.Text));
-//            if (dresult = DBProxy.Current.Execute(null, updCmd, spam))
-//            {
-//                MyUtility.Msg.InfoBox("save successful");
-//            }
-       
-            
-            return base.ClickSave();
         }
 
         private void comboInspectionStage_SelectedIndexChanged(object sender, EventArgs e)
