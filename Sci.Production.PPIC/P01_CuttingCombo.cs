@@ -36,7 +36,7 @@ namespace Sci.Production.PPIC
             this.gridCuttingCombo.IsEditingReadOnly = true;
             this.gridCuttingCombo.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridCuttingCombo)
-                .Text("CuttingSP", header: "Cutting SP#", width: Widths.AnsiChars(15))
+                .Text("CuttingSP", header: "Cutting SP#", width: Widths.AnsiChars(13))
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15));
         }
     }
