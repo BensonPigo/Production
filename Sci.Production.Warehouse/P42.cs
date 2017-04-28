@@ -160,7 +160,7 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd
                 = string.Format(@"
-select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID
+select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID,c.MdivisionId
 ,(select max(FinalETA) from 
 	(select po_supp_detail.FinalETA from PO_Supp_Detail WITH (NOLOCK) 
 		WHERE PO_Supp_Detail.ID = B.ID 
@@ -194,7 +194,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             {
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
-            sqlcmd += "GROUP BY b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
+            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit,b.stockunit";
 //20161215 CheckBox 選項用 checkBoxs_Status() 取代
 //            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM 
 //	(SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail 
@@ -268,11 +268,11 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
                 else
                 { sqlcmd += string.Format(@",tapeoffline = '{0}'", ((DateTime)item["TapeOffline"]).ToShortDateString()); }
 
-                sqlcmd += string.Format(@" where poid ='{0}' and seq1 = '{1}' and seq2 = '{2}' ;"//and mdivisionid='{3}'
+                sqlcmd += string.Format(@" where poid ='{0}' and seq1 = '{1}' and seq2 = '{2}' and mdivisionid='{3}';"
                                                         , item["POID"]
                                                         , item["seq1"]
                                                         , item["seq2"]
-                                                       // , item["mdivisionid"]
+                                                        , item["mdivisionid"]
                                                         );
                 //回寫表頭TapeFirstInline,EditName,EditDate欄位
                 sqlcmd += string.Format(@"  update a set EditName='{0}',EditDate=GETDATE(),TapeFirstInline=b.TapeFirstInline
@@ -288,8 +288,8 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
                                             where a.poid ='{1}' and a.mdivisionid='{2}'"
                                             ,Sci.Env.User.UserID
                                             ,item["POID"]
-                                           // ,item["mdivisionid"]
-                                           , Sci.Env.User.Keyword
+                                            ,item["mdivisionid"]
+                                         
                                             );
                 
             }
