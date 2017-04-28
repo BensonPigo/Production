@@ -106,15 +106,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(917, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(911, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(911, 40);
             // 
             // detail
             // 
@@ -195,7 +195,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(120, 23);
             this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             // 
             // displayStyle
             // 

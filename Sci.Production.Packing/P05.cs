@@ -724,7 +724,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
         }
 
         //Pull-out Date Validating()
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void datePullOutDate_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(datePullOutDate.Value) && datePullOutDate.Value != datePullOutDate.OldValue)
             {
@@ -742,7 +742,7 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
         }
 
         //Batch Import
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBatchImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {

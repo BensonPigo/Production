@@ -48,7 +48,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel11 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Panel();
-            this.btnCheckAndImport = new Sci.Win.UI.Button();
+            this.btnCheckImport = new Sci.Win.UI.Button();
             this.btnRemoveExcel = new Sci.Win.UI.Button();
             this.btnAddExcel = new Sci.Win.UI.Button();
             this.panel8 = new Sci.Win.UI.Panel();
@@ -122,7 +122,7 @@
             this.btnWriteIn.TabIndex = 0;
             this.btnWriteIn.Text = "Write In";
             this.btnWriteIn.UseVisualStyleBackColor = true;
-            this.btnWriteIn.Click += new System.EventHandler(this.button4_Click);
+            this.btnWriteIn.Click += new System.EventHandler(this.btnWriteIn_Click);
             // 
             // panel5
             // 
@@ -249,7 +249,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Controls.Add(this.btnCheckAndImport);
+            this.btnClose.Controls.Add(this.btnCheckImport);
             this.btnClose.Controls.Add(this.btnRemoveExcel);
             this.btnClose.Controls.Add(this.btnAddExcel);
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
@@ -258,15 +258,15 @@
             this.btnClose.Size = new System.Drawing.Size(172, 144);
             this.btnClose.TabIndex = 1;
             // 
-            // btnCheckAndImport
+            // btnCheckImport
             // 
-            this.btnCheckAndImport.Location = new System.Drawing.Point(23, 106);
-            this.btnCheckAndImport.Name = "btnCheckAndImport";
-            this.btnCheckAndImport.Size = new System.Drawing.Size(146, 30);
-            this.btnCheckAndImport.TabIndex = 2;
-            this.btnCheckAndImport.Text = "Check && Import";
-            this.btnCheckAndImport.UseVisualStyleBackColor = true;
-            this.btnCheckAndImport.Click += new System.EventHandler(this.button3_Click);
+            this.btnCheckImport.Location = new System.Drawing.Point(23, 106);
+            this.btnCheckImport.Name = "btnCheckImport";
+            this.btnCheckImport.Size = new System.Drawing.Size(146, 30);
+            this.btnCheckImport.TabIndex = 2;
+            this.btnCheckImport.Text = "Check && Import";
+            this.btnCheckImport.UseVisualStyleBackColor = true;
+            this.btnCheckImport.Click += new System.EventHandler(this.btnCheckImport_Click);
             // 
             // btnRemoveExcel
             // 
@@ -276,7 +276,7 @@
             this.btnRemoveExcel.TabIndex = 1;
             this.btnRemoveExcel.Text = "Remove Excel";
             this.btnRemoveExcel.UseVisualStyleBackColor = true;
-            this.btnRemoveExcel.Click += new System.EventHandler(this.button2_Click);
+            this.btnRemoveExcel.Click += new System.EventHandler(this.btnRemoveExcel_Click);
             // 
             // btnAddExcel
             // 
@@ -286,7 +286,7 @@
             this.btnAddExcel.TabIndex = 0;
             this.btnAddExcel.Text = "Add Excel";
             this.btnAddExcel.UseVisualStyleBackColor = true;
-            this.btnAddExcel.Click += new System.EventHandler(this.button1_Click);
+            this.btnAddExcel.Click += new System.EventHandler(this.btnAddExcel_Click);
             // 
             // panel8
             // 
@@ -355,7 +355,7 @@
         private Win.UI.Grid gridAttachFile;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel btnClose;
-        private Win.UI.Button btnCheckAndImport;
+        private Win.UI.Button btnCheckImport;
         private Win.UI.Button btnRemoveExcel;
         private Win.UI.Button btnAddExcel;
         private Win.UI.Panel panel8;

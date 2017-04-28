@@ -1026,7 +1026,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Brand
-        private void txtbrand1_Validated(object sender, EventArgs e)
+        private void txtbrand_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtbrand.OldValue)) return;
             if (EditMode && txtbrand.OldValue != txtbrand.Text)
@@ -1036,7 +1036,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //CustCD
-        private void txtcustcd1_Validated(object sender, EventArgs e)
+        private void txtcustcd_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
             {
@@ -1061,7 +1061,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
         
         //ShipMode        
-        private void txtshipmode1_Validated(object sender, EventArgs e)
+        private void txtshipmode_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtshipmode.OldValue)) return;
             if (EditMode && txtshipmode.OldValue != txtshipmode.SelectedValue)
@@ -1118,7 +1118,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Sort by
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSortby_SelectedIndexChanged(object sender, EventArgs e)
         {
             labelLocateforTransferClog.Visible = true;
             txtLocateforTransferClog.Visible = false;
@@ -1184,14 +1184,14 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Carton Summary
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCartonSummary_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         //UnConfirm History
-        private void button3_Click(object sender, EventArgs e)
+        private void btnUnConfirmHistory_Click(object sender, EventArgs e)
         {
             //Bug fix:0000276: PACKING_P03_Packing List Weight & Summary(Bulk)，1.點選[Unconfirm history]會出現錯誤訊息。
             //Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("PackingList_History", CurrentMaintain["ID"].ToString(), "Status", caption: "UnConfirm History", haveRemark: true, customerGridFormatTable: "HisType", moduleName: "PackingList");
@@ -1200,7 +1200,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Recalculate Weight
-        private void button2_Click(object sender, EventArgs e)
+        private void btnRecalculateWeight_Click(object sender, EventArgs e)
         {
             //如果已經Shipping Lock的話就不可以再重算重量
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
@@ -1388,7 +1388,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Find Now
-        private void button4_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
 
             int index;
@@ -1431,7 +1431,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             excel.Visible = true;
         }
 
-        private void btnImportExcel_Click(object sender, EventArgs e)
+        private void btnImportFromExcel_Click(object sender, EventArgs e)
         {
             #region chech Brand, CustCD, Destination, ShipMode not empty
             List<string> errMsg = new List<string>();

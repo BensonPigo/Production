@@ -26,7 +26,7 @@ namespace Sci.Production.Packing
             ControlPrintFunction(false);
         }
 
-        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        private void radioBarcodePrint_CheckedChanged(object sender, EventArgs e)
         {
             ControlPrintFunction(radioBarcodePrint.Checked);
         }

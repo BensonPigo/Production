@@ -567,7 +567,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //檢查輸入的SP#是否正確
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -621,7 +621,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         // SP#輸入完成後要帶入其他欄位值
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSP_Validated(object sender, EventArgs e)
         {
             if (txtSP.OldValue == txtSP.Text)
             {
@@ -694,7 +694,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         }
 
         //Seq按右鍵功能
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (EditMode)
             {
@@ -769,7 +769,7 @@ order by oa.Seq,os.Seq", orderID, seq);
         }
 
         //Pull-out Date Validating()
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void datePullOutDate_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(datePullOutDate.Value) && datePullOutDate.Value != datePullOutDate.OldValue)
             {

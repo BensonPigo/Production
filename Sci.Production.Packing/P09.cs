@@ -55,7 +55,7 @@ namespace Sci.Production.Packing
         }
 
         //SP#
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(txtSP.Text) && txtSP.OldValue != txtSP.Text)
             {
@@ -111,7 +111,7 @@ namespace Sci.Production.Packing
         }
 
         //SP#
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSP_Validated(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty(txtSP.Text) && (txtSP.OldValue != txtSP.Text))
             {
@@ -229,20 +229,20 @@ order by ID,Seq", txtSP.Text);
         }
 
         //Only not yet scan complete
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkOnlyNotYetScanComplete_CheckedChanged(object sender, EventArgs e)
         {
             SetFilter(checkOnlyNotYetScanComplete.Checked);
 
         }
 
         //Packing No Filter
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboPackingNoFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetFilter(checkOnlyNotYetScanComplete.Checked);
         }
 
         //Quick Select CTN#
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void txtQuickSelectCTN_TextChanged(object sender, EventArgs e)
         {
             int pos = -1;
             bool hadFound = false;
@@ -279,13 +279,13 @@ order by ID,Seq", txtSP.Text);
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Uncomplete
-        private void button1_Click(object sender, EventArgs e)
+        private void btnUncomplete_Click(object sender, EventArgs e)
         {
             //問是否要做Uncomplete，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("This carton had been scanned, are you sure you want to < Uncomplete >?", "Warning", MessageBoxButtons.YesNo);
@@ -310,7 +310,7 @@ order by ID,Seq", txtSP.Text);
         }
         
         //Start to Scan
-        private void button2_Click(object sender, EventArgs e)
+        private void btnStartToScan_Click(object sender, EventArgs e)
         {
             if (gridDetail.GetTable() != null && gridDetail.GetTable().Rows.Count == 0)
             {

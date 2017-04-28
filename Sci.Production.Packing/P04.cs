@@ -766,14 +766,14 @@ where ID = @INVNo";
         }
 
         //Carton Summary
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCartonSummary_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P04_CartonSummary callNextForm = new Sci.Production.Packing.P04_CartonSummary(CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         //Batch Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnBatchImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
@@ -785,7 +785,7 @@ where ID = @INVNo";
         }
 
         //Recalculate Weight
-        private void button5_Click(object sender, EventArgs e)
+        private void btnRecalculateWeight_Click(object sender, EventArgs e)
         {
             //如果已經Shipping Lock的話就不可以再重算重量
             if (!MyUtility.Check.Empty(CurrentMaintain["GMTBookingLock"]))
@@ -868,7 +868,7 @@ where ID = @INVNo";
         }
 
         //Download excel format
-        private void button4_Click(object sender, EventArgs e)
+        private void btnDownloadExcelFormat_Click(object sender, EventArgs e)
         {
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P04_ImportExcelFormat.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
@@ -877,13 +877,13 @@ where ID = @INVNo";
         }
 
         //Import from excel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImportFromExcel_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P04_ExcelImport callNextForm = new Sci.Production.Packing.P04_ExcelImport((DataTable)detailgridbs.DataSource);
             callNextForm.ShowDialog(this);
         }
 
-        private void txtcustcd1_Validated(object sender, EventArgs e)
+        private void txtcustcd_Validated(object sender, EventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(txtcustcd.Text) && txtcustcd.OldValue != txtcustcd.Text)
             {

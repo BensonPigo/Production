@@ -58,7 +58,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateSewingInlineDate.Value1) && MyUtility.Check.Empty(dateSewingInlineDate.Value2) && MyUtility.Check.Empty(dateEstBookingDate.Value1) && MyUtility.Check.Empty(dateEstBookingDate.Value2) && MyUtility.Check.Empty(dateEstArrivedDate.Value1) && MyUtility.Check.Empty(dateEstArrivedDate.Value2))
             {
@@ -204,7 +204,7 @@ order by SciDelivery,ID,Refno");
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable = (DataTable)listControlBindingSource1.DataSource;
 
@@ -219,7 +219,7 @@ order by SciDelivery,ID,Refno");
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

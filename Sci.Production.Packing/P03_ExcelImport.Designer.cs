@@ -32,7 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnCheckandImport = new Sci.Win.UI.Button();
+            this.btnCheckImport = new Sci.Win.UI.Button();
             this.btnRemoveExcel = new Sci.Win.UI.Button();
             this.btnAddExcel = new Sci.Win.UI.Button();
             this.panel9 = new Sci.Win.UI.Panel();
@@ -72,15 +72,15 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // btnCheckandImport
+            // btnCheckImport
             // 
-            this.btnCheckandImport.Location = new System.Drawing.Point(23, 106);
-            this.btnCheckandImport.Name = "btnCheckandImport";
-            this.btnCheckandImport.Size = new System.Drawing.Size(146, 30);
-            this.btnCheckandImport.TabIndex = 2;
-            this.btnCheckandImport.Text = "Check && Import";
-            this.btnCheckandImport.UseVisualStyleBackColor = true;
-            this.btnCheckandImport.Click += new System.EventHandler(this.btnCheck_Click);
+            this.btnCheckImport.Location = new System.Drawing.Point(23, 106);
+            this.btnCheckImport.Name = "btnCheckImport";
+            this.btnCheckImport.Size = new System.Drawing.Size(146, 30);
+            this.btnCheckImport.TabIndex = 2;
+            this.btnCheckImport.Text = "Check && Import";
+            this.btnCheckImport.UseVisualStyleBackColor = true;
+            this.btnCheckImport.Click += new System.EventHandler(this.btnCheckImport_Click);
             // 
             // btnRemoveExcel
             // 
@@ -90,7 +90,7 @@
             this.btnRemoveExcel.TabIndex = 1;
             this.btnRemoveExcel.Text = "Remove Excel";
             this.btnRemoveExcel.UseVisualStyleBackColor = true;
-            this.btnRemoveExcel.Click += new System.EventHandler(this.btnRemove_Click);
+            this.btnRemoveExcel.Click += new System.EventHandler(this.btnRemoveExcel_Click);
             // 
             // btnAddExcel
             // 
@@ -100,11 +100,11 @@
             this.btnAddExcel.TabIndex = 0;
             this.btnAddExcel.Text = "Add Excel";
             this.btnAddExcel.UseVisualStyleBackColor = true;
-            this.btnAddExcel.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAddExcel.Click += new System.EventHandler(this.btnAddExcel_Click);
             // 
             // panel9
             // 
-            this.panel9.Controls.Add(this.btnCheckandImport);
+            this.panel9.Controls.Add(this.btnCheckImport);
             this.panel9.Controls.Add(this.btnRemoveExcel);
             this.panel9.Controls.Add(this.btnAddExcel);
             this.panel9.Dock = System.Windows.Forms.DockStyle.Right;
@@ -343,7 +343,7 @@
         #endregion
 
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private Win.UI.Button btnCheckandImport;
+        private Win.UI.Button btnCheckImport;
         private Win.UI.Button btnRemoveExcel;
         private Win.UI.Button btnAddExcel;
         private Win.UI.Panel panel9;

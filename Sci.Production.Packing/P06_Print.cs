@@ -27,7 +27,7 @@ namespace Sci.Production.Packing
         }
 
         //Packing Guide Report
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radioPackingGuideReport_CheckedChanged(object sender, EventArgs e)
         {
             ControlPrintFunction(radioPackingGuideReport.Checked);
         }

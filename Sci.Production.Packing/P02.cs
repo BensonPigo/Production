@@ -679,7 +679,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
         }
 
         //檢查輸入的SP#是否正確
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {
@@ -752,7 +752,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
         }
 
         // SP#輸入完成後要帶入其他欄位值
-        private void textBox1_Validated(object sender, EventArgs e)
+        private void txtSPNo_Validated(object sender, EventArgs e)
         {
             if (txtSPNo.OldValue == txtSPNo.Text)
             {
@@ -916,7 +916,7 @@ order by oa.Seq,os.Seq", orderID, seq);
         }
 
         //Seq按右鍵功能
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             IList<DataRow> orderQtyShipData;
             string sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", CurrentMaintain["OrderID"].ToString());
@@ -940,21 +940,21 @@ order by oa.Seq,os.Seq", orderID, seq);
         }
 
         //Special Instruction
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSpecialInstruction_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["SpecialInstruction"].ToString(), "Special Instruction", false, null);
             callNextForm.ShowDialog(this);
         }
 
         //Carton Dimension
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCartonDimension_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P02_CartonSummary callNextForm = new Sci.Production.Packing.P02_CartonSummary(CurrentMaintain["OrderID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         //Switch to Packing list
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSwitchToPackingList_Click(object sender, EventArgs e)
         {
             //檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderShipmodeSeq"].ToString(), CurrentMaintain["ID"].ToString())))
@@ -1568,13 +1568,13 @@ ELSE
         }
 
         //Packing Method
-        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        private void comboPackingMethod_SelectionChangeCommitted(object sender, EventArgs e)
         {
             ControlGridColumn();
         }
 
         //ShipMode
-        private void txtshipmode1_SelectionChangeCommitted(object sender, EventArgs e)
+        private void txtshipmode_SelectionChangeCommitted(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty(txtshipmode.SelectedValue))
             {

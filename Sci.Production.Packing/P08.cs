@@ -44,7 +44,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(txtSPEnd.Text) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateSewingInlineDate.Value1) && MyUtility.Check.Empty(dateSewingInlineDate.Value2) && MyUtility.Check.Empty(dateCartonEstBooking.Value1) && MyUtility.Check.Empty(dateCartonEstBooking.Value2) && MyUtility.Check.Empty(dateCartonEstArrived.Value1) && MyUtility.Check.Empty(dateCartonEstArrived.Value2))
             {
@@ -173,7 +173,7 @@ and o.Junk = 0");
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
             
@@ -200,7 +200,7 @@ and o.Junk = 0");
         }
 
         //Approve
-        private void button3_Click(object sender, EventArgs e)
+        private void btnApprove_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             this.gridDetail.EndEdit();
@@ -258,7 +258,7 @@ and o.Junk = 0");
         }
 
         //Close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

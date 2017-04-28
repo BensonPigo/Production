@@ -51,7 +51,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with OrderData
@@ -83,11 +83,11 @@ as
             {
                 sqlCmd.Append("\r\n and oq.BuyerDelivery <= @buyerDelivery2");
             }
-            if (!MyUtility.Check.Empty(btnImport.Value1))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
             {
                 sqlCmd.Append("\r\n and o.SciDelivery >= @sciDelivery1");
             }
-            if (!MyUtility.Check.Empty(btnImport.Value2))
+            if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
             {
                 sqlCmd.Append("\r\n and o.SciDelivery <= @sciDelivery2");
             }
@@ -135,11 +135,11 @@ where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0");
 
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp7.ParameterName = "@sciDelivery1";
-            sp7.Value = !MyUtility.Check.Empty(btnImport.Value1) ? btnImport.Value1 : DateTime.Now;
+            sp7.Value = !MyUtility.Check.Empty(dateSCIDelivery.Value1) ? dateSCIDelivery.Value1 : DateTime.Now;
 
             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
             sp8.ParameterName = "@sciDelivery2";
-            sp8.Value = !MyUtility.Check.Empty(btnImport.Value2) ? btnImport.Value2 : DateTime.Now;
+            sp8.Value = !MyUtility.Check.Empty(dateSCIDelivery.Value2) ? dateSCIDelivery.Value2 : DateTime.Now;
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
@@ -169,7 +169,7 @@ where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0");
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             listControlBindingSource1.EndEdit();

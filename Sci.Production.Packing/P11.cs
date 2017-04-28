@@ -325,7 +325,7 @@ where od.ID = '{0}'", masterID);
         }
 
         //檢查輸入的SP#是否正確
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode)
             {

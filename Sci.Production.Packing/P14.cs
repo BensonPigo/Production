@@ -45,7 +45,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
@@ -89,13 +89,13 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         }
 
         //Close
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //To Excel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             listControlBindingSource1.EndEdit();

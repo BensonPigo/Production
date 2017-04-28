@@ -74,7 +74,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateExpPoutDate.Value))
             {
@@ -294,7 +294,7 @@ namespace Sci.Production.Packing
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             if ((DataTable)listControlBindingSource1.DataSource == null || ((DataTable)listControlBindingSource1.DataSource).Rows.Count <= 0)
             {
@@ -306,13 +306,13 @@ namespace Sci.Production.Packing
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Find Now
-        private void button4_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("ID", txtLocateForSP.Text.ToString());

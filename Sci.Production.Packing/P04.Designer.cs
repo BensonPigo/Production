@@ -59,8 +59,8 @@
             this.numTtlCBM = new Sci.Win.UI.NumericBox();
             this.btnCartonSummary = new Sci.Win.UI.Button();
             this.btnBatchImport = new Sci.Win.UI.Button();
-            this.btnImportfromexcel = new Sci.Win.UI.Button();
-            this.btnDownloadexcelformat = new Sci.Win.UI.Button();
+            this.btnImportFromExcel = new Sci.Win.UI.Button();
+            this.btnDownloadExcelFormat = new Sci.Win.UI.Button();
             this.btnRecalculateWeight = new Sci.Win.UI.Button();
             this.numTtlCtn = new Sci.Win.UI.NumericBox();
             this.displayPurchaseCTN = new Sci.Win.UI.DisplayBox();
@@ -90,8 +90,8 @@
             this.masterpanel.Controls.Add(this.txtfactory);
             this.masterpanel.Controls.Add(this.displayPurchaseCTN);
             this.masterpanel.Controls.Add(this.btnRecalculateWeight);
-            this.masterpanel.Controls.Add(this.btnDownloadexcelformat);
-            this.masterpanel.Controls.Add(this.btnImportfromexcel);
+            this.masterpanel.Controls.Add(this.btnDownloadExcelFormat);
+            this.masterpanel.Controls.Add(this.btnImportFromExcel);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.btnCartonSummary);
             this.masterpanel.Controls.Add(this.numTtlCBM);
@@ -157,8 +157,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numTtlCBM, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCartonSummary, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnImportfromexcel, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnDownloadexcelformat, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadExcelFormat, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnRecalculateWeight, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPurchaseCTN, 0);
@@ -186,15 +186,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(992, 556);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(986, 510);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(986, 40);
             // 
             // detail
             // 
@@ -314,7 +314,7 @@
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 3;
-            this.txtcustcd.Validated += new System.EventHandler(this.txtcustcd1_Validated);
+            this.txtcustcd.Validated += new System.EventHandler(this.txtcustcd_Validated);
             // 
             // txtcountry
             // 
@@ -539,7 +539,7 @@
             this.btnCartonSummary.TabIndex = 49;
             this.btnCartonSummary.Text = "Carton Summary";
             this.btnCartonSummary.UseVisualStyleBackColor = true;
-            this.btnCartonSummary.Click += new System.EventHandler(this.button1_Click);
+            this.btnCartonSummary.Click += new System.EventHandler(this.btnCartonSummary_Click);
             // 
             // btnBatchImport
             // 
@@ -550,29 +550,29 @@
             this.btnBatchImport.TabIndex = 50;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
             // 
-            // btnImportfromexcel
+            // btnImportFromExcel
             // 
-            this.btnImportfromexcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportfromexcel.Location = new System.Drawing.Point(847, 137);
-            this.btnImportfromexcel.Name = "btnImportfromexcel";
-            this.btnImportfromexcel.Size = new System.Drawing.Size(145, 30);
-            this.btnImportfromexcel.TabIndex = 51;
-            this.btnImportfromexcel.Text = "Import from excel";
-            this.btnImportfromexcel.UseVisualStyleBackColor = true;
-            this.btnImportfromexcel.Click += new System.EventHandler(this.button3_Click);
+            this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportFromExcel.Location = new System.Drawing.Point(847, 137);
+            this.btnImportFromExcel.Name = "btnImportFromExcel";
+            this.btnImportFromExcel.Size = new System.Drawing.Size(145, 30);
+            this.btnImportFromExcel.TabIndex = 51;
+            this.btnImportFromExcel.Text = "Import from excel";
+            this.btnImportFromExcel.UseVisualStyleBackColor = true;
+            this.btnImportFromExcel.Click += new System.EventHandler(this.btnImportFromExcel_Click);
             // 
-            // btnDownloadexcelformat
+            // btnDownloadExcelFormat
             // 
-            this.btnDownloadexcelformat.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnDownloadexcelformat.Location = new System.Drawing.Point(847, 169);
-            this.btnDownloadexcelformat.Name = "btnDownloadexcelformat";
-            this.btnDownloadexcelformat.Size = new System.Drawing.Size(145, 55);
-            this.btnDownloadexcelformat.TabIndex = 52;
-            this.btnDownloadexcelformat.Text = "Download excel format";
-            this.btnDownloadexcelformat.UseVisualStyleBackColor = true;
-            this.btnDownloadexcelformat.Click += new System.EventHandler(this.button4_Click);
+            this.btnDownloadExcelFormat.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnDownloadExcelFormat.Location = new System.Drawing.Point(847, 169);
+            this.btnDownloadExcelFormat.Name = "btnDownloadExcelFormat";
+            this.btnDownloadExcelFormat.Size = new System.Drawing.Size(145, 55);
+            this.btnDownloadExcelFormat.TabIndex = 52;
+            this.btnDownloadExcelFormat.Text = "Download excel format";
+            this.btnDownloadExcelFormat.UseVisualStyleBackColor = true;
+            this.btnDownloadExcelFormat.Click += new System.EventHandler(this.btnDownloadExcelFormat_Click);
             // 
             // btnRecalculateWeight
             // 
@@ -583,7 +583,7 @@
             this.btnRecalculateWeight.TabIndex = 53;
             this.btnRecalculateWeight.Text = "Recalculate Weight";
             this.btnRecalculateWeight.UseVisualStyleBackColor = true;
-            this.btnRecalculateWeight.Click += new System.EventHandler(this.button5_Click);
+            this.btnRecalculateWeight.Click += new System.EventHandler(this.btnRecalculateWeight_Click);
             // 
             // numTtlCtn
             // 
@@ -744,8 +744,8 @@
         private Win.UI.DateBox dateCartonEstBooking;
         private Class.txtshipmode txtshipmode;
         private Win.UI.Button btnRecalculateWeight;
-        private Win.UI.Button btnDownloadexcelformat;
-        private Win.UI.Button btnImportfromexcel;
+        private Win.UI.Button btnDownloadExcelFormat;
+        private Win.UI.Button btnImportFromExcel;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Button btnCartonSummary;
         private Win.UI.DisplayBox displayPurchaseCTN;

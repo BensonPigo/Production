@@ -102,7 +102,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
         }
 
         //改變Grid's Row時，表頭的資訊要跟著改變
-        private void grid1_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
+        private void gridDetail_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
         {
             DataRow dr = gridDetail.GetDataRow(e.RowIndex);
             displayRefBarcode.Value = MyUtility.Convert.GetString(dr["Barcode"]);
@@ -116,7 +116,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
         }
 
         //Complete
-        private void button1_Click(object sender, EventArgs e)
+        private void btnComplete_Click(object sender, EventArgs e)
         {
             if (labelTtlPCCTN1.Text != labelTtlPCCTNScanned1.Text)
             {
@@ -165,7 +165,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
         }
 
         //Cancel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             //問是否要Cancel，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure to cancel this scanning?", "Warning", MessageBoxButtons.YesNo);
@@ -177,7 +177,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
         }
 
         //Reset
-        private void button3_Click(object sender, EventArgs e)
+        private void btnReset_Click(object sender, EventArgs e)
         {
             //問是否要清空Ref. Barcode值，確定才繼續往下做
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure to reset ref. barcode?", "Warning", MessageBoxButtons.YesNo);
@@ -193,7 +193,7 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             labelTtlPCCTNScanned1.Text = MyUtility.Convert.GetString(obj);
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtScanBarcode_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Empty(txtScanBarcode.Text))
             {
@@ -317,8 +317,8 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
             labelTtlPCCTNScanned1.Text = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(labelTtlPCCTNScanned1.Text) + 1);
             txtScanBarcode.Text = "";
         }
-        
-        private void displayBox1_TextChanged(object sender, EventArgs e)
+
+        private void displayRefBarcode_TextChanged(object sender, EventArgs e)
         {
             btnReset.Enabled = !displayRefBarcode.Value.ToString().Empty();  
         }

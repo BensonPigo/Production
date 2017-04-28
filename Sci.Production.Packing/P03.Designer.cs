@@ -205,15 +205,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1055, 556);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1049, 510);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1049, 40);
             // 
             // detail
             // 
@@ -297,7 +297,7 @@
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.Size = new System.Drawing.Size(121, 24);
             this.comboSortby.TabIndex = 18;
-            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboSortby_SelectedIndexChanged);
             // 
             // labelShipMode
             // 
@@ -549,7 +549,7 @@
             this.btnCartonSummary.TabIndex = 48;
             this.btnCartonSummary.Text = "Carton Summary";
             this.btnCartonSummary.UseVisualStyleBackColor = true;
-            this.btnCartonSummary.Click += new System.EventHandler(this.button1_Click);
+            this.btnCartonSummary.Click += new System.EventHandler(this.btnCartonSummary_Click);
             // 
             // btnRecalculateWeight
             // 
@@ -560,7 +560,7 @@
             this.btnRecalculateWeight.TabIndex = 49;
             this.btnRecalculateWeight.Text = "Recalculate Weight";
             this.btnRecalculateWeight.UseVisualStyleBackColor = true;
-            this.btnRecalculateWeight.Click += new System.EventHandler(this.button2_Click);
+            this.btnRecalculateWeight.Click += new System.EventHandler(this.btnRecalculateWeight_Click);
             // 
             // btnUnConfirmHistory
             // 
@@ -571,7 +571,7 @@
             this.btnUnConfirmHistory.TabIndex = 50;
             this.btnUnConfirmHistory.Text = "UnConfirm History";
             this.btnUnConfirmHistory.UseVisualStyleBackColor = true;
-            this.btnUnConfirmHistory.Click += new System.EventHandler(this.button3_Click);
+            this.btnUnConfirmHistory.Click += new System.EventHandler(this.btnUnConfirmHistory_Click);
             // 
             // labelLocateforTransferClog
             // 
@@ -608,7 +608,7 @@
             this.btnFindNow.TabIndex = 54;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button4_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // labelBrand
             // 
@@ -673,7 +673,7 @@
             this.btnImportFromExcel.Text = "Import From Excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
             this.btnImportFromExcel.Visible = false;
-            this.btnImportFromExcel.Click += new System.EventHandler(this.btnImportExcel_Click);
+            this.btnImportFromExcel.Click += new System.EventHandler(this.btnImportFromExcel_Click);
             // 
             // txtcountry
             // 
@@ -695,7 +695,7 @@
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 1;
-            this.txtcustcd.Validated += new System.EventHandler(this.txtcustcd1_Validated);
+            this.txtcustcd.Validated += new System.EventHandler(this.txtcustcd_Validated);
             // 
             // txtbrand
             // 
@@ -706,7 +706,7 @@
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(78, 23);
             this.txtbrand.TabIndex = 0;
-            this.txtbrand.Validated += new System.EventHandler(this.txtbrand1_Validated);
+            this.txtbrand.Validated += new System.EventHandler(this.txtbrand_Validated);
             // 
             // txtshipmode
             // 
@@ -720,7 +720,7 @@
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 3;
             this.txtshipmode.UseFunction = "ORDER";
-            this.txtshipmode.Validated += new System.EventHandler(this.txtshipmode1_Validated);
+            this.txtshipmode.Validated += new System.EventHandler(this.txtshipmode_Validated);
             // 
             // numTtlGW
             // 

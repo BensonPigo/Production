@@ -34,7 +34,7 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnQuery = new Sci.Win.UI.Button();
             this.label6 = new Sci.Win.UI.Label();
-            this.btnImport = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
@@ -47,7 +47,7 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
-            this.button2 = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -78,7 +78,7 @@
             // 
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.label6);
-            this.panel3.Controls.Add(this.btnImport);
+            this.panel3.Controls.Add(this.dateSCIDelivery);
             this.panel3.Controls.Add(this.dateBuyerDelivery);
             this.panel3.Controls.Add(this.txtSPNoEnd);
             this.panel3.Controls.Add(this.txtSPNoStart);
@@ -103,7 +103,7 @@
             this.btnQuery.TabIndex = 12;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // label6
             // 
@@ -119,13 +119,13 @@
             this.label6.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label6.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // btnImport
+            // dateSCIDelivery
             // 
-            this.btnImport.IsRequired = false;
-            this.btnImport.Location = new System.Drawing.Point(288, 63);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(280, 23);
-            this.btnImport.TabIndex = 10;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(288, 63);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 10;
             // 
             // dateBuyerDelivery
             // 
@@ -219,7 +219,7 @@
             // panel4
             // 
             this.panel4.Controls.Add(this.btnClose);
-            this.panel4.Controls.Add(this.button2);
+            this.panel4.Controls.Add(this.btnImport);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 453);
             this.panel4.Name = "panel4";
@@ -236,15 +236,15 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnImport
             // 
-            this.button2.Location = new System.Drawing.Point(518, 8);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Location = new System.Drawing.Point(518, 8);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // panel5
             // 
@@ -282,7 +282,7 @@
             // 
             // P05_BatchImport
             // 
-            this.AcceptButton = this.button2;
+            this.AcceptButton = this.btnImport;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(729, 498);
             this.Controls.Add(this.panel5);
@@ -318,7 +318,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnQuery;
         private Win.UI.Label label6;
-        private Win.UI.DateRange btnImport;
+        private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.TextBox txtSPNoStart;
@@ -326,6 +326,6 @@
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSPNo;
         private Win.UI.Button btnClose;
-        private Win.UI.Button button2;
+        private Win.UI.Button btnImport;
     }
 }

@@ -47,49 +47,49 @@ namespace Sci.Production.Packing
         }
 
         //b'down
-        private void button1_Click(object sender, EventArgs e)
+        private void btnbdown_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_QtyCTN callNextForm = new Sci.Production.PPIC.P01_QtyCTN(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Quantity breakdown
-        private void button2_Click(object sender, EventArgs e)
+        private void btnQuantityBreakdown_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(displayPOcombo.Value));
             callNextForm.ShowDialog(this);
         }
 
         //Packing method
-        private void button3_Click(object sender, EventArgs e)
+        private void btnPackingMethod_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["Packing"].ToString(), "Packing method", false, null);
             callNextForm.ShowDialog(this);
         }
 
         //Carton Status
-        private void button4_Click(object sender, EventArgs e)
+        private void btnCartonStatus_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(CurrentMaintain["ID"].ToString(), false);
             callNextForm.ShowDialog(this);
         }
 
         //Material import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnMaterialImport_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Carton Booking
-        private void button6_Click(object sender, EventArgs e)
+        private void btnCartonBooking_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Overrun garment record
-        private void button7_Click(object sender, EventArgs e)
+        private void btnOverrunGarmentRecord_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P01_OverrunGMTRecord callNextForm = new Sci.Production.Packing.P01_OverrunGMTRecord(CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);

@@ -39,7 +39,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(txtGarmentBookingStart.Text) && MyUtility.Check.Empty(txtGarmentBookingEnd.Text) && MyUtility.Check.Empty(dateFCRDate.Value1) && MyUtility.Check.Empty(dateFCRDate.Value2))
             {
@@ -101,13 +101,13 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //To Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading....");
             if (MyUtility.Check.Empty(listControlBindingSource1)) return;

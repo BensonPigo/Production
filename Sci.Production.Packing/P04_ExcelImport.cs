@@ -69,7 +69,7 @@ namespace Sci.Production.Packing
         }
 
         //Add Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAddExcel_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
@@ -84,7 +84,7 @@ namespace Sci.Production.Packing
         }
 
         //Remove Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnRemoveExcel_Click(object sender, EventArgs e)
         {
             if (listControlBindingSource1.Position != -1)
             {
@@ -93,7 +93,7 @@ namespace Sci.Production.Packing
         }
 
         //Check & Import
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCheckImport_Click(object sender, EventArgs e)
         {
             #region 判斷第一個Grid是否有資料
             if (listControlBindingSource1.Count <= 0)
@@ -218,7 +218,7 @@ namespace Sci.Production.Packing
         }
 
         //Write in
-        private void button4_Click(object sender, EventArgs e)
+        private void btnWriteIn_Click(object sender, EventArgs e)
         {
             DataTable tmpPackData;
             try

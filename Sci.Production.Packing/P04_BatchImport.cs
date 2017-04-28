@@ -55,7 +55,7 @@ namespace Sci.Production.Packing
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
@@ -167,7 +167,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         }
 
         //Order Type Right Click
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtOrderType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string sqlWhere = string.Format("select ID from OrderType WITH (NOLOCK) where BrandID = '{0}' order by ID", packingListData["BrandID"].ToString());
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlWhere, "20", this.Text, false, "");
@@ -178,7 +178,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         }
 
         //Find
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("OrderId", txtLocateSPNo.Text.ToString());
@@ -189,7 +189,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
         }
 
         //Import
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
             listControlBindingSource1.EndEdit();

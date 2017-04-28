@@ -308,8 +308,8 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(130, 23);
             this.txtSP.TabIndex = 3;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.txtSP.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
+            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
             // 
             // labelSeason
             // 
@@ -356,7 +356,7 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button3_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // panel5
             // 
@@ -435,7 +435,7 @@
             this.btnStartToScan.TabIndex = 6;
             this.btnStartToScan.Text = "Start to Scan";
             this.btnStartToScan.UseVisualStyleBackColor = true;
-            this.btnStartToScan.Click += new System.EventHandler(this.button2_Click);
+            this.btnStartToScan.Click += new System.EventHandler(this.btnStartToScan_Click);
             // 
             // btnUncomplete
             // 
@@ -445,7 +445,7 @@
             this.btnUncomplete.TabIndex = 5;
             this.btnUncomplete.Text = "Uncomplete";
             this.btnUncomplete.UseVisualStyleBackColor = true;
-            this.btnUncomplete.Click += new System.EventHandler(this.button1_Click);
+            this.btnUncomplete.Click += new System.EventHandler(this.btnUncomplete_Click);
             // 
             // txtQuickSelectCTN
             // 
@@ -455,7 +455,7 @@
             this.txtQuickSelectCTN.Name = "txtQuickSelectCTN";
             this.txtQuickSelectCTN.Size = new System.Drawing.Size(65, 23);
             this.txtQuickSelectCTN.TabIndex = 4;
-            this.txtQuickSelectCTN.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.txtQuickSelectCTN.TextChanged += new System.EventHandler(this.txtQuickSelectCTN_TextChanged);
             // 
             // labelQuickSelectCTN
             // 
@@ -476,7 +476,7 @@
             this.comboPackingNoFilter.Name = "comboPackingNoFilter";
             this.comboPackingNoFilter.Size = new System.Drawing.Size(136, 24);
             this.comboPackingNoFilter.TabIndex = 2;
-            this.comboPackingNoFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboPackingNoFilter.SelectedIndexChanged += new System.EventHandler(this.comboPackingNoFilter_SelectedIndexChanged);
             // 
             // labelPackingNoFilter
             // 
@@ -497,7 +497,7 @@
             this.checkOnlyNotYetScanComplete.TabIndex = 0;
             this.checkOnlyNotYetScanComplete.Text = "Only not yet scan complete";
             this.checkOnlyNotYetScanComplete.UseVisualStyleBackColor = true;
-            this.checkOnlyNotYetScanComplete.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkOnlyNotYetScanComplete.CheckedChanged += new System.EventHandler(this.checkOnlyNotYetScanComplete_CheckedChanged);
             // 
             // shapeContainer1
             // 

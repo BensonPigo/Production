@@ -48,7 +48,7 @@ namespace Sci.Production.Packing
         }
 
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSP.Text) && MyUtility.Check.Empty(this.txtPO.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
@@ -91,7 +91,7 @@ namespace Sci.Production.Packing
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
             this.gridDetail.ValidateControl();
@@ -211,7 +211,7 @@ where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["P
             }
 
         //Import From Barcode
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportFromBarcode_Click(object sender, EventArgs e)
         {
             //設定只能選txt檔
             openFileDialog1.Filter = "txt files (*.txt)|*.txt";

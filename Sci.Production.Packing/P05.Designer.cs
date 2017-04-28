@@ -134,15 +134,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(913, 483);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(907, 437);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(907, 40);
             // 
             // detail
             // 
@@ -381,7 +381,7 @@
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 4;
-            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
+            this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePullOutDate_Validating);
             // 
             // displayPullOutNo
             // 
@@ -412,7 +412,7 @@
             this.btnBatchImport.TabIndex = 23;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.button1_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
             // 
             // txtshipmode
             // 
