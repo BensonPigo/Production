@@ -141,11 +141,7 @@ select  i.poid
         , I.SCIRefno
         , I.UnitID POUNIT
         , DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
-        , ISNULL((SELECT cast(V.RateValue as numeric) 
-                  FROM dbo.View_Unitrate V 
-                  WHERE   V.FROM_U=I.UnitID 
-                          AND V.TO_U = DBO.getStockUnit(I.SCIRefno,I.suppid))
-                 , 1.0) RATE
+        , dbo.GetUnitRate(I.UnitID, DBO.getStockUnit(I.SCIRefno,I.suppid)) RATE
 from inventory i WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
