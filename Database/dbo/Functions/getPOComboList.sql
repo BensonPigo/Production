@@ -3,12 +3,17 @@ CREATE FUNCTION [dbo].[getPOComboList](@orderid varchar(13), @poid varchar(13))
 RETURNS varchar(max)
 BEGIN
 	DECLARE @string nvarchar(max) --要回傳的字串
-	IF @orderid <> @poid
+	IF @poid is null
+		BEGIN
+			SET @string = @orderid
+		END	
+	ELSE
+	BEGIN
+		IF @orderid <> @poid
 		BEGIN
 			SET @string = 'Master:'+@poid
 		END
-	ELSE
-
+		ELSE
 		BEGIN
 			DECLARE cursor_Orders CURSOR FOR
 			SELECT ID FROM Orders WITH (NOLOCK) WHERE POID = @poid and ID <> @poid
@@ -39,6 +44,6 @@ BEGIN
 			--將cursor物件從記憶體移除
 			DEALLOCATE cursor_Orders
 		END
-
+	END
 	RETURN @string
 END
