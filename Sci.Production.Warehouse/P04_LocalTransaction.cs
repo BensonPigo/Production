@@ -56,20 +56,19 @@ select 	s.date
 		, s.Name
 		, s.arrivedQty
 		, s.releasedQty
-		, [balance] = sum(arrivedQty -releasedQty) Over (order by s.date, s.transactionID, s.Name)
+        , balance = 0
 		, s.remark
 From (
 	SELECT	[date] = a.IssueDate
 			,[transactionID] = a.ID
 			,[Name] ='P60.Local PO Receiving - incoming' 
-			,[arrivedQty] = sum(b.Qty)
+			,[arrivedQty] = b.Qty
 			,[releasedQty] = '0.00' 
 			,[remark] = isnull(a.Remark, '')
 	FROM LocalReceiving A
 	INNER JOIN LocalReceiving_Detail B ON  A.ID=B.Id 
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID 
         and a.Status = 'CONFIRMED'
-    Group By a.IssueDate, a.ID, a.Remark
 
 	Union all
 
@@ -77,15 +76,14 @@ From (
 			,[transactionID] = a.ID
 			,[Name] ='P61.Issue Local Item' 
 			,[arrivedQty] = '0.00' 
-			,[releasedQty] = sum(b.Qty)
+			,[releasedQty] = b.Qty
 			,[remark] = isnull(a.Remark, '')
 	FROM localissue a 
 	inner join localissue_Detail b ON a.id=b.id
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
         and a.Status = 'CONFIRMED'
-    Group By a.IssueDate, a.ID, a.Remark
 ) s	
-order by s.date, s.Name          
+order by s.date, s.Name, arrivedQty, releasedQty        
 ";
             #endregion
             this.ShowWaitMessage("Data Loading....");
@@ -100,6 +98,21 @@ order by s.date, s.Name
                 }
                 else
                 {
+                    #region compute BalanceQty
+                    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    {
+                        DataRow dr = dataTable.Rows[i];
+                        if (i == 0)
+                        {
+                            dr["balance"] = Convert.ToDecimal(dr["arrivedQty"]) - Convert.ToDecimal(dr["releasedQty"]);
+                        }
+                        else
+                        {
+                            DataRow drFront = dataTable.Rows[i - 1];
+                            dr["balance"] = Convert.ToDecimal(drFront["balance"]) + Convert.ToDecimal(dr["arrivedQty"]) - Convert.ToDecimal(dr["releasedQty"]);
+                        }
+                    }
+                    #endregion 
                     listControlBindingSource1.DataSource = dataTable;
                     string arrivedQty = dataTable.Compute("sum(arrivedQty)", null).ToString();
                     string releasedQty = dataTable.Compute("sum(releasedQty)", null).ToString();
