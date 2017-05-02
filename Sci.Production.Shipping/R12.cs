@@ -81,7 +81,7 @@ o.FactoryID
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)))
 ,LocalPSCost= IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
-						(select sum(ot.Price) 
+						(select Isnull(sum(ot.Price),0) 
 						from Order_TmsCost ot
 						inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 						where ot.ID = pd.OrderID and a.Classify = 'P')
