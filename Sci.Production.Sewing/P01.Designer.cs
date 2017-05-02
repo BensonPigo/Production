@@ -228,7 +228,7 @@
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
             this.dateDate.TabIndex = 0;
-            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
+            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateDate_Validating);
             // 
             // displayFactory
             // 
@@ -313,7 +313,7 @@
             0,
             0,
             0});
-            this.numManpower.Validated += new System.EventHandler(this.numericBox1_Validated);
+            this.numManpower.Validated += new System.EventHandler(this.numManpower_Validated);
             // 
             // numWHours
             // 
@@ -340,7 +340,7 @@
             0,
             0,
             0});
-            this.numWHours.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numWHours.Validated += new System.EventHandler(this.numWHours_Validated);
             // 
             // numManhours
             // 
@@ -526,7 +526,7 @@
             this.btnRevisedHistory.TabIndex = 6;
             this.btnRevisedHistory.Text = "Revised History";
             this.btnRevisedHistory.UseVisualStyleBackColor = true;
-            this.btnRevisedHistory.Click += new System.EventHandler(this.button1_Click);
+            this.btnRevisedHistory.Click += new System.EventHandler(this.btnRevisedHistory_Click);
             // 
             // btnShareWorkingHoursToSP
             // 
@@ -537,7 +537,7 @@
             this.btnShareWorkingHoursToSP.TabIndex = 7;
             this.btnShareWorkingHoursToSP.Text = "Share <working hours> to SP#";
             this.btnShareWorkingHoursToSP.UseVisualStyleBackColor = true;
-            this.btnShareWorkingHoursToSP.Click += new System.EventHandler(this.button2_Click);
+            this.btnShareWorkingHoursToSP.Click += new System.EventHandler(this.btnShareWorkingHoursToSP_Click);
             // 
             // labelFactory
             // 

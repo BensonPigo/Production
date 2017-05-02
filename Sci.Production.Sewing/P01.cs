@@ -1018,7 +1018,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         }
 
         //Date
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void dateDate_Validating(object sender, CancelEventArgs e)
         {
             if (EditMode && !MyUtility.Check.Empty(dateDate.Value) && dateDate.Value != dateDate.OldValue)
             {
@@ -1040,7 +1040,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         }
 
         //Manpower
-        private void numericBox1_Validated(object sender, EventArgs e)
+        private void numManpower_Validated(object sender, EventArgs e)
         {
             //值有異動過就要重算ManHour
             if (EditMode && numManpower.Value != numManpower.OldValue)
@@ -1050,7 +1050,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         }
 
         //W/Hours(Day)
-        private void numericBox2_Validated(object sender, EventArgs e)
+        private void numWHours_Validated(object sender, EventArgs e)
         {
             //值有異動過就要重算ManHour
             if (EditMode && numWHours.Value != numWHours.OldValue)
@@ -1066,7 +1066,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         }
 
         //Share < working hours > to SP#
-        private void button2_Click(object sender, EventArgs e)
+        private void btnShareWorkingHoursToSP_Click(object sender, EventArgs e)
         {
             DataTable SumQaQty;
             try
@@ -1107,7 +1107,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
         }
 
         //Revised History
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRevisedHistory_Click(object sender, EventArgs e)
         {
             Sci.Win.UI.ShowHistory callNextForm = new Sci.Win.UI.ShowHistory("SewingOutput_History", MyUtility.Convert.GetString(CurrentMaintain["ID"]), "Status", reasonType: "Sewing_RVS", caption: "Revised History");
             callNextForm.ShowDialog(this);

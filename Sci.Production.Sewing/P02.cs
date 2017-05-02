@@ -448,7 +448,7 @@ where sd.ID = '{0}'", masterID);
         }
 
         //Date
-        private void dateBox1_Validating(object sender, CancelEventArgs e)
+        private void dateDate_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(dateDate.Value))
             {
@@ -477,13 +477,13 @@ where sd.ID = '{0}'", masterID);
         }
 
         //Manpower
-        private void numericBox1_Validated(object sender, EventArgs e)
+        private void numManpower_Validated(object sender, EventArgs e)
         {
             CalculateManHour();
         }
 
         //W/Hours(Day)
-        private void numericBox2_Validated(object sender, EventArgs e)
+        private void numWHours_Validated(object sender, EventArgs e)
         {
             CalculateManHour();
         }
@@ -495,7 +495,7 @@ where sd.ID = '{0}'", masterID);
         }
 
         //Share < working hours > to SP#
-        private void button1_Click(object sender, EventArgs e)
+        private void btnShareWworkingHoursToSP_Click(object sender, EventArgs e)
         {
             DataTable SumQaQty;
             try

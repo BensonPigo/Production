@@ -40,7 +40,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         }
 
         //Date
-        private void dateBox1_Validated(object sender, EventArgs e)
+        private void dateDateStart_Validated(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(dateDateStart.Value))
             {
@@ -53,7 +53,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         }
 
         //Report Type
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboReportType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboReportType.SelectedIndex == 0)
             {
@@ -84,13 +84,13 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out fact
         }
 
         //Sewing Line
-        private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSewingLineStart_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtSewingLineStart.Text = SelectSewingLine(txtSewingLineStart.Text);
         }
 
         //Sewing Line
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtSewingLineEnd_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             txtSewingLineEnd.Text = SelectSewingLine(txtSewingLineEnd.Text);
         }

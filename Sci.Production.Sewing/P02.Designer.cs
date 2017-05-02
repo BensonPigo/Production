@@ -139,15 +139,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(918, 451);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(912, 405);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(912, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -219,7 +219,7 @@
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
             this.dateDate.TabIndex = 0;
-            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateBox1_Validating);
+            this.dateDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateDate_Validating);
             // 
             // displayFactory
             // 
@@ -297,7 +297,7 @@
             0,
             0,
             0});
-            this.numManpower.Validated += new System.EventHandler(this.numericBox1_Validated);
+            this.numManpower.Validated += new System.EventHandler(this.numManpower_Validated);
             // 
             // numWHours
             // 
@@ -329,7 +329,7 @@
             0,
             0,
             0});
-            this.numWHours.Validated += new System.EventHandler(this.numericBox2_Validated);
+            this.numWHours.Validated += new System.EventHandler(this.numWHours_Validated);
             // 
             // numManhours
             // 
@@ -516,7 +516,7 @@
             this.btnShareWworkingHoursToSP.TabIndex = 4;
             this.btnShareWworkingHoursToSP.Text = "Share < working hours > to SP#";
             this.btnShareWworkingHoursToSP.UseVisualStyleBackColor = true;
-            this.btnShareWworkingHoursToSP.Click += new System.EventHandler(this.button1_Click);
+            this.btnShareWworkingHoursToSP.Click += new System.EventHandler(this.btnShareWworkingHoursToSP_Click);
             // 
             // label12
             // 
