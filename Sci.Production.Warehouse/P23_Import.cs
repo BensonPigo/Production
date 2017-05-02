@@ -83,7 +83,6 @@ select  m.*
         ,isnull(xx.accu_qty,0)accu_qty 
 into #tmp
 from cte m 
-left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
 
 cross apply(
     select  sum(s2.Qty) as accu_qty 
