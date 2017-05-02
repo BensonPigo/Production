@@ -216,7 +216,14 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return 
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
                 if (dr.RowState != DataRowState.Added)
                 {
                     if (oldvalue == newvalue) return;
@@ -232,7 +239,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("<Roll> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
@@ -246,7 +253,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string oldvalue = dr["DryScale"].ToString();
                     string newvalue = e.FormattedValue.ToString();
-                    if (this.EditMode == false) return;
+                    if (!this.EditMode) return;//非編輯模式 
+                    if (e.RowIndex == -1) return; //沒東西 return
+                    if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                     if (dr.RowState != DataRowState.Added)
                     {
                         if (oldvalue == newvalue) return;
@@ -256,7 +265,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     DataRow roll_dr;
                     if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
-                        MyUtility.Msg.WarningBox("<Dry Scale> data not found!");
+                        MyUtility.Msg.WarningBox(string.Format("<Dry Scale: {0}> data not found!",e.FormattedValue));
                         dr["DryScale"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
@@ -269,7 +278,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["wetScale"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 if (dr.RowState != DataRowState.Added)
                 {
                     if (oldvalue == newvalue) return;
@@ -279,7 +290,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow roll_dr;
                 if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                 {
-                    MyUtility.Msg.WarningBox("<Wet Scale> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Wet Scale: {0}> data not found!",e.FormattedValue));
                     dr["wetScale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
@@ -292,7 +303,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["inspector"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 if (dr.RowState != DataRowState.Added)
                 {
                     if (oldvalue == newvalue) return;
@@ -302,7 +315,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                 {
 
-                    MyUtility.Msg.WarningBox("<Inspector> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!",e.FormattedValue));
                     dr["Inspector"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
@@ -522,7 +535,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     {
                         if (rolldt.Rows.Count < 1)
                         {
-                            MyUtility.Msg.WarningBox("Each Roll must be in Physical Contiunity");
+                            MyUtility.Msg.WarningBox("Each Roll must be in Physical Contiunity.");
                             return;
                         }
                     }
@@ -582,7 +595,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
@@ -693,7 +706,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             spam.Add(new SqlParameter("@poid", maindr["poid"]));
             if (!MyUtility.Check.Seek(cmd, spam, out maindr))
             {
-                MyUtility.Msg.InfoBox("Data is empty");
+                MyUtility.Msg.InfoBox("Data is empty.");
             }
 
         }

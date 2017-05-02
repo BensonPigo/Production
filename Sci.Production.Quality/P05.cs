@@ -283,7 +283,7 @@ namespace Sci.Production.Quality
 	            }
                 else
                 {
-                    MyUtility.Msg.InfoBox("fail");
+                    MyUtility.Msg.WarningBox("fail");
                 }
             }
             contextMenuStrip();          

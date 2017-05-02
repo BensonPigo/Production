@@ -262,8 +262,9 @@ where a.ID='{0}'",
             #region Valid Event
             defectCode.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataTable dt;
                 DualResult result;
@@ -274,7 +275,7 @@ where a.ID='{0}'",
                 {
                     if (dt.Rows.Count < 1)
                     {
-                        MyUtility.Msg.InfoBox("<Defect Code> is not exist");
+                        MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> is not exist",e.FormattedValue));
                         dr["GarmentDefectCodeid"] = "";
                         dr["Description"] = "";
                         dr["GarmentDefectTypeID"] = "";
@@ -305,7 +306,7 @@ where a.ID='{0}'",
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (Convert.ToInt32(e.FormattedValue) < 0)
                 {
-                    MyUtility.Msg.InfoBox("<No.Of Defects> cannot less than 0"); 
+                    MyUtility.Msg.WarningBox("<No.Of Defects> cannot less than 0"); 
                     dr["Qty"] = "";
                     return;
                 }
@@ -324,7 +325,7 @@ where a.ID='{0}'",
                     dr["CFAAreaID"] = e.FormattedValue;                }
                 else
                 {
-                    MyUtility.Msg.InfoBox("<Area Code> is not exist");
+                    MyUtility.Msg.WarningBox(string.Format("<Area Code: {0}> is not exist",e.FormattedValue));
                     dr["CFAAreaID"] = "";
                     dr["AreaDesc"] = "";
                     dr.EndEdit();
@@ -463,7 +464,7 @@ where a.ID='{0}'",
                 DataRow[] daArray = afterDT.Select(string.Format("GarmentDefectCodeid ='{0}'",MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
                 if (daArray.Length>1)
                 {
-                    MyUtility.Msg.WarningBox("<Defect Code>" + MyUtility.Convert.GetString(dr["GarmentDefectCodeid"]) + " is already exist! ");
+                    MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> is already exist! ", MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
                     return false;
                 }
             }
@@ -595,31 +596,6 @@ where a.ID='{0}'",
             }
         }
 
-        private void txtSP_Validated(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.txtSP.Text))
-            {
-                this.txtSP.Select();
-                return;
-            }
-            DataTable dt;
-            DualResult result;
-            string sqlcmd = string.Format(@"select a.ID,a.FactoryID,a.StyleID,a.Dest,a.CustPONo,a.Qty from Orders a WITH (NOLOCK) 
-where a.ID='{0}'", txtSP.Text);
-            result = DBProxy.Current.Select(null, sqlcmd, out dt);
-            if (result)
-            {
-                if (dt.Rows.Count>0)
-                {
-                    this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
-                    this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
-                    this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
-                    this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
-                    this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
-                }
-            }
-        }
-
         private void numGarmentOutput_TextChanged(object sender, EventArgs e)
         {
             this.numGarmentOutput.MaxLength = 3;
@@ -627,16 +603,17 @@ where a.ID='{0}'", txtSP.Text);
 
         private void txtSP_Validating(object sender, CancelEventArgs e)
         {
-           if (MyUtility.Check.Empty(this.txtSP.Text))
-                {
+            if (MyUtility.Check.Empty(this.txtSP.Text))
+            {
                 this.txtSP.Text = "";
                 this.txtStyle.Text = "";
                 this.txtDestination.Text = "";
                 this.txtFactory.Text = "";
                 this.txtPO.Text = "";
-                this.numOrderQty.Text = "0";  
+                this.numOrderQty.Text = "0";
                 this.numSQR.Text = "0";
-                    return;
+                this.txtSP.Focus();
+                return;
             }
             DataTable dt;   
             DualResult result;
@@ -645,9 +622,9 @@ where a.ID='{0}'", txtSP.Text);
             result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (result)
             {
-                if (dt.Rows.Count==0)
+                if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
                 {
-                    MyUtility.Msg.WarningBox("<SP#> Data is not found! ");
+                    MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ",this.txtSP.Text));
                     this.txtSP.Text = "";
                     this.txtStyle.Text = "";
                     this.txtDestination.Text = "";
@@ -656,8 +633,16 @@ where a.ID='{0}'", txtSP.Text);
                     this.numOrderQty.Text = "0";
                     this.numSQR.Text = "0";
                     this.txtSP.Focus();
-                    this.txtSP.Select();      
+                    e.Cancel = true;  
                     return;
+                }
+                else
+                {
+                    this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
+                    this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
+                    this.txtFactory.Text = dt.Rows[0]["FactoryID"].ToString();
+                    this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
+                    this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                 }
             }          
         }

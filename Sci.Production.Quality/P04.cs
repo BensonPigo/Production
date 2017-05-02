@@ -231,8 +231,9 @@ namespace Sci.Production.Quality
             };
             inspectorCell.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;// 
-                if (e.RowIndex == -1) return; //沒東西 return               
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return               
 
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr_cmd;
@@ -257,7 +258,7 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Inspector> : {0} not found!!!",e.FormattedValue));
+                    MyUtility.Msg.WarningBox(string.Format("< Inspector: {0}> not found!!!", e.FormattedValue));
                     dr["EditName"] = loginID;
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                     dr["inspector"] = "";
@@ -499,7 +500,7 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             {
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("The OrderID is not verify");
+                    MyUtility.Msg.WarningBox(string.Format("<The OrderID: {0}> is not verify", this.txtSP.Text));
                     txtSP.Text = "";
                     this.txtSP.Focus();
                     return;

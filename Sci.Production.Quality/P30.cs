@@ -142,8 +142,9 @@ namespace Sci.Production.Quality
 
             itemSelect.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 DataRow dr1;
                 string sqlcmd = string.Format(@"select  refno from PO_Supp_Detail a WITH (NOLOCK) ,Orders b WITH (NOLOCK) where a.id=b.POID and a.fabrictype='A'
@@ -157,7 +158,7 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
+                    MyUtility.Msg.WarningBox(string.Format("<Item: {0}> does not exist!",e.FormattedValue));
                     dr["Item"] = "";
                     dr.EndEdit();
                     e.Cancel = true; return;
@@ -197,7 +198,7 @@ where a.id=b.POID and a.fabrictype='A'
                 }
                 else
                 {
-                    MyUtility.Msg.InfoBox(e.FormattedValue + " does not exist!");
+                    MyUtility.Msg.WarningBox(string.Format("<Color: {0}> does not exist!", e.FormattedValue));
                     dr["Colorid"] = "";
                     dr.EndEdit();
                     e.Cancel = true; return;
@@ -381,12 +382,12 @@ where a.id=b.POID and a.fabrictype='A'
                 {
                     if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["ID"].ToString()))
                     {
-                        MyUtility.Msg.InfoBox("<ID> cannot be null !");
+                        MyUtility.Msg.WarningBox("<ID> cannot be null !");
                         return false;
                     }
                     if (detailDt.Rows[i].RowState != DataRowState.Deleted && MyUtility.Check.Empty(detailDt.Rows[i]["Type"].ToString()))
                     {
-                        MyUtility.Msg.InfoBox("<Main Item NO> cannot be null !");
+                        MyUtility.Msg.WarningBox("<Main Item NO> cannot be null !");
                         return false;
                     }
                 }

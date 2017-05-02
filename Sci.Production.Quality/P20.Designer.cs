@@ -55,10 +55,10 @@
             this.displayStyle = new Sci.Win.UI.DisplayBox();
             this.displayDestination = new Sci.Win.UI.DisplayBox();
             this.comboTeam = new Sci.Win.UI.ComboBox();
-            this.txtCPU = new Sci.Win.UI.TextBox();
             this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.comboShift = new Sci.Production.Class.txtdropdownlist();
+            this.txtCPU = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,9 +75,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.txtRFT);
-            this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.comboTeam);
             this.masterpanel.Controls.Add(this.comboShift);
             this.masterpanel.Controls.Add(this.displayDestination);
@@ -136,9 +136,9 @@
             this.masterpanel.Controls.SetChildIndex(this.displayDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboTeam, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRFT, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
             // 
             // detailpanel
             // 
@@ -159,15 +159,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(912, 400);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(906, 354);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(906, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -213,7 +213,6 @@
             this.txtSP.Size = new System.Drawing.Size(118, 23);
             this.txtSP.TabIndex = 3;
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
-            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
             // 
             // labelDate
             // 
@@ -495,17 +494,6 @@
             this.comboTeam.Size = new System.Drawing.Size(121, 24);
             this.comboTeam.TabIndex = 2;
             // 
-            // txtCPU
-            // 
-            this.txtCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtCPU.IsSupportEditMode = false;
-            this.txtCPU.Location = new System.Drawing.Point(576, 33);
-            this.txtCPU.Name = "txtCPU";
-            this.txtCPU.ReadOnly = true;
-            this.txtCPU.Size = new System.Drawing.Size(121, 23);
-            this.txtCPU.TabIndex = 136;
-            // 
             // txtRFT
             // 
             this.txtRFT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -540,6 +528,27 @@
             this.comboShift.Size = new System.Drawing.Size(150, 24);
             this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
+            // 
+            // txtCPU
+            // 
+            this.txtCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCPU.IsSupportEditMode = false;
+            this.txtCPU.Location = new System.Drawing.Point(576, 33);
+            this.txtCPU.Name = "txtCPU";
+            this.txtCPU.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.txtCPU.ReadOnly = true;
+            this.txtCPU.Size = new System.Drawing.Size(121, 23);
+            this.txtCPU.TabIndex = 139;
+            this.txtCPU.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P20
             // 
@@ -610,8 +619,8 @@
         private Win.UI.DisplayBox displayStyle;
         private Class.txtdropdownlist comboShift;
         private Win.UI.ComboBox comboTeam;
-        private Win.UI.TextBox txtCPU;
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
+        private Win.UI.NumericBox txtCPU;
     }
 }

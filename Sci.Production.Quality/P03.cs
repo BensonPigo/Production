@@ -355,7 +355,7 @@ order by a.seq1,a.seq2,a.Refno "
                   
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
@@ -431,7 +431,7 @@ order by a.seq1,a.seq2,a.Refno "
                 find_dr = detDtb.Select(find_new);
                 if (find_dr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox("Not+ Found");
+                    MyUtility.Msg.WarningBox("Not Found");
                     return;
                 }
                 else { index = 0; }

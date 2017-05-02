@@ -389,8 +389,8 @@ namespace Sci.Production.Quality
                     }
                     
                     _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    //MyUtility.Msg.WarningBox("Successfully");
+                    _transactionscope.Dispose();                    
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
@@ -462,7 +462,7 @@ namespace Sci.Production.Quality
                 find_dr = detDtb.Select(find_new);
                 if (find_dr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox("Not Found");
+                    MyUtility.Msg.WarningBox("Data not Found.");
                     return;
                 }
                 else { index = 0; }

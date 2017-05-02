@@ -228,13 +228,7 @@ namespace Sci.Production.Quality
             
             base.OnFormLoaded();
         }
-        //private void detailgrid_MouseClick(object sender, MouseEventArgs e)
-        //{
-        //    if (e.Button==MouseButtons.Right)
-        //    {
-        //        MyUtility.Msg.InfoBox("right click event");
-        //    }
-        //}
+     
 
         // Context Menu選擇Create New test
         private void CreateNewTest()
@@ -303,7 +297,7 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.InfoBox("fail");
+                    MyUtility.Msg.WarningBox("fail");
                 }
             }
             contextMenuStrip();

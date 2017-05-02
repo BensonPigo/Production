@@ -210,7 +210,14 @@ where a.ID='{0}'"
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return   
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
                 if (oldvalue == newvalue) return;
                 string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
@@ -222,7 +229,7 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("<Roll> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
@@ -403,7 +410,9 @@ where a.ID='{0}'"
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["inspector"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 if (oldvalue == newvalue) return;
                 string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is null where a.id ='{0}'", maindr["id"]);
                 DataRow roll_dr;
@@ -414,7 +423,7 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("<Inspector> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!",e.FormattedValue));
                     dr["Inspector"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
@@ -723,7 +732,7 @@ where a.ID='{0}'"
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
@@ -778,7 +787,7 @@ where a.ID='{0}'"
             spam.Add(new SqlParameter("@poid", maindr["poid"]));
             if (!MyUtility.Check.Seek(cmd,spam,out maindr))
             {
-                MyUtility.Msg.InfoBox("Data is empty");            
+                MyUtility.Msg.WarningBox("Data is empty");            
             }
           
         }

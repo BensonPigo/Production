@@ -151,8 +151,9 @@ namespace Sci.Production.Quality
                     string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
+                    if (result == DialogResult.Cancel) { return; }                    
+                    dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
+                    dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                 }
             };
             Rollcell.CellValidating += (s, e) =>
@@ -160,7 +161,14 @@ namespace Sci.Production.Quality
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
                 if (oldvalue == newvalue) return;
                 string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
@@ -172,7 +180,7 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("<Roll> data not found!");
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
@@ -449,7 +457,7 @@ namespace Sci.Production.Quality
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {

@@ -162,7 +162,7 @@ namespace Sci.Production.Quality
                         }
                         _transactionscope.Complete();
                         _transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox("Successfully");
+                        MyUtility.Msg.InfoBox("Successfully");
                         this.btnAmend.Text = "Amend";
                         this.btnEdit.Text = "Edit";
                         this.btnEdit.Enabled = false;
@@ -339,7 +339,7 @@ namespace Sci.Production.Quality
                                 }
                                 _transactionscope.Complete();
                                 _transactionscope.Dispose();
-                                MyUtility.Msg.WarningBox("Successfully");
+                                MyUtility.Msg.InfoBox("Successfully");
                                 this.btnAmend.Text = "Encode";
                                 this.btnEdit.Text = "Edit";
                                 this.btnAmend.Enabled = true;

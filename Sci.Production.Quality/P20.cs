@@ -51,13 +51,34 @@ namespace Sci.Production.Quality
             string textValue = this.txtSP.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtSP.OldValue)
             {
-                // 20161101 willy 修改and to or 原因文件上所示：編輯狀態下判斷若RFT.OrderID # Order.ID 或　Order.Factoryid # 登入工廠
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Orders WITH (NOLOCK) where ID='{0}' or MDivisionID='{1}'", textValue, Sci.Env.User.Keyword)))
+                DataTable dt; 
+                DualResult result;
+                string cmd = string.Format(@"select id,styleid,dest,cpu from Orders WITH (NOLOCK) where ID='{0}' and FactoryID='{1}'", textValue, Sci.Env.User.Factory);
+
+                // 修改and to or 原因如文件上所示：編輯狀態下判斷若RFT.OrderID <> Order.ID 或　Order.Factoryid <> 登入工廠
+                if (result = DBProxy.Current.Select(null, cmd, out dt))
+                {                    
+                    if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("< SP#: {0}> does not exist OR Factory is not match !!", textValue));
+                        this.txtSP.Text = "";
+                        displayStyle.Text = "";
+                        displayDestination.Text = "";
+                        this.txtCPU.Value = 0;
+                        this.txtSP.Focus(); 
+                        e.Cancel = true;
+                        return;
+                    }
+                    else
+                    {
+                        displayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                        displayDestination.Text = dt.Rows[0]["dest"].ToString();
+                        txtCPU.Value = MyUtility.Convert.GetDecimal( dt.Rows[0]["cpu"]);
+                    }
+                }
+                else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< SP# > does not exist OR Factory is not match !!", textValue));
-                    this.txtSP.Text = "";                                       
-                    e.Cancel = true;
-                    return;
+                    MyUtility.Msg.WarningBox("Error:"+ result);
                 }
             }
         }
@@ -85,7 +106,7 @@ namespace Sci.Production.Quality
                 this.displayStyle.Text = dr["StyleID"].ToString().Trim();
                 this.displayCell.Text = dr["SewingCell"].ToString().Trim();
                 this.displayDestination.Text = dr["Dest"].ToString().Trim();
-                this.txtCPU.Text = MyUtility.Convert.GetDecimal(dr["CPU"]).ToString().Trim();
+                this.txtCPU.Value = MyUtility.Convert.GetDecimal(dr["CPU"]);
                 this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
@@ -192,9 +213,10 @@ namespace Sci.Production.Quality
             #region CellValidating
             GarmentDefectCodeIDCell.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return                
                 var dr = this.CurrentDetailData;
-                if (e.FormattedValue.ToString().Trim() == "")
+                if (MyUtility.Check.Empty(e.FormattedValue.ToString()))
                 {
                     dr["GarmentDefectCodeID"] = "";
                     dr["Description"] = "";
@@ -211,7 +233,7 @@ namespace Sci.Production.Quality
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<Defect Code> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["GarmentDefectCodeID"] = "";
                     dr["Description"] = "";
                     dr["GarmentDefectTypeid"] = "";
@@ -342,7 +364,7 @@ namespace Sci.Production.Quality
             afterDT.AcceptChanges();
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["GarmentDefectCodeID"])))
             {
-                MyUtility.Msg.InfoBox("<Defect Code> cannot be null!");
+                MyUtility.Msg.WarningBox("<Defect Code> cannot be null!");
                 return false;
             }
             foreach (DataRow dr in afterDT.Rows)
@@ -350,7 +372,7 @@ namespace Sci.Production.Quality
                 DataRow[] daArray = afterDT.Select(string.Format("GarmentDefectCodeID ='{0}'", MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
                 if (daArray.Length > 1)
                 {
-                    MyUtility.Msg.WarningBox("<Defect Code>" + MyUtility.Convert.GetString(dr["GarmentDefectCodeid"]) + " is already exist! ");
+                    MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> is already exist! ", MyUtility.Convert.GetString(dr["GarmentDefectCodeid"])));
                     return false;
                 }
             }   
@@ -361,7 +383,7 @@ namespace Sci.Production.Quality
             DBProxy.Current.Select(null, sql, out dt);
             if (dt.Rows.Count > 0 && isNew)// 如果是新增,才判斷ＳＰ＃是否存在
             {
-                MyUtility.Msg.InfoBox(" SP#,Shift,Team,Date,Factory can't be same in dataBase,please pick one least to change!");
+                MyUtility.Msg.WarningBox(" SP#,Shift,Team,Date,Factory can't be same in dataBase,please pick one least to change!");
                 return false;
             }
 
@@ -446,29 +468,9 @@ namespace Sci.Production.Quality
             this.displayStyle.Text = "";
             this.displayDestination.Text = "";
             this.txtRFT.Text="";
-            this.txtCPU.Text = "";
+            this.txtCPU.Value = 0;
             this.isNew = true;
             return base.ClickNew();
-        }
-
-        private void txtSP_Validated(object sender, EventArgs e)
-        {
-        
-            if (MyUtility.Check.Empty(this.txtSP.Text)) return;
-            DataTable dt;
-            DualResult result;
-            string sqlcmd = string.Format(@"select StyleID,Dest,CPU from Orders WITH (NOLOCK) where id='{0}' ", txtSP.Text.ToString());
-            result = DBProxy.Current.Select(null, sqlcmd,out dt);            
-            if (result)
-            {
-                if (dt.Rows.Count>0)
-                {
-                    displayStyle.Text = dt.Rows[0]["styleid"].ToString();
-                    displayDestination.Text = dt.Rows[0]["dest"].ToString();
-                    txtCPU.Text = dt.Rows[0]["cpu"].ToString();
-                }
-               
-            }
         }
     }
 }

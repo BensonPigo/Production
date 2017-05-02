@@ -312,7 +312,8 @@ namespace Sci.Production.Quality
         }
 
         private void OvenTest()
-        {           
+        {
+            if (!IsSupportEdit || EditMode) return;          
             var dr = this.CurrentDetailData;
             if (dr == null) return;
             string currentID = this.CurrentDetailData["ID"].ToString();
@@ -343,6 +344,7 @@ namespace Sci.Production.Quality
         }
         private void WashTest()
         {
+            if (!IsSupportEdit || EditMode) return;          
             var dr = this.CurrentDetailData;
             if (dr == null) return;
             Sci.Production.Quality.P07_Wash callWasHDetailForm = new P07_Wash(true, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);

@@ -275,7 +275,7 @@ namespace Sci.Production.Quality
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
@@ -350,7 +350,7 @@ namespace Sci.Production.Quality
 
         private void ModifyDetail()
         {
-            if (!IsSupportEdit) return;
+            if (!IsSupportEdit||EditMode) return;   //沒編輯權限 OR 編輯模式下 不能跳下一層編輯
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;

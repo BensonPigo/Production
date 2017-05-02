@@ -324,11 +324,21 @@ and a.seq1=@seq1";
             };
             seqMskCell.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 DataTable dt;
                 DataTable dt1;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空
+                {
+                    dr["SEQ"] = "";
+                    dr["seq1"] = "";
+                    dr["seq2"] = "";
+                    dr["scirefno"] = "";
+                    dr["refno"] = "";
+                    dr["colorid"] = "";
+                    return;  
+                }
 
                 dr["seq1"] = e.FormattedValue.ToString().PadRight(5).Substring(0, 3);
                 dr["seq2"] = e.FormattedValue.ToString().PadRight(5).Substring(3, 2);
@@ -345,7 +355,7 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, sql_cmd, out dt1);
                 if (dt1.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<SEQ#> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ#: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["SEQ"] = "";
                     dr["seq1"] = "";
                     dr["seq2"] = "";
@@ -375,7 +385,7 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     return;
@@ -479,11 +489,16 @@ and a.seq1=@seq1";
             };
             rollCell.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) { return; }
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return; 
+                }
                 #region 新資料 不判斷SEQ
                 //if (newOven)//
                 //{
@@ -518,7 +533,7 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<Roll> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
@@ -576,8 +591,9 @@ and a.seq1=@seq1";
             };
             chgCell.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue)) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@ChangeScale";
@@ -587,7 +603,7 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<Color Change Scal> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<Color Change Scal: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Changescale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
@@ -637,8 +653,9 @@ and a.seq1=@seq1";
             };
             staCell.CellValidating += (s, e) =>
             {
-                if (this.EditMode == false) return;
-                if (MyUtility.Check.Empty(e.FormattedValue )) return;
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@StainingScale";
@@ -648,7 +665,7 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("<Color Staining Scale> doesn't exist in Data!");
+                    MyUtility.Msg.WarningBox(string.Format("<Color Staining Scale: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["StainingScale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
@@ -699,18 +716,18 @@ and a.seq1=@seq1";
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
             {
-                MyUtility.Msg.InfoBox("<Article> cannot be empty!!");
+                MyUtility.Msg.WarningBox("<Article> cannot be empty!!");
                 this.txtArticle.Select();
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtuserInspector.TextBox1.Text))
             {
-                MyUtility.Msg.InfoBox("<Inspector> cannot be empty!!");
+                MyUtility.Msg.WarningBox("<Inspector> cannot be empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(this.dateTestDate.Value))
             {
-                MyUtility.Msg.InfoBox("<Test Date> cannot be empty!!");
+                MyUtility.Msg.WarningBox("<Test Date> cannot be empty!!");
                 return false;
             }
             return base.OnSaveBefore();
@@ -902,7 +919,7 @@ SET IDENTITY_INSERT oven off";
             {
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.InfoBox("Article doesn't exist in orders");
+                    MyUtility.Msg.WarningBox(string.Format("<Article: {0}> doesn't exist in orders", txtArticle.Text));
                     txtArticle.Text = "";
                     txtArticle.Select();
                     e.Cancel = true;
@@ -926,7 +943,7 @@ SET IDENTITY_INSERT oven off";
             {
                 if (dt.Rows.Count <= 0)
 	            {
-                    MyUtility.Msg.InfoBox("Data is empty please Append first!");
+                    MyUtility.Msg.WarningBox("Data is empty please Append first!");
                     return;
 	            }
 
@@ -936,27 +953,27 @@ SET IDENTITY_INSERT oven off";
                     {
                         if (MyUtility.Check.Empty(dr["ovenGroup"]))
                         {
-                            MyUtility.Msg.InfoBox("<Group> can not be empty!");
+                            MyUtility.Msg.WarningBox("<Group> can not be empty!");
                             return;
                         }
                         if (MyUtility.Check.Empty(dr["Seq"]))
                         {
-                            MyUtility.Msg.InfoBox("<SEQ> can not be empty!");
+                            MyUtility.Msg.WarningBox("<SEQ> can not be empty!");
                             return;
                         }
                         if (MyUtility.Check.Empty(dr["Changescale"]))
                         {
-                            MyUtility.Msg.InfoBox("<Color Change Scale> can not be empty!");
+                            MyUtility.Msg.WarningBox("<Color Change Scale> can not be empty!");
                             return;
                         }
                         if (MyUtility.Check.Empty(dr["StainingScale"]))
                         {
-                            MyUtility.Msg.InfoBox("<Color Staining Scale> can not be empty!");
+                            MyUtility.Msg.WarningBox("<Color Staining Scale> can not be empty!");
                             return;
                         }
                         if (MyUtility.Check.Empty(dr["Result"]))
                         {
-                            MyUtility.Msg.InfoBox("<Result> can not be empty!");
+                            MyUtility.Msg.WarningBox("<Result> can not be empty!");
                             return;
                         }
                         if (dr["Result"].ToString().Trim().ToUpper() == "FAIL")

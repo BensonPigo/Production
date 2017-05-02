@@ -399,7 +399,6 @@
             this.txtSP.Size = new System.Drawing.Size(141, 23);
             this.txtSP.TabIndex = 2;
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
-            this.txtSP.Validated += new System.EventHandler(this.txtSP_Validated);
             // 
             // txtStyle
             // 
