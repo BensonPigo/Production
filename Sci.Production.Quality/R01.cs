@@ -349,7 +349,9 @@ ORDER BY POID,SEQ";
             xl.dicDatas.Add("##supp", Supp);
             xl.dicDatas.Add("##Over", Over);
             xl.dicDatas.Add("##body", dt);
+            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
             xl.Save();
+            wks.Columns.AutoFit();
             return true;
             
         }
