@@ -841,7 +841,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 objSheets.get_Range("A" + (3 + printData.Rows.Count), lastright).Interior.Color = Color.FromArgb(204, 255, 102);//最後一列儲存格背景色
                 objSheets.get_Range("A2", lastright).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;//設定有資料範圍所有框線
                 objSheets.get_Range("A2", lastright).EntireRow.AutoFit();//自動調整列高
-
+                objSheets.Columns.AutoFit();
                 objApp.Visible = true;//Excell顯示
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
@@ -891,7 +891,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
 
                 //Range all = objSheets.get_Range(top, bottom);
                 //all.Interior.Color = Color.FromArgb(222, 186, 252);
-
+                objSheets.Columns.AutoFit();
                 objApp.Visible = true;//Excell顯示
                 if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
                 if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
