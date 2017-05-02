@@ -33,7 +33,7 @@ namespace Sci.Production.Warehouse
 
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();
+            base.OnFormLoaded();            
             this.Text += string.Format(@" ({0}-{1}-{2})", dr["id"], dr["seq1"], dr["seq2"]);  //351: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，3.Tool bar要帶出SP# & Seq
             this.displaySeqNo.Text = dr["seq1"].ToString() + "-" + dr["seq2"].ToString();
             this.displayDescription.Text = MyUtility.GetValue.Lookup(string.Format("select dbo.getmtldesc('{0}','{1}','{2}',2,0)", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString()));
@@ -322,6 +322,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 MyUtility.Msg.ErrorBox("Data error ,Please doubleclick 'Balance' field to click 'Re-Calculate' button for recalculate inventory qty, then retry to doubleclick this 'Release Qty' field.!!");
                 return;
             }
+            this.comboStockType.Text = "ALL";
         }
 
         private void button1_Click(object sender, EventArgs e)
