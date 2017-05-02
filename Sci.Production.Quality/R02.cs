@@ -289,7 +289,9 @@ OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) whe
             xl.dicDatas.Add("##supp", Supp);
             xl.dicDatas.Add("##Over", Over);
             xl.dicDatas.Add("##body", dt);
+            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
             xl.Save("", false);
+            wks.Columns.AutoFit();
             return true;
 
         }
