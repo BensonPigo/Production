@@ -275,7 +275,7 @@ namespace Sci.Production.Planning
 
         DataTable dtData = null;
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             numCheckedQty.Value = 0;
           //  DataTable dtData;
@@ -439,13 +439,13 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
     
         //close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             CheckData();
             DualResult result;
@@ -515,7 +515,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
 
         //Find SP#
-        private void button2_Click(object sender, EventArgs e)
+        private void btnLocateForSPNoFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("id", txtLocateForSPNo.Text.TrimEnd());
@@ -537,7 +537,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
 
         //Filter empty Supp ID , In Line
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void checkSuppID_CheckedChanged(object sender, EventArgs e)
         {
             listControlBindingSource1.Filter = "";
             if (checkSuppID.Checked && checkInLine.Checked) listControlBindingSource1.Filter = " localsuppid ='' and ArtworkInLine is null ";
@@ -612,7 +612,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
 
         //update inline
-        private void button5_Click(object sender, EventArgs e)
+        private void btnUpdateInline_Click(object sender, EventArgs e)
         {
             decimal stdq = 0m;
             int wkdays = 0;
@@ -648,7 +648,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
 
         //Check data
-        private void button7_Click(object sender, EventArgs e)
+        private void btnCheckData_Click(object sender, EventArgs e)
         {
             CheckData();
         }
@@ -727,7 +727,7 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
         }
 
         //find Style#
-        private void button6_Click_1(object sender, EventArgs e)
+        private void btnLocateForStyleNoFind_Click_1(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("Styleid", txtLocateForStyleNo.Text.TrimEnd());

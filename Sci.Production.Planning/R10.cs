@@ -1299,7 +1299,7 @@ namespace Sci.Production.Planning
             }
         }
 
-        private void rdHalfMonth_CheckedChanged(object sender, EventArgs e)
+        private void radioSemimonthlyReport_CheckedChanged(object sender, EventArgs e)
         {
             labelMonth.Visible = radioSemimonthlyReport.Checked;
             numMonth.Visible = radioSemimonthlyReport.Checked;
@@ -1311,7 +1311,7 @@ namespace Sci.Production.Planning
 
         }
 
-        private void raProductionStatus_CheckedChanged(object sender, EventArgs e)
+        private void radioProductionStatus_CheckedChanged(object sender, EventArgs e)
         {
             labelMonth.Visible = radioProductionStatus.Checked;
             numMonth.Visible = radioProductionStatus.Checked;
