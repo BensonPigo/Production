@@ -195,7 +195,7 @@ namespace Sci.Production.Cutting
                                                 ,a.Parts [Parts]
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
-                                                ,b.MDivisionid [left]
+                                                ,c.FactoryID  [left]
                                         from dbo.Bundle_Detail a WITH (NOLOCK)
                                         left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
                                         left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -231,7 +231,7 @@ namespace Sci.Production.Cutting
                                                 ,d.Parts [Parts]
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
-                                                ,b.MDivisionid [left]
+                                                ,c.FactoryID  [left]
                                         from dbo.Bundle_Detail a WITH (NOLOCK)
                                         left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
                                         left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -274,7 +274,7 @@ namespace Sci.Production.Cutting
                                                 ,a.Parts [Parts]
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
-                                                ,b.MDivisionid [left]
+                                                ,c.FactoryID  [left]
                                         from dbo.Bundle_Detail a WITH (NOLOCK)
                                         left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
                                         left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
@@ -310,7 +310,7 @@ namespace Sci.Production.Cutting
                                                 ,a.Parts [Parts]
                                                 ,a.Qty [Qty]
                                                 ,b.PatternPanel +'-'+convert(varchar ,b.cutno) [Body_Cut]
-                                                ,b.MDivisionid [left]
+                                                ,c.FactoryID  [left]
                                         from dbo.Bundle_Detail a WITH (NOLOCK)
                                         left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
                                         left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid

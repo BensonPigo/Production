@@ -60,7 +60,7 @@ namespace Sci.Production.Cutting
                 {
                     #region SQL
                     scmd = string.Format(@"select a.BundleGroup [Group_right]
-		                                            ,b.MDivisionid [Group_left]
+		                                            ,c.FactoryID  [Group_left]
                                                     ,b.Sewinglineid [Line]
                                                     ,b.SewingCell [Cell]
                                                     ,b.Orderid [SP]
@@ -87,7 +87,7 @@ namespace Sci.Production.Cutting
                                             union all
 
                                             select a.BundleGroup [Group_right]
-		                                            ,b.MDivisionid [Group_left]
+		                                            ,c.FactoryID  [Group_left]
                                                     ,b.Sewinglineid [Line]
                                                     ,b.SewingCell [Cell]
                                                     ,b.Orderid [SP]
@@ -118,7 +118,7 @@ namespace Sci.Production.Cutting
                 {
                     #region SQL
                     scmd = string.Format(@"select a.BundleGroup [Group_right]
-		                                            ,b.MDivisionid [Group_left]
+		                                            ,c.FactoryID  [Group_left]
                                                     ,b.Sewinglineid [Line]
                                                     ,b.SewingCell [Cell]
                                                     ,b.Orderid [SP]
@@ -146,7 +146,7 @@ namespace Sci.Production.Cutting
                                             union all
 
                                             select a.BundleGroup [Group_right]
-		                                            ,b.MDivisionid [Group_left]
+		                                            ,c.FactoryID  [Group_left]
                                                     ,b.Sewinglineid [Line]
                                                     ,b.SewingCell [Cell]
                                                     ,b.Orderid [SP]
