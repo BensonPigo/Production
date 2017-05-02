@@ -46,61 +46,85 @@ namespace Sci.Production.Warehouse
                 #region -- Sql Command --
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
-select rtrim(pd.ID) poid ,rtrim(pd.seq1) seq1,pd.seq2,pd.POUnit,pd.StockUnit,pd.Qty*isnull(u.RateValue,1) poqty,o.FactoryID ToFactoryID
-	,dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
-	,x.InventoryPOID,x.InventorySeq1,x.InventorySeq2
-	,x.earliest,x.lastest,x.taipei_qty*isnull(u.RateValue,1) taipei_qty
-from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id 
-left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
-inner join dbo.factory f WITH (NOLOCK) on f.id = o.FtyGroup
-cross apply
-(
- select i.InventoryPOID,i.InventorySeq1,i.InventorySeq2,
- min(i.ConfirmDate) earliest,max(i.confirmdate) lastest,sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
- from dbo.Invtrans i WITH (NOLOCK) 
- where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
-and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 
-and (i.type=2 or i.type=6)
-group by i.InventoryPOID,i.InventorySeq1,i.InventorySeq2
-)x
-where f.MDivisionID='{0}' and pd.ID = @poid
+    select  rtrim(pd.ID) poid 
+            , rtrim(pd.seq1) seq1
+            , pd.seq2
+            , pd.POUnit
+            , pd.StockUnit
+            , Round(dbo.GetUnitQty(POUnit, StockUnit, pd.Qty), 2) poqty
+            , o.FactoryID ToFactoryID
+	        , dbo.getMtlDesc(poid,seq1,seq2,2,0) as [description]
+	        , x.InventoryPOID
+            , x.InventorySeq1
+            , x.InventorySeq2
+	        , x.earliest
+            , x.lastest
+            , Round(dbo.GetUnitQty(POUnit, StockUnit, x.taipei_qty), 2) taipei_qty
+    from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
+    inner join dbo.orders o WITH (NOLOCK) on o.id = pd.id
+    inner join dbo.factory f WITH (NOLOCK) on f.id = o.FtyGroup
+
+    cross apply(
+        select  i.InventoryPOID
+                , i.InventorySeq1
+                , i.InventorySeq2
+                , min(i.ConfirmDate) earliest
+                , max(i.confirmdate) lastest
+                , sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+        from dbo.Invtrans i WITH (NOLOCK) 
+        where i.InventoryPOID = pd.StockPOID and i.InventorySeq1 = pd.StockSeq1 
+            and i.PoID = pd.ID and i.InventorySeq2 = pd.StockSeq2 
+            and (i.type=2 or i.type=6)
+        group by i.InventoryPOID,i.InventorySeq1,i.InventorySeq2
+    )x
+    where f.MDivisionID='{0}' and pd.ID = @poid
 )
-select m.*,isnull(xx.accu_qty,0)accu_qty into #tmp
-from cte m left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
-cross apply
-(
-		select sum(s2.Qty) as accu_qty from dbo.SubTransfer s1 WITH (NOLOCK) inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
-			where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' 
-				and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
-  ) xx
-select * from #tmp order by poid,seq1,seq2 ;
-select 0 AS selected,'' as id
-,o.FactoryID FromFactoryID
-,fi.POID FromPOID
-,fi.seq1 Fromseq1
-,fi.seq2 Fromseq2
-,dbo.getmtldesc(fi.POID,fi.seq1,fi.seq2,2,0) as [description]
-,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
-,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType
-,fi.Ukey as fromftyinventoryukey 
-,fi.InQty,fi.OutQty,fi.AdjustQty
-,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
-,0.00 as qty
-,StockUnit
-,isnull((select inqty from dbo.FtyInventory t WITH (NOLOCK) 
-	where t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
-	and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot),0) as [accu_qty]
-,dbo.Getlocation(fi.ukey) as [Location]
-,#tmp.ToFactoryID
-,rtrim(#tmp.poid) ToPOID
-,rtrim(#tmp.seq1) ToSeq1
-,#tmp.seq2 ToSeq2
-,concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2) as toseq
-,fi.roll ToRoll,fi.dyelot ToDyelot
-,'B' as [ToStockType]
-,'' as [ToLocation]
-,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by #tmp.ToFactoryID,#tmp.poid,#tmp.seq1,#tmp.seq2,fi.dyelot)
+select  m.*
+        ,isnull(xx.accu_qty,0)accu_qty 
+into #tmp
+from cte m 
+left join Unit_Rate u WITH (NOLOCK) on u.UnitFrom = POUnit and u.UnitTo = StockUnit
+
+cross apply(
+    select  sum(s2.Qty) as accu_qty 
+    from dbo.SubTransfer s1 WITH (NOLOCK) 
+    inner join dbo.SubTransfer_Detail s2 WITH (NOLOCK) on s2.Id= s1.Id 
+	where s1.type ='B' and s1.Status ='Confirmed' and s2.ToStockType = 'B' 
+		and s2.ToPOID = m.poid and s2.ToSeq1 = m.seq1 and s2.ToSeq2 = m.seq2 and s1.Id !='{1}'
+) xx
+
+select * 
+from #tmp 
+order by poid,seq1,seq2 ;
+
+select  0 AS selected
+        , '' as id
+        , o.FactoryID FromFactoryID
+        , fi.POID FromPOID
+        , fi.seq1 Fromseq1
+        , fi.seq2 Fromseq2
+        , dbo.getmtldesc(fi.POID,fi.seq1,fi.seq2,2,0) as [description]
+        , concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
+        , fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType
+        , fi.Ukey as fromftyinventoryukey 
+        , fi.InQty,fi.OutQty,fi.AdjustQty
+        , fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
+        , 0.00 as qty
+        , StockUnit
+        , isnull((  select inqty from dbo.FtyInventory t WITH (NOLOCK) 
+                    where t.POID = #tmp.POID and t.seq1 = #tmp.seq1 and t.seq2 = #tmp.seq2 and t.StockType = 'B' 
+	                    and t.Roll = fi.Roll and t.Dyelot = fi.Dyelot)
+                ,0) as [accu_qty]
+        , dbo.Getlocation(fi.ukey) as [Location]
+        , #tmp.ToFactoryID
+        , rtrim(#tmp.poid) ToPOID
+        , rtrim(#tmp.seq1) ToSeq1
+        , #tmp.seq2 ToSeq2
+        , concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2) as toseq
+        , fi.roll ToRoll,fi.dyelot ToDyelot
+        , 'B' as [ToStockType]
+        , '' as [ToLocation]
+        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by #tmp.ToFactoryID,#tmp.poid,#tmp.seq1,#tmp.seq2,fi.dyelot)
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID and fi.seq1 = Inventoryseq1 and fi.seq2 = InventorySEQ2 and fi.StockType = 'I'
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
