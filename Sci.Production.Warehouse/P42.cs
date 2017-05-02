@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         {
             
             base.OnFormLoaded();
-            this.checheckEptyEachCons.Checked = true;
+            this.checkEmptyEachCons.Checked = true;
             this.checkEmptyMtlETA.Checked = true;
             dateInline.Value = DateTime.Now;
             dateOffline.Value = DateTime.Now;
@@ -126,7 +126,7 @@ namespace Sci.Production.Warehouse
                   ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
@@ -137,7 +137,7 @@ namespace Sci.Production.Warehouse
             buyerdlv_b = null;
             buyerdlv_e = null;
             bool eachchk, mtletachk;
-            eachchk = checheckEptyEachCons.Checked;
+            eachchk = checkEmptyEachCons.Checked;
             mtletachk = checkEmptyMtlETA.Checked;
 
             if (dateSewingInline.Value1 != null) sewinline_b = this.dateSewingInline.Text1;
@@ -231,12 +231,12 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             DualResult result;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
@@ -334,7 +334,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("poid", txtLocateForSP.Text.TrimEnd());
@@ -352,12 +352,12 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             this.displayCheckedQty.Value = MyUtility.Convert.GetDecimal(localPrice).ToString("F2");            
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkEmptyEachCons_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxs_Status();
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void checkEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxs_Status();
         }
@@ -367,7 +367,7 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.Use
             if(listControlBindingSource1.DataSource == null)
                 return;
             string formatStr = "";
-            if (checheckEptyEachCons.Checked) formatStr += "EachConsApv is not null ";
+            if (checkEmptyEachCons.Checked) formatStr += "EachConsApv is not null ";
             if (checkEmptyMtlETA.Checked)
                 formatStr += (formatStr.EqualString("")) ? "ETA is not null" : "and ETA is not null";
 

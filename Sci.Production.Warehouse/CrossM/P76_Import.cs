@@ -42,7 +42,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow currentRow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(currentRow["stocktype"].ToString(), currentRow["location"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    DataRow currentRow = grid1.GetDataRow(grid1.GetSelectedRowIndex());
+                    DataRow currentRow = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     currentRow["location"] = e.FormattedValue;
                     string sqlcmd = string.Format(@"
 SELECT  id 
@@ -93,9 +93,9 @@ WHERE   StockType='{0}'
             };
             #endregion
 
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = TaipeiOutputBS;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            this.gridImport.DataSource = TaipeiOutputBS;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4)) 
@@ -139,14 +139,14 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-         private void btn_Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
+            gridImport.ValidateControl();
             DataTable dt = (DataTable)TaipeiOutputBS.DataSource;
             DataRow[] dr2 = dt.Select("Selected = 1");
             if (dr2.Length == 0)

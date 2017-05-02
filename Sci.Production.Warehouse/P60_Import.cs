@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             DateTime? issueDate1, issueDate2;
             String localpoid = this.txtLocalPO.Text;
@@ -182,14 +182,14 @@ Where b.Qty - b.InQty >0
             col_remark.DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
 
             gridImport.ValidateControl();

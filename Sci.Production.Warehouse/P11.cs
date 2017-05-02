@@ -690,7 +690,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             gridIssueBreakDown.IsEditingReadOnly = true;
             gridIssueBreakDown.ReadOnly = true;
 
-            checkBox1_CheckedChanged(null,null);
+            checkByCombo_CheckedChanged(null, null);
 
             return Result.True;
         }
@@ -1059,7 +1059,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             frm.ShowDialog(this);
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
             //((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
             //刪除表身重新匯入
@@ -1350,7 +1350,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 conn.Close();
             }
         }
-        private void textBox1_Validating(object sender, EventArgs e)
+        private void txtOrderID_Validating(object sender, EventArgs e)
         {
             if (txtOrderID.Text == txtOrderID.OldValue) return;
             CurrentMaintain["orderid"] = txtOrderID.Text;
@@ -1371,7 +1371,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             }
         }
 
-        private void textBox1_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
+        private void txtOrderID_Validated(object sender, EventArgs e) //若order ID有變，重新撈取資料庫。
         {
             if (txtOrderID.Text == txtOrderID.OldValue) return;
            // DBProxy.Current.Execute(null, string.Format("delete from dbo.issue_breakdown where id='{0}';", CurrentMaintain["id"].ToString()));
@@ -1465,7 +1465,7 @@ where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetail
             return Result.True;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkByCombo_CheckedChanged(object sender, EventArgs e)
         {
             if (dtIssueBreakDown == null) return;
             if (checkByCombo.Checked)

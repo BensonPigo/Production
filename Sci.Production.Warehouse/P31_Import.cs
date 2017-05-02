@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtToSP.Text.TrimEnd();
@@ -174,14 +174,14 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq
             cbb_stocktype.DisplayMember = "Value";
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
 
@@ -249,7 +249,7 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq
         }
 
         // To SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtToSP_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 

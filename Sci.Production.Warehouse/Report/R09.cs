@@ -25,36 +25,36 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbFilter, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
-            cbbFilter.SelectedIndex = 0;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
+            comboFilterCondition.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
-                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
-                MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) && MyUtility.Check.Empty(txtSpno2.Text)))
+            if (MyUtility.Check.Empty(dateDeadLine.Value1) && MyUtility.Check.Empty(dateDeadLine.Value2) &&
+                MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) &&
+                MyUtility.Check.Empty(dateInventoryETA.Value1) && MyUtility.Check.Empty(dateInventoryETA.Value2) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Dead Line > & < Buyer Delivery > & < SP# > & < ETA > can't be empty!!");
                 return false;
             }
 
-            deadline1 = dateRange1.Value1;
-            deadline2 = dateRange1.Value2;
-            buyerDelivery1 = dateRange2.Value1;
-            buyerDelivery2 = dateRange2.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
-            eta1 = dateRange3.Value1;
-            eta2 = dateRange3.Value2;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            refno1 = txtRefno1.Text;
-            refno2 = txtRefno2.Text;
-            filterIndex = cbbFilter.SelectedIndex;
+            deadline1 = dateDeadLine.Value1;
+            deadline2 = dateDeadLine.Value2;
+            buyerDelivery1 = dateBuyerDelivery.Value1;
+            buyerDelivery2 = dateBuyerDelivery.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
+            eta1 = dateInventoryETA.Value1;
+            eta2 = dateInventoryETA.Value2;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            refno1 = txtRefnoStart.Text;
+            refno2 = txtRefnoEnd.Text;
+            filterIndex = comboFilterCondition.SelectedIndex;
 
             return base.ValidateInput();
         }

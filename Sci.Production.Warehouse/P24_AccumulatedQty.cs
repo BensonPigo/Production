@@ -91,7 +91,7 @@ group by d.FromPOID,d.fromseq1,d.fromseq2,p.StockUnit,d.scrap_qty, p.POUnit", dr
                  ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

@@ -95,7 +95,7 @@
             this.radioPLRcvReport.Text = "P/L Rcv Report";
             this.radioPLRcvReport.UseVisualStyleBackColor = true;
             this.radioPLRcvReport.Value = "P/L Rcv Report";
-            this.radioPLRcvReport.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioPLRcvReport.CheckedChanged += new System.EventHandler(this.radioPLRcvReport_CheckedChanged);
             // 
             // P07_Print
             // 

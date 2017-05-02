@@ -23,25 +23,25 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            txtMdivision.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2)) 
+            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2)) 
             {
                 MyUtility.Msg.WarningBox("< Issue Date > can't be empty!!");
                 return false;
             }
 
-            issueDate1 = dateRange1.Value1;
-            issueDate2 = dateRange1.Value2;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            reason = txtwhseReason1.TextBox1.Text;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
+            issueDate1 = dateIssueDate.Value1;
+            issueDate2 = dateIssueDate.Value2;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            reason = txtwhseReasonCode.TextBox1.Text;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
 
             return base.ValidateInput();
         }

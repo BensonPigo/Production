@@ -911,7 +911,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             this.EnsureToolbarExt();
         }
 
-        private void btCutRef_Click(object sender, EventArgs e)
+        private void btnCutRef_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
             frm.P10 = this;

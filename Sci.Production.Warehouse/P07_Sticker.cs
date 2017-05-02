@@ -103,7 +103,7 @@ namespace Sci.Production.Warehouse
 
         }
 
-        private void btn_Print_Click(object sender, EventArgs e)
+        private void btnPrint_Click(object sender, EventArgs e)
         {
             
                List<P07_Sticker_Data> tmpData = Data.Where(data => data.selected).ToList();

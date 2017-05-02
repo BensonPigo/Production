@@ -91,7 +91,7 @@ order by EditName,ID"
                  .DateTime("editdate", header: "Edit Date", width: Widths.AnsiChars(20));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

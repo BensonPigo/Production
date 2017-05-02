@@ -33,18 +33,18 @@
             this.label25 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.dateBox3 = new Sci.Win.UI.DateBox();
-            this.button5 = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.button8 = new Sci.Win.UI.Button();
+            this.btnFind = new Sci.Win.UI.Button();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
-            this.button9 = new Sci.Win.UI.Button();
+            this.btnClearQtyIsEmpty = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.label2 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
-            this.textBox2 = new Sci.Win.UI.TextBox();
+            this.btnAccumulatedQty = new Sci.Win.UI.Button();
+            this.txtRequestNo = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
@@ -69,16 +69,16 @@
             this.masterpanel.Controls.Add(this.displayBox3);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
-            this.masterpanel.Controls.Add(this.textBox2);
-            this.masterpanel.Controls.Add(this.button1);
+            this.masterpanel.Controls.Add(this.txtRequestNo);
+            this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.editBox1);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.button9);
-            this.masterpanel.Controls.Add(this.button8);
+            this.masterpanel.Controls.Add(this.btnClearQtyIsEmpty);
+            this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.textBox1);
             this.masterpanel.Controls.Add(this.label5);
-            this.masterpanel.Controls.Add(this.button5);
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.dateBox3);
             this.masterpanel.Controls.Add(this.displayBox1);
             this.masterpanel.Controls.Add(this.label25);
@@ -93,16 +93,16 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBox3, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button8, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button9, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnClearQtyIsEmpty, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.editBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.button1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRequestNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
@@ -222,17 +222,17 @@
             this.dateBox3.Size = new System.Drawing.Size(130, 23);
             this.dateBox3.TabIndex = 0;
             // 
-            // button5
+            // btnImport
             // 
-            this.button5.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button5.Location = new System.Drawing.Point(893, 145);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(89, 31);
-            this.button5.TabIndex = 9;
-            this.button5.Text = "Import";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(893, 145);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(89, 31);
+            this.btnImport.TabIndex = 9;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // shapeContainer1
             // 
@@ -253,16 +253,16 @@
             this.lineShape1.Y1 = 137;
             this.lineShape1.Y2 = 137;
             // 
-            // button8
+            // btnFind
             // 
-            this.button8.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button8.Location = new System.Drawing.Point(279, 144);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(70, 30);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "Find";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(70, 30);
+            this.btnFind.TabIndex = 7;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // textBox1
             // 
@@ -283,16 +283,16 @@
             this.label5.TabIndex = 58;
             this.label5.Text = "Locate for SP#";
             // 
-            // button9
+            // btnClearQtyIsEmpty
             // 
-            this.button9.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button9.Location = new System.Drawing.Point(355, 144);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(148, 30);
-            this.button9.TabIndex = 8;
-            this.button9.Text = "Clear Qty is empty";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
+            this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
+            this.btnClearQtyIsEmpty.TabIndex = 8;
+            this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
+            this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
+            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
             // 
             // label1
             // 
@@ -323,28 +323,28 @@
             this.label2.TabIndex = 62;
             this.label2.Text = "Request#";
             // 
-            // button1
+            // btnAccumulatedQty
             // 
-            this.button1.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(874, 80);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(145, 31);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Accumulated Qty";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(874, 80);
+            this.btnAccumulatedQty.Name = "btnAccumulatedQty";
+            this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
+            this.btnAccumulatedQty.TabIndex = 5;
+            this.btnAccumulatedQty.Text = "Accumulated Qty";
+            this.btnAccumulatedQty.UseVisualStyleBackColor = true;
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
             // 
-            // textBox2
+            // txtRequestNo
             // 
-            this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "requestid", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox2.Location = new System.Drawing.Point(97, 45);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(121, 23);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtRequestNo.BackColor = System.Drawing.Color.White;
+            this.txtRequestNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "requestid", true));
+            this.txtRequestNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRequestNo.Location = new System.Drawing.Point(97, 45);
+            this.txtRequestNo.Name = "txtRequestNo";
+            this.txtRequestNo.Size = new System.Drawing.Size(121, 23);
+            this.txtRequestNo.TabIndex = 1;
+            this.txtRequestNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtRequestNo_Validating);
             // 
             // label6
             // 
@@ -434,22 +434,22 @@
         private Win.UI.Label label3;
         private Win.UI.DisplayBox displayBox1;
         private Win.UI.Label label25;
-        private Win.UI.Button button5;
+        private Win.UI.Button btnImport;
         private Win.UI.DateBox dateBox3;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
-        private Win.UI.Button button8;
+        private Win.UI.Button btnFind;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label5;
-        private Win.UI.Button button9;
+        private Win.UI.Button btnClearQtyIsEmpty;
         private Win.UI.EditBox editBox1;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnAccumulatedQty;
         private Win.UI.ComboBox comboBox1;
         private Win.UI.DisplayBox displayBox3;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtRequestNo;
     }
 }

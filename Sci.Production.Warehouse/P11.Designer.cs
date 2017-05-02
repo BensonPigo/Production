@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(1156, 128);
+            this.gridicon.Location = new System.Drawing.Point(1315, 128);
             // 
             // refresh
             // 
@@ -433,7 +433,7 @@
             this.btnClear.TabIndex = 8;
             this.btnClear.Text = "Clear Qty=0";
             this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.button9_Click);
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // txtOrderID
             // 
@@ -444,8 +444,8 @@
             this.txtOrderID.Name = "txtOrderID";
             this.txtOrderID.Size = new System.Drawing.Size(107, 23);
             this.txtOrderID.TabIndex = 3;
-            this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.txtOrderID.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.txtOrderID.Validating += new System.ComponentModel.CancelEventHandler(this.txtOrderID_Validating);
+            this.txtOrderID.Validated += new System.EventHandler(this.txtOrderID_Validated);
             // 
             // labelOrderID
             // 
@@ -492,7 +492,7 @@
             this.checkByCombo.TabIndex = 2;
             this.checkByCombo.Text = "By Combo";
             this.checkByCombo.UseVisualStyleBackColor = true;
-            this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkByCombo.CheckedChanged += new System.EventHandler(this.checkByCombo_CheckedChanged);
             // 
             // P11
             // 

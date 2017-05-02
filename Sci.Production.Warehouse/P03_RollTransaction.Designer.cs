@@ -87,7 +87,7 @@
             this.btnPrint.TabIndex = 5;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.button2_Click);
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
             // labelStockType
             // 
@@ -112,7 +112,7 @@
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
             this.comboStockType.TabIndex = 3;
-            this.comboStockType.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboStockType.SelectedIndexChanged += new System.EventHandler(this.comboStockType_SelectedIndexChanged);
             // 
             // btnClose
             // 
@@ -124,7 +124,7 @@
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // bindingSource1
             // 

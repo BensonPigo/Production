@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.label8 = new Sci.Win.UI.Label();
-            this.txtSP2 = new Sci.Win.UI.TextBox();
-            this.txtSP1 = new Sci.Win.UI.TextBox();
-            this.lblSP = new Sci.Win.UI.Label();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
+            this.lbSPNo = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtRefno2 = new Sci.Win.UI.TextBox();
-            this.txtRefno1 = new Sci.Win.UI.TextBox();
-            this.lblRefno = new Sci.Win.UI.Label();
+            this.txtRefnoEnd = new Sci.Win.UI.TextBox();
+            this.txtRefnoStart = new Sci.Win.UI.TextBox();
+            this.lbRefno = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtColor2 = new Sci.Win.UI.TextBox();
-            this.txtColor1 = new Sci.Win.UI.TextBox();
-            this.lblThreadColor = new Sci.Win.UI.Label();
-            this.lblSupplier = new Sci.Win.UI.Label();
-            this.lblFactory = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.txtSupp = new Sci.Production.Class.txtsubcon();
+            this.txtThreadColorEnd = new Sci.Win.UI.TextBox();
+            this.txtThreadColorStart = new Sci.Win.UI.TextBox();
+            this.lbThreadColor = new Sci.Win.UI.Label();
+            this.lbSupplier = new Sci.Win.UI.Label();
+            this.lbFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtSupplier = new Sci.Production.Class.txtsubcon();
             this.SuspendLayout();
             // 
             // print
@@ -70,32 +70,32 @@
             this.label8.Text = "~";
             this.label8.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtSP2
+            // txtSPNoEnd
             // 
-            this.txtSP2.BackColor = System.Drawing.Color.White;
-            this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP2.Location = new System.Drawing.Point(262, 9);
-            this.txtSP2.Name = "txtSP2";
-            this.txtSP2.Size = new System.Drawing.Size(130, 23);
-            this.txtSP2.TabIndex = 96;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(262, 9);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNoEnd.TabIndex = 96;
             // 
-            // txtSP1
+            // txtSPNoStart
             // 
-            this.txtSP1.BackColor = System.Drawing.Color.White;
-            this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP1.Location = new System.Drawing.Point(106, 9);
-            this.txtSP1.Name = "txtSP1";
-            this.txtSP1.Size = new System.Drawing.Size(130, 23);
-            this.txtSP1.TabIndex = 95;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(106, 9);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
+            this.txtSPNoStart.TabIndex = 95;
             // 
-            // lblSP
+            // lbSPNo
             // 
-            this.lblSP.Lines = 0;
-            this.lblSP.Location = new System.Drawing.Point(9, 9);
-            this.lblSP.Name = "lblSP";
-            this.lblSP.Size = new System.Drawing.Size(90, 23);
-            this.lblSP.TabIndex = 94;
-            this.lblSP.Text = "SP#";
+            this.lbSPNo.Lines = 0;
+            this.lbSPNo.Location = new System.Drawing.Point(9, 9);
+            this.lbSPNo.Name = "lbSPNo";
+            this.lbSPNo.Size = new System.Drawing.Size(90, 23);
+            this.lbSPNo.TabIndex = 94;
+            this.lbSPNo.Text = "SP#";
             // 
             // label1
             // 
@@ -108,32 +108,32 @@
             this.label1.Text = "~";
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtRefno2
+            // txtRefnoEnd
             // 
-            this.txtRefno2.BackColor = System.Drawing.Color.White;
-            this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno2.Location = new System.Drawing.Point(290, 40);
-            this.txtRefno2.Name = "txtRefno2";
-            this.txtRefno2.Size = new System.Drawing.Size(160, 23);
-            this.txtRefno2.TabIndex = 100;
+            this.txtRefnoEnd.BackColor = System.Drawing.Color.White;
+            this.txtRefnoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoEnd.Location = new System.Drawing.Point(290, 40);
+            this.txtRefnoEnd.Name = "txtRefnoEnd";
+            this.txtRefnoEnd.Size = new System.Drawing.Size(160, 23);
+            this.txtRefnoEnd.TabIndex = 100;
             // 
-            // txtRefno1
+            // txtRefnoStart
             // 
-            this.txtRefno1.BackColor = System.Drawing.Color.White;
-            this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno1.Location = new System.Drawing.Point(106, 41);
-            this.txtRefno1.Name = "txtRefno1";
-            this.txtRefno1.Size = new System.Drawing.Size(160, 23);
-            this.txtRefno1.TabIndex = 99;
+            this.txtRefnoStart.BackColor = System.Drawing.Color.White;
+            this.txtRefnoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoStart.Location = new System.Drawing.Point(106, 41);
+            this.txtRefnoStart.Name = "txtRefnoStart";
+            this.txtRefnoStart.Size = new System.Drawing.Size(160, 23);
+            this.txtRefnoStart.TabIndex = 99;
             // 
-            // lblRefno
+            // lbRefno
             // 
-            this.lblRefno.Lines = 0;
-            this.lblRefno.Location = new System.Drawing.Point(9, 41);
-            this.lblRefno.Name = "lblRefno";
-            this.lblRefno.Size = new System.Drawing.Size(90, 23);
-            this.lblRefno.TabIndex = 98;
-            this.lblRefno.Text = "Refno";
+            this.lbRefno.Lines = 0;
+            this.lbRefno.Location = new System.Drawing.Point(9, 41);
+            this.lbRefno.Name = "lbRefno";
+            this.lbRefno.Size = new System.Drawing.Size(90, 23);
+            this.lbRefno.TabIndex = 98;
+            this.lbRefno.Text = "Refno";
             // 
             // label3
             // 
@@ -146,112 +146,112 @@
             this.label3.Text = "~";
             this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtColor2
+            // txtThreadColorEnd
             // 
-            this.txtColor2.BackColor = System.Drawing.Color.White;
-            this.txtColor2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor2.Location = new System.Drawing.Point(260, 72);
-            this.txtColor2.Name = "txtColor2";
-            this.txtColor2.Size = new System.Drawing.Size(130, 23);
-            this.txtColor2.TabIndex = 104;
+            this.txtThreadColorEnd.BackColor = System.Drawing.Color.White;
+            this.txtThreadColorEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadColorEnd.Location = new System.Drawing.Point(260, 72);
+            this.txtThreadColorEnd.Name = "txtThreadColorEnd";
+            this.txtThreadColorEnd.Size = new System.Drawing.Size(130, 23);
+            this.txtThreadColorEnd.TabIndex = 104;
             // 
-            // txtColor1
+            // txtThreadColorStart
             // 
-            this.txtColor1.BackColor = System.Drawing.Color.White;
-            this.txtColor1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor1.Location = new System.Drawing.Point(106, 73);
-            this.txtColor1.Name = "txtColor1";
-            this.txtColor1.Size = new System.Drawing.Size(130, 23);
-            this.txtColor1.TabIndex = 103;
+            this.txtThreadColorStart.BackColor = System.Drawing.Color.White;
+            this.txtThreadColorStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadColorStart.Location = new System.Drawing.Point(106, 73);
+            this.txtThreadColorStart.Name = "txtThreadColorStart";
+            this.txtThreadColorStart.Size = new System.Drawing.Size(130, 23);
+            this.txtThreadColorStart.TabIndex = 103;
             // 
-            // lblThreadColor
+            // lbThreadColor
             // 
-            this.lblThreadColor.Lines = 0;
-            this.lblThreadColor.Location = new System.Drawing.Point(9, 73);
-            this.lblThreadColor.Name = "lblThreadColor";
-            this.lblThreadColor.Size = new System.Drawing.Size(90, 23);
-            this.lblThreadColor.TabIndex = 102;
-            this.lblThreadColor.Text = "Thread Color";
+            this.lbThreadColor.Lines = 0;
+            this.lbThreadColor.Location = new System.Drawing.Point(9, 73);
+            this.lbThreadColor.Name = "lbThreadColor";
+            this.lbThreadColor.Size = new System.Drawing.Size(90, 23);
+            this.lbThreadColor.TabIndex = 102;
+            this.lbThreadColor.Text = "Thread Color";
             // 
-            // lblSupplier
+            // lbSupplier
             // 
-            this.lblSupplier.Lines = 0;
-            this.lblSupplier.Location = new System.Drawing.Point(9, 105);
-            this.lblSupplier.Name = "lblSupplier";
-            this.lblSupplier.Size = new System.Drawing.Size(90, 23);
-            this.lblSupplier.TabIndex = 106;
-            this.lblSupplier.Text = "Supplier";
+            this.lbSupplier.Lines = 0;
+            this.lbSupplier.Location = new System.Drawing.Point(9, 105);
+            this.lbSupplier.Name = "lbSupplier";
+            this.lbSupplier.Size = new System.Drawing.Size(90, 23);
+            this.lbSupplier.TabIndex = 106;
+            this.lbSupplier.Text = "Supplier";
             // 
-            // lblFactory
+            // lbFactory
             // 
-            this.lblFactory.Lines = 0;
-            this.lblFactory.Location = new System.Drawing.Point(9, 135);
-            this.lblFactory.Name = "lblFactory";
-            this.lblFactory.Size = new System.Drawing.Size(90, 23);
-            this.lblFactory.TabIndex = 107;
-            this.lblFactory.Text = "Factory";
+            this.lbFactory.Lines = 0;
+            this.lbFactory.Location = new System.Drawing.Point(9, 135);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(90, 23);
+            this.lbFactory.TabIndex = 107;
+            this.lbFactory.Text = "Factory";
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(106, 135);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 133;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(106, 135);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 133;
             // 
-            // txtSupp
+            // txtSupplier
             // 
-            this.txtSupp.DisplayBox1Binding = "";
-            this.txtSupp.IsIncludeJunk = true;
-            this.txtSupp.Location = new System.Drawing.Point(106, 105);
-            this.txtSupp.Name = "txtSupp";
-            this.txtSupp.Size = new System.Drawing.Size(170, 23);
-            this.txtSupp.TabIndex = 134;
-            this.txtSupp.TextBox1Binding = "";
+            this.txtSupplier.DisplayBox1Binding = "";
+            this.txtSupplier.IsIncludeJunk = true;
+            this.txtSupplier.Location = new System.Drawing.Point(106, 105);
+            this.txtSupplier.Name = "txtSupplier";
+            this.txtSupplier.Size = new System.Drawing.Size(170, 23);
+            this.txtSupplier.TabIndex = 134;
+            this.txtSupplier.TextBox1Binding = "";
             // 
             // R40
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(554, 200);
-            this.Controls.Add(this.txtSupp);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.lblFactory);
-            this.Controls.Add(this.lblSupplier);
+            this.Controls.Add(this.txtSupplier);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.lbFactory);
+            this.Controls.Add(this.lbSupplier);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtColor2);
-            this.Controls.Add(this.txtColor1);
-            this.Controls.Add(this.lblThreadColor);
+            this.Controls.Add(this.txtThreadColorEnd);
+            this.Controls.Add(this.txtThreadColorStart);
+            this.Controls.Add(this.lbThreadColor);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtRefno2);
-            this.Controls.Add(this.txtRefno1);
-            this.Controls.Add(this.lblRefno);
+            this.Controls.Add(this.txtRefnoEnd);
+            this.Controls.Add(this.txtRefnoStart);
+            this.Controls.Add(this.lbRefno);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.txtSP2);
-            this.Controls.Add(this.txtSP1);
-            this.Controls.Add(this.lblSP);
+            this.Controls.Add(this.txtSPNoEnd);
+            this.Controls.Add(this.txtSPNoStart);
+            this.Controls.Add(this.lbSPNo);
             this.Name = "R40";
             this.Text = "R40. Local Item Inventory Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.lblSP, 0);
-            this.Controls.SetChildIndex(this.txtSP1, 0);
-            this.Controls.SetChildIndex(this.txtSP2, 0);
+            this.Controls.SetChildIndex(this.lbSPNo, 0);
+            this.Controls.SetChildIndex(this.txtSPNoStart, 0);
+            this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.lblRefno, 0);
-            this.Controls.SetChildIndex(this.txtRefno1, 0);
-            this.Controls.SetChildIndex(this.txtRefno2, 0);
+            this.Controls.SetChildIndex(this.lbRefno, 0);
+            this.Controls.SetChildIndex(this.txtRefnoStart, 0);
+            this.Controls.SetChildIndex(this.txtRefnoEnd, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.lblThreadColor, 0);
-            this.Controls.SetChildIndex(this.txtColor1, 0);
-            this.Controls.SetChildIndex(this.txtColor2, 0);
+            this.Controls.SetChildIndex(this.lbThreadColor, 0);
+            this.Controls.SetChildIndex(this.txtThreadColorStart, 0);
+            this.Controls.SetChildIndex(this.txtThreadColorEnd, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.lblSupplier, 0);
-            this.Controls.SetChildIndex(this.lblFactory, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.txtSupp, 0);
+            this.Controls.SetChildIndex(this.lbSupplier, 0);
+            this.Controls.SetChildIndex(this.lbFactory, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.txtSupplier, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,20 +260,20 @@
         #endregion
 
         private Win.UI.Label label8;
-        private Win.UI.TextBox txtSP2;
-        private Win.UI.TextBox txtSP1;
-        private Win.UI.Label lblSP;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.TextBox txtSPNoStart;
+        private Win.UI.Label lbSPNo;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtRefno2;
-        private Win.UI.TextBox txtRefno1;
-        private Win.UI.Label lblRefno;
+        private Win.UI.TextBox txtRefnoEnd;
+        private Win.UI.TextBox txtRefnoStart;
+        private Win.UI.Label lbRefno;
         private Win.UI.Label label3;
-        private Win.UI.TextBox txtColor2;
-        private Win.UI.TextBox txtColor1;
-        private Win.UI.Label lblThreadColor;
-        private Win.UI.Label lblSupplier;
-        private Win.UI.Label lblFactory;
-        private Class.txtfactory txtfactory1;
-        private Class.txtsubcon txtSupp;
+        private Win.UI.TextBox txtThreadColorEnd;
+        private Win.UI.TextBox txtThreadColorStart;
+        private Win.UI.Label lbThreadColor;
+        private Win.UI.Label lbSupplier;
+        private Win.UI.Label lbFactory;
+        private Class.txtfactory txtfactory;
+        private Class.txtsubcon txtSupplier;
     }
 }

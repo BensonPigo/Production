@@ -91,7 +91,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Add Excel
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAddExcel_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
@@ -106,7 +106,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Remove Excel
-        private void button2_Click(object sender, EventArgs e)
+        private void btnRemoveExcel_Click(object sender, EventArgs e)
         {
             if (listControlBindingSource1.Position != -1)
             {
@@ -392,7 +392,7 @@ where   stocktype='{0}'
         }
 
         //Write in
-        private void button4_Click(object sender, EventArgs e)
+        private void btnWriteIn_Click(object sender, EventArgs e)
         {
             DataTable tmpPacking = (DataTable)listControlBindingSource2.DataSource;
             try

@@ -191,14 +191,14 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
         // Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             gridLack_Detail.ValidateControl();

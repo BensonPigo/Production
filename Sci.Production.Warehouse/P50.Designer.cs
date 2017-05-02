@@ -105,15 +105,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
             // 
             // detail
             // 
@@ -207,7 +207,7 @@
             this.btngenerate.TabIndex = 3;
             this.btngenerate.Text = "generate";
             this.btngenerate.UseVisualStyleBackColor = true;
-            this.btngenerate.Click += new System.EventHandler(this.button5_Click);
+            this.btngenerate.Click += new System.EventHandler(this.btngenerate_Click);
             // 
             // labelRemark
             // 
@@ -268,7 +268,7 @@
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 1;
-            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.cbbStockType_Validating);
+            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboStockType_Validating);
             // 
             // P50
             // 

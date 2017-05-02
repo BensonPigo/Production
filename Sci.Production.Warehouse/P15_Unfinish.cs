@@ -61,13 +61,13 @@ ORDER BY issuedate desc,id asc;", Sci.Env.User.Keyword, FabricType);
             bindingSource1.DataSource = selectDataTable1;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnHide_Click(object sender, EventArgs e)
         {
             timer1.Start();
             this.Hide();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRefresh_Click(object sender, EventArgs e)
         {
             this.selectData();
         }

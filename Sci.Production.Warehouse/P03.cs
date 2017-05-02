@@ -113,7 +113,7 @@ namespace Sci.Production.Warehouse
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                 DialogResult DR =  frm.ShowDialog(this);
-                if (DR == DialogResult.OK) button1_Click(null,null);
+                if (DR == DialogResult.OK) btnQuery_Click(null, null);
             };
             #endregion
             #region Inventory Qty 開窗
@@ -255,7 +255,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             Query();
         }
@@ -526,7 +526,7 @@ where ROW_NUMBER_D =1
         }
 
         // Close
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -545,7 +545,7 @@ where ROW_NUMBER_D =1
         //}
 
         //Excel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             //DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
@@ -561,7 +561,7 @@ where ROW_NUMBER_D =1
             return;
            
         }
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.grid1_sorting();
         }

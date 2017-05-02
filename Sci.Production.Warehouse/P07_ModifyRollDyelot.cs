@@ -72,7 +72,7 @@ namespace Sci.Production.Warehouse
             cbb_stocktype.DisplayMember = "Value";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
@@ -238,7 +238,7 @@ group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
             this.HideWaitMessage();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCommit_Click(object sender, EventArgs e)
         {
             string sqlcmd,sqlupd1, sqlupd2, newRoll, newDyelot;
             DualResult result1, result2;

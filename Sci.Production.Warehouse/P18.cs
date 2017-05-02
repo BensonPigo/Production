@@ -1078,7 +1078,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
@@ -1095,7 +1095,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated Form
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P18_AccumulatedQty(CurrentMaintain);
             frm.P18 = this;
@@ -1103,7 +1103,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Find
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
@@ -1121,7 +1121,7 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtFromFactory_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
@@ -1131,9 +1131,9 @@ Where a.id = '{0}'", masterID);
                 this.txtFromFactory.Select();
             }
         }
-   
 
-        private void textBox2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+
+        private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
                 string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";

@@ -59,7 +59,7 @@ GROUP BY A.PoId,b.Seq1,b.Seq2,b.RequestQty", dr["requestid"], dr["id"]));
                  ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

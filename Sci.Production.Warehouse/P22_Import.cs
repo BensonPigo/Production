@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
@@ -275,13 +275,13 @@ WHERE   StockType='{0}'
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             //string sp = textBox1.Text.TrimEnd();
 
@@ -297,7 +297,7 @@ WHERE   StockType='{0}'
 
         }
 
-        private void cb_return_Click(object sender, EventArgs e)
+        private void checkReturn_Click(object sender, EventArgs e)
         {
             myFilter();
         }
@@ -316,7 +316,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void btn_updateLoc_Click(object sender, EventArgs e)
+        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             FtyDetailBS.EndEdit();
             DataRow dr = grid_TaipeiInput.GetDataRow(grid_TaipeiInput.GetSelectedRowIndex());
@@ -329,7 +329,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void textBox3_MouseDown(object sender, MouseEventArgs e)
+        private void txtLocation_MouseDown(object sender, MouseEventArgs e)
         {
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("I", "");
             DialogResult result = item.ShowDialog();
@@ -337,7 +337,7 @@ WHERE   StockType='{0}'
             txtLocation.Text = item.GetSelectedString();
         }
 
-        private void btn_Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
 

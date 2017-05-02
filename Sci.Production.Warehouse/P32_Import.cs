@@ -249,13 +249,13 @@ drop table #tmp
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
             dtBorrow = gridImport.GetTable();

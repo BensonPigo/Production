@@ -412,7 +412,7 @@ Where a.id = '{0}' ", masterID);
 
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P26_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
@@ -420,7 +420,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         //217: WAREHOUSE_P26_Mtl Location update，2.當表身已經有值時，編輯時若換了stock type則表身要一併清空。
-        private void comboBox1_Validating(object sender, CancelEventArgs e)
+        private void comboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
             {

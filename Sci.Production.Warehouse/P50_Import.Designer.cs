@@ -71,7 +71,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -83,7 +83,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnFindNow
             // 
@@ -95,7 +95,7 @@
             this.btnFindNow.TabIndex = 8;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtSPNoStart
             // 
@@ -142,7 +142,7 @@
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.Size = new System.Drawing.Size(119, 24);
             this.comboSortby.TabIndex = 5;
-            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.cbbSort_SelectedIndexChanged);
+            this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.comboSortby_SelectedIndexChanged);
             // 
             // groupBox1
             // 
@@ -231,7 +231,7 @@
             0,
             0,
             0});
-            this.numRandom.TextChanged += new System.EventHandler(this.numericBox3_TextChanged);
+            this.numRandom.TextChanged += new System.EventHandler(this.numRandom_TextChanged);
             // 
             // labelCountOfRandom
             // 

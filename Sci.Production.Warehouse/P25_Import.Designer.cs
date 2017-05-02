@@ -57,7 +57,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -69,7 +69,7 @@
             this.btnImport.TabIndex = 0;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnFindNow
             // 
@@ -81,7 +81,7 @@
             this.btnFindNow.TabIndex = 2;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtSPNo
             // 
@@ -93,7 +93,7 @@
             this.txtSPNo.ReadOnly = true;
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // labelSPNo
             // 

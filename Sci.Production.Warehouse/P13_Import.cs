@@ -30,7 +30,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
@@ -149,14 +149,14 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
             this.grid1.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             grid1.ValidateControl();
@@ -204,7 +204,7 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
             this.Close();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 //            string seq1 = txtSeq1.seq1;

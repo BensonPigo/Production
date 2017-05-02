@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btn_Cancel = new Sci.Win.UI.Button();
-            this.btn_Import = new Sci.Win.UI.Button();
+            this.components = new System.ComponentModel.Container();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource();
+            this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -41,34 +42,34 @@
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
-            // btn_Cancel
+            // btnCancel
             // 
-            this.btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Cancel.Location = new System.Drawing.Point(912, 15);
-            this.btn_Cancel.Name = "btn_Cancel";
-            this.btn_Cancel.Size = new System.Drawing.Size(90, 30);
-            this.btn_Cancel.TabIndex = 3;
-            this.btn_Cancel.Text = "Cancel";
-            this.btn_Cancel.UseVisualStyleBackColor = true;
-            this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btn_Import
+            // btnImport
             // 
-            this.btn_Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Import.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Import.Location = new System.Drawing.Point(816, 15);
-            this.btn_Import.Name = "btn_Import";
-            this.btn_Import.Size = new System.Drawing.Size(90, 30);
-            this.btn_Import.TabIndex = 2;
-            this.btn_Import.Text = "Import";
-            this.btn_Import.UseVisualStyleBackColor = true;
-            this.btn_Import.Click += new System.EventHandler(this.btn_Import_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 15);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btn_Cancel);
-            this.groupBox2.Controls.Add(this.btn_Import);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
             this.groupBox2.Name = "groupBox2";
@@ -134,8 +135,8 @@
 
         #endregion
 
-        private Win.UI.Button btn_Cancel;
-        private Win.UI.Button btn_Import;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ListControlBindingSource TaipeiOutputBS;
         private Win.UI.Panel panel1;

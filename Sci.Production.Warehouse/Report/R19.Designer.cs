@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tbxSP = new Sci.Win.UI.TextBox();
-            this.cbxCategory = new Sci.Win.UI.ComboBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateRange_ReturnDate = new Sci.Win.UI.DateRange();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
+            this.txtBorrowSPNo = new Sci.Win.UI.TextBox();
+            this.comboCategoryAlreadyReturn = new Sci.Win.UI.ComboBox();
+            this.labelAlreadyReturn = new Sci.Win.UI.Label();
+            this.labelBorrowSeqNo = new Sci.Win.UI.Label();
+            this.dateEstReturnDate = new Sci.Win.UI.DateRange();
+            this.labelBorrowSPNo = new Sci.Win.UI.Label();
+            this.labelEstReturnDate = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
             this.SuspendLayout();
             // 
             // print
@@ -56,110 +56,110 @@
             this.close.Location = new System.Drawing.Point(484, 77);
             this.close.TabIndex = 6;
             // 
-            // tbxSP
+            // txtBorrowSPNo
             // 
-            this.tbxSP.BackColor = System.Drawing.Color.White;
-            this.tbxSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.tbxSP.Location = new System.Drawing.Point(127, 48);
-            this.tbxSP.MaxLength = 13;
-            this.tbxSP.Name = "tbxSP";
-            this.tbxSP.Size = new System.Drawing.Size(118, 23);
-            this.tbxSP.TabIndex = 1;
+            this.txtBorrowSPNo.BackColor = System.Drawing.Color.White;
+            this.txtBorrowSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBorrowSPNo.Location = new System.Drawing.Point(127, 48);
+            this.txtBorrowSPNo.MaxLength = 13;
+            this.txtBorrowSPNo.Name = "txtBorrowSPNo";
+            this.txtBorrowSPNo.Size = new System.Drawing.Size(118, 23);
+            this.txtBorrowSPNo.TabIndex = 1;
             // 
-            // cbxCategory
+            // comboCategoryAlreadyReturn
             // 
-            this.cbxCategory.BackColor = System.Drawing.Color.White;
-            this.cbxCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbxCategory.FormattingEnabled = true;
-            this.cbxCategory.IsSupportUnselect = true;
-            this.cbxCategory.Items.AddRange(new object[] {
+            this.comboCategoryAlreadyReturn.BackColor = System.Drawing.Color.White;
+            this.comboCategoryAlreadyReturn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategoryAlreadyReturn.FormattingEnabled = true;
+            this.comboCategoryAlreadyReturn.IsSupportUnselect = true;
+            this.comboCategoryAlreadyReturn.Items.AddRange(new object[] {
             "Not Yet",
             "Yet",
             "All"});
-            this.cbxCategory.Location = new System.Drawing.Point(127, 121);
-            this.cbxCategory.Name = "cbxCategory";
-            this.cbxCategory.Size = new System.Drawing.Size(121, 24);
-            this.cbxCategory.TabIndex = 3;
+            this.comboCategoryAlreadyReturn.Location = new System.Drawing.Point(127, 121);
+            this.comboCategoryAlreadyReturn.Name = "comboCategoryAlreadyReturn";
+            this.comboCategoryAlreadyReturn.Size = new System.Drawing.Size(121, 24);
+            this.comboCategoryAlreadyReturn.TabIndex = 3;
             // 
-            // label7
+            // labelAlreadyReturn
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(10, 121);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(114, 23);
-            this.label7.TabIndex = 107;
-            this.label7.Text = "Already Return";
+            this.labelAlreadyReturn.Lines = 0;
+            this.labelAlreadyReturn.Location = new System.Drawing.Point(10, 121);
+            this.labelAlreadyReturn.Name = "labelAlreadyReturn";
+            this.labelAlreadyReturn.Size = new System.Drawing.Size(114, 23);
+            this.labelAlreadyReturn.TabIndex = 107;
+            this.labelAlreadyReturn.Text = "Already Return";
             // 
-            // label1
+            // labelBorrowSeqNo
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(10, 84);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(114, 23);
-            this.label1.TabIndex = 114;
-            this.label1.Text = "Borrow Seq#";
+            this.labelBorrowSeqNo.Lines = 0;
+            this.labelBorrowSeqNo.Location = new System.Drawing.Point(10, 84);
+            this.labelBorrowSeqNo.Name = "labelBorrowSeqNo";
+            this.labelBorrowSeqNo.Size = new System.Drawing.Size(114, 23);
+            this.labelBorrowSeqNo.TabIndex = 114;
+            this.labelBorrowSeqNo.Text = "Borrow Seq#";
             // 
-            // dateRange_ReturnDate
+            // dateEstReturnDate
             // 
-            this.dateRange_ReturnDate.IsRequired = false;
-            this.dateRange_ReturnDate.Location = new System.Drawing.Point(127, 12);
-            this.dateRange_ReturnDate.Name = "dateRange_ReturnDate";
-            this.dateRange_ReturnDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRange_ReturnDate.TabIndex = 0;
+            this.dateEstReturnDate.IsRequired = false;
+            this.dateEstReturnDate.Location = new System.Drawing.Point(127, 12);
+            this.dateEstReturnDate.Name = "dateEstReturnDate";
+            this.dateEstReturnDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstReturnDate.TabIndex = 0;
             // 
-            // label2
+            // labelBorrowSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(10, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(114, 23);
-            this.label2.TabIndex = 116;
-            this.label2.Text = "Borrow SP#";
+            this.labelBorrowSPNo.Lines = 0;
+            this.labelBorrowSPNo.Location = new System.Drawing.Point(10, 48);
+            this.labelBorrowSPNo.Name = "labelBorrowSPNo";
+            this.labelBorrowSPNo.Size = new System.Drawing.Size(114, 23);
+            this.labelBorrowSPNo.TabIndex = 116;
+            this.labelBorrowSPNo.Text = "Borrow SP#";
             // 
-            // label3
+            // labelEstReturnDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(10, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(114, 23);
-            this.label3.TabIndex = 117;
-            this.label3.Text = "Est. Return Date";
+            this.labelEstReturnDate.Lines = 0;
+            this.labelEstReturnDate.Location = new System.Drawing.Point(10, 12);
+            this.labelEstReturnDate.Name = "labelEstReturnDate";
+            this.labelEstReturnDate.Size = new System.Drawing.Size(114, 23);
+            this.labelEstReturnDate.TabIndex = 117;
+            this.labelEstReturnDate.Text = "Est. Return Date";
             // 
-            // txtSeq1
+            // txtSeq
             // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(127, 84);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 2;
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(127, 84);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 2;
             // 
             // R19
             // 
             this.ClientSize = new System.Drawing.Size(576, 240);
-            this.Controls.Add(this.txtSeq1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateRange_ReturnDate);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.cbxCategory);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.tbxSP);
+            this.Controls.Add(this.txtSeq);
+            this.Controls.Add(this.labelEstReturnDate);
+            this.Controls.Add(this.labelBorrowSPNo);
+            this.Controls.Add(this.dateEstReturnDate);
+            this.Controls.Add(this.labelBorrowSeqNo);
+            this.Controls.Add(this.comboCategoryAlreadyReturn);
+            this.Controls.Add(this.labelAlreadyReturn);
+            this.Controls.Add(this.txtBorrowSPNo);
             this.Name = "R19";
             this.Text = "R19. Material Borrowing Query";
             this.Load += new System.EventHandler(this.R18_Load);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.tbxSP, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
-            this.Controls.SetChildIndex(this.cbxCategory, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateRange_ReturnDate, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtSeq1, 0);
+            this.Controls.SetChildIndex(this.txtBorrowSPNo, 0);
+            this.Controls.SetChildIndex(this.labelAlreadyReturn, 0);
+            this.Controls.SetChildIndex(this.comboCategoryAlreadyReturn, 0);
+            this.Controls.SetChildIndex(this.labelBorrowSeqNo, 0);
+            this.Controls.SetChildIndex(this.dateEstReturnDate, 0);
+            this.Controls.SetChildIndex(this.labelBorrowSPNo, 0);
+            this.Controls.SetChildIndex(this.labelEstReturnDate, 0);
+            this.Controls.SetChildIndex(this.txtSeq, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,13 +167,13 @@
 
         #endregion
 
-        private Win.UI.TextBox tbxSP;
-        private Win.UI.ComboBox cbxCategory;
-        private Win.UI.Label label7;
-        private Win.UI.Label label1;
-        private Win.UI.DateRange dateRange_ReturnDate;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Class.txtSeq txtSeq1;
+        private Win.UI.TextBox txtBorrowSPNo;
+        private Win.UI.ComboBox comboCategoryAlreadyReturn;
+        private Win.UI.Label labelAlreadyReturn;
+        private Win.UI.Label labelBorrowSeqNo;
+        private Win.UI.DateRange dateEstReturnDate;
+        private Win.UI.Label labelBorrowSPNo;
+        private Win.UI.Label labelEstReturnDate;
+        private Class.txtSeq txtSeq;
     }
 }

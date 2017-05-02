@@ -179,7 +179,7 @@ group by z.POID,z.Seq1,z.Seq2,qty,z.stockunit
                  ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

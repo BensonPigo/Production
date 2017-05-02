@@ -146,7 +146,7 @@
             this.btnCommit.TabIndex = 1;
             this.btnCommit.Text = "Commit";
             this.btnCommit.UseVisualStyleBackColor = true;
-            this.btnCommit.Click += new System.EventHandler(this.button3_Click);
+            this.btnCommit.Click += new System.EventHandler(this.btnCommit_Click);
             // 
             // labelRollNo
             // 
@@ -167,7 +167,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button1_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // splitContainer1
             // 

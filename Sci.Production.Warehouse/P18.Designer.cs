@@ -238,7 +238,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -268,7 +268,7 @@
             this.btnClearQtyIsEmpty.TabIndex = 7;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
-            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.button9_Click);
+            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
             // 
             // labelRemark
             // 
@@ -301,7 +301,7 @@
             this.btnAccumulatedQty.TabIndex = 4;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
             // 
             // labelFromFactory
             // 
@@ -322,8 +322,8 @@
             this.txtFromFactory.Name = "txtFromFactory";
             this.txtFromFactory.Size = new System.Drawing.Size(67, 23);
             this.txtFromFactory.TabIndex = 0;
-            this.txtFromFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox2_PopUp);
-            this.txtFromFactory.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtFromFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFromFactory_PopUp);
+            this.txtFromFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFromFactory_Validating);
             // 
             // btnImport
             // 

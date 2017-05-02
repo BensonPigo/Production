@@ -26,38 +26,38 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            cbbFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbStockType,2,1, "D,Bulk,E,Inventory");
-            cbbStockType.SelectedIndex = 0;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            comboFabricType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, "D,Bulk,E,Inventory");
+            comboStockType.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
-                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) && MyUtility.Check.Empty(txtSpno2.Text))) 
+            if (MyUtility.Check.Empty(dateScrapDate.Value1) && MyUtility.Check.Empty(dateScrapDate.Value2) &&
+                MyUtility.Check.Empty(dateBuyerDelivery.Value1) && MyUtility.Check.Empty(dateBuyerDelivery.Value2) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text))) 
             {
                 MyUtility.Msg.WarningBox("< Scrap Date > & < Buyer Delivery > & < SP# > can't be empty!!");
                 return false;
             }
 
-            issueDate1 = dateRange1.Value1;
-            issueDate2 = dateRange1.Value2;
-            buyerDelivery1 = dateRange2.Value1;
-            buyerDelivery2 = dateRange2.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
-            season = txtseason1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            brand = txtbrand1.Text;
-            fabrictype = cbbFabricType.SelectedValue.ToString();
-            stocktype = cbbStockType.SelectedValue.ToString();
-            refno1 = txtRefno1.Text;
-            refno2 = txtRefno2.Text;
+            issueDate1 = dateScrapDate.Value1;
+            issueDate2 = dateScrapDate.Value2;
+            buyerDelivery1 = dateBuyerDelivery.Value1;
+            buyerDelivery2 = dateBuyerDelivery.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
+            season = txtseason.Text;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            brand = txtbrand.Text;
+            fabrictype = comboFabricType.SelectedValue.ToString();
+            stocktype = comboStockType.SelectedValue.ToString();
+            refno1 = txtRefnoStart.Text;
+            refno2 = txtRefnoEnd.Text;
 
             return base.ValidateInput();
         }

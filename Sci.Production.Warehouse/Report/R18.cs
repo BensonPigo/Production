@@ -26,19 +26,19 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.EditMode = true;
-            cbxCategory.SelectedIndex = 0;
+            comboCategory.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(tbxSP.Text) &&
-                MyUtility.Check.Empty(tbxRefno.Text) &&
-                MyUtility.Check.Empty(tbxLocation.Text))
+            if (MyUtility.Check.Empty(txtSPNo.Text) &&
+                MyUtility.Check.Empty(txtRefno.Text) &&
+                MyUtility.Check.Empty(txtLocation.Text))
             {
                 MyUtility.Msg.WarningBox("SP#, Ref#, Location can't be empty!!");
                 return false;
             }
-            selectindex = cbxCategory.SelectedIndex;
+            selectindex = comboCategory.SelectedIndex;
             return base.ValidateInput();
         }
 
@@ -83,15 +83,15 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            String spno = tbxSP.Text.TrimEnd();
-            String style = tbxStyle.Text;
-            String refno = tbxRefno.Text;
-            String location = tbxLocation.Text.TrimEnd();
-            String colorid = tbxColor.Text;
-            String factoryid = txtfactory1.Text;
-            String sizespec = tbxSizeCode.Text;
+            String spno = txtSPNo.Text.TrimEnd();
+            String style = txtStyle.Text;
+            String refno = txtRefno.Text;
+            String location = txtLocation.Text.TrimEnd();
+            String colorid = txtColor.Text;
+            String factoryid = txtfactory.Text;
+            String sizespec = txtSizeCode.Text;
 
-            bool chkbalance = checkBox1.Checked;
+            bool chkbalance = checkBalanceQty.Checked;
             
 
             DualResult result = Result.True;

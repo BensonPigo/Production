@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSP.Text.TrimEnd();
@@ -236,13 +236,13 @@ WHERE   StockType='{0}'
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
@@ -288,7 +288,7 @@ WHERE   StockType='{0}'
         }
 
         //SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 
@@ -318,7 +318,7 @@ WHERE   StockType='{0}'
         }
 
         //Seq Valid
-        private void txtSeq1_Leave(object sender, EventArgs e)
+        private void txtSeq_Leave(object sender, EventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 //            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
@@ -333,7 +333,7 @@ WHERE   StockType='{0}'
         }
 
         //Update All
-        private void button4_Click(object sender, EventArgs e)
+        private void btnUpdateAll_Click(object sender, EventArgs e)
         {
             //grid1.ValidateControl();
             listControlBindingSource1.EndEdit();
@@ -347,7 +347,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void displayBox1_MouseDown(object sender, MouseEventArgs e)
+        private void displayLocation_MouseDown(object sender, MouseEventArgs e)
         {
             #region Location 右鍵開窗
 

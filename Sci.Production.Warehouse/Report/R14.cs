@@ -25,26 +25,26 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtfactory1.Text = Sci.Env.User.Factory;
-            MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            cbbFabricType.SelectedIndex = 0;
-            txtdropdownlist1.SelectedIndex = 0;
+            txtfactory.Text = Sci.Env.User.Factory;
+            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            comboFabricType.SelectedIndex = 0;
+            txtdropdownlistOrderType.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateWKNoETA.Value1) && MyUtility.Check.Empty(dateWKNoETA.Value2))
             {
                 MyUtility.Msg.WarningBox("< WK# ETA > can't be empty!!");
                 return false;
             }
 
-            eta1 = dateRange1.Value1;
-            eta2 = dateRange1.Value2;
-            ordertypeindex = txtdropdownlist1.SelectedIndex;
-            fabrictype = cbbFabricType.SelectedValue.ToString();
-            factory = txtfactory1.Text;
+            eta1 = dateWKNoETA.Value1;
+            eta2 = dateWKNoETA.Value2;
+            ordertypeindex = txtdropdownlistOrderType.SelectedIndex;
+            fabrictype = comboFabricType.SelectedValue.ToString();
+            factory = txtfactory.Text;
             switch (ordertypeindex)
             {
                 case 0:
@@ -71,11 +71,11 @@ namespace Sci.Production.Warehouse
                 , Convert.ToDateTime(eta1).ToString("d")
                 , Convert.ToDateTime(eta2).ToString("d")));
             condition.Append(string.Format(@"Fabric Type : {0}" + Environment.NewLine
-                , cbbFabricType.Text));
+                , comboFabricType.Text));
             condition.Append(string.Format(@"Factory : {0}" + Environment.NewLine
-                , txtfactory1.Text));
+                , txtfactory.Text));
             condition.Append(string.Format(@"Order Type : {0}" + Environment.NewLine
-                , txtdropdownlist1.Text));
+                , txtdropdownlistOrderType.Text));
             return base.ValidateInput();
         }
 

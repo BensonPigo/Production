@@ -36,7 +36,7 @@
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
             this.checkEmptyMtlETA = new Sci.Win.UI.CheckBox();
-            this.checheckEptyEachCons = new Sci.Win.UI.CheckBox();
+            this.checkEmptyEachCons = new Sci.Win.UI.CheckBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
@@ -73,7 +73,7 @@
             this.panel1.Controls.Add(this.txtLocateForSP);
             this.panel1.Controls.Add(this.labelLocateForSP);
             this.panel1.Controls.Add(this.checkEmptyMtlETA);
-            this.panel1.Controls.Add(this.checheckEptyEachCons);
+            this.panel1.Controls.Add(this.checkEmptyEachCons);
             this.panel1.Controls.Add(this.dateBuyerDelivery);
             this.panel1.Controls.Add(this.labelBuyerDelivery);
             this.panel1.Controls.Add(this.dateSewingInline);
@@ -94,7 +94,7 @@
             this.btnFind.TabIndex = 7;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button2_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // btnQuery
             // 
@@ -104,7 +104,7 @@
             this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtLocateForSP
             // 
@@ -134,19 +134,19 @@
             this.checkEmptyMtlETA.TabIndex = 4;
             this.checkEmptyMtlETA.Text = "Filter empty Mtl. ETA";
             this.checkEmptyMtlETA.UseVisualStyleBackColor = true;
-            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkEmptyMtlETA.CheckedChanged += new System.EventHandler(this.checkEmptyMtlETA_CheckedChanged);
             // 
-            // checheckEptyEachCons
+            // checkEmptyEachCons
             // 
-            this.checheckEptyEachCons.AutoSize = true;
-            this.checheckEptyEachCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checheckEptyEachCons.Location = new System.Drawing.Point(423, 38);
-            this.checheckEptyEachCons.Name = "checheckEptyEachCons";
-            this.checheckEptyEachCons.Size = new System.Drawing.Size(176, 21);
-            this.checheckEptyEachCons.TabIndex = 3;
-            this.checheckEptyEachCons.Text = "Filter empty Each Cons.";
-            this.checheckEptyEachCons.UseVisualStyleBackColor = true;
-            this.checheckEptyEachCons.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkEmptyEachCons.AutoSize = true;
+            this.checkEmptyEachCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkEmptyEachCons.Location = new System.Drawing.Point(423, 38);
+            this.checkEmptyEachCons.Name = "checkEmptyEachCons";
+            this.checkEmptyEachCons.Size = new System.Drawing.Size(176, 21);
+            this.checkEmptyEachCons.TabIndex = 3;
+            this.checkEmptyEachCons.Text = "Filter empty Each Cons.";
+            this.checkEmptyEachCons.UseVisualStyleBackColor = true;
+            this.checkEmptyEachCons.CheckedChanged += new System.EventHandler(this.checkEmptyEachCons_CheckedChanged);
             // 
             // dateBuyerDelivery
             // 
@@ -257,7 +257,7 @@
             this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
@@ -268,7 +268,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button3_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // pictureBox2
             // 
@@ -378,7 +378,7 @@
         private Win.UI.TextBox txtLocateForSP;
         private Win.UI.Label labelLocateForSP;
         private Win.UI.CheckBox checkEmptyMtlETA;
-        private Win.UI.CheckBox checheckEptyEachCons;
+        private Win.UI.CheckBox checkEmptyEachCons;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.DateRange dateSewingInline;

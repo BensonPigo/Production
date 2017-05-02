@@ -140,12 +140,12 @@ where d.id='{0}' and i.CutplanID = '{0}' and i.Status = 'Confirmed'
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-         private void btn_Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
             DataTable dt = (DataTable)TaipeiOutputBS.DataSource;

@@ -216,7 +216,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button5_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // shapeContainer1
             // 
@@ -246,7 +246,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtLocateForSP
             // 

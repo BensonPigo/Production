@@ -253,7 +253,7 @@
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 1;
-            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.cbbStockType_Validating);
+            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboStockType_Validating);
             // 
             // P51
             // 

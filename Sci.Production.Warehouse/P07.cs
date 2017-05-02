@@ -1130,7 +1130,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         // invoice# valid
-        private void textBox3_Validating(object sender, CancelEventArgs e)
+        private void txtInvoiceNo_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             DataTable dt;
@@ -1224,7 +1224,7 @@ where a.id='{0}'", CurrentMaintain["exportid"]);
         }
 
         //Filter
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (comboTypeFilter.SelectedIndex)
             {

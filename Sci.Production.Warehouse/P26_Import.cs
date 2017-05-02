@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Button Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
@@ -263,14 +263,14 @@ WHERE   StockType='{0}'
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             gridImport.ValidateControl();
@@ -312,7 +312,7 @@ WHERE   StockType='{0}'
             this.Close();
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 
@@ -340,8 +340,8 @@ WHERE   StockType='{0}'
 //            }
 
         }
-        
-        private void textBox3_MouseDown(object sender, MouseEventArgs e)
+
+        private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");
             DialogResult result = item.ShowDialog();
@@ -380,7 +380,7 @@ WHERE   StockType='{0}'
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;

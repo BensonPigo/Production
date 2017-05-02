@@ -84,7 +84,7 @@
             this.btnHide.Text = "Hide";
             this.btnHide.UseVisualStyleBackColor = true;
             this.btnHide.Visible = false;
-            this.btnHide.Click += new System.EventHandler(this.button2_Click);
+            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
             // 
             // btnRefresh
             // 
@@ -96,7 +96,7 @@
             this.btnRefresh.TabIndex = 0;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.button1_Click);
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // P15_Unfinish
             // 

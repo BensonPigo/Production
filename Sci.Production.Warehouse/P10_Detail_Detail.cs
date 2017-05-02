@@ -142,12 +142,12 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             gridRollNo.ValidateControl();

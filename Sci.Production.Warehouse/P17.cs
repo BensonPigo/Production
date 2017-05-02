@@ -846,7 +846,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
@@ -862,7 +862,7 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P17_AccumulatedQty(CurrentMaintain);
             frm.P17 = this;
@@ -896,7 +896,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtTransfer_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
 
@@ -934,7 +934,7 @@ where a.id='{0}'", txtTransfer.Text), out dt);
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());

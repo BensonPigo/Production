@@ -26,24 +26,24 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            txtMdivision.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateCFMDate.Value1) && MyUtility.Check.Empty(dateCFMDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< CFM date > can't be empty!!");
                 return false;
             }
 
-            cfmdate1 = dateRange1.Value1;
-            cfmdate2 = dateRange1.Value2;
-            mdivisionid = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            brand = txtbrand1.Text;
-            operation = txtdropdownlist1.SelectedValue.ToString();
+            cfmdate1 = dateCFMDate.Value1;
+            cfmdate2 = dateCFMDate.Value2;
+            mdivisionid = txtMdivision.Text;
+            factory = txtfactory.Text;
+            brand = txtbrand.Text;
+            operation = txtdropdownlistOperation.SelectedValue.ToString();
 
             condition.Clear();
             condition.Append(string.Format(@"Issue Date : {0} ~ {1}" + "   "
@@ -212,11 +212,11 @@ where "
             return true;
         }
 
-        private void txtMdivision1_Validated(object sender, EventArgs e)
+        private void txtMdivision_Validated(object sender, EventArgs e)
         {
-            if (!txtMdivision1.Text.EqualString(txtMdivision1.OldValue))
+            if (!txtMdivision.Text.EqualString(txtMdivision.OldValue))
             {
-                this.txtfactory1.Text = "";
+                this.txtfactory.Text = "";
             }
         }
     }

@@ -718,7 +718,7 @@
             this.btnShippingMark.TabIndex = 3;
             this.btnShippingMark.Text = "Shipping Mark";
             this.btnShippingMark.UseVisualStyleBackColor = true;
-            this.btnShippingMark.Click += new System.EventHandler(this.button2_Click);
+            this.btnShippingMark.Click += new System.EventHandler(this.btnShippingMark_Click);
             // 
             // labelLocateSP
             // 
@@ -760,7 +760,7 @@
             this.btnFind.TabIndex = 2;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button3_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txttpeuserHandle
             // 

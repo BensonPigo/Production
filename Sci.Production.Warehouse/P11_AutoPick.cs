@@ -462,7 +462,7 @@ delete from #tmp2 where qty = 0;
                 .Sum(r => r.Field<decimal>("qty"));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }

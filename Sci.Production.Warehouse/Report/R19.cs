@@ -23,12 +23,12 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.EditMode = true;
-            cbxCategory.SelectedIndex = 0;
+            comboCategoryAlreadyReturn.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
         {
-            selectindex = cbxCategory.SelectedIndex;
+            selectindex = comboCategoryAlreadyReturn.SelectedIndex;
             return base.ValidateInput();
         }
 
@@ -49,11 +49,11 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            DateTime? returnDate1 = dateRange_ReturnDate.Value1;
-            DateTime? returnDate2 = dateRange_ReturnDate.Value2;
-            String spno = tbxSP.Text.TrimEnd();
-            string seq1 = txtSeq1.seq1;
-            string seq2 = txtSeq1.seq2;
+            DateTime? returnDate1 = dateEstReturnDate.Value1;
+            DateTime? returnDate2 = dateEstReturnDate.Value2;
+            String spno = txtBorrowSPNo.Text.TrimEnd();
+            string seq1 = txtSeq.seq1;
+            string seq2 = txtSeq.seq2;
 
             DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
@@ -75,7 +75,7 @@ and a.Status = 'Confirmed'");
             {
                 sqlcmd.Append(string.Format(" And b.frompoid = '{0}'", spno));
             }
-            if (!txtSeq1.checkEmpty(showErrMsg: false))
+            if (!txtSeq.checkEmpty(showErrMsg: false))
             {
                 sqlcmd.Append(string.Format(" And b.fromseq1 = '{0}' and b.FromSeq2 ='{1}'", seq1, seq2));
             }

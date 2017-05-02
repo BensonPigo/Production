@@ -27,31 +27,31 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            txtfactory1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            cbbFabricType.SelectedIndex = 0;
-            txtdropdownlist1.SelectedIndex = 0;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            txtfactory.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            comboFabricType.SelectedIndex = 0;
+            txtdropdownlistShift.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && 
-                MyUtility.Check.Empty(dateRange2.Value2) &&MyUtility.Check.Empty(dateRange2.Value1))
+            if (MyUtility.Check.Empty(dateIssueDate.Value1) && MyUtility.Check.Empty(dateIssueDate.Value2) && 
+                MyUtility.Check.Empty(dateApproveDate.Value2) &&MyUtility.Check.Empty(dateApproveDate.Value1))
             {
                 MyUtility.Msg.WarningBox("< Issue date > , < Approve date > can't be empty!!");
                 return false;
             }
 
-            issuedate1 = dateRange1.Value1;
-            issuedate2 = dateRange1.Value2;
-            approveDate1 = dateRange2.Value1;
-            approveDate2 = dateRange2.Value2;
-            fabrictype = cbbFabricType.SelectedValue.ToString();
-            mdivisionid = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            shift = txtdropdownlist1.SelectedValue.ToString();
+            issuedate1 = dateIssueDate.Value1;
+            issuedate2 = dateIssueDate.Value2;
+            approveDate1 = dateApproveDate.Value1;
+            approveDate2 = dateApproveDate.Value2;
+            fabrictype = comboFabricType.SelectedValue.ToString();
+            mdivisionid = txtMdivision.Text;
+            factory = txtfactory.Text;
+            shift = txtdropdownlistShift.SelectedValue.ToString();
 
             condition.Clear();
             condition.Append(string.Format(@"Issue Date : {0} ~ {1}" + "   "
@@ -61,13 +61,13 @@ namespace Sci.Production.Warehouse
                 , Convert.ToDateTime(approveDate1).ToString("d")
                 , Convert.ToDateTime(approveDate2).ToString("d")));
             condition.Append(string.Format(@"M : {0}" + "   "
-                , txtMdivision1.Text));
+                , txtMdivision.Text));
             condition.Append(string.Format(@"Factory : {0}" + "   "
-                , txtfactory1.Text));
+                , txtfactory.Text));
             condition.Append(string.Format(@"Shift : {0}" + "   "
-                , txtdropdownlist1.Text));
+                , txtdropdownlistShift.Text));
             condition.Append(string.Format(@"Fabric Type : {0}"
-                , cbbFabricType.Text));
+                , comboFabricType.Text));
 
             return base.ValidateInput();
         }
@@ -198,7 +198,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
                 , Convert.ToDateTime(approveDate2).ToString("d"));
             //Shift (3, 6)
             objSheets.Cells[3, 6] = string.Format(@"{0}" + "   "
-                , txtdropdownlist1.Text);
+                , txtdropdownlistShift.Text);
             //Date (3, 11)
             objSheets.Cells[3, 11] = string.Format("{0:d}", DateTime.Now);
 
@@ -218,11 +218,11 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             return true;
         }
 
-        private void txtMdivision1_Validated(object sender, EventArgs e)
+        private void txtMdivision_Validated(object sender, EventArgs e)
         {
-            if (!txtMdivision1.Text.EqualString(txtMdivision1.OldValue))
+            if (!txtMdivision.Text.EqualString(txtMdivision.OldValue))
             {
-                this.txtfactory1.Text = "";
+                this.txtfactory.Text = "";
             }
         }
     }

@@ -112,15 +112,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1058, 539);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1052, 493);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -214,7 +214,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button5_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // shapeContainer1
             // 
@@ -244,7 +244,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -274,7 +274,7 @@
             this.btnClearQtyIsEmpty.TabIndex = 7;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
-            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.button9_Click);
+            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
             // 
             // labelRemark
             // 
@@ -306,7 +306,7 @@
             this.btnAccumulatedQty.TabIndex = 63;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
             // 
             // P22
             // 

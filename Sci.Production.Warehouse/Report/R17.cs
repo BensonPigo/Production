@@ -25,18 +25,18 @@ namespace Sci.Production.Warehouse
         {
             InitializeComponent();
             this.EditMode = true;
-            comboBox1.SelectedIndex = 0;
+            comboStockType.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) && 
-                MyUtility.Check.Empty(textBox1.Text) && MyUtility.Check.Empty(textBox3.Text))
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && 
+                MyUtility.Check.Empty(txtSPNo.Text) && MyUtility.Check.Empty(txtLocation.Text))
             {
                 MyUtility.Msg.WarningBox("SP#, SCI Delivery, Location can't be empty!!");
                 return false;
             }
-            selectindex = comboBox1.SelectedIndex;
+            selectindex = comboStockType.SelectedIndex;
             return base.ValidateInput();
         }
 
@@ -75,17 +75,17 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             //return base.OnAsyncDataLoad(e);
-            String spno = textBox1.Text.TrimEnd();
-            string seq1 = txtSeq1.seq1;
-            string seq2 = txtSeq1.seq2;
-            String location1 = textBox3.Text.TrimEnd();
-            string factory = txtfactory1.Text;
-            bool chkbalance = checkBox1.Checked;
+            String spno = txtSPNo.Text.TrimEnd();
+            string seq1 = txtSeq.seq1;
+            string seq2 = txtSeq.seq2;
+            String location1 = txtLocation.Text.TrimEnd();
+            string factory = txtfactory.Text;
+            bool chkbalance = checkBalanceQty.Checked;
 
             DualResult result = Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))    // SCI Delivery empty
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2))    // SCI Delivery empty
             {
                 if (MyUtility.Check.Empty(location1)) // Location empty
                 {
@@ -122,7 +122,7 @@ where 1=1");
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@"And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq1.checkEmpty(showErrMsg: false)) 
+                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
                         sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
 
                     if (chkbalance) 
@@ -179,7 +179,7 @@ where 1=1 And b.mtllocationid = '{0}' ", location1));
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq1.checkEmpty(showErrMsg: false)) 
+                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
                         sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
 
                     if (chkbalance) 
@@ -237,15 +237,15 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.se
 inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
 where 1=1"));
 
-                    if (!MyUtility.Check.Empty(dateRange1.Value1))
-                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
-                    if (!MyUtility.Check.Empty(dateRange1.Value2))
-                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
+                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
+                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
 
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq1.checkEmpty(showErrMsg: false)) 
+                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
                         sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
 
                     if (chkbalance) 
@@ -301,15 +301,15 @@ inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 where 1=1
 And b.mtllocationid = '{0}' ", location1));
 
-                    if (!MyUtility.Check.Empty(dateRange1.Value1))
-                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateRange1.Value1).ToString("d")));
-                    if (!MyUtility.Check.Empty(dateRange1.Value2))
-                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateRange1.Value2).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
+                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
+                    if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
+                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
 
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq1.checkEmpty(showErrMsg: false)) 
+                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
                         sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
 
                     if (chkbalance) 

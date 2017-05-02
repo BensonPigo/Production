@@ -178,7 +178,7 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
                  ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
@@ -188,7 +188,7 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
 
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSortBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (comboSortBy.SelectedIndex)
             {

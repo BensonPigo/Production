@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSP.Text.TrimEnd();
@@ -227,12 +227,12 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
         }
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
@@ -284,7 +284,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         //SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSP_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 
@@ -328,7 +328,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
         }
 
         //Update All
-        private void button4_Click(object sender, EventArgs e)
+        private void btnUpdateAll_Click(object sender, EventArgs e)
         {
             string reasonid = comboReason.SelectedValue.ToString();
             gridImport.ValidateControl();
@@ -343,7 +343,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             }
         }
 
-        private void textBox4_Validating(object sender, CancelEventArgs e)
+        private void txtLocation_Validating(object sender, CancelEventArgs e)
         {
             if (txtLocation.Text.ToString() == "") return;
             if (!MyUtility.Check.Seek(string.Format(@"
@@ -361,7 +361,7 @@ where exists(
             }
         }
         //Location  右鍵
-        private void textBox4_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void txtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format(@"

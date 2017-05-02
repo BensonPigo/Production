@@ -29,7 +29,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
@@ -176,13 +176,13 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             gridImport.ValidateControl();
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
@@ -228,7 +228,7 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'I'
         }
 
         //SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 

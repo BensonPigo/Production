@@ -53,7 +53,7 @@ namespace Sci.Production.Warehouse
                  .Text("Shipmodeid", header: "Ship Mode", width: Widths.AnsiChars(6));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

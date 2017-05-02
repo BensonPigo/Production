@@ -106,7 +106,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2411, 70);
+            this.gridicon.Location = new System.Drawing.Point(2520, 70);
             // 
             // refresh
             // 
@@ -320,7 +320,7 @@
             this.btnCutRef.TabIndex = 45;
             this.btnCutRef.Text = "Cut Ref#";
             this.btnCutRef.UseVisualStyleBackColor = true;
-            this.btnCutRef.Click += new System.EventHandler(this.btCutRef_Click);
+            this.btnCutRef.Click += new System.EventHandler(this.btnCutRef_Click);
             // 
             // P10
             // 

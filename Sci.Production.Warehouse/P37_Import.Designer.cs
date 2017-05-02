@@ -95,7 +95,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // labelSPNo
             // 
@@ -143,7 +143,7 @@
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
-            this.txtSeq.Leave += new System.EventHandler(this.txtSeq1_Leave);
+            this.txtSeq.Leave += new System.EventHandler(this.txtSeq_Leave);
             // 
             // txtWK
             // 

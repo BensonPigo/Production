@@ -148,12 +148,12 @@ order by ColorID, SizeSpec ,SewinLine
                  ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P03_Refno.xltx"); //預先開啟excel app

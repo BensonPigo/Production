@@ -490,7 +490,7 @@ Where a.id = '{0}'", masterID);
             this.RenewData();
         }
 
-        private void cbbStockType_Validating(object sender, CancelEventArgs e)
+        private void comboStockType_Validating(object sender, CancelEventArgs e)
         {
             if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
             {

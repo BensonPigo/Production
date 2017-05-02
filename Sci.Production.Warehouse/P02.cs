@@ -162,7 +162,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Find
-        private void button3_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             string poID = txtLocateSP.Text + txtSeq1.getSeq();
 
@@ -175,7 +175,7 @@ where ed.ID = '{0}'", masterID);
         }
 
         //Shipping Mark
-        private void button2_Click(object sender, EventArgs e)
+        private void btnShippingMark_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);

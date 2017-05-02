@@ -275,7 +275,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         }
 
         //SP# Valid
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 
@@ -305,7 +305,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         }
 
         //Seq Valid
-        private void txtSeq1_Leave(object sender, EventArgs e)
+        private void txtSeq_Leave(object sender, EventArgs e)
         {
 //            string sp = textBox1.Text.TrimEnd();
 //            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;

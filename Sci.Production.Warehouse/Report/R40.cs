@@ -29,14 +29,14 @@ namespace Sci.Production.Warehouse
         protected override bool ValidateInput()
         {
             #region Set Filter Date
-            strSP1 = txtSP1.Text.Trim();
-            strSP2 = txtSP2.Text.Trim();
-            strRefno1 = txtRefno1.Text.Trim();
-            strRefno2 = txtRefno2.Text.Trim();
-            strColor1 = txtColor1.Text.Trim();
-            strColor2 = txtColor1.Text.Trim();
-            strSupp = txtSupp.TextBox1.Text.Trim();
-            strFactory = txtfactory1.Text.Trim();
+            strSP1 = txtSPNoStart.Text.Trim();
+            strSP2 = txtSPNoEnd.Text.Trim();
+            strRefno1 = txtRefnoStart.Text.Trim();
+            strRefno2 = txtRefnoEnd.Text.Trim();
+            strColor1 = txtThreadColorStart.Text.Trim();
+            strColor2 = txtThreadColorStart.Text.Trim();
+            strSupp = txtSupplier.TextBox1.Text.Trim();
+            strFactory = txtfactory.Text.Trim();
             #endregion 
             return base.ValidateInput();
         }

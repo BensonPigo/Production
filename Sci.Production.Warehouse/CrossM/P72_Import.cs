@@ -131,14 +131,14 @@ where fi.StockType = 'I' and lock = 0 and fi.InQty - fi.OutQty+fi.AdjustQty > 0;
             #endregion
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             gridDetail.ValidateControl();
             DataTable dtDetail = ((DataSet)listControlBindingSource1.DataSource).Tables["detail"];

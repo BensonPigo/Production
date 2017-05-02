@@ -64,7 +64,7 @@
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -76,7 +76,7 @@
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btn_Import_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnFindNow
             // 
@@ -88,7 +88,7 @@
             this.btnFindNow.TabIndex = 1;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtSPNo
             // 
@@ -99,7 +99,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // labelSPNo
             // 
@@ -135,7 +135,7 @@
             this.btnUpdateAllLocation.TabIndex = 7;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btn_updateLoc_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
             // 
             // txtLocation
             // 
@@ -148,7 +148,7 @@
             this.txtLocation.ReadOnly = true;
             this.txtLocation.Size = new System.Drawing.Size(222, 23);
             this.txtLocation.TabIndex = 6;
-            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox3_MouseDown);
+            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation_MouseDown);
             // 
             // labelLocation
             // 
@@ -172,7 +172,7 @@
             this.checkReturn.TabIndex = 5;
             this.checkReturn.Text = "Return Transfer Qty Back";
             this.checkReturn.UseVisualStyleBackColor = true;
-            this.checkReturn.Click += new System.EventHandler(this.cb_return_Click);
+            this.checkReturn.Click += new System.EventHandler(this.checkReturn_Click);
             // 
             // groupBox1
             // 

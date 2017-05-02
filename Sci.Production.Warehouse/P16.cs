@@ -136,7 +136,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["Requestid"]))
             {
                 MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
-                textBox2.Focus();
+                txtRequestNo.Focus();
                 return false;
             }
 
@@ -594,14 +594,14 @@ Where a.id = '{0}'", masterID);
         }
 
         //Delete empty qty
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         //Import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["requestid"]))
             {
@@ -615,7 +615,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated Qty
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P16_AccumulatedQty(CurrentMaintain);
             frm.P16 = this;
@@ -630,7 +630,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //Locate for (find)
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("poid", textBox1.Text.TrimEnd());
@@ -641,12 +641,12 @@ Where a.id = '{0}'", masterID);
         }
 
         //Request ID
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtRequestNo_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack WITH (NOLOCK) 
 where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
-                , textBox2.Text, Sci.Env.User.Keyword), out dr, null))
+                , txtRequestNo.Text, Sci.Env.User.Keyword), out dr, null))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
@@ -664,12 +664,12 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'"
                 if (!MyUtility.Check.Empty(dr["issuelackid"]))
                 {
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", textBox2.Text, dr["issuelackid"]));
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", txtRequestNo.Text, dr["issuelackid"]));
                     return;
                 }
 
             }
-            CurrentMaintain["requestid"] = textBox2.Text;
+            CurrentMaintain["requestid"] = txtRequestNo.Text;
             CurrentMaintain["type"] = dr["type"].ToString();
         }
 

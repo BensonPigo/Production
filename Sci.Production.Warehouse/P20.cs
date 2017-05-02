@@ -96,14 +96,14 @@ namespace Sci.Production.Warehouse
         }
 
         //Close
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             //this.Dispose();
             this.Close();
         }
 
         //Query
-        private void button2_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             //搜尋前先清空資料
             bindingSource1.DataSource = null;
@@ -307,7 +307,7 @@ select i.poid,i.seq1,i.Seq2,t.id
             Grid3Refresh();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkQty_CheckedChanged(object sender, EventArgs e)
         {
             if (checkQty.Checked)
             {

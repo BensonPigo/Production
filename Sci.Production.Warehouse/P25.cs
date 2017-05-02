@@ -710,7 +710,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
@@ -719,7 +719,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //Import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P25_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
@@ -727,7 +727,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P25_AccumulatedQty(CurrentMaintain);
             frm.P25 = this;
@@ -735,7 +735,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Locate
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("fromseq", txtSeq.getSeq());

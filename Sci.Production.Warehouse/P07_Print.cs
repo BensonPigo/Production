@@ -167,7 +167,7 @@ namespace Sci.Production.Warehouse
 
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radioPLRcvReport_CheckedChanged(object sender, EventArgs e)
         {
 
             CheckControlEnable();

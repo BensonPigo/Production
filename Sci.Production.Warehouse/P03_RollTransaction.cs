@@ -325,12 +325,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             this.comboStockType.Text = "ALL";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboStockType_SelectedIndexChanged(object sender, EventArgs e)
         {
             bindingSource1_PositionChanged(sender, e);  //687: WAREHOUSE_P03_RollTransaction_Transaction Detail by Roll#，1.Grid3值不對
             switch (comboStockType.SelectedIndex)
@@ -391,7 +391,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnPrint_Click(object sender, EventArgs e)
         {
 
 

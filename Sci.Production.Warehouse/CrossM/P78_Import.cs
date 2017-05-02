@@ -141,7 +141,7 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellFormatting = (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow(e.RowIndex);
+                DataRow dr = gridImport.GetDataRow(e.RowIndex);
                 switch (dr["StockType"].ToString())
                 {
                     case "B":
@@ -163,14 +163,14 @@ namespace Sci.Production.Warehouse
                 //紀錄 Borrowing and Return 總數
                 decimal sumBorrowing = 0, sumReturn = 0;
                 //Get Grid2 目前選取的Data
-                DataRow grid2Dr = grid2.GetDataRow(e.RowIndex);               
+                DataRow grid2Dr = gridImport2.GetDataRow(e.RowIndex);               
                 grid2Dr["ReciveQty"] = 0;
 
                 #region Grid1.Qty <= BorrowingQty
-                DataRow grid1Dr = grid1.GetDataRow(grid1SelectIndex);
+                DataRow grid1Dr = gridImport.GetDataRow(grid1SelectIndex);
 
                 //Borrowing 加總條件 BorrowingSP, BorrowingSeq, StockType
-                DataRow[] findrow = grid2.GetTable().Select(string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", grid1Dr["BorrowingSP"], grid1Dr["BorrowingSeq"], grid1Dr["StockType"]));
+                DataRow[] findrow = gridImport2.GetTable().Select(string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", grid1Dr["BorrowingSP"], grid1Dr["BorrowingSeq"], grid1Dr["StockType"]));
                 foreach (DataRow dr in findrow)
                     sumBorrowing += Convert.ToDecimal(dr["ReciveQty"]);
 
@@ -182,7 +182,7 @@ namespace Sci.Production.Warehouse
 
                 #region Grid2.Accu <= ReturnQty
                 //Return 加總條件 ReturnSp, ReturnSeq, Roll, Dyelot
-                findrow = grid2.GetTable().Select(string.Format("ReturnSP = '{0}' and ReturnSeq = '{1}' and Roll = '{2}' and Dyelot = '{3}'", grid1Dr["ReturnSP"], grid1Dr["ReturnSeq"], grid2Dr["Roll"], grid2Dr["Dyelot"]));
+                findrow = gridImport2.GetTable().Select(string.Format("ReturnSP = '{0}' and ReturnSeq = '{1}' and Roll = '{2}' and Dyelot = '{3}'", grid1Dr["ReturnSP"], grid1Dr["ReturnSeq"], grid2Dr["Roll"], grid2Dr["Dyelot"]));
                 foreach (DataRow dr in findrow)
                     sumReturn += Convert.ToDecimal(dr["ReciveQty"]);
 
@@ -237,16 +237,16 @@ namespace Sci.Production.Warehouse
                     //grid1.Rows[grid1SelectIndex].Cells["AccuDiffQty"].Style.BackColor = Color.White;
                 }
 
-                grid1.RefreshEdit();
-                grid2.RefreshEdit();
+                gridImport.RefreshEdit();
+                gridImport2.RefreshEdit();
             };
             #endregion
 
             Ict.Win.UI.DataGridViewNumericBoxColumn col_ReciveQty;
 
-            this.grid1.IsEditingReadOnly = false;
-            this.grid1.DataSource = TaipeiOutputBS;
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.gridImport.IsEditingReadOnly = false;
+            this.gridImport.DataSource = TaipeiOutputBS;
+            Helper.Controls.Grid.Generator(this.gridImport)
                 .Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
                 .Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10), settings: ns)
@@ -258,9 +258,9 @@ namespace Sci.Production.Warehouse
                 .CheckBox("ReciveCheck", header: "Complete", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
 
-            this.grid2.IsEditingReadOnly = false;
-            this.grid2.DataSource = TaipeiOutputBS_Detail;
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.gridImport2.IsEditingReadOnly = false;
+            this.gridImport2.DataSource = TaipeiOutputBS_Detail;
+            Helper.Controls.Grid.Generator(this.gridImport2)
                 //.Text("BorrowingSP", header: "Borrowing" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 //.Text("BorrowingSeq", header: "Borrowing" + Environment.NewLine + "Seq", iseditingreadonly: true, width: Widths.AnsiChars(9))
                 //.Text("StockType", header: "StockType", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -391,18 +391,18 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-         private void btn_Import_Click(object sender, EventArgs e)
+         private void btnImport_Click(object sender, EventArgs e)
         {
-            grid1.ValidateControl();
-            grid2.ValidateControl();
+            gridImport.ValidateControl();
+            gridImport2.ValidateControl();
 
             #region check Qty 
-            foreach (DataRow dr in grid2.GetTable().Rows)
+            foreach (DataRow dr in gridImport2.GetTable().Rows)
             {
                 if (Convert.ToDecimal(dr["AccuDiffReciveQty"]) > 0)
                 {
@@ -412,13 +412,13 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
             }
             #endregion
 
-            grid2.GetTable().Columns["BorrowingM"].ColumnName = "MDivisionID";
-            grid2.GetTable().Columns["BorrowingSP"].ColumnName = "POID";
-            grid2.GetTable().Columns["BorrowingSeq"].ColumnName = "Seq";
-            grid2.GetTable().Columns["BorrowingSeq1"].ColumnName = "Seq1";
-            grid2.GetTable().Columns["BorrowingSeq2"].ColumnName = "Seq2";
-            grid2.GetTable().Columns["ReciveQty"].ColumnName = "qty";
-            DataRow[] findRow = grid2.GetTable().Select("qty > 0");
+            gridImport2.GetTable().Columns["BorrowingM"].ColumnName = "MDivisionID";
+            gridImport2.GetTable().Columns["BorrowingSP"].ColumnName = "POID";
+            gridImport2.GetTable().Columns["BorrowingSeq"].ColumnName = "Seq";
+            gridImport2.GetTable().Columns["BorrowingSeq1"].ColumnName = "Seq1";
+            gridImport2.GetTable().Columns["BorrowingSeq2"].ColumnName = "Seq2";
+            gridImport2.GetTable().Columns["ReciveQty"].ColumnName = "qty";
+            DataRow[] findRow = gridImport2.GetTable().Select("qty > 0");
 
             foreach (DataRow dr in dt_detail.Rows)
             {
@@ -453,30 +453,30 @@ order by g1.BorrowingSp, g1.BorrowingSeq, g2.ReturnSP, g2.ReturnSeq, Roll, Dyelo
          private void grid1_RowSelecting(object sender, Ict.Win.UI.DataGridViewRowSelectingEventArgs e)
          {
              grid1SelectIndex = e.RowIndex;
-             DataRow dr = grid1.GetDataRow(grid1SelectIndex);
+             DataRow dr = gridImport.GetDataRow(grid1SelectIndex);
              TaipeiOutputBS_Detail.Filter = string.Format("BorrowingSP = '{0}' and BorrowingSeq = '{1}' and StockType = '{2}'", dr["BorrowingSP"], dr["BorrowingSeq"], dr["StockType"]);
          }
 
          private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
          {
-             grid2.ValidateControl();
+             gridImport2.ValidateControl();
              grid2_changeColor();
          }
 
          private void grid2_changeColor()
          {
-             for (int i = 0; i < grid2.Rows.Count; i++)
+             for (int i = 0; i < gridImport2.Rows.Count; i++)
              {
-                 if (Convert.ToDecimal(grid2.Rows[i].Cells["AccuDiffReciveQty"].Value) == 0)
+                 if (Convert.ToDecimal(gridImport2.Rows[i].Cells["AccuDiffReciveQty"].Value) == 0)
                  {
-                     grid2.Rows[i].Cells["AssignCheck"].Value = 0;
-                     grid2.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
+                     gridImport2.Rows[i].Cells["AssignCheck"].Value = 0;
+                     gridImport2.Rows[i].DefaultCellStyle.BackColor = Color.Gray;
                  }
                  else
                  {
-                     grid2.Rows[i].Cells["AssignCheck"].Value = 1;
-                     grid2.Rows[i].DefaultCellStyle.BackColor = Color.White;
-                     grid2.Rows[i].Cells["ReciveQty"].Style.BackColor = Color.Pink;
+                     gridImport2.Rows[i].Cells["AssignCheck"].Value = 1;
+                     gridImport2.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                     gridImport2.Rows[i].Cells["ReciveQty"].Style.BackColor = Color.Pink;
                  }
              }
          }

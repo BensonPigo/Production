@@ -514,14 +514,14 @@ Where a.id = '{0}' ", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             ((DataTable)detailgridbs.DataSource).Select("").ToList().ForEach(r => r.Delete());
             
         }
 
         //find
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("OrderId", txtLocateForSP.Text.TrimEnd());
@@ -532,7 +532,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         //Batch Import
-        private void button1_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["localsuppid"]))
             {

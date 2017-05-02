@@ -29,27 +29,27 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btn_Cancel = new Sci.Win.UI.Button();
-            this.btn_Import = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.BorrowItemBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.displayBoxColor = new Sci.Win.UI.DisplayBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.displayBoxRefno = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBoxSizeSpec = new Sci.Win.UI.DisplayBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.button1 = new Sci.Win.UI.Button();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.displayColorID = new Sci.Win.UI.DisplayBox();
+            this.labelColorID = new Sci.Win.UI.Label();
+            this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.displaySizeSpec = new Sci.Win.UI.DisplayBox();
+            this.labelSizeSpec = new Sci.Win.UI.Label();
+            this.txtBorrowFromSPNo = new Sci.Win.UI.TextBox();
+            this.labelBorrowFromSPNo = new Sci.Win.UI.Label();
+            this.labelDesc = new Sci.Win.UI.Label();
+            this.editDesc = new Sci.Win.UI.EditBox();
+            this.txtToSPNoSeq = new Sci.Win.UI.TextBox();
+            this.labelToSPNoSeq = new Sci.Win.UI.Label();
+            this.btnFindNow = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BorrowItemBS)).BeginInit();
             this.panel1.SuspendLayout();
@@ -57,34 +57,34 @@
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
-            // btn_Cancel
+            // btnCancel
             // 
-            this.btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Cancel.Location = new System.Drawing.Point(912, 15);
-            this.btn_Cancel.Name = "btn_Cancel";
-            this.btn_Cancel.Size = new System.Drawing.Size(90, 30);
-            this.btn_Cancel.TabIndex = 1;
-            this.btn_Cancel.Text = "Cancel";
-            this.btn_Cancel.UseVisualStyleBackColor = true;
-            this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 1;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btn_Import
+            // btnImport
             // 
-            this.btn_Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Import.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Import.Location = new System.Drawing.Point(816, 15);
-            this.btn_Import.Name = "btn_Import";
-            this.btn_Import.Size = new System.Drawing.Size(90, 30);
-            this.btn_Import.TabIndex = 0;
-            this.btn_Import.Text = "Import";
-            this.btn_Import.UseVisualStyleBackColor = true;
-            this.btn_Import.Click += new System.EventHandler(this.btn_Import_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 15);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btn_Cancel);
-            this.groupBox2.Controls.Add(this.btn_Import);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
             this.groupBox2.Name = "groupBox2";
@@ -94,150 +94,160 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.txtSeq1);
-            this.panel1.Controls.Add(this.displayBoxColor);
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.displayBoxRefno);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.displayBoxSizeSpec);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.textBox3);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.editBox1);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.txtSeq);
+            this.panel1.Controls.Add(this.displayColorID);
+            this.panel1.Controls.Add(this.labelColorID);
+            this.panel1.Controls.Add(this.displayRefno);
+            this.panel1.Controls.Add(this.labelRefno);
+            this.panel1.Controls.Add(this.displaySizeSpec);
+            this.panel1.Controls.Add(this.labelSizeSpec);
+            this.panel1.Controls.Add(this.txtBorrowFromSPNo);
+            this.panel1.Controls.Add(this.labelBorrowFromSPNo);
+            this.panel1.Controls.Add(this.labelDesc);
+            this.panel1.Controls.Add(this.editDesc);
+            this.panel1.Controls.Add(this.txtToSPNoSeq);
+            this.panel1.Controls.Add(this.labelToSPNoSeq);
+            this.panel1.Controls.Add(this.btnFindNow);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 155);
             this.panel1.TabIndex = 19;
             // 
-            // displayBoxColor
+            // txtSeq
             // 
-            this.displayBoxColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxColor.Location = new System.Drawing.Point(690, 43);
-            this.displayBoxColor.Name = "displayBoxColor";
-            this.displayBoxColor.Size = new System.Drawing.Size(113, 23);
-            this.displayBoxColor.TabIndex = 25;
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(236, 11);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 1;
             // 
-            // label7
+            // displayColorID
             // 
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(592, 43);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(95, 23);
-            this.label7.TabIndex = 24;
-            this.label7.Text = "Color ID";
+            this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColorID.Location = new System.Drawing.Point(690, 43);
+            this.displayColorID.Name = "displayColorID";
+            this.displayColorID.Size = new System.Drawing.Size(113, 23);
+            this.displayColorID.TabIndex = 25;
             // 
-            // displayBoxRefno
+            // labelColorID
             // 
-            this.displayBoxRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxRefno.Location = new System.Drawing.Point(414, 43);
-            this.displayBoxRefno.Name = "displayBoxRefno";
-            this.displayBoxRefno.Size = new System.Drawing.Size(153, 23);
-            this.displayBoxRefno.TabIndex = 23;
+            this.labelColorID.Lines = 0;
+            this.labelColorID.Location = new System.Drawing.Point(592, 43);
+            this.labelColorID.Name = "labelColorID";
+            this.labelColorID.Size = new System.Drawing.Size(95, 23);
+            this.labelColorID.TabIndex = 24;
+            this.labelColorID.Text = "Color ID";
             // 
-            // label6
+            // displayRefno
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(316, 43);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 23);
-            this.label6.TabIndex = 22;
-            this.label6.Text = "Refno";
+            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefno.Location = new System.Drawing.Point(414, 43);
+            this.displayRefno.Name = "displayRefno";
+            this.displayRefno.Size = new System.Drawing.Size(153, 23);
+            this.displayRefno.TabIndex = 23;
             // 
-            // displayBoxSizeSpec
+            // labelRefno
             // 
-            this.displayBoxSizeSpec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxSizeSpec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxSizeSpec.Location = new System.Drawing.Point(107, 43);
-            this.displayBoxSizeSpec.Name = "displayBoxSizeSpec";
-            this.displayBoxSizeSpec.Size = new System.Drawing.Size(189, 23);
-            this.displayBoxSizeSpec.TabIndex = 21;
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(316, 43);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(95, 23);
+            this.labelRefno.TabIndex = 22;
+            this.labelRefno.Text = "Refno";
             // 
-            // label5
+            // displaySizeSpec
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(9, 43);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 23);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "SizeSpec";
+            this.displaySizeSpec.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySizeSpec.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySizeSpec.Location = new System.Drawing.Point(107, 43);
+            this.displaySizeSpec.Name = "displaySizeSpec";
+            this.displaySizeSpec.Size = new System.Drawing.Size(189, 23);
+            this.displaySizeSpec.TabIndex = 21;
             // 
-            // textBox3
+            // labelSizeSpec
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(445, 11);
-            this.textBox3.MaxLength = 13;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(122, 23);
-            this.textBox3.TabIndex = 2;
+            this.labelSizeSpec.Lines = 0;
+            this.labelSizeSpec.Location = new System.Drawing.Point(9, 43);
+            this.labelSizeSpec.Name = "labelSizeSpec";
+            this.labelSizeSpec.Size = new System.Drawing.Size(95, 23);
+            this.labelSizeSpec.TabIndex = 20;
+            this.labelSizeSpec.Text = "SizeSpec";
             // 
-            // label4
+            // txtBorrowFromSPNo
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(316, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(126, 23);
-            this.label4.TabIndex = 19;
-            this.label4.Text = "Borrow From  SP#";
+            this.txtBorrowFromSPNo.BackColor = System.Drawing.Color.White;
+            this.txtBorrowFromSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBorrowFromSPNo.Location = new System.Drawing.Point(445, 11);
+            this.txtBorrowFromSPNo.MaxLength = 13;
+            this.txtBorrowFromSPNo.Name = "txtBorrowFromSPNo";
+            this.txtBorrowFromSPNo.Size = new System.Drawing.Size(122, 23);
+            this.txtBorrowFromSPNo.TabIndex = 2;
             // 
-            // label3
+            // labelBorrowFromSPNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(9, 75);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 23);
-            this.label3.TabIndex = 18;
-            this.label3.Text = "Desc.";
+            this.labelBorrowFromSPNo.Lines = 0;
+            this.labelBorrowFromSPNo.Location = new System.Drawing.Point(316, 11);
+            this.labelBorrowFromSPNo.Name = "labelBorrowFromSPNo";
+            this.labelBorrowFromSPNo.Size = new System.Drawing.Size(126, 23);
+            this.labelBorrowFromSPNo.TabIndex = 19;
+            this.labelBorrowFromSPNo.Text = "Borrow From  SP#";
             // 
-            // editBox1
+            // labelDesc
             // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(107, 75);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(525, 56);
-            this.editBox1.TabIndex = 17;
+            this.labelDesc.Lines = 0;
+            this.labelDesc.Location = new System.Drawing.Point(9, 75);
+            this.labelDesc.Name = "labelDesc";
+            this.labelDesc.Size = new System.Drawing.Size(95, 23);
+            this.labelDesc.TabIndex = 18;
+            this.labelDesc.Text = "Desc.";
             // 
-            // textBox1
+            // editDesc
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(107, 11);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(122, 23);
-            this.textBox1.TabIndex = 0;
+            this.editDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.editDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDesc.IsSupportEditMode = false;
+            this.editDesc.Location = new System.Drawing.Point(107, 75);
+            this.editDesc.Multiline = true;
+            this.editDesc.Name = "editDesc";
+            this.editDesc.ReadOnly = true;
+            this.editDesc.Size = new System.Drawing.Size(525, 56);
+            this.editDesc.TabIndex = 17;
             // 
-            // label1
+            // txtToSPNoSeq
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(9, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 23);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "To SP# Seq#";
+            this.txtToSPNoSeq.BackColor = System.Drawing.Color.White;
+            this.txtToSPNoSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtToSPNoSeq.Location = new System.Drawing.Point(107, 11);
+            this.txtToSPNoSeq.MaxLength = 13;
+            this.txtToSPNoSeq.Name = "txtToSPNoSeq";
+            this.txtToSPNoSeq.Size = new System.Drawing.Size(122, 23);
+            this.txtToSPNoSeq.TabIndex = 0;
             // 
-            // button1
+            // labelToSPNoSeq
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(895, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 30);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Find Now";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.labelToSPNoSeq.Lines = 0;
+            this.labelToSPNoSeq.Location = new System.Drawing.Point(9, 11);
+            this.labelToSPNoSeq.Name = "labelToSPNoSeq";
+            this.labelToSPNoSeq.Size = new System.Drawing.Size(95, 23);
+            this.labelToSPNoSeq.TabIndex = 14;
+            this.labelToSPNoSeq.Text = "To SP# Seq#";
+            // 
+            // btnFindNow
+            // 
+            this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnFindNow.Location = new System.Drawing.Point(895, 11);
+            this.btnFindNow.Name = "btnFindNow";
+            this.btnFindNow.Size = new System.Drawing.Size(101, 30);
+            this.btnFindNow.TabIndex = 3;
+            this.btnFindNow.Text = "Find Now";
+            this.btnFindNow.UseVisualStyleBackColor = true;
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // panel2
             // 
@@ -271,16 +281,6 @@
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
-            // txtSeq1
-            // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(236, 11);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
-            // 
             // P74_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 601);
@@ -301,26 +301,26 @@
 
         #endregion
 
-        private Win.UI.Button btn_Cancel;
-        private Win.UI.Button btn_Import;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ListControlBindingSource BorrowItemBS;
         private Win.UI.Panel panel1;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnFindNow;
         private Win.UI.Panel panel2;
         private Win.UI.Grid grid1;
-        private Win.UI.DisplayBox displayBoxColor;
-        private Win.UI.Label label7;
-        private Win.UI.DisplayBox displayBoxRefno;
-        private Win.UI.Label label6;
-        private Win.UI.DisplayBox displayBoxSizeSpec;
-        private Win.UI.Label label5;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label1;
-        private Class.txtSeq txtSeq1;
+        private Win.UI.DisplayBox displayColorID;
+        private Win.UI.Label labelColorID;
+        private Win.UI.DisplayBox displayRefno;
+        private Win.UI.Label labelRefno;
+        private Win.UI.DisplayBox displaySizeSpec;
+        private Win.UI.Label labelSizeSpec;
+        private Win.UI.TextBox txtBorrowFromSPNo;
+        private Win.UI.Label labelBorrowFromSPNo;
+        private Win.UI.Label labelDesc;
+        private Win.UI.EditBox editDesc;
+        private Win.UI.TextBox txtToSPNoSeq;
+        private Win.UI.Label labelToSPNoSeq;
+        private Class.txtSeq txtSeq;
     }
 }

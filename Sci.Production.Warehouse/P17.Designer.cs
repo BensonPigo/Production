@@ -235,7 +235,7 @@
             this.btnFind.TabIndex = 5;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -265,7 +265,7 @@
             this.btnClearQtyIsEmpty.TabIndex = 6;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
-            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.button9_Click);
+            this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
             // 
             // labelRemark
             // 
@@ -297,7 +297,7 @@
             this.btnAccumulatedQty.TabIndex = 3;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
-            this.btnAccumulatedQty.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
             // 
             // labelTransfer
             // 
@@ -317,7 +317,7 @@
             this.txtTransfer.Name = "txtTransfer";
             this.txtTransfer.Size = new System.Drawing.Size(120, 23);
             this.txtTransfer.TabIndex = 0;
-            this.txtTransfer.Validating += new System.ComponentModel.CancelEventHandler(this.textBox2_Validating);
+            this.txtTransfer.Validating += new System.ComponentModel.CancelEventHandler(this.txtTransfer_Validating);
             // 
             // P17
             // 

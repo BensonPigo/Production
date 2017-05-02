@@ -38,7 +38,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
 
@@ -160,14 +160,14 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             cbb_fabrictype.DisplayMember = "Value";
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             gridImport.ValidateControl();
@@ -204,12 +204,12 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             this.Close();
         }
 
-        private void numericBox3_TextChanged(object sender, EventArgs e)
+        private void numRandom_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void cbbSort_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboSortby_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (comboSortby.SelectedIndex)
             {

@@ -96,7 +96,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -718,7 +718,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
@@ -727,7 +727,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //Import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P78_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
             frm.P78 = this;

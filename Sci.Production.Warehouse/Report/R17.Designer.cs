@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
-            this.txtSeq1 = new Sci.Production.Class.txtSeq();
-            this.label8 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelSeqNo = new Sci.Win.UI.Label();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.labelLocation = new Sci.Win.UI.Label();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.labelStockType = new Sci.Win.UI.Label();
+            this.checkBalanceQty = new Sci.Win.UI.CheckBox();
+            this.comboStockType = new Sci.Win.UI.ComboBox();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -61,177 +61,177 @@
             this.close.Location = new System.Drawing.Point(440, 84);
             this.close.TabIndex = 9;
             // 
-            // dateRange1
+            // dateSCIDelivery
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(100, 44);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 2;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(100, 44);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 2;
             // 
-            // textBox1
+            // txtSPNo
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(100, 12);
-            this.textBox1.MaxLength = 13;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(118, 23);
-            this.textBox1.TabIndex = 0;
+            this.txtSPNo.BackColor = System.Drawing.Color.White;
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo.Location = new System.Drawing.Point(100, 12);
+            this.txtSPNo.MaxLength = 13;
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.Size = new System.Drawing.Size(118, 23);
+            this.txtSPNo.TabIndex = 0;
             // 
-            // label2
+            // labelSPNo
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(8, 12);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 96;
-            this.label2.Text = "SP#";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(8, 12);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSPNo.Size = new System.Drawing.Size(89, 23);
+            this.labelSPNo.TabIndex = 96;
+            this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label3
+            // labelSeqNo
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(251, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(48, 23);
-            this.label3.TabIndex = 97;
-            this.label3.Text = "Seq#";
+            this.labelSeqNo.Lines = 0;
+            this.labelSeqNo.Location = new System.Drawing.Point(251, 12);
+            this.labelSeqNo.Name = "labelSeqNo";
+            this.labelSeqNo.Size = new System.Drawing.Size(48, 23);
+            this.labelSeqNo.TabIndex = 97;
+            this.labelSeqNo.Text = "Seq#";
             // 
-            // label1
+            // labelSCIDelivery
             // 
-            this.label1.BackColor = System.Drawing.Color.PaleGreen;
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(8, 44);
-            this.label1.Name = "label1";
-            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 99;
-            this.label1.Text = "SCI Delivery";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSCIDelivery.BackColor = System.Drawing.Color.PaleGreen;
+            this.labelSCIDelivery.Lines = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(8, 44);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSCIDelivery.Size = new System.Drawing.Size(89, 23);
+            this.labelSCIDelivery.TabIndex = 99;
+            this.labelSCIDelivery.Text = "SCI Delivery";
+            this.labelSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label4
+            // labelLocation
             // 
-            this.label4.BackColor = System.Drawing.Color.PaleGreen;
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(8, 76);
-            this.label4.Name = "label4";
-            this.label4.RectStyle.Color = System.Drawing.Color.LightSkyBlue;
-            this.label4.Size = new System.Drawing.Size(89, 23);
-            this.label4.TabIndex = 100;
-            this.label4.Text = "Location";
-            this.label4.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelLocation.BackColor = System.Drawing.Color.PaleGreen;
+            this.labelLocation.Lines = 0;
+            this.labelLocation.Location = new System.Drawing.Point(8, 76);
+            this.labelLocation.Name = "labelLocation";
+            this.labelLocation.RectStyle.Color = System.Drawing.Color.LightSkyBlue;
+            this.labelLocation.Size = new System.Drawing.Size(89, 23);
+            this.labelLocation.TabIndex = 100;
+            this.labelLocation.Text = "Location";
+            this.labelLocation.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // textBox3
+            // txtLocation
             // 
-            this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox3.Location = new System.Drawing.Point(100, 76);
-            this.textBox3.MaxLength = 10;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(106, 23);
-            this.textBox3.TabIndex = 3;
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocation.Location = new System.Drawing.Point(100, 76);
+            this.txtLocation.MaxLength = 10;
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.Size = new System.Drawing.Size(106, 23);
+            this.txtLocation.TabIndex = 3;
             // 
-            // label6
+            // labelStockType
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(8, 141);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(89, 23);
-            this.label6.TabIndex = 104;
-            this.label6.Text = "Stock Type";
+            this.labelStockType.Lines = 0;
+            this.labelStockType.Location = new System.Drawing.Point(8, 141);
+            this.labelStockType.Name = "labelStockType";
+            this.labelStockType.Size = new System.Drawing.Size(89, 23);
+            this.labelStockType.TabIndex = 104;
+            this.labelStockType.Text = "Stock Type";
             // 
-            // checkBox1
+            // checkBalanceQty
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(234, 143);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(128, 21);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Balance Qty > 0";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBalanceQty.AutoSize = true;
+            this.checkBalanceQty.Checked = true;
+            this.checkBalanceQty.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBalanceQty.Location = new System.Drawing.Point(234, 143);
+            this.checkBalanceQty.Name = "checkBalanceQty";
+            this.checkBalanceQty.Size = new System.Drawing.Size(128, 21);
+            this.checkBalanceQty.TabIndex = 6;
+            this.checkBalanceQty.Text = "Balance Qty > 0";
+            this.checkBalanceQty.UseVisualStyleBackColor = true;
             // 
-            // comboBox1
+            // comboStockType
             // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Items.AddRange(new object[] {
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboBox1.Location = new System.Drawing.Point(99, 141);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 5;
+            this.comboStockType.Location = new System.Drawing.Point(99, 141);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboStockType.TabIndex = 5;
             // 
-            // txtSeq1
+            // txtSeq
             // 
-            this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(302, 12);
-            this.txtSeq1.Name = "txtSeq1";
-            this.txtSeq1.seq1 = "";
-            this.txtSeq1.seq2 = "";
-            this.txtSeq1.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq1.TabIndex = 1;
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(302, 12);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 1;
             // 
-            // label8
+            // labelFactory
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(8, 109);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(89, 23);
-            this.label8.TabIndex = 106;
-            this.label8.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(8, 109);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(89, 23);
+            this.labelFactory.TabIndex = 106;
+            this.labelFactory.Text = "Factory";
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(100, 109);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 107;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(100, 109);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 107;
             // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(559, 237);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.txtSeq1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.dateRange1);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.txtSeq);
+            this.Controls.Add(this.comboStockType);
+            this.Controls.Add(this.checkBalanceQty);
+            this.Controls.Add(this.labelStockType);
+            this.Controls.Add(this.txtLocation);
+            this.Controls.Add(this.labelLocation);
+            this.Controls.Add(this.labelSCIDelivery);
+            this.Controls.Add(this.labelSeqNo);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.txtSPNo);
+            this.Controls.Add(this.dateSCIDelivery);
             this.Name = "R17";
             this.Text = "R17. Material Location Query";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.textBox3, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
-            this.Controls.SetChildIndex(this.txtSeq1, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.txtSPNo, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
+            this.Controls.SetChildIndex(this.labelSeqNo, 0);
+            this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.labelLocation, 0);
+            this.Controls.SetChildIndex(this.txtLocation, 0);
+            this.Controls.SetChildIndex(this.labelStockType, 0);
+            this.Controls.SetChildIndex(this.checkBalanceQty, 0);
+            this.Controls.SetChildIndex(this.comboStockType, 0);
+            this.Controls.SetChildIndex(this.txtSeq, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,18 +239,18 @@
 
         #endregion
 
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label1;
-        private Win.UI.Label label4;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.Label label6;
-        private Win.UI.CheckBox checkBox1;
-        private Win.UI.ComboBox comboBox1;
-        private Class.txtSeq txtSeq1;
-        private Win.UI.Label label8;
-        private Class.txtfactory txtfactory1;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelSeqNo;
+        private Win.UI.Label labelSCIDelivery;
+        private Win.UI.Label labelLocation;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Label labelStockType;
+        private Win.UI.CheckBox checkBalanceQty;
+        private Win.UI.ComboBox comboStockType;
+        private Class.txtSeq txtSeq;
+        private Win.UI.Label labelFactory;
+        private Class.txtfactory txtfactory;
     }
 }

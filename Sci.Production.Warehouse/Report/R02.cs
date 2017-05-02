@@ -30,10 +30,10 @@ namespace Sci.Production.Warehouse
 
         protected override bool ValidateInput()
         {
-            strIssueDate1 = dateRange1.Value1;
-            strIssueDate2 = dateRange1.Value2;
-            strM = txtMdivision1.Text;
-            strFactory = txtfactory1.Text;
+            strIssueDate1 = dateIssueDate.Value1;
+            strIssueDate2 = dateIssueDate.Value2;
+            strM = txtMdivision.Text;
+            strFactory = txtfactory.Text;
 
             if (MyUtility.Check.Empty(strIssueDate1) && MyUtility.Check.Empty(strIssueDate2))
             {

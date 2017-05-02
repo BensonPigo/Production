@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
                   ;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
@@ -164,12 +164,12 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
             int index = listControlBindingSource1.Find("poid", txtLocateForSP.Text.TrimEnd());
@@ -179,7 +179,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             { listControlBindingSource1.Position = index; }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             dt.DefaultView.RowFilter = listControlBindingSource1.Filter;
@@ -220,12 +220,12 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
             //}
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkEachCons_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxs_Status();
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        private void checkEmptyMtlETA_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxs_Status();
         }

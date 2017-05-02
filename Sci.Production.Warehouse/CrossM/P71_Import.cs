@@ -28,15 +28,15 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
+            String sp = this.txtIssueSP.Text.TrimEnd();
 
             if (string.IsNullOrWhiteSpace(sp))
             {
                 MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                textBox1.Focus();
+                txtIssueSP.Focus();
                 return;
             }
 
@@ -102,7 +102,7 @@ select 0 as selected ,* from cte
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -110,7 +110,7 @@ select 0 as selected ,* from cte
         // SP# Valid
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-            string sp = textBox1.Text.TrimEnd();
+            string sp = txtIssueSP.Text.TrimEnd();
 
             if (MyUtility.Check.Empty(sp)) return;
 
@@ -124,7 +124,7 @@ select 0 as selected ,* from cte
 
         }
 
-        private void btn_Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
             DataTable dt = (DataTable)TaipeiOutputBS.DataSource;

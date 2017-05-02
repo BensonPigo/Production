@@ -102,7 +102,7 @@ namespace Sci.Production.Warehouse
             if (MyUtility.Check.Empty(CurrentMaintain["IssueDate"]))
             {
                 MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                dateBox3.Focus();
+                dateIssueDate.Focus();
                 return false;
             }
 
@@ -627,7 +627,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             //detailgridbs.EndEdit();
@@ -636,12 +636,12 @@ Where a.id = '{0}'", masterID);
         }
 
         //Import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cutplanid"]))
             {
                 MyUtility.Msg.WarningBox("< Request Id >  can't be empty!!");
-                txtRequestID.Focus();
+                txtBorrowID.Focus();
                 return;
             }
 

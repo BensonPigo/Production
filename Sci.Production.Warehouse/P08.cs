@@ -815,13 +815,13 @@ Where a.id = '{0}' ", masterID);
         }
 
         //delete all
-        private void button9_Click(object sender, EventArgs e)
+        private void btnDeleteAll_Click(object sender, EventArgs e)
         {
             ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
         }
 
         //Accumulated Qty
-        private void button5_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P08_AccumulatedQty(CurrentMaintain);
             frm.P08 = this;
@@ -829,7 +829,7 @@ Where a.id = '{0}' ", masterID);
         }
 
         //find
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());

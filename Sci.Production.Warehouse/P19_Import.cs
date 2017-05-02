@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             if (comboStockType.SelectedIndex < 0)
             {
@@ -176,14 +176,14 @@ and a.id = @sp and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
             cbb_stocktype.DisplayMember = "Value";
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             gridImport.ValidateControl();

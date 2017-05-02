@@ -79,12 +79,12 @@ namespace Sci.Production.Warehouse
             gridUpdateAct.Columns["actualweight"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             bool rtn;
             gridUpdateAct.ValidateControl();

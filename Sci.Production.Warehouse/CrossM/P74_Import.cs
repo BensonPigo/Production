@@ -26,22 +26,22 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
-            String sp = this.textBox1.Text.TrimEnd();
-            String fromSP = this.textBox3.Text.TrimEnd();
-            if (txtSeq1.checkEmpty())
+            String sp = this.txtToSPNoSeq.Text.TrimEnd();
+            String fromSP = this.txtBorrowFromSPNo.Text.TrimEnd();
+            if (txtSeq.checkEmpty())
             {
                 return;
             }
-            string seq1 = txtSeq1.seq1;
-            string seq2 = txtSeq1.seq2;
+            string seq1 = txtSeq.seq1;
+            string seq2 = txtSeq.seq2;
 
-            if (string.IsNullOrWhiteSpace(sp) || txtSeq1.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
-                textBox1.Focus();
+                txtToSPNoSeq.Focus();
                 return;
             }
 
@@ -112,17 +112,17 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                     DataTable headDt;
                     if (!(result = DBProxy.Current.Select(null, headSql, out headDt)) | headDt.Rows.Count == 0 | dtBorrow.Rows.Count == 0)
                     {
-                        displayBoxSizeSpec.Text = "";
-                        displayBoxRefno.Text = "";
-                        displayBoxColor.Text = "";
-                        editBox1.Text = "";
+                        displaySizeSpec.Text = "";
+                        displayRefno.Text = "";
+                        displayColorID.Text = "";
+                        editDesc.Text = "";
                     }
                     else
                     {
-                        displayBoxSizeSpec.Text = headDt.Rows[0].GetValue("SizeSpec").ToString();
-                        displayBoxRefno.Text = headDt.Rows[0].GetValue("Refno").ToString();
-                        displayBoxColor.Text = headDt.Rows[0].GetValue("ColorID").ToString();
-                        editBox1.Text = headDt.Rows[0].GetValue("Description").ToString();
+                        displaySizeSpec.Text = headDt.Rows[0].GetValue("SizeSpec").ToString();
+                        displayRefno.Text = headDt.Rows[0].GetValue("Refno").ToString();
+                        displayColorID.Text = headDt.Rows[0].GetValue("ColorID").ToString();
+                        editDesc.Text = headDt.Rows[0].GetValue("Description").ToString();
                     }
                 }
                 else { ShowErr(strSQLCmd.ToString(), result); }
@@ -163,13 +163,13 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
         }
 
         // Cancel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         // SP# Valid
-        private void btn_Import_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             grid1.ValidateControl();
             DataTable dt = (DataTable)BorrowItemBS.DataSource;
@@ -221,10 +221,10 @@ and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2, Sci.Env.User.Keyword);
                 string s2 = cRow["fromseq2"].ToString();
 
                 DataRow[] dra = dtBorrow.Select(string.Format("fromseq1={0} and fromseq2={1}", s1, s2));
-                displayBoxSizeSpec.Text = dra[0]["SizeSpec"].ToString();
-                displayBoxRefno.Text = dra[0]["Refno"].ToString();
-                displayBoxColor.Text = dra[0]["ColorID"].ToString();
-                editBox1.Text = dra[0]["description"].ToString();
+                displaySizeSpec.Text = dra[0]["SizeSpec"].ToString();
+                displayRefno.Text = dra[0]["Refno"].ToString();
+                displayColorID.Text = dra[0]["ColorID"].ToString();
+                editDesc.Text = dra[0]["description"].ToString();
             }
         }
     }

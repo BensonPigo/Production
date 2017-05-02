@@ -37,7 +37,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             QueryData();
         }
@@ -204,12 +204,12 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                ; //8
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnBatchCloseRMTL_Click(object sender, EventArgs e)
         {
             //listControlBindingSource1.EndEdit();
             gridBatchCloseRowMaterial.ValidateControl();

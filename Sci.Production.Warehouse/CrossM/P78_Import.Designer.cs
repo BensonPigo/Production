@@ -29,51 +29,51 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btn_Cancel = new Sci.Win.UI.Button();
-            this.btn_Import = new Sci.Win.UI.Button();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.TaipeiOutputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.TaipeiOutputBS_Detail = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
-            this.grid2 = new Sci.Win.UI.Grid();
-            this.grid1 = new Sci.Win.UI.Grid();
+            this.gridImport2 = new Sci.Win.UI.Grid();
+            this.gridImport = new Sci.Win.UI.Grid();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS_Detail)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.SuspendLayout();
             // 
-            // btn_Cancel
+            // btnCancel
             // 
-            this.btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Cancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Cancel.Location = new System.Drawing.Point(912, 15);
-            this.btn_Cancel.Name = "btn_Cancel";
-            this.btn_Cancel.Size = new System.Drawing.Size(90, 30);
-            this.btn_Cancel.TabIndex = 3;
-            this.btn_Cancel.Text = "Cancel";
-            this.btn_Cancel.UseVisualStyleBackColor = true;
-            this.btn_Cancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btn_Import
+            // btnImport
             // 
-            this.btn_Import.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Import.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btn_Import.Location = new System.Drawing.Point(816, 15);
-            this.btn_Import.Name = "btn_Import";
-            this.btn_Import.Size = new System.Drawing.Size(90, 30);
-            this.btn_Import.TabIndex = 2;
-            this.btn_Import.Text = "Import";
-            this.btn_Import.UseVisualStyleBackColor = true;
-            this.btn_Import.Click += new System.EventHandler(this.btn_Import_Click);
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(816, 15);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(90, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btn_Cancel);
-            this.groupBox2.Controls.Add(this.btn_Import);
+            this.groupBox2.Controls.Add(this.btnCancel);
+            this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 548);
             this.groupBox2.Name = "groupBox2";
@@ -91,63 +91,63 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.grid2);
-            this.panel2.Controls.Add(this.grid1);
+            this.panel2.Controls.Add(this.gridImport2);
+            this.panel2.Controls.Add(this.gridImport);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 48);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1008, 500);
             this.panel2.TabIndex = 20;
             // 
-            // grid2
+            // gridImport2
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridImport2.AllowUserToAddRows = false;
+            this.gridImport2.AllowUserToDeleteRows = false;
+            this.gridImport2.AllowUserToResizeRows = false;
+            this.gridImport2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 247);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(1008, 253);
-            this.grid2.TabIndex = 1;
-            this.grid2.TabStop = false;
+            this.gridImport2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport2.Location = new System.Drawing.Point(0, 247);
+            this.gridImport2.Name = "gridImport2";
+            this.gridImport2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport2.RowTemplate.Height = 24;
+            this.gridImport2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport2.Size = new System.Drawing.Size(1008, 253);
+            this.gridImport2.TabIndex = 1;
+            this.gridImport2.TabStop = false;
             // 
-            // grid1
+            // gridImport
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1008, 500);
-            this.grid1.TabIndex = 0;
-            this.grid1.TabStop = false;
-            this.grid1.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
-            this.grid1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
+            this.gridImport.AllowUserToAddRows = false;
+            this.gridImport.AllowUserToDeleteRows = false;
+            this.gridImport.AllowUserToResizeRows = false;
+            this.gridImport.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridImport.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridImport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridImport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridImport.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridImport.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridImport.Location = new System.Drawing.Point(0, 0);
+            this.gridImport.Name = "gridImport";
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridImport.RowTemplate.Height = 24;
+            this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.Size = new System.Drawing.Size(1008, 500);
+            this.gridImport.TabIndex = 0;
+            this.gridImport.TabStop = false;
+            this.gridImport.RowSelecting += new System.EventHandler<Ict.Win.UI.DataGridViewRowSelectingEventArgs>(this.grid1_RowSelecting);
+            this.gridImport.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
             // 
             // P78_Import
             // 
@@ -161,22 +161,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiOutputBS_Detail)).EndInit();
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Win.UI.Button btn_Cancel;
-        private Win.UI.Button btn_Import;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Button btnImport;
         private Win.UI.GroupBox groupBox2;
         private Win.UI.ListControlBindingSource TaipeiOutputBS;
         private Win.UI.ListControlBindingSource TaipeiOutputBS_Detail;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel2;
-        private Win.UI.Grid grid1;
-        private Win.UI.Grid grid2;
+        private Win.UI.Grid gridImport;
+        private Win.UI.Grid gridImport2;
     }
 }

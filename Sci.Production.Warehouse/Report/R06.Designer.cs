@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
-            this.cbbFabricType = new System.Windows.Forms.ComboBox();
-            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.dateIssueDate = new Sci.Win.UI.DateRange();
+            this.labelFactory = new Sci.Win.UI.Label();
+            this.labelFabricType = new Sci.Win.UI.Label();
+            this.labelShift = new Sci.Win.UI.Label();
+            this.comboFabricType = new System.Windows.Forms.ComboBox();
+            this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
+            this.dateApproveDate = new Sci.Win.UI.DateRange();
+            this.labelApproveDate = new Sci.Win.UI.Label();
+            this.labelIssueDate = new Sci.Win.UI.Label();
+            this.labelM = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -57,152 +57,152 @@
             this.close.Location = new System.Drawing.Point(439, 84);
             this.close.TabIndex = 8;
             // 
-            // dateRange1
+            // dateIssueDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(116, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateIssueDate.IsRequired = false;
+            this.dateIssueDate.Location = new System.Drawing.Point(116, 12);
+            this.dateIssueDate.Name = "dateIssueDate";
+            this.dateIssueDate.Size = new System.Drawing.Size(280, 23);
+            this.dateIssueDate.TabIndex = 0;
             // 
-            // label4
+            // labelFactory
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(15, 120);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 103;
-            this.label4.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(15, 120);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(98, 23);
+            this.labelFactory.TabIndex = 103;
+            this.labelFactory.Text = "Factory";
             // 
-            // label8
+            // labelFabricType
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(15, 192);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(98, 23);
-            this.label8.TabIndex = 118;
-            this.label8.Text = "Fabric Type";
+            this.labelFabricType.Lines = 0;
+            this.labelFabricType.Location = new System.Drawing.Point(15, 192);
+            this.labelFabricType.Name = "labelFabricType";
+            this.labelFabricType.Size = new System.Drawing.Size(98, 23);
+            this.labelFabricType.TabIndex = 118;
+            this.labelFabricType.Text = "Fabric Type";
             // 
-            // label6
+            // labelShift
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(15, 156);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(98, 23);
-            this.label6.TabIndex = 125;
-            this.label6.Text = "Shift";
+            this.labelShift.Lines = 0;
+            this.labelShift.Location = new System.Drawing.Point(15, 156);
+            this.labelShift.Name = "labelShift";
+            this.labelShift.Size = new System.Drawing.Size(98, 23);
+            this.labelShift.TabIndex = 125;
+            this.labelShift.Text = "Shift";
             // 
-            // cbbFabricType
+            // comboFabricType
             // 
-            this.cbbFabricType.FormattingEnabled = true;
-            this.cbbFabricType.Location = new System.Drawing.Point(116, 191);
-            this.cbbFabricType.Name = "cbbFabricType";
-            this.cbbFabricType.Size = new System.Drawing.Size(121, 24);
-            this.cbbFabricType.TabIndex = 5;
+            this.comboFabricType.FormattingEnabled = true;
+            this.comboFabricType.Location = new System.Drawing.Point(116, 191);
+            this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.Size = new System.Drawing.Size(121, 24);
+            this.comboFabricType.TabIndex = 5;
             // 
-            // txtdropdownlist1
+            // txtdropdownlistShift
             // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(116, 155);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 4;
-            this.txtdropdownlist1.Type = "Shift";
+            this.txtdropdownlistShift.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlistShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlistShift.FormattingEnabled = true;
+            this.txtdropdownlistShift.IsSupportUnselect = true;
+            this.txtdropdownlistShift.Location = new System.Drawing.Point(116, 155);
+            this.txtdropdownlistShift.Name = "txtdropdownlistShift";
+            this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlistShift.TabIndex = 4;
+            this.txtdropdownlistShift.Type = "Shift";
             // 
-            // dateRange2
+            // dateApproveDate
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(116, 48);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 1;
+            this.dateApproveDate.IsRequired = false;
+            this.dateApproveDate.Location = new System.Drawing.Point(116, 48);
+            this.dateApproveDate.Name = "dateApproveDate";
+            this.dateApproveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateApproveDate.TabIndex = 1;
             // 
-            // label3
+            // labelApproveDate
             // 
-            this.label3.BackColor = System.Drawing.Color.SkyBlue;
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(15, 48);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(97, 23);
-            this.label3.TabIndex = 129;
-            this.label3.Text = "Approve Date";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelApproveDate.BackColor = System.Drawing.Color.SkyBlue;
+            this.labelApproveDate.Lines = 0;
+            this.labelApproveDate.Location = new System.Drawing.Point(15, 48);
+            this.labelApproveDate.Name = "labelApproveDate";
+            this.labelApproveDate.Size = new System.Drawing.Size(97, 23);
+            this.labelApproveDate.TabIndex = 129;
+            this.labelApproveDate.Text = "Approve Date";
+            this.labelApproveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label2
+            // labelIssueDate
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(15, 12);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label2.Size = new System.Drawing.Size(98, 23);
-            this.label2.TabIndex = 128;
-            this.label2.Text = "Issue Date";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelIssueDate.Lines = 0;
+            this.labelIssueDate.Location = new System.Drawing.Point(15, 12);
+            this.labelIssueDate.Name = "labelIssueDate";
+            this.labelIssueDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelIssueDate.Size = new System.Drawing.Size(98, 23);
+            this.labelIssueDate.TabIndex = 128;
+            this.labelIssueDate.Text = "Issue Date";
+            this.labelIssueDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label1
+            // labelM
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(15, 84);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(98, 23);
-            this.label1.TabIndex = 131;
-            this.label1.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(15, 84);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(98, 23);
+            this.labelM.TabIndex = 131;
+            this.labelM.Text = "M";
             // 
-            // txtMdivision1
+            // txtMdivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(116, 84);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 2;
-            this.txtMdivision1.Validated += new System.EventHandler(this.txtMdivision1_Validated);
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(116, 84);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 2;
+            this.txtMdivision.Validated += new System.EventHandler(this.txtMdivision_Validated);
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(116, 120);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 132;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(116, 120);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 132;
             // 
             // R06
             // 
             this.ClientSize = new System.Drawing.Size(531, 266);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.txtdropdownlist1);
-            this.Controls.Add(this.cbbFabricType);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.dateRange1);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.labelApproveDate);
+            this.Controls.Add(this.labelIssueDate);
+            this.Controls.Add(this.dateApproveDate);
+            this.Controls.Add(this.txtdropdownlistShift);
+            this.Controls.Add(this.comboFabricType);
+            this.Controls.Add(this.labelShift);
+            this.Controls.Add(this.labelFabricType);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.dateIssueDate);
             this.IsSupportToPrint = false;
             this.Name = "R06";
             this.Text = "R06. Fabric\\Accessory Lacking & Replacement Report";
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.dateIssueDate, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.cbbFabricType, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtMdivision1, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.Controls.SetChildIndex(this.labelFabricType, 0);
+            this.Controls.SetChildIndex(this.labelShift, 0);
+            this.Controls.SetChildIndex(this.comboFabricType, 0);
+            this.Controls.SetChildIndex(this.txtdropdownlistShift, 0);
+            this.Controls.SetChildIndex(this.dateApproveDate, 0);
+            this.Controls.SetChildIndex(this.labelIssueDate, 0);
+            this.Controls.SetChildIndex(this.labelApproveDate, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -210,17 +210,17 @@
 
         #endregion
 
-        private Win.UI.DateRange dateRange1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label8;
-        private Win.UI.Label label6;
-        private System.Windows.Forms.ComboBox cbbFabricType;
-        private Class.txtdropdownlist txtdropdownlist1;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label2;
-        private Win.UI.Label label1;
-        private Class.txtMdivision txtMdivision1;
-        private Class.txtfactory txtfactory1;
+        private Win.UI.DateRange dateIssueDate;
+        private Win.UI.Label labelFactory;
+        private Win.UI.Label labelFabricType;
+        private Win.UI.Label labelShift;
+        private System.Windows.Forms.ComboBox comboFabricType;
+        private Class.txtdropdownlist txtdropdownlistShift;
+        private Win.UI.DateRange dateApproveDate;
+        private Win.UI.Label labelApproveDate;
+        private Win.UI.Label labelIssueDate;
+        private Win.UI.Label labelM;
+        private Class.txtMdivision txtMdivision;
+        private Class.txtfactory txtfactory;
     }
 }

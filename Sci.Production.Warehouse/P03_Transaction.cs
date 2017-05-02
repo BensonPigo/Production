@@ -799,12 +799,12 @@ namespace Sci.Production.Warehouse
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnReCalculate_Click(object sender, EventArgs e)
         {
             
             if (null == dr) return;
@@ -850,7 +850,7 @@ namespace Sci.Production.Warehouse
             this.Dispose();  //重算完自動關閉視窗
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnPrint_Click(object sender, EventArgs e)
         {
             Excel.Application objApp = MyUtility.Excel.ConnectExcel("");
             //MyUtility.Excel.CopyToXls(grid1.GetTable(), "", "", headerRow: 3, showExcel: false, showSaveMsg: false, excelApp: objApp);

@@ -201,7 +201,7 @@
             this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button6_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // editRemark
             // 
@@ -234,7 +234,7 @@
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 1;
-            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboBox1_Validating);
+            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboStockType_Validating);
             // 
             // labelStockType
             // 

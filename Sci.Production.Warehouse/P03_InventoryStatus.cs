@@ -160,7 +160,7 @@ from TMP"
             gridInventoryStatus.Columns[1].Frozen = true;  //Fabric Type
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Dispose();
         }

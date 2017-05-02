@@ -60,7 +60,7 @@
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -72,7 +72,7 @@
             this.btnImport.TabIndex = 1;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnFindNow
             // 
@@ -84,7 +84,7 @@
             this.btnFindNow.TabIndex = 2;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
-            this.btnFindNow.Click += new System.EventHandler(this.button1_Click);
+            this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
             // 
             // txtSP
             // 
@@ -94,7 +94,7 @@
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(122, 23);
             this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
             // 
             // labelSP
             // 
@@ -127,7 +127,7 @@
             this.displayLocation.Name = "displayLocation";
             this.displayLocation.Size = new System.Drawing.Size(432, 23);
             this.displayLocation.TabIndex = 9;
-            this.displayLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.displayBox1_MouseDown);
+            this.displayLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.displayLocation_MouseDown);
             // 
             // btnUpdateAll
             // 
@@ -139,7 +139,7 @@
             this.btnUpdateAll.TabIndex = 0;
             this.btnUpdateAll.Text = "Update All";
             this.btnUpdateAll.UseVisualStyleBackColor = true;
-            this.btnUpdateAll.Click += new System.EventHandler(this.button4_Click);
+            this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
             // 
             // labelLocation
             // 
@@ -172,7 +172,7 @@
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
-            this.txtSeq.Leave += new System.EventHandler(this.txtSeq1_Leave);
+            this.txtSeq.Leave += new System.EventHandler(this.txtSeq_Leave);
             // 
             // panel1
             // 

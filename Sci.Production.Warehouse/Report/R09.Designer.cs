@@ -28,26 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
-            this.dateRange2 = new Sci.Win.UI.DateRange();
-            this.label6 = new Sci.Win.UI.Label();
-            this.txtSpno2 = new Sci.Win.UI.TextBox();
-            this.txtSpno1 = new Sci.Win.UI.TextBox();
+            this.labelDeadLine = new Sci.Win.UI.Label();
+            this.dateDeadLine = new Sci.Win.UI.DateRange();
+            this.labelM = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label11 = new Sci.Win.UI.Label();
-            this.txtRefno2 = new Sci.Win.UI.TextBox();
-            this.txtRefno1 = new Sci.Win.UI.TextBox();
+            this.labelSPNo = new Sci.Win.UI.Label();
+            this.labelRefno = new Sci.Win.UI.Label();
+            this.txtRefnoEnd = new Sci.Win.UI.TextBox();
+            this.txtRefnoStart = new Sci.Win.UI.TextBox();
             this.label12 = new Sci.Win.UI.Label();
-            this.dateRange3 = new Sci.Win.UI.DateRange();
-            this.label1 = new Sci.Win.UI.Label();
-            this.cbbFilter = new Sci.Win.UI.ComboBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
-            this.label5 = new Sci.Win.UI.Label();
+            this.dateInventoryETA = new Sci.Win.UI.DateRange();
+            this.labelInventoryETA = new Sci.Win.UI.Label();
+            this.comboFilterCondition = new Sci.Win.UI.ComboBox();
+            this.labelFilterCondition = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -65,87 +65,87 @@
             this.close.Location = new System.Drawing.Point(485, 84);
             this.close.TabIndex = 11;
             // 
-            // label3
+            // labelDeadLine
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 12);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.RectStyle.BorderWidth = 1F;
-            this.label3.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label3.RectStyle.ExtBorderWidth = 1F;
-            this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "Dead Line";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelDeadLine.Lines = 0;
+            this.labelDeadLine.Location = new System.Drawing.Point(13, 12);
+            this.labelDeadLine.Name = "labelDeadLine";
+            this.labelDeadLine.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelDeadLine.RectStyle.BorderWidth = 1F;
+            this.labelDeadLine.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelDeadLine.RectStyle.ExtBorderWidth = 1F;
+            this.labelDeadLine.Size = new System.Drawing.Size(98, 23);
+            this.labelDeadLine.TabIndex = 96;
+            this.labelDeadLine.Text = "Dead Line";
+            this.labelDeadLine.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelDeadLine.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // dateRange1
+            // dateDeadLine
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(115, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateDeadLine.IsRequired = false;
+            this.dateDeadLine.Location = new System.Drawing.Point(115, 12);
+            this.dateDeadLine.Name = "dateDeadLine";
+            this.dateDeadLine.Size = new System.Drawing.Size(280, 23);
+            this.dateDeadLine.TabIndex = 0;
             // 
-            // label4
+            // labelM
             // 
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(13, 152);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 23);
-            this.label4.TabIndex = 103;
-            this.label4.Text = "M";
+            this.labelM.Lines = 0;
+            this.labelM.Location = new System.Drawing.Point(13, 152);
+            this.labelM.Name = "labelM";
+            this.labelM.Size = new System.Drawing.Size(98, 23);
+            this.labelM.TabIndex = 103;
+            this.labelM.Text = "M";
             // 
-            // txtMdivision1
+            // txtMdivision
             // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(115, 153);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 5;
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(115, 153);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 5;
             // 
-            // dateRange2
+            // dateBuyerDelivery
             // 
-            this.dateRange2.IsRequired = false;
-            this.dateRange2.Location = new System.Drawing.Point(115, 47);
-            this.dateRange2.Name = "dateRange2";
-            this.dateRange2.Size = new System.Drawing.Size(280, 23);
-            this.dateRange2.TabIndex = 1;
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(115, 47);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 1;
             // 
-            // label6
+            // labelBuyerDelivery
             // 
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(13, 47);
-            this.label6.Name = "label6";
-            this.label6.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.RectStyle.BorderWidth = 1F;
-            this.label6.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label6.RectStyle.ExtBorderWidth = 1F;
-            this.label6.Size = new System.Drawing.Size(98, 23);
-            this.label6.TabIndex = 105;
-            this.label6.Text = "Buyer Delivery";
-            this.label6.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBuyerDelivery.Lines = 0;
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 47);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelBuyerDelivery.RectStyle.BorderWidth = 1F;
+            this.labelBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelBuyerDelivery.RectStyle.ExtBorderWidth = 1F;
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(98, 23);
+            this.labelBuyerDelivery.TabIndex = 105;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
+            this.labelBuyerDelivery.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtSpno2
+            // txtSPNoEnd
             // 
-            this.txtSpno2.BackColor = System.Drawing.Color.White;
-            this.txtSpno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpno2.Location = new System.Drawing.Point(267, 82);
-            this.txtSpno2.Name = "txtSpno2";
-            this.txtSpno2.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno2.TabIndex = 3;
+            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
+            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoEnd.Location = new System.Drawing.Point(267, 82);
+            this.txtSPNoEnd.Name = "txtSPNoEnd";
+            this.txtSPNoEnd.Size = new System.Drawing.Size(128, 23);
+            this.txtSPNoEnd.TabIndex = 3;
             // 
-            // txtSpno1
+            // txtSPNoStart
             // 
-            this.txtSpno1.BackColor = System.Drawing.Color.White;
-            this.txtSpno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpno1.Location = new System.Drawing.Point(115, 82);
-            this.txtSpno1.Name = "txtSpno1";
-            this.txtSpno1.Size = new System.Drawing.Size(128, 23);
-            this.txtSpno1.TabIndex = 2;
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(115, 82);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(128, 23);
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // label10
             // 
@@ -156,45 +156,45 @@
             this.label10.TabIndex = 115;
             this.label10.Text = "～";
             // 
-            // label9
+            // labelSPNo
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 82);
-            this.label9.Name = "label9";
-            this.label9.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label9.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label9.Size = new System.Drawing.Size(98, 23);
-            this.label9.TabIndex = 114;
-            this.label9.Text = "SP#";
-            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelSPNo.Lines = 0;
+            this.labelSPNo.Location = new System.Drawing.Point(13, 82);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSPNo.Size = new System.Drawing.Size(98, 23);
+            this.labelSPNo.TabIndex = 114;
+            this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label11
+            // labelRefno
             // 
-            this.label11.Lines = 0;
-            this.label11.Location = new System.Drawing.Point(13, 217);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(98, 23);
-            this.label11.TabIndex = 120;
-            this.label11.Text = "Refno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(13, 217);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(98, 23);
+            this.labelRefno.TabIndex = 120;
+            this.labelRefno.Text = "Refno";
             // 
-            // txtRefno2
+            // txtRefnoEnd
             // 
-            this.txtRefno2.BackColor = System.Drawing.Color.White;
-            this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno2.Location = new System.Drawing.Point(303, 217);
-            this.txtRefno2.Name = "txtRefno2";
-            this.txtRefno2.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno2.TabIndex = 7;
+            this.txtRefnoEnd.BackColor = System.Drawing.Color.White;
+            this.txtRefnoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoEnd.Location = new System.Drawing.Point(303, 217);
+            this.txtRefnoEnd.Name = "txtRefnoEnd";
+            this.txtRefnoEnd.Size = new System.Drawing.Size(164, 23);
+            this.txtRefnoEnd.TabIndex = 7;
             // 
-            // txtRefno1
+            // txtRefnoStart
             // 
-            this.txtRefno1.BackColor = System.Drawing.Color.White;
-            this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno1.Location = new System.Drawing.Point(114, 217);
-            this.txtRefno1.Name = "txtRefno1";
-            this.txtRefno1.Size = new System.Drawing.Size(164, 23);
-            this.txtRefno1.TabIndex = 6;
+            this.txtRefnoStart.BackColor = System.Drawing.Color.White;
+            this.txtRefnoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefnoStart.Location = new System.Drawing.Point(114, 217);
+            this.txtRefnoStart.Name = "txtRefnoStart";
+            this.txtRefnoStart.Size = new System.Drawing.Size(164, 23);
+            this.txtRefnoStart.TabIndex = 6;
             // 
             // label12
             // 
@@ -205,116 +205,116 @@
             this.label12.TabIndex = 123;
             this.label12.Text = "～";
             // 
-            // dateRange3
+            // dateInventoryETA
             // 
-            this.dateRange3.IsRequired = false;
-            this.dateRange3.Location = new System.Drawing.Point(115, 117);
-            this.dateRange3.Name = "dateRange3";
-            this.dateRange3.Size = new System.Drawing.Size(280, 23);
-            this.dateRange3.TabIndex = 4;
+            this.dateInventoryETA.IsRequired = false;
+            this.dateInventoryETA.Location = new System.Drawing.Point(115, 117);
+            this.dateInventoryETA.Name = "dateInventoryETA";
+            this.dateInventoryETA.Size = new System.Drawing.Size(280, 23);
+            this.dateInventoryETA.TabIndex = 4;
             // 
-            // label1
+            // labelInventoryETA
             // 
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(13, 117);
-            this.label1.Name = "label1";
-            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.RectStyle.BorderWidth = 1F;
-            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label1.RectStyle.ExtBorderWidth = 1F;
-            this.label1.Size = new System.Drawing.Size(98, 23);
-            this.label1.TabIndex = 125;
-            this.label1.Text = "Inventory ETA";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelInventoryETA.Lines = 0;
+            this.labelInventoryETA.Location = new System.Drawing.Point(13, 117);
+            this.labelInventoryETA.Name = "labelInventoryETA";
+            this.labelInventoryETA.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelInventoryETA.RectStyle.BorderWidth = 1F;
+            this.labelInventoryETA.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelInventoryETA.RectStyle.ExtBorderWidth = 1F;
+            this.labelInventoryETA.Size = new System.Drawing.Size(98, 23);
+            this.labelInventoryETA.TabIndex = 125;
+            this.labelInventoryETA.Text = "Inventory ETA";
+            this.labelInventoryETA.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelInventoryETA.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // cbbFilter
+            // comboFilterCondition
             // 
-            this.cbbFilter.BackColor = System.Drawing.Color.White;
-            this.cbbFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cbbFilter.FormattingEnabled = true;
-            this.cbbFilter.IsSupportUnselect = true;
-            this.cbbFilter.Location = new System.Drawing.Point(114, 252);
-            this.cbbFilter.Name = "cbbFilter";
-            this.cbbFilter.Size = new System.Drawing.Size(353, 24);
-            this.cbbFilter.TabIndex = 8;
+            this.comboFilterCondition.BackColor = System.Drawing.Color.White;
+            this.comboFilterCondition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFilterCondition.FormattingEnabled = true;
+            this.comboFilterCondition.IsSupportUnselect = true;
+            this.comboFilterCondition.Location = new System.Drawing.Point(114, 252);
+            this.comboFilterCondition.Name = "comboFilterCondition";
+            this.comboFilterCondition.Size = new System.Drawing.Size(353, 24);
+            this.comboFilterCondition.TabIndex = 8;
             // 
-            // label2
+            // labelFilterCondition
             // 
-            this.label2.Lines = 0;
-            this.label2.Location = new System.Drawing.Point(13, 252);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(98, 23);
-            this.label2.TabIndex = 127;
-            this.label2.Text = "Filter Condition";
+            this.labelFilterCondition.Lines = 0;
+            this.labelFilterCondition.Location = new System.Drawing.Point(13, 252);
+            this.labelFilterCondition.Name = "labelFilterCondition";
+            this.labelFilterCondition.Size = new System.Drawing.Size(98, 23);
+            this.labelFilterCondition.TabIndex = 127;
+            this.labelFilterCondition.Text = "Filter Condition";
             // 
-            // txtfactory1
+            // txtfactory
             // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(115, 184);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 128;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(115, 184);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 128;
             // 
-            // label5
+            // labelFactory
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 184);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(98, 23);
-            this.label5.TabIndex = 129;
-            this.label5.Text = "Factory";
+            this.labelFactory.Lines = 0;
+            this.labelFactory.Location = new System.Drawing.Point(13, 184);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(98, 23);
+            this.labelFactory.TabIndex = 129;
+            this.labelFactory.Text = "Factory";
             // 
             // R09
             // 
             this.ClientSize = new System.Drawing.Size(577, 309);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.txtfactory1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.cbbFilter);
-            this.Controls.Add(this.dateRange3);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtRefno2);
-            this.Controls.Add(this.txtRefno1);
+            this.Controls.Add(this.labelFactory);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.labelFilterCondition);
+            this.Controls.Add(this.comboFilterCondition);
+            this.Controls.Add(this.dateInventoryETA);
+            this.Controls.Add(this.labelInventoryETA);
+            this.Controls.Add(this.txtRefnoEnd);
+            this.Controls.Add(this.txtRefnoStart);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.txtSpno2);
-            this.Controls.Add(this.txtSpno1);
+            this.Controls.Add(this.labelRefno);
+            this.Controls.Add(this.txtSPNoEnd);
+            this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.dateRange2);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.dateRange1);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.dateBuyerDelivery);
+            this.Controls.Add(this.labelBuyerDelivery);
+            this.Controls.Add(this.labelM);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.dateDeadLine);
+            this.Controls.Add(this.labelDeadLine);
             this.IsSupportToPrint = false;
             this.Name = "R09";
             this.Text = "R09. Taipei Stock VS Factory Inventory";
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
-            this.Controls.SetChildIndex(this.txtMdivision1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.dateRange2, 0);
-            this.Controls.SetChildIndex(this.label9, 0);
+            this.Controls.SetChildIndex(this.labelDeadLine, 0);
+            this.Controls.SetChildIndex(this.dateDeadLine, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.labelM, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.label10, 0);
-            this.Controls.SetChildIndex(this.txtSpno1, 0);
-            this.Controls.SetChildIndex(this.txtSpno2, 0);
+            this.Controls.SetChildIndex(this.txtSPNoStart, 0);
+            this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label11, 0);
+            this.Controls.SetChildIndex(this.labelRefno, 0);
             this.Controls.SetChildIndex(this.label12, 0);
-            this.Controls.SetChildIndex(this.txtRefno1, 0);
-            this.Controls.SetChildIndex(this.txtRefno2, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.dateRange3, 0);
-            this.Controls.SetChildIndex(this.cbbFilter, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.txtfactory1, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.txtRefnoStart, 0);
+            this.Controls.SetChildIndex(this.txtRefnoEnd, 0);
+            this.Controls.SetChildIndex(this.labelInventoryETA, 0);
+            this.Controls.SetChildIndex(this.dateInventoryETA, 0);
+            this.Controls.SetChildIndex(this.comboFilterCondition, 0);
+            this.Controls.SetChildIndex(this.labelFilterCondition, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.labelFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -322,25 +322,25 @@
 
         #endregion
 
-        private Win.UI.Label label3;
-        private Win.UI.DateRange dateRange1;
-        private Class.txtMdivision txtMdivision1;
-        private Win.UI.Label label4;
-        private Win.UI.DateRange dateRange2;
-        private Win.UI.Label label6;
-        private Win.UI.TextBox txtSpno2;
-        private Win.UI.TextBox txtSpno1;
+        private Win.UI.Label labelDeadLine;
+        private Win.UI.DateRange dateDeadLine;
+        private Class.txtMdivision txtMdivision;
+        private Win.UI.Label labelM;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.TextBox txtSPNoEnd;
+        private Win.UI.TextBox txtSPNoStart;
         private Win.UI.Label label10;
-        private Win.UI.Label label9;
-        private Win.UI.Label label11;
-        private Win.UI.TextBox txtRefno2;
-        private Win.UI.TextBox txtRefno1;
+        private Win.UI.Label labelSPNo;
+        private Win.UI.Label labelRefno;
+        private Win.UI.TextBox txtRefnoEnd;
+        private Win.UI.TextBox txtRefnoStart;
         private Win.UI.Label label12;
-        private Win.UI.DateRange dateRange3;
-        private Win.UI.Label label1;
-        private Win.UI.ComboBox cbbFilter;
-        private Win.UI.Label label2;
-        private Class.txtfactory txtfactory1;
-        private Win.UI.Label label5;
+        private Win.UI.DateRange dateInventoryETA;
+        private Win.UI.Label labelInventoryETA;
+        private Win.UI.ComboBox comboFilterCondition;
+        private Win.UI.Label labelFilterCondition;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label labelFactory;
     }
 }

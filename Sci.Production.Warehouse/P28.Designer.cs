@@ -224,7 +224,7 @@
             this.checkOnly.TabIndex = 3;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
-            this.checkOnly.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
             // 
             // btnClose
             // 

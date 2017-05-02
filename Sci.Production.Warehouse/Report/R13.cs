@@ -23,27 +23,27 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbStockType,2,1, "A,Bulk,B,Inventory");
-            cbbStockType.SelectedIndex = 0;
-            txtReason1.SelectedIndex = 0;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboStockType,2,1, "A,Bulk,B,Inventory");
+            comboStockType.SelectedIndex = 0;
+            txtReason.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateAdjustDate.Value1) && MyUtility.Check.Empty(dateAdjustDate.Value2))
             {
                 MyUtility.Msg.WarningBox("< Adjust Date > can't be empty!!");
                 return false;
             }
 
-            issueDate1 = dateRange1.Value1;
-            issueDate2 = dateRange1.Value2;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            stocktype = cbbStockType.SelectedValue.ToString();
-            reason = txtReason1.SelectedValue.ToString();
+            issueDate1 = dateAdjustDate.Value1;
+            issueDate2 = dateAdjustDate.Value2;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            stocktype = comboStockType.SelectedValue.ToString();
+            reason = txtReason.SelectedValue.ToString();
 
             return base.ValidateInput();
         }

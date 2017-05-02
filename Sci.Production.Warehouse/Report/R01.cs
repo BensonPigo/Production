@@ -24,49 +24,49 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
-            txtMdivision1.Text = Sci.Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(cbbFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
-            cbbFabricType.SelectedIndex = 0;
-            MyUtility.Tool.SetupCombox(cbbOrderBy, 1, 1, "Supplier,SP#");
-            cbbOrderBy.SelectedIndex = 0;
+            txtMdivision.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFabricType, 2, 1, ",ALL,F,Fabric,A,Accessory");
+            comboFabricType.SelectedIndex = 0;
+            MyUtility.Tool.SetupCombox(comboOrderBy, 1, 1, "Supplier,SP#");
+            comboOrderBy.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2) &&
-                MyUtility.Check.Empty(dateRange2.Value1) && MyUtility.Check.Empty(dateRange2.Value2) &&
-                MyUtility.Check.Empty(dateRange4.Value1) && MyUtility.Check.Empty(dateRange3.Value2) &&
-                MyUtility.Check.Empty(dateRange3.Value1) && MyUtility.Check.Empty(dateRange4.Value2) &&
-                (MyUtility.Check.Empty(txtSpno1.Text) && MyUtility.Check.Empty(txtSpno2.Text)) &&
-                (MyUtility.Check.Empty(txtRefno1.Text) && MyUtility.Check.Empty(txtRefno2.Text)))
+            if (MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) &&
+                MyUtility.Check.Empty(dateSuppDelivery.Value1) && MyUtility.Check.Empty(dateSuppDelivery.Value2) &&
+                MyUtility.Check.Empty(dateETA.Value1) && MyUtility.Check.Empty(datelabelFinalETA.Value2) &&
+                MyUtility.Check.Empty(datelabelFinalETA.Value1) && MyUtility.Check.Empty(dateETA.Value2) &&
+                (MyUtility.Check.Empty(txtSPNoStart.Text) && MyUtility.Check.Empty(txtSPNoEnd.Text)) &&
+                (MyUtility.Check.Empty(txtRefnoStart.Text) && MyUtility.Check.Empty(txtRefnoEnd.Text)))
             {
                 MyUtility.Msg.WarningBox("< Supp Delivery > & < SCI Delivery > & < ETA > & < Final ETA >& < SP# > & < Refno > can't be empty!!");
                 return false;
             }
             #region -- 擇一必輸的條件 --
-            sciDelivery1 = dateRange1.Value1;
-            sciDelivery2 = dateRange1.Value2;
-            suppDelivery1 = dateRange2.Value1;
-            suppDelivery2 = dateRange2.Value2;
-            eta1 = dateRange4.Value1;
-            eta2 = dateRange4.Value2;
-            ata1 = dateRange3.Value1;
-            ata2 = dateRange3.Value2;
-            spno1 = txtSpno1.Text;
-            spno2 = txtSpno2.Text;
-            refno1 = txtRefno1.Text;
-            refno2 = txtRefno2.Text;
+            sciDelivery1 = dateSCIDelivery.Value1;
+            sciDelivery2 = dateSCIDelivery.Value2;
+            suppDelivery1 = dateSuppDelivery.Value1;
+            suppDelivery2 = dateSuppDelivery.Value2;
+            eta1 = dateETA.Value1;
+            eta2 = dateETA.Value2;
+            ata1 = datelabelFinalETA.Value1;
+            ata2 = datelabelFinalETA.Value2;
+            spno1 = txtSPNoStart.Text;
+            spno2 = txtSPNoEnd.Text;
+            refno1 = txtRefnoStart.Text;
+            refno2 = txtRefnoEnd.Text;
             #endregion
 
-            country = txtcountry1.Text;
-            supp = txtsupplier1.TextBox1.Text;
-            style = txtstyle1.Text;
-            season = txtseason1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = txtfactory1.Text;
-            fabrictype = cbbFabricType.SelectedValue.ToString();
-            orderby = cbbOrderBy.Text;
+            country = txtcountry.Text;
+            supp = txtsupplier.TextBox1.Text;
+            style = txtstyle.Text;
+            season = txtseason.Text;
+            mdivision = txtMdivision.Text;
+            factory = txtfactory.Text;
+            fabrictype = comboFabricType.SelectedValue.ToString();
+            orderby = comboOrderBy.Text;
 
             return base.ValidateInput();
         }
@@ -313,7 +313,7 @@ where 1=1 and c.ThirdCountry = 1"));
                 cmds.Add(sp_refno2);
             }
 
-            if (checkBox1.Checked == false)
+            if (checkIncludeCompleteItem.Checked == false)
             {
                 sqlCmd.Append(" and b.complete = 0");
             }

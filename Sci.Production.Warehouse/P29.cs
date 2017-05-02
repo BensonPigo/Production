@@ -617,7 +617,7 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
             this.gridComplete.ValidateControl();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkOnly_CheckedChanged(object sender, EventArgs e)
         {
             if (checkOnly.Checked)
             {

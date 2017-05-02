@@ -70,7 +70,7 @@
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button3_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnImport
             // 
@@ -82,7 +82,7 @@
             this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button2_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnQuery
             // 
@@ -94,7 +94,7 @@
             this.btnQuery.TabIndex = 7;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtSPNo
             // 
@@ -105,7 +105,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
             this.txtSPNo.TabIndex = 1;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // groupBox2
             // 
@@ -131,7 +131,7 @@
             this.btnUpdateAllLocation.TabIndex = 3;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.button4_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
             // 
             // txtLocation2
             // 
@@ -143,7 +143,7 @@
             this.txtLocation2.ReadOnly = true;
             this.txtLocation2.Size = new System.Drawing.Size(471, 23);
             this.txtLocation2.TabIndex = 2;
-            this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox3_MouseDown);
+            this.txtLocation2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocation2_MouseDown);
             // 
             // label2
             // 

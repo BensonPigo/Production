@@ -224,7 +224,7 @@
             this.btnFind.TabIndex = 5;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button8_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtLocateForSP
             // 
@@ -254,7 +254,7 @@
             this.btnDelete.TabIndex = 6;
             this.btnDelete.Text = "Delete all";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.button9_Click);
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // labelRemark
             // 
@@ -285,7 +285,7 @@
             this.btnImport.TabIndex = 7;
             this.btnImport.Text = "Batch Import";
             this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.button1_Click);
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // txtsubconLocalSupplier
             // 

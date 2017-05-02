@@ -603,14 +603,14 @@ Where a.id = '{0}'", masterID);
         }
 
         //Delete empty qty
-        private void button9_Click(object sender, EventArgs e)
+        private void btnClearQtyIsEmpty_Click(object sender, EventArgs e)
         {
             detailgrid.ValidateControl();
             ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
         }
 
         //Import
-        private void button5_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["requestid"]))
             {
@@ -625,7 +625,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Accumulated Qty
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P15_AccumulatedQty(CurrentMaintain);
             frm.P15 = this;
@@ -640,7 +640,7 @@ Where a.id = '{0}'", masterID);
         }
 
         //Locate for (find)
-        private void button8_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
@@ -651,7 +651,7 @@ Where a.id = '{0}'", masterID);
         }
 
         // Request ID
-        private void textBox2_Validating(object sender, CancelEventArgs e)
+        private void txtRequest_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack WITH (NOLOCK) 

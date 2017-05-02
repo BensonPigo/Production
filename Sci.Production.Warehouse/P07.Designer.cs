@@ -330,7 +330,7 @@
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(120, 23);
             this.txtInvoiceNo.TabIndex = 0;
-            this.txtInvoiceNo.Validating += new System.ComponentModel.CancelEventHandler(this.textBox3_Validating);
+            this.txtInvoiceNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtInvoiceNo_Validating);
             // 
             // displayWKNO
             // 
@@ -554,7 +554,7 @@
             this.comboTypeFilter.Name = "comboTypeFilter";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
             this.comboTypeFilter.TabIndex = 16;
-            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
             // 
             // btnDeleteAll
             // 

@@ -85,7 +85,7 @@
             this.btnQuery.TabIndex = 1;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // panel3
             // 
@@ -122,7 +122,7 @@
             this.comboSortBy.Name = "comboSortBy";
             this.comboSortBy.Size = new System.Drawing.Size(121, 24);
             this.comboSortBy.TabIndex = 0;
-            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboSortBy.SelectedIndexChanged += new System.EventHandler(this.comboSortBy_SelectedIndexChanged);
             // 
             // btnToExcel
             // 
@@ -134,7 +134,7 @@
             this.btnToExcel.TabIndex = 1;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.button3_Click);
+            this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
             // btnClose
             // 
@@ -145,7 +145,7 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.button4_Click);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // panel2
             // 
