@@ -73,9 +73,9 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,o.BrandID
 ,o.FactoryID
 ,fd.ShipperID
-,o.CPU
-,isnull(cpucost.cpucost,0) as cpucost
-,SubPSCost=         ((Select Isnull(sum(ot.Price),0) 
+,ROUND(o.CPU,3) as cpu
+,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
+,SubPSCost=         ROUND((Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
@@ -83,19 +83,19 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
                     (Select Isnull(sum(ot.Price)*cpucost.cpucost,0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)))
-,LocalPSCost= IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
+					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3)
+,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
 						(select Isnull(sum(ot.Price),0) 
 						from Order_TmsCost ot
 						inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 						where ot.ID = o.id and a.Classify = 'P')
-					,0)
+					,0),3)
 
 From Orders o
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 outer apply
 (
-    select top 1 fcd.CpuCost
+    select top 1 ROUND(fcd.CpuCost,3) AS CpuCost
     from dbo.FSRCpuCost_Detail fcd 
     where fcd.ShipperID=fd.ShipperID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
 ) cpucost
@@ -153,7 +153,7 @@ Where o.LocalOrder = 0 ");
             sqlCmd.Append(@" ) 
                             select *
                             ,FtyCMPCostUnit=ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
-                            ,TotalCMPDeclaredtoCustomer=cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2)
+                            ,TotalCMPDeclaredtoCustomer=ROUND(cte.Qty*ROUND(cte.CPU * cte.CPUCost + cte.SubPSCost + cte.LocalPSCost, 2),5)
                             from cte");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
