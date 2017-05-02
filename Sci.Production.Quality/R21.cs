@@ -251,7 +251,7 @@ where a.Status = 'Confirmed'");
                 }
 
                 Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R21_CFA_InlineReport_Summary.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(SummaryData,"","Quality_R21_CFA_InlineReport_Summary.xltx",2,true,null,  excel);
+                MyUtility.Excel.CopyToXls(SummaryData, "", "Quality_R21_CFA_InlineReport_Summary.xltx", 2, true, null, excel);
                 Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1];// 取得工作表                 
 
                 excel.Cells.EntireColumn.AutoFit();
