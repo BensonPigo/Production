@@ -111,9 +111,7 @@ namespace Sci.Production.Warehouse
 	,MIN(a.SewInLine) as FstSewinline
     ,b.Special
     ,b.SizeSpec
-	,round(cast(b.Qty as float)
-        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rate from unit_rate WITH (NOLOCK) where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
-		,(select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit)) as qty
+	,Qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), (select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit)) 
     ,min(a.SciDelivery) SCIdlv
     ,min(a.BuyerDelivery) BuyerDlv
     ,B.Refno
