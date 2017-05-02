@@ -714,9 +714,9 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
             DataTable sizeRange, subDetails;
             if (GetSubDetailDatas(CurrentDetailData, out subDetails))
             {
-                DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
-from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
-where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
+                DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,'{1}' AS Id,0.00 AS QTY
+from dbo.Order_SizeCode a WITH (NOLOCK) 
+where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange);
                 foreach (DataRow dr in sizeRange.Rows)
                 {
                     dr.AcceptChanges();
@@ -732,7 +732,7 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"], CurrentDetailD
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.getpoid();
-            this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
+            this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,'{2}' AS Issue_DetailUkey,isnull(b.Qty,0) QTY
 from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             return base.OnSubDetailSelectCommandPrepare(e);
