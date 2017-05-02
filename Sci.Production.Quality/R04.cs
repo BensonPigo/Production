@@ -241,7 +241,9 @@ namespace Sci.Production.Quality
             xl.dicDatas.Add("##Outstanding", OUTSTAN);
             xl.dicDatas.Add("##body", dt);
             //xl.Save(outpath, false);
+            Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
             xl.Save();
+            wks.Columns.AutoFit();
             return true;
         }
     }
