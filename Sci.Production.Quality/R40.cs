@@ -502,9 +502,11 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 dic.Add(stringyear2, "9,11");
                 xdt_All.lisTitleMerge.Add(dic);
                 xdt_All.ShowHeader = true;
+                xdt_All.boAutoFitColumn = true;
                 xl.dicDatas.Add("##by_year", xdt_All);
                 SaveXltReportCls.ReplaceAction a = AddRpt;
                 xl.dicDatas.Add("##addrpt", a);
+                
                 xl.Save();
                 #endregion
 
@@ -572,16 +574,20 @@ drop table #dRangesM,#dRangesY,#daterange,#F
                 }
 
                 xl.VarToSheetName = "##ftySheetName";
+                xdt_All.boAutoFitColumn = true;
                 xl.dicDatas.Add("##by_factory", xdt_All);
 
 
                 SaveXltReportCls.ReplaceAction b = Addfactory;
+                
                 xl.dicDatas.Add("##addfactory", b);
 
                 SaveXltReportCls.ReplaceAction c = CopySheet;
                 xl.dicDatas.Add("##copyftysheet", c);
 
+                Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                 xl.Save();
+                wks.Columns.AutoFit();
 
                 #endregion
             }
