@@ -172,9 +172,7 @@ select 0 as Selected,c.POID,a.EachConsApv,b.FactoryID,c.MdivisionId
 	) tmp) as ETA
 	,MIN(a.SewInLine) as FstSewinline
     ,b.Special AS cutType
-	,round(cast(b.Qty as float)
-        * (iif(b.POUnit=b.StockUnit,1,(select unit_rate.rateValue from unit_rate WITH (NOLOCK) where Unit_Rate.UnitFrom = b.POUnit and Unit_Rate.UnitTo = b.StockUnit)))
-		,(select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit)) as qty
+	,qty = round(dbo.GetUnitQty(b.POUnit, b.StockUnit, b.Qty), (select unit.Round from unit WITH (NOLOCK) where id = b.StockUnit))
 	,b.stockunit
 	,b.SizeSpec cutwidth,B.Refno,B.SEQ1,B.SEQ2
     ,c.TapeInline,c.TapeOffline
