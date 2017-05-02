@@ -282,12 +282,17 @@ order by tmpData2.OrderID";
             xrt3.ShowHeader = false;
             xrt4.ShowHeader = false;
 
+            xrt1.boAutoFitColumn = true;
+            xrt3.boAutoFitColumn = true;
+            xrt4.boAutoFitColumn = true;
+
             sxrc.dicDatas.Add("##detail", xrt1);
             //sxrc.dicDatas.Add("##detailAll", xrt2);
             sxrc.dicDatas.Add("##StyleDetail", xrt3);
             sxrc.dicDatas.Add("##OrderDetail", xrt4);
             sxrc.dicDatas.Add("##title", title);
             sxrc.dicDatas.Add("##Fty Code", txtSeason.Text + "_historical data");
+            
 
             //Microsoft.Office.Interop.Excel.Application excel = sxrc.ExcelApp;
 
