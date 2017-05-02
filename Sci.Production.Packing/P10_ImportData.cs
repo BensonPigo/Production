@@ -195,7 +195,7 @@ where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ", currentRecord["P
                     else
                     {
                         transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                        MyUtility.Msg.WarningBox("Save failed, Please re-try");
                         return;
                     }
                 }
