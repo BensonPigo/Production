@@ -411,7 +411,10 @@ and ai.Status='Confirmed'
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricDetail);
+                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                     xl.Save();
+                    wks.Columns.AutoFit();
+                    wks.Rows.AutoFit();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
@@ -424,7 +427,9 @@ and ai.Status='Confirmed'
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_FabricSummary.xltx");
                     xl.dicDatas.Add("##BODY", dtFabricSummary);
+                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                     xl.Save();
+                    wks.Columns.AutoFit();
                 }
 
             }
@@ -441,7 +446,10 @@ and ai.Status='Confirmed'
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessoryDetail.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessoryDetail);
+                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                     xl.Save();
+                    wks.Columns.AutoFit();
+                    wks.Rows.AutoFit();
                 }
                 if (radioSummary.Checked)//("Summary".EqualString(this.radioSummary.Text))
                 {
@@ -454,7 +462,9 @@ and ai.Status='Confirmed'
                     }
                     Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Quality_R05_AccessorySummary.xltx");
                     xl.dicDatas.Add("##BODY", dtAccessorySummary);
+                    Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
                     xl.Save();
+                    wks.Columns.AutoFit();
                 }
 
             }
