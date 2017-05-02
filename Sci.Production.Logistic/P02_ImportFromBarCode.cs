@@ -71,7 +71,7 @@ namespace Sci.Production.Logistic
         }
 
         //Append
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAppend_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.Add(new P02_FileInfo(null, null));
             listControlBindingSource1.MoveLast();
@@ -79,7 +79,7 @@ namespace Sci.Production.Logistic
         }
 
         //Delete
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
             if (listControlBindingSource1.Position != -1)
             {
@@ -88,7 +88,7 @@ namespace Sci.Production.Logistic
         }
 
         //Import Data
-        private void button3_Click(object sender, EventArgs e)
+        private void btnImportData_Click(object sender, EventArgs e)
         {
             //清空Grid資料
             if (grid2Data != null)
@@ -268,7 +268,7 @@ namespace Sci.Production.Logistic
         }
 
         //To Excel
-        private void button4_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable ExcelTable;
             try
@@ -304,7 +304,7 @@ namespace Sci.Production.Logistic
         }
 
         //Save
-        private void button5_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             //檢查Receive Date不可為空值，若為空值則出訊息告知且不做任何動作
             if (MyUtility.Check.Empty(this.dateReceiveDate.Value))
@@ -531,7 +531,7 @@ namespace Sci.Production.Logistic
         }
 
         // Cancel, Close
-        private void button6_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             if (this.btnCancel.Text == "Cancel")
             {

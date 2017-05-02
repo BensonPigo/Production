@@ -48,7 +48,7 @@ namespace Sci.Production.Logistic
         }
 
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.dateReceiveDate.Value))
             {
@@ -97,7 +97,7 @@ namespace Sci.Production.Logistic
         }
 
         //Save，將有勾選的資料回寫回上一層的Detail
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             this.gridCartonReturn.ValidateControl();
             listControlBindingSource1.EndEdit();

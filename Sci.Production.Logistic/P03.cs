@@ -47,7 +47,7 @@ namespace Sci.Production.Logistic
         }
 
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
@@ -95,7 +95,7 @@ namespace Sci.Production.Logistic
         }
 
         //Import From Barcode
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImportFromBarcode_Click(object sender, EventArgs e)
         {
             //設定只能選txt檔
             openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -188,7 +188,7 @@ namespace Sci.Production.Logistic
         }
 
         //Save
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
             this.gridReceiveDate.ValidateControl();
@@ -273,7 +273,7 @@ where a.Selected = 1", out selectData);
         }
 
         //Cancel
-        private void button4_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

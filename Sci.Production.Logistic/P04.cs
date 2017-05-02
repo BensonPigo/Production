@@ -101,7 +101,7 @@ namespace Sci.Production.Logistic
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.txtSPNoEnd.Text) && MyUtility.Check.Empty(this.txtPackIDStart.Text) && MyUtility.Check.Empty(this.txtPackIDEnd.Text) && MyUtility.Check.Empty(this.txtPONoStart.Text) && MyUtility.Check.Empty(this.txtPONoEnd.Text))
             {
@@ -214,7 +214,7 @@ from (
         }
 
         //Update All Location
-        private void button2_Click(object sender, EventArgs e)
+        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;
@@ -240,7 +240,7 @@ from (
         }
 
         //Save
-        private void button4_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             this.gridPackID.ValidateControl();
             this.gridPackID.EndEdit();
@@ -360,13 +360,13 @@ from (
         }
 
         //Cancel
-        private void button5_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Filter
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboFilter.SelectedIndex != -1)
             {
@@ -419,7 +419,7 @@ from (
         }
 
         //第二個Filter
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboFilter2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboFilter2.SelectedIndex != -1)
             {
@@ -451,7 +451,7 @@ from (
         }
 
         //Print Move Ticket
-        private void button3_Click(object sender, EventArgs e)
+        private void btnPrintMoveTicket_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
             {

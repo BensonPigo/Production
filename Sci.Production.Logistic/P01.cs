@@ -67,42 +67,42 @@ namespace Sci.Production.Logistic
         }
 
         //Quantity breakdown
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuantityBreakdown_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(displayPOCombo.Value));
             callNextForm.ShowDialog(this);
         }
 
         //Q'ty b'down by shipmode
-        private void button2_Click(object sender, EventArgs e)
+        private void btnQtyBDownByShipmode_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["POID"]));
             callNextForm.ShowDialog(this);
         }
 
         //Production output
-        private void button3_Click(object sender, EventArgs e)
+        private void btnProductionOutput_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Garment Export
-        private void button4_Click(object sender, EventArgs e)
+        private void btnGarmentExport_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_GMTExport callNextForm = new Sci.Production.PPIC.P01_GMTExport(CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
         //Carton Size
-        private void button5_Click(object sender, EventArgs e)
+        private void btnCartonSize_Click(object sender, EventArgs e)
         {
             Sci.Production.Packing.P01_CTNData callNextForm = new Sci.Production.Packing.P01_CTNData(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Carton Status
-        private void button6_Click(object sender, EventArgs e)
+        private void btnCartonStatus_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(CurrentMaintain["ID"].ToString(),true);
             callNextForm.ShowDialog(this);
@@ -113,20 +113,20 @@ namespace Sci.Production.Logistic
         }
 
         //Order remark
-        private void button7_Click(object sender, EventArgs e)
+        private void btnOrderRemark_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(CurrentMaintain["OrderRemark"].ToString(), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
         }
 
         //CMPQ sheet
-        private void button8_Click(object sender, EventArgs e)
+        private void btnCMPQSheet_Click(object sender, EventArgs e)
         {
 
         }
 
         //Fabric inspection list
-        private void button9_Click(object sender, EventArgs e)
+        private void btnFabricInspectionList_Click(object sender, EventArgs e)
         {
             //等QA -> P01開發完成後呼叫
             //Sci.Production.QA.P01 callNextForm = new Sci.Production.QA.P01(CurrentMaintain["POID"].ToString());
@@ -134,14 +134,14 @@ namespace Sci.Production.Logistic
         }
 
         //CFA && RFT list
-        private void button10_Click(object sender, EventArgs e)
+        private void btnCFARFTList_Click(object sender, EventArgs e)
         {
             Sci.Production.Logistic.P01_CFAAndRFTList callNextForm = new Sci.Production.Logistic.P01_CFAAndRFTList(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Accessory inspection list
-        private void button11_Click(object sender, EventArgs e)
+        private void btnAccessoryInspectionList_Click(object sender, EventArgs e)
         {
             //等QA -> P02開發完成後呼叫
             //Sci.Production.QA.P02 callNextForm = new Sci.Production.QA.P02(CurrentMaintain["POID"].ToString());

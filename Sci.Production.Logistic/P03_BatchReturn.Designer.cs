@@ -95,7 +95,7 @@
             this.btnFind.TabIndex = 8;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.button1_Click);
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtPONo
             // 
@@ -229,7 +229,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button2_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // P03_BatchReturn
             // 

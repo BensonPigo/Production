@@ -55,7 +55,7 @@ namespace Sci.Production.Logistic
         }
 
         //Find
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFind_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtTransferClogNoStart) && MyUtility.Check.Empty(this.txtTransferClogNoEnd))
             {
@@ -185,7 +185,7 @@ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Tr
         }
 
         //Update All Location
-        private void button2_Click(object sender, EventArgs e)
+        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.bindingSource1.Position;     //記錄目前指標位置
@@ -203,7 +203,7 @@ MyUtility.Check.Empty(this.txtTransferClogNoStart.Text.Trim()) ? "" : " and a.Tr
         }
 
         //Save，將有勾選的資料回寫回上一層的Detail
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             this.gridCartonReceiving.ValidateControl();
             bindingSource1.EndEdit();

@@ -18,7 +18,7 @@ namespace Sci.Production.Logistic
             this.labelReceiveDate.Text = lableName;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateReceiveDate.Text))
             {

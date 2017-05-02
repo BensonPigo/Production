@@ -123,7 +123,7 @@
             this.comboFilter2.Name = "comboFilter2";
             this.comboFilter2.Size = new System.Drawing.Size(166, 24);
             this.comboFilter2.TabIndex = 12;
-            this.comboFilter2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.comboFilter2.SelectedIndexChanged += new System.EventHandler(this.comboFilter2_SelectedIndexChanged);
             // 
             // comboFilter
             // 
@@ -135,7 +135,7 @@
             this.comboFilter.Name = "comboFilter";
             this.comboFilter.Size = new System.Drawing.Size(85, 24);
             this.comboFilter.TabIndex = 11;
-            this.comboFilter.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboFilter.SelectedIndexChanged += new System.EventHandler(this.comboFilter_SelectedIndexChanged);
             // 
             // labelFilter
             // 
@@ -154,7 +154,7 @@
             this.btnUpdateAllLocation.TabIndex = 10;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.button2_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
             // 
             // txtcloglocationLocationNo
             // 
@@ -184,7 +184,7 @@
             this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
-            this.btnQuery.Click += new System.EventHandler(this.button1_Click);
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // label7
             // 
@@ -344,7 +344,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button5_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
@@ -355,7 +355,7 @@
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.button4_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnPrintMoveTicket
             // 
@@ -365,7 +365,7 @@
             this.btnPrintMoveTicket.TabIndex = 3;
             this.btnPrintMoveTicket.Text = "Print Move Ticket";
             this.btnPrintMoveTicket.UseVisualStyleBackColor = true;
-            this.btnPrintMoveTicket.Click += new System.EventHandler(this.button3_Click);
+            this.btnPrintMoveTicket.Click += new System.EventHandler(this.btnPrintMoveTicket_Click);
             // 
             // comboRequestby
             // 

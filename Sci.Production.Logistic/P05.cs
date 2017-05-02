@@ -44,7 +44,7 @@ namespace Sci.Production.Logistic
         }
 
         //Query
-        private void button1_Click(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"select cr.ReceiveDate,cr.PackingListID,cr.OrderID,oq.Seq,cr.CTNStartNo,
@@ -85,13 +85,13 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         }
 
         //Close
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //To Excel
-        private void button3_Click(object sender, EventArgs e)
+        private void btnToExcel_Click(object sender, EventArgs e)
         {
             bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", xltfile: "Logistic_P05.xltx", headerRow: 1);
             if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
