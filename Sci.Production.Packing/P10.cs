@@ -174,7 +174,7 @@ namespace Sci.Production.Packing
                     }
                     if (insertCount == 0)
                     {
-                        MyUtility.Msg.WarningBox("All data were transfered or order's M is not equal to login M.");
+                        MyUtility.Msg.WarningBox("All data were transferred or order's M is not equal to login M.");
                         return;
                     }
                     if (MissData.Rows.Count > 0)
