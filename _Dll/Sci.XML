@@ -590,46 +590,6 @@
             <param name="datas">result DataTable of retrieve.</param>
             <returns>result of the SQL command is executed.</returns>
         </member>
-        <member name="M:Sci.Data.IDBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.IDBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.IDBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.IDBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
-            <summary>
-            Select Data From Database. with specified connection and parameter list.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
         <member name="M:Sci.Data.IDBProxy.Fill(System.String,System.String,System.Data.DataTable)">
             <summary>
             Select Data from DataBase and fill into specified DataTable.
@@ -918,6 +878,46 @@
             <param name="result">result of process.</param>
             <returns>true or false.</returns>
         </member>
+        <member name="M:Sci.Data.IDBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataSet of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.IDBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataSet of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.IDBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataSet of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.IDBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
+            <summary>
+            Select Data From Database. with specified connection and parameter list.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataSet of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
         <member name="M:Sci.Data.IDBProxy.FetchTable(Sci.Data.FetchActionByTable,System.String,System.String,System.Int32,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})">
             <summary>
             預期資料量很多的情況下 , 製訂每幾筆執行一次指定的動作
@@ -1095,66 +1095,6 @@
             <returns>result of the SQL command is executed.</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.Data.DBProxy.Select``1(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)" -->
-        <member name="M:Sci.Data.DBProxy.SelectSet(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSet(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSet``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSet``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
-            <summary>
-            Select Data From Database. with specified connection and parameter list.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.Select(System.String,System.String,System.Data.DataTable[]@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)">
-            <summary>
-            Select Data From Database. with specified connection and parameter list.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
         <member name="M:Sci.Data.DBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataTable@)">
             <summary>
             Select Data From Database. with specified connection.
@@ -1185,66 +1125,6 @@
             <returns>result of the SQL command is executed.</returns>
         </member>
         <member name="M:Sci.Data.DBProxy.SelectByConn``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
-            <summary>
-            Select Data From Database. with specified connection and parameter list.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataTable[]@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)">
-            <summary>
-            Select Data From Database. with specified connection and parameter list.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="parameters">Parameter list</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
-            <summary>
-            Select Data From Database. with specified connection.
-            </summary>
-            <typeparam name="TABLE">Type name of DataTable.</typeparam>
-            <param name="conn">SqlConnection object.</param>
-            <param name="cmdtext">SQL command text.</param>
-            <param name="datas">result DataTable of retrieve.</param>
-            <returns>result of the SQL command is executed.</returns>
-        </member>
-        <member name="M:Sci.Data.DBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
             <summary>
             Select Data From Database. with specified connection and parameter list.
             </summary>
@@ -1593,6 +1473,126 @@
             </summary>
             <param name="result">result of process.</param>
             <returns>true or false.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.Select(System.String,System.String,System.Data.DataTable[]@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.Select(System.String,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)">
+            <summary>
+            Select Data From Database. with specified connection and parameter list.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataTable[]@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataTable[]@)">
+            <summary>
+            Select Data From Database. with specified connection and parameter list.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSet(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSet(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSet``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSet``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
+            <summary>
+            Select Data From Database. with specified connection and parameter list.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSetByConn(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.Data.DataSet@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,``0@)">
+            <summary>
+            Select Data From Database. with specified connection.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
+        </member>
+        <member name="M:Sci.Data.DBProxy.SelectSetByConn``1(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},``0@)">
+            <summary>
+            Select Data From Database. with specified connection and parameter list.
+            </summary>
+            <typeparam name="TABLE">Type name of DataTable.</typeparam>
+            <param name="conn">SqlConnection object.</param>
+            <param name="cmdtext">SQL command text.</param>
+            <param name="parameters">Parameter list</param>
+            <param name="datas">result DataTable of retrieve.</param>
+            <returns>result of the SQL command is executed.</returns>
         </member>
         <member name="T:Sci.Data.SYS">
              <summary>
@@ -3585,6 +3585,11 @@
             Generate SQL Order command string.
             </summary>
             <returns>Order by SQL command string.</returns>
+        </member>
+        <member name="P:Sci.Win.IQueryBuilderCommand._defaultOrderBy">
+            <summary>
+            default order by , if no order by is used by user
+            </summary>
         </member>
         <member name="T:Sci.Win.IQueryBuilderCondition">
             <summary>
@@ -6267,6 +6272,16 @@
             <param name="sender">sender object.</param>
             <param name="e">SubreportProcessingEventArgs object.</param>
         </member>
+        <member name="P:Sci.Win.Subs.ReportView.Viewer_ZoomMode">
+            <summary>
+            設定ReportView要用的ZoomMode .
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Subs.ReportView.Viewer_ZoomPercent">
+            <summary>
+            當使用 ReportView.ZoomMode = Percent的時候 , 設定顯示的百分比大小
+            </summary>
+        </member>
         <member name="F:Sci.Win.Subs.ReportView.components">
             <summary>
             Required designer variable.
@@ -8669,6 +8684,12 @@
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">EventArgs</param>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.ClickClip_EnsureCanEdit">
+            <summary>
+            控制夾檔畫面的使用權限 , 回傳true 代表user可以新增/刪除夾檔
+            </summary>
+            <returns></returns>
         </member>
         <member name="F:Sci.Win.Tems.Input1.components">
             <summary>
@@ -11203,6 +11224,22 @@
             </summary>
             <param name="report"></param>
         </member>
+        <member name="P:Sci.Win.Tems.PrintForm.Viewer_ZoomMode">
+            <summary>
+            設定ReportView要用的ZoomMode .
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tems.PrintForm.Viewer_ZoomPercent">
+            <summary>
+            當使用 ReportView.ZoomMode = Percent的時候 , 設定顯示的百分比大小
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.PrintForm.SetupReportViewer(Sci.Win.Subs.ReportView)">
+            <summary>
+            ReportView顯示出來之前, 提供setup 的功能
+            </summary>
+            <param name="viewform"></param>
+        </member>
         <member name="F:Sci.Win.Tems.PrintForm.components">
             <summary>
             Required designer variable.
@@ -11550,6 +11587,16 @@
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip.AddClip(System.String,System.String,System.String,System.String[])">
+            <summary>
+            不顯示畫面, 直接夾檔
+            </summary>
+            <param name="tablename">Table name</param>
+            <param name="uid">a unique value in {tablename} </param>
+            <param name="userID">who add clip (refer to Pass1.ID )</param>
+            <param name="clipFiles">one or more strings for each file (full path)</param>
+            <returns></returns>
         </member>
         <member name="F:Sci.Win.Tools.Clip.components">
             <summary>
@@ -12792,6 +12839,14 @@
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
         </member>
+        <member name="M:Sci.Win.Tools.QueryBuilder.#ctor(System.String,System.String,Sci.Win.IQueryBuilderCommand,System.String)">
+            <summary>
+            Constructor of QueryBuilder with parameters.
+            </summary>
+            <param name="formname">Form name.</param>
+            <param name="value">Original string.(Last condition string)</param>
+            <param name="qbcommand"></param>
+        </member>
         <member name="F:Sci.Win.Tools.QueryBuilder.components">
             <summary>
             Required designer variable.
@@ -12832,6 +12887,11 @@
         <member name="P:Sci.Win.Tools.QueryBuilderCommand.Orders">
             <summary>
             Property of Order by condition list.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.QueryBuilderCommand._defaultOrderBy">
+            <summary>
+            default order by , if no order by is used by user
             </summary>
         </member>
         <member name="M:Sci.Win.Tools.QueryBuilderCommand.ToExpressSql">
@@ -14518,6 +14578,11 @@
             Get the edit mode.
             </summary>
         </member>
+        <member name="T:Sci.Win.UI.AdvEditModesReadOnly">
+            <summary>
+            enum of advance ReadOnly by edit mode.
+            </summary>
+        </member>
         <member name="T:Sci.Win.UI.Grid">
             <summary>
             Sci Grid control.(DataGridView)
@@ -14605,7 +14670,7 @@
         </member>
         <member name="M:Sci.Win.UI.Grid.Sci#Win#UI#IControl#ChangeEditMode(Sci.Win.UI.ChangeEditModeEventArgs)">
             <summary>
-            Change the Edit mode.
+            Change the IsEditingReadOnly by Edit mode.
             </summary>
             <param name="e">Information of event.</param>
         </member>
@@ -14620,6 +14685,16 @@
             </summary>
             <param name="leftToRight">true 由左往右找尋可編輯欄位;  false 由右往左找尋可編輯欄位</param>
             <returns></returns>
+        </member>
+        <member name="F:Sci.Win.UI.Grid._SupportEditMode">
+            <summary>
+            Field of advance Editmode.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.UI.Grid.SupportEditMode">
+            <summary>
+            Property of advance Editmode.
+            </summary>
         </member>
         <member name="T:Sci.Win.UI.GridIcon">
             <summary>
