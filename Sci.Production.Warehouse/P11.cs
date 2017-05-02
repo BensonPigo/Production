@@ -96,7 +96,20 @@ namespace Sci.Production.Warehouse
                     string sqlcmd = string.Format(@"select a.*,
 CASE b.FabricType WHEN 'A' THEN 'Accessory' WHEN 'F' THEN 'Fabric'  WHEN 'O' THEN 'Other' END AS FabricType
 ,b.SCIRefno,f.MtlTypeID,m.IssueType,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
+                         from dbo.issue WITH (NOLOCK) 
+                         inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                         where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
+                                and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
+                                and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
+,balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
+                        from dbo.ftyinventory FI WITH (NOLOCK) 
+                        where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                    ,0.00)
+from dbo.ftyinventory a WITH (NOLOCK) 
+inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where lock=0 and inqty-outqty+adjustqty > 0 
@@ -127,6 +140,14 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                     //CurrentDetailData["mdivisionid"] = x[0]["mdivisionid"];
                     CurrentDetailData["stocktype"] = x[0]["stocktype"];
                     CurrentDetailData["ftyinventoryukey"] = x[0]["ukey"];
+                    CurrentDetailData["Colorid"] = x[0]["Colorid"];
+                    CurrentDetailData["SizeSpec"] = x[0]["SizeSpec"];
+                    CurrentDetailData["UsedQty"] = x[0]["UsedQty"];
+                    CurrentDetailData["SizeUnit"] = x[0]["SizeUnit"];
+                    CurrentDetailData["location"] = x[0]["location"];
+                    CurrentDetailData["description"] = x[0]["description"];
+                    CurrentDetailData["accu_issue"] = x[0]["accu_issue"];
+                    CurrentDetailData["balanceqty"] = x[0]["balanceqty"];
                 }
             };
 
@@ -156,7 +177,20 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                         }
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
-from dbo.ftyinventory a WITH (NOLOCK) inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
+,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
+                         from dbo.issue WITH (NOLOCK) 
+                         inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                         where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
+                                and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
+                                and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
+,balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
+                        from dbo.ftyinventory FI WITH (NOLOCK) 
+                        where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                    ,0.00)
+from dbo.ftyinventory a WITH (NOLOCK) 
+inner join dbo.po_supp_detail b WITH (NOLOCK) on b.id=a.POID and b.seq1=a.seq1 and b.seq2 = a.Seq2
 inner join Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-outqty+adjustqty > 0  and stocktype='B' "
@@ -174,6 +208,14 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
                             //CurrentDetailData["mdivisionid"] = dr["mdivisionid"];
                             CurrentDetailData["stocktype"] = dr["stocktype"];
                             CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
+                            CurrentDetailData["Colorid"] = dr["Colorid"];
+                            CurrentDetailData["SizeSpec"] = dr["SizeSpec"];
+                            CurrentDetailData["UsedQty"] = dr["UsedQty"];
+                            CurrentDetailData["SizeUnit"] = dr["SizeUnit"];
+                            CurrentDetailData["location"] = dr["location"];
+                            CurrentDetailData["description"] = dr["description"];
+                            CurrentDetailData["accu_issue"] = dr["accu_issue"];
+                            CurrentDetailData["balanceqty"] = dr["balanceqty"];
                         }
                     }
                 }
