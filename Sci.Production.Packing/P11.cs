@@ -384,7 +384,7 @@ where od.ID = '{0}'", masterID);
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
-                MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
+                MyUtility.Msg.WarningBox("Confirm failed, Please re-try");
             }
 
             RenewData();
