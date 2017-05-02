@@ -427,9 +427,9 @@ where   stocktype='{0}'
                 }
 
                 //刪除表身重新匯入
-                foreach (DataRow del in detailData.Rows)
+                foreach (DataRow del in detailData.ToList())
                 {
-                    del.Delete();
+                    detailData.Rows.Remove(del);
                 }
                 foreach (DataRow dr2 in tmpPacking.Rows)
                 {
