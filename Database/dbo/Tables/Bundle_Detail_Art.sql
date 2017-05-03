@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[Bundle_Detail_Art] (
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原bundle2.artwork轉成table', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail_Art';
 
@@ -33,6 +35,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level
 
 
 GO
-CREATE NONCLUSTERED INDEX [Bundle_Detail_Art-ID-Bundleno]
-    ON [dbo].[Bundle_Detail_Art]([Bundleno] ASC, [ID] ASC);
+CREATE NONCLUSTERED INDEX [ID_PC_Bundleno]
+    ON [dbo].[Bundle_Detail_Art]([Bundleno] ASC, [PatternCode] ASC, [ID] ASC);
 
