@@ -678,7 +678,7 @@ and a.article = '{1}' and a.PatternUkey = p.ukey", poid, article);
             {
                 selectDr_Cutref = ((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row;
             }
-            ArticleSizeTb.DefaultView.RowFilter = string.Format("Ukey ='{0}'", selectDr_Cutref["Ukey"]);
+            ArticleSizeTb.DefaultView.RowFilter = string.Format("Ukey ='{0}' and patternPanel = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["patternPanel"]);
             if (ArticleSizeTb.Rows.Count == 0) return;
             if (gridArticleSize.GetSelectedRowIndex() == -1)
             {
