@@ -414,19 +414,36 @@ namespace Sci.Production.Cutting
                 ,a.Ukey
             from workorder a WITH (NOLOCK) ,orders ord WITH (NOLOCK) , workorder_PatternPanel b WITH (NOLOCK)  
             Where a.ukey = b.workorderukey and a.orderid = ord.id and ord.mDivisionid = '{0}' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
-            string distru_cmd = string.Format(
-            @"Select distinct 0 as sel,0 as iden,a.cutref,b.orderid,b.article,a.colorid,b.sizecode,c.PatternPanel, '' as Ratio,a.cutno,
-                Sewingline=ord.SewLine,
-                SewingCell=a.CutCellid,
-                (Select Reason.Name 
-                from Reason WITH (NOLOCK) , Style WITH (NOLOCK) 
-                where Reason.Reasontypeid ='Style_Apparel_Type' and 
-                Style.ukey = ord.styleukey and Style.ApparelType = Reason.id ) 
-                as item,
-           1 as Qty,isnull(sum(b.Qty),0) as cutoutput,0 as TotalParts,ord.poid, 0 as startno
-,a.Ukey
-            from workorder a WITH (NOLOCK) ,orders ord WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) ,workorder_PatternPanel c WITH (NOLOCK) 
-            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}' and a.ukey = c.workorderukey and b.orderid = ord.id and c.id = a.id and a.id = b.id and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
+            string distru_cmd = string.Format(@"
+Select distinct 0 as sel,0 as iden,a.cutref,b.orderid,b.article,a.colorid,b.sizecode,c.PatternPanel, '' as Ratio,a.cutno,
+    Sewingline=ord.SewLine,
+    SewingCell=a.CutCellid,
+    item = (
+		Select Reason.Name 
+		from Reason WITH (NOLOCK) , Style WITH (NOLOCK) 
+		where Reason.Reasontypeid ='Style_Apparel_Type' and 
+		Style.ukey = ord.styleukey and Style.ApparelType = Reason.id
+	)
+	,1 as Qty,isnull(sum(b.Qty),0) as cutoutput,0 as TotalParts,ord.poid, 0 as startno
+	,a.Ukey
+	,ord.StyleUkey
+	,ag.ArticleGroup
+from workorder a WITH (NOLOCK) 
+inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
+inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
+inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
+outer apply
+(
+	select a.ArticleGroup
+	from pattern p
+	inner join Pattern_GL_Article a on  a.PatternUkey = p.ukey and a.PatternUkey = p.ukey
+	where p.STYLEUKEY = ord.Styleukey
+	and a.article = b.article
+	and Status = 'Completed' 
+	AND p.EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = ord.Styleukey and Status = 'Completed')	
+)ag
+Where a.CutRef is not null  
+and ord.mDivisionid = '{0}'", keyWord);
 
             string Excess_cmd = string.Format(
             @"Select distinct a.cutref,a.orderid
@@ -460,7 +477,9 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            distru_cmd = distru_cmd + " and b.orderid !='EXCESS' and a.CutRef is not null  group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid,a.Ukey  order by b.sizecode,b.orderid";
+            distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
+group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
+order by b.sizecode,b.orderid";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
@@ -500,16 +519,14 @@ namespace Sci.Production.Cutting
                 }
             }
             #endregion
-            #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
 
+            #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
             int iden = 1;
             MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "Cutref,Article,SizeCode", "Select b.Cutref,a.SizeCode,a.Qty From Workorder_SizeRatio a WITH (NOLOCK) ,#tmp b,workorder c WITH (NOLOCK)  where b.cutref = c.cutref and c.ukey = a.workorderukey and b.sizecode = a.sizecode", out SizeRatioTb);
 
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
                 dr["iden"] = iden;
-                createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["PatternPanel"].ToString(), dr["Cutref"].ToString(), iden);
-
                 #region Create Qtytb
                 DataRow qty_newRow = qtyTb.NewRow();
                 qty_newRow["No"] = 1;
@@ -521,11 +538,12 @@ namespace Sci.Production.Cutting
                 qty_newRow["iden"] = iden;
                 qtyTb.Rows.Add(qty_newRow);
                 #endregion
+                createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["PatternPanel"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 int totalpart = MyUtility.Convert.GetInt(patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
                 iden++;
             }
-            #endregion
+            #endregion            
 
             gridCutRef.DataSource = CutRefTb;
             gridArticleSize.DataSource = ArticleSizeTb;
@@ -541,19 +559,10 @@ namespace Sci.Production.Cutting
             this.HideWaitMessage();
 
         }
-        public void createPattern(string poid, string article, string patternpanel, string cutref, int iden)
+        public void createPattern(string poid, string article, string patternpanel, string cutref, int iden, string ArticleGroup)
         {
-            //撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            string sqlcmd = String.Format(@"
-select a.ArticleGroup
-from pattern p,orders o,Pattern_GL_Article a
-where o.id = '{0}' and Status = 'Completed' and p.STYLEUKEY = o.Styleukey
-AND p.EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = o.Styleukey and Status = 'Completed')
-and a.article = '{1}' and a.PatternUkey = p.ukey", poid, article);
-
-            f_code = MyUtility.GetValue.Lookup(sqlcmd, null);
-            if (f_code == "") f_code = "F_Code";
-
+            if (ArticleGroup == "") f_code = "F_Code";
+            else f_code = ArticleGroup;
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
             DataRow[] garmentar = GarmentTb.Select(string.Format("{0} = '{1}'", f_code, patternpanel));
