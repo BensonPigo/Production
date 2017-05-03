@@ -569,19 +569,6 @@ namespace Sci.Production.Subcon
             this.RenewData();
         }
 
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (this.EditMode) return;
-            var frm = new Sci.Production.Subcon.P01_BatchCreate("P10");
-            frm.ShowDialog(this);
-            ReloadDatas();
-        }
-
-        private void txtartworktype_ftyArtworkType_Validating(object sender, CancelEventArgs e)
-        {
-            
-        }
         //print
         protected override bool ClickPrint()
         {

@@ -84,11 +84,5 @@ namespace Sci.Production.Subcon
 
             return base.OnSaveBefore();
         }
-
-        private void save_Click(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

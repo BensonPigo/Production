@@ -40,7 +40,7 @@
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.dateDate = new Sci.Win.UI.DateBox();
             this.numTotalQty = new Sci.Win.UI.NumericBox();
-            this.label25 = new Sci.Win.UI.Label();
+            this.labelConfirmed = new Sci.Win.UI.Label();
             this.txtmfactory = new Sci.Production.Class.txtmfactory();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
@@ -61,7 +61,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.txtmfactory);
-            this.masterpanel.Controls.Add(this.label25);
+            this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.numTotalQty);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.txtuserHandle);
@@ -92,7 +92,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtuserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalQty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             // 
             // detailpanel
@@ -289,18 +289,17 @@
             0,
             0});
             // 
-            // label25
+            // labelConfirmed
             // 
-            this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(892, 14);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(103, 23);
-            this.label25.TabIndex = 44;
-            this.label25.Text = "Confirmed";
-            this.label25.TextStyle.Color = System.Drawing.Color.Red;
-            this.label25.Click += new System.EventHandler(this.label25_Click);
+            this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
+            this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.labelConfirmed.Lines = 0;
+            this.labelConfirmed.Location = new System.Drawing.Point(892, 14);
+            this.labelConfirmed.Name = "labelConfirmed";
+            this.labelConfirmed.Size = new System.Drawing.Size(103, 23);
+            this.labelConfirmed.TabIndex = 44;
+            this.labelConfirmed.Text = "Confirmed";
+            this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // txtmfactory
             // 
@@ -388,7 +387,7 @@
         private Win.UI.Label labelFactory;
         private Win.UI.DateBox dateDate;
         private Win.UI.NumericBox numTotalQty;
-        private Win.UI.Label label25;
+        private Win.UI.Label labelConfirmed;
         private Class.txtmfactory txtmfactory;
     }
 }

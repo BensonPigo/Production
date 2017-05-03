@@ -239,7 +239,7 @@ outer apply(
             }
             #endregion
             #region Status Label
-            label25.Text = CurrentMaintain["Status"].ToString();
+            labelConfirmed.Text = CurrentMaintain["Status"].ToString();
             #endregion
             #region Batch Import
             btnImportFromRealTime.Enabled = this.EditMode;
@@ -689,13 +689,6 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
             RenewData();
             OnDetailEntered();
             this.EnsureToolbarExt();
-        }
-
-
-
-        private void label25_Click(object sender, EventArgs e)
-        {
-
         }
 
         // P03_ImportFrom Real Time

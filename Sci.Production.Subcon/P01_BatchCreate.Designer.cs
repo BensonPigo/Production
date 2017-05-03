@@ -205,7 +205,7 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
-            this.txtartworktype_ftyArtworkType.Validated += new System.EventHandler(this.txtartworktype_ftyArtworkType_Validated);
+           
             // 
             // btnFindNow
             // 

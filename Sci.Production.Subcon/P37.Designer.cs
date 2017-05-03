@@ -139,7 +139,6 @@
             this.masterpanel.Controls.Add(this.labelDebitNo);
             this.masterpanel.Size = new System.Drawing.Size(1000, 438);
             this.masterpanel.TabIndex = 1;
-            this.masterpanel.Paint += new System.Windows.Forms.PaintEventHandler(this.masterpanel_Paint);
             this.masterpanel.Controls.SetChildIndex(this.labelDebitNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblSubconDebitNote, 0);

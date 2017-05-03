@@ -616,10 +616,7 @@ Order_TmsCost.ApvDate
             }
         }
 
-        private void txtartworktype_ftyArtworkType_Validated(object sender, EventArgs e)
-        {
-
-        }
+       
 
         //excel
         private void btnToExcel_Click(object sender, EventArgs e)

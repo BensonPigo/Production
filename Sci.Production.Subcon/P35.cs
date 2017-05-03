@@ -583,14 +583,6 @@ where lapd.id = '{0}'"
             //}
         }
         
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (this.EditMode) return;
-            var frm = new Sci.Production.Subcon.P01_BatchCreate("P35");
-            frm.ShowDialog(this);
-            ReloadDatas();
-        }
-        
         protected override bool ClickNewBefore()
         {
             this.DetailSelectCommand = string.Format("select *,0.0 as amount,0.0 as balance,0 as inqty,0 as apqty,'' as description from localap_detail WITH (NOLOCK) where 1=0");

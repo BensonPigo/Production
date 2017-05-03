@@ -124,11 +124,6 @@ from debit_detail WITH (NOLOCK) Where debit_detail.id = '{0}' order by orderid "
 
         }
 
-        private void masterpanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();

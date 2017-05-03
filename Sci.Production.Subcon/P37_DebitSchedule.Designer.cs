@@ -41,10 +41,6 @@
             // 
             this.gridcont.Size = new System.Drawing.Size(807, 438);
             // 
-            // save
-            // 
-            this.save.Click += new System.EventHandler(this.save_Click);
-            // 
             // P37_DebitSchedule
             // 
             this.ClientSize = new System.Drawing.Size(831, 500);
