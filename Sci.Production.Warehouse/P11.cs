@@ -452,6 +452,38 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     , sqlcmd, out result, "#tmp");
                 //MyUtility.Msg.InfoBox("Save completed!!");
             }
+
+            //刪除第三層qty為0的資料
+            DataTable subDT;
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (GetSubDetailDatas(dr, out subDT))
+                {
+                    foreach (DataRow dr2 in subDT.ToList())
+                    {
+                        if (dr2.RowState != DataRowState.Deleted && Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState != DataRowState.Modified)
+                        {
+                            subDT.Rows.Remove(dr2);
+                        }
+                    }
+                }
+            }
+
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (GetSubDetailDatas(dr, out subDT))
+                {
+                    foreach (DataRow dr2 in subDT.Rows)
+                    {
+                        if (Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState == DataRowState.Modified)
+                        {
+                            dr2.Delete();
+                        }
+                    }
+                }
+            }
+       
+
             return base.ClickSaveBefore();
         }
 
@@ -732,7 +764,7 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.getpoid();
-            this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,'{2}' AS Issue_DetailUkey,isnull(b.Qty,0) QTY
+            this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,'{2}' AS Issue_DetailUkey,isnull(b.Qty,0) QTY,IIF(b.Qty IS NULL , 1 ,0) isvirtual
 from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             return base.OnSubDetailSelectCommandPrepare(e);
@@ -1451,7 +1483,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.po
                 DataTable sizeRange, subDetails;
                 if (GetSubDetailDatas(CurrentDetailData, out subDetails))
                 {
-                    DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY
+                    DBProxy.Current.Select(null, string.Format(@"select a.SizeCode,b.Id,b.Issue_DetailUkey,isnull(b.Qty,0) QTY 
 from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' --and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq ", this.poid, CurrentMaintain["id"], CurrentDetailData["ukey"]), out sizeRange);
                     foreach (DataRow drr in sizeRange.Rows)

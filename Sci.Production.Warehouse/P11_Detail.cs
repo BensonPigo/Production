@@ -60,8 +60,15 @@ namespace Sci.Production.Warehouse
                                             .Where(row=> !MyUtility.Check.Empty(row["Qty"]) )
                                             .Sum(row => Convert.ToDecimal(row["Qty"].ToString())) * usedqty * Rate
                                             , 2);
-            
-            
+            //將需新增的資料狀態更改為新增
+            foreach (DataRow temp in CurrentSubDetailDatas.Rows)
+            {
+                if (temp["isvirtual"].ToString() == "1" && Convert.ToDecimal(temp["QTY"].ToString()) > 0)
+                {
+                    temp.AcceptChanges();
+                    temp.SetAdded();
+                }
+            }
         }
         protected override void OnFormLoaded()
         {
