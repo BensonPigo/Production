@@ -321,7 +321,6 @@
             this.comboType.Size = new System.Drawing.Size(100, 24);
             this.comboType.TabIndex = 0;
             this.comboType.SelectedIndexChanged += new System.EventHandler(this.comboType_SelectedIndexChanged);
-            this.comboType.SelectedValueChanged += new System.EventHandler(this.comboType_SelectedValueChanged);
             // 
             // comboType2
             // 

@@ -599,27 +599,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             return base.ClickPrint();
         }
 
-        //Type
-        //private void comboBox1_Validating(object sender, CancelEventArgs e)
-        //{
-                        
-        //    //if (EditMode == true && MyUtility.Convert.GetString(CurrentMaintain["type"]) != MyUtility.Convert.GetString(comboBox1.SelectedValue))
-        //    //string oldValue = MyUtility.Convert.GetString(comboBox1.OldValue), selectValue = MyUtility.Convert.GetString(comboBox1.SelectedValue);
-        //    //if (EditMode == true & !MyUtility.Check.Empty(oldValue)
-        //    //    & !oldValue.EqualString(selectValue))
-        //    //{                
-        //    //    if (comboBox1.SelectedIndex != -1)
-        //    //    {
-        //    //        //CurrentMaintain["Type"] = selectValue;
-        //    //        //CurrentMaintain["SubType"] = "";
-        //    //        //CurrentMaintain.EndEdit();
-
-        //    //        this.ChangeCombo2DataSource();
-        //    //        //comboBox2.SelectedIndex = 0;
-        //    //    }
-        //    //}
-        //}
-
+      
         //計算表身Grid欄位的Amount值
         private void CalculateGridAmount(DataRow dr)
         {
@@ -711,10 +691,6 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
         }
 
-        private void comboType_SelectedValueChanged(object sender, EventArgs e)
-        {
-            
-        }
 
         private void comboType_SelectedIndexChanged(object sender, EventArgs e)
         {
