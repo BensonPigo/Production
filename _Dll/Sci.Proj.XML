@@ -1511,6 +1511,20 @@
             </summary>
             <param name="Path"></param>
         </member>
+        <member name="M:Sci.Utility.Excel.SaveXltReportCls.Save(System.String,System.Boolean)">
+            <summary>
+            SaveXltReportCls的最後步驟，若前方沒有把ExcelApp接起來的話，則會自行回收
+            </summary>
+            <param name="Path"></param>
+            <param name="AddHead"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveXltReportCls.SaveToPrinter">
+            <summary>
+            SaveXltReportCls的最後步驟加上列印
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:Sci.Utility.WaitPanel.MaxWidth">
             <summary>
             WaitingPanel的最大寬度限制，預設為200
