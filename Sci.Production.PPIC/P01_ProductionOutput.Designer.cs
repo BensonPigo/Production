@@ -419,7 +419,6 @@
             0,
             0,
             0});
-            this.numCuttingQty.DoubleClick += new System.EventHandler(this.numCuttingQty_DoubleClick);
             // 
             // numOrderQty
             // 

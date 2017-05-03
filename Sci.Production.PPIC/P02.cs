@@ -148,16 +148,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             this.Close();
         }
 
-        //Updated Date
-        //private void dateBox2_Validated(object sender, EventArgs e)
-        //{
-        //    if (dateBox2.OldValue != dateBox2.Value)
-        //    {
-        //        QueryDate((string)comboBox1.SelectedValue, (DateTime?)dateBox2.Value);
-        //    }
-
-        //}
-
+        
         //Factory
         private void comboFactory_SelectedValueChanged(object sender, EventArgs e)
         {

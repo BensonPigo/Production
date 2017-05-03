@@ -948,19 +948,6 @@ where o.Junk = 0 and o.POID= @POID order by o.ID
             callNextForm.ShowDialog(this);
         }
 
-        //Each Cons. Print
-        private void button22_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        //Each Consumption
-        private void button23_Click(object sender, EventArgs e)
-        {
-            
-
-        }
-
         //Artwork Transaction List
         private void btnArtworkTransactionList_Click(object sender, EventArgs e)
         {

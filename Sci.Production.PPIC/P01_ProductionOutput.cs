@@ -265,13 +265,5 @@ order by oa.Seq,os.Seq", string.Format("o.ID = '{0}'", MyUtility.Convert.GetStri
             Sci.Production.PPIC.P01_ProductionOutput_SewingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_SewingDetail(MyUtility.Convert.GetString(masterData["ID"]),"A","","");
             callNextForm.ShowDialog(this);
         }
-
-        //Cutting Q'ty
-        private void numCuttingQty_DoubleClick(object sender, EventArgs e)
-        {
-            //因為會誤導使用者，所以取消
-            //Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail callNextForm = new Sci.Production.PPIC.P01_ProductionOutput_CuttingDetail(cuttingWorkType, cuttingWorkType == "1" ? MyUtility.Convert.GetString(masterData["CuttingSP"]) : MyUtility.Convert.GetString(masterData["ID"]), "A", "", "");
-            //callNextForm.ShowDialog(this);
-        }
     }
 }
