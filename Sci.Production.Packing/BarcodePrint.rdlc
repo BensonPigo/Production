@@ -227,8 +227,8 @@
   </Body>
   <Width>1.875in</Width>
   <Page>
-    <PageHeight>1.875in</PageHeight>
-    <PageWidth>4in</PageWidth>
+    <PageHeight>4in</PageHeight>
+    <PageWidth>1.875in</PageWidth>
     <ColumnSpacing>0.05118in</ColumnSpacing>
     <Style />
   </Page>
