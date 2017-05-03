@@ -59,59 +59,72 @@ namespace Sci.Production.Cutting
                 if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
                 {
                     #region SQL
-                    scmd = string.Format(@"select a.BundleGroup [Group_right]
-		                                            ,c.FactoryID  [Group_left]
-                                                    ,b.Sewinglineid [Line]
-                                                    ,b.SewingCell [Cell]
-                                                    ,b.Orderid [SP]
-                                                    ,c.StyleID [Style]
-                                                    ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
-		                                            ,a.Parts [Parts]
-                                                    ,b.Article + '\' + b.Colorid [Color]
-                                                    ,a.SizeCode [Size]
-		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-                                                    ,Artwork.Artwork [Artwork]
-                                                    ,a.Qty [Quantity]
-                                                    ,a.BundleNo [Barcode]
-                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
-                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
-                                            outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-                                            outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-							                                                                        for xml path('')))as Artwork
-                                            where a.ID= @ID and a.Patterncode != 'ALLPARTS'
+                    scmd = string.Format(@"
+select a.BundleGroup [Group_right]
+	,c.FactoryID  [Group_left]
+    ,b.Sewinglineid [Line]
+    ,b.SewingCell [Cell]
+    ,b.Orderid [SP]
+    ,c.StyleID [Style]
+    ,b.Item [Item]
+    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+	,a.Parts [Parts]
+    ,b.Article + '\' + b.Colorid [Color]
+    ,a.SizeCode [Size]
+	,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
+    ,Artwork.Artwork [Artwork]
+    ,a.Qty [Quantity]
+    ,a.BundleNo [Barcode]
+from dbo.Bundle_Detail a WITH (NOLOCK) 
+left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
+outer apply
+(
+	select Artwork = 
+	(
+		select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+		from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
+		where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
+		for xml path('')
+	)
+)as Artwork
+where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
-                                            union all
+union all
 
-                                            select a.BundleGroup [Group_right]
-		                                            ,c.FactoryID  [Group_left]
-                                                    ,b.Sewinglineid [Line]
-                                                    ,b.SewingCell [Cell]
-                                                    ,b.Orderid [SP]
-                                                    ,c.StyleID [Style]
-                                                    ,b.Item [Item]
-                                                    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
-		                                            ,d.Parts [Parts]
-                                                    ,b.Article + '\' + b.Colorid [Color]
-                                                    ,a.SizeCode [Size]
-		                                            ,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-                                                    ,Artwork.Artwork [Artwork]
-                                                    ,a.Qty [Quantity]
-                                                    ,a.BundleNo [Barcode]
-                                            from dbo.Bundle_Detail a WITH (NOLOCK) 
-                                            left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-                                            left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
-                                            left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
-                                            outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-                                            outer apply(select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-							                                                                        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-							                                                                        where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-							                                                                        for xml path('')))as Artwork
-                                            where a.ID= @ID and a.Patterncode = 'ALLPARTS'
-                                            order by a.BundleNo ");
+select a.BundleGroup [Group_right]
+	,c.FactoryID  [Group_left]
+    ,b.Sewinglineid [Line]
+    ,b.SewingCell [Cell]
+    ,b.Orderid [SP]
+    ,c.StyleID [Style]
+    ,b.Item [Item]
+    ,isnull(b.PatternPanel,'')+'-'+convert(varchar,b.Cutno) [Body_Cut]
+	,d.Parts [Parts]
+    ,b.Article + '\' + b.Colorid [Color]
+    ,a.SizeCode [Size]
+	,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
+    ,Artwork.Artwork [Artwork]
+    ,a.Qty [Quantity]
+    ,a.BundleNo [Barcode]
+from dbo.Bundle_Detail a WITH (NOLOCK) 
+left join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
+left join dbo.orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
+outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
+outer apply
+(
+	select Artwork = 
+	(
+		select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+		from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
+		where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
+		for xml path('')
+	)
+)as Artwork
+where a.ID= @ID and a.Patterncode = 'ALLPARTS'
+order by a.BundleNo ");
                         #endregion
                 }
                 else  //沒勾[Extend All Parts]
