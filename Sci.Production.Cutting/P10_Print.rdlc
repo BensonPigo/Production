@@ -1026,7 +1026,7 @@
                                       <Value>="*" + Fields!Barcode.Value + "*"</Value>
                                       <Style>
                                         <FontFamily>C39HrP24DhTt</FontFamily>
-                                        <FontSize>28pt</FontSize>
+                                        <FontSize>24pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1037,9 +1037,9 @@
                               </Paragraphs>
                               <rd:DefaultName>Barcode</rd:DefaultName>
                               <Top>1.24919cm</Top>
-                              <Left>5.5564cm</Left>
+                              <Left>5.35cm</Left>
                               <Height>6.25633cm</Height>
-                              <Width>1.21846cm</Width>
+                              <Width>1.1cm</Width>
                               <ZIndex>30</ZIndex>
                               <Style>
                                 <Border>
