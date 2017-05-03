@@ -221,14 +221,14 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         }
 
         //Production output
-        private void button3_Click(object sender, EventArgs e)
+        private void btnProductionOutput_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_ProductionOutput callNextForm = new Sci.Production.PPIC.P01_ProductionOutput(CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
 
         //Order remark
-        private void button4_Click(object sender, EventArgs e)
+        private void btnOrderRemark_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["OrderRemark"]), "Order Remark", false, null);
             callNextForm.ShowDialog(this);
@@ -242,7 +242,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         }
 
         //Label & Hangtag
-        private void button6_Click(object sender, EventArgs e)
+        private void btnLabelHangtag_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["Label"]), "Label & Hangtag", false, null);
             callNextForm.ShowDialog(this);
@@ -270,7 +270,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         }
 
         //Artwork
-        private void button14_Click(object sender, EventArgs e)
+        private void btnArtwork_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(false, MyUtility.Convert.GetString(CurrentMaintain["ID"]), null, null, MyUtility.Convert.GetString(CurrentMaintain["StyleID"]), MyUtility.Convert.GetString(CurrentMaintain["SeasonID"]));
             callNextForm.ShowDialog(this);
@@ -406,7 +406,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         //}
 
         //Packing Method
-        private void button29_Click(object sender, EventArgs e)
+        private void btnPackingMethod_Click(object sender, EventArgs e)
         {
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(CurrentMaintain["Packing"]), "Packing Method", false, null);
             callNextForm.ShowDialog(this);
@@ -481,27 +481,27 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
         }
 
         //Quantity breakdown
-        private void button8_Click(object sender, EventArgs e)
+        private void btnQuantityBreakdown_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_Qty callNextForm = new Sci.Production.PPIC.P01_Qty(CurrentMaintain["id"].ToString(), CurrentMaintain["poid"].ToString(), editPOCombo.Text);
             callNextForm.ShowDialog(this);
         }
 
-        private void button23_Click(object sender, EventArgs e)
+        private void btnEachConsumption_Click(object sender, EventArgs e)
         {
             var dr = this.CurrentMaintain; if (null == dr) return;
             var frm = new Sci.Production.PublicForm.EachConsumption(false, CurrentMaintain["id"].ToString(), null, null, false, false,false);
             frm.ShowDialog(this);
         }
 
-        private void button25_Click_1(object sender, EventArgs e)
+        private void btnProductionKits_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_ProductionKit callNextForm =
                 new Sci.Production.PPIC.P01_ProductionKit(false, CurrentMaintain["StyleUkey"].ToString(), null, null, null);
             callNextForm.ShowDialog(this);
         }
 
-        private void button19_Click_1(object sender, EventArgs e)
+        private void btnMaterialImport_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P01_MTLImport callNextForm = new Sci.Production.PPIC.P01_MTLImport(CurrentMaintain);
             callNextForm.ShowDialog(this);
