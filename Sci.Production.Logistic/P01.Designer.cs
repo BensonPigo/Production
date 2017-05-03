@@ -1353,7 +1353,6 @@
             this.btnCMPQSheet.TabIndex = 93;
             this.btnCMPQSheet.Text = "CMPQ sheet";
             this.btnCMPQSheet.UseVisualStyleBackColor = true;
-            this.btnCMPQSheet.Click += new System.EventHandler(this.btnCMPQSheet_Click);
             // 
             // btnFabricInspectionList
             // 

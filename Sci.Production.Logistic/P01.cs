@@ -119,12 +119,6 @@ namespace Sci.Production.Logistic
             callNextForm.ShowDialog(this);
         }
 
-        //CMPQ sheet
-        private void btnCMPQSheet_Click(object sender, EventArgs e)
-        {
-
-        }
-
         //Fabric inspection list
         private void btnFabricInspectionList_Click(object sender, EventArgs e)
         {
