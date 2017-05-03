@@ -190,7 +190,7 @@ namespace Sci.Production.PPIC
         }
 
         //Copy Season
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCopySeason_Click(object sender, EventArgs e)
         {
             Sci.Production.PPIC.P04_WeightData_CopySeason callNextForm = new Sci.Production.PPIC.P04_WeightData_CopySeason(KeyValue1);
             DialogResult result = callNextForm.ShowDialog(this);
