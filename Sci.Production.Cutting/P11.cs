@@ -436,7 +436,7 @@ outer apply
 (
 	select a.ArticleGroup
 	from pattern p
-	inner join Pattern_GL_Article a on  a.PatternUkey = p.ukey and a.PatternUkey = p.ukey
+	inner join Pattern_GL_Article a on  a.PatternUkey = p.ukey
 	where p.STYLEUKEY = ord.Styleukey
 	and a.article = b.article
 	and Status = 'Completed' 
@@ -449,24 +449,37 @@ and ord.mDivisionid = '{0}'", keyWord);
             @"Select distinct a.cutref,a.orderid
             from workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) ,orders ord WITH (NOLOCK) 
             Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}'   and a.id = b.id and b.orderid = 'EXCESS' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
-
+            
+            StringBuilder SizeRatio = new StringBuilder();
+            SizeRatio.Append(string.Format(@"
+;with tmp as(
+	Select distinct a.cutref,b.sizecode,a.Ukey
+	from workorder a WITH (NOLOCK) 
+	inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
+	inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
+	inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
+	Where a.CutRef is not null and ord.mDivisionid = '{0}'
+", keyWord));
             if (!MyUtility.Check.Empty(cutref))
             {
                 query_cmd = query_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 distru_cmd = distru_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 Excess_cmd = Excess_cmd + string.Format(" and a.cutref='{0}'", cutref);
+                SizeRatio.Append(string.Format(" and a.cutref='{0}'", cutref));
             }
             if (!MyUtility.Check.Empty(dateEstCutDate.Value))
             {
                 query_cmd = query_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
                 distru_cmd = distru_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
                 Excess_cmd = Excess_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
+                SizeRatio.Append(string.Format(" and a.estcutdate='{0}'", cutdate));
             }
             if (!MyUtility.Check.Empty(poid))
             {
                 query_cmd = query_cmd + string.Format(" and ord.poid='{0}'", poid);
                 distru_cmd = distru_cmd + string.Format(" and ord.poid='{0}'", poid);
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.poid='{0}'", poid);
+                SizeRatio.Append(string.Format(" and ord.poid='{0}'", poid));
             }
             #endregion
 
@@ -481,6 +494,19 @@ and ord.mDivisionid = '{0}'", keyWord);
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
 order by b.sizecode,b.orderid";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
+            if (!query_dResult)
+            {
+                ShowErr(distru_cmd, query_dResult);
+                return;
+            }
+            
+            SizeRatio.Append(@"
+)
+Select b.Cutref,a.SizeCode,a.Qty
+From Workorder_SizeRatio a WITH (NOLOCK)
+inner join workorder c WITH (NOLOCK) on c.ukey = a.workorderukey 
+inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
+            query_dResult = DBProxy.Current.Select(null, SizeRatio.ToString(), out SizeRatioTb);
             if (!query_dResult)
             {
                 ShowErr(distru_cmd, query_dResult);
@@ -521,8 +547,7 @@ order by b.sizecode,b.orderid";
             #endregion
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
-            int iden = 1;
-            MyUtility.Tool.ProcessWithDatatable(ArticleSizeTb, "Cutref,Article,SizeCode", "Select b.Cutref,a.SizeCode,a.Qty From Workorder_SizeRatio a WITH (NOLOCK) ,#tmp b,workorder c WITH (NOLOCK)  where b.cutref = c.cutref and c.ukey = a.workorderukey and b.sizecode = a.sizecode", out SizeRatioTb);
+            int iden = 1;            
 
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
