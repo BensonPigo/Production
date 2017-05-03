@@ -6,12 +6,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>3.92361in</Width>
+              <Width>4in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.77222in</Height>
+              <Height>1.875in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -36,7 +36,8 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Left>0.0625in</Left>
+                          <Top>0.15875cm</Top>
+                          <Left>0.09375in</Left>
                           <Height>0.86111in</Height>
                           <Width>3.79167in</Width>
                           <Style>
@@ -69,10 +70,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>ID</rd:DefaultName>
-                          <Top>0.875in</Top>
-                          <Left>0.46056in</Left>
+                          <Top>0.9375in</Top>
+                          <Left>0.32514in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3in</Width>
+                          <Width>3.35417in</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -104,10 +105,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox13</rd:DefaultName>
-                          <Top>1.10556in</Top>
-                          <Left>0.46056in</Left>
+                          <Top>1.16806in</Top>
+                          <Left>0.32514in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3in</Width>
+                          <Width>3.35417in</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -139,10 +140,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
-                          <Top>1.32778in</Top>
-                          <Left>0.46056in</Left>
+                          <Top>1.39028in</Top>
+                          <Left>0.32514in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3in</Width>
+                          <Width>3.35417in</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -174,10 +175,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox15</rd:DefaultName>
-                          <Top>1.55in</Top>
-                          <Left>0.46056in</Left>
+                          <Top>1.6125in</Top>
+                          <Left>0.32514in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3in</Width>
+                          <Width>3.35417in</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
@@ -227,8 +228,8 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>Report_BarcodePrint</DataSetName>
-        <Height>1.77222in</Height>
-        <Width>3.92361in</Width>
+        <Height>1.875in</Height>
+        <Width>4in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -236,10 +237,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.77778in</Height>
+    <Height>1.875in</Height>
     <Style />
   </Body>
-  <Width>3.92361in</Width>
+  <Width>4in</Width>
   <Page>
     <PageHeight>1.875in</PageHeight>
     <PageWidth>4in</PageWidth>
