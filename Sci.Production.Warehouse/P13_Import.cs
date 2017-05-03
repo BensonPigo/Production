@@ -203,55 +203,5 @@ Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0
 
             this.Close();
         }
-
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-//            string seq1 = txtSeq1.seq1;
-//            string seq2 = txtSeq1.seq2;
-//            string seq = seq1 + " " + seq2;
-
-//            if (MyUtility.Check.Empty(sp)) return;
-
-//            if (MyUtility.Check.Empty(seq))
-//            {
-//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-//                    , sp), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP# is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-//            else
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
-//                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-
-        }
-
-        private void textBox2_Validating(object sender, CancelEventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-//            if (MyUtility.Check.Empty(sp) || MyUtility.Check.Empty(txtSeq1.getSeq())) return;
-
-//            string seq1 = txtSeq1.seq1;
-//            string seq2 = txtSeq1.seq2;
-
-//            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
-//                        and seq1 = '{1}' and seq2 = '{2}')", sp, seq1, seq2), null))
-//            {
-//                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                e.Cancel = true;
-//                return;
-//            }
-
-        }
     }
 }

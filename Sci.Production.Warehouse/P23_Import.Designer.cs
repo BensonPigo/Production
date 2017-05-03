@@ -99,7 +99,6 @@
             this.txtIssueSP.Name = "txtIssueSP";
             this.txtIssueSP.Size = new System.Drawing.Size(122, 23);
             this.txtIssueSP.TabIndex = 0;
-            this.txtIssueSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtIssueSP_Validating);
             // 
             // label1
             // 

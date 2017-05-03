@@ -229,46 +229,5 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'B'
 
             this.Close();
         }
-
-        //SP# Valid
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-
-//            if (MyUtility.Check.Empty(sp)) return;
-
-//            if (txtSeq1.checkEmpty(showErrMsg: false))
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"
-//select 1 where exists(select * 
-//                      from ftyinventory WITH (NOLOCK) 
-//                      inner join Orders on ftyinventory.poid = Orders.id
-//                      inner join Factory on Orders.FactoryID = Factory.id
-//                      where ftyinventory.poid ='{0}' and Factory.MDivisionID = '{1}')"
-//                    , sp, Sci.Env.User.Keyword), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP# is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-//            else
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"
-//select 1 where exists(select * 
-//                      from mdivisionpodetail WITH (NOLOCK) 
-//                      inner join Orders on mdivisionpodetail.poid = Orders.id
-//                      inner join Factory on Orders.FactoryID = Factory.id
-//                      where mdivisionpodetail.poid ='{0}' and mdivisionpodetail.seq1 = '{1}' and mdivisionpodetail.seq2 = '{2}'
-//                        and Factory.MDivisioinID = '{3}')
-//", sp, txtSeq1.seq1, txtSeq1.seq2, Sci.Env.User.Keyword), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-            //}
-
-        }
     }
 }

@@ -473,22 +473,6 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        //delete all
-        private void button9_Click(object sender, EventArgs e)
-        {
-            detailgrid.ValidateControl();
-            //detailgridbs.EndEdit();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
-            
-        }
-
-        //Import
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P50_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
 
         private void comboStockType_Validating(object sender, CancelEventArgs e)
         {

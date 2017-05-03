@@ -278,14 +278,6 @@ Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        //delete all
-        private void button9_Click(object sender, EventArgs e)
-        {
-            detailgrid.ValidateControl();
-            //detailgridbs.EndEdit();
-            ((DataTable)detailgridbs.DataSource).Select("qty=0.00 or qty is null").ToList().ForEach(r => r.Delete());
-            
-        }
 
         //Import
         private void btngenerate_Click(object sender, EventArgs e)

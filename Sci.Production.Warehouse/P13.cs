@@ -202,10 +202,6 @@ where t.id= @ID";
             frm.MdiParent = MdiParent;
             frm.Show();
 
-
-
-          
-            
             return base.ClickPrint();
         }
 

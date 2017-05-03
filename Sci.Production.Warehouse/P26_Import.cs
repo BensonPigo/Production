@@ -312,35 +312,6 @@ WHERE   StockType='{0}'
             this.Close();
         }
 
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-
-//            if (MyUtility.Check.Empty(sp)) return;
-
-//            if (txtSeq1.checkEmpty(showErrMsg: false))
-//            {
-//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-//                    , sp), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP# is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-//            else
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
-//                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-
-        }
-
         private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
             Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");

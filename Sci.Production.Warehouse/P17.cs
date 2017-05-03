@@ -854,46 +854,11 @@ Where a.id = '{0}'", masterID);
 
         }
 
-        //Import
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P13_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
-
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Warehouse.P17_AccumulatedQty(CurrentMaintain);
             frm.P17 = this;
             frm.ShowDialog(this);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
-            if (dr["status"].ToString().ToUpper() != "CONFIRMED")
-            {
-                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
-                return;
-            }
-            try
-            {
-
-                DataTable dtmaster = new DataTable();
-
-                dtmaster.ImportRow(CurrentMaintain);
-
-                viewer.LocalReport.ReportEmbeddedResource = "Sci.Production.Warehouse.P13Detail.rdlc";
-                viewer.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dtmaster));
-                viewer.LocalReport.SubreportProcessing += new SubreportProcessingEventHandler(MySubreportEventHandler);
-                //
-                viewer.RefreshReport();
-            }
-            catch (Exception ex)
-            {
-                ShowErr("data loading error." + ex.ToString());
-            }
         }
 
         private void txtTransfer_Validating(object sender, CancelEventArgs e)

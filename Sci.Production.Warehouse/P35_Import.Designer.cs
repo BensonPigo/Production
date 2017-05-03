@@ -99,8 +99,7 @@
             this.txtSP.Location = new System.Drawing.Point(81, 19);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(122, 23);
-            this.txtSP.TabIndex = 0;
-            this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.txtSP_Validating);
+            this.txtSP.TabIndex = 0;          
             // 
             // labelSP
             // 
@@ -193,7 +192,6 @@
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
             this.txtSeq.TabIndex = 1;
-            this.txtSeq.Leave += new System.EventHandler(this.txtSeq1_Leave);
             // 
             // txtdropdownlistFabricType
             // 

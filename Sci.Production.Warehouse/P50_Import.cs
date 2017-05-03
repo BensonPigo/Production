@@ -240,24 +240,5 @@ where   junk != '1'
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLocation.Text = item.GetSelectedString();
         }
-
-        private void txtLocation_Validating(object sender, CancelEventArgs e)
-        {
-          ////  base.OnValidating(e);
-          //  string textValue = this.txtLocation.Text;
-          //  if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLocation.OldValue)
-          //  {
-          //      string sql = string.Format("select id,Description from mtllocation WITH (NOLOCK) where junk=0 or Junk is null and stocktype='{0}' and id='{1}'", dr_master["stocktype"],textValue);
-          //      if (!MyUtility.Check.Seek(sql))
-          //      {
-          //          MyUtility.Msg.WarningBox(string.Format("< Location: {0} > not found!!!", textValue));
-          //          this.txtLocation.Text = "";
-          //          e.Cancel = true;
-          //          return;
-          //      }
-          //  }
-        }
-
-
     }
 }

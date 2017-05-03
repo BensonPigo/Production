@@ -530,20 +530,6 @@ where ROW_NUMBER_D =1
         {
             this.Close();
         }
-
-        //locate
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)) return;
-            
-        //    int index = listControlBindingSource1.Find("id", tb_locate.Text.TrimEnd());
-        //    if (index == -1)
-        //    { MyUtility.Msg.WarningBox("Data was not found!!"); }
-        //    else
-        //    { listControlBindingSource1.Position = index; }                
-            
-        //}
-
         //Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {

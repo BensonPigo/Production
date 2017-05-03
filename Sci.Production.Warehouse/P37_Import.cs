@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
         }
 
         //Find Now Button
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
@@ -221,13 +221,13 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
         }
 
         //Close
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Import
-        private void button2_Click(object sender, EventArgs e)
+        private void btnImport_Click(object sender, EventArgs e)
         {
             string remark = "";
             gridImport.ValidateControl();
@@ -272,51 +272,6 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
             }
             dr_master["remark"] = remark;
             this.Close();
-        }
-
-        //SP# Valid
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-
-//            if (MyUtility.Check.Empty(sp)) return;
-
-//            if (txtSeq1.checkEmpty(showErrMsg: false))
-//            {
-//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from ftyinventory WITH (NOLOCK) where poid ='{0}')"
-//                    , sp), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP# is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-//            else
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from mdivisionpodetail WITH (NOLOCK) where poid ='{0}' 
-//                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-
-        }
-
-        //Seq Valid
-        private void txtSeq_Leave(object sender, EventArgs e)
-        {
-//            string sp = textBox1.Text.TrimEnd();
-//            if (MyUtility.Check.Empty(sp) || txtSeq1.checkEmpty(showErrMsg: false)) return;
-
-//            if (!MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}' 
-//                        and seq1 = '{1}' and seq2 = '{2}')", sp, txtSeq1.seq1, txtSeq1.seq2), null))
-//            {
-//                MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                return;
-//            }
-
         }
 
     }

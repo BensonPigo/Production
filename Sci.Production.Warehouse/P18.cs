@@ -1086,14 +1086,6 @@ Where a.id = '{0}'", masterID);
 
         }
 
-        //Import
-        private void button5_Click(object sender, EventArgs e)
-        {
-            var frm = new Sci.Production.Warehouse.P13_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource);
-            frm.ShowDialog(this);
-            this.RenewData();
-        }
-
         // Accumulated Form
         private void btnAccumulatedQty_Click(object sender, EventArgs e)
         {

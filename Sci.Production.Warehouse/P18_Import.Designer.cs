@@ -124,7 +124,6 @@
             this.txtTransferOutID.Name = "txtTransferOutID";
             this.txtTransferOutID.Size = new System.Drawing.Size(150, 23);
             this.txtTransferOutID.TabIndex = 0;
-            this.txtTransferOutID.Validating += new System.ComponentModel.CancelEventHandler(this.txtTransferOutID_Validating);
             // 
             // panel1
             // 
