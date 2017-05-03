@@ -10,12 +10,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	declare @oldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --上次匯入的最後日期
+	declare @oldDate date = (select top 1 DateEnd from  Trade_To_Pms.dbo.DateInfo where Name='imp_Order_OldDate')
+	declare @dToDay date = (select top 1 DateEnd from  Trade_To_Pms.dbo.DateInfo where Name='imp_Order_dToDay')
 
+	--declare @oldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --上次匯入的最後日期
+	--declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
 	declare @Sayfty table(id varchar(10)) --工廠代碼
 	insert @Sayfty select id from Production.dbo.Factory
 
-	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
+	
 	declare @Odate_s date  = (select DateStart from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name='MockupOrder')
 			
 
