@@ -17,14 +17,14 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
-    public partial class P10_Generate : Sci.Win.Subs.Base
+    public partial class btnGarmentList : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
         DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, detailTb2 = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null, table_bundleqty_c;
         string f_code;
         int NoOfBunble;
 
-        public P10_Generate(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
+        public btnGarmentList(DataRow maindr,DataTable table_bundle_Detail,DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
         {
             table_bundleqty_c = table_bundleqty;
             string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";

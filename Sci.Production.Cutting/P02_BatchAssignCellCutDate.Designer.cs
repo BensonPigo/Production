@@ -94,7 +94,6 @@
             this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(996, 338);
             this.gridBatchAssignCellEstCutDate.TabIndex = 0;
             this.gridBatchAssignCellEstCutDate.TabStop = false;
-            this.gridBatchAssignCellEstCutDate.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridBatchAssignCellEstCutDate_CellContentClick);
             // 
             // btnClose
             // 

@@ -194,11 +194,6 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void gridBatchAssignCellEstCutDate_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();

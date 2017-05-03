@@ -733,7 +733,7 @@ namespace Sci.Production.Cutting
             detailgrid.ValidateControl();
             DataTable bdwtb;
             MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
-            var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
+            var frm = new Sci.Production.Cutting.btnGarmentList(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
             frm.ShowDialog(this);
            // queryTable();
         }
@@ -847,21 +847,5 @@ namespace Sci.Production.Cutting
                 return;
             }
         }
-
-
-        //private void textBox_Line_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    if (!this.EditMode) return;
-        //    if (e.Button == System.Windows.Forms.MouseButtons.Right)
-        //    {
-
-        //        string sqlcmd1 = "語法需有文件確認才可以填上去";
-        //        SelectItem item1 = new SelectItem(sqlcmd1, "30", textBox_Line.Text.ToString());
-        //        DialogResult result1 = item1.ShowDialog();
-        //        if (result1 == DialogResult.Cancel) { return; }
-        //        //
-        //        textBox_Line.Text = item1.GetSelectedString();
-        //    }
-        //}
     }
 }
