@@ -11,6 +11,15 @@ using Sci.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+
+
+
+//using Sci.Production.PublicPrg;
+//using System.Data.SqlClient;
+//using System.IO;
+//using System.Transactions;
+
+
 namespace Sci.Production.Warehouse
 {
     public partial class P07_ExcelImport : Sci.Win.Subs.Base
@@ -67,6 +76,41 @@ namespace Sci.Production.Warehouse
 
             listControlBindingSource2.DataSource = grid2Data;
             gridPoid.DataSource = listControlBindingSource2;
+            #region Ship Qty Valid
+
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+
+                    grid2Data.Rows[e.RowIndex]["shipqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["foc"].ToString());
+                    grid2Data.Rows[e.RowIndex]["actualqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["foc"].ToString());
+                    grid2Data.Rows[e.RowIndex]["stockqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["foc"].ToString());
+                    grid2Data.Rows[e.RowIndex]["qty"] = e.FormattedValue;
+                    //grid2Data.Rows[e.RowIndex]["foc"] = e.FormattedValue;
+
+                }
+            };
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            ns2.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+
+                    grid2Data.Rows[e.RowIndex]["shipqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["qty"].ToString());
+                    grid2Data.Rows[e.RowIndex]["actualqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["qty"].ToString());
+                    grid2Data.Rows[e.RowIndex]["stockqty"] = Convert.ToDecimal(e.FormattedValue) + Convert.ToDecimal(grid2Data.Rows[e.RowIndex]["qty"].ToString());
+                    //grid2Data.Rows[e.RowIndex]["qty"] = e.FormattedValue;
+                    grid2Data.Rows[e.RowIndex]["foc"] = e.FormattedValue;
+
+                }
+            };
+          
+
+            #endregion Ship Qty Valid
 
             gridPoid.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridPoid)
@@ -77,8 +121,8 @@ namespace Sci.Production.Warehouse
                 .Text("dyelot", header: "Lot No", width: Widths.AnsiChars(4))
                 .Text("pounit", header: "Po Unit", width: Widths.AnsiChars(4))
                 .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(4))
-                .Numeric("Qty", header: "Qty")
-                .Numeric("foc", header: "F.O.C")
+                .Numeric("Qty", header: "Qty",settings:ns)
+                .Numeric("foc", header: "F.O.C", settings: ns2)
                 .Numeric("weight", header: "WeiKg")
                 .Numeric("actualWeight", header: "NetKg")
                 .Text("location", header: "Location", width: Widths.AnsiChars(8))
