@@ -61,9 +61,9 @@
             this.radioBackwardSocktakingLi.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioBackwardSocktakingLi.Location = new System.Drawing.Point(19, 74);
             this.radioBackwardSocktakingLi.Name = "radioBackwardSocktakingLi";
-            this.radioBackwardSocktakingLi.Size = new System.Drawing.Size(175, 21);
+            this.radioBackwardSocktakingLi.Size = new System.Drawing.Size(186, 21);
             this.radioBackwardSocktakingLi.TabIndex = 2;
-            this.radioBackwardSocktakingLi.Text = "Backward Socktaking Li";
+            this.radioBackwardSocktakingLi.Text = "Backward Socktaking List";
             this.radioBackwardSocktakingLi.UseVisualStyleBackColor = true;
             this.radioBackwardSocktakingLi.Value = "Backward Socktaking Li";
             // 
