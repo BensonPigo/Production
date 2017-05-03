@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Pattern_GL_Article] (
     [ID]           VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_ID] DEFAULT ('') NOT NULL,
-	[Seq] VARCHAR(2) NOT NULL DEFAULT (''), 
+    [Seq]          VARCHAR (2)    DEFAULT ('') NOT NULL,
     [Version]      VARCHAR (3)    CONSTRAINT [DF_Pattern_GL_Article_Version] DEFAULT ('') NOT NULL,
     [PatternUKEY]  BIGINT         CONSTRAINT [DF_Pattern_GL_Article_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [ArticleGroup] VARCHAR (6)    CONSTRAINT [DF_Pattern_GL_Article_ArticleGroup] DEFAULT ('') NOT NULL,
@@ -11,8 +11,10 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
-    CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([ID], [Seq], [Version], [Article], [ArticleGroup])
+    CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC, [Version] ASC, [Article] ASC, [ArticleGroup] ASC)
 );
+
+
 
 
 
@@ -74,3 +76,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Pattern_GL_Article',
     @level2type = N'COLUMN',
     @level2name = N'Seq'
+GO
+CREATE NONCLUSTERED INDEX [article]
+    ON [dbo].[Pattern_GL_Article]([Article] ASC);
+
