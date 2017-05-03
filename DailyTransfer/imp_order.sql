@@ -12,6 +12,15 @@ BEGIN
 	declare @OldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --最後匯入資料日期
 	declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
 
+		--LEO新增 @OldDate(TransferDate)
+		       -- @dToDay(UpdateDate)
+			   DELETE FROM Trade_To_Pms.dbo.DateInfo
+			   WHERE NAME='imp_Order_OldDate' or NAME='imp_Order_dToDay'
+
+	INSERT INTO Trade_To_Pms.dbo.DateInfo (Name, DateStart, DateEnd)
+                    VALUES  ('imp_Order_OldDate',@OldDate , @OldDate),
+					        ('imp_Order_dToDay',@dToDay , @dToDay);
+
 	declare @Odate_s datetime = (SELECT TOP 1 DateStart FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 	declare @Odate_e datetime = (SELECT TOP 1 DateEnd FROM Trade_To_Pms.dbo.DateInfo WHERE NAME = 'ORDER')
 -----------------匯入訂單檢核表------------------------
@@ -117,8 +126,8 @@ BEGIN
 				, t.NewSCIDelivery		= s.SCIDelivery
 				, t.MDivisionID			= s.MDivisionID
 				, t.FactoryID			= s.FactoryID
-				, t.UpdateDate			= @dToDay
-				, t.TransferDate		= @OldDate
+				, t.UpdateDate			= @dToDay--寫入到IMP MOCKUPORDER
+				, t.TransferDate		= @OldDate--寫入到IMP MOCKUPORDER
 		when not matched by target then
 			insert(NewOrder, OrderID, OriginalStyleID, NewQty, NewBuyerDelivery, NewSCIDelivery, MDivisionID, FactoryID, UpdateDate, TransferDate)
 			values(1, s.ID, s.StyleID, s.Qty, s.BuyerDelivery, s.SCIDelivery, s.MDivisionID, s.FactoryID, @dToDay, @OldDate);
