@@ -939,11 +939,6 @@ namespace Sci.Production.Quality
             }
         }
 
-        private void article_Validated(object sender, EventArgs e)
-        {
-            
-        }
-
         #endregion
 
         private void btnEncode_Click(object sender, EventArgs e)

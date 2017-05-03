@@ -467,13 +467,6 @@ where a.id=b.POID and a.fabrictype='A'
             ReloadDatas();
             gridbs.Position = rowindex;        
         }
-        
-        private void button2_Click(object sender, EventArgs e)
-        {
-            int a = this.detailgrid.Rows.Count;
-            var tab = (DataTable)this.detailgridbs.DataSource;
-            int b = tab.Rows.Count;
-        }
 
         private void btnFabricInspectionList_Click(object sender, EventArgs e)
         {
