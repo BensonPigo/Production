@@ -445,6 +445,7 @@ order by a.OrderId,os.Seq"
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
                 e.Detail["QAQty"] = QAQty;
+                e.Detail["InlineQty"] = QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,5))/100);
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
