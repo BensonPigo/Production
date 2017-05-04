@@ -26,8 +26,14 @@ namespace Sci.Production.Warehouse
             string sqlcmd;
             #region -- 檢查export detail是否含有成衣物料 --
 
-            sqlcmd = string.Format(@"select 1 chk where exists(select * from dbo.Export_Detail ed WITH (NOLOCK) inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-on pd.id = ed.PoID and pd.seq1 = ed.seq1 and pd.seq2 = ed.Seq2 where ed.ID='{0}')", CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"
+select 1 chk 
+where exists(   
+    select * 
+    from dbo.Export_Detail ed WITH (NOLOCK) 
+    inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = ed.PoID and pd.seq1 = ed.seq1 and pd.seq2 = ed.Seq2 
+    where ed.ID='{0}'
+)", CurrentMaintain["id"]);
             if (MyUtility.Check.Seek(sqlcmd))
             {
                 MyUtility.Msg.WarningBox("The shipment have material, can't revise < Arrive W/H Date >.", "Warning");
@@ -42,24 +48,81 @@ on pd.id = ed.PoID and pd.seq1 = ed.seq1 and pd.seq2 = ed.Seq2 where ed.ID='{0}'
         {
             string masterID = (e.Master == null) ? "" : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(@"
-select FactoryID=iif(ed.potype='M', (case when ed.FabricType = 'M' then (select mpo.FactoryID from [Machine].dbo.MachinePO mpo, [Machine].dbo.MachinePO_Detail mpod where mpo.ID = mpod.ID and mpod.ID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2)
-             when ed.FabricType = 'P' then (select top 1 ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
-			 when ed.FabricType = 'O' then (select mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) 
-			 else o.FactoryID end),o.FactoryID
-			 ),
-o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders WITH (NOLOCK) where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
-(case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' else '' end) as Category,
-iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory WITH (NOLOCK) where ID = o.factoryID)='PH',iif((select MrTeam from Brand WITH (NOLOCK) where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
-(SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
-iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
-
-FabricType =iif(ed.potype='M',
-(case when ed.FabricType = 'M' then 'Machine' when ed.FabricType = 'P' then 'Part' when ed.FabricType = 'O' then 'Miscellaneous' else '' end),
-			''),
-
-ed.UnitId,isnull(psd.ColorID,'') as ColorID,isnull(psd.SizeSpec,'') as SizeSpec,ed.Qty,ed.Foc,ed.BalanceQty,
-ed.NetKg,ed.WeightKg,iif(ed.IsFormA = 1,'Y','') as IsFormA,ed.FormXType,ed.FormXReceived,ed.FormXDraftCFM,ed.FormXINV,ed.ID,ed.Seq1,ed.Seq2,ed.Ukey,rtrim(ed.PoID)+(SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as FindColumn
-
+select  FactoryID = iif(ed.potype='M'
+                        , (case when ed.FabricType = 'M' then ( select mpo.FactoryID 
+                                                                from [Machine].dbo.MachinePO mpo
+                                                                     , [Machine].dbo.MachinePO_Detail mpod 
+                                                                where   mpo.ID = mpod.ID 
+                                                                        and mpod.ID = ed.PoID 
+                                                                        and mpod.Seq1 = ed.Seq1 
+                                                                        and mpod.seq2 = ed.Seq2)
+                                when ed.FabricType = 'P' then ( select top 1 ppo.FactoryID 
+                                                                from [Machine].dbo.PartPO ppo
+                                                                     , [Machine].dbo.PartPO_Detail ppod 
+                                                                where   ppo.ID = ppod.ID 
+                                                                        and ppod.TPEPOID = ed.PoID 
+                                                                        and ppod.Seq1 = ed.Seq1 
+                                                                        and ppod.seq2 = ed.Seq2) 
+			                    when ed.FabricType = 'O' then ( select mpo.Factoryid 
+                                                                from [Machine].dbo.MiscPO mpo
+                                                                     , [Machine].dbo.MiscPO_Detail mpod 
+                                                                where   mpo.ID = mpod.ID 
+                                                                        and mpod.TPEPOID = ed.PoID 
+                                                                        and mpod.Seq1 = ed.Seq1 
+                                                                        and mpod.seq2 = ed.Seq2) 
+			                    else o.FactoryID 
+                            end)
+                        ,o.FactoryID)
+        , o.ProjectID
+        , ed.PoID
+        , SCIDlv = (select min(SciDelivery) 
+                    from Orders WITH (NOLOCK) 
+                    where POID = ed.PoID and (Category = 'B' or Category = o.Category))
+        , Category = (case  when o.Category = 'B' then 'Bulk' 
+                            when o.Category = 'S' then 'Sample' 
+                            when o.Category = 'M' then 'Material' 
+                            else '' 
+                      end)
+        , InspDate =iif(o.PFOrder = 1, dateadd(day,-10,o.SciDelivery)
+                        , iif(( select CountryID 
+                                from Factory WITH (NOLOCK) 
+                                where ID = o.factoryID)='PH'
+                               , iif((  select MrTeam 
+                                        from Brand WITH (NOLOCK) 
+                                        where ID = o.BrandID) = '01'
+                                    , dateadd(day,-15,o.SciDelivery)
+                                    , dateadd(day,-24,o.SciDelivery))
+                                , dateadd(day,-34
+                        , o.SciDelivery))) 
+        , (SUBSTRING(ed.Seq1,1,3)+' '+ed.Seq2) as Seq
+        , (ed.SuppID+'-'+s.AbbEN) as Supp
+        , Description = iif(ed.Description = '', isnull(f.DescDetail,'')
+                                               , ed.Description)
+        , FabricType = iif(ed.potype='M', (case when ed.FabricType = 'M' then 'Machine' 
+                                                when ed.FabricType = 'P' then 'Part' 
+                                                when ed.FabricType = 'O' then 'Miscellaneous' 
+                                                else '' 
+                                           end)
+                                        , '')
+        , ed.UnitId
+        , ColorID = isnull(psd.ColorID,'')
+        , SizeSpec = isnull(psd.SizeSpec,'')
+        , ed.Qty
+        , ed.Foc
+        , ed.BalanceQty
+        , ed.NetKg
+        , ed.WeightKg
+        , IsFormA = iif(ed.IsFormA = 1,'Y','')
+        , ed.FormXType
+        , ed.FormXReceived
+        , ed.FormXDraftCFM
+        , ed.FormXINV
+        , ed.ID
+        , ed.Seq1
+        , ed.Seq2
+        , ed.Ukey
+        , PoidSeq1 = rtrim(ed.Poid) + Ltrim(Rtrim(ed.Seq1))
+        , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
