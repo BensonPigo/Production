@@ -20,7 +20,7 @@
     [AddDate]          DATETIME        NULL,
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_Manpower_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME        NULL,
-    [MDivisionID]      VARCHAR (8)     NULL,
+    [MDivisionID]      VARCHAR (8)     NULL CONSTRAINT [DF_Manpower_MDivisionID]  DEFAULT (''),
     CONSTRAINT [PK_Manpower] PRIMARY KEY CLUSTERED ([FactoryID] ASC, [Year] ASC, [Month] ASC)
 );
 
