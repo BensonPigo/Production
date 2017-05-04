@@ -466,7 +466,9 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                     x1.dicDatas.Add("##Factory" + idxstr, Factory1);
                     x1.dicDatas.Add("##theorderid" + idxstr, TheOrderID);
                     x1.dicDatas.Add("##date" + idxstr, date);
-                    x1.dicDatas.Add("##SP" + idxstr, finalda);
+                    Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt = new Sci.Utility.Excel.SaveXltReportCls.xltRptTable(finalda);
+                    dt.boAutoFitColumn = true;
+                    x1.dicDatas.Add("##SP" + idxstr, dt);
 
                     
                     idx += 1;
