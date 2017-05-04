@@ -11,7 +11,8 @@ namespace Sci.Production.Packing
 {
     class P09_IDX_CTRL
     {
-        [DllImport(".\\IDX_CTRL\\IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
+        static string x = Sci.Env.Cfg.XltPathDir;//System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+        [DllImport("\\\\PHL-NEWPMS\\System2017$\\Production\\PH1_Dummy\\Production_201705030001\\IDX_CTRL\\IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
         static extern void IdxCallVB(int a, string b, Int32 c);
 
         [HandleProcessCorruptedStateExceptions]
