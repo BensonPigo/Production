@@ -607,8 +607,7 @@ where a.ID='{0}'",
             {
                 this.txtSP.Text = "";
                 this.txtStyle.Text = "";
-                this.txtDestination.Text = "";
-                this.txtFactory.Text = "";
+                this.txtDestination.Text = "";                
                 this.txtPO.Text = "";
                 this.numOrderQty.Text = "0";
                 this.numSQR.Text = "0";
@@ -627,8 +626,7 @@ where a.ID='{0}'", txtSP.Text);
                     MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ",this.txtSP.Text));
                     this.txtSP.Text = "";
                     this.txtStyle.Text = "";
-                    this.txtDestination.Text = "";
-                    this.txtFactory.Text = "";
+                    this.txtDestination.Text = "";                    
                     this.txtPO.Text = ""; 
                     this.numOrderQty.Text = "0";
                     this.numSQR.Text = "0";
