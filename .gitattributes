@@ -3509,6 +3509,7 @@ Sci.Production.Warehouse/Report/R40.cs -text
 Sci.Production.Warehouse/Report/R40.resx -text
 Sci.Production.Warehouse/Sci.Production.Warehouse.csproj -text
 Sci.Production/IDX_CTRL/IDX_CTRL.dll -text
+Sci.Production/IDX_CTRL/IDX_CTRL_64.dll -text
 Sci.Production/PMS_icon.ico -text
 Sci.Production/Program.cs -text
 Sci.Production/Properties/AssemblyInfo.cs -text
