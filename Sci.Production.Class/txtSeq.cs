@@ -38,12 +38,17 @@ namespace Sci.Production.Class
             return seq1 + " " + seq2;
         }
 
+        public bool checkSeq1Empty()
+        {
+            return MyUtility.Check.Empty(seq1);
+        }
+
         public bool checkEmpty(bool showErrMsg = true)
         {
-            if ((MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2)) & showErrMsg)
+            if ((MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2)) & showErrMsg)
                 MyUtility.Msg.WarningBox("Seq' mask need enter 00-00");
 
-            return MyUtility.Check.Empty(seq1) | MyUtility.Check.Empty(seq2);
+            return MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2);
         }
 
         public void txtSeq_ReadOnly(bool ReadOnly)
