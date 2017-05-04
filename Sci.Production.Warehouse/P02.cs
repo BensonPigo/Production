@@ -227,10 +227,25 @@ where ed.ID = '{0}'", masterID);
         //Find
         private void btnFind_Click(object sender, EventArgs e)
         {
-            string poID = txtLocateSP.Text + txtSeq1.getSeq();
-
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
-            int index = detailgridbs.Find("FindColumn", poID);
+            int index = -1;
+
+            //判斷 Poid
+            if (txtSeq1.checkEmpty(showErrMsg: false))
+            {
+                index = detailgridbs.Find("poid", txtLocateSP.Text.TrimEnd());
+            }
+            //判斷 Poid + Seq1
+            else if (txtSeq1.checkSeq2Empty())
+            {
+                index = detailgridbs.Find("PoidSeq1", txtLocateSP.Text.TrimEnd() + txtSeq1.seq1);
+            }
+            //判斷 Poid + Seq1 + Seq2
+            else
+            {
+                index = detailgridbs.Find("PoidSeq", txtLocateSP.Text.TrimEnd() + txtSeq1.getSeq());
+            }
+
             if (index == -1)
             { MyUtility.Msg.WarningBox("Data was not found!!"); }
             else
