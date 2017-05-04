@@ -1113,6 +1113,7 @@
     <Content Include="IDX_CTRL\IDX_CTRL.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="IDX_CTRL\IDX_CTRL_64.dll" />
     <Content Include="PMS_icon.ico" />
   </ItemGroup>
   <ItemGroup>
