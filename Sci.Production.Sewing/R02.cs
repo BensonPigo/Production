@@ -670,9 +670,10 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             }
             insertRow = insertRow + 3;
             decimal ttlm = MyUtility.Convert.GetDecimal(printData.Compute("sum(ManPower)", ""));
+            decimal c = MyUtility.Convert.GetDecimal(printData.Compute("sum(TotalCPU)", "")) / MyUtility.Convert.GetDecimal(printData.Compute("sum(ManHour)", ""));
             worksheet.Cells[insertRow, 1] = "VPH";
 
-            worksheet.Cells[insertRow, 3] = ttlm * MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["CPUSewer"]) / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
+            worksheet.Cells[insertRow, 3] = ttlm * c / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 9] = "/Total work day:";
