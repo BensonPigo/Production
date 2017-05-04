@@ -449,6 +449,7 @@ order by a.OrderId,os.Seq"
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
+                CurrentMaintain["InlineQty"] =MyUtility.Convert.GetInt(CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(CurrentMaintain["DefectQty"]);
             }
             return base.ConvertSubDetailDatasFromDoSubForm(e);
         }
