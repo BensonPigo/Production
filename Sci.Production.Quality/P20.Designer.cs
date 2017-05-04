@@ -58,7 +58,7 @@
             this.txtRFT = new Sci.Win.UI.TextBox();
             this.labConfirm = new System.Windows.Forms.Label();
             this.comboShift = new Sci.Production.Class.txtdropdownlist();
-            this.txtCPU = new Sci.Win.UI.NumericBox();
+            this.txtCPU = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -151,7 +151,6 @@
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
@@ -537,19 +536,9 @@
             this.txtCPU.IsSupportEditMode = false;
             this.txtCPU.Location = new System.Drawing.Point(576, 33);
             this.txtCPU.Name = "txtCPU";
-            this.txtCPU.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             this.txtCPU.ReadOnly = true;
             this.txtCPU.Size = new System.Drawing.Size(121, 23);
-            this.txtCPU.TabIndex = 139;
-            this.txtCPU.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.txtCPU.TabIndex = 140;
             // 
             // P20
             // 
@@ -622,6 +611,6 @@
         private Win.UI.ComboBox comboTeam;
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
-        private Win.UI.NumericBox txtCPU;
+        private Win.UI.TextBox txtCPU;
     }
 }

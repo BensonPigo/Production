@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
                         this.txtSP.Text = "";
                         displayStyle.Text = "";
                         displayDestination.Text = "";
-                        this.txtCPU.Value = 0;
+                        this.txtCPU.Text = "0";
                         this.txtSP.Focus(); 
                         e.Cancel = true;
                         return;
@@ -73,7 +73,7 @@ namespace Sci.Production.Quality
                     {
                         displayStyle.Text = dt.Rows[0]["styleid"].ToString();
                         displayDestination.Text = MyUtility.Check.Empty(dt.Rows[0]["dest"].ToString()) ? "" : dt.Rows[0]["dest"].ToString() + " - " + MyUtility.GetValue.Lookup("NameEN", dt.Rows[0]["dest"].ToString(), "dbo.Country", "ID");
-                        txtCPU.Value = MyUtility.Convert.GetDecimal( dt.Rows[0]["cpu"]);
+                        txtCPU.Text = dt.Rows[0]["cpu"].ToString();
                     }
                 }
                 else
@@ -91,11 +91,10 @@ namespace Sci.Production.Quality
             if (!dt.Columns.Contains("Description"))
             {
                  dt.Columns.Add("Description", typeof(string));
-            }
-           // dt.Columns.Add("Description", typeof(string));
+            }           
 
             DataRow dr;
-            sql = string.Format(@"select B.StyleID , C.SewingCell , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest , B.CPU , Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))) as RFT_percentage
+            sql = string.Format(@"select B.StyleID , C.SewingCell , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest , B.CPU , [RFT_percentage]=isnull(Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
                                 from Rft A WITH (NOLOCK) 
                                 left join Orders B WITH (NOLOCK) on B.ID=A.OrderID
                                 left join SewingLine C WITH (NOLOCK) on C.ID=A.SewinglineID and C.FactoryID=A.FactoryID
@@ -106,7 +105,7 @@ namespace Sci.Production.Quality
                 this.displayStyle.Text = dr["StyleID"].ToString().Trim();
                 this.displayCell.Text = dr["SewingCell"].ToString().Trim();
                 this.displayDestination.Text = dr["Dest"].ToString().Trim();
-                this.txtCPU.Value = MyUtility.Convert.GetDecimal(dr["CPU"]);
+                this.txtCPU.Text = MyUtility.Check.Empty(dr["CPU"].ToString()) ? "0" : dr["CPU"].ToString();
                 this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
             }
 
@@ -468,7 +467,7 @@ namespace Sci.Production.Quality
             this.displayStyle.Text = "";
             this.displayDestination.Text = "";
             this.txtRFT.Text="";
-            this.txtCPU.Value = 0;
+            this.txtCPU.Text = "0";
             this.isNew = true;
             return base.ClickNew();
         }
