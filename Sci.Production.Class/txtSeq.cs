@@ -43,6 +43,11 @@ namespace Sci.Production.Class
             return MyUtility.Check.Empty(seq1);
         }
 
+        public bool checkSeq2Empty()
+        {
+            return MyUtility.Check.Empty(seq2);
+        }
+
         public bool checkEmpty(bool showErrMsg = true)
         {
             if ((MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2)) & showErrMsg)
