@@ -158,7 +158,7 @@ namespace Sci.Production.Quality
  order by GarmentDefectCodeID,GarmentDefectTypeID
 ";
 
-                    SelectItem item = new SelectItem(item_cmd, "10", dr["GarmentDefectCodeID"].ToString());
+                    SelectItem item = new SelectItem(item_cmd, "10,10,25", dr["GarmentDefectCodeID"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel) return;
                     dr["GarmentDefectCodeID"] = item.GetSelectedString();
@@ -407,29 +407,29 @@ namespace Sci.Production.Quality
             else
             {
                 this.displayCell.Text = "";
-            }
-            //this.DisplayCell.Text= 
+            }            
         }
 
         private void txtLine_Validating(object sender, CancelEventArgs e)
         {
             string textValue = this.txtLine.Text;
+            DataRow dr;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtLine.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select id from SewingLine WITH (NOLOCK) where id = '{0}'", textValue)))
-                {                   
-                    MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
-                    this.txtLine.Text = "";
-                    e.Cancel = true;
-                    return;                   
-                }
-
-                if (!MyUtility.Check.Seek(string.Format(@"select id from Rft WITH (NOLOCK) where orderid = '{0}' and sewingLineID='{1}'", this.txtSP.Text, textValue)))
+                if (!MyUtility.Check.Seek(string.Format(
+                    @"select a.id,b.ID,b.SewingCell from Rft a WITH (NOLOCK) 
+                    inner join SewingLine b on a.SewinglineID=b.ID
+                    where orderid = '{0}' and b.ID='{1}' and b.factoryID='{2}'", this.txtSP.Text, textValue,Sci.Env.User.Factory),out dr))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     this.txtLine.Text = "";
+                    this.displayCell.Text = "";
                     e.Cancel = true;
                     return;
+                }
+                else
+                {
+                    this.displayCell.Text = dr["SewingCell"].ToString().Trim();
                 }
             }
         }
