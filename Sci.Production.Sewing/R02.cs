@@ -559,7 +559,7 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
-            excel.Visible = true;
+            //excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("Fm:{0}",factoryName);
@@ -668,10 +668,11 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
-            insertRow = insertRow + 3;            
-                        
+            insertRow = insertRow + 3;
+            decimal ttlm = MyUtility.Convert.GetDecimal(printData.Compute("sum(ManPower)", ""));
             worksheet.Cells[insertRow, 1] = "VPH";
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["ManPower"]) * MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["CPUSewer"]) / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
+
+            worksheet.Cells[insertRow, 3] = ttlm * MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["CPUSewer"]) / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 9] = "/Total work day:";
