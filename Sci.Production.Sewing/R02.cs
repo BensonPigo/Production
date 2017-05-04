@@ -16,7 +16,7 @@ namespace Sci.Production.Sewing
         string line1, line2, factory, factoryName;
         DateTime? date1, date2;
         int excludeHolday, excludeSubconin, reportType, orderby;
-        DataTable SewOutPutData, printData, excludeInOutTotal, cpuFactor, subprocessData, subconData;
+        DataTable SewOutPutData, printData, excludeInOutTotal, cpuFactor, subprocessData, subconData,vphData;
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -515,6 +515,31 @@ select * from tmpSubconOut",
             }
             #endregion
             factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
+
+            sqlCmd.Clear();
+            sqlCmd.Append(string.Format(@"
+select f.id,m.ActiveManpower,SumA = SUM(m.ActiveManpower) over() 
+from Factory f
+left join Manpower m on m.FactoryID = f.ID and m.Year = {0} and m.Month = {1}
+where f.Junk = 0", date1.Value.Year, date1.Value.Month));
+            if (factory != "")
+            {
+                sqlCmd.Append(string.Format(" and f.id= '{0}'",factory));
+            }
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out vphData);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
+                return failResult;
+            }
+            foreach (DataRow dr in vphData.Rows)
+            {
+                if (dr["ActiveManpower"].Empty())
+                {
+                    DualResult failResult = new DualResult(false, string.Format("{0} has not been set ActiveManpower", dr["id"].ToString()));
+                    return failResult;
+                }
+            }
             return Result.True;
         }
 
@@ -534,7 +559,7 @@ select * from tmpSubconOut",
             string strXltName = Sci.Env.Cfg.XltPathDir + (reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
-            //excel.Visible = true;
+            excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[2, 1] = string.Format("Fm:{0}",factoryName);
@@ -643,9 +668,16 @@ select * from tmpSubconOut",
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
-
+            insertRow = insertRow + 3;            
+                        
+            worksheet.Cells[insertRow, 1] = "VPH";
+            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["ManPower"]) * MyUtility.Convert.GetDecimal(excludeInOutTotal.Rows[0]["CPUSewer"]) / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
+            worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
+            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
+            worksheet.Cells[insertRow, 9] = "/Total work day:";
+            worksheet.Cells[insertRow, 11] = printData.Rows.Count;
             //Subcon
-            insertRow = insertRow + 4;
+            insertRow = insertRow + 2;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
             if (subconData.Rows.Count > 0)
