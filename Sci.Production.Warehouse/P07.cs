@@ -1239,9 +1239,6 @@ where a.id='{0}'
                 case 2:
                     detailgridbs.Filter = "fabrictype ='A'";
                     break;
-                case 3:
-                    detailgridbs.Filter = "fabrictype ='O'";
-                    break;
             }
         }
 

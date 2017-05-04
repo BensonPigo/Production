@@ -547,8 +547,7 @@
             this.comboTypeFilter.Items.AddRange(new object[] {
             "ALL",
             "Fabric",
-            "Accessory",
-            "Other"});
+            "Accessory"});
             this.comboTypeFilter.Location = new System.Drawing.Point(541, 177);
             this.comboTypeFilter.Name = "comboTypeFilter";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
