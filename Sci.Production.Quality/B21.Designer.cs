@@ -55,6 +55,7 @@
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelDefectType);
             this.detailcont.Size = new System.Drawing.Size(831, 357);
+            this.detailcont.MouseDown += new System.Windows.Forms.MouseEventHandler(this.detailcont_MouseDown);
             // 
             // detailbtm
             // 
@@ -117,6 +118,7 @@
             this.txtDefectcode.Name = "txtDefectcode";
             this.txtDefectcode.Size = new System.Drawing.Size(135, 23);
             this.txtDefectcode.TabIndex = 0;
+            this.txtDefectcode.Validating += new System.ComponentModel.CancelEventHandler(this.txtDefectcode_Validating);
             this.txtDefectcode.Validated += new System.EventHandler(this.txtDefectcode_Validated);
             // 
             // txtDefectType
@@ -124,22 +126,25 @@
             this.txtDefectType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDefectType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "GarmentDefectTypeID", true));
             this.txtDefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDefectType.IsSupportEditMode = false;
             this.txtDefectType.Location = new System.Drawing.Point(150, 99);
             this.txtDefectType.Name = "txtDefectType";
             this.txtDefectType.ReadOnly = true;
-            this.txtDefectType.Size = new System.Drawing.Size(100, 23);
+            this.txtDefectType.Size = new System.Drawing.Size(135, 23);
             this.txtDefectType.TabIndex = 1;
             // 
             // editDescription
             // 
             this.editDescription.BackColor = System.Drawing.Color.White;
-            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
+            this.editDescription.CausesValidation = false;
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editDescription.Location = new System.Drawing.Point(150, 132);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.Size = new System.Drawing.Size(460, 94);
             this.editDescription.TabIndex = 2;
+            this.editDescription.Leave += new System.EventHandler(this.editDescription_Leave);
             // 
             // B21
             // 

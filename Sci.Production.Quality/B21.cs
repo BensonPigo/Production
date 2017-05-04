@@ -19,29 +19,21 @@ namespace Sci.Production.Quality
          public B21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
-             
+            InitializeComponent();                    
         }
+
          protected override void ClickEditAfter()
          {
-             this.txtDefectcode.ReadOnly = true;
-             this.txtDefectType.ReadOnly = true;
-             base.ClickEditAfter();           
-                         
-         }
+             this.txtDefectcode.ReadOnly = true;         
+             base.ClickEditAfter();                                    
+         }        
          protected override bool ClickNewBefore()
          {
-             this.txtDefectType.Text = "";
+             this.txtDefectcode.ReadOnly = false;         
              return base.ClickNewBefore();
-         }
-         protected override void ClickNewAfter()
-         {
-             this.txtDefectType.ReadOnly = true;
-             base.ClickNewAfter();
          }
          protected override bool ClickSaveBefore()
          {
-
              #region 必輸檢查
              if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
              {
@@ -57,45 +49,70 @@ namespace Sci.Production.Quality
              }
 
              #endregion
+             return base.ClickSaveBefore();
+         }       
 
+         private void txtDefectcode_Validating(object sender, CancelEventArgs e)
+         {
+             if (MyUtility.Check.Empty(this.txtDefectcode.Text))
+             {
+                 txtDefectType.Text = "";
+                 return;
+             }
              DataTable dtCode;
-             string SQLCmd = "select ID,junk from GarmentDefectType where ID=@ID ";
-             System.Data.SqlClient.SqlParameter sq1 = new System.Data.SqlClient.SqlParameter();
-             sq1.ParameterName = "@ID";
-             sq1.Value = (this.txtDefectcode.Text).ToString().Substring(0, 1);
-             string aa = sq1.Value.ToString();
-             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-             cmds.Add(sq1);
-
-             if (!(result = DBProxy.Current.Select(null, SQLCmd, cmds, out dtCode)))
+             string SQLCmd = string.Format(@"select ID,junk from GarmentDefectType where ID='{0}' ",this.txtDefectcode.Text.Substring(0,1)); 
+             if (!(result = DBProxy.Current.Select(null, SQLCmd, out dtCode)))
              {
                  MyUtility.Msg.ErrorBox(result.ToString());
-                 return false;
+                 return ;
              }
-             if (dtCode.Rows.Count == 0)
+             else
              {
-                 MyUtility.Msg.WarningBox("The first word does not exist in <GarmentDefectType-ID>");
-                 this.txtDefectcode.Focus();
-                 return false;
+                 if (MyUtility.Check.Empty(dtCode) || dtCode.Rows.Count == 0)
+                 {
+                     MyUtility.Msg.WarningBox(string.Format("<The first word: {0}> does not exist in <GarmentDefectType-ID>",this.txtDefectcode.Text.Substring(0,1)));
+                     this.txtDefectcode.Text = "";
+                     this.txtDefectcode.Focus();
+                     e.Cancel = true;
+                     return;
+                 }
+                 else if (dtCode.Rows[0]["junk"].ToString() == "1")
+                 {
+                     MyUtility.Msg.WarningBox(string.Format("<Defect code: {0}> junk is true,cannot use it !"), this.txtDefectcode.Text.Substring(0, 1));
+                     this.txtDefectcode.Text = "";
+                     this.txtDefectcode.Focus();
+                     e.Cancel = true;
+                     return;
+                 }                           
              }
-             if (dtCode.Rows[0][1].ToString()=="True")
-             {
-                 MyUtility.Msg.WarningBox("The defect code is a junk ");
-                 this.txtDefectcode.Focus();
-                 return false;
-             }
-
-             return base.ClickSaveBefore();
          }
-
+         
          private void txtDefectcode_Validated(object sender, EventArgs e)
          {
-             if (this.txtDefectcode.Text != "")
+             if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
              {
-                 this.txtDefectType.Text = (this.txtDefectcode.Text).ToString().Substring(0, 1);
-                 
+                 this.txtDefectType.Text = this.txtDefectcode.Text.ToString().Substring(0, 1);
              }
          }
+         #region 解決EditBox BindSouce後,會清空txtDefectType
+         private void editDescription_Leave(object sender, EventArgs e)
+         {
+             if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
+             {
+                 this.txtDefectType.Text = this.txtDefectcode.Text.ToString().Substring(0, 1);
+             }
+         }
+
+         private void detailcont_MouseDown(object sender, MouseEventArgs e)
+         {
+             if (!MyUtility.Check.Empty(this.txtDefectcode.Text))
+             {
+                 this.txtDefectType.Text = this.txtDefectcode.Text.ToString().Substring(0, 1);
+             }
+         }
+        #endregion
+
+
 
     }
 }
