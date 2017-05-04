@@ -445,7 +445,6 @@ drop table #tmp");
             if (dataSet.Tables[0].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("NO Data!");
-                return;
             }
             btnCreate.Enabled = true;
             this.HideWaitMessage();
