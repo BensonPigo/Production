@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Runtime.ExceptionServices;
 using System.Configuration;
-
 namespace Sci.Production.Packing
 {
     class P09_IDX_CTRL
@@ -14,12 +13,17 @@ namespace Sci.Production.Packing
         [DllImport(".\\IDX_CTRL\\IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
         static extern void IdxCallVB(int a, string b, Int32 c);
 
+        [DllImport(".\\IDX_CTRL\\IDX_CTRL_64.dll", EntryPoint = "IdxCallVB_64")]
+        static extern void IdxCallVB_64(int a, string b, Int32 c);
         [HandleProcessCorruptedStateExceptions]
         public void IdxCall(int Command, string Request, Int32 RequestSize)
         {
             try
             {
-                IdxCallVB(Command, Request, RequestSize);
+                if(Environment.Is64BitOperatingSystem)
+                    IdxCallVB_64(Command, Request, RequestSize);
+                else
+                    IdxCallVB(Command, Request, RequestSize);
             }
             catch (AccessViolationException e)
             {
