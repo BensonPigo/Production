@@ -502,7 +502,6 @@
             // 
             // btnFind
             // 
-            this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnFind.Location = new System.Drawing.Point(352, 174);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(98, 30);
