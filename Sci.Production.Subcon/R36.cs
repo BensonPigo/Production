@@ -362,6 +362,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
             {
                 Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_R36_DebitNote(LocalSupplier).xltx");
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dt);
+                dt1.boAutoFitRow = true;
                 x1.dicDatas.Add("##SD", dt1);
                 dt1.ShowHeader = false;
                 x1.Save();
@@ -390,6 +391,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 x1.dicDatas.Add("##Status", status);
                 x1.dicDatas.Add("##PaymentSettled", payment);
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSummary1 = new SaveXltReportCls.xltRptTable(dtSummary);
+                dtSummary1.boAutoFitColumn = true;
                 x1.dicDatas.Add("##SD", dtSummary1);
                 dtSummary1.ShowHeader = false;
                 x1.Save();
@@ -418,8 +420,10 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtDetail);
                 //xdt.boAutoFitColumn = true;
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtDetail1 = new SaveXltReportCls.xltRptTable(dtDetail);
+                dtDetail1.boAutoFitColumn = true;
                 x1.dicDatas.Add("##SD", dtDetail1);
                 dtDetail1.ShowHeader = false;
+
                 x1.Save();
                 return true;
             }
@@ -446,6 +450,7 @@ select a.ID,a.Status,a.issuedate,a.factoryid, vs1.Name_Extno as Handle, vs2.Name
                 //SaveXltReportCls.xltRptTable xdt = new SaveXltReportCls.xltRptTable(dtSchedule);
                 //xdt.boAutoFitColumn = true;
                 Sci.Utility.Excel.SaveXltReportCls.xltRptTable dtSchedule1 = new SaveXltReportCls.xltRptTable(dtSchedule);
+                dtSchedule1.boAutoFitColumn = true;
                 x1.dicDatas.Add("##SD", dtSchedule1);
                 dtSchedule1.ShowHeader = false;
                 x1.Save();
