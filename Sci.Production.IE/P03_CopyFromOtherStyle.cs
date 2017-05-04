@@ -20,7 +20,7 @@ namespace Sci.Production.IE
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCopy_Click(object sender, EventArgs e)
         {
             string style, season, brand, version;
             style = txtstyle.Text;
