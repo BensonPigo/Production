@@ -23,16 +23,6 @@ namespace Sci.Production.Quality
             InitializeComponent();
             
         }
-        private void maskedTextBox1_TypeValidationCompleted(object sender, TypeValidationEventArgs e)
-        {
-            if (!e.IsValidInput)
-            {
-                toolTip1.ToolTipTitle = "Invalid Number Value";
-                MyUtility.Msg.InfoBox("The value you entered is not a valid Number. Please change the value.");               
-                e.Cancel = true;
-                return;
-            }
-        }
         private void numWeight_TextChanged(object sender, EventArgs e)
         {
             this.numWeight.MaxLength = 2;
