@@ -1106,22 +1106,27 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
-,(select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
-,a.shipqty
-,a.Weight
-,a.ActualWeight
-,a.Roll
-,a.Dyelot
-,a.ActualQty
-,a.PoUnit
-,a.StockQty
-,a.StockUnit
-,a.StockType
-,a.Location
-,a.remark
-,a.ukey
+            this.DetailSelectCommand = string.Format(@"
+select  a.id
+        , a.PoId
+        , a.Seq1
+        , a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+        , a.Poid + concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as PoidSeq
+        , a.Poid + Ltrim(Rtrim(a.seq1)) as PoidSeq1
+        , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2) as fabrictype
+        , a.shipqty
+        , a.Weight
+        , a.ActualWeight
+        , a.Roll
+        , a.Dyelot
+        , a.ActualQty
+        , a.PoUnit
+        , a.StockQty
+        , a.StockUnit
+        , a.StockType
+        , a.Location
+        , a.remark
+        , a.ukey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 Where a.id = '{0}' ", masterID);
 
@@ -1271,9 +1276,20 @@ where a.id='{0}'
             if (MyUtility.Check.Empty(detailgridbs.DataSource)) return;
             int index = -1;
 
-            if(txtSeq1.checkEmpty(showErrMsg: false)) {
+
+            //判斷 Poid
+            if (txtSeq1.checkEmpty(showErrMsg: false))
+            {
                 index = detailgridbs.Find("poid", txtLocateForSP.Text.TrimEnd());
-            }else{
+            }
+            //判斷 Poid + Seq1
+            else if (txtSeq1.checkSeq2Empty())
+            {
+                index = detailgridbs.Find("PoidSeq1", txtLocateForSP.Text.TrimEnd() + txtSeq1.seq1);
+            }
+            //判斷 Poid + Seq1 + Seq2
+            else
+            {
                 index = detailgridbs.Find("PoidSeq", txtLocateForSP.Text.TrimEnd() + txtSeq1.getSeq());
             }
             
