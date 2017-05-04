@@ -72,7 +72,7 @@ namespace Sci.Production.Quality
                     else
                     {
                         displayStyle.Text = dt.Rows[0]["styleid"].ToString();
-                        displayDestination.Text = dt.Rows[0]["dest"].ToString();
+                        displayDestination.Text = MyUtility.Check.Empty(dt.Rows[0]["dest"].ToString()) ? "" : dt.Rows[0]["dest"].ToString() + " - " + MyUtility.GetValue.Lookup("NameEN", dt.Rows[0]["dest"].ToString(), "dbo.Country", "ID");
                         txtCPU.Value = MyUtility.Convert.GetDecimal( dt.Rows[0]["cpu"]);
                     }
                 }
