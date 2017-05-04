@@ -160,14 +160,5 @@ namespace Sci.Production.Planning
             } 
           
         }
-
-
-        private void radiobyMonth_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-
     }
 }

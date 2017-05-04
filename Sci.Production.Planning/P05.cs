@@ -577,40 +577,6 @@ inner join dbo.Factory WITH (NOLOCK) on factory.id = a.factoryid
             
         }
 
-        //set default supplier from style
-        private void button6_Click(object sender, EventArgs e)
-        {
-            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
-            if (dt == null || dt.Rows.Count == 0) return;
-            DataRow[] find;
-            find = dt.Select("Selected = 1");
-            if (find.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
-                return;
-            }
-
-            foreach (DataRow item in find)
-            {
-                DataRow dr;
-                bool found;
-                if (item["inhouseosp"].ToString() == "O")
-                {
-                    found = MyUtility.Check.Seek(string.Format(@"select top 1 b.LocalSuppId 
-                                                                                    ,(select abb from localsupp WITH (NOLOCK) where id = b.localsuppid) as suppnm
-                                                                                     from Style_Artwork a WITH (NOLOCK) left join style_artwork_quot b WITH (NOLOCK) on a.Ukey = b.Ukey
-                                                                                     where a.StyleUkey={0} AND a.ArtworkTypeID = 'PRINTING' 
-                                                                                     and b.PriceApv = 'Y'"
-                                                                , item["styleukey"]), out dr, null);
-                    if (found)
-                    {
-                        item["localsuppid"] = dr["localsuppid"];
-                        item["suppnm"] = dr["suppnm"];
-                    }
-                }
-            }
-        }
-
         //update inline
         private void btnUpdateInline_Click(object sender, EventArgs e)
         {

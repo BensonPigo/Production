@@ -1112,17 +1112,7 @@ namespace Sci.Production.Planning
                 rg = wks.get_Range(rgStr);
                 rg.Cells.NumberFormat = "###,##0.00%";
             }
-
-            //sxrc.dicDatas.Add("##Year", intYear);
-            //sxrc.dicDatas.Add("##Month", intMonth);
-            //sxrc.dicDatas.Add("##ArtworkType", ArtWorkType == "CPU" ? ArtWorkType : ArtWorkType + " TMS/Min");
-            //string dTypeStr = isSCIDelivery ? "Sci Delivery" : "Buyer Delivery";
-            //sxrc.dicDatas.Add("##DateType", dTypeStr);
-
-            //sxrc.Save();
-
-            //wks = null;
-            //sxrc = null;
+                      
             GC.Collect();
 
             return Result.True;

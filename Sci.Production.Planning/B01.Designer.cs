@@ -250,7 +250,6 @@
             this.radiobyMonth.Text = "by month";
             this.radiobyMonth.UseVisualStyleBackColor = true;
             this.radiobyMonth.Value = "2";
-            this.radiobyMonth.CheckedChanged += new System.EventHandler(this.radiobyMonth_CheckedChanged);
             // 
             // radiobyDay
             // 
