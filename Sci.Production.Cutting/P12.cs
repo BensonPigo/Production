@@ -172,6 +172,63 @@ namespace Sci.Production.Cutting
             if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
             {
                 #region SQL
+                sqlcmd = string.Format(@"
+select CT =(
+select count(1)
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' )                                        
++
+(
+select count(1)
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+" + sqlWhere + @" and a.Patterncode = 'ALLPARTS' )");
+                #endregion
+            }
+            else  //沒勾[Extend All Parts]
+            {
+                #region SQL
+                sqlcmd = string.Format(@"
+select ct=(
+select count(1)
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' )                                        
++
+(
+select count(1)
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+" + sqlWhere + @" and a.Patterncode = 'ALLPARTS' )");
+                #endregion
+            }
+            result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
+            if (!result)
+            {
+                ShowErr(sqlcmd, result);
+                this.HideWaitMessage();
+                return;
+            }
+            if (MyUtility.Convert.GetInt(dtt.Rows[0][0]) >= 30000)
+            {
+                ShowErr("Too much datas. Condtion need more precise!");
+                this.HideWaitMessage();
+                return;
+            }
+
+            if (checkExtendAllParts.Checked)  //有勾[Extend All Parts]
+            {
+                #region SQL
                 sqlcmd = string.Format(@"select Convert(bit,0) as selected
                                                 ,a.BundleNo [Bundle]
                                                 ,b.CutRef [CutRef]
@@ -328,6 +385,7 @@ namespace Sci.Production.Cutting
             if (!result)
             {
                 ShowErr(sqlcmd, result);
+                this.HideWaitMessage();
                 return;
             }
             if (dtt.Rows.Count == 0)  MyUtility.Msg.WarningBox("Data not found!!"); 
