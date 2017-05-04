@@ -62,13 +62,14 @@ namespace Sci.Production.Class
                 return;
             }
 
+            //mantis# : 4260
             //Seq1 isn't Empty & Seq2 is Empty
-            if (!MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2))
-            {
-                MyUtility.Msg.WarningBox("When Seq1 isn't Empty, Seq2 can't be Empty", "Seq");
-                textSeq2.Focus();
-                return;
-            }
+            //if (!MyUtility.Check.Empty(seq1) & MyUtility.Check.Empty(seq2))
+            //{
+            //    MyUtility.Msg.WarningBox("When Seq1 isn't Empty, Seq2 can't be Empty", "Seq");
+            //    textSeq2.Focus();
+            //    return;
+            //}
         }
     }
 }
