@@ -1187,7 +1187,9 @@ inner join View_unitrate v on v.FROM_U = b.POUnit
 				ff.UsageUnit , 
 				uu.ExtensionUnit), 
 			ff.UsageUnit)))--b.StockUnit
-where a.id='{0}'", CurrentMaintain["exportid"]);
+where a.id='{0}'
+ order by a.poid,a.seq1,a.seq2,b.FabricType
+", CurrentMaintain["exportid"]);
                     DBProxy.Current.Select(null, selCom, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
