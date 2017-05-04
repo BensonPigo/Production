@@ -16,6 +16,7 @@ using Microsoft.Reporting.WinForms;
 using System.Data.SqlClient;
 using Sci.Win;
 using Sci.Utility.Excel;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -158,21 +159,79 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorTextColumnSettings locationSet = new DataGridViewGeneratorTextColumnSettings();
+            locationSet.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    Sci.Win.Tools.SelectItem2 selectItem = Prgs.SelectLocation(CurrentDetailData["ToStockType"].ToString());
+                    DialogResult result = selectItem.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                        return;
+                    CurrentDetailData["ToLocation"] = selectItem.GetSelectedString();
+                }
+            };
+
+
+            locationSet.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    CurrentDetailData["tolocation"] = e.FormattedValue;
+                    string sqlcmd = string.Format(@"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", CurrentDetailData["tostocktype"].ToString());
+                    DataTable dt;
+                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    string[] getLocation = CurrentDetailData["tolocation"].ToString().Split(',').Distinct().ToArray();
+                    bool selectId = true;
+                    List<string> errLocation = new List<string>();
+                    List<string> trueLocation = new List<string>();
+                    foreach (string location in getLocation)
+                    {
+                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !(location.EqualString("")))
+                        {
+                            selectId &= false;
+                            errLocation.Add(location);
+                        }
+                        else if (!(location.EqualString("")))
+                        {
+                            trueLocation.Add(location);
+                        }
+                    }
+
+                    if (!selectId)
+                    {
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        e.Cancel = true;
+                    }
+                    trueLocation.Sort();
+                    CurrentDetailData["tolocation"] = string.Join(",", (trueLocation).ToArray());
+                    //去除錯誤的Location將正確的Location填回
+                }
+            };
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) //4
-            .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    //5
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //6
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //7
-            .Text("fromlocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(30))    //8
+            .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  
+            .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  
+            .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  
+            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  
+            .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) 
+            .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    
+            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)   
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)   
+            .Text("ToCtnNo", header: "Ctn#", width: Widths.AnsiChars(8))
+            .Text("fromlocation", header: "From Bulk Location", iseditingreadonly: true, width: Widths.AnsiChars(30))
+            .Text("toLocation", header: "To Scrap Location", iseditingreadonly: false, width: Widths.AnsiChars(30), settings: locationSet)
             ;     //
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
-
+            this.detailgrid.Columns["ToCtnNo"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["toLocation"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
@@ -693,6 +752,8 @@ select
     ,a.FromRoll
     ,a.FromDyelot
     ,a.FromStockType
+    ,dbo.Getlocation(f.Ukey)  as Fromlocation
+    ,a.ToCtnNo
     ,a.Qty
     ,a.ToPoId
     ,a.ToSeq1
@@ -700,7 +761,7 @@ select
     ,a.ToDyelot
     ,a.ToRoll
     ,a.ToStockType
-    ,dbo.Getlocation(f.Ukey)  as Fromlocation
+    ,a.ToLocation
     ,a.ukey
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
