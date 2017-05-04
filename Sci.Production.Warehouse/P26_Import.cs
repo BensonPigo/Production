@@ -81,7 +81,11 @@ where   A.StockType='{0}'
                             strSQLCmd.Append(string.Format(@" 
         and a.poid='{0}' ", sp));
                         }
-                        if (!txtSeq.checkEmpty(showErrMsg: false))
+                        if (!txtSeq.checkSeq1Empty() && txtSeq.checkSeq2Empty())
+                        {
+                            strSQLCmd.Append(string.Format(@" 
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                        }else if (!txtSeq.checkEmpty(showErrMsg: false))
                         {
                             strSQLCmd.Append(string.Format(@" 
         and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
