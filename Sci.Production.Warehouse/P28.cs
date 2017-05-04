@@ -356,6 +356,9 @@ where f.MDivisionID = '{0}'", Env.User.Keyword));
                 case 2:
                     sqlcmd.Append(@" and (o.Category = 'M')");
                     break;
+                case 3:
+                    sqlcmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')");
+                    break;
             }
             switch (selectindex2)
             {
