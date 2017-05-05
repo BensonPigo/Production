@@ -323,11 +323,12 @@ namespace Sci.Production.Subcon
             ts.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (string.Format(@"Select refno,description, localsuppid,unitid,price 
+                {                   
+                   Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                        (string.Format(@"Select refno,description, localsuppid,unitid,price
                                                     from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                                                                                 , "20,30,10,10,10",null);
+                                                                                                                                 , "15,30,8,8,10","",null,"0,0,0,0,4");
+                    item.Size = new System.Drawing.Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     IList<DataRow> x = item.GetSelecteds();
@@ -368,7 +369,8 @@ namespace Sci.Production.Subcon
                         || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
                         return;
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "20,60", null);
+                        (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+                    item.Size = new System.Drawing.Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["Threadcolorid"] = item.GetSelectedString();
