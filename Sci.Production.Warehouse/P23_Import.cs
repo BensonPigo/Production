@@ -273,7 +273,7 @@ WHERE   StockType='{0}'
                         e.Value = "Inventory";
                         break;
                     case "O":
-                        e.Value = "Obsolete";
+                        e.Value = "Scrap";
                         break;
                 }
             };

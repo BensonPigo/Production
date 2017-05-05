@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             combos.ColumnsStringAdd("Value");
             combos.Rows.Add(new object[] { "I", "Inventory" });
             combos.Rows.Add(new object[] { "B", "Bulk" });
+            combos.Rows.Add(new object[] { "O", "Scrap" });
             //Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
             //comboBox1_RowSource.Add("I", "Inventory");
             //comboBox1_RowSource.Add("B", "Bulk");

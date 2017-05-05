@@ -177,7 +177,7 @@ where f.InQty - f.OutQty + f.AdjustQty > 0 and f.lock=0 and a.Status = 'Confirme
                         e.Value = "Inventory";
                         break;
                     case "O":
-                        e.Value = "Obsolete";
+                        e.Value = "Scrap";
                         break;
                 }
             };

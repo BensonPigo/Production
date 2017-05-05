@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
                            e.Value = "Inventory";
                            break;
                        case "O":
-                           e.Value = "Other";
+                           e.Value = "Scrap";
                            break;                                              
                    }                  
                 };

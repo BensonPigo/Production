@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             Dictionary<string, string> di_Stocktype = new Dictionary<string, string>();
             di_Stocktype.Add("B", "Bulk");
             di_Stocktype.Add("I", "Inventory");
+            di_Stocktype.Add("O", "Scrap");
 
             comboStockType.DataSource = new BindingSource(di_Stocktype, null);
             comboStockType.ValueMember = "Key";

@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
-            di_stocktype.Add("O", "Obsolete");
+            di_stocktype.Add("O", "Scrap");
             di_stocktype.Add("B", "Bulk");
             di_stocktype.Add("I", "Inventory");
         }

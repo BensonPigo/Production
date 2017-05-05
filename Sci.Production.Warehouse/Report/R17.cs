@@ -106,7 +106,7 @@ select distinct
         sotckType	= case a.StockType
                         when 'b' then 'Bulk'
                         when 'i' then 'Inventory'
-                        when 'o' then 'obsolete'
+                        when 'o' then 'Scrap'
                       end,
         deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders WITH (NOLOCK) where orders.id = a.poid)),
@@ -163,7 +163,7 @@ select distinct
         sotckType	= case a.StockType
                         when 'b' then 'Bulk'
                         when 'i' then 'Inventory'
-                        when 'o' then 'obsolete'
+                        when 'o' then 'Scrap'
                       end,
         deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders WITH (NOLOCK) where id = a.Poid)),
@@ -223,7 +223,7 @@ select distinct
         sotckType	= case a.StockType
                         when 'b' then 'Bulk'
                         when 'i' then 'Inventory'
-                        when 'o' then 'obsolete'
+                        when 'o' then 'Scrap'
                       end,
         deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
@@ -286,7 +286,7 @@ select distinct
         sotckType	= case a.StockType
                         when 'b' then 'Bulk'
                         when 'i' then 'Inventory'
-                        when 'o' then 'obsolete'
+                        when 'o' then 'Scrap'
                       end,
         deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
 				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),

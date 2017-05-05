@@ -561,7 +561,7 @@ SELECT  id
                         when 'b' then 
                             'Bulk' 
                         when 'o' then 
-                            'Obsolete' 
+                            'Scrap' 
                        End
 FROM DBO.MtlLocation WITH (NOLOCK) 
 WHERE   StockType='{0}'

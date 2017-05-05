@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                 = string.Format(@"Select a.Roll,a.Dyelot
                                 ,[stocktype] = case when stocktype = 'B' then 'Bulk'
                                                     when stocktype = 'I' then 'Invertory'
-			                                        when stocktype = 'O' then 'Other' End
+			                                        when stocktype = 'O' then 'Scrap' End
                                                 ,a.InQty,a.OutQty,a.AdjustQty
                                                 ,a.InQty - a.OutQty + a.AdjustQty as balance
                                                 ,dbo.Getlocation(a.ukey)  MtlLocationID 
@@ -78,7 +78,7 @@ namespace Sci.Production.Warehouse
                 = string.Format(@"select tmp.Roll,
 [stocktype] = case when stocktype = 'B' then 'Bulk'
                    when stocktype = 'I' then 'Invertory'
-			       when stocktype = 'O' then 'Other' End
+			       when stocktype = 'O' then 'Scrap' End
 ,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
 over (partition by tmp.stocktype,tmp.roll order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
@@ -425,7 +425,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             DBProxy.Current.Select("",
              @"                                   select c.Roll[Roll]
                                                   ,c.Dyelot [Dyelot]
-                                                  ,Case c.StockType when 'B' THEN 'Bulk' WHEN 'I' THEN 'Inventory' ELSE 'Obsolete' END as [Stock_Type]
+                                                  ,Case c.StockType when 'B' THEN 'Bulk' WHEN 'I' THEN 'Inventory' ELSE 'Scrap' END as [Stock_Type]
                                                   ,c.InQty [Arrived_Qty]
                                                   ,c.OutQty [Released_Qty]
                                                   ,c.AdjustQty [Adjust_Qty]
