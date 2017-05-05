@@ -110,10 +110,8 @@ namespace Sci.Production.Warehouse
             bindingSource2.DataSource = null;
             bindingSource3.DataSource = null;
 
-            string spno, seq1, seq2;
+            string spno;
             spno = txtSPNo.Text;
-            seq1 = txtSeq.seq1;
-            seq2 = txtSeq.seq2;
             if (MyUtility.Check.Empty(spno))
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox("It will take a lot of time for searching data if condition of SP# is empty, Do you continue?");
@@ -147,76 +145,121 @@ inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
 left join dbo.PO_Supp as s WITH (NOLOCK) on s.ID = b.ID and s.Seq1 = b.SEQ1
 where f.Junk = 0 ");
-            if (!MyUtility.Check.Empty(spno))
-                sqlcmd.Append(" and i.poid = @spno");
-            if (!MyUtility.Check.Empty(seq1))
-                sqlcmd.Append(" and i.seq1 = @seq1");
-            if (!MyUtility.Check.Empty(seq2))
-                sqlcmd.Append(" and i.seq2 = @seq2");
-            sqlcmd.Append(Environment.NewLine);
-            sqlcmd.Append(@";select poid,seq1,seq2,id,ConfirmDate,[type],qty,seq70
-,sum(tmp.qty) over (partition by InventoryUkey 
-                             order by InventoryUkey,ConfirmDate,ID
-			rows between unbounded preceding and current row) as running_total
-,FactoryID,TransferFactory
-,ConfirmHandle+' : '+(select a.Name+'#'+a.ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.id=ConfirmHandle) as ConfirmHandle
-,Reasonid,Reason,InventoryUkey
-from 
-(
-select i.poid,i.seq1,i.Seq2,t.id
-,CHOOSE(T.TYPE,'1-INPUT','2-OUTOUT','3-TRANSFER-OUT','4-ADJUST','5-OBSOLETS','6-RETURN') AS TYPE
-,T.ConfirmDate
-,choose(T.TYPE,T.qty,0-t.qty,0-t.qty,t.qty,0-t.qty,t.qty) qty
-,t.seq70poid+t.InventorySeq2+t.seq70seq2 as seq70
-,t.FactoryID,TransferFactory
-,T.ConfirmHandle
-,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) Reason
-,T.InventoryUkey
-,t.TransferUkey
- from inventory i WITH (NOLOCK) inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
- inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
- where f.Junk = 0 ");
-            if (!MyUtility.Check.Empty(spno))
-                sqlcmd.Append(" and i.poid = @spno");
-            if (!MyUtility.Check.Empty(seq1))
-                sqlcmd.Append(" and i.seq1 = @seq1");
-            if (!MyUtility.Check.Empty(seq2))
-                sqlcmd.Append(" and i.seq2 = @seq2 ");
-            sqlcmd.Append(Environment.NewLine);
-            sqlcmd.Append(@"union all
- select i.poid,i.seq1,i.Seq2,t.id
-,'3-TRANSFER-IN' AS TYPE
-,T.ConfirmDate
-,t.qty
-,t.seq70poid+t.InventorySeq2+t.seq70seq2 as seq70
-,t.FactoryID,TransferFactory
-,T.ConfirmHandle
-,t.ReasonID, (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) name
-,t.TransferUkey
-,T.InventoryUkey
- from inventory i WITH (NOLOCK) inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
- inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
- where f.Junk = 0 ");
-            if (!MyUtility.Check.Empty(spno))
-                sqlcmd.Append(" and i.poid = @spno");
-            if (!MyUtility.Check.Empty(seq1))
-                sqlcmd.Append(" and i.seq1 = @seq1");
-            if (!MyUtility.Check.Empty(seq2))
-                sqlcmd.Append(" and i.seq2 = @seq2 ");
 
-            sqlcmd.Append(@" ) tmp
- order by InventoryUkey,ConfirmDate,ID");
-            sqlcmd.Append(Environment.NewLine);
-            sqlcmd.Append(@";select f.poid as id,f.Poid,f.Seq1,f.seq2,f.Roll,f.Dyelot,f.InQty,f.OutQty,f.AdjustQty
- ,dbo.Getlocation(f.ukey)  Location
- from FtyInventory f WITH (NOLOCK) 
- where stocktype='I'");
             if (!MyUtility.Check.Empty(spno))
-                sqlcmd.Append(" and f.poid = @spno");
-            if (!MyUtility.Check.Empty(seq1))
-                sqlcmd.Append(" and f.seq1 = @seq1");
-            if (!MyUtility.Check.Empty(seq2))
-                sqlcmd.Append(" and f.seq2 = @seq2");
+                sqlcmd.Append(" and i.poid = @spno");
+            if (!txtSeq.checkSeq1Empty())
+                sqlcmd.Append(" and i.seq1 = @seq1");
+            if (!txtSeq.checkSeq2Empty())
+                sqlcmd.Append(" and i.seq2 = @seq2");
+
+            sqlcmd.Append(Environment.NewLine);
+            sqlcmd.Append(@";
+select  poid
+        , seq1
+        , seq2
+        , id
+        , ConfirmDate
+        , [type]
+        , qty
+        , seq70
+        , running_total = sum(tmp.qty) over (partition by InventoryUkey 
+                                            order by InventoryUkey,ConfirmDate,ID
+			                                rows between unbounded preceding and current row)  
+        , FactoryID
+        , TransferFactory
+        , ConfirmHandle = ConfirmHandle+' : '+(select a.Name+'#'+a.ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.id=ConfirmHandle) 
+        , Reasonid
+        , Reason
+        , InventoryUkey
+from (
+    select  i.poid
+            , i.seq1
+            , i.Seq2
+            , t.id
+            , TYPE = CHOOSE(T.TYPE,'1-INPUT','2-OUTOUT','3-TRANSFER-OUT','4-ADJUST','5-OBSOLETS','6-RETURN')
+            , T.ConfirmDate
+            , qty = choose(T.TYPE,T.qty,0-t.qty,0-t.qty,t.qty,0-t.qty,t.qty)
+            , seq70 = t.seq70poid+t.InventorySeq2+t.seq70seq2
+            , t.FactoryID
+            , TransferFactory
+            , T.ConfirmHandle
+            , t.ReasonID
+            , Reason = (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) 
+            , T.InventoryUkey
+            , t.TransferUkey
+    from inventory i WITH (NOLOCK) 
+    inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+    inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
+    where f.Junk = 0 ");
+            if (!MyUtility.Check.Empty(spno))
+                sqlcmd.Append(@" 
+        and i.poid = @spno");
+            if (!txtSeq.checkSeq1Empty())
+                sqlcmd.Append(@"
+        and i.seq1 = @seq1");
+            if (!txtSeq.checkSeq2Empty())
+                sqlcmd.Append(@" 
+        and i.seq2 = @seq2 ");
+            sqlcmd.Append(Environment.NewLine);
+            sqlcmd.Append(@"
+    
+    union all
+    select  i.poid
+            , i.seq1
+            , i.Seq2
+            , t.id
+            , '3-TRANSFER-IN' AS TYPE
+            , T.ConfirmDate
+            , t.qty
+            , t.seq70poid+t.InventorySeq2+t.seq70seq2 as seq70
+            , t.FactoryID
+            , TransferFactory
+            , T.ConfirmHandle
+            , t.ReasonID
+            , (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) name
+            , t.TransferUkey
+            , T.InventoryUkey
+    from inventory i WITH (NOLOCK) 
+    inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
+    inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
+    where f.Junk = 0 ");
+            if (!MyUtility.Check.Empty(spno))
+                sqlcmd.Append(@" 
+        and i.poid = @spno");
+            if (!txtSeq.checkSeq1Empty())
+                sqlcmd.Append(@" 
+        and i.seq1 = @seq1");
+            if (!txtSeq.checkSeq2Empty())
+                sqlcmd.Append(@" 
+        and i.seq2 = @seq2 ");
+
+            sqlcmd.Append(@" 
+) tmp
+order by InventoryUkey,ConfirmDate,ID");
+            sqlcmd.Append(Environment.NewLine);
+            sqlcmd.Append(@"
+;select f.poid as id
+        , f.Poid
+        , f.Seq1
+        , f.seq2
+        , f.Roll
+        , f.Dyelot
+        , f.InQty
+        , f.OutQty
+        , f.AdjustQty
+        , dbo.Getlocation(f.ukey)  Location
+from FtyInventory f WITH (NOLOCK) 
+where   stocktype='I'");
+            if (!MyUtility.Check.Empty(spno))
+                sqlcmd.Append(@" 
+        and f.poid = @spno");
+            if (!txtSeq.checkSeq1Empty())
+                sqlcmd.Append(@" 
+        and f.seq1 = @seq1");
+            if (!txtSeq.checkSeq2Empty())
+                sqlcmd.Append(@" 
+        and f.seq2 = @seq2");
 
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@spno";
@@ -224,11 +267,11 @@ select i.poid,i.seq1,i.Seq2,t.id
 
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
             sp2.ParameterName = "@seq1";
-            sp2.Value = seq1;
+            sp2.Value = txtSeq.seq1;
 
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
             sp3.ParameterName = "@seq2";
-            sp3.Value = seq2;
+            sp3.Value = txtSeq.seq2;
 
             IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
             paras.Add(sp1);
