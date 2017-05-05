@@ -88,7 +88,8 @@ namespace Sci.Production.Warehouse
 			,[SubGW]=sum(R.Weight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 ) 
 			,[SubAW]=sum(R.ActualWeight) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
 			,[SubStockQty]=sum(R.StockQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
-            ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  			
+            ,[SubVaniance]=sum(R.ActualWeight - R.Weight)OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )  
+            ,R.Remark		
             from dbo.Receiving_Detail R WITH (NOLOCK) 
             LEFT join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID = R.POID and  p.SEQ1 = R.Seq1 and P.seq2 = R.Seq2 
             where R.id = @ID ";
@@ -118,7 +119,8 @@ namespace Sci.Production.Warehouse
                                     StockQty = row1["StockQty"].ToString(),
                                     StockUnit = row1["StockUnit"].ToString(),
                                     SubStockQty = row1["SubStockQty"].ToString(),
-                                    SubQty = row1["SubQty"].ToString()
+                                    SubQty = row1["SubQty"].ToString(),
+                                    Remark = row1["Remark"].ToString()
 
                                 }).ToList();
 
@@ -144,8 +146,8 @@ namespace Sci.Production.Warehouse
                                    SubQty = row1["SubQty"].ToString(),
                                    SubGW = row1["SubGW"].ToString(),
                                    SubAW = row1["SubAW"].ToString(),
-                                   SubVaniance = row1["SubVaniance"].ToString()
-
+                                   SubVaniance = row1["SubVaniance"].ToString(),
+                                   Remark = row1["Remark"].ToString()
                                }).ToList();
                 e.Report.ReportDataSource = data;
 
@@ -216,6 +218,7 @@ namespace Sci.Production.Warehouse
                     objSheets.Cells[nRow, 6] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
                     objSheets.Cells[nRow, 7] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
                     objSheets.Cells[nRow, 8] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["Remark"].ToString();
                     nRow++;
                 }
 
@@ -244,6 +247,7 @@ namespace Sci.Production.Warehouse
                     objSheets.Cells[nRow, 6] = dr["Weight"].ToString();
                     objSheets.Cells[nRow, 7] = dr["ActualWeight"].ToString();
                     objSheets.Cells[nRow, 8] = dr["Vaniance"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["Remark"].ToString();
                     nRow++;
                 }
 
