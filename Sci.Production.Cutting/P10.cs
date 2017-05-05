@@ -21,7 +21,7 @@ namespace Sci.Production.Cutting
         DataTable bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb;
         string WorkOrder_Ukey;
 
-        public P10(ToolStripMenuItem menuitem,string history)
+        public P10(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
         {
             InitializeComponent();
@@ -59,12 +59,12 @@ namespace Sci.Production.Cutting
             }
 
             string estcutdate = MyUtility.GetValue.Lookup(string.Format("Select estcutdate from workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref), null);
-            if (!MyUtility.Check.Empty(estcutdate))  displayEstCutDate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
-            
+            if (!MyUtility.Check.Empty(estcutdate)) displayEstCutDate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
+
             int qty = 0;
-            if(bundle_Detail_Qty_Tb.Rows.Count==0)  qty =0;
-            else  qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)",""));
-           
+            if (bundle_Detail_Qty_Tb.Rows.Count == 0) qty = 0;
+            else qty = Convert.ToInt16(bundle_Detail_Qty_Tb.Compute("Sum(Qty)", ""));
+
             numQtyperBundleGroup.Value = qty;
 
             string factoryid = MyUtility.GetValue.Lookup(string.Format("SELECT o.FactoryID FROM Bundle b WITH (NOLOCK) inner join orders o WITH (NOLOCK) on b.Orderid=o.ID where b.Orderid='{0}'", orderid), null);
@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
             else
             {
                 this.displayPrintDate.Text = "";
-            }            
+            }
         }
         public void queryTable()
         {
@@ -177,7 +177,7 @@ namespace Sci.Production.Cutting
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5,iseditingreadonly: true)
+            .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
             .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -201,7 +201,7 @@ namespace Sci.Production.Cutting
             bundle_Detail_Qty_Tb.Clear();
 
         }
-       
+
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
@@ -250,7 +250,7 @@ namespace Sci.Production.Cutting
             int drcount = DetailDatas.Count;
             IList<string> cListBundleno;
 
-            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", Convert.ToDateTime(CurrentMaintain["cDate"]), 3,"Bundleno", batchNumber: drcount,sequenceMode:2);
+            cListBundleno = MyUtility.GetValue.GetBatchID("", "Bundle_Detail", Convert.ToDateTime(CurrentMaintain["cDate"]), 3, "Bundleno", batchNumber: drcount, sequenceMode: 2);
             if (cListBundleno.Count == 0)
             {
                 return new DualResult(false, "Create Bundleno error.");
@@ -277,14 +277,14 @@ namespace Sci.Production.Cutting
 
                 }
             }
-            #endregion  
+            #endregion
             //DataTable dt = (DataTable)detailgridbs.DataSource;
             return base.ClickSavePre();
         }
         protected override DualResult ClickSavePost()
         {
 
-            string allpart_cmd = "", Art_cmd = "",Qty_cmd = "";
+            string allpart_cmd = "", Art_cmd = "", Qty_cmd = "";
             #region 先撈出實體Table 為了平行判斷筆數 DataTable allparttmp, arttmp, qtytmp
             DataTable allparttmp, arttmp, qtytmp;
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
@@ -312,7 +312,7 @@ namespace Sci.Production.Cutting
             int row = 0;
             #region 處理Bundle_Detail_AllPart
             int allpart_old_rowCount = allparttmp.Rows.Count;
-            
+
             foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows) //處理Bundle_Detail_AllPart
             {
 
@@ -329,7 +329,7 @@ namespace Sci.Production.Cutting
                 Parts ={2}  Where ukey ={3};", dr["PatternCode"], dr["PatternDesc"], dr["Parts"], allparttmp.Rows[row]["ukey"]);
                 }
                 row++;
-                
+
             }
             bundle_Detail_allpart_Tb.AcceptChanges();//變更Row Status 狀態
             int allpart_new_rowCount = bundle_Detail_allpart_Tb.Rows.Count;
@@ -344,7 +344,7 @@ namespace Sci.Production.Cutting
             #region 處理Bundle_Detail_Art
             row = 0;
             int art_old_rowCount = arttmp.Rows.Count;
-            
+
             foreach (DataRow dr in bundle_Detail_Art_Tb.Rows) //處理Bundle_Detail_Art
             {
 
@@ -377,7 +377,7 @@ namespace Sci.Production.Cutting
             #region 處理Bundle_Detail_Qty
             row = 0;
             int Qty_old_rowCount = qtytmp.Rows.Count;
-            
+
             foreach (DataRow dr in bundle_Detail_Qty_Tb.Rows) //處理Bundle_Detail_Art
             {
                 if (dr.RowState != DataRowState.Deleted)
@@ -460,7 +460,7 @@ namespace Sci.Production.Cutting
             bundle_Detail_Qty_Tb.Clear();
             WorkOrder_Ukey = "";
             CurrentMaintain.EndEdit();
-           
+
         }
 
 
@@ -472,7 +472,7 @@ namespace Sci.Production.Cutting
                 clear();
                 return;
             }
-            
+
             string newvalue = txtCutRef.Text;
             if (txtCutRef.OldValue.ToString() == newvalue) return;
             string cmd = string.Format(
@@ -523,7 +523,7 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["OrderID"] = cutdr["Workorder_Distribute_OrderID"].ToString();    //cutdr["OrderID"].ToString()
                 CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
-                CurrentMaintain["Sizecode"] = cutdr["Sizecode"].ToString().Substring(0,cutdr["Sizecode"].ToString().Length-1);
+                CurrentMaintain["Sizecode"] = cutdr["Sizecode"].ToString().Substring(0, cutdr["Sizecode"].ToString().Length - 1);
                 CurrentMaintain["Ratio"] = cutdr["Ratio"].ToString().Substring(0, cutdr["Ratio"].ToString().Length - 1);
                 CurrentMaintain["Article"] = cutdr["Article"].ToString();
                 CurrentMaintain["Colorid"] = cutdr["Colorid"].ToString();
@@ -532,9 +532,9 @@ namespace Sci.Production.Cutting
                 CurrentMaintain["FabricPanelCode"] = cutdr["FabricPanelCode"].ToString();
                 displaySeason.Text = cutdr["Seasonid"].ToString();
                 displayStyle.Text = cutdr["Styleid"].ToString();
-                displayEstCutDate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"])?"":((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
-                
-                string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString()+cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
+                displayEstCutDate.Text = MyUtility.Check.Empty(cutdr["Estcutdate"]) ? "" : ((DateTime)cutdr["Estcutdate"]).ToString("yyyy/MM/dd");
+
+                string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString() + cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 CurrentMaintain["SewingCell"] = cellid;
 
                 #region Startno
@@ -550,14 +550,14 @@ namespace Sci.Production.Cutting
                 CurrentMaintain.EndEdit();
             }
             ((DataTable)this.detailgridbs.DataSource).Clear();
-            
+
         }
 
         private void txtSPNo_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Check.Empty(CurrentMaintain["Cutref"]) || MyUtility.Check.Empty(CurrentMaintain["POID"])) return;
             Sci.Win.Tools.SelectItem item;
-            string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp",CurrentMaintain["POID"].ToString(),"Orders","ID");
+            string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp", CurrentMaintain["POID"].ToString(), "Orders", "ID");
             //string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
             string selectCommand = string.Format(@"select distinct b.orderid 
                                                 from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
@@ -587,9 +587,9 @@ namespace Sci.Production.Cutting
                 }
                 string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}'", CurrentMaintain["Cutref"], newvalue);
                 DataTable articleTb;
-                if (DBProxy.Current.Select(null, work_cmd,out articleTb))
+                if (DBProxy.Current.Select(null, work_cmd, out articleTb))
                 {
-                    if (articleTb.Rows.Count ==0 )
+                    if (articleTb.Rows.Count == 0)
                     {
                         MyUtility.Msg.WarningBox("<Cutref> is different.");
                         txtSPNo.Text = "";
@@ -632,7 +632,7 @@ namespace Sci.Production.Cutting
                         #region Cell
                         if (!MyUtility.Check.Empty(cutdr["sewline"].ToString()))
                         {
-                            string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2)+cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
+                            string cellid = MyUtility.GetValue.Lookup("SewingCell", cutdr["sewline"].ToString().Substring(0, 2) + cutdr["Factoryid"].ToString(), "SewingLine", "ID+factoryid");
 
                             CurrentMaintain["SewingCell"] = cellid;
                         }
@@ -646,14 +646,14 @@ namespace Sci.Production.Cutting
                         {
                             string ColorComb_cmd = string.Format("Select top(1) article,colorid from order_colorcombo WITH (NOLOCK) where id ='{0}' and patternpanel = '{1}'", cutdr["POID"], CurrentMaintain["PatternPanel"]);
                             DataRow colordr;
-                            if(MyUtility.Check.Seek(ColorComb_cmd, out colordr))
+                            if (MyUtility.Check.Seek(ColorComb_cmd, out colordr))
                             {
                                 CurrentMaintain["Article"] = colordr["Article"];
                                 CurrentMaintain["colorid"] = colordr["colorid"];
                             }
-                            
+
                         }
-                        #endregion 
+                        #endregion
                     }
                 }
             }
@@ -663,7 +663,7 @@ namespace Sci.Production.Cutting
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", CurrentMaintain["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm =
-    new Sci.Production.PublicForm.GarmentList(ukey,null);
+    new Sci.Production.PublicForm.GarmentList(ukey, null);
             callNextForm.ShowDialog(this);
             OnDetailEntered();
         }
@@ -692,7 +692,7 @@ namespace Sci.Production.Cutting
             CurrentMaintain["Cdate"] = DateTime.Now;
             int startno = startNo_Function(CurrentMaintain["OrderID"].ToString());
             CurrentMaintain["startno"] = startno;
-            #region 清除Detail Bundleno,ID 
+            #region 清除Detail Bundleno,ID
             foreach (DataRow dr in DetailDatas)
             {
                 dr["Bundleno"] = "";
@@ -713,7 +713,7 @@ namespace Sci.Production.Cutting
             {
                 dr["ID"] = "";
             }
-            #endregion 
+            #endregion
         }
 
         private void numBeginBundleGroup_Validated(object sender, EventArgs e)
@@ -729,13 +729,13 @@ namespace Sci.Production.Cutting
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-            DataTable dt = ((DataTable)detailgridbs.DataSource);           
+            DataTable dt = ((DataTable)detailgridbs.DataSource);
             detailgrid.ValidateControl();
             DataTable bdwtb;
             MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
             var frm = new Sci.Production.Cutting.btnGarmentList(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
             frm.ShowDialog(this);
-           // queryTable();
+            // queryTable();
         }
         protected override bool ClickPrint()
         {
@@ -744,7 +744,7 @@ namespace Sci.Production.Cutting
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.displayPrintDate.Text = dtn;
             string sqlcmd = string.Format(@"update Bundle set PrintDate = '{0}' where ID = '{1}'", dtn, CurrentMaintain["ID"]);
-            DBProxy.Current.Execute(null,sqlcmd);
+            DBProxy.Current.Execute(null, sqlcmd);
             return true;
 
         }
@@ -756,24 +756,34 @@ namespace Sci.Production.Cutting
             if (!EditMode) return;
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
-                selectCommand = string.Format(@"select distinct Article from Workorder_Distribute WITH (NOLOCK) 
-                                                where Article!='' 
-                                                    and WorkorderUkey=(select Ukey from workorder WITH (NOLOCK) where cutref='{0}' and mDivisionid = '{1}')"
+                selectCommand = string.Format(@"
+select distinct Article ,w.Colorid
+from workorder w WITH (NOLOCK) 
+inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}'"
                                 , CurrentMaintain["cutref"].ToString(), keyword);
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                txtArticle.Text = item.GetSelectedString();
+                txtArticle.Text = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
+                txtColorID.Text = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
             }
             else
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["Orderid"]))
                 {
-                    selectCommand = string.Format(@"select distinct article from Order_Qty WITH (NOLOCK) where Id='{0}'", CurrentMaintain["Orderid"]);
+                    selectCommand = string.Format(@"
+select distinct Article ,w.Colorid
+from workorder w WITH (NOLOCK) 
+inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}'"
+                        , CurrentMaintain["Orderid"].ToString(), keyword);
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
-                    txtArticle.Text = item.GetSelectedString();
+
+                    txtArticle.Text = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
+                    txtColorID.Text = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
                 }
             }
         }
