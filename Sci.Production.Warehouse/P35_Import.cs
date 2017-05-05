@@ -47,44 +47,60 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(string.Format(@"select 0 as selected 
-,'' id,c.PoId,a.Seq1,a.Seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
-,c.Roll
-,c.Dyelot
-,c.inqty-c.outqty + c.adjustqty as QtyBefore
-,0.00 as QtyAfter
-,dbo.Getlocation(c.ukey) as location
-,'' reasonid
-,'' reason_nm
-,a.FabricType
-,a.stockunit
-,c.stockType
-,c.ukey as ftyinventoryukey
+                strSQLCmd.Append(string.Format(@"
+select  0 as selected 
+        , '' id
+        , c.PoId
+        , a.Seq1
+        , a.Seq2
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+        , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
+        , c.Roll
+        , c.Dyelot
+        , c.inqty-c.outqty + c.adjustqty as QtyBefore
+        , 0.00 as QtyAfter
+        , dbo.Getlocation(c.ukey) as location
+        , '' reasonid
+        , '' reason_nm
+        , a.FabricType
+        , a.stockunit
+        , c.stockType
+        , c.ukey as ftyinventoryukey
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Factory f WITH (NOLOCK) on a.FactoryID=f.id
-Where c.lock = 0 and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
+Where   c.lock = 0 
+        and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))
                 {
-                    strSQLCmd.Append(string.Format(@" and a.id = '{0}' ", sp));
+                    strSQLCmd.Append(string.Format(@" 
+        and a.id = '{0}' ", sp));
                 }
 
                 if (!MyUtility.Check.Empty(refno))
                 {
-                    strSQLCmd.Append(string.Format(@" and a.refno = '{0}' ", refno));
+                    strSQLCmd.Append(string.Format(@" 
+        and a.refno = '{0}' ", refno));
                 }
 
                 if (!MyUtility.Check.Empty(location))
                 {
-                    strSQLCmd.Append(string.Format(@" and c.ukey in (select ukey from dbo.ftyinventory_detail WITH (NOLOCK) where mtllocationid = '{0}') ", location));
+                    strSQLCmd.Append(string.Format(@" 
+        and c.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid = '{0}') ", location));
                 }
 
-                if (!txtSeq.checkEmpty(showErrMsg: false))
+                if (!txtSeq.checkSeq1Empty())
                 {
-                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
+                    strSQLCmd.Append(string.Format(@"
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                }
+                if (!txtSeq.checkSeq2Empty())
+                {
+                    strSQLCmd.Append(string.Format(@" 
+        and a.seq2 = '{0}'", txtSeq.seq2));
                 }
 
                 switch (fabrictype)
@@ -92,10 +108,12 @@ Where c.lock = 0 and f.mdivisionid='{0}'", Sci.Env.User.Keyword));
                     case "ALL":
                         break;
                     case "F":
-                        strSQLCmd.Append(@" And a.fabrictype = 'F'");
+                        strSQLCmd.Append(@" 
+        And a.fabrictype = 'F'");
                         break;
                     case "A":
-                        strSQLCmd.Append(@" And a.fabrictype = 'A'");
+                        strSQLCmd.Append(@" 
+        And a.fabrictype = 'A'");
                         break;
                 }
 
