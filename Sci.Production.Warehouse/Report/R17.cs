@@ -76,8 +76,6 @@ namespace Sci.Production.Warehouse
         {
             //return base.OnAsyncDataLoad(e);
             String spno = txtSPNo.Text.TrimEnd();
-            string seq1 = txtSeq.seq1;
-            string seq2 = txtSeq.seq2;
             String location1 = txtLocation.Text.TrimEnd();
             string factory = txtfactory.Text;
             bool chkbalance = checkBalanceQty.Checked;
@@ -118,29 +116,43 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-where 1=1");
+where   1=1");
                     if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@"And a.Poid like '{0}%'", spno));
+                        sqlcmd.Append(string.Format(@"
+        And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
-                        sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
+                    if (!txtSeq.checkSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(@"
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                    }
+                    if (!txtSeq.checkSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and a.seq2 = '{0}'", txtSeq.seq2));
+                    }
 
                     if (chkbalance) 
-                        sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+                        sqlcmd.Append(@" 
+        And a.inqty- a.outqty + a.adjustqty > 0");
 
                     if (!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" and orders.FactoryID = '{0}'", factory));
+                        sqlcmd.Append(string.Format(@" 
+        and orders.FactoryID = '{0}'", factory));
 
                     switch (selectindex)
                     {
                         case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
+                            sqlcmd.Append(@" 
+        And (a.stocktype = 'B' or a.stocktype = 'I')");
                             break;
                         case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'B'");
                             break;
                         case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'I'");
                             break;
                     }
                 }
@@ -175,29 +187,44 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-where 1=1 And b.mtllocationid = '{0}' ", location1));
+where   1=1 
+        And b.mtllocationid = '{0}' ", location1));
                     if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
+                        sqlcmd.Append(string.Format(@" 
+        And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
-                        sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
+                    if (!txtSeq.checkSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(@"
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                    }
+                    if (!txtSeq.checkSeq2Empty())
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and a.seq2 = '{0}'", txtSeq.seq2));
+                    }
 
                     if (chkbalance) 
-                        sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+                        sqlcmd.Append(@" 
+        And a.inqty- a.outqty + a.adjustqty > 0");
 
                     if(!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" and orders.FactoryID = '{0}'", factory));
+                        sqlcmd.Append(string.Format(@" 
+        and orders.FactoryID = '{0}'", factory));
 
                     switch (selectindex)
                     {
                         case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
+                            sqlcmd.Append(@" 
+        And (a.stocktype = 'B' or a.stocktype = 'I')");
                             break;
                         case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'B'");
                             break;
                         case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'I'");
                             break;
                     }
                 }
@@ -235,35 +262,49 @@ from dbo.FtyInventory a WITH (NOLOCK)
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
-where 1=1"));
+where   1=1"));
 
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
-                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
+                        sqlcmd.Append(string.Format(@" 
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
-                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
+                        sqlcmd.Append(string.Format(@" 
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
 
                     if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
+                        sqlcmd.Append(string.Format(@" 
+        And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
-                        sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
+                    if (!txtSeq.checkSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(@"
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                    }
+                    if (!txtSeq.checkSeq2Empty()) 
+                        sqlcmd.Append(string.Format(@" 
+        and a.seq2 = '{0}'", txtSeq.seq2));
 
                     if (chkbalance) 
-                        sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+                        sqlcmd.Append(@" 
+        And a.inqty- a.outqty + a.adjustqty > 0");
 
                     if (!MyUtility.Check.Empty(factory))
-                        sqlcmd.Append(string.Format(@" and orders.FactoryID = '{0}'", factory));
+                        sqlcmd.Append(string.Format(@" 
+        and orders.FactoryID = '{0}'", factory));
 
                     switch (selectindex)
                     {
                         case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
+                            sqlcmd.Append(@" 
+        And (a.stocktype = 'B' or a.stocktype = 'I')");
                             break;
                         case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'B'");
                             break;
                         case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
+                            sqlcmd.Append(@" 
+        And a.stocktype = 'I'");
                             break;
                     }
                 }
@@ -298,19 +339,28 @@ from dbo.FtyInventory a WITH (NOLOCK)
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
-where 1=1
-And b.mtllocationid = '{0}' ", location1));
+where   1=1
+        And b.mtllocationid = '{0}' ", location1));
 
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
-                        sqlcmd.Append(string.Format(" and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
+                        sqlcmd.Append(string.Format(@" 
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(dateSCIDelivery.Value1).ToString("d")));
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value2))
-                        sqlcmd.Append(string.Format(" and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
+                        sqlcmd.Append(string.Format(@" 
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(dateSCIDelivery.Value2).ToString("d")));
 
                     if (!MyUtility.Check.Empty(spno)) 
-                        sqlcmd.Append(string.Format(@" And a.Poid like '{0}%'", spno));
+                        sqlcmd.Append(string.Format(@" 
+        And a.Poid like '{0}%'", spno));
 
-                    if (!txtSeq.checkEmpty(showErrMsg: false)) 
-                        sqlcmd.Append(string.Format(@" And a.seq1 ='{0}' and a.seq2 = '{1}'", seq1, seq2));
+                    if (!txtSeq.checkSeq1Empty())
+                    {
+                        sqlcmd.Append(string.Format(@"
+        and a.seq1 = '{0}'", txtSeq.seq1));
+                    }
+                    if (!txtSeq.checkSeq2Empty()) 
+                        sqlcmd.Append(string.Format(@" 
+        and a.seq2 = '{0}'", txtSeq.seq2));
 
                     if (chkbalance) 
                         sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
