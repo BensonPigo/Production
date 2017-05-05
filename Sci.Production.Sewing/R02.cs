@@ -673,7 +673,11 @@ where f.Junk = 0", date1.Value.Year, date1.Value.Month));
             decimal c = MyUtility.Convert.GetDecimal(printData.Compute("sum(TotalCPU)", "")) / MyUtility.Convert.GetDecimal(printData.Compute("sum(ManHour)", ""));
             worksheet.Cells[insertRow, 1] = "VPH";
 
-            worksheet.Cells[insertRow, 3] = ttlm * c / printData.Rows.Count / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]);
+            //[VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
+            c = System.Math.Round(c, 2, MidpointRounding.AwayFromZero);
+            decimal tempA = System.Math.Round(ttlm * c / printData.Rows.Count, 2, MidpointRounding.AwayFromZero);
+            worksheet.Cells[insertRow, 3] = System.Math.Round(tempA / MyUtility.Convert.GetDecimal(vphData.Rows[0]["SumA"]), 2, MidpointRounding.AwayFromZero);
+
             worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
             worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(vphData.Rows[0]["SumA"]);
             worksheet.Cells[insertRow, 9] = "/Total work day:";
