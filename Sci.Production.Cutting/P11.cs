@@ -1118,8 +1118,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             int idofnum = ArticleSizeTb.Select("Sel=1").Length; //會產生表頭數
             int bundleofnum = 0;
             int autono = 0, qtycount = 0, patterncount = 0;
-            if (radioWithcuto.Value == "1") autono = 0; //自動根據之前的往下排
-            if (radiobegin1.Value == "1") autono = 1;//從1開始
+            //if (radioWithcuto.Checked) autono = 0; //自動根據之前的往下排
+            if (radiobegin1.Checked) autono = 1;//從1開始
 
             #region 計算Bundle數 並填入Ratio,Startno
             DataTable spStartnoTb = new DataTable(); //for Startno,分SP給
