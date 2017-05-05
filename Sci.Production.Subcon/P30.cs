@@ -402,7 +402,7 @@ namespace Sci.Production.Subcon
             {
                 if (this.EditMode && e.FormattedValue != null)
                 {
-                    //CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
+                    CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
                     CurrentDetailData["qty"] = e.FormattedValue;
                     
                 }
