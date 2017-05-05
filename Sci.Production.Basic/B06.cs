@@ -64,13 +64,21 @@ namespace Sci.Production.Basic
             string textValue = this.txtYear.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtYear.OldValue)
             {
-                if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
+                int n;
+                if (!int.TryParse(txtYear.Text, out n))
                 {
                     MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                     this.txtYear.Text = "";
                     e.Cancel = true;
                     return;
                 }
+                if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
+                    {
+                        MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
+                        this.txtYear.Text = "";
+                        e.Cancel = true;
+                        return;
+                    }
             }
         }
 
@@ -80,6 +88,14 @@ namespace Sci.Production.Basic
             string textValue = this.txtMonthly.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtMonthly.OldValue)
             {
+                int n;
+                if (!int.TryParse(txtMonthly.Text, out n))
+                {
+                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
+                    this.txtMonthly.Text = "";
+                    e.Cancel = true;
+                    return;
+                }
                 if (!(1 <= int.Parse(textValue) && int.Parse(textValue) <= 12))
                 {
                     MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
@@ -150,5 +166,17 @@ namespace Sci.Production.Basic
                 return;
             }
         }
+
+        private void txtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlCmd = "select distinct FactoryID from Manpower WITH (NOLOCK) ";
+
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", txtFactory.Text, "Factory");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel) { return; }
+            txtFactory.Text = item.GetSelectedString();
+        }
+
+
     }
 }

@@ -690,6 +690,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(55, 23);
             this.txtFactory.TabIndex = 47;
+            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFactory_PopUp);
             this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFactory_Validating);
             // 
             // B06
