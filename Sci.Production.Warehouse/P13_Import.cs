@@ -34,9 +34,6 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
-            string seq1 = txtSeq1.seq1;
-            string seq2 = txtSeq1.seq2;
-            string seq = seq1 + " " + seq2;
 
             if (string.IsNullOrWhiteSpace(sp))
             {
@@ -73,10 +70,16 @@ inner join dbo.Factory on orders.FactoryID = factory.ID
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
     and factory.MDivisionID = '{1}'
 ", sp, Sci.Env.User.Keyword)); // 
-                if (!MyUtility.Check.Empty(seq))
+                if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())
                 {
-                    strSQLCmd.Append(string.Format(@" and a.seq1 = '{0}' and a.seq2='{1}'", seq1, seq2));
+                    strSQLCmd.Append(string.Format(@" 
+    and a.seq1 = '{0}' ", txtSeq1.seq1));
+                }else if (!txtSeq1.checkEmpty(showErrMsg: false))
+                {
+                    strSQLCmd.Append(string.Format(@" 
+    and a.seq1 = '{0}' and a.seq2='{1}'", txtSeq1.seq1, txtSeq1.seq2));
                 }
+
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
