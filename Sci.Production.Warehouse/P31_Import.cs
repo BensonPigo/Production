@@ -46,10 +46,38 @@ namespace Sci.Production.Warehouse
 
             else
             {
+                #region Get SizeSpec, Refno, Color, Desc
+                DataTable dt;
+                string strSQL = string.Format(@"
+select  po.SizeSpec
+        , po.Refno
+        , po.ColorID
+        , f.Description
+from PO_Supp_Detail po
+left join Fabric f on po.SCIRefno = f.SCIRefno
+where   po.id = '{0}' 
+        and po.seq1 = '{1}' 
+        and po.seq2='{2}'", sp, txtSeq.seq1, txtSeq.seq2);
+
+                DBProxy.Current.Select(null, strSQL, out dt);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    displaySizeSpec.Text = dt.Rows[0]["SizeSpec"].ToString();
+                    displayRefno.Text = dt.Rows[0]["Refno"].ToString();
+                    displayColorID.Text = dt.Rows[0]["ColorID"].ToString();
+                    editDesc.Text = dt.Rows[0]["Description"].ToString();
+                }
+                else
+                {
+                    displaySizeSpec.Text = "";
+                    displayRefno.Text = "";
+                    displayColorID.Text = "";
+                    editDesc.Text = "";
+                }
+                #endregion
                 // 建立可以符合回傳的Cursor
 
                 strSQLCmd.Append(string.Format(@"
-
 select  selected = 0
         ,id = '' 
         ,FromRoll = c.Roll 
