@@ -44,7 +44,7 @@ namespace Sci.Production.Packing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
+            Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();            
             comboBox1_RowSource.Add("1", "SOLID COLOR/SIZE");
             comboBox1_RowSource.Add("2", "SOLID COLOR/ASSORTED SIZE");
             comboBox1_RowSource.Add("3", "ASSORTED COLOR/SOLID SIZE");
@@ -798,7 +798,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                     displayStyle.Value = orderData["StyleID"].ToString();
                     displaySeason.Value = orderData["SeasonID"].ToString();
                     displayPONo.Value = orderData["CustPONo"].ToString();
-                    numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);
+                    numOrderQty.Value = MyUtility.Convert.GetInt(orderData["Qty"]);                  
                     comboPackingMethod.SelectedValue = orderData["CtnType"].ToString();
                     CurrentMaintain["SpecialInstruction"] = orderData["Packing"].ToString();
                     CurrentMaintain["FactoryID"] = orderData["FtyGroup"].ToString();
@@ -858,7 +858,25 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (!MyUtility.Check.Empty(orderID) && !MyUtility.Check.Empty(seq))
             {
                 string sqlCmd;
-                if (comboPackingMethod.SelectedValue.ToString() == "2")
+                if (comboPackingMethod.SelectedValue==null||string.IsNullOrEmpty(comboPackingMethod.SelectedValue.ToString()))
+                {
+                    sqlCmd = string.Format(@"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
+	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
+	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
+	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW 
+from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
+left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
+left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw.Article = oqd.Article and sw.SizeCode = oqd.SizeCode
+left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
+left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
+left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
+where oqd.ID = '{0}' and oqd.Seq = '{1}'
+order by oa.Seq,os.Seq", orderID, seq);
+                }
+               
+               else if ( comboPackingMethod.SelectedValue.ToString() == "2")
                 {
                     sqlCmd = string.Format("select * from Order_QtyCTN WITH (NOLOCK) where Id = '{0}'", orderID);
                     if (!MyUtility.Check.Seek(sqlCmd))
