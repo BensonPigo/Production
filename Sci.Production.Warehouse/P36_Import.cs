@@ -76,8 +76,10 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join dbo.Orders on c.Poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
-Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O' 
-    and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+Where   c.lock = 0 
+        and c.InQty-c.OutQty+c.AdjustQty > 0 
+        and c.stocktype = 'O' 
+        and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -93,18 +95,25 @@ Where c.lock = 0 and c.InQty-c.OutQty+c.AdjustQty > 0 and c.stocktype = 'O'
 
                 if (!MyUtility.Check.Empty(sp))
                 {
-                    strSQLCmd.Append(@" and a.id = @sp1 ");
+                    strSQLCmd.Append(@" 
+        and a.id = @sp1 ");
                     sp1.Value = sp;
                     cmds.Add(sp1);
                 }
 
-                if (!txtSeq.checkEmpty(showErrMsg: false))
+                seq1.Value = txtSeq.seq1;
+                seq2.Value = txtSeq.seq2;
+                cmds.Add(seq1);
+                cmds.Add(seq2);
+                if (!txtSeq.checkSeq1Empty())
                 {
-                    strSQLCmd.Append(@" and a.seq1 = @seq1 and a.seq2 = @seq2");
-                    seq1.Value = txtSeq.seq1;
-                    seq2.Value = txtSeq.seq2;
-                    cmds.Add(seq1);
-                    cmds.Add(seq2);
+                    strSQLCmd.Append(@"
+        and a.seq1 = @seq1");
+                }
+                if (!txtSeq.checkSeq2Empty())
+                {
+                    strSQLCmd.Append(@" 
+        and a.seq2 = @seq2");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
