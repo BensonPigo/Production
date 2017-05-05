@@ -103,29 +103,45 @@ namespace Sci.Production.Warehouse
             }
 
             strSQLCmd.Append(string.Format(@"
-select 0 as [selected], fi.POID,fi.seq1,fi.seq2,fi.Roll,fi.Dyelot,iif(fi.Lock=0,'Unlocked','Locked') [status]
-,fi.InQty,fi.OutQty,fi.AdjustQty,fi.InQty-fi.OutQty+fi.AdjustQty as balanceqty
-,case fi.stocktype when 'B' then'Bulk' when 'I' then 'Inventory' else fi.StockType end as stocktype
-,fi.LockDate
-,(select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) LockName
-,fi.ukey
-,dbo.Getlocation(fi.ukey) as [location]
-,dbo.getMtlDesc(fi.poid,fi.seq1,fi.seq2,2,0) as [Description]
-,pd.ColorID
-,o.styleid
-,o.BrandID
-,o.FactoryID
-,x.*
+select  0 as [selected]
+        , fi.POID
+        , fi.seq1
+        , fi.seq2
+        , fi.Roll
+        , fi.Dyelot
+        , iif(fi.Lock=0,'Unlocked','Locked') [status]
+        , fi.InQty
+        , fi.OutQty
+        , fi.AdjustQty
+        , fi.InQty-fi.OutQty+fi.AdjustQty as balanceqty
+        , stocktype =  case fi.stocktype 
+                        when 'B' then'Bulk' 
+                        when 'I' then 'Inventory' 
+                        else fi.StockType 
+                       end 
+        , fi.LockDate
+        , LockName = (select id+'-'+name from dbo.pass1 WITH (NOLOCK) where id=fi.LockName) 
+        , fi.ukey
+        , [location] = dbo.Getlocation(fi.ukey)
+        , [Description] = dbo.getMtlDesc(fi.poid,fi.seq1,fi.seq2,2,0)
+        , pd.ColorID
+        , o.styleid
+        , o.BrandID
+        , o.FactoryID
+        , x.*
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
 left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
 cross apply
 (
-	select min(o1.BuyerDelivery) earliest_BuyerDelivery ,min(o1.SciDelivery) earliest_SciDelivery 
-	from dbo.orders o1 WITH (NOLOCK) where o1.POID = fi.POID and o1.Junk = 0
+	select  earliest_BuyerDelivery = min(o1.BuyerDelivery)  
+            , earliest_SciDelivery = min(o1.SciDelivery)  
+	from dbo.orders o1 WITH (NOLOCK) 
+    where o1.POID = fi.POID and o1.Junk = 0
 ) x
-where f.MDivisionID = '{0}' and fi.POID like @poid1 
+where   f.MDivisionID = '{0}' 
+        and fi.POID like @poid1 
 ", Sci.Env.User.Keyword));
 
             System.Data.SqlClient.SqlParameter sp1_1 = new System.Data.SqlClient.SqlParameter();
@@ -140,28 +156,40 @@ where f.MDivisionID = '{0}' and fi.POID like @poid1
                 case 0:
                     break;
                 case 1:
-                    strSQLCmd.Append(@" and lock=1");
+                    strSQLCmd.Append(@" 
+        and lock=1");
                     break;
                 case 2:
-                    strSQLCmd.Append(@" and lock=0");
+                    strSQLCmd.Append(@" 
+        and lock=0");
                     break;
             }
 
             switch (comboStockType.SelectedIndex)
             {
                 case 0:
-                    strSQLCmd.Append(@" and (stocktype='B' or stocktype ='I')");
+                    strSQLCmd.Append(@" 
+        and (stocktype='B' or stocktype ='I')");
                     break;
                 case 1:
-                    strSQLCmd.Append(@" and stocktype='B'");
+                    strSQLCmd.Append(@" 
+        and stocktype='B'");
                     break;
                 case 2:
-                    strSQLCmd.Append(@" and stocktype='I'");
+                    strSQLCmd.Append(@" 
+        and stocktype='I'");
                     break;
             }
-            if (!txtSeq.checkEmpty(false))
+
+            if (!txtSeq.checkSeq1Empty())
             {
-                strSQLCmd.Append(string.Format(@" and fi.seq1='{0}' and fi.seq2='{1}'", txtSeq.seq1, txtSeq.seq2));
+                strSQLCmd.Append(string.Format(@"
+        and fi.seq1 = '{0}'", txtSeq.seq1));
+            }
+            if (!txtSeq.checkSeq2Empty())
+            {
+                strSQLCmd.Append(string.Format(@" 
+        and fi.seq2 = '{0}'", txtSeq.seq2));
             }
             
 
