@@ -156,7 +156,7 @@ order by a.OrderId,os.Seq"
                             dr["Color"] = "";
                             dr["QAOutput"] = "";
                             dr["TMS"] = 0;
-                            dr["RFT"] = 0;
+                            dr["RFT"] = "0.00%";
                             dr.EndEdit();
                             return;
                         }
@@ -507,7 +507,7 @@ and Team = @team";
             }
             else
             {
-                dr["RFT"] = 0;
+                dr["RFT"] = "0.00%";
             }
         }
 
