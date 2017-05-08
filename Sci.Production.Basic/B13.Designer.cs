@@ -49,6 +49,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(828, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkIsTrimCardOther);
@@ -64,7 +68,12 @@
             this.detailcont.Controls.Add(this.labelProduction);
             this.detailcont.Controls.Add(this.labelArtwork);
             this.detailcont.Controls.Add(this.labelMaterialType);
+            this.detailcont.Size = new System.Drawing.Size(828, 357);
             this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
