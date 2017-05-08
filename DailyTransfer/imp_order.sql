@@ -114,7 +114,8 @@ BEGIN
 		Using (	select a.* 
 				from Trade_To_Pms.dbo.Orders a
 				left join #tmpOrders b on a.ID = b.ID
-				where b.id is null) as s
+				where b.id is null
+					  and a.FactoryID in (select ID from Production.dbo.Factory)) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then
 			update set 
@@ -137,7 +138,8 @@ BEGIN
 		Using (	select a.*
 				from #tmpOrders a
 				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID
-				where b.id is null) as s
+				where b.id is null
+					  and b.FactoryID in (select ID from Production.dbo.Factory)) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then
 			update set
@@ -161,7 +163,9 @@ BEGIN
 		Using (	select	a.*
 						, Transfer2Factroy = b.FactoryID
 				from #tmpOrders a
-				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and a.FactoryID != b.FactoryID) as s
+				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID 
+					 and a.FactoryID != b.FactoryID
+					 and b.FactoryID in (select ID from Production.dbo.Factory)) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then 
 			update set
@@ -184,7 +188,9 @@ BEGIN
 	    Merge Production.dbo.OrderComparisonList as t
 		Using (	select b.*
 				from #tmpOrders a
-				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and a.FactoryID != b.FactoryID) as s
+				join Trade_To_Pms.dbo.Orders b on a.ID = b.ID 
+					 and a.FactoryID != b.FactoryID
+					 and b.FactoryID in (select ID from Production.dbo.Factory)) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then 
 			update set
@@ -209,8 +215,8 @@ BEGIN
 		Using (select	ID					= A.ID
 						, FactoryID			= A.FactoryID
 						, MDivisionID		= A.MDivisionID
-						, O_Qty				= iif(a.qty != b.qty, a.qty, null)
-						, N_Qty				= iif(a.qty != b.qty, b.qty, null)
+						, O_Qty				= iif(a.qty != b.qty, a.qty, 0)
+						, N_Qty				= iif(a.qty != b.qty, b.qty, 0)
 						, O_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, A.BuyerDelivery, null)
 						, N_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, b.BuyerDelivery, null)
 						, O_SciDelivery		= iif(a.SciDelivery != b.SciDelivery, A.SciDelivery, null)
@@ -225,14 +231,14 @@ BEGIN
 						, N_SMnorderApv		= iif(a.SMnorderApv != b.SMnorderApv, b.SMnorderApv, null)
 						, O_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, A.MnorderApv2, null)
 						, N_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, b.MnorderApv2, null)
-						, O_Junk			= iif(a.Junk != b.Junk, A.Junk, null)
-						, N_Junk			= iif(a.Junk != b.Junk, b.Junk, null)
+						, O_Junk			= iif(a.Junk != b.Junk, A.Junk, 0)
+						, N_Junk			= iif(a.Junk != b.Junk, b.Junk, 0)
 						, O_KPILETA			= iif(a.KPILETA != b.KPILETA, A.KPILETA, null)
 						, N_KPILETA			= iif(a.KPILETA != b.KPILETA, b.KPILETA, null)
 						, O_LETA			= IIF( A.LETA != B.LETA, A.LETA, null)
 						, N_LETA			= IIF( A.LETA != B.LETA, b.LETA, null)
-						, O_Style			= IIF(a.StyleID != b.StyleID , a.StyleID, null)
-						, N_Style			= IIF(a.StyleID != b.StyleID , b.StyleID, null)
+						, O_Style			= IIF(a.StyleID != b.StyleID , a.StyleID, '')
+						, N_Style			= IIF(a.StyleID != b.StyleID , b.StyleID, '')
 				from #tmpOrders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
 				where	A.QTY != B.QTY 
@@ -246,7 +252,8 @@ BEGIN
 						OR A.MnorderApv2 != B.MnorderApv2 
 						OR A.Junk != B.Junk 
 						OR A.KPILETA != B.KPILETA
-						OR A.LETA != B.LETA	) s
+						OR A.LETA != B.LETA	
+						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
 		when matched then 
 			update set
