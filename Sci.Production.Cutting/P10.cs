@@ -25,12 +25,12 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            if (history == "0") 
+            if (history == "0")
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
-            else 
+            else
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
         }
-        
+
         protected override bool OnGridSetup()
         {
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -64,7 +64,7 @@ outer apply
 ) as s
 where a.id = '{0}' 
 order by bundlegroup"
-                , masterID);            
+                , masterID);
             this.DetailSelectCommand = cmdsql;
             #endregion
 
@@ -198,7 +198,7 @@ order by bundlegroup"
                 }
             }
         }
-        
+
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -484,39 +484,39 @@ order by bundlegroup"
 
             string newvalue = txtCutRef.Text;
             if (txtCutRef.OldValue.ToString() == newvalue) return;
-            string cmd = string.Format(
-            @"Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
+            string cmd = string.Format(@"
+Select a.*,substring(b.Sewline,1,charindex(',',b.Sewline,1)) as Sewline ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
+(
+    Select Top(1) OrderID
+    From Workorder_Distribute WD WITH (NOLOCK) 
+    Where a.ukey =WD.workorderukey --and a.orderid=WD.orderid
+) as Workorder_Distribute_OrderID,
 
-            (
-               Select Top(1) OrderID
-                From Workorder_Distribute WD WITH (NOLOCK) 
-                Where a.ukey =WD.workorderukey --and a.orderid=WD.orderid
-            ) as Workorder_Distribute_OrderID,
-
-             (
-                Select d.SizeCode+'/' 
-                From Workorder_SizeRatio d WITH (NOLOCK) 
-                Where a.ukey =d.workorderukey
-                For XML path('')
-            ) as SizeCode,
-             (
-                Select convert(varchar,Qty)+'/' 
-                From Workorder_SizeRatio e WITH (NOLOCK) 
-                Where a.ukey =e.workorderukey
-                For XML path('')
-            ) as Ratio,
-            (
-                Select Top(1) Article
-                From Workorder_Distribute f WITH (NOLOCK) 
-                Where a.ukey =f.workorderukey --and a.orderid=f.orderid
-            ) as article,
-            (
-                Select count(id)
-                From Workorder_Distribute g WITH (NOLOCK) 
-                Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
-            ) as Qty
-            From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
-            Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id", txtCutRef.Text, keyword);
+    (
+    Select d.SizeCode+'/' 
+    From Workorder_SizeRatio d WITH (NOLOCK) 
+    Where a.ukey =d.workorderukey
+    For XML path('')
+) as SizeCode,
+    (
+    Select convert(varchar,Qty)+'/' 
+    From Workorder_SizeRatio e WITH (NOLOCK) 
+    Where a.ukey =e.workorderukey
+    For XML path('')
+) as Ratio,
+(
+    Select Top(1) Article
+    From Workorder_Distribute f WITH (NOLOCK) 
+    Where a.ukey =f.workorderukey --and a.orderid=f.orderid
+) as article,
+(
+    Select count(id)
+    From Workorder_Distribute g WITH (NOLOCK) 
+    Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
+) as Qty
+From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
+Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
+                , txtCutRef.Text, keyword);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
@@ -568,16 +568,16 @@ order by bundlegroup"
             Sci.Win.Tools.SelectItem item;
             string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp", CurrentMaintain["POID"].ToString(), "Orders", "ID");
             //string selectCommand = string.Format("select b.orderid from workorder a, workorder_distribute b where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey and a.id = b.id and b.id = '{1}'", CurrentMaintain["Cutref"], cuttingid);
-            string selectCommand = string.Format(@"select distinct b.orderid 
-                                                from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
-                                                where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
+            string selectCommand = string.Format(@"
+select distinct b.orderid 
+from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
+where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                                                 , CurrentMaintain["Cutref"], cuttingid);
             item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             txtSPNo.Text = item.GetSelectedString();
         }
-
         private void txtSPNo_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
@@ -680,11 +680,11 @@ order by bundlegroup"
         public int startNo_Function(string orderid) //Start No 計算
         {
             #region startno
-            string max_cmd = string.Format("Select isnull(Max(startno+Qty),0) as Start from Bundle  WITH (NOLOCK) Where OrderID = '{0}'", orderid);
+            string max_cmd = string.Format("Select Max(startno+Qty) as Start from Bundle  WITH (NOLOCK) Where OrderID = '{0}'", orderid);
             DataTable max_st;
             if (DBProxy.Current.Select(null, max_cmd, out max_st))
             {
-                if (max_st.Rows.Count != 0) return Convert.ToInt16(max_st.Rows[0]["Start"]);
+                if (max_st.Rows[0][0] != DBNull.Value) return Convert.ToInt16(max_st.Rows[0]["Start"]);
                 else return 1;
             }
             else
@@ -694,6 +694,7 @@ order by bundlegroup"
             #endregion
 
         }
+
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
@@ -738,7 +739,7 @@ order by bundlegroup"
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(CurrentMaintain["article"])||MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
+            if (MyUtility.Check.Empty(CurrentMaintain["article"]) || MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
             {
                 ShowErr("Fabric Combo and Article can't empty!");
                 return;
@@ -748,14 +749,14 @@ order by bundlegroup"
             DataTable bdwtb;
             MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
             var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
-            
+
             frm.ShowDialog(this);
 
             //DataTable dt = (DataTable)detailgridbs.DataSource;
             //detailgrid.ValidateControl();
             //var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb);
             //frm.ShowDialog(this);
-            // queryTable();
+            //queryTable();
         }
         protected override bool ClickPrint()
         {
@@ -774,10 +775,10 @@ order by bundlegroup"
             string selectCommand, sqlwhere = "";
             Sci.Win.Tools.SelectItem item;
             if (!EditMode) return;
-           
+
             if (!MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
             {
-                 sqlwhere = string.Format(" and = '{0}'",CurrentMaintain["PatternPanel"].ToString());
+                sqlwhere = string.Format(" and w.FabricCombo = '{0}'", txtFabricCombo.Text);
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
@@ -823,8 +824,11 @@ where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
             DataTable dtTEMP;
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
-                sql = string.Format(@"select Article from Workorder_Distribute WITH (NOLOCK) 
-                                                where Article!='' and WorkorderUkey={0} and Article='{1}'", WorkOrder_Ukey, newvalue);
+                sql = string.Format(@"
+select Article 
+from Workorder_Distribute WITH (NOLOCK) 
+where Article!='' and WorkorderUkey={0} and Article='{1}'"
+                    , WorkOrder_Ukey, newvalue);
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
                     if (dtTEMP.Rows.Count == 0)
