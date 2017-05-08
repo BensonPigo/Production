@@ -5,13 +5,13 @@ AS
 BEGIN
 
 	--抓取ID為POID
-	select @OrderID=POID FROM dbo.Orders WITH (NOLOCK) where ID = @OrderID
+	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
 	
 	SELECT
 	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID
-	,REPORTNAME = (SELECT top 1 Title FROM dbo.Company WITH (NOLOCK) where Junk = 0 and IsDefault = 1 order by ID desc)
-	FROM dbo.Orders WITH (NOLOCK)
-	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Production.dbo.Orders WITH (NOLOCK) WHERE POID = @OrderID  order by ID FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'') as spno) d
+	,REPORTNAME = (SELECT top 1 Title FROM dbo.Company where Junk = 0 and IsDefault = 1 order by ID desc)
+	FROM dbo.Orders
+	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Orders WHERE POID = @OrderID  order by ID FOR XML PATH('')),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
@@ -22,11 +22,11 @@ BEGIN
 	,MarkerName,SizeCode,MarkerLength,a.ActCuttingPerimeter
 	,Seq,a.REMARK,Qty
 	into #tmp
-	From dbo.Order_MarkerList a WITH (NOLOCK)
-	inner join dbo.Order_MarkerList_SizeQty b WITH (NOLOCK) on a.Id = b.Id and a.Ukey = b.Order_MarkerListUkey	
-	inner join dbo.Order_BOF d WITH (NOLOCK) on a.Id = d.Id and a.FabricCode = d.FabricCode
-	inner join dbo.Fabric e WITH (NOLOCK) on d.SCIRefno = e.SCIRefno
-	where a.id in (select CuttingSP from dbo.Orders WITH (NOLOCK) where Id = @OrderID)
+	From dbo.Order_MarkerList a
+	inner join dbo.Order_MarkerList_SizeQty b on a.Id = b.Id and a.Ukey = b.Order_MarkerListUkey	
+	inner join dbo.Order_BOF d on a.Id = d.Id and a.FabricCode = d.FabricCode
+	inner join dbo.Fabric e on d.SCIRefno = e.SCIRefno
+	where a.id in (select CuttingSP from dbo.Orders where Id = @OrderID)
 	order by Seq
 
 
@@ -44,8 +44,8 @@ BEGIN
 
 			declare @colStr nvarchar(max) = '' ; declare @colStr3 nvarchar(max) = ''
 
-			select @colStr=STUFF((SELECT ',['+SizeCode+']' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
-			select @colStr3= 'where ' + STUFF((SELECT ' ['+SizeCode+'] is not null or' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH(''), TYPE ).value('.', 'NVARCHAR(MAX)'),1,1,'')
+			select @colStr=STUFF((SELECT ',['+SizeCode+']' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH('')),1,1,'')
+			select @colStr3= 'where ' + STUFF((SELECT ' ['+SizeCode+'] is not null or' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH('')),1,1,'')
 			select @colStr3 = substring(@colStr3,1,len(@colStr3)-3)
 
 			declare @sql varchar(max) = 'SELECT SizeGroup='''+@SizeGroup+''',COMB,COMBdes,MarkerName,REMARK,'+@colStr+',MarkerLength as ''MAKER LEN.+1"'',ActCuttingPerimeter AS ''Cut Perimeter'' FROM (
