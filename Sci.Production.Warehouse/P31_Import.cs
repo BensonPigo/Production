@@ -37,7 +37,8 @@ namespace Sci.Production.Warehouse
             String sp = this.txtToSP.Text.TrimEnd();
             String fromSP = this.txtBorrowFromSP.Text.TrimEnd();
 
-            if (string.IsNullOrWhiteSpace(sp) || txtSeq.checkEmpty(showErrMsg: false) || string.IsNullOrWhiteSpace(fromSP))
+            if (string.IsNullOrWhiteSpace(sp) || txtSeq.checkSeq1Empty() 
+                || txtSeq.checkSeq2Empty() || string.IsNullOrWhiteSpace(fromSP))
             {
                 MyUtility.Msg.WarningBox("< To SP# Seq> <From SP#> can't be empty!!");
                 txtToSP.Focus();
