@@ -692,11 +692,11 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                 return 1;
             }
             #endregion
-
         }
 
         protected override void ClickCopyAfter()
         {
+            int oldstartno = MyUtility.Convert.GetInt(CurrentMaintain["startno"]);
             base.ClickCopyAfter();
             CurrentMaintain["ID"] = "";
             CurrentMaintain["Cdate"] = DateTime.Now;
@@ -707,7 +707,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             {
                 dr["Bundleno"] = "";
                 dr["ID"] = "";
-                dr["BundleGroup"] = 0;
+                dr["BundleGroup"] = MyUtility.Convert.GetInt(dr["BundleGroup"]) + startno - oldstartno;
             }
             foreach (DataRow dr in bundle_Detail_allpart_Tb.Rows)
             {
