@@ -857,8 +857,8 @@ where not exists(select id from Production.dbo.SHIPTerm as a WITH (NOLOCK) where
 UPDATE a
 SET  
       -- a.ID	    =b.ID	
-      a.MDivisionID	      =b.MDivisionID	
-      ,a.Junk	      =b.Junk	
+      -- a.MDivisionID	      =b.MDivisionID	
+      a.Junk	      =b.Junk	
       ,a.Abb	      =b.Abb	
       ,a.NameCH	      =b.NameCH	
       ,a.NameEN	      =b.NameEN	
