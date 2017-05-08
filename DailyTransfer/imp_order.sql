@@ -294,8 +294,8 @@ BEGIN
 		Using Production.dbo.Factory as s
 		on t.factoryid=s.id and UpdateDate =@dToDay
 		when not matched by Target then 
-			insert(OrderId,    UpdateDate,  TransferDate,FactoryID)
-			values('No Change!',@dToDay,    @OldDate,    s.ID);
+			insert(OrderId,    UpdateDate,  TransferDate, MDivisionID  , FactoryID)
+			values('No Change!',@dToDay,    @OldDate,     s.MDivisionID, s.ID);
 -----------------------------------------------------------------------------------------------------------
 ---------------------Order--------------------------------------
 		--------------Order.id= AOrder.id  if eof()
