@@ -42,7 +42,7 @@ namespace Sci.Production.Shipping
                 if (MyUtility.Convert.GetString(CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
                 {
                     txtCustomdeclareno.ReadOnly = false;
-                    dateBox1.ReadOnly = true;
+                    dateDate.ReadOnly = true;
                     txtContractNo.ReadOnly = true;
                     txtBLNO.ReadOnly = true;
                     txtWKNo.ReadOnly = true;
@@ -56,7 +56,7 @@ namespace Sci.Production.Shipping
                 else
                 {
                     txtCustomdeclareno.ReadOnly = true;
-                    dateBox1.ReadOnly = false;
+                    dateDate.ReadOnly = false;
                     txtContractNo.ReadOnly = false;
                     txtshipmodeShipby.ReadOnly = false;
                     txtcountryCountryfrom.TextBox1.ReadOnly = false;
@@ -197,7 +197,7 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
                 MyUtility.Msg.WarningBox("Date can't empty!!");
-                dateBox1.Focus();
+                dateDate.Focus();
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))

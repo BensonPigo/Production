@@ -62,7 +62,7 @@
             this.masterpanel.Controls.Add(this.labelContractNo);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(913, 103);
+            this.masterpanel.Size = new System.Drawing.Size(892, 103);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
@@ -77,7 +77,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 103);
-            this.detailpanel.Size = new System.Drawing.Size(913, 246);
+            this.detailpanel.Size = new System.Drawing.Size(892, 246);
             // 
             // gridicon
             // 
@@ -90,7 +90,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(913, 246);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 246);
             // 
             // detail2
             // 
@@ -106,16 +106,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(913, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(913, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(913, 38);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -232,8 +232,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(921, 449);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ID";
             this.GridAlias = "VNContractQtyAdjust_Detail";
             this.GridUniqueKey = "NLCode";

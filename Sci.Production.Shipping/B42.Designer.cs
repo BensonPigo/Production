@@ -157,15 +157,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(927, 468);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(921, 422);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(921, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -549,8 +549,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(935, 530);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtCustomSPNo";
+            this.DefaultControlForEdit = "txtCustomSPNo";
             this.DefaultOrder = "VNContractID,CustomSP";
             this.GridAlias = "VNConsumption_Detail";
             this.GridNew = 0;

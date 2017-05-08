@@ -166,7 +166,7 @@
             this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(998, 290);
+            this.masterpanel.Size = new System.Drawing.Size(875, 290);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
@@ -227,7 +227,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 290);
-            this.detailpanel.Size = new System.Drawing.Size(998, 254);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -240,7 +240,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(998, 254);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -256,11 +256,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(998, 670);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(998, 544);
+            this.detailcont.Size = new System.Drawing.Size(892, 261);
             // 
             // detailbtm
             // 
@@ -273,8 +273,8 @@
             this.detailbtm.Controls.Add(this.editDescription);
             this.detailbtm.Controls.Add(this.labelDescription);
             this.detailbtm.Controls.Add(this.datePayDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 544);
-            this.detailbtm.Size = new System.Drawing.Size(998, 126);
+            this.detailbtm.Location = new System.Drawing.Point(0, 261);
+            this.detailbtm.Size = new System.Drawing.Size(892, 126);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -533,7 +533,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(998, 290);
+            this.shapeContainer1.Size = new System.Drawing.Size(875, 290);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1055,8 +1055,8 @@
             // 
             this.ApvChkValue = "Sent";
             this.ClientSize = new System.Drawing.Size(1006, 732);
-            this.DefaultControl = "comboBox1";
-            this.DefaultControlForEdit = "comboBox1";
+            this.DefaultControl = "comboFrom";
+            this.DefaultControlForEdit = "comboFrom";
             this.DefaultDetailOrder = "CTNNo,Seq1";
             this.DefaultOrder = "ShipDate,ID";
             this.GridAlias = "Express_Detail";

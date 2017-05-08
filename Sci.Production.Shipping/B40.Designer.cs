@@ -69,10 +69,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(737, 350);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBrand);
@@ -108,12 +104,12 @@
             this.detailcont.Controls.Add(this.labelDescription2);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelRefNo);
-            this.detailcont.Size = new System.Drawing.Size(737, 350);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 350);
-            this.detailbtm.Size = new System.Drawing.Size(737, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -524,8 +520,8 @@
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(745, 412);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtNLCode";
+            this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "RefNo";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

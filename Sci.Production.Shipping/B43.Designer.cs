@@ -74,7 +74,7 @@
             this.masterpanel.Controls.Add(this.labelStartDate);
             this.masterpanel.Controls.Add(this.dateEndDate);
             this.masterpanel.Controls.Add(this.dateStartDate);
-            this.masterpanel.Size = new System.Drawing.Size(912, 131);
+            this.masterpanel.Size = new System.Drawing.Size(892, 131);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEndDate, 0);
@@ -95,7 +95,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 131);
-            this.detailpanel.Size = new System.Drawing.Size(912, 248);
+            this.detailpanel.Size = new System.Drawing.Size(892, 218);
             // 
             // gridicon
             // 
@@ -107,7 +107,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 248);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 218);
             // 
             // detail2
             // 
@@ -123,16 +123,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 417);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 379);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 379);
-            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -317,8 +317,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(920, 479);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateStartDate";
+            this.DefaultControlForEdit = "dateStartDate";
             this.DefaultDetailOrder = "NLCode";
             this.DefaultOrder = "startDate";
             this.GridAlias = "VNContract_Detail";

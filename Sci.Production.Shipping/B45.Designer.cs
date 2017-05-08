@@ -49,10 +49,6 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(828, 347);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkTissuepaper);
@@ -65,12 +61,6 @@
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelHSCode);
             this.detailcont.Controls.Add(this.labelNLCode);
-            this.detailcont.Size = new System.Drawing.Size(828, 309);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 309);
-            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -233,8 +223,8 @@
             // B45
             // 
             this.ClientSize = new System.Drawing.Size(836, 409);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtNLCode";
+            this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "NLCode";
             this.Name = "B45";
             this.Text = "B45. Fixed Export Declare Data";

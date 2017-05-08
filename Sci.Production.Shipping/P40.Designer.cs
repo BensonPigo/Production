@@ -33,7 +33,7 @@
             this.labelContractNo = new Sci.Win.UI.Label();
             this.labelBLNO = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
+            this.dateDate = new Sci.Win.UI.DateBox();
             this.txtContractNo = new Sci.Win.UI.TextBox();
             this.txtBLNO = new Sci.Win.UI.TextBox();
             this.labelShipby = new Sci.Win.UI.Label();
@@ -79,10 +79,10 @@
             this.masterpanel.Controls.Add(this.labelContractNo);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Controls.Add(this.dateBox1);
+            this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(914, 148);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelContractNo, 0);
@@ -211,13 +211,13 @@
             this.displayID.Size = new System.Drawing.Size(130, 23);
             this.displayID.TabIndex = 11;
             // 
-            // dateBox1
+            // dateDate
             // 
-            this.dateBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
-            this.dateBox1.Location = new System.Drawing.Point(101, 37);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 0;
+            this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
+            this.dateDate.Location = new System.Drawing.Point(101, 37);
+            this.dateDate.Name = "dateDate";
+            this.dateDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDate.TabIndex = 0;
             // 
             // txtContractNo
             // 
@@ -360,8 +360,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(922, 513);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ID";
             this.GridAlias = "VNImportDeclaration_Detail";
             this.GridUniqueKey = "NLCode";
@@ -406,7 +406,7 @@
         private Win.UI.Label labelShipby;
         private Win.UI.TextBox txtBLNO;
         private Win.UI.TextBox txtContractNo;
-        private Win.UI.DateBox dateBox1;
+        private Win.UI.DateBox dateDate;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelBLNO;
         private Win.UI.Label labelContractNo;

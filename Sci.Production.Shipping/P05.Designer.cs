@@ -180,7 +180,7 @@
             this.masterpanel.Controls.Add(this.dateSendtoTPE);
             this.masterpanel.Controls.Add(this.dateFCRDate);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(990, 311);
+            this.masterpanel.Size = new System.Drawing.Size(892, 311);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateSendtoTPE, 0);
@@ -254,7 +254,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 311);
-            this.detailpanel.Size = new System.Drawing.Size(990, 251);
+            this.detailpanel.Size = new System.Drawing.Size(892, 38);
             // 
             // gridicon
             // 
@@ -267,32 +267,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(990, 251);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 38);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(990, 600);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(984, 554);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(984, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(990, 600);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(990, 562);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 562);
-            this.detailbtm.Size = new System.Drawing.Size(990, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -1095,8 +1095,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(998, 662);
-            this.DefaultControl = "txtfactory1";
-            this.DefaultControlForEdit = "txtfactory1";
+            this.DefaultControl = "txtfactoryShipper";
+            this.DefaultControlForEdit = "txtfactoryShipper";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList";
             this.GridNew = 0;
