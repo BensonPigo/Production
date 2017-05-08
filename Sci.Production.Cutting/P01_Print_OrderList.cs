@@ -396,7 +396,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "cutting_P01_MarkerList.xltx");
-                sxrc sxr = new sxrc(xltPath);
+                sxrc sxr = new sxrc(xltPath, true);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
                 for (int sgIdx = 1; sgIdx < dts.Length; sgIdx++)
@@ -411,13 +411,13 @@ namespace Sci.Production.Cutting
                     sxr.dicDatas.Add(sxr._v + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
                     sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"]);
                     sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
                     sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
 
                     #region 補上空白的SizeCode
                     int SizeCodeCnt = dt.Columns.Count - 2 - 3;
-                    int addEmptySizecode = 12 - SizeCodeCnt;
+                    int addEmptySizecode = 8 - SizeCodeCnt;
                     for (int i = 0; i < addEmptySizecode; i++)
                     {
                         dt.Columns.Add(new string(' ', i + 1));
@@ -440,17 +440,16 @@ namespace Sci.Production.Cutting
 
                     //合併儲存格
                     dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
-
+                    sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
                     //凍結窗格
                     dt.boFreezePanes = true;
                     dt.intFreezeColumn = 3;
                     dt.lisColumnInfo.Add(new sxrc.xlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
-                    sxr.dicDatas.Add(sxr._v + "tbl1" + idxStr, dt);
-                    //sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
+                    sxr.dicDatas.Add(sxr._v + "Now", DateTime.Now);
                     sxr.dicDatas.Add(sxr._v + "SizeGroup" + idxStr, SizeGroup);
 
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
-                    wks.Range["B3","B3"].WrapText = 1;
+                    wks.Range["B3", "B3"].WrapText = 1;
                     wks.get_Range("A3").RowHeight = 16.5;
                     wks.get_Range("A4").RowHeight = 16.5;
                     sxrc.ReplaceAction a = exMethod;
@@ -461,7 +460,6 @@ namespace Sci.Production.Cutting
 
                 sxr.boOpenFile = true;
                 sxr.Save();
-                //SaveExcel(sxr, xltPath);
                 #endregion
             }
             if (radioConsumptionCalculateByMarkerListConsPerPC.Checked)
