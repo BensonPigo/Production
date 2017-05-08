@@ -312,7 +312,7 @@ order by ID,Seq", txtSP.Text);
         //Start to Scan
         private void btnStartToScan_Click(object sender, EventArgs e)
         {
-            if (gridDetail.GetTable() != null && gridDetail.GetTable().Rows.Count == 0)
+            if (gridDetail.GetTable() == null || gridDetail.GetTable().Rows.Count == 0)
             {
                 return;
             }
