@@ -247,7 +247,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
-                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Cutref='{0}'", dr["Cutref"]));
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
 
                 foreach (DataRow row in ArticleAry)
                 {
