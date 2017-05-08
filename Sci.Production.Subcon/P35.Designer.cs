@@ -116,7 +116,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 258);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 258);
             this.masterpanel.TabIndex = 1;
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
@@ -159,7 +159,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 258);
-            this.detailpanel.Size = new System.Drawing.Size(892, 91);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 219);
             // 
             // gridicon
             // 
@@ -173,7 +173,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 91);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
             // 
             // detail2
             // 
@@ -189,16 +189,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse

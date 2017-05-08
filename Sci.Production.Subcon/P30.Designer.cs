@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 215);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 215);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(892, 134);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 262);
             // 
             // gridicon
             // 
@@ -154,7 +154,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 134);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 262);
             // 
             // detail2
             // 
@@ -170,16 +170,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse

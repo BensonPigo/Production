@@ -63,6 +63,10 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(900, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.btnApprove);
@@ -87,7 +91,12 @@
             this.detailcont.Controls.Add(this.txtsubconSupplier3);
             this.detailcont.Controls.Add(this.txtsubconSupplier2);
             this.detailcont.Controls.Add(this.txtsubconSupplier1);
+            this.detailcont.Size = new System.Drawing.Size(900, 357);
             this.detailcont.TabIndex = 1;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 

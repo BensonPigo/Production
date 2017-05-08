@@ -97,7 +97,7 @@
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -129,7 +129,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(892, 101);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
             // 
             // gridicon
             // 
@@ -143,7 +143,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 101);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
             // 
             // detail2
             // 
@@ -159,16 +159,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1058, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1058, 477);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse

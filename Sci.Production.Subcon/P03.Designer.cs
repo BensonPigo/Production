@@ -76,7 +76,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.btnImportFromRealTime);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 139);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 139);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromRealTime, 0);
@@ -98,7 +98,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 139);
-            this.detailpanel.Size = new System.Drawing.Size(892, 210);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 490);
             // 
             // gridicon
             // 
@@ -128,16 +128,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1000, 667);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1000, 629);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 629);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -166,7 +166,7 @@
             // 
             this.btnImportFromRealTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportFromRealTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromRealTime.Location = new System.Drawing.Point(784, 46);
+            this.btnImportFromRealTime.Location = new System.Drawing.Point(892, 46);
             this.btnImportFromRealTime.Name = "btnImportFromRealTime";
             this.btnImportFromRealTime.Size = new System.Drawing.Size(100, 50);
             this.btnImportFromRealTime.TabIndex = 5;
