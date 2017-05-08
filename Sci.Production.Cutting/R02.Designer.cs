@@ -239,8 +239,8 @@
             this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateR_CuttingDate";
-            this.DefaultControlForEdit = "dateR_CuttingDate";
+            this.DefaultControl = "dateCuttingDate";
+            this.DefaultControlForEdit = "dateCuttingDate";
             this.Name = "R02";
             this.Text = "R02.Cutting Daily Plan Summary Report";
             this.Controls.SetChildIndex(this.panel1, 0);

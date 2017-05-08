@@ -414,7 +414,7 @@
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtCutRefStart";
             this.Name = "P12";
             this.Text = "P12. Batch Print Bundle Card";
             this.Controls.SetChildIndex(this.panel1, 0);

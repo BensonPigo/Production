@@ -191,7 +191,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5489, 561);
+            this.refresh.Location = new System.Drawing.Point(5545, 561);
             // 
             // detailgridcont
             // 
@@ -200,7 +200,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(743, 911);
             // 
             // detail2
             // 
@@ -1143,7 +1143,7 @@
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(1012, 775);
-            this.DefaultControlForEdit = "numericBox_MarkerLengthY";
+            this.DefaultControlForEdit = "numMarkerLengthY";
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
             this.GridAlias = "WorkOrder";

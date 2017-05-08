@@ -318,7 +318,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(924, 518);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtCutplan";
             this.DefaultOrder = "id";
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;

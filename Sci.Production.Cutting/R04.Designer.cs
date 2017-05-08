@@ -223,8 +223,8 @@
             this.ClientSize = new System.Drawing.Size(533, 242);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "cmb_M";
-            this.DefaultControlForEdit = "cmb_M";
+            this.DefaultControl = "comboM";
+            this.DefaultControlForEdit = "comboM";
             this.Name = "R04";
             this.Text = "R04.Cutting BCS Report";
             this.Controls.SetChildIndex(this.print, 0);

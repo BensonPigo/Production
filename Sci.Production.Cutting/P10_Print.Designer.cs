@@ -98,7 +98,7 @@
             // 
             this.ClientSize = new System.Drawing.Size(484, 162);
             this.Controls.Add(this.radioPanel1);
-            this.DefaultControl = "radioButton1";
+            this.DefaultControl = "radioBundleCard";
             this.Name = "P10_Print";
             this.Text = "P10. Print";
             this.Controls.SetChildIndex(this.radioPanel1, 0);

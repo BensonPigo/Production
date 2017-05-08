@@ -158,8 +158,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(834, 492);
-            this.DefaultControl = "textCellNo";
-            this.DefaultControlForEdit = "textDescription";
+            this.DefaultControl = "txtCellNo";
+            this.DefaultControlForEdit = "txtDescription";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

@@ -79,7 +79,7 @@
             this.Controls.Add(this.labelCutRef);
             this.Controls.Add(this.txtCutRef);
             this.Controls.Add(this.btnCopy);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtCutRef";
             this.Name = "P11_copytocutref";
             this.Text = "Copy Cutpart/Artwork to other CutRef#";
             this.ResumeLayout(false);

@@ -314,7 +314,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(922, 518);
-            this.DefaultControlForEdit = "dateBox2";
+            this.DefaultControlForEdit = "dateReleaseDate";
             this.DefaultOrder = "id";
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;

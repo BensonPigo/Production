@@ -139,8 +139,8 @@
             this.ClientSize = new System.Drawing.Size(553, 183);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateR_EstCutDate";
-            this.DefaultControlForEdit = "dateR_EstCutDate";
+            this.DefaultControl = "dateEstCutDate";
+            this.DefaultControlForEdit = "dateEstCutDate";
             this.Name = "R05";
             this.Text = "R05.Cutting Monthly Forecast";
             this.Controls.SetChildIndex(this.print, 0);

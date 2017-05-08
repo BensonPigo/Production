@@ -751,8 +751,8 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(901, 504);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtRemark";
+            this.DefaultControlForEdit = "txtRemark";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

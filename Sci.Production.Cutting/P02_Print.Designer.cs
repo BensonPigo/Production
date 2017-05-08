@@ -134,8 +134,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(531, 220);
             this.Controls.Add(this.radioGroup1);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtCutRefNoStart";
+            this.DefaultControlForEdit = "txtCutRefNoStart";
             this.IsSupportToPrint = false;
             this.Name = "P02_Print";
             this.Text = "Spreading Report";

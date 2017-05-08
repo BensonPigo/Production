@@ -228,7 +228,7 @@
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
             this.DefaultControl = "txtID";
-            this.DefaultControlForEdit = "txtartworktype_fty1";
+            this.DefaultControlForEdit = "txtartworktype_ftyArtworkType";
             this.DefaultOrder = "id";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

@@ -318,8 +318,8 @@
             this.Controls.Add(this.gridDetail);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "textBox_Cutsp";
-            this.DefaultControlForEdit = "textBox_Cutsp";
+            this.DefaultControl = "txtCuttingSPNo";
+            this.DefaultControlForEdit = "txtCuttingSPNo";
             this.EditMode = true;
             this.Name = "P03";
             this.Text = "P03.Change Est. Cut Date after finished Cutting Daily Plan";

@@ -231,8 +231,8 @@
             this.ClientSize = new System.Drawing.Size(611, 287);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "cmb_M";
-            this.DefaultControlForEdit = "cmb_M";
+            this.DefaultControl = "comboM";
+            this.DefaultControlForEdit = "comboM";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03.Cutting Schedule List    ";

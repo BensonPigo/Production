@@ -159,7 +159,7 @@
             this.Controls.Add(this.panelMIDDLE);
             this.Controls.Add(this.panelBOTTOM);
             this.Controls.Add(this.panelTOP);
-            this.DefaultControl = "dateBox1";
+            this.DefaultControl = "dateEstCutDate";
             this.Name = "P20_Import_Workorder";
             this.Text = "P20_Import";
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();

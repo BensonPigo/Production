@@ -648,8 +648,8 @@
             this.Controls.Add(this.gridAllPart);
             this.Controls.Add(this.gridQty);
             this.Controls.Add(this.gridCutRef);
-            this.DefaultControl = "Cutref_textBox";
-            this.DefaultControlForEdit = "Cutref_textBox";
+            this.DefaultControl = "txtCutref";
+            this.DefaultControlForEdit = "txtCutref";
             this.EditMode = true;
             this.Name = "P11";
             this.Text = "P11.Batch Create Bundle Card";

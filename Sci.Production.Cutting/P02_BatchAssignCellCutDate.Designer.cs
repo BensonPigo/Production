@@ -407,7 +407,7 @@
             this.Controls.Add(this.gridBatchAssignCellEstCutDate);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.shapeContainer1);
-            this.DefaultControl = "SP_textbox";
+            this.DefaultControl = "txtSPNo";
             this.Name = "P02_BatchAssignCellCutDate";
             this.Text = "Batch Assign Cell/Est. Cut Date";
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).EndInit();

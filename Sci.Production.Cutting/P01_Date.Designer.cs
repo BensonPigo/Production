@@ -77,7 +77,7 @@
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.dateSewingInLineDateBefore);
             this.Controls.Add(this.labelSewingInLineDateBefore);
-            this.DefaultControl = "dateBox1";
+            this.DefaultControl = "dateSewingInLineDateBefore";
             this.Name = "P01_Date";
             this.Text = "Cutting Generate";
             this.ResumeLayout(false);

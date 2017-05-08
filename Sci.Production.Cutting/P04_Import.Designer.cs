@@ -183,7 +183,7 @@
             this.Controls.Add(this.panelMiddle);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelTop);
-            this.DefaultControl = "dateBox1";
+            this.DefaultControl = "dateEstCutDate";
             this.Name = "P04_Import";
             this.Text = "P04_Import";
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();

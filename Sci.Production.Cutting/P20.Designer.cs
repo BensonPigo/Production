@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.labelDate);
-            this.masterpanel.Size = new System.Drawing.Size(918, 135);
+            this.masterpanel.Size = new System.Drawing.Size(892, 135);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
@@ -104,7 +104,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 135);
-            this.detailpanel.Size = new System.Drawing.Size(918, 241);
+            this.detailpanel.Size = new System.Drawing.Size(892, 214);
             // 
             // gridicon
             // 
@@ -116,20 +116,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 241);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(918, 414);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(918, 376);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 376);
-            this.detailbtm.Size = new System.Drawing.Size(918, 38);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 214);
             // 
             // browse
             // 
@@ -372,8 +359,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(926, 476);
-            this.DefaultControl = "numericBox1";
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControl = "numWorkingHourPerDay";
+            this.DefaultControlForEdit = "numWorkingHourPerDay";
             this.DefaultDetailOrder = "Cutref,OrderID";
             this.DefaultOrder = "cDate";
             this.GridAlias = "CuttingOutput_Detail";
