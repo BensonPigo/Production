@@ -104,7 +104,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 135);
-            this.detailpanel.Size = new System.Drawing.Size(892, 214);
+            this.detailpanel.Size = new System.Drawing.Size(918, 241);
             // 
             // gridicon
             // 
@@ -116,7 +116,20 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 214);
+            this.detailgridcont.Size = new System.Drawing.Size(918, 241);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(918, 414);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(918, 376);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 376);
+            this.detailbtm.Size = new System.Drawing.Size(918, 38);
             // 
             // browse
             // 
