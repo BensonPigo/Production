@@ -70,18 +70,19 @@ namespace Sci.Production.Class
                 if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
                 {
                     string alltrimData = textValue.Trim();
-                    bool isUserName = MyUtility.Check.Seek(alltrimData, "Pass1", "Name");
+                    //bool isUserName = MyUtility.Check.Seek(alltrimData, "Pass1", "Name");
                     bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");
+                    DataTable dtName;
+                    string selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name like '%{0}%' order by ID", textValue.Trim());
+                    var resultName= DBProxy.Current.Select(null, selectCommand, out dtName);
 
-                    if (isUserName | isUserExtNo)
-                    {
-                        string selectCommand;
+                    //if (isUserName | isUserExtNo)
+                    if ((resultName && dtName.Rows.Count > 0) | isUserExtNo)
+                    {                        
                         DataTable selectTable;
-                        if (isUserName)
+                        if (dtName.Rows.Count > 0)
                         {
-                            selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name = '{0}' order by ID", textValue.Trim());
-                            DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.textBox1.Text);
                             item.Size = new System.Drawing.Size(828, 509);
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
@@ -107,7 +108,7 @@ namespace Sci.Production.Class
                             }
                             this.textBox1.Text = item.GetSelectedString();
                         }
-                    }
+                    }                   
                     else
                     {
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
