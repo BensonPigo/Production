@@ -106,7 +106,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(912, 207);
+            this.masterpanel.Size = new System.Drawing.Size(892, 207);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
@@ -143,7 +143,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 207);
-            this.detailpanel.Size = new System.Drawing.Size(912, 243);
+            this.detailpanel.Size = new System.Drawing.Size(892, 142);
             // 
             // gridicon
             // 
@@ -155,7 +155,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 243);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 142);
             // 
             // detail2
             // 
@@ -171,16 +171,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 488);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 450);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 450);
-            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -561,8 +561,8 @@
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(920, 550);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtSPNo";
+            this.DefaultControlForEdit = "txtSPNo";
             this.DefaultOrder = "OrderID";
             this.GridAlias = "PackingGuide_Detail";
             this.GridNew = 0;

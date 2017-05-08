@@ -186,15 +186,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(992, 556);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(986, 510);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(986, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -676,8 +676,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1000, 618);
-            this.DefaultControl = "txtfactory1";
-            this.DefaultControlForEdit = "txtfactory1";
+            this.DefaultControl = "txtfactory";
+            this.DefaultControlForEdit = "txtfactory";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList_Detail";
