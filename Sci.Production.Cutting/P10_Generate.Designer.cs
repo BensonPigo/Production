@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class btnGarmentList
+    partial class P10_Generate
     {
         /// <summary>
         /// 設計工具所需的變數。
