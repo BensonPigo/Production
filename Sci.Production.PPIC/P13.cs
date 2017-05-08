@@ -537,20 +537,34 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
             _transactionscope.Dispose();
             _transactionscope = null;
             #endregion
-
-            #region 找出需新增或update 的Cutting
+            #region 找出需新增或update 的Cutting           
             DataTable cuttingtb;
             string updsql = "";
-            sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord WITH (NOLOCK) ,
-            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
-                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
-                WHERE Inline <= '{0}' And offline is not null and offline !=''
-               AND b.FactoryID = '{1}' group by b.orderid) d 
-            where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp not in (Select id from cutting WITH (NOLOCK))) cut
-            where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
-          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
+            sqlcmd = string.Format(
+@"SELECT ord.cuttingsp, 
+       Min(isnull(ord.sewinline,''))  AS inline, 
+       Max(isnull(ord.sewoffline,'')) AS offlinea 
+FROM   orders ord WITH (nolock), 
+       (SELECT * 
+        FROM   (SELECT DISTINCT c.cuttingsp 
+                FROM   orders c WITH (nolock), 
+                       (SELECT orderid 
+                        FROM   sewingschedule b WITH (nolock) 
+                        WHERE  inline <= '{0}' 
+                               AND offline IS NOT NULL 
+                               AND offline != '' 
+                               AND b.factoryid = '{1}' 
+                        GROUP  BY b.orderid) d 
+                WHERE  c.id = d.orderid 
+                       AND c.isforecast = 0 
+                       AND c.localorder = 0) e 
+        WHERE  e.cuttingsp IS NOT NULL 
+               AND e.cuttingsp NOT IN (SELECT id 
+                                       FROM   cutting WITH (nolock))) cut 
+WHERE  ord.cuttingsp = cut.cuttingsp 
+       AND ord.factoryid = '{1}' 
+GROUP  BY ord.cuttingsp 
+ORDER  BY ord.cuttingsp ", sewdate, Sci.Env.User.Factory);
             dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
             string sewin, sewof;
             foreach (DataRow dr in cuttingtb.Rows)
@@ -562,49 +576,58 @@ where o.ID in ({0})", MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.
 
                 updsql = updsql + string.Format("insert into cutting(ID,sewInline,sewoffline,mDivisionid,FactoryID,AddName,AddDate) Values('{0}','{1}','{2}','{3}','{4}','{5}',GetDate()); ", dr["cuttingsp"].ToString(), sewin, sewof, Sci.Env.User.Keyword, Sci.Env.User.Factory, Sci.Env.User.UserID);
             }
-            sqlcmd = string.Format(@"Select ord.cuttingsp,min(ord.sewinline) as inline ,max(ord.sewoffline) as offlinea 
-            from orders ord WITH (NOLOCK) ,
-            (Select * from (Select distinct c.cuttingsp from orders c WITH (NOLOCK) , 
-                (SELECT orderid FROM Sewingschedule b WITH (NOLOCK) 
-                WHERE Inline <= '{0}' And offline is not null and offline !=''
-               AND b.FactoryID = '{1}' group by b.orderid) d 
-            where c.id = d.orderid and c.IsForecast = 0 and c.LocalOrder = 0 ) e Where e.cuttingsp is not null 
-			and e.cuttingsp in (Select id from cutting WITH (NOLOCK) )) cut
-            where ord.cuttingsp = cut.CuttingSP and ord.FactoryID = '{1}'
-          group by ord.CuttingSp order by ord.CuttingSP", sewdate, Sci.Env.User.Factory);
-            dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
-            foreach (DataRow dr in cuttingtb.Rows)
+            if (!MyUtility.Check.Empty(updsql))
             {
-                if (dr["inline"] == DBNull.Value) sewin = "";
-                else sewin = Convert.ToDateTime(dr["inline"]).ToShortDateString();
-                if (dr["offlinea"] == DBNull.Value) sewof = "";
-                else sewof = Convert.ToDateTime(dr["offlinea"]).ToShortDateString();
-
-                updsql = updsql + string.Format("update cutting set SewInLine ='{0}',sewoffline = '{1}' where id = '{2}'; ", sewin, sewof, dr["cuttingsp"]);
-            }
-            TransactionScope _transactionscope2 = new TransactionScope();
-            using (_transactionscope2)
-            {
-                try
+                dresult = DBProxy.Current.Execute(null, updsql);
+                if (!dresult)
                 {
-                    if (!(dresult = DBProxy.Current.Execute(null, updsql)))
-                    {
-                        _transactionscope2.Dispose();
-                        ShowErr(updsql, dresult);
-                        return;
-                    }
-                    _transactionscope2.Complete();
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope2.Dispose();
-                    ShowErr("Commit transaction error.", ex);
+                    ShowErr(updsql, dresult);
                     return;
                 }
             }
-            _transactionscope2.Dispose();
-            _transactionscope2 = null;
+           
+            string sqlupdate = string.Format(
+@"SELECT ord.cuttingsp, 
+       Min(isnull(ord.sewinline,''))  AS inline, 
+       Max(isnull(ord.sewoffline,'')) AS offlinea 
+FROM   orders ord WITH (nolock), 
+       (SELECT * 
+        FROM   (SELECT DISTINCT c.cuttingsp 
+                FROM   orders c WITH (nolock), 
+                       (SELECT orderid 
+                        FROM   sewingschedule b WITH (nolock) 
+                        WHERE  inline <= '{0}' 
+                               AND offline IS NOT NULL 
+                               AND offline != '' 
+                               AND b.factoryid = '{1}' 
+                        GROUP  BY b.orderid) d 
+                WHERE  c.id = d.orderid 
+                       AND c.isforecast = 0 
+                       AND c.localorder = 0) e 
+        WHERE  e.cuttingsp IS NOT NULL 
+               AND e.cuttingsp IN (SELECT id 
+                                   FROM   cutting WITH (nolock))) cut 
+WHERE  ord.cuttingsp = cut.cuttingsp 
+       AND ord.factoryid = '{1}' 
+GROUP  BY ord.cuttingsp 
+ORDER  BY ord.cuttingsp 
+
+MERGE production.dbo.cutting AS t 
+using #updatetemp AS s 
+ON t.id = s.cuttingsp 
+WHEN matched THEN 
+  UPDATE SET t.sewinline = s.inline, 
+             t.sewoffline = s.offlinea; 
+
+DROP TABLE #updatetemp  ", sewdate, Sci.Env.User.Factory);
+            dresult = DBProxy.Current.Select("Production", sqlcmd, out cuttingtb);
+            if (!dresult)
+            {
+                 ShowErr(updsql, dresult);
+                        return;
+            }
             #endregion
+            MyUtility.Msg.InfoBox("Update is Completed!");
 
             DBProxy.Current.DefaultTimeout = 0;
 
