@@ -495,6 +495,7 @@ WHERE   StockType='{0}'
                     if (result == DialogResult.Cancel) { return; }
                     //CurrentDetailData["location"] = item.GetSelectedString();
                     detailgrid.GetDataRow(e.RowIndex)["location"] = item.GetSelectedString();
+                    detailgrid.GetDataRow(e.RowIndex).EndEdit();
                 }
             };
 
