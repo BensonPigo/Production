@@ -69,6 +69,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(737, 350);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBrand);
@@ -108,8 +112,8 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 350);
+            this.detailbtm.Size = new System.Drawing.Size(737, 0);
             // 
             // browse
             // 

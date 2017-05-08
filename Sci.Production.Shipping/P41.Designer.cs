@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 99);
+            this.masterpanel.Size = new System.Drawing.Size(830, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -100,7 +100,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 99);
-            this.detailpanel.Size = new System.Drawing.Size(892, 219);
+            this.detailpanel.Size = new System.Drawing.Size(830, 262);
             // 
             // gridicon
             // 
@@ -112,7 +112,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 219);
+            this.detailgridcont.Size = new System.Drawing.Size(830, 262);
             // 
             // detail2
             // 
@@ -128,11 +128,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(830, 430);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 318);
+            this.detailcont.Size = new System.Drawing.Size(830, 361);
             // 
             // detailbtm
             // 
@@ -144,8 +144,8 @@
             this.detailbtm.Controls.Add(this.labelNW);
             this.detailbtm.Controls.Add(this.numQty);
             this.detailbtm.Controls.Add(this.labelQty);
-            this.detailbtm.Location = new System.Drawing.Point(0, 318);
-            this.detailbtm.Size = new System.Drawing.Size(892, 69);
+            this.detailbtm.Location = new System.Drawing.Point(0, 361);
+            this.detailbtm.Size = new System.Drawing.Size(830, 69);
             this.detailbtm.Controls.SetChildIndex(this.labelQty, 0);
             this.detailbtm.Controls.SetChildIndex(this.numQty, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelNW, 0);

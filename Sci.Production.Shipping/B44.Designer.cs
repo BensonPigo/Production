@@ -44,6 +44,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(829, 327);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtVietnamUnit);
@@ -54,7 +58,13 @@
             this.detailcont.Controls.Add(this.labelVietnamDesc);
             this.detailcont.Controls.Add(this.labelEnglishDesc);
             this.detailcont.Controls.Add(this.labelNLCode);
+            this.detailcont.Size = new System.Drawing.Size(829, 289);
             // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 289);
+            this.detailbtm.Size = new System.Drawing.Size(829, 38);
+            //  
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(829, 327);
