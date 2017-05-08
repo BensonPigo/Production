@@ -738,6 +738,11 @@ order by bundlegroup"
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(CurrentMaintain["article"])||MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
+            {
+                ShowErr("Fabric Combo and Article can't empty!");
+                return;
+            }
             DataTable dt = ((DataTable)detailgridbs.DataSource);
             detailgrid.ValidateControl();
             DataTable bdwtb;

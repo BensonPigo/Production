@@ -784,8 +784,8 @@
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(1035, 564);
-            this.DefaultControl = "textBox_Cutref";
-            this.DefaultControlForEdit = "textBox_Cutref";
+            this.DefaultControl = "txtCutRef";
+            this.DefaultControlForEdit = "txtCutRef";
             this.DefaultDetailOrder = "BundleGroup";
             this.DefaultOrder = "ID";
             this.GridAlias = "Bundle_Detail";
