@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[IESelectCode] (
     [Type]     VARCHAR (5)  CONSTRAINT [DF_IESelectCode_Type] DEFAULT ('') NOT NULL,
-    [ID]       VARCHAR (10) CONSTRAINT [DF_IESelectCode_ID] DEFAULT ('') NOT NULL,
+    [ID]       VARCHAR (20) CONSTRAINT [DF_IESelectCode_ID] DEFAULT ('') NOT NULL,
     [Name]     VARCHAR (30) CONSTRAINT [DF_IESelectCode_Name] DEFAULT ('') NULL,
     [AddName]  VARCHAR (10) CONSTRAINT [DF_IESelectCode_AddName] DEFAULT ('') NULL,
     [AddDate]  DATETIME     NULL,
