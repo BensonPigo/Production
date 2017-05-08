@@ -41,31 +41,18 @@ namespace Sci.Production.Packing
 
     class P09_IDX_CTRL
     {
-#if false
-        static string x = Sci.Env.Cfg.XltPathDir;//System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
-        [DllImport("IDX_CTRL.dll", EntryPoint = "IdxCallVB")]
-        static extern void IdxCallVB(int a, string b, Int32 c);
-
-        [HandleProcessCorruptedStateExceptions]
-        public void IdxCall(int Command, string Request, Int32 RequestSize)
-        {
-            try
-            {
-                IdxCallVB(Command, Request, RequestSize);
-            }
-            catch (AccessViolationException e)
-            {
-                MyUtility.Msg.InfoBox(e.Message);
-            }
-        }
-#endif
         private delegate int IdxCallVB_func(int command, string Request, int RequestSize);
 
         public void IdxCall(int command, string Request, int RequestSize)
         {
-            DllInvoke dll = new DllInvoke(".\\IDX_CTRL.dll");
-            IdxCallVB_func func = (IdxCallVB_func)dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));
+            DllInvoke dll;
+           
+            if (Environment.Is64BitOperatingSystem)
+                dll = new DllInvoke(".\\IDX_CTRL.dll");
+            else
+                dll = new DllInvoke(".\\IDX_CTRL.dll");
 
+            IdxCallVB_func func = (IdxCallVB_func)dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));
             func(command, Request, RequestSize);
         }
     }
