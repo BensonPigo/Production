@@ -6,12 +6,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4in</Width>
+              <Width>3.95312in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.875in</Height>
+              <Height>1.85417in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -37,14 +37,14 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
                           <Top>0.13229cm</Top>
-                          <Left>0.09896in</Left>
+                          <Left>0.06771in</Left>
                           <Height>0.86111in</Height>
                           <Width>3.79167in</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
+                            <VerticalAlign>Bottom</VerticalAlign>
                             <PaddingLeft>1pt</PaddingLeft>
                             <PaddingRight>1pt</PaddingRight>
                             <PaddingTop>1pt</PaddingTop>
@@ -71,7 +71,7 @@
                           </Paragraphs>
                           <rd:DefaultName>ID</rd:DefaultName>
                           <Top>0.92708in</Top>
-                          <Left>0.33035in</Left>
+                          <Left>0.2991in</Left>
                           <Height>0.22222in</Height>
                           <Width>3.35417in</Width>
                           <ZIndex>1</ZIndex>
@@ -106,7 +106,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox13</rd:DefaultName>
                           <Top>1.15764in</Top>
-                          <Left>0.33035in</Left>
+                          <Left>0.2991in</Left>
                           <Height>0.22222in</Height>
                           <Width>3.35417in</Width>
                           <ZIndex>2</ZIndex>
@@ -141,7 +141,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
                           <Top>1.37986in</Top>
-                          <Left>0.33035in</Left>
+                          <Left>0.2991in</Left>
                           <Height>0.22222in</Height>
                           <Width>3.35417in</Width>
                           <ZIndex>3</ZIndex>
@@ -176,7 +176,7 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox15</rd:DefaultName>
                           <Top>1.60208in</Top>
-                          <Left>0.33035in</Left>
+                          <Left>0.2991in</Left>
                           <Height>0.22222in</Height>
                           <Width>3.35417in</Width>
                           <ZIndex>4</ZIndex>
@@ -228,8 +228,8 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>Report_BarcodePrint</DataSetName>
-        <Height>1.875in</Height>
-        <Width>4in</Width>
+        <Height>1.85417in</Height>
+        <Width>3.95312in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -237,10 +237,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.875in</Height>
+    <Height>1.85417in</Height>
     <Style />
   </Body>
-  <Width>4in</Width>
+  <Width>3.95312in</Width>
   <Page>
     <PageHeight>1.875in</PageHeight>
     <PageWidth>4in</PageWidth>
