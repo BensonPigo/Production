@@ -73,7 +73,7 @@ as
             }
             if (!MyUtility.Check.Empty(txtSPNoEnd.Text))
             {
-                sqlCmd.Append("\r\n and o.ID >= @orderID2");
+                sqlCmd.Append("\r\n and o.ID <= @orderID2");
             }
             if (!MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
