@@ -19,7 +19,7 @@ namespace Sci.Production.Sewing
         Ict.Win.DataGridViewGeneratorTextColumnSettings orderid = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
-        Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();        
         private DateTime systemLockDate;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -258,7 +258,7 @@ order by a.OrderId,os.Seq"
                         }
                     }
                 }
-            };
+            };          
             #endregion
             #region ComboType的Right Click
             combotype.EditingMouseDown += (s, e) =>
@@ -419,6 +419,13 @@ order by a.OrderId,os.Seq"
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true);
         }
+        //設定表身RFT的預設值
+        protected override void OnDetailGridInsert(int index = -1)
+        {
+            base.OnDetailGridInsert(index);
+            CurrentDetailData["Rft"] = "0.00%";
+            
+        }
        
         //重組表身Grid的QA Qty資料
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
@@ -444,8 +451,8 @@ order by a.OrderId,os.Seq"
                 //CalculateDefectQty(CurrentDetailData);
 
                 e.Detail["QAOutput"] = QAOutput.Length > 0 ? QAOutput.ToString() : "";
-                e.Detail["QAQty"] = QAQty;
-                e.Detail["InlineQty"] = QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,5))/100);
+                e.Detail["QAQty"] = QAQty;                
+                e.Detail["InlineQty"] =e.Detail["RFT"].ToString().Substring(0,4)=="0.00"?0: QAQty / (decimal.Parse(e.Detail["RFT"].ToString().Substring(0,4))/100);
                 //e.Detail.EndEdit();
                 CalculateDefectQty(e.Detail);
                 CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("SUM(QAQty)", "");
@@ -577,6 +584,8 @@ order by a.OrderId,os.Seq";
             CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1);
             CurrentMaintain["Shift"] = "D";
             CurrentMaintain["Team"] = "A";
+            CurrentDetailData["RFT"] = "0.00%";
+            
         }
 
         protected override bool ClickEditBefore()
