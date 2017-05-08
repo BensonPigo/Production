@@ -39,12 +39,21 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(833, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txtScaleCode);
             this.detailcont.Controls.Add(this.labelScaleCode);
+            this.detailcont.Size = new System.Drawing.Size(833, 357);
             // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(833, 38);
+            //  
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(833, 395);
