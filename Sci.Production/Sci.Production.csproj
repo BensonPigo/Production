@@ -1110,6 +1110,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IDX_CTRL.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="PMS_icon.ico" />
   </ItemGroup>
   <ItemGroup>
