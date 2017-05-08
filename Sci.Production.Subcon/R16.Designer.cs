@@ -287,8 +287,8 @@
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRangePoIssueDate";
-            this.DefaultControlForEdit = "dateRangePoIssueDate";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R16";
             this.Text = "R16. Sub-con PO Summary by SP#";

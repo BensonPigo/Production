@@ -30,10 +30,10 @@
         {
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelArtworkType = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
+            this.lbAPDate = new Sci.Win.UI.Label();
+            this.lbSupplier = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.dateAPDate = new Sci.Win.UI.DateRange();
             this.labelM = new Sci.Win.UI.Label();
             this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
@@ -75,29 +75,29 @@
             this.labelArtworkType.TabIndex = 95;
             this.labelArtworkType.Text = "Artwork Type";
             // 
-            // label3
+            // lbAPDate
             // 
-            this.label3.Lines = 0;
-            this.label3.Location = new System.Drawing.Point(13, 12);
-            this.label3.Name = "label3";
-            this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.RectStyle.BorderWidth = 1F;
-            this.label3.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.label3.RectStyle.ExtBorderWidth = 1F;
-            this.label3.Size = new System.Drawing.Size(98, 23);
-            this.label3.TabIndex = 96;
-            this.label3.Text = "A/P Date";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.lbAPDate.Lines = 0;
+            this.lbAPDate.Location = new System.Drawing.Point(13, 12);
+            this.lbAPDate.Name = "lbAPDate";
+            this.lbAPDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbAPDate.RectStyle.BorderWidth = 1F;
+            this.lbAPDate.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.lbAPDate.RectStyle.ExtBorderWidth = 1F;
+            this.lbAPDate.Size = new System.Drawing.Size(98, 23);
+            this.lbAPDate.TabIndex = 96;
+            this.lbAPDate.Text = "A/P Date";
+            this.lbAPDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbAPDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label5
+            // lbSupplier
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(13, 156);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(98, 23);
-            this.label5.TabIndex = 98;
-            this.label5.Text = "Supplier";
+            this.lbSupplier.Lines = 0;
+            this.lbSupplier.Location = new System.Drawing.Point(13, 156);
+            this.lbSupplier.Name = "lbSupplier";
+            this.lbSupplier.Size = new System.Drawing.Size(98, 23);
+            this.lbSupplier.TabIndex = 98;
+            this.lbSupplier.Text = "Supplier";
             // 
             // comboFactory
             // 
@@ -110,13 +110,13 @@
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 3;
             // 
-            // dateRange1
+            // dateAPDate
             // 
-            this.dateRange1.IsRequired = false;
-            this.dateRange1.Location = new System.Drawing.Point(115, 12);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 0;
+            this.dateAPDate.IsRequired = false;
+            this.dateAPDate.Location = new System.Drawing.Point(115, 12);
+            this.dateAPDate.Name = "dateAPDate";
+            this.dateAPDate.Size = new System.Drawing.Size(280, 23);
+            this.dateAPDate.TabIndex = 0;
             // 
             // labelM
             // 
@@ -189,23 +189,23 @@
             this.Controls.Add(this.txtMdivisionM);
             this.Controls.Add(this.txtsubconSupplier);
             this.Controls.Add(this.txtartworktype_ftyArtworkType);
-            this.Controls.Add(this.dateRange1);
+            this.Controls.Add(this.dateAPDate);
             this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.lbSupplier);
+            this.Controls.Add(this.lbAPDate);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "APDate";
+            this.DefaultControlForEdit = "APDate";
             this.IsSupportToPrint = false;
             this.Name = "R12";
             this.Text = "R12. Outstanding List of Subcon Payment";
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelArtworkType, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.lbAPDate, 0);
+            this.Controls.SetChildIndex(this.lbSupplier, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.dateAPDate, 0);
             this.Controls.SetChildIndex(this.txtartworktype_ftyArtworkType, 0);
             this.Controls.SetChildIndex(this.txtsubconSupplier, 0);
             this.Controls.SetChildIndex(this.txtMdivisionM, 0);
@@ -224,10 +224,10 @@
 
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelArtworkType;
-        private Win.UI.Label label3;
-        private Win.UI.Label label5;
+        private Win.UI.Label lbAPDate;
+        private Win.UI.Label lbSupplier;
         private Win.UI.ComboBox comboFactory;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.DateRange dateAPDate;
         private Class.txtartworktype_fty txtartworktype_ftyArtworkType;
         private Class.txtsubcon txtsubconSupplier;
         private Class.txtMdivision txtMdivisionM;

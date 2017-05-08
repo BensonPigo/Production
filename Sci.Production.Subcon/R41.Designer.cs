@@ -184,8 +184,8 @@
             this.Controls.Add(this.labelBundleCDate);
             this.Controls.Add(this.labelSPNo);
             this.Controls.Add(this.labelCutRefNo);
-            this.DefaultControl = "textCutRef_Start";
-            this.DefaultControlForEdit = "textCutRef_Start";
+            this.DefaultControl = "txtCutRefStart";
+            this.DefaultControlForEdit = "txtCutRefStart";
             this.Name = "R41";
             this.Text = "R41.Bundle tracking list (RFID)";
             this.Controls.SetChildIndex(this.print, 0);

@@ -260,7 +260,7 @@
             this.Controls.Add(this.txtUnit);
             this.Controls.Add(this.txtSPNo);
             this.Controls.Add(this.labelSPNo);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtSPNo";
             this.Name = "P36_ModifyDetail";
             this.Text = "P36 Detail";
             this.WorkAlias = "Localdebit_detail";

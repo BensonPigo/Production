@@ -307,8 +307,8 @@
             this.ClientSize = new System.Drawing.Size(547, 314);
             this.Controls.Add(this.checkShippingMark);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSCIDelivery";
+            this.DefaultControlForEdit = "dateSCIDelivery";
             this.Name = "R26";
             this.Text = "R26. Local PO Report";
             this.Controls.SetChildIndex(this.panel1, 0);

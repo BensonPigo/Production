@@ -207,8 +207,8 @@
             this.Controls.Add(this.labelBundleCDate);
             this.Controls.Add(this.labelSPNo);
             this.Controls.Add(this.labelCutRefNo);
-            this.DefaultControl = "textCutRef_Start";
-            this.DefaultControlForEdit = "textCutRef_Start";
+            this.DefaultControl = "txtCutRefStart";
+            this.DefaultControlForEdit = "txtCutRefStart";
             this.Name = "R42";
             this.Text = "R42. Bundle Transaction detail (RFID)";
             this.Controls.SetChildIndex(this.print, 0);

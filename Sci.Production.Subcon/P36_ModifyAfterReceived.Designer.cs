@@ -142,7 +142,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
-            this.DefaultControl = "editBox1";
+            this.DefaultControl = "editDescription";
             this.Name = "P36_ModifyAfterReceived";
             this.Text = "P36. Modify After Received";
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

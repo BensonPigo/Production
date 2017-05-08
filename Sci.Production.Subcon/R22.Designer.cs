@@ -208,8 +208,8 @@
             this.Controls.Add(this.labelIssueDate);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R22";
             this.Text = "R22. Local Payment List or Summary";

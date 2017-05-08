@@ -195,8 +195,8 @@
             this.Controls.Add(this.labelAPDate);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateAPDate";
+            this.DefaultControlForEdit = "dateAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R21";
             this.Text = "R21. Outstanding List of Local Payment";

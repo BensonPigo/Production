@@ -288,8 +288,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(627, 348);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "DebDate";
-            this.DefaultControlForEdit = "DebDate";
+            this.DefaultControl = "dateDebitDate";
+            this.DefaultControlForEdit = "dateDebitDate";
             this.Name = "R37";
             this.Text = "R37. Debit Memo List(Taipei)";
             this.Controls.SetChildIndex(this.print, 0);

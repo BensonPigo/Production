@@ -97,7 +97,7 @@
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
+            this.masterpanel.Size = new System.Drawing.Size(892, 248);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -129,7 +129,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
+            this.detailpanel.Size = new System.Drawing.Size(892, 101);
             // 
             // gridicon
             // 
@@ -143,7 +143,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 101);
             // 
             // detail2
             // 
@@ -159,16 +159,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -469,8 +469,8 @@
             this.ClientSize = new System.Drawing.Size(1066, 577);
             this.CloseChkValue = "Approved";
             this.Controls.Add(this.btnBatchCreate);
-            this.DefaultControl = "txtsubcon1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "txtsubconSupplier";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.DefaultFilter = "POTYPE=\'I\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";

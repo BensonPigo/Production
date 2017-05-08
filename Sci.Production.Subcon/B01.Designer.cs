@@ -50,7 +50,7 @@
             this.labelAccountNo = new Sci.Win.UI.Label();
             this.labelW = new Sci.Win.UI.Label();
             this.labelH = new Sci.Win.UI.Label();
-            this.tetRefno = new Sci.Win.UI.TextBox();
+            this.txtRefno = new Sci.Win.UI.TextBox();
             this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_fty();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.txtcurrencyPrice = new Sci.Production.Class.txtcurrency();
@@ -106,7 +106,7 @@
             this.detailcont.Controls.Add(this.txtcurrencyPrice);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtunit_ftyUnit);
-            this.detailcont.Controls.Add(this.tetRefno);
+            this.detailcont.Controls.Add(this.txtRefno);
             this.detailcont.Controls.Add(this.labelAccountNo);
             this.detailcont.Controls.Add(this.labelSupplier);
             this.detailcont.Controls.Add(this.labelPrice);
@@ -349,15 +349,15 @@
             this.labelH.TabIndex = 23;
             this.labelH.Text = "H";
             // 
-            // tetRefno
+            // txtRefno
             // 
-            this.tetRefno.BackColor = System.Drawing.Color.White;
-            this.tetRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "refno", true));
-            this.tetRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.tetRefno.Location = new System.Drawing.Point(92, 12);
-            this.tetRefno.Name = "tetRefno";
-            this.tetRefno.Size = new System.Drawing.Size(209, 23);
-            this.tetRefno.TabIndex = 0;
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "refno", true));
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(92, 12);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(209, 23);
+            this.txtRefno.TabIndex = 0;
             // 
             // txtunit_ftyUnit
             // 
@@ -876,8 +876,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
-            this.DefaultControl = "textRefno";
-            this.DefaultControlForEdit = "txtartworktype_fty1";
+            this.DefaultControl = "txtRefno";
+            this.DefaultControlForEdit = "txtartworktype_ftyCategory";
             this.EnableGridJunkColor = true;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -906,7 +906,7 @@
 
         private Win.UI.TextBox txtDescription;
         private Class.txtunit_fty txtunit_ftyUnit;
-        private Win.UI.TextBox tetRefno;
+        private Win.UI.TextBox txtRefno;
         private Win.UI.Label labelH;
         private Win.UI.Label labelW;
         private Win.UI.Label labelAccountNo;

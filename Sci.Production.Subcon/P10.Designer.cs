@@ -116,7 +116,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateApprovedDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 258);
+            this.masterpanel.Size = new System.Drawing.Size(892, 258);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApprovedDate, 0);
@@ -158,7 +158,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 258);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 219);
+            this.detailpanel.Size = new System.Drawing.Size(892, 91);
             // 
             // gridicon
             // 
@@ -172,32 +172,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 219);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 91);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1058, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1052, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1052, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -637,8 +637,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "txtartworktype_fty1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtpayterm_ftyTerms";
+            this.DefaultControlForEdit = "txtRemark";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkAP_detail";
             this.GridUniqueKey = "artworkpo_detailukey";

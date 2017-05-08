@@ -308,8 +308,8 @@
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRangeApIssueDate";
-            this.DefaultControlForEdit = "dateRangeApIssueDate";
+            this.DefaultControl = "dateAPDate";
+            this.DefaultControlForEdit = "dateAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R14";
             this.Text = "R14. Sub-con Payment summary by SP#";

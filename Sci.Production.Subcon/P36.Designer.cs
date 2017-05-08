@@ -125,7 +125,7 @@
             this.masterpanel.Controls.Add(this.lblTaipeiDebitNote);
             this.masterpanel.Controls.Add(this.lblStatus);
             this.masterpanel.Controls.Add(this.labelSDNo);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 225);
+            this.masterpanel.Size = new System.Drawing.Size(875, 225);
             this.masterpanel.Controls.SetChildIndex(this.labelSDNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblTaipeiDebitNote, 0);
@@ -164,7 +164,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 225);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 164);
+            this.detailpanel.Size = new System.Drawing.Size(875, 0);
             // 
             // gridicon
             // 
@@ -180,7 +180,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 164);
+            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
             // 
             // detail2
             // 
@@ -196,11 +196,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 599);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 389);
+            this.detailcont.Size = new System.Drawing.Size(892, 177);
             // 
             // detailbtm
             // 
@@ -216,8 +216,8 @@
             this.detailbtm.Controls.Add(this.txtuserReceived);
             this.detailbtm.Controls.Add(this.labelReceived);
             this.detailbtm.Controls.Add(this.editDescription);
-            this.detailbtm.Location = new System.Drawing.Point(0, 389);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 210);
+            this.detailbtm.Location = new System.Drawing.Point(0, 177);
+            this.detailbtm.Size = new System.Drawing.Size(892, 210);
             this.detailbtm.TabIndex = 0;
             this.detailbtm.Controls.SetChildIndex(this.editDescription, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelReceived, 0);
@@ -280,7 +280,7 @@
             this.lblTaipeiDebitNote.BackColor = System.Drawing.Color.Transparent;
             this.lblTaipeiDebitNote.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblTaipeiDebitNote.Lines = 0;
-            this.lblTaipeiDebitNote.Location = new System.Drawing.Point(835, 9);
+            this.lblTaipeiDebitNote.Location = new System.Drawing.Point(710, 9);
             this.lblTaipeiDebitNote.Name = "lblTaipeiDebitNote";
             this.lblTaipeiDebitNote.Size = new System.Drawing.Size(157, 23);
             this.lblTaipeiDebitNote.TabIndex = 46;
@@ -293,7 +293,7 @@
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.lblStatus.Lines = 0;
-            this.lblStatus.Location = new System.Drawing.Point(877, 41);
+            this.lblStatus.Location = new System.Drawing.Point(752, 41);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
             this.lblStatus.TabIndex = 45;
@@ -410,7 +410,7 @@
             // btnDebitSchedule
             // 
             this.btnDebitSchedule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDebitSchedule.Location = new System.Drawing.Point(865, 76);
+            this.btnDebitSchedule.Location = new System.Drawing.Point(740, 76);
             this.btnDebitSchedule.Name = "btnDebitSchedule";
             this.btnDebitSchedule.Size = new System.Drawing.Size(127, 30);
             this.btnDebitSchedule.TabIndex = 8;
@@ -776,8 +776,8 @@
             // 
             this.ApvChkValue = "Received";
             this.ClientSize = new System.Drawing.Size(1008, 661);
-            this.DefaultControl = "txtuser_Handle";
-            this.DefaultControlForEdit = "txtuser_Handle";
+            this.DefaultControl = "txtuserHandle";
+            this.DefaultControlForEdit = "txtuserHandle";
             this.DefaultDetailOrder = "orderid";
             this.DefaultOrder = "IssueDate,ID";
             this.GridAlias = "LocalDebit_Detail";

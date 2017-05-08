@@ -51,7 +51,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["price"] = DBNull.Value;
             CurrentMaintain["quotdate"] = DBNull.Value;
             CurrentMaintain["currencyid"] = DBNull.Value;
-            tetRefno.Focus();
+            txtRefno.Focus();
             txtartworktype_ftyCategory.ValidateControl();
         }
 
@@ -59,7 +59,7 @@ namespace Sci.Production.Subcon
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.tetRefno.ReadOnly = true;
+            this.txtRefno.ReadOnly = true;
             this.txtSubconSupplier.TextBox1.ReadOnly=true;
         }
 
@@ -69,7 +69,7 @@ namespace Sci.Production.Subcon
             if (String.IsNullOrWhiteSpace(CurrentMaintain["refno"].ToString()))
             {
                 MyUtility.Msg.WarningBox("< Refno > can not be empty!");
-                this.tetRefno.Focus();
+                this.txtRefno.Focus();
                 return false;
             }
 

@@ -236,7 +236,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "dateRange1";
+            this.DefaultControl = "dateApproveDate";
             this.Name = "P01_Import";
             this.Text = "Batch Import";
             this.groupBox2.ResumeLayout(false);

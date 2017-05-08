@@ -414,8 +414,8 @@
             this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.labelReportType);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateRange_Debit";
-            this.DefaultControlForEdit = "dateRange_Debit";
+            this.DefaultControl = "dateDebitDate";
+            this.DefaultControlForEdit = "dateDebitDate";
             this.Name = "R36";
             this.Text = "R36. Debit Note List Report";
             this.Controls.SetChildIndex(this.print, 0);

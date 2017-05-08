@@ -328,8 +328,8 @@
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRangeAPDate";
-            this.DefaultControlForEdit = "dateRangeAPDate";
+            this.DefaultControl = "dateAPDate";
+            this.DefaultControlForEdit = "dateAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R24";
             this.Text = "R24. Local Payment summary by SP#";

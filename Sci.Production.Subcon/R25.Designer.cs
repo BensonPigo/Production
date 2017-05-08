@@ -194,8 +194,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(517, 294);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateReceiveDate";
+            this.DefaultControlForEdit = "dateReceiveDate";
             this.Name = "R25";
             this.Text = "R25. Local Purchase Receiving List";
             this.Controls.SetChildIndex(this.print, 0);

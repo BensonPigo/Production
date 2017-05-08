@@ -285,8 +285,8 @@
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRangePoDate";
-            this.DefaultControlForEdit = "dateRangePoDate";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R23";
             this.Text = "R23. Local PO summary by SP#";

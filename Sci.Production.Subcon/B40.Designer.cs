@@ -149,7 +149,7 @@
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(852, 457);
-            this.DefaultControl = "textID";
+            this.DefaultControl = "txtID";
             this.DefaultControlForEdit = "comboSubprocess";
             this.IsSupportPrint = false;
             this.Name = "B40";

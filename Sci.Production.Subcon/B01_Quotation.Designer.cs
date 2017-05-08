@@ -63,10 +63,6 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(900, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.btnApprove);
@@ -91,12 +87,7 @@
             this.detailcont.Controls.Add(this.txtsubconSupplier3);
             this.detailcont.Controls.Add(this.txtsubconSupplier2);
             this.detailcont.Controls.Add(this.txtsubconSupplier1);
-            this.detailcont.Size = new System.Drawing.Size(900, 357);
             this.detailcont.TabIndex = 1;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(900, 38);
             // 
             // browse
             // 
@@ -493,8 +484,8 @@
             // B01_Quotation
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportCopy = false;
             this.Name = "B01_Quotation";
             this.Text = "Quotation Record";

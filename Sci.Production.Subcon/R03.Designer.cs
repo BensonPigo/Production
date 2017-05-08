@@ -241,8 +241,8 @@
             this.Controls.Add(this.labelSupplier);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. Cutparts Farm In List";

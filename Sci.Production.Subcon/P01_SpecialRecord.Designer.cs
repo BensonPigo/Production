@@ -178,7 +178,7 @@
             this.Controls.Add(this.gridSpecialRecord);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtSPNo";
             this.Name = "P01_SpecialRecord";
             this.Text = "Special Record";
             ((System.ComponentModel.ISupportInitialize)(this.gridSpecialRecord)).EndInit();

@@ -23,32 +23,32 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(cbbFactory, 1, factory);
-            cbbFactory.Text = Sci.Env.User.Factory;
-            txtMdivision1.Text = Sci.Env.User.Keyword;
+            MyUtility.Tool.SetupCombox(comboFactory, 1, factory);
+            comboFactory.Text = Sci.Env.User.Factory;
+            txtM.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(dateRange1.Value1) && MyUtility.Check.Empty(dateRange1.Value2))
+            if (MyUtility.Check.Empty(dateFarmOutDate.Value1) && MyUtility.Check.Empty(dateFarmOutDate.Value2))
             {
                 MyUtility.Msg.WarningBox("Farm Out Date can't empty!!");
                 return false;
             }
-            farmoutdate1 = dateRange1.Value1;
-            farmoutdate2 = dateRange1.Value2;
-            bundleno1 = txtBundleno1.Text;
-            bundleno2 = txtBundleno2.Text;
-            scidelivery1 = dateRange2.Value1;
-            scidelivery2 = dateRange2.Value2;
+            farmoutdate1 = dateFarmOutDate.Value1;
+            farmoutdate2 = dateFarmOutDate.Value2;
+            bundleno1 = txtBundleNoStart.Text;
+            bundleno2 = txtBundleNoEnd.Text;
+            scidelivery1 = dateSCIDelivery.Value1;
+            scidelivery2 = dateSCIDelivery.Value2;
 
-            artworktype = txtartworktype_fty1.Text;
-            mdivision = txtMdivision1.Text;
-            factory = cbbFactory.Text;
-            subcon = txtsubcon1.TextBox1.Text;
-            poid = txtSPNO.Text;
-            style = txtstyle1.Text;
+            artworktype = txtartworktype_ftyArtworkType.Text;
+            mdivision = txtM.Text;
+            factory = comboFactory.Text;
+            subcon = txtsubconSupplier.TextBox1.Text;
+            poid = txtMasterSPNo.Text;
+            style = txtstyle.Text;
             
             return base.ValidateInput();
         }

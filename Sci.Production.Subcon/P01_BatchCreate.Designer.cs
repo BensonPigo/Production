@@ -205,7 +205,6 @@
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 4;
             this.txtartworktype_ftyArtworkType.Validating += new System.ComponentModel.CancelEventHandler(this.txtartworktype_ftyArtworkType_Validating);
-           
             // 
             // btnFindNow
             // 
@@ -327,7 +326,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "dateRange1";
+            this.DefaultControl = "dateApproveDate";
             this.Name = "P01_BatchCreate";
             this.Text = "Batch Create From Sub Process Data";
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchCreateFromSubProcessData)).EndInit();

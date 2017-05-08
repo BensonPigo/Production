@@ -238,7 +238,7 @@
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
-            this.DefaultControl = "numericBox1";
+            this.DefaultControl = "numAmount";
             this.Name = "P36_ModifyAfterSent";
             this.Text = "P36. Modify After Sent";
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

@@ -118,8 +118,8 @@
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSubProcess);
-            this.DefaultControl = "dateBundleReceive";
-            this.DefaultControlForEdit = "dateBundleReceive";
+            this.DefaultControl = "dateBundleReceiveDate";
+            this.DefaultControlForEdit = "dateBundleReceiveDate";
             this.Name = "R43";
             this.Text = "R43.Sub-process BCS report (RFID)";
             this.Controls.SetChildIndex(this.print, 0);

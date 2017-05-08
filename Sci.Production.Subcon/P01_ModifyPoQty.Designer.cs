@@ -307,7 +307,7 @@
             this.Controls.Add(this.labelArtwork);
             this.Controls.Add(this.labelCutpartID);
             this.Controls.Add(this.labelSPNo);
-            this.DefaultControl = "numericBox1";
+            this.DefaultControl = "numPOQty";
             this.Name = "P01_ModifyPoQty";
             this.Text = "Modify PO Qty";
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();

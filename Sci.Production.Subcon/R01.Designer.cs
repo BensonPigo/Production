@@ -254,8 +254,8 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateIssueDate";
+            this.DefaultControlForEdit = "dateIssueDate";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Subcon PO List";

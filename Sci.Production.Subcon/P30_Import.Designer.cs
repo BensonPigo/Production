@@ -314,7 +314,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "dateRangeBooking";
+            this.DefaultControl = "dateEstBookingDate";
             this.Name = "P30_Import";
             this.Text = "Import From P/O#";
             this.groupBox2.ResumeLayout(false);
