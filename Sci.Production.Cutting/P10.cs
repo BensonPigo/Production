@@ -25,10 +25,80 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            if (history == "0") this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
-            else this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
-
+            if (history == "0") 
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
+            else 
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);
         }
+        
+        protected override bool OnGridSetup()
+        {
+            Helper.Controls.Grid.Generator(this.detailgrid)
+            .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
+            .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("subProcessid", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true);
+            return base.OnGridSetup();
+        }
+
+        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            #region 主 Detail
+            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
+            string cmdsql = string.Format(@"
+Select a.*	,s.subProcessid	,ukey1 = 0
+From Bundle_Detail a WITH (NOLOCK) 
+outer apply
+(
+	select subProcessid =
+	stuff((
+		Select concat('+',Subprocessid)
+		From Bundle_Detail_art c WITH (NOLOCK) 
+		Where c.bundleno =a.bundleno and c.id = a.id 
+		For XML path('')
+	),1,1,'')
+) as s
+where a.id = '{0}' 
+order by bundlegroup"
+                , masterID);            
+            this.DetailSelectCommand = cmdsql;
+            #endregion
+
+            #region 先撈出底層其他Table
+            if (!IsDetailInsertByCopy)
+            {
+                string allPart_cmd = string.Format(@"Select sel = 0,b.*, ukey1 = 0, annotation = '' from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_Allpart b WITH (NOLOCK) on a.id = b.id Where a.id ='{0}'", masterID);
+                string art_cmd = string.Format(@"Select b.*, ukey1 = 0 from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_art b WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id Where a.id ='{0}' ", masterID);
+                string qty_cmd = string.Format(@"Select No = 0, a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
+                DualResult dRes = null;
+                dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
+                if (!dRes)
+                {
+                    ShowErr(allPart_cmd, dRes);
+                    return dRes;
+                }
+                dRes = DBProxy.Current.Select(null, art_cmd, out bundle_Detail_Art_Tb);
+                if (!dRes)
+                {
+                    ShowErr(art_cmd, dRes);
+                    return dRes;
+                }
+                dRes = DBProxy.Current.Select(null, qty_cmd, out bundle_Detail_Qty_Tb);
+                if (!dRes)
+                {
+                    ShowErr(qty_cmd, dRes);
+                    return dRes;
+                }
+            }
+            #endregion
+
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -82,6 +152,7 @@ namespace Sci.Production.Cutting
                 this.displayPrintDate.Text = "";
             }
         }
+
         public void queryTable()
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
@@ -109,7 +180,6 @@ namespace Sci.Production.Cutting
             foreach (DataRow dr in DetailDatas)
             {
                 dr["ukey1"] = ukey;
-                //DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("Bundleno='{0}'", dr["Bundleno"]));
                 DataRow[] allar = bundle_Detail_allpart_Tb.Select(string.Format("id='{0}'", dr["ID"]));
                 if (allar.Length > 0)
                 {
@@ -128,67 +198,7 @@ namespace Sci.Production.Cutting
                 }
             }
         }
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
-            string cmdsql = string.Format(
-            @"
-            Select a.*,
-            (
-                Select Subprocessid+'+' 
-                From Bundle_Detail_art c WITH (NOLOCK) 
-                Where c.bundleno =a.bundleno and c.id = a.id 
-                For XML path('')
-            ) as subProcessid, 0 as ukey1
-            From Bundle_Detail a WITH (NOLOCK) 
-            where a.id = '{0}' order by bundlegroup
-            ", masterID);
-            this.DetailSelectCommand = cmdsql;
-            #region 先撈出底層其他Table
-            if (!IsDetailInsertByCopy)
-            {
-                string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_Allpart b WITH (NOLOCK) Where a.id ='{0}' and a.id = b.id", masterID);
-                string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
-                string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
-                DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
-                if (!dRes)
-                {
-                    ShowErr(allPart_cmd, dRes);
-                    return dRes;
-                }
-                dRes = DBProxy.Current.Select(null, art_cmd, out bundle_Detail_Art_Tb);
-                if (!dRes)
-                {
-                    ShowErr(allPart_cmd, dRes);
-                    return dRes;
-                }
-                dRes = DBProxy.Current.Select(null, qty_cmd, out bundle_Detail_Qty_Tb);
-                if (!dRes)
-                {
-                    ShowErr(allPart_cmd, dRes);
-                    return dRes;
-                }
-
-            }
-            #endregion
-
-            return base.OnDetailSelectCommandPrepare(e);
-        }
-        protected override bool OnGridSetup()
-        {
-            Helper.Controls.Grid.Generator(this.detailgrid)
-            .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
-            .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("subProcessid", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true);
-            //.Numeric("Farmout", header: "Farm Out", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            //.Numeric("Farmin", header: "Farm In", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            return base.OnGridSetup();
-        }
+        
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -463,7 +473,6 @@ namespace Sci.Production.Cutting
 
         }
 
-
         private void txtCutRef_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode) return;
@@ -733,8 +742,14 @@ namespace Sci.Production.Cutting
             detailgrid.ValidateControl();
             DataTable bdwtb;
             MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource, "", "Select [No] = BundleNo, SizeCode,Qty,Ukey = Ukey1 , id from #tmp group by BundleGroup,BundleNo,SizeCode,Qty,Ukey1,id", out bdwtb);
-            var frm = new Sci.Production.Cutting.btnGarmentList(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
+            var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bdwtb.Rows.Count == 0 ? bundle_Detail_Qty_Tb : bdwtb);
+            
             frm.ShowDialog(this);
+
+            //DataTable dt = (DataTable)detailgridbs.DataSource;
+            //detailgrid.ValidateControl();
+            //var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb);
+            //frm.ShowDialog(this);
             // queryTable();
         }
         protected override bool ClickPrint()
@@ -765,8 +780,8 @@ where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}'"
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
-                txtArticle.Text = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
-                txtColorID.Text = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
+                CurrentMaintain["article"] = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
+                CurrentMaintain["Colorid"] = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
             }
             else
             {
@@ -782,8 +797,8 @@ where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}'"
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
 
-                    txtArticle.Text = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
-                    txtColorID.Text = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
+                    CurrentMaintain["article"] = item.GetSelecteds()[0]["Article"].ToString().TrimEnd();
+                    CurrentMaintain["Colorid"] = item.GetSelecteds()[0]["Colorid"].ToString().TrimEnd();
                 }
             }
         }
