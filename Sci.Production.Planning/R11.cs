@@ -28,7 +28,11 @@ namespace Sci.Production.Planning
             InitializeComponent();
             txtMdivision.Text = Sci.Env.User.Keyword;
             txtfactory.Text = Sci.Env.User.Factory;
-            comboCategory.SelectedIndex = 1;  //Bulk
+            //comboCategory.SelectedIndex = 1;  //Bulk
+            txtdropdownlist1.Type = "Category_Report";
+           // = "Category_Report"
+          
+           
         }
 
         // 驗證輸入條件
@@ -46,7 +50,7 @@ namespace Sci.Production.Planning
             #endregion
             mdivision = txtMdivision.Text;
             factory = txtfactory.Text;
-            selectindex = comboCategory.SelectedIndex;
+            selectindex = txtdropdownlist1.SelectedIndex;
             months = numNewStyleBaseOn.Value;
 
             DualResult result;
@@ -134,23 +138,29 @@ Where 1=1 "));
                 cmds.Add(sp_factory);
                 condition.Append(string.Format(@"    Factory : {0}", factory));
             }
-
+            
             switch (selectindex)
             {
                 case 0:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
-                    break;
-                case 1:
                     sqlCmd.Append(@" and o.Category = 'B' ");
                     break;
-                case 2:
+                case 1:
                     sqlCmd.Append(@" and o.Category = 'S' ");
                     break;
-                case 3:
+                case 2:
                     sqlCmd.Append(@" and o.Category = 'M' ");
                     break;
+                case 3:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
+                    break;
+                case 4:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
+                    break;
+                case 5:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
+                    break;
             }
-            condition.Append(string.Format(@"    Category : {0}", comboCategory.Items[selectindex]));
+            condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
 
             #endregion
 
@@ -195,16 +205,22 @@ where 1=1"
             switch (selectindex)
             {
                 case 0:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
-                    break;
-                case 1:
                     sqlCmd.Append(@" and o.Category = 'B' ");
                     break;
-                case 2:
+                case 1:
                     sqlCmd.Append(@" and o.Category = 'S' ");
                     break;
-                case 3:
+                case 2:
                     sqlCmd.Append(@" and o.Category = 'M' ");
+                    break;
+                case 3:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
+                    break;
+                case 4:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
+                    break;
+                case 5:
+                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
                     break;
             }
             sqlCmd.Append(string.Format(@"

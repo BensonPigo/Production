@@ -31,14 +31,14 @@
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.labelM = new Sci.Win.UI.Label();
-            this.txtMdivision = new Sci.Production.Class.txtMdivision();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelNewStyleBaseOn = new Sci.Win.UI.Label();
             this.labelmonth = new Sci.Win.UI.Label();
             this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,15 +89,6 @@
             this.labelFactory.TabIndex = 132;
             this.labelFactory.Text = "Factory";
             // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.Location = new System.Drawing.Point(115, 83);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 2;
-            // 
             // labelM
             // 
             this.labelM.Lines = 0;
@@ -106,31 +97,6 @@
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 134;
             this.labelM.Text = "M";
-            // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(115, 49);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 1;
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Items.AddRange(new object[] {
-            "Bulk+Sample",
-            "Bulk",
-            "Sample",
-            "Material"});
-            this.comboCategory.Location = new System.Drawing.Point(115, 121);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 3;
             // 
             // labelCategory
             // 
@@ -173,13 +139,43 @@
             0,
             0});
             // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(114, 120);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(281, 24);
+            this.txtdropdownlist1.TabIndex = 140;
+            this.txtdropdownlist1.Type = "Category_Report";
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(115, 49);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 1;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(115, 83);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 2;
+            // 
             // R11
             // 
             this.ClientSize = new System.Drawing.Size(522, 230);
+            this.Controls.Add(this.txtdropdownlist1);
             this.Controls.Add(this.numNewStyleBaseOn);
             this.Controls.Add(this.labelmonth);
             this.Controls.Add(this.labelNewStyleBaseOn);
-            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.txtMdivision);
@@ -202,10 +198,10 @@
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
-            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.labelNewStyleBaseOn, 0);
             this.Controls.SetChildIndex(this.labelmonth, 0);
             this.Controls.SetChildIndex(this.numNewStyleBaseOn, 0);
+            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -220,10 +216,10 @@
         private Class.txtfactory txtfactory;
         private Win.UI.Label labelM;
         private Class.txtMdivision txtMdivision;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.Label labelNewStyleBaseOn;
         private Win.UI.Label labelmonth;
         private Win.UI.NumericUpDown numNewStyleBaseOn;
+        private Class.txtdropdownlist txtdropdownlist1;
     }
 }
