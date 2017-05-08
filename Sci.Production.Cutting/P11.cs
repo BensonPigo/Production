@@ -248,11 +248,11 @@ namespace Sci.Production.Cutting
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
-
-                foreach (DataRow row in ArticleAry)
-                {
-                    row["Sel"] = newvalue;
-                }
+                ArticleSizeTb.Rows[e.RowIndex][e.ColumnIndex] = newvalue;
+                //foreach (DataRow row in ArticleAry)
+                //{
+                //    row["Sel"] = newvalue;
+                //}
                 dr["sel"] = newvalue;
                 dr.EndEdit();
                 gridArticleSize.Refresh();
@@ -282,10 +282,11 @@ namespace Sci.Production.Cutting
                 if (e.RowIndex != -1) return; //判斷是Header
                 if (e.ColumnIndex != 0) return;//判斷是Sel 欄位
                 int sel = Convert.ToInt16(CutRefTb.Rows[0]["Sel"]);
-                foreach (DataRow dr in ArticleSizeTb.Rows)
-                {
-                    dr["Sel"] = sel;
-                }
+                ArticleSizeTb.Rows[e.RowIndex][e.ColumnIndex] = sel;
+                //foreach (DataRow dr in ArticleSizeTb.Rows)
+                //{
+                //    dr["Sel"] = sel;
+                //}
                 gridArticleSize.Refresh();
 
             };
@@ -492,7 +493,7 @@ and ord.mDivisionid = '{0}'", keyWord);
 
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,c.PatternPanel,a.cutno,ord.styleukey,a.CutCellid,a.Ukey,ag.ArticleGroup
-order by b.sizecode,b.orderid";
+order by b.sizecode,b.orderid,c.PatternPanel";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
@@ -1126,7 +1127,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             spStartnoTb.Columns.Add("orderid", typeof(string));
             spStartnoTb.Columns.Add("startno", typeof(string));
 
-            DataRow[] ArtAy = ArticleSizeTb.Select("Sel=1 ", "Orderid");
+            DataRow[] ArtAy = ArticleSizeTb.Select("Sel=1", "Orderid");
             foreach (DataRow artar in ArtAy)
             {
                 #region 填入SizeRatio
