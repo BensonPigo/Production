@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.button1 = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -41,7 +42,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
             this.gridMaterialStatus = new Sci.Win.UI.Grid();
-            this.button1 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -60,6 +60,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 2;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(272, 8);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(104, 30);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "New Search";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // txtSPNo
             // 
@@ -184,16 +194,6 @@
             this.gridMaterialStatus.TabIndex = 0;
             this.gridMaterialStatus.TabStop = false;
             this.gridMaterialStatus.Sorted += new System.EventHandler(this.gridMaterialStatus_Sorted);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(272, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "New Search";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // P03
             // 
