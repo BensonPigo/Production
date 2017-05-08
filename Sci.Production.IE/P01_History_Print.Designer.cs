@@ -91,8 +91,8 @@
             this.ClientSize = new System.Drawing.Size(345, 156);
             this.Controls.Add(this.numEfficiencySetting);
             this.Controls.Add(this.labelEfficiencySetting);
-            this.DefaultControl = "numericBox1";
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControl = "numEfficiencySetting";
+            this.DefaultControlForEdit = "numEfficiencySetting";
             this.IsSupportPrint = false;
             this.IsSupportToPrint = false;
             this.Name = "P01_History_Print";

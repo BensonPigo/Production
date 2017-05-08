@@ -139,8 +139,8 @@
             this.Controls.Add(this.labelLanguage);
             this.Controls.Add(this.labelArtworkType);
             this.Controls.Add(this.labelEfficiencySetting);
-            this.DefaultControl = "numericBox1";
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControl = "numEfficiencySetting";
+            this.DefaultControlForEdit = "numEfficiencySetting";
             this.IsSupportToPrint = false;
             this.Name = "P01_Print";
             this.Text = "Print";

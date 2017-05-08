@@ -182,7 +182,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelVersion);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(996, 206);
+            this.masterpanel.Size = new System.Drawing.Size(892, 206);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
@@ -252,7 +252,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 206);
-            this.detailpanel.Size = new System.Drawing.Size(996, 417);
+            this.detailpanel.Size = new System.Drawing.Size(892, 143);
             // 
             // gridicon
             // 
@@ -264,34 +264,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(996, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 143);
             // 
             // detail2
             // 
-            this.detail2.Location = new System.Drawing.Point(4, 24);
-            this.detail2.Size = new System.Drawing.Size(996, 661);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(990, 615);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(990, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(996, 661);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(996, 623);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 623);
-            this.detailbtm.Size = new System.Drawing.Size(996, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -683,7 +681,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(996, 206);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 206);
             this.shapeContainer1.TabIndex = 27;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1357,8 +1355,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1004, 722);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtFactory";
+            this.DefaultControlForEdit = "txtFactory";
             this.DefaultDetailOrder = "No";
             this.DefaultOrder = "BrandID,StyleID,SeasonID,Version";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);

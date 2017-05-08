@@ -149,7 +149,7 @@
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
-            this.DefaultControl = "txtstyle1";
+            this.DefaultControl = "txtstyle";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P03_CopyFromOtherStyle";
             this.Text = "Copy From Other Style Line Mapping";

@@ -321,7 +321,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtID";
             this.Name = "P01_SelectOperationCode";
             this.Text = "Select Operation Code";
             this.panel3.ResumeLayout(false);

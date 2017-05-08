@@ -52,10 +52,6 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(832, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtBrand);
@@ -71,12 +67,7 @@
             this.detailcont.Controls.Add(this.labelDaysbefore);
             this.detailcont.Controls.Add(this.labelActivities);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(832, 357);
             this.detailcont.TabIndex = 0;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(832, 38);
             // 
             // browse
             // 
@@ -260,8 +251,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(840, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtCode";
+            this.DefaultControlForEdit = "txtActivities";
             this.DefaultOrder = "BrandID,Code";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

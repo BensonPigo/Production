@@ -159,7 +159,7 @@
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.label1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtStyle";
             this.Name = "P01_Copy";
             this.Text = "Copy to";
             this.ResumeLayout(false);

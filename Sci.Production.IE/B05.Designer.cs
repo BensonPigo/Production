@@ -269,8 +269,8 @@
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
-            this.DefaultControl = "displayBox1";
-            this.DefaultControlForEdit = "displayBox1";
+            this.DefaultControl = "displayCode";
+            this.DefaultControlForEdit = "displayCode";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

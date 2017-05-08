@@ -165,8 +165,8 @@
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtFactory";
+            this.DefaultControlForEdit = "txtFactory";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Line Mapping List";

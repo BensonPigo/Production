@@ -1034,7 +1034,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(835, 552);
-            this.DefaultControlForEdit = "numericBox3";
+            this.DefaultControlForEdit = "numCOPT";
             this.DefaultOrder = "FactoryID,SewingLineID,Inline";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;

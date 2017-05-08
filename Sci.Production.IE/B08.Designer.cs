@@ -259,8 +259,8 @@
             // B08
             // 
             this.ClientSize = new System.Drawing.Size(840, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtEmployee";
+            this.DefaultControlForEdit = "txtNickName";
             this.DefaultOrder = "FactoryID,ID";
             this.IsSupportCopy = false;
             this.Name = "B08";

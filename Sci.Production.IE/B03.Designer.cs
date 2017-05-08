@@ -138,8 +138,8 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
-            this.DefaultControl = "displayBox1";
-            this.DefaultControlForEdit = "editBox1";
+            this.DefaultControl = "displayID";
+            this.DefaultControlForEdit = "editDescription";
             this.DefaultFilter = "Type = \'LM\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

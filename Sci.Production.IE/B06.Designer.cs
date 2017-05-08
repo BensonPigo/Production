@@ -134,8 +134,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(833, 457);
             this.ConnectionName = "Machine";
-            this.DefaultControl = "displayBox1";
-            this.DefaultControlForEdit = "displayBox2";
+            this.DefaultControl = "displayCode";
+            this.DefaultControlForEdit = "displayDescription";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

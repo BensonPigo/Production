@@ -183,8 +183,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "numTarget";
             this.DefaultOrder = "EffectiveDate";
             this.IsSupportPrint = false;
             this.Name = "B02";
