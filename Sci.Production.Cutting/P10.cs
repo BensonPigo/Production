@@ -766,17 +766,23 @@ order by bundlegroup"
 
         private void txtArticle_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
-            string selectCommand;
+            string selectCommand, sqlwhere = "";
             Sci.Win.Tools.SelectItem item;
             if (!EditMode) return;
+           
+            if (!MyUtility.Check.Empty(CurrentMaintain["PatternPanel"]))
+            {
+                 sqlwhere = string.Format(" and = '{0}'",CurrentMaintain["PatternPanel"].ToString());
+            }
+
             if (!MyUtility.Check.Empty(CurrentMaintain["cutref"]))
             {
                 selectCommand = string.Format(@"
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}'"
-                                , CurrentMaintain["cutref"].ToString(), keyword);
+where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}' {2}"
+                                , CurrentMaintain["cutref"].ToString(), keyword, sqlwhere);
                 item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
@@ -791,8 +797,8 @@ where Article!='' and w.cutref='{0}' and w.mDivisionid = '{1}'"
 select distinct Article ,w.Colorid
 from workorder w WITH (NOLOCK) 
 inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
-where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}'"
-                        , CurrentMaintain["Orderid"].ToString(), keyword);
+where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}"
+                        , CurrentMaintain["Orderid"].ToString(), keyword, sqlwhere);
                     item = new Sci.Win.Tools.SelectItem(selectCommand, "20", this.Text);
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel) { return; }
