@@ -447,7 +447,7 @@ namespace Production.Daily
             desc += Environment.NewLine + "================================" +
                     Environment.NewLine + mailTo["Content"].ToString();
             #endregion
-            subject = mailTo["Subject"].ToString().TrimEnd() + this.CurrentData["RgCode"].ToString();
+            subject = mailTo["Subject"].ToString().TrimEnd() +" "+ this.CurrentData["RgCode"].ToString();
 
             SendMail(subject, desc);
             #endregion
