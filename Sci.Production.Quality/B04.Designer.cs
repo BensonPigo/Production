@@ -47,10 +47,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(828, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.label4);
@@ -64,11 +60,6 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txtLevel);
             this.detailcont.Controls.Add(this.labelLevel);
-            this.detailcont.Size = new System.Drawing.Size(828, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -206,8 +197,8 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtLevel";
+            this.DefaultControlForEdit = "txtRateRangeStart";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

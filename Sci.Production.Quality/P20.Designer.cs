@@ -544,7 +544,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(920, 462);
-            this.DefaultControl = "CDate";
+            this.DefaultControl = "dateDate";
             this.DefaultDetailOrder = "GarmentDefectTypeid,GarmentDefectCodeID";
             this.DefaultOrder = "ID";
             this.GridAlias = "Rft_Detail";

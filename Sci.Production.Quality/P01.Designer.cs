@@ -122,7 +122,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(837, 188);
+            this.masterpanel.Size = new System.Drawing.Size(892, 188);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -157,7 +157,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 188);
-            this.detailpanel.Size = new System.Drawing.Size(837, 442);
+            this.detailpanel.Size = new System.Drawing.Size(892, 161);
             // 
             // gridicon
             // 
@@ -169,7 +169,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(837, 442);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 161);
             // 
             // detail2
             // 
@@ -185,11 +185,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(837, 668);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(837, 630);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
@@ -203,8 +203,8 @@
             this.detailbtm.Controls.Add(this.labelPhysicalInsp);
             this.detailbtm.Controls.Add(this.displayavailablemodified);
             this.detailbtm.Controls.Add(this.labelavailablemodified);
-            this.detailbtm.Location = new System.Drawing.Point(0, 630);
-            this.detailbtm.Size = new System.Drawing.Size(837, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -717,7 +717,7 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(845, 730);
-            this.DefaultControlForEdit = "wk_box";
+            this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "seq1,seq2,Receivingid";
             this.DefaultOrder = "id";
             this.GridAlias = "FIR";

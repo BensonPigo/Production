@@ -102,7 +102,7 @@
             this.masterpanel.Controls.Add(this.dateTargetLeadtime);
             this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
             this.masterpanel.Controls.Add(this.dateEarliestEstCuttingDate);
-            this.masterpanel.Size = new System.Drawing.Size(921, 203);
+            this.masterpanel.Size = new System.Drawing.Size(892, 203);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCuttingDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
@@ -137,7 +137,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 203);
-            this.detailpanel.Size = new System.Drawing.Size(921, 278);
+            this.detailpanel.Size = new System.Drawing.Size(892, 146);
             // 
             // gridicon
             // 
@@ -150,32 +150,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(921, 278);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 146);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(921, 519);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(915, 473);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(915, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(921, 519);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(921, 481);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 481);
-            this.detailbtm.Size = new System.Drawing.Size(921, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -481,7 +481,7 @@
             // P07
             // 
             this.ClientSize = new System.Drawing.Size(929, 581);
-            this.DefaultControlForEdit = "remark_text";
+            this.DefaultControlForEdit = "editRemark";
             this.DefaultDetailOrder = "seq1,seq2";
             this.DefaultOrder = "id";
             this.GridAlias = "AIR_Laboratory";

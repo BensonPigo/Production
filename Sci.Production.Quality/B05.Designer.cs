@@ -40,21 +40,12 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(831, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numWeight);
             this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Controls.Add(this.labelWeight);
-            this.detailcont.Size = new System.Drawing.Size(831, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
             // 
@@ -137,7 +128,7 @@
             // B05
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControlForEdit = "numWeight";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

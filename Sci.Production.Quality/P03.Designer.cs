@@ -107,7 +107,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(917, 178);
+            this.masterpanel.Size = new System.Drawing.Size(892, 178);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -142,7 +142,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 178);
-            this.detailpanel.Size = new System.Drawing.Size(917, 295);
+            this.detailpanel.Size = new System.Drawing.Size(892, 171);
             // 
             // gridicon
             // 
@@ -155,32 +155,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(917, 295);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 171);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(917, 511);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(911, 465);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(911, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(917, 511);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(917, 473);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 473);
-            this.detailbtm.Size = new System.Drawing.Size(917, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -530,7 +530,7 @@
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(925, 573);
-            this.DefaultControlForEdit = "wk_box";
+            this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";
             this.GridAlias = "FIR";

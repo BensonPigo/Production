@@ -133,8 +133,8 @@
             // B20
             // 
             this.ClientSize = new System.Drawing.Size(834, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "editBox1";
+            this.DefaultControl = "txtDefectType";
+            this.DefaultControlForEdit = "editDescription";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
