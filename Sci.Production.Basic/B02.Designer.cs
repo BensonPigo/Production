@@ -803,8 +803,8 @@
             // 
             this.ClientSize = new System.Drawing.Size(759, 474);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "numericBox2";
-            this.DefaultControlForEdit = "numericBox2";
+            this.DefaultControl = "numSample";
+            this.DefaultControlForEdit = "numSample";
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.Text = "B02. System Parameter";

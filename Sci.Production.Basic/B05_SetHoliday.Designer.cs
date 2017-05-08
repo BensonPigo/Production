@@ -109,7 +109,7 @@
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.txtDate);
             this.Controls.Add(this.labelDate);
-            this.DefaultControl = "textBox2";
+            this.DefaultControl = "txtDescription";
             this.Name = "B05_SetHoliday";
             this.Text = "Holiday Setup";
             this.ResumeLayout(false);

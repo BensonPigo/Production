@@ -65,10 +65,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(832, 455);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numStdLTDayb41stCutDateBaseOnSubProcess);
@@ -100,13 +96,13 @@
             this.detailcont.Controls.Add(this.labelClassify);
             this.detailcont.Controls.Add(this.labelArtworkType);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(832, 403);
+            this.detailcont.Size = new System.Drawing.Size(897, 343);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 403);
-            this.detailbtm.Size = new System.Drawing.Size(832, 52);
+            this.detailbtm.Location = new System.Drawing.Point(0, 343);
+            this.detailbtm.Size = new System.Drawing.Size(897, 52);
             // 
             // browse
             // 
@@ -462,7 +458,7 @@
             // B14
             // 
             this.ClientSize = new System.Drawing.Size(840, 517);
-            this.DefaultControlForEdit = "comboBox1";
+            this.DefaultControlForEdit = "comboInHouseOSP";
             this.DefaultOrder = "Seq";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

@@ -65,10 +65,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(830, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayM);
@@ -100,11 +96,9 @@
             this.detailcont.Controls.Add(this.labelName);
             this.detailcont.Controls.Add(this.labelCode);
             this.detailcont.Controls.Add(this.txtUserManager);
-            this.detailcont.Size = new System.Drawing.Size(830, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(830, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -420,8 +414,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(838, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox10";
+            this.DefaultControl = "txtCode";
+            this.DefaultControlForEdit = "txtKeyWord";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B01";

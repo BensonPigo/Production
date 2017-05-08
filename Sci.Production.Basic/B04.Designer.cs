@@ -61,10 +61,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(824, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numWHoldingTerm);
@@ -92,12 +88,7 @@
             this.detailcont.Controls.Add(this.labelNationality);
             this.detailcont.Controls.Add(this.labelAbbreviation);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(824, 357);
             this.detailcont.TabIndex = 0;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(824, 38);
             // 
             // browse
             // 
@@ -387,8 +378,8 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(832, 457);
-            this.DefaultControl = "textCode";
-            this.DefaultControlForEdit = "textBox4";
+            this.DefaultControl = "txtCode";
+            this.DefaultControlForEdit = "txtTel";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

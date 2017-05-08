@@ -67,10 +67,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(830, 576);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.btnShippingMark);
@@ -104,13 +100,7 @@
             this.detailcont.Controls.Add(this.txtPaytermarSample);
             this.detailcont.Controls.Add(this.txtPaytermarBulk);
             this.detailcont.Controls.Add(this.txtCountry);
-            this.detailcont.Size = new System.Drawing.Size(830, 538);
             this.detailcont.TabIndex = 0;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 538);
-            this.detailbtm.Size = new System.Drawing.Size(830, 38);
             // 
             // browse
             // 
@@ -445,7 +435,7 @@
             // B11
             // 
             this.ClientSize = new System.Drawing.Size(838, 638);
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControlForEdit = "txtDestination";
             this.DefaultOrder = "BrandID,ID";
             this.EnableGridJunkColor = true;
             this.IsSupportCopy = false;

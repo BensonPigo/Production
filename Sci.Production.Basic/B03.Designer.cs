@@ -40,21 +40,12 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(835, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtUserManager);
             this.detailcont.Controls.Add(this.txtM);
             this.detailcont.Controls.Add(this.labelManager);
             this.detailcont.Controls.Add(this.labelM);
-            this.detailcont.Size = new System.Drawing.Size(835, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(835, 38);
             // 
             // browse
             // 
@@ -118,8 +109,8 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(843, 457);
-            this.DefaultControl = "textM";
-            this.DefaultControlForEdit = "txtuser1";
+            this.DefaultControl = "txtM";
+            this.DefaultControlForEdit = "txtUserManager";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

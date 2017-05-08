@@ -511,7 +511,7 @@
             this.Controls.Add(this.comboYearMonth);
             this.Controls.Add(this.btnRefersh);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.DefaultControl = "comboBox1";
+            this.DefaultControl = "comboYearMonth";
             this.EditMode = true;
             this.Name = "B05";
             this.Text = "B05. Holiday setup";

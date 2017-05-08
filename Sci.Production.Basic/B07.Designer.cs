@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(829, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkJunk);
@@ -52,11 +48,6 @@
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.labelTerm);
             this.detailcont.Controls.Add(this.labelID);
-            this.detailcont.Size = new System.Drawing.Size(829, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(829, 38);
             // 
             // browse
             // 
@@ -134,8 +125,8 @@
             // B07
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtID";
+            this.DefaultControlForEdit = "txtTerm";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
