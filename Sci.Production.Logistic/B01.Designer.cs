@@ -133,8 +133,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtCode";
+            this.DefaultControlForEdit = "txtCode";
             this.DefaultOrder = "ID";
             this.Name = "B01";
             this.Text = "B01. Clog Location Index";
