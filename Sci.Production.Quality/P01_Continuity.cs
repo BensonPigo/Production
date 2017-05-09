@@ -15,6 +15,7 @@ using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using Sci.Production.PublicPrg;
 
 
 namespace Sci.Production.Quality
@@ -137,6 +138,7 @@ namespace Sci.Production.Quality
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
@@ -169,6 +171,7 @@ namespace Sci.Production.Quality
                     dr["Dyelot"] = "";
                     return;
                 }
+                //手動輸入,oldvalue <> newvalue,就不會return並且繼續判斷
                 if (oldvalue == newvalue) return;
                 string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
@@ -190,32 +193,11 @@ namespace Sci.Production.Quality
             };
             #endregion
 
-            #region Resultcell
-            
-            Resultcell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass")
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["Result"] = "Fail";
-                    ctl.Text = dr["result"].ToString();
-                }
-                else
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;          
-                    dr["Result"] = "Pass";
-                    ctl.Text = dr["result"].ToString();
-                }
-            };
-            #endregion
-
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5))
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true,settings: Resultcell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)

@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Data.SqlClient;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 
 namespace Sci.Production.Quality
@@ -141,7 +142,7 @@ namespace Sci.Production.Quality
         {
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings Resultcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             
             #region Roll
             Rollcell.EditingMouseDown += (s, e) =>
@@ -194,33 +195,13 @@ namespace Sci.Production.Quality
                     return;
                 }  
             };
-            #endregion
-
-            #region Resultcell
-            Resultcell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass")
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["Result"] = "Fail";
-                    ctl.Text = dr["result"].ToString();
-                }
-                else
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;          
-                    dr["Result"] = "Pass";
-                    ctl.Text = dr["result"].ToString();
-                }
-            };
-            #endregion
+            #endregion          
 
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5))
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true,settings: Resultcell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
             .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)

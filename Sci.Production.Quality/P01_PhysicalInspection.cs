@@ -14,7 +14,7 @@ using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
-//using Microsoft.Office.Interop.Excel;
+using Sci.Production.PublicPrg;
 
 
 namespace Sci.Production.Quality
@@ -159,7 +159,7 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             #region TotalPoint Double Click
             TotalPointcell.EditingMouseDoubleClick += (s, e) =>
             {
@@ -245,25 +245,7 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
             };
             #endregion
-            #region Result
-            ResultCell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "Pass")
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["Result"] = "Fail";
-                    ctl.Text = dr["result"].ToString();
-                }
-                else
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["Result"] = "Pass";
-                    ctl.Text = dr["result"].ToString();
-                }
-            };
-            #endregion
+           
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
@@ -274,7 +256,7 @@ namespace Sci.Production.Quality
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: TotalPointcell)
             .Numeric("pointRate", header: "Point Rate \nper 100yds", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6,decimal_places:2)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5),  settings: ResultCell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResulCell)
             .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .CheckBox("moisture", header: "Moisture", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
