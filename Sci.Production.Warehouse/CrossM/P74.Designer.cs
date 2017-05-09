@@ -281,8 +281,8 @@
             // P74
             // 
             this.ClientSize = new System.Drawing.Size(1066, 601);
-            this.DefaultControl = "txtMdivision1";
-            this.DefaultControlForEdit = "txtMdivision1";
+            this.DefaultControl = "txtMdivision";
+            this.DefaultControlForEdit = "txtMdivision";
             this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

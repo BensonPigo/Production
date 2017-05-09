@@ -287,8 +287,6 @@
             // 
             this.ApvChkValue = "Sent";
             this.ClientSize = new System.Drawing.Size(1008, 601);
-            this.DefaultControl = "textBox3";
-            this.DefaultControlForEdit = "textBox3";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
