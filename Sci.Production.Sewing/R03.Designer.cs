@@ -246,8 +246,8 @@
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.labelBuyerDelivery);
             this.Controls.Add(this.labelSewingOutputDate);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSewingOutputDate";
+            this.DefaultControlForEdit = "dateSewingOutputDate";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. Prod. Efficiency Analysis Report";

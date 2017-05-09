@@ -185,8 +185,8 @@
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.labelOoutputDate);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateOoutputDate";
+            this.DefaultControlForEdit = "dateOoutputDate";
             this.IsSupportToPrint = false;
             this.Name = "R04";
             this.Text = "R04. Sewing daily output list";

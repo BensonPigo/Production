@@ -546,7 +546,7 @@
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(926, 513);
-            this.DefaultControl = "dateBox1";
+            this.DefaultControl = "dateDate";
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "OutputDate";
             this.GridAlias = "SewingOutput_Detail";

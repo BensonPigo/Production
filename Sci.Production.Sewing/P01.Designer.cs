@@ -575,8 +575,8 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(930, 525);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "txtdropdownlist1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "txtdropdownlistShift";
             this.DefaultDetailOrder = "OrderID,ComboType,Article";
             this.DefaultOrder = "OutputDate,SewingLineID,Shift";
             this.GridAlias = "SewingOutput_Detail";

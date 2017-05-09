@@ -285,8 +285,8 @@
             this.Controls.Add(this.labelHoliday);
             this.Controls.Add(this.labelSewingLine);
             this.Controls.Add(this.labelDate);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateDateStart";
+            this.DefaultControlForEdit = "dateDateStart";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Monthly Production output Report";

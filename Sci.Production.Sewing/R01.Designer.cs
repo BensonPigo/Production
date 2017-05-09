@@ -160,8 +160,8 @@
             this.Controls.Add(this.labelTeam);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelDate);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "dateDate";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Daily CMP Report";
