@@ -1297,7 +1297,7 @@
             this.Controls.Add(this.labelInvoice);
             this.Controls.Add(this.labelSEQ);
             this.Controls.Add(this.shapeContainer1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtSEQ";
             this.Name = "P08_InputData";
             this.Text = "Replacement Report - Fabric";
             this.WorkAlias = "ReplacementReport_Detail";

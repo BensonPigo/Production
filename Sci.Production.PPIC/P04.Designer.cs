@@ -1106,8 +1106,8 @@
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(905, 569);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "txtuser1";
+            this.DefaultControl = "txtStyleNo";
+            this.DefaultControlForEdit = "txtuserLocalMR";
             this.DefaultOrder = "ID,SeasonID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

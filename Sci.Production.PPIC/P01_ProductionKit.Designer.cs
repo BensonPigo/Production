@@ -204,7 +204,7 @@
             this.Controls.Add(this.labelMR);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.labelFactory);
-            this.DefaultControl = "comboBox1";
+            this.DefaultControl = "comboFactory";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.KeyField1 = "StyleUkey";
             this.Name = "P01_ProductionKit";

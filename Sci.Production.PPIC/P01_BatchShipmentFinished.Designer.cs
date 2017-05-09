@@ -234,7 +234,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtStyle";
             this.Name = "P01_BatchShipmentFinished";
             this.Text = "Batch Shipment Finished";
             this.panel3.ResumeLayout(false);

@@ -160,8 +160,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(834, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtID";
+            this.DefaultControlForEdit = "txtDescription";
             this.DefaultFilter = "Type = \'FL\'";
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;

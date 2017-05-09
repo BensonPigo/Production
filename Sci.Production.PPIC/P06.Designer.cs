@@ -270,8 +270,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateExpPoutDate";
+            this.DefaultControlForEdit = "dateExpPoutDate";
             this.EditMode = true;
             this.Name = "P06";
             this.Text = "P06. Shipment Schedule";

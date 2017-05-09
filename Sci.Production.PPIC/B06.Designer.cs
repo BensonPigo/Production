@@ -216,8 +216,8 @@
             // B06
             // 
             this.ClientSize = new System.Drawing.Size(840, 457);
-            this.DefaultControl = "displayBox1";
-            this.DefaultControlForEdit = "displayBox1";
+            this.DefaultControl = "displayFactory";
+            this.DefaultControlForEdit = "displayFactory";
             this.DefaultOrder = "ID";
             this.IsSupportPrint = false;
             this.Name = "B06";

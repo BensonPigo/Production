@@ -212,8 +212,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateBox2";
-            this.DefaultControlForEdit = "dateBox2";
+            this.DefaultControl = "dateUpdatedDate";
+            this.DefaultControlForEdit = "dateUpdatedDate";
             this.EditMode = true;
             this.Name = "P02";
             this.Text = "P02. Comparison List for updated order";

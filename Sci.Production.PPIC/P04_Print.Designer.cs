@@ -172,8 +172,8 @@
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelbrand);
             this.Controls.Add(this.labelStyleNo);
-            this.DefaultControl = "txtstyle1";
-            this.DefaultControlForEdit = "txtstyle1";
+            this.DefaultControl = "txtstyleStart";
+            this.DefaultControlForEdit = "txtstyleStart";
             this.IsSupportToPrint = false;
             this.Name = "P04_Print";
             this.Text = "Print";

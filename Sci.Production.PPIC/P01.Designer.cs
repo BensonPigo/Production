@@ -3194,8 +3194,8 @@
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtProgram";
+            this.DefaultControlForEdit = "txtProgram";
             this.DefaultOrder = "ID";
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.IsSupportCopy = false;

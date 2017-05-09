@@ -287,7 +287,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "comboBox1";
+            this.DefaultControl = "comboPackingListID";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P01_CTNStatus";
             this.Text = "Carton Status";

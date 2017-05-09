@@ -218,7 +218,7 @@
             this.Controls.Add(this.labelWeekDay);
             this.Controls.Add(this.labelDate);
             this.Controls.Add(this.labelLine);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtLineNoStart";
             this.Name = "B07_BatchAdd";
             this.Text = " Batch Edit/Add";
             this.ResumeLayout(false);

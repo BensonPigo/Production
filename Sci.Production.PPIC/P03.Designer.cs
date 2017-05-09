@@ -318,8 +318,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtStyleNo";
+            this.DefaultControlForEdit = "txtStyleNo";
             this.Name = "P03";
             this.Text = "P03. Production Kits confirm";
             this.Controls.SetChildIndex(this.panel1, 0);

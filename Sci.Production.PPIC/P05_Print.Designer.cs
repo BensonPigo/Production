@@ -70,8 +70,8 @@
             this.ClientSize = new System.Drawing.Size(493, 149);
             this.Controls.Add(this.dateReadydate);
             this.Controls.Add(this.labelReadydate);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateReadydate";
+            this.DefaultControlForEdit = "dateReadydate";
             this.IsSupportToPrint = false;
             this.Name = "P05_Print";
             this.Text = "Print";

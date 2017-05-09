@@ -116,8 +116,8 @@
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.dateDelivery);
             this.Controls.Add(this.labelDelivery);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateDelivery";
+            this.DefaultControlForEdit = "dateDelivery";
             this.IsSupportToPrint = false;
             this.Name = "P06_Print";
             this.Text = "Print";

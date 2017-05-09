@@ -525,8 +525,8 @@
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
             this.ClientSize = new System.Drawing.Size(928, 552);
-            this.DefaultControl = "textSP";
-            this.DefaultControlForEdit = "textSP";
+            this.DefaultControl = "txtSPNo";
+            this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq1,Seq2";
             this.DefaultOrder = "CDate,ID";
             this.GridAlias = "ReplacementReport_Detail";

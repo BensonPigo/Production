@@ -238,8 +238,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateUptoSCIDelivery";
+            this.DefaultControlForEdit = "dateUptoSCIDelivery";
             this.Name = "P05";
             this.Text = "P05. Poduction Schedule";
             this.Controls.SetChildIndex(this.panel1, 0);

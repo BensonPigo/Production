@@ -153,7 +153,7 @@
             this.Controls.Add(this.labelHours);
             this.Controls.Add(this.dateDate);
             this.Controls.Add(this.labelDate);
-            this.DefaultControl = "dateRange1";
+            this.DefaultControl = "dateDate";
             this.Name = "B07_Add";
             this.Text = "Add";
             this.ResumeLayout(false);
