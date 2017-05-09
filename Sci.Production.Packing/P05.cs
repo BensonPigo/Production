@@ -698,12 +698,12 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 CurrentMaintain["ID"] = id;
                 CurrentMaintain["INVNo"] = id;
             }
-            if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
-            {
-                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
-                numTtlCBM.Focus();
-                return false;
-            }
+            //if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
+            //{
+            //    MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
+            //    numTtlCBM.Focus();
+            //    return false;
+            //}
             return base.ClickSaveBefore();
         }
 
