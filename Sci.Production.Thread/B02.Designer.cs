@@ -115,8 +115,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtThreadColor";
+            this.DefaultControlForEdit = "txtDescription";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B02";

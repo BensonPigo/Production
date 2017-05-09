@@ -334,8 +334,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(920, 449);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtSP";
+            this.DefaultControlForEdit = "txtSP";
             this.DefaultDetailOrder = "Refno,ThreadColorid";
             this.DefaultOrder = "OrderID";
             this.GridAlias = "ThreadRequisition_Detail";

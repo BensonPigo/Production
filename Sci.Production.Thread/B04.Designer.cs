@@ -115,8 +115,8 @@
             // B04
             // 
             this.ClientSize = new System.Drawing.Size(905, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtThreadLocation";
+            this.DefaultControlForEdit = "txtDescription";
             this.DefaultOrder = "id";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

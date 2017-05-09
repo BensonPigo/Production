@@ -110,8 +110,8 @@
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(837, 352);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "checkBox1";
+            this.DefaultControl = "txtThreadType";
+            this.DefaultControlForEdit = "checkJunk";
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B03";

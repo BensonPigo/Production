@@ -227,8 +227,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(926, 414);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "txtRemark";
             this.DefaultOrder = "ID";
             this.GridAlias = "ThreadIncoming_Detail";
             this.GridNew = 0;
