@@ -138,6 +138,3 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際完�
 
 
 GO
-CREATE NONCLUSTERED INDEX [status_styleUkey_EditDate]
-    ON [dbo].[Pattern]([Status] ASC, [StyleUkey] ASC, [EditDate] ASC);
-
