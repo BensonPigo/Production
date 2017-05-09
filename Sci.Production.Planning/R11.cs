@@ -143,24 +143,33 @@ Where 1=1 "));
             {
                 case 0:
                     sqlCmd.Append(@" and o.Category = 'B' ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
                     break;
                 case 1:
                     sqlCmd.Append(@" and o.Category = 'S' ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
                     break;
                 case 2:
                     sqlCmd.Append(@" and o.Category = 'M' ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
                     break;
                 case 3:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
                     break;
                 case 4:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
                     break;
                 case 5:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
+                    condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+                    break;
+                default:
+
                     break;
             }
-            condition.Append(string.Format(@"    Category : {0}", txtdropdownlist1.Items[selectindex]));
+            
 
             #endregion
 
@@ -221,6 +230,9 @@ where 1=1"
                     break;
                 case 5:
                     sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
+                    break;
+                default:
+                   
                     break;
             }
             sqlCmd.Append(string.Format(@"
