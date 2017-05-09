@@ -244,34 +244,20 @@ namespace Sci.Production.Cutting
 
             chcutref.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    DataRow dr = gridCutRef.GetDataRow(0);
-                    int oldvalue = Convert.ToInt16(dr["sel"]);
-                    int newvalue = Convert.ToInt16(((DataTable)gridCutRef.DataSource).DefaultView.ToTable().Rows[0]["sel"]);
-                    foreach (DataRow row in ArticleSizeTb.Rows)
-                    {
-                        row["Sel"] = newvalue;
-                    }
-                    dr["sel"] = newvalue;
-                    dr.EndEdit();
-                    gridArticleSize.Refresh();
-                }
-                else
-                {
-                    DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
-                    int oldvalue = Convert.ToInt16(dr["sel"]);
-                    int newvalue = Convert.ToInt16(e.FormattedValue);
-                    DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
+                if (e.RowIndex == -1) return;
 
-                    foreach (DataRow row in ArticleAry)
-                    {
-                        row["Sel"] = newvalue;
-                    }
-                    dr["sel"] = newvalue;
-                    dr.EndEdit();
-                    gridArticleSize.Refresh();
-                }      
+                DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
+                int oldvalue = Convert.ToInt16(dr["sel"]);
+                int newvalue = Convert.ToInt16(e.FormattedValue);
+                DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
+
+                foreach (DataRow row in ArticleAry)
+                {
+                    row["Sel"] = newvalue;
+                }
+                dr["sel"] = newvalue;
+                dr.EndEdit();
+                gridArticleSize.Refresh();
             };
             charticle.CellValidating += (s, e) =>
             {
@@ -297,12 +283,15 @@ namespace Sci.Production.Cutting
             {
                 if (e.RowIndex != -1) return; //判斷是Header
                 if (e.ColumnIndex != 0) return;//判斷是Sel 欄位
-                int sel = Convert.ToInt16(CutRefTb.Rows[0]["Sel"]);
-                ArticleSizeTb.Rows[e.RowIndex][e.ColumnIndex] = sel;
-                foreach (DataRow dr in ArticleSizeTb.Rows)
+                DataRow dr = gridCutRef.GetDataRow(0);
+                int oldvalue = Convert.ToInt16(dr["sel"]);
+                int newvalue = Convert.ToInt16(((DataTable)gridCutRef.DataSource).DefaultView.ToTable().Rows[0]["sel"]);
+                foreach (DataRow row in ArticleSizeTb.Rows)
                 {
-                    dr["Sel"] = sel;
+                    row["Sel"] = newvalue;
                 }
+                dr["sel"] = newvalue;
+                dr.EndEdit();
                 gridArticleSize.Refresh();
 
             };
