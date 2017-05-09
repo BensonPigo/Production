@@ -243,7 +243,7 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) //7
                 .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //8
-                .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //9
+                .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6), minimum: -9999999999)  //9
                 .Text("location", header: "Location", width: Widths.AnsiChars(30), iseditingreadonly: true)    //10
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //11
                ;

@@ -361,7 +361,7 @@ where R.id= @ID";
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns)    //5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
+            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: -9999999999)    //6
             .Text("Location", header: "Location", iseditingreadonly: true)    //7
             ;     //
             #endregion 欄位設定
