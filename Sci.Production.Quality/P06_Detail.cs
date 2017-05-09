@@ -638,11 +638,7 @@ namespace Sci.Production.Quality
             };
             #endregion
 
-            #region -- resultCell
-            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
-            resultCell.CharacterCasing = CharacterCasing.Normal;
-            
-            #endregion
+            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();    
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;      
         
             
