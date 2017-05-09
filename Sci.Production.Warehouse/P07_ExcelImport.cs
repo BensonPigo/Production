@@ -137,7 +137,7 @@ namespace Sci.Production.Warehouse
         //Add Excel
         private void btnAddExcel_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
+            openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 DataRow dr = ((DataTable)listControlBindingSource1.DataSource).NewRow();
