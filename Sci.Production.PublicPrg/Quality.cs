@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Windows.Forms;
 using Sci.Data;
 using Sci;
 using Ict;
@@ -115,5 +116,30 @@ namespace Sci.Production.PublicPrg
             return re_str;
         }
         #endregion
+        /// <summary>
+        /// Double Click後將Result替換成相反結果(Pass<=>Fail)
+        /// </summary>
+        /// <returns></returns>
+        public class cellResult : DataGridViewGeneratorTextColumnSettings
+        {
+            public static DataGridViewGeneratorTextColumnSettings GetGridCell()
+            {
+                cellResult Result = new cellResult();
+                Result.CellMouseDoubleClick += (s, e) =>
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) return;
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    if (dr["Result"].ToString().ToUpper() == "PASS")
+                    {
+                        dr["Result"] = "Fail";
+
+                    }
+                    else dr["Result"] = "Pass";
+                   
+                };
+                return Result;
+            }
+        }
     }
 }
