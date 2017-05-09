@@ -162,8 +162,8 @@
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelApvDate);
             this.Controls.Add(this.labelCreateDate);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateCreateDate";
+            this.DefaultControlForEdit = "dateCreateDate";
             this.IsSupportToPrint = false;
             this.Name = "R08";
             this.Text = "R08. Replacement Report List";

@@ -375,8 +375,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtSPStart";
+            this.DefaultControlForEdit = "txtSPStart";
             this.EditMode = true;
             this.Name = "P13";
             this.Text = "P13. Assign sample to sewing schedule";

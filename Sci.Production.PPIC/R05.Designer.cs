@@ -141,8 +141,8 @@
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelApvDate);
             this.Controls.Add(this.labelReportType);
-            this.DefaultControl = "comboBox1";
-            this.DefaultControlForEdit = "comboBox1";
+            this.DefaultControl = "comboReportType";
+            this.DefaultControlForEdit = "comboReportType";
             this.IsSupportToPrint = false;
             this.Name = "R05";
             this.Text = "R05. Allowance Consumption Report";

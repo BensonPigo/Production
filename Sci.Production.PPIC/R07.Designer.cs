@@ -172,8 +172,8 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelYear);
-            this.DefaultControl = "numericUpDown1";
-            this.DefaultControlForEdit = "numericUpDown1";
+            this.DefaultControl = "numericUpDownYear";
+            this.DefaultControlForEdit = "numericUpDownYear";
             this.IsSupportToPrint = false;
             this.Name = "R07";
             this.Text = "R07. Sewing Schedule Gantt Chart";

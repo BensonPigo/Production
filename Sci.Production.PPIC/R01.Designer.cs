@@ -254,8 +254,8 @@
             this.Controls.Add(this.labelSewingLine);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
-            this.DefaultControl = "comboBox1";
-            this.DefaultControlForEdit = "comboBox1";
+            this.DefaultControl = "comboM";
+            this.DefaultControlForEdit = "comboM";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Sewing Line Schedule Report";

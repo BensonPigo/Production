@@ -141,8 +141,8 @@
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelApvDate);
             this.Controls.Add(this.label1);
-            this.DefaultControl = "comboBox1";
-            this.DefaultControlForEdit = "comboBox1";
+            this.DefaultControl = "comboReportType";
+            this.DefaultControlForEdit = "comboReportType";
             this.IsSupportToPrint = false;
             this.Name = "R04";
             this.Text = "R04. Lacking & Replacement BCS Report";

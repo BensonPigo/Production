@@ -489,8 +489,8 @@
             this.Controls.Add(this.labelCutOffDate);
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.labelBuyerDelivery);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateBuyerDelivery";
+            this.DefaultControlForEdit = "dateBuyerDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. PPIC master list report";

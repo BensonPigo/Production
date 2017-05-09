@@ -500,8 +500,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(926, 549);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtSP";
+            this.DefaultControlForEdit = "txtSP";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
             this.GridAlias = "Lack_Detail";

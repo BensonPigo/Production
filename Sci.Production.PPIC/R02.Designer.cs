@@ -315,8 +315,8 @@
             this.Controls.Add(this.labelFtyMRRcvDate);
             this.Controls.Add(this.labelProvideDate);
             this.Controls.Add(this.labelSCIDelivery);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSCIDelivery";
+            this.DefaultControlForEdit = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R02";
             this.Text = "R02. Production Kits Report";

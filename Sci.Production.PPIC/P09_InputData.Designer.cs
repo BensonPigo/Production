@@ -619,7 +619,7 @@
             this.Controls.Add(this.labelColorCode);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.labelSEQ);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtSEQ";
             this.Name = "P09_InputData";
             this.Text = "Replacement Report - Accessory";
             this.Controls.SetChildIndex(this.labelSEQ, 0);
