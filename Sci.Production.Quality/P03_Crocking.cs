@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
@@ -122,7 +123,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             DataGridViewGeneratorTextColumnSettings dryScaleCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings wetScaleCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             DataGridViewGeneratorDateColumnSettings InspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
 
@@ -198,16 +199,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     }                    
                     dr["Inspector"] = item1.GetSelectedString();
                 }
-            };
-
-            ResultCell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-
-                if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
-                else dr["Result"] = "PASS";
-            };
+            };         
 
             #endregion
             #region Valid 檢驗
@@ -322,17 +314,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-            };
-            ResultCell.CellValidating += (s, e) =>
-            {
-                string result_cmd = string.Format(@"select result from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);
-                DataRow drResult;
-                if (!MyUtility.Check.Seek(result_cmd, out drResult))
-                {
-                    MyUtility.Msg.WarningBox("<Result> cannot be empty!");
-                    return;
-                }
-            };
+            };        
             InspDateCell.CellValidating += (s, e) =>
             {
                 string result_cmd = string.Format(@"select inspdate from FIR_Laboratory_Crocking WITH (NOLOCK) where id ='{0}'", maindr["id"]);

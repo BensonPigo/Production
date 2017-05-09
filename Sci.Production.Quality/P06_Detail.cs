@@ -639,27 +639,9 @@ namespace Sci.Production.Quality
             #endregion
 
             #region -- resultCell
-            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             resultCell.CharacterCasing = CharacterCasing.Normal;
             
-
-            resultCell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["result"].ToString().ToUpper() == "PASS") 
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;                   
-                    dr["result"] = "Fail";
-                    ctl.Text = dr["result"].ToString();
-                }
-                else
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;           
-                    dr["result"] = "Pass";
-                    ctl.Text = dr["result"].ToString();
-                }
-            };
             #endregion
             seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;      
         

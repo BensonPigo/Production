@@ -158,7 +158,7 @@ where a.ID='{0}'"
             DataGridViewGeneratorNumericColumnSettings SkeTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region 設定GridMouse Click 事件
             Rollcell.EditingMouseDown += (s, e) =>
@@ -196,13 +196,6 @@ where a.ID='{0}'"
                 }
             };
 
-            ResultCell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (!this.EditMode) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Result"].ToString() == "PASS") dr["Result"] = "FAIL";
-                else dr["Result"] = "PASS";
-            };
             #endregion
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>

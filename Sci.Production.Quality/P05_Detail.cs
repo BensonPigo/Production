@@ -217,7 +217,7 @@ and a.seq1=@seq1";
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
 
             #region groupCell
             //groupCell.EditingValueChanged +=(s,e) =>
@@ -674,28 +674,7 @@ and a.seq1=@seq1";
             };
             #endregion
 
-            #region resultCell
-            resultCell.CharacterCasing = CharacterCasing.Normal;
-
-            resultCell.CellMouseDoubleClick += (s, e) =>
-            {
-                if (this.EditMode == false) return;
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-
-                if (dr["result"].ToString().ToUpper() == "PASS")
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["result"] = "Fail";
-                    ctl.Text = dr["result"].ToString();
-                }
-                else
-                {
-                    var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
-                    dr["result"] = "Pass";
-                    ctl.Text = dr["result"].ToString();
-                }
-            };
-            #endregion
+         
         
             Helper.Controls.Grid.Generator(this.grid)                           
                .Text("OvenGroup", "Group", width: Widths.AnsiChars(5), settings: groupCell)                
