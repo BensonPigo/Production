@@ -411,8 +411,8 @@ namespace Sci.Production.Cutting
                     sxr.dicDatas.Add(sxr._v + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
                     sxr.dicDatas.Add(sxr._v + "ORDERNO" + idxStr, dr["ORDERNO"]);
                     sxr.dicDatas.Add(sxr._v + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"]);
-                    sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);
+                    sxr.dicDatas.Add(sxr._v + "QTY" + idxStr, dr["QTY"].ToString());
+                    sxr.dicDatas.Add(sxr._v + "FACTORY" + idxStr, dr["FACTORY"]);                    
                     sxrc.xltRptTable dt = new sxrc.xltRptTable(dts[sgIdx]);
 
                     #region 補上空白的SizeCode
