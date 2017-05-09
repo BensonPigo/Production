@@ -241,10 +241,10 @@ namespace Sci.Production.Cutting
                 dr.EndEdit();
                 calpart();
             };
-
             chcutref.CellValidating += (s, e) =>
             {
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
+                if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1"?true:false)) return;
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
