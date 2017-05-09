@@ -920,8 +920,6 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out sub_Schema);
             if (!ok) { return ok; };
 
-
-
             foreach (KeyValuePair<DataRow, DataTable> it in e.SubDetails)
             {
                 foreach (DataRow dr in it.Value.Rows)
@@ -938,23 +936,6 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                             Updated.Add(dr);
                         }
                     }
-                    //if (dr.RowState == DataRowState.Added)
-                    //{
-                    //    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
-                    //    {
-                    //        Inserted.Add(dr);
-                    //        deleteList.Add(dr);
-                    //    }
-                    //}
-                    //if (dr.RowState == DataRowState.Modified)
-                    //{
-                    //    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
-                    //    {
-                    //        Updated.Add(dr);
-                    //        deleteList.Add(dr);
-                    //        //dr.Delete();
-                    //    }
-                    //}
                 }
             }
 
@@ -988,16 +969,23 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
 
             List<DataRow> NewDelete = new List<DataRow>();
             if (deleteList.Count > 0)
-            {
+            {                         
                 var newT = deleteList[0].Table.Clone();
                 for (int i = 0; i < deleteList.Count; i++)
-                {
-
+                {                    
                     var newOne = newT.NewRow();
                     newOne.ItemArray = deleteList[i].ItemArray;
                     try
                     {
-                        newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
+                        if (deleteList[i].RowState != DataRowState.Added)
+                        {
+                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];    
+                        }
+                        else
+                        {
+                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Current];    
+                        }
+                        
                     }
                     catch (Exception ec)
                     {
