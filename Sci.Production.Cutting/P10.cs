@@ -746,7 +746,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             }
             DataTable dt = ((DataTable)detailgridbs.DataSource);
             detailgrid.ValidateControl();
-            var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb);
+            int c = txtCutRef.Text == "" ? 0 : 1;
+            var frm = new Sci.Production.Cutting.P10_Generate(CurrentMaintain, dt, bundle_Detail_allpart_Tb, bundle_Detail_Art_Tb, bundle_Detail_Qty_Tb,c);
             frm.ShowDialog(this);
         }
         protected override bool ClickPrint()

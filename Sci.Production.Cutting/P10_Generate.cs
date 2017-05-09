@@ -23,19 +23,21 @@ namespace Sci.Production.Cutting
         DataTable allpartTb, patternTb, artTb, detailTb, alltmpTb, bundle_detail_artTb, qtyTb, sizeTb, garmentTb;
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
         string f_code;
-        int NoOfBunble;
+        int NoOfBunble,cutrefE;
 
-        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
+        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb,int c)
         {
             InitializeComponent();
-
+            #region 取tabel的結構
             string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
             string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);            
             string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
-
+            #endregion
+            
+            #region 準備要處理的table 和原本的table
             maindatarow = maindr;
             detailTb = table_bundle_Detail.Copy();
             alltmpTb = bundle_Detail_allpart_Tb.Copy();
@@ -46,20 +48,22 @@ namespace Sci.Production.Cutting
             alltmpTb2 = bundle_Detail_allpart_Tb;
             bundle_detail_artTb2 = bundle_Detail_Art_Tb;
             qtyTb2 = bundle_Detail_Qty_Tb;
+            #endregion
 
-            numNoOfBundle.Value = (decimal)maindr["Qty"];
+            cutrefE = c;
+
             
-            DataTable bdwtb2 = null;
-            if (bundle_Detail_Qty_Tb.Rows.Count != 0)
-            {
-                MyUtility.Tool.ProcessWithDatatable(bundle_Detail_Qty_Tb, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
-            }
-            NoOfBunble = bdwtb2 == null ? Convert.ToInt16(maindr["Qty"]) : bdwtb2.Rows.Count;
+            //DataTable bdwtb2 = null;
+            //if (bundle_Detail_Qty_Tb.Rows.Count != 0)
+            //{
+            //    MyUtility.Tool.ProcessWithDatatable(bundle_Detail_Qty_Tb, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
+            //}
+
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
-            //calsumQty();
             garmentlist(); //排出所有GarmentList
 
             int totalCutQty = 0;
+
             #region Size-CutQty
             if (MyUtility.Check.Empty(maindr["cutref"])) //因為無CutRef 就直接抓取Order_Qty 的SizeCode
             {
@@ -82,9 +86,17 @@ namespace Sci.Production.Cutting
             displayTotalCutOutput.Value = totalCutQty;
             #endregion
 
+            numNoOfBundle.Value = (decimal)maindr["Qty"];
+            NoOfBunble = Convert.ToInt16(maindr["Qty"]) == 0 ? sizeTb.Rows.Count : Convert.ToInt16(maindr["Qty"]);
+
             if (qtyTb.Rows.Count == 0)
             {
-                qtyTbclear();
+                DataRow row = qtyTb.NewRow();
+                row["No"] = 1;
+                row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
+                row["Qty"] = sizeTb.Rows[0]["Qty"];
+                qtyTb.Rows.Add(row);
+                numNoOfBundle.Value = 1;
             }
             calsumQty();
 
@@ -440,54 +452,104 @@ namespace Sci.Production.Cutting
         {
             #region Qty 的筆數分配
             //輸入的數量必須超過[No of Bundle]
-            if (Qtycount < NoOfBunble)
+            if (qtyTb.Rows.Count == 0) return;
+            if (cutrefE == 1)
             {
-                MyUtility.Msg.WarningBox(string.Format("[No of Bundle] must exceed {0} !!", NoOfBunble));
-                return;
+                if (Qtycount < NoOfBunble)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("[No of Bundle] must exceed {0} !!", NoOfBunble));
+                    return;
+                }
+                int rowindex = grid_qty.CurrentRow.Index;
+                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
+                int NowCount = qtyTb.Select(string.Format("SizeCode='{0}'", SizeCode)).Length;  //現在有幾筆
+                int BeforeAddCount = NowCount - 1;  //之前新增筆數
+                int AddCount = Qtycount - NoOfBunble;  //想要新增幾筆  6-4=2
+                int Modify = AddCount - BeforeAddCount;
+                if (Modify > 0)  //新增
+                {
+                    for (int i = 0; i < Modify; i++)
+                    {
+                        DataRow ndr = qtyTb.NewRow();
+                        ndr["SizeCode"] = SizeCode;
+                        qtyTb.Rows.Add(ndr);
+                    }
+                }
+                else if (Modify < 0)  //刪除(從後面)
+                {
+                    for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
+                    {
+                        if (Modify >= 0) break;
+                        if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
+                        {
+                            if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
+                            {
+                                qtyTb.Rows[i].Delete();
+                                Modify++;
+                            }
+                        }
+                    }
+                }
+
+                //賦予流水號
+                int serial = 1;
+                foreach (DataRow dr in qtyTb.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        dr["No"] = serial;
+                        serial++;
+                    }
+                }
+                calQty();
+            }
+            else
+            {
+                int rowindex = grid_qty.CurrentRow.Index;
+                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
+                int NowCount = qtyTb.Select(string.Format("SizeCode='{0}'", SizeCode)).Length;  //現在有幾筆
+                int BeforeAddCount = NowCount - 1;  //之前新增筆數
+                int AddCount = Qtycount - 1;  //-1是因為cutref為空時，Default只有一筆
+                int Modify = AddCount - BeforeAddCount;
+                if (Modify > 0)  //新增
+                {
+                    for (int i = 0; i < Modify; i++)
+                    {
+                        DataRow ndr = qtyTb.NewRow();
+                        ndr["SizeCode"] = SizeCode;
+                        qtyTb.Rows.Add(ndr);
+                    }
+                }
+                else if (Modify < 0)  //刪除(從後面)
+                {
+                    for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
+                    {
+                        if (Modify >= 0) break;
+                        if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
+                        {
+                            if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
+                            {
+                                qtyTb.Rows[i].Delete();
+                                Modify++;
+                            }
+                        }
+                    }
+                }
+
+                //賦予流水號
+                int serial = 1;
+                foreach (DataRow dr in qtyTb.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        dr["No"] = serial;
+                        serial++;
+                    }
+                }
+                calQty();
             }
 
-            int rowindex = grid_qty.CurrentRow.Index;
-            string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-            int NowCount = qtyTb.Select(string.Format("SizeCode='{0}'", SizeCode)).Length;  //現在有幾筆
-            int BeforeAddCount = NowCount - 1;  //之前新增筆數
-            int AddCount = Qtycount - NoOfBunble;  //想要新增幾筆  6-4=2
-            int Modify = AddCount - BeforeAddCount;
-            if (Modify > 0)  //新增
-            {
-                for (int i = 0; i < Modify; i++)
-                {
-                    DataRow ndr = qtyTb.NewRow();
-                    ndr["SizeCode"] = SizeCode;
-                    qtyTb.Rows.Add(ndr);
-                }
-            }
-            else if (Modify < 0)  //刪除(從後面)
-            {
-                for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
-                {
-                    if (Modify >= 0) break;
-                    if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
-                    {                        
-                        if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
-                        {
-                            qtyTb.Rows[i].Delete();
-                            Modify++;
-                        }
-                    }                    
-                }
-            }
             
-            //賦予流水號
-            int serial = 1;
-            foreach (DataRow dr in qtyTb.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    dr["No"] = serial;
-                    serial++;
-                }
-            }
-            calQty();
             #endregion
         }
 
@@ -553,6 +615,13 @@ namespace Sci.Production.Cutting
         {
             #region 將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
             qtyTb.Rows.Clear();
+
+            //DataRow row = qtyTb.NewRow();
+            //row["No"] = 1;
+            //row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
+            //row["Qty"] = sizeTb.Rows[0]["Qty"];
+            //qtyTb.Rows.Add(row);
+
             int j = 1;
             foreach (DataRow dr in sizeTb.Rows)
             {
