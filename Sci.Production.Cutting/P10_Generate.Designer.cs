@@ -226,7 +226,7 @@
             this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button2_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // button3
             // 
@@ -454,7 +454,7 @@
             this.grid_Size.TabStop = false;
             this.grid_Size.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_Size_CellDoubleClick);
             // 
-            // btnGarmentList
+            // P10_Generate
             // 
             this.ClientSize = new System.Drawing.Size(991, 489);
             this.Controls.Add(this.grid_Size);
@@ -479,7 +479,7 @@
             this.Controls.Add(this.grid_allpart);
             this.Controls.Add(this.grid_art);
             this.Controls.Add(this.grid_qty);
-            this.Name = "btnGarmentList";
+            this.Name = "P10_Generate";
             this.Text = "Bundle Card Generate";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P10_Generate_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.grid_qty)).EndInit();

@@ -20,38 +20,39 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
-        DataTable allpartTb = null, artTb = null, qtyTb = null, sizeTb = null, patternTb = null, detailTb = null, detailTb2 = null, garmentTb = null, alltmpTb = null, bundle_detail_artTb = null, table_bundleqty_c;
+        DataTable allpartTb, patternTb, artTb, detailTb, alltmpTb, bundle_detail_artTb, qtyTb, sizeTb, garmentTb;
+        DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
         string f_code;
         int NoOfBunble;
 
-        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable table_bundleallpart, DataTable table_bundleart, DataTable table_bundleqty)
+        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
-            table_bundleqty_c = table_bundleqty;
+            InitializeComponent();
+
             string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
-
             string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
-            DBProxy.Current.Select(null, pattern_cmd, out patternTb);
-            
+            DBProxy.Current.Select(null, pattern_cmd, out patternTb);            
             string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
 
-            InitializeComponent();
-
             maindatarow = maindr;
-            alltmpTb = table_bundleallpart;
-            bundle_detail_artTb = table_bundleart;            
-            qtyTb = table_bundleqty;
-            detailTb2 = table_bundle_Detail.Copy();
-            //table_bundle_Detail.Clear();
-            detailTb = table_bundle_Detail;
+            detailTb = table_bundle_Detail.Copy();
+            alltmpTb = bundle_Detail_allpart_Tb.Copy();
+            bundle_detail_artTb = bundle_Detail_Art_Tb.Copy();
+            qtyTb = bundle_Detail_Qty_Tb.Copy();
+
+            detailTb2 = table_bundle_Detail;
+            alltmpTb2 = bundle_Detail_allpart_Tb;
+            bundle_detail_artTb2 = bundle_Detail_Art_Tb;
+            qtyTb2 = bundle_Detail_Qty_Tb;
 
             numNoOfBundle.Value = (decimal)maindr["Qty"];
             
             DataTable bdwtb2 = null;
-            if (table_bundleqty.Rows.Count != 0)
+            if (bundle_Detail_Qty_Tb.Rows.Count != 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(table_bundleqty, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
+                MyUtility.Tool.ProcessWithDatatable(bundle_Detail_Qty_Tb, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
             }
             NoOfBunble = bdwtb2 == null ? Convert.ToInt16(maindr["Qty"]) : bdwtb2.Rows.Count;
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
@@ -102,7 +103,6 @@ namespace Sci.Production.Cutting
         {
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-            //DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code,maindatarow["FabricPanelCode"]));
             DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code, maindatarow["PatternPanel"]));
             foreach (DataRow dr in garmentar)
             {
@@ -187,8 +187,6 @@ namespace Sci.Production.Cutting
             
 
             #region Create Qtytb
-            //268: CUTTING_P10_Generate_Bundle Card Generate
-            //distributeQty(Convert.ToInt16(maindatarow["Qty"]));
             #endregion
         }
 
@@ -437,15 +435,7 @@ namespace Sci.Production.Cutting
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5);
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            detailTb.Clear();
-            detailTb.Merge(detailTb2);
-            this.Dispose();
-            this.Close();
-        }
-
+        
         public void distributeQty(int Qtycount)
         {
             #region Qty 的筆數分配
@@ -942,13 +932,27 @@ namespace Sci.Production.Cutting
                     }
                 }
             }
-            
+
+            detailTb2.Clear();
+            alltmpTb2.Clear();
+            bundle_detail_artTb2.Clear();
+            qtyTb2.Clear();
+
+            detailTb2.Merge(detailTb);
+            alltmpTb2.Merge(alltmpTb);
+            bundle_detail_artTb2.Merge(bundle_detail_artTb);
+            qtyTb2.Merge(qtyTb);
             this.Close();
         }
 
         private void grid_Size_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             button_Qty_Click(sender, e);
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void P10_Generate_FormClosed(object sender, FormClosedEventArgs e)
