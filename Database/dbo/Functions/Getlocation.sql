@@ -16,13 +16,15 @@ BEGIN
 	DECLARE @locationStr as varchar(300);
 
 	-- Add the T-SQL statements to compute the return value here
-	select  @locationStr = isnull(stuff((select ',' + cast(MtlLocationid as varchar) 
-										 from (select MtlLocationid 
-											   from FtyInventory_Detail WITH (NOLOCK) 
-											   where ukey = @ukey) t 
-										 for xml path('')
-										), 1, 1, '')
-								  ,'')
+	select  @locationStr = stuff((	select ',' + MtlLocationID
+									from (	
+										select d.MtlLocationID	
+										from dbo.FtyInventory_Detail d WITH (NOLOCK) 
+										where	ukey = @ukey 
+												and d.MtlLocationID != ''
+												and d.MtlLocationID is not null) t
+									for xml path(''))
+								, 1, 1, '')
 
 	-- Return the result of the function
 	RETURN @locationStr
