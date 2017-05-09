@@ -408,12 +408,11 @@ namespace Sci.Production.Quality
             return Result.True;
 
         }
-
+        //判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         public void FinalResult(DataRow dr)
         {
             if (this.EditMode) //Status = Confirm 才會判斷
-            {
-
+            {               
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(dr["ID"]);
 
                 dr["Result"] = returnstr[0];
