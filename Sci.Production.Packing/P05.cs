@@ -527,12 +527,12 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 }
             }
 
-            if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
-            {
-                MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
-                txtshipmode.Focus();
-                return false;
-            }
+            //if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
+            //{
+            //    MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
+            //    txtshipmode.Focus();
+            //    return false;
+            //}
 
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
