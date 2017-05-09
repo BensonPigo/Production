@@ -244,8 +244,6 @@ namespace Sci.Production.Cutting
 
             chcutref.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1) return;
-
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
