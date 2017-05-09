@@ -182,7 +182,7 @@
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelStyle);
-            this.DefaultControl = "txtstyle1";
+            this.DefaultControl = "txtstyle";
             this.IsSupportToPrint = false;
             this.Name = "R03";
             this.Text = "R03. Local Quotation List";

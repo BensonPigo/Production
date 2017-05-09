@@ -546,8 +546,8 @@
             this.ClientSize = new System.Drawing.Size(1234, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
-            this.DefaultControl = "txtstyle1";
-            this.DefaultControlForEdit = "txtstyle1";
+            this.DefaultControl = "txtstyle";
+            this.DefaultControlForEdit = "txtstyle";
             this.Name = "P02";
             this.Text = "P02. Printing Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);

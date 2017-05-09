@@ -387,8 +387,8 @@
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
-            this.DefaultControl = "dateRangeBuyerDelivery";
-            this.DefaultControlForEdit = "dateRangeBuyerDelivery";
+            this.DefaultControl = "dateBuyerDelivery";
+            this.DefaultControlForEdit = "dateBuyerDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R15";
             this.Text = "R15. WIP";

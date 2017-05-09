@@ -288,8 +288,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "datebox1";
+            this.DefaultControl = "dateDate";
+            this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ISSUEDATE,ARTWORKTYPEID,FTYSUPP";
             this.IsSupportPrint = false;
             this.Name = "B01";

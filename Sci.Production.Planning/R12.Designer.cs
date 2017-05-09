@@ -141,8 +141,8 @@
             this.Controls.Add(this.lbGroupingby);
             this.Controls.Add(this.lbSeason);
             this.Controls.Add(this.lbBrand);
-            this.DefaultControl = "txtbrand1";
-            this.DefaultControlForEdit = "txtbrand1";
+            this.DefaultControl = "txtBrand";
+            this.DefaultControlForEdit = "txtBrand";
             this.Name = "R12";
             this.Text = "R12. Style  Efficiency Matrix and SMV evaluation report";
             this.Controls.SetChildIndex(this.print, 0);

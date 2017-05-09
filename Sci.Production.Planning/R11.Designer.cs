@@ -183,8 +183,8 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSCIDelivery";
+            this.DefaultControlForEdit = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R11";
             this.Text = "R11. Prod. Efficiency record by  Style";

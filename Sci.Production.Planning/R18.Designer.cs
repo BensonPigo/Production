@@ -143,8 +143,8 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.dateSewingDate);
             this.Controls.Add(this.labelSewingDate);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSewingDate";
+            this.DefaultControlForEdit = "dateSewingDate";
             this.IsSupportToPrint = false;
             this.Name = "R18";
             this.Text = "R18. Heat Transfer Machine Forecast";

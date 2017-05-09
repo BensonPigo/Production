@@ -148,8 +148,8 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelSCIDelivery);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateSCIDelivery";
+            this.DefaultControlForEdit = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R01";
             this.Text = "R01. Sub-process Monthly Report";

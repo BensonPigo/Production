@@ -757,8 +757,8 @@
             this.ClientSize = new System.Drawing.Size(1232, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
-            this.DefaultControl = "txtstyle1";
-            this.DefaultControlForEdit = "txtstyle1";
+            this.DefaultControl = "txtstyle";
+            this.DefaultControlForEdit = "txtstyle";
             this.Name = "P05";
             this.Text = "P05. Embroidery Quick Adjust";
             this.Controls.SetChildIndex(this.panel3, 0);

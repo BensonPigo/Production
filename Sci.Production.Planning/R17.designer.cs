@@ -198,8 +198,8 @@
             this.Controls.Add(this.dateFactoryKPIDate);
             this.Controls.Add(this.radioSample);
             this.Controls.Add(this.radioBulk);
-            this.DefaultControl = "dateRange1";
-            this.DefaultControlForEdit = "dateRange1";
+            this.DefaultControl = "dateFactoryKPIDate";
+            this.DefaultControlForEdit = "dateFactoryKPIDate";
             this.Name = "R17";
             this.Text = "R17. SDP Report";
             this.Controls.SetChildIndex(this.print, 0);

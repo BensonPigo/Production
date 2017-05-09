@@ -357,8 +357,8 @@
             this.ClientSize = new System.Drawing.Size(467, 430);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.radioGroup2);
-            this.DefaultControl = "numYear1";
-            this.DefaultControlForEdit = "numYear1";
+            this.DefaultControl = "numYear";
+            this.DefaultControlForEdit = "numYear";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "R10";
             this.Text = "R10. Factory Capacity by Month Report";

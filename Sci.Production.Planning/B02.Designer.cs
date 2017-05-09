@@ -208,8 +208,8 @@
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(842, 457);
-            this.DefaultControl = "numericBox1";
-            this.DefaultControlForEdit = "numericBox1";
+            this.DefaultControl = "numBeginStitch";
+            this.DefaultControlForEdit = "numBeginStitch";
             this.IsSupportClip = false;
             this.IsSupportLocate = false;
             this.IsSupportPrint = false;
