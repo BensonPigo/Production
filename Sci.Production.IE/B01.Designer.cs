@@ -52,6 +52,10 @@
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(832, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtBrand);
@@ -67,7 +71,12 @@
             this.detailcont.Controls.Add(this.labelDaysbefore);
             this.detailcont.Controls.Add(this.labelActivities);
             this.detailcont.Controls.Add(this.labelCode);
+            this.detailcont.Size = new System.Drawing.Size(832, 357);
             this.detailcont.TabIndex = 0;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(832, 38);
             // 
             // browse
             // 
