@@ -263,8 +263,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "textBox1";
+            this.DefaultControl = "txtSP";
+            this.DefaultControlForEdit = "txtSP";
             this.Name = "P38";
             this.Text = "P38. Material Lock/Unlock for All Transaction";
             this.Controls.SetChildIndex(this.panel1, 0);

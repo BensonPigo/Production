@@ -313,8 +313,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "editBox1";
-            this.DefaultControlForEdit = "editBox1";
+            this.DefaultControl = "editRemark";
+            this.DefaultControlForEdit = "editRemark";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "TransferOut_detail";

@@ -362,8 +362,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtBorrowID";
+            this.DefaultControlForEdit = "txtBorrowID";
             this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "Issuedate,ID";
             this.Grid2New = 0;

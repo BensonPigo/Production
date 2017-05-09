@@ -327,7 +327,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
-            this.DefaultControl = "textBox1";
+            this.DefaultControl = "txtSPNo";
             this.Name = "P26_Import";
             this.Text = "P26. Import Detail";
             this.groupBox2.ResumeLayout(false);

@@ -323,8 +323,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtTransfer";
+            this.DefaultControlForEdit = "txtTransfer";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

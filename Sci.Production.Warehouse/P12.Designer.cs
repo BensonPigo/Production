@@ -297,8 +297,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "editBox1";
-            this.DefaultControlForEdit = "editBox1";
+            this.DefaultControl = "editRemark";
+            this.DefaultControlForEdit = "editRemark";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

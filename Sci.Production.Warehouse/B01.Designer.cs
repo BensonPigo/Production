@@ -157,8 +157,8 @@
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 457);
-            this.DefaultControl = "textBox1";
-            this.DefaultControlForEdit = "checkBox1";
+            this.DefaultControl = "txtID";
+            this.DefaultControlForEdit = "checkJunk";
             this.DefaultFilter = "TYPE=\'IR\'";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;

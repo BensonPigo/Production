@@ -338,8 +338,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "txtwhseReason1";
-            this.DefaultControlForEdit = "txtwhseReason1";
+            this.DefaultControl = "txtwhseReason";
+            this.DefaultControlForEdit = "txtwhseReason";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

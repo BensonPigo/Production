@@ -360,8 +360,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "dateBox1";
-            this.DefaultControlForEdit = "dateBox1";
+            this.DefaultControl = "dateEstReturnDate";
+            this.DefaultControlForEdit = "dateEstReturnDate";
             this.DefaultDetailOrder = "FromMdivisionid,Frompoid,Fromseq1,Fromseq2,Fromroll,FromDyelot";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;

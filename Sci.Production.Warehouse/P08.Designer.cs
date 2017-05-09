@@ -323,8 +323,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "dateBox3";
-            this.DefaultControlForEdit = "dateBox3";
+            this.DefaultControl = "dateArriveWHDate";
+            this.DefaultControlForEdit = "dateArriveWHDate";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "WhseArrival,ID";
             this.Grid2New = 0;

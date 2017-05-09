@@ -348,8 +348,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "dateRange2";
-            this.DefaultControlForEdit = "dateRange2";
+            this.DefaultControl = "dateSCIDelivery";
+            this.DefaultControlForEdit = "dateSCIDelivery";
             this.Name = "P42";
             this.Text = "P42. Cutting Tape Quick Adjust";
             this.Controls.SetChildIndex(this.panel1, 0);

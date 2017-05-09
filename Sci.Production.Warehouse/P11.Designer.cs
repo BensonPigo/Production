@@ -499,7 +499,7 @@
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1007, 592);
             this.DefaultControl = "txtRequest";
-            this.DefaultControlForEdit = "checkBox1";
+            this.DefaultControlForEdit = "checkByCombo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "Issue_Detail";

@@ -342,8 +342,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "textBox2";
-            this.DefaultControlForEdit = "textBox2";
+            this.DefaultControl = "txtFromFactory";
+            this.DefaultControlForEdit = "txtFromFactory";
             this.DefaultOrder = "ISSUEDATE,ID";
             this.Grid2New = 0;
             this.GridAlias = "TransferIn_detail";

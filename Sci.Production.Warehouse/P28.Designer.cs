@@ -330,8 +330,8 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.DefaultControl = "txtSP";
-            this.DefaultControlForEdit = "txtSP";
+            this.DefaultControl = "txtIssueSP";
+            this.DefaultControlForEdit = "txtIssueSP";
             this.EditMode = true;
             this.Name = "P28";
             this.Text = "P28. Batch Create Bulk to Inventory";
