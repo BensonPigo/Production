@@ -91,12 +91,7 @@ namespace Sci.Production.Cutting
 
             if (qtyTb.Rows.Count == 0)
             {
-                DataRow row = qtyTb.NewRow();
-                row["No"] = 1;
-                row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
-                row["Qty"] = sizeTb.Rows[0]["Qty"];
-                qtyTb.Rows.Add(row);
-                numNoOfBundle.Value = 1;
+                qtyTbclear();
             }
             calsumQty();
 
@@ -615,22 +610,27 @@ namespace Sci.Production.Cutting
         {
             #region 將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
             qtyTb.Rows.Clear();
-
-            //DataRow row = qtyTb.NewRow();
-            //row["No"] = 1;
-            //row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
-            //row["Qty"] = sizeTb.Rows[0]["Qty"];
-            //qtyTb.Rows.Add(row);
-
-            int j = 1;
-            foreach (DataRow dr in sizeTb.Rows)
+            if (cutrefE == 0)
             {
                 DataRow row = qtyTb.NewRow();
-                row["No"] = j;
-                row["SizeCode"] = dr["SizeCode"];
-                row["Qty"] = dr["Qty"];
+                row["No"] = 1;
+                row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
+                row["Qty"] = sizeTb.Rows[0]["Qty"];
                 qtyTb.Rows.Add(row);
-                j++;
+                numNoOfBundle.Value = 1;
+            }
+            else
+            {
+                int j = 1;
+                foreach (DataRow dr in sizeTb.Rows)
+                {
+                    DataRow row = qtyTb.NewRow();
+                    row["No"] = j;
+                    row["SizeCode"] = dr["SizeCode"];
+                    row["Qty"] = dr["Qty"];
+                    qtyTb.Rows.Add(row);
+                    j++;
+                }
             }
             #endregion        
         }
