@@ -216,21 +216,7 @@ namespace Sci.Production.Subcon
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                (e.Details).Columns["amount"].Expression = "price * qty";
-                (e.Details).Columns.Add("std_price", typeof(decimal));
-                decimal std_price;
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    std_price = 0m;
-                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format(@"select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
-                                                                               from orders a WITH (NOLOCK) 
-                                                                               inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
-                                                                               where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], e.Master["category"].ToString())), out std_price);
-                    dr["std_price"] = std_price;
-                }
-            }
+
             return base.OnRenewDataDetailPost(e);
         }
 
@@ -238,7 +224,23 @@ namespace Sci.Production.Subcon
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            
+            DataTable detailDt = (DataTable)detailgridbs.DataSource;
+            if (!detailDt.Columns.Contains("Amount"))
+            {
+                detailDt.Columns.Add("amount",typeof(decimal));
+                detailDt.Columns.Add("std_price", typeof(decimal));
+                decimal std_price;
+                foreach (DataRow dr in detailDt.Rows)
+                {
+                    std_price = 0m;
+                    decimal.TryParse(MyUtility.GetValue.Lookup(string.Format(@"select [std_price]=round(sum(a.qty*b.Price)/iif(isnull(sum(a.qty),0)=0,1,isnull(sum(a.qty),0)),3) 
+                                                                               from orders a WITH (NOLOCK) 
+                                                                               inner join Order_TmsCost b WITH (NOLOCK) on b.id = a.ID
+                                                                               where a.poid = '{0}' and b.ArtworkTypeID='{1}'", dr["poid"], CurrentMaintain["category"].ToString())), out std_price);
+                    dr["std_price"] = std_price;
+                    dr["Amount"] = MyUtility.Convert.GetDecimal(dr["price"]) *MyUtility.Convert.GetDecimal(dr["Qty"]) ;
+                }
+            }
             if (!(CurrentMaintain == null))
             {
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
@@ -404,7 +406,7 @@ namespace Sci.Production.Subcon
                 {
                     CurrentDetailData["amount"] = (decimal)CurrentDetailData["price"] * (decimal)e.FormattedValue;
                     CurrentDetailData["qty"] = e.FormattedValue;
-                    
+                    CurrentDetailData.EndEdit();
                 }
             };
             #endregion
@@ -678,7 +680,7 @@ namespace Sci.Production.Subcon
 //                                                            inner join orders on localpo_detail.orderid = orders.id
 //                                                            inner join localitem on localitem.refno = localpo_detail.refno 
 //                                                        Where localpo_detail.id = '{0}' order by orderid,localpo_detail.refno,threadcolorid ", masterID);
-            this.DetailSelectCommand = string.Format(@"select * ,0.0 as amount,orders.factoryid,orders.sewinline,localitem.description
+            this.DetailSelectCommand = string.Format(@"select *,orders.factoryid,orders.sewinline,localitem.description
                                                         from localpo_detail WITH (NOLOCK) 
                                                             left join orders WITH (NOLOCK) on localpo_detail.orderid = orders.id
                                                             left join localitem WITH (NOLOCK) on localitem.refno = localpo_detail.refno 
