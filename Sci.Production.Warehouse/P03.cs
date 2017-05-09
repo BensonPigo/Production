@@ -251,6 +251,7 @@ namespace Sci.Production.Warehouse
                         gridMaterialStatus.Rows[i].Cells[2].Style.BackColor = Color.Yellow;
                     }
 
+                    if (!dr["OutQty"].ToString().Empty() && !dr["NETQty"].ToString().Empty())
                     if (Convert.ToDecimal(dr["OutQty"].ToString()) > Convert.ToDecimal(dr["NETQty"].ToString()))
                     {
                         gridMaterialStatus.Rows[i].Cells["OutQty"].Style.ForeColor = Color.Red;
