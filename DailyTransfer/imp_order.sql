@@ -48,25 +48,13 @@ BEGIN
 -------------------------------------------------------------------------Order
 		--轉單為Cutting母單時,覆寫CutPlan母子單的工廠欄位
 		Update a
-		set a.MDivisionid = b.FTY_Group
-		from Production.dbo.Cutplan a
-		inner join #TOrder b on a.ID=b.ID
-		inner join Production.dbo.Orders c on b.ID=c.ID
-		where b.qty > 0 and b.IsForecast = '0'
-
-	
-		----delete  SewingSchedule_Detail
-		delete c
-		from #TOrder a 
-		inner join Production.dbo.SewingSchedule b on a.id=b.orderid and b.FactoryID<>a.FTY_Group
-		inner join Production.dbo.SewingSchedule_Detail c on c.ID=b.ID
-		where a.qty > 0 and a.IsForecast = '0'
-		
-		--delete SewingSchedule
-		delete b
-		from #TOrder a 		
-		inner join Production.dbo.SewingSchedule b on a.id=b.OrderID and b.FactoryID<>a.FTY_Group
-		where a.qty > 0 and a.IsForecast = '0'
+		set a.FactoryID = b.FTY_Group
+			, a.MDivisionID = f.MDivisionID
+		from Production.dbo.WorkOrder a
+		inner join #TOrder b on a.ID = b.ID
+		inner join Production.dbo.Orders c on b.ID = c.ID and a.FactoryID != b.FTY_Group
+		left join Production.dbo.Factory f on b.FTY_Group = f.ID
+		where 	b.qty > 0 and b.IsForecast = '0'
 
 		--delete cutting
 		delete b
