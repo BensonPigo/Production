@@ -16,6 +16,7 @@ namespace Sci.Production.Cutting
     {
         private DataTable curTb;
         private DataTable detailTb;
+        private DataTable sp;
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
             InitializeComponent();
@@ -23,8 +24,7 @@ namespace Sci.Production.Cutting
             txtCell2.FactoryId = Sci.Env.User.Keyword;
             detailTb = cursor;
             curTb = cursor.Copy();
-            curTb.Columns.Add("Sel", typeof(bool));
-
+            curTb.Columns.Add("Sel", typeof(bool));            
             gridsetup();
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
@@ -94,6 +94,25 @@ namespace Sci.Production.Cutting
                 }
             };
 
+            #region SP
+            MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
+            DataGridViewGeneratorTextColumnSettings col_sp = new DataGridViewGeneratorTextColumnSettings();
+            col_sp.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    SelectItem sele;
+
+                    sele = new SelectItem(sp, "OrderID", "15@300,400", sp.Columns["OrderID"].ToString(), columndecimals: "50");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    e.EditingControl.Text = sele.GetSelectedString();
+
+                }
+            };
+            #endregion
+
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
              .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -107,7 +126,7 @@ namespace Sci.Production.Cutting
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
              .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: col_sp, iseditingreadonly: false)
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
              .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -119,6 +138,8 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
+            this.gridBatchAssignCellEstCutDate.Columns["orderid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["orderid"].DefaultCellStyle.ForeColor = Color.Red;
 
         }
 
