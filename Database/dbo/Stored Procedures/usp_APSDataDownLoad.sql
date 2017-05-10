@@ -454,6 +454,7 @@ BEGIN
 			Begin Transaction
 				delete from SewingSchedule_Detail where ID in (select ID from SewingSchedule WITH (NOLOCK) where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype);
 				delete from SewingSchedule  where FactoryID = @factoryid and APSNo = @apsno and OrderID = @orderid and ComboType = @combotype;
+				DELETE FROM ORDERS WHERE ID = @orderid;
 			Commit Transaction;
 		End Try
 		Begin Catch
