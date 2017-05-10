@@ -6,12 +6,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>3.95312in</Width>
+              <Width>3.92361in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.85417in</Height>
+              <Height>1.8in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -36,15 +36,15 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox10</rd:DefaultName>
-                          <Top>0.13229cm</Top>
-                          <Left>0.06771in</Left>
+                          <Top>0.09174cm</Top>
+                          <Left>0.0625in</Left>
                           <Height>0.86111in</Height>
                           <Width>3.79167in</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <VerticalAlign>Bottom</VerticalAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>1pt</PaddingLeft>
                             <PaddingRight>1pt</PaddingRight>
                             <PaddingTop>1pt</PaddingTop>
@@ -70,10 +70,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>ID</rd:DefaultName>
-                          <Top>0.92708in</Top>
-                          <Left>0.2991in</Left>
+                          <Top>0.89723in</Top>
+                          <Left>0.46056in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3.35417in</Width>
+                          <Width>3in</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -105,10 +105,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox13</rd:DefaultName>
-                          <Top>1.15764in</Top>
-                          <Left>0.2991in</Left>
+                          <Top>1.11945in</Top>
+                          <Left>0.46056in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3.35417in</Width>
+                          <Width>3in</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -140,10 +140,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
-                          <Top>1.37986in</Top>
-                          <Left>0.2991in</Left>
+                          <Top>1.34167in</Top>
+                          <Left>0.46056in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3.35417in</Width>
+                          <Width>3in</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -175,10 +175,10 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox15</rd:DefaultName>
-                          <Top>1.60208in</Top>
-                          <Left>0.2991in</Left>
+                          <Top>1.56389in</Top>
+                          <Left>0.46056in</Left>
                           <Height>0.22222in</Height>
-                          <Width>3.35417in</Width>
+                          <Width>3in</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
                             <Border>
@@ -228,8 +228,8 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>Report_BarcodePrint</DataSetName>
-        <Height>1.85417in</Height>
-        <Width>3.95312in</Width>
+        <Height>1.8in</Height>
+        <Width>3.92361in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -237,10 +237,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.85417in</Height>
+    <Height>1.8in</Height>
     <Style />
   </Body>
-  <Width>3.95312in</Width>
+  <Width>3.92361in</Width>
   <Page>
     <PageHeight>1.875in</PageHeight>
     <PageWidth>4in</PageWidth>
