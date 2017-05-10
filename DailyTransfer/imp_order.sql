@@ -74,12 +74,6 @@ BEGIN
 		inner join Production.dbo.Cutting b on a.id=b.ID and b.FactoryID<>a.FTY_Group
 		where a.qty > 0 and a.IsForecast = '0'
 
-		--delete order 
-		delete b
-		from #TOrder a 		
-		inner join Production.dbo.Orders b on a.id=b.id and b.FtyGroup <> a.FTY_Group
-		where a.qty > 0 and a.IsForecast = '0'
-
 	--需填入 Order.SDPDate = Buyer Delivery - 放假日(船期表)--
 		--如果買家到貨日不是工廠放假日,SDDate=BuyerDelivery
 		update #TOrder
