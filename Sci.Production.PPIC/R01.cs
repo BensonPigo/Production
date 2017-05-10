@@ -8,6 +8,9 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.PPIC
 {
@@ -126,7 +129,8 @@ select  SewingLineID
         , IIF(Article = '','',SUBSTRING(Article,1,LEN(Article)-1)) as Article
         , CdCodeID
         , StyleID
-        , Qty,AlloQty
+        , Qty
+        , AlloQty
         , CutQty
         , SewingQty
         , ClogQty
@@ -310,10 +314,41 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 return false;
             }
 
-            bool result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
-            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); return false; }
-            return true;
+            bool result = false;
 
+            if (checkForPrintOut.Checked == true)
+            {
+                printData.Columns.Remove("MDivisionID");
+                printData.Columns.Remove("PFRemark");
+                printData.Columns.Remove("BuyerDelivery");
+                printData.Columns.Remove("VasShas");
+                printData.Columns.Remove("ShipModeList");
+                printData.Columns.Remove("Alias");
+
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
+                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    return false;
+                }
+
+                this.ShowWaitMessage("Excel Processing...");
+                Excel.Worksheet worksheet = objApp.Sheets[1];
+                worksheet.Columns[26].ColumnWidth = 30;
+                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+            }
+            else
+            {               
+                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    return false;
+                }
+            }            
+            return true;
         }
 
         private void comboFactory_SelectedIndexChanged(object sender, EventArgs e)
