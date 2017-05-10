@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (txtSPNo.Focus())
+            if (txtSPNo.Focused)
             {
                 switch (keyData)
                 {

@@ -561,7 +561,7 @@ where ROW_NUMBER_D =1
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (txtSPNo.Focus())
+            if (txtSPNo.Focused)
             {
                 switch (keyData)
                 {
