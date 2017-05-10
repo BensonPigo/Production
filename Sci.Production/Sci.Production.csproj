@@ -509,6 +509,9 @@
     <None Include="XLT\PPIC_Pattern-P01_PrintSMnotice.xlt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\PPIC_R01_PrintOut.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\PPIC_R01_SewingLineScheduleReport.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
