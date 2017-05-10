@@ -25,6 +25,9 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
 
+            dateTransferDate.Value1 = DateTime.Now.AddDays(-30);
+            dateTransferDate.Value2 = DateTime.Now;
+
             //Grid設定
             this.gridDetail.IsEditingReadOnly = false;
             this.gridDetail.DataSource = listControlBindingSource1;
