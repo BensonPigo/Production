@@ -51,14 +51,7 @@ namespace Sci.Production.Cutting
             #endregion
 
             cutrefE = c;
-
             
-            //DataTable bdwtb2 = null;
-            //if (bundle_Detail_Qty_Tb.Rows.Count != 0)
-            //{
-            //    MyUtility.Tool.ProcessWithDatatable(bundle_Detail_Qty_Tb, "", "Select distinct SizeCode,id from #tmp group by SizeCode,Ukey,id", out bdwtb2);
-            //}
-
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
             garmentlist(); //排出所有GarmentList
 
@@ -403,6 +396,7 @@ namespace Sci.Production.Cutting
             };
 
             listControlBindingSource1.DataSource = qtyTb;
+            
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
@@ -502,7 +496,7 @@ namespace Sci.Production.Cutting
             {
                 int rowindex = grid_qty.CurrentRow.Index;
                 string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-                int NowCount = qtyTb.Select(string.Format("SizeCode='{0}'", SizeCode)).Length;  //現在有幾筆
+                int NowCount = qtyTb.Select().Length;  //現在有幾筆
                 int BeforeAddCount = NowCount - 1;  //之前新增筆數
                 int AddCount = Qtycount - 1;  //-1是因為cutref為空時，Default只有一筆
                 int Modify = AddCount - BeforeAddCount;
@@ -606,9 +600,10 @@ namespace Sci.Production.Cutting
             if(qtyTb.Rows.Count>0) qty = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
             displayTotalQty.Value = qty;
         }
+
+        //將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
         private void qtyTbclear()
         {
-            #region 將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
             qtyTb.Rows.Clear();
             if (cutrefE == 0)
             {
@@ -631,9 +626,9 @@ namespace Sci.Production.Cutting
                     qtyTb.Rows.Add(row);
                     j++;
                 }
-            }
-            #endregion        
+            }     
         }
+
         private void button_Qty_Click(object sender, EventArgs e)
         {
             DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -849,6 +844,7 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
             int bundlegroup = Convert.ToInt16(maindatarow["startno"]);
             int ukey = 1;
+            grid_qty.ValidateControl();
             foreach (DataRow dr in qtyTb.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
