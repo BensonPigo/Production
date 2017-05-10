@@ -117,7 +117,7 @@ namespace Sci.Production.Cutting
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             #region 寫入共用欄位
-            worksheet.Cells[1, 6] = keyword;
+            worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
