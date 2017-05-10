@@ -1894,6 +1894,8 @@ order by id,article,sizecode"
                 MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg2);
                 return false;
             }
+            CurrentMaintain["cutinline"]= ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
+            CurrentMaintain["CutOffLine"]= ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
             return base.ClickSaveBefore();
         }
         protected override DualResult ClickSavePost()
@@ -2012,7 +2014,6 @@ order by id,article,sizecode"
                     return upResult;
                 }
             }
-
             return base.ClickSavePost();
         }
         protected override void ClickSaveAfter()
