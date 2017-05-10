@@ -83,36 +83,111 @@ BEGIN
 				t.NewSCIDelivery=s.SCIDelivery,
 				t.NewStyleID=s.StyleID,
 				t.TransferDate=@oldDate,
-				t.NewOrder='1'				
+				t.NewOrder='1',		
+				t.MDivisionID=s.MDivisionID		
 			when not matched by target then
-				insert(OrderId,UpdateDate,FactoryID,NewQty,NewSCIDelivery,NewStyleID,TransferDate,NewOrder)
-				values(s.id,@dToDay,s.FactoryID, s.Qty,s.SCIDelivery,s.StyleID,@oldDate,'1');
+				insert(OrderId,UpdateDate,FactoryID,NewQty,NewSCIDelivery,NewStyleID,TransferDate,NewOrder,MDivisionID)
+				values(s.id,@dToDay,s.FactoryID, s.Qty,s.SCIDelivery,s.StyleID,@oldDate,'1',s.MDivisionID);
 
-		----------Merge3 Update--------------------------------
+		----------Merge3 Update---------------1.Qty-----------------(2017/05/10 Qty styleid SCIDelivery 分開CHECK)
 		Merge Production.dbo.OrderComparisonList as t
 		Using (
 		select a.*,
-		[t_ID]=a.id,[P.ID]=b.id,
-		[T_Qty]=a.qty,[P_Qty]=b.qty,
-		[T_SCIDelivery]=a.SCIDelivery,[P_SCIDelivery]=b.SCIDelivery,
-		[T_StyleID]=a.StyleID,[P_StyleID]=b.StyleID
+		[t_ID]=a.id,
+		[P.ID]=b.id,
+		[T_Qty]=a.qty,
+		[P_Qty]=b.qty,
+		[T_SCIDelivery]=a.SCIDelivery,
+		[P_SCIDelivery]=b.SCIDelivery,
+		[T_StyleID]=a.StyleID,
+		[P_StyleID]=b.StyleID
 			from  #temp_MockupOrder_Trade  a
 			inner join #temp_MockupOrder_PMS b on a.id=b.id		
-			where (a.qty <> b.qty or a.styleid <> b.styleid or a.SCIDelivery <> b.SCIDelivery)			
+			where (a.qty <> b.qty )--or a.styleid <> b.styleid or a.SCIDelivery <> b.SCIDelivery)			
 			) as s
 		on orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
 			when matched then
 				update set
 				t.OriginalQty=s.[P_Qty],
-				t.NewQty =s.[T_Qty],
-				t.OriginalSCIDelivery =s.[P_SCIDelivery],
-				t.NewSCIDelivery =s.[T_SCIDelivery],				
-				t.OriginalStyleID =s.[P_StyleID],				
+				t.NewQty =s.[T_Qty]
+				--t.OriginalSCIDelivery =s.[P_SCIDelivery],
+				--t.NewSCIDelivery =s.[T_SCIDelivery],--				
+				--t.OriginalStyleID =s.[P_StyleID],	--			
+				--t.NewStyleID =s.[T_StyleID],
+				--t.MDivisionID=s.MDivisionID			
+			when not matched by Target then
+			insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalQty ,NewQty ,MDivisionID)
+				values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.MDivisionID);
+				--insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalQty ,NewQty   ,OriginalSCIDelivery ,NewSCIDelivery   ,OriginalStyleID,NewStyleID,MDivisionID)
+				--values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.[P_SCIDelivery]   ,s.[T_SCIDelivery],s.[P_StyleID]  ,s.[T_StyleID],s.MDivisionID);
+				----------Merge3 Update---------------2.styleid-----------------(2017/05/10 Qty styleid SCIDelivery 分開CHECK)
+		Merge Production.dbo.OrderComparisonList as t
+		Using (
+		select a.*,
+		[t_ID]=a.id,
+		[P.ID]=b.id,
+		[T_Qty]=a.qty,
+		[P_Qty]=b.qty,
+		[T_SCIDelivery]=a.SCIDelivery,
+		[P_SCIDelivery]=b.SCIDelivery,
+		[T_StyleID]=a.StyleID,
+		[P_StyleID]=b.StyleID
+			from  #temp_MockupOrder_Trade  a
+			inner join #temp_MockupOrder_PMS b on a.id=b.id		
+			where (a.styleid <> b.styleid)			
+			) as s
+		on orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
+			when matched then
+				update set		
+				t.OriginalStyleID =s.[P_StyleID],
 				t.NewStyleID =s.[T_StyleID]			
 			when not matched by Target then
-				insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalQty ,NewQty   ,OriginalSCIDelivery ,NewSCIDelivery   ,OriginalStyleID,NewStyleID)
-				values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.[P_SCIDelivery]   ,s.[T_SCIDelivery],s.[P_StyleID]  ,s.[T_StyleID]);
-
+				insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalStyleID,NewStyleID,MDivisionID)
+				values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_StyleID]  ,s.[T_StyleID],s.MDivisionID);
+----------Merge3 Update---------------3.SCIDelivery-----------------(2017/05/10 Qty styleid SCIDelivery 分開CHECK)
+		Merge Production.dbo.OrderComparisonList as t
+		Using (
+		select a.*,
+		[t_ID]=a.id,
+		[P.ID]=b.id,
+		[T_Qty]=a.qty,
+		[P_Qty]=b.qty,
+		[T_SCIDelivery]=a.SCIDelivery,
+		[P_SCIDelivery]=b.SCIDelivery,
+		[T_StyleID]=a.StyleID,
+		[P_StyleID]=b.StyleID
+			from  #temp_MockupOrder_Trade  a
+			inner join #temp_MockupOrder_PMS b on a.id=b.id		
+			where (a.SCIDelivery <> b.SCIDelivery)			
+			) as s
+		on orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
+			when matched then
+				update set
+				t.OriginalSCIDelivery =s.[P_SCIDelivery],
+				t.NewSCIDelivery =s.[T_SCIDelivery]				
+			when not matched by Target then
+				insert(orderid,UpdateDate ,TransferDate ,FactoryID ,OriginalSCIDelivery ,NewSCIDelivery,MDivisionID)
+				values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_SCIDelivery]   ,s.[T_SCIDelivery],s.MDivisionID);
+				----------Merge3 Update---------------4.單獨JUNK判斷-----------------(2017/05/10 Qty styleid SCIDelivery 分開CHECK)
+		Merge Production.dbo.OrderComparisonList as t
+		Using (
+		select a.*,
+		[t_ID]=a.id,
+		[P.ID]=b.id,
+		[T_Qty]=a.qty,
+		[P_Qty]=b.qty,
+		[T_SCIDelivery]=a.SCIDelivery,
+		[P_SCIDelivery]=b.SCIDelivery,
+		[T_StyleID]=a.StyleID,
+		[P_StyleID]=b.StyleID
+			from  #temp_MockupOrder_Trade  a
+			inner join #temp_MockupOrder_PMS b on a.id=b.id		
+			where (a.junk <> b.junk)			
+			) as s
+		on orderid=s.id and t.factoryid=s.factoryid and t.updateDate = @dToDay
+			when matched then
+				update set
+				t.JunkOrder =s.junk;
 	-----------------MockupOrder again(Delete)------------------------
 	
 	--需要刪除的資料-#MockuporderANGIN
@@ -134,11 +209,11 @@ BEGIN
 			t.OriginalQty =s.qty,
 			t.OriginalStyleID=s.styleID,
 			t.DeleteOrder=1,
-			t.NewStyleID=iif(s.factoryid is not null,s.[TRADE_Factory],t.NewStyleID)
-
+			t.NewStyleID=iif(s.factoryid is not null,s.[TRADE_Factory],t.NewStyleID),
+			t.MDivisionID=s.MDivisionID	
 		when not matched by target then
-			insert(orderid,UpdateDate,FactoryID  ,TransferDate,OriginalQty,OriginalStyleID,DeleteOrder,NewStyleID)
-			values(s.id	  ,@dToDay   ,s.FactoryID,@oldDate    ,s.qty      ,s.styleID      ,1          ,iif(s.factoryid is not null,s.[TRADE_Factory],''));
+			insert(orderid,UpdateDate,FactoryID  ,TransferDate,OriginalQty,OriginalStyleID,DeleteOrder,NewStyleID,MDivisionID)
+			values(s.id	  ,@dToDay   ,s.FactoryID,@oldDate    ,s.qty      ,s.styleID      ,1          ,iif(s.factoryid is not null,s.[TRADE_Factory],''),s.MDivisionID);
 
 	----------------Delete MockOrder ---------------------------------------------------
 		
@@ -148,6 +223,7 @@ BEGIN
 	
 	drop table #temp_MockupOrder_Trade,#MockuporderANGIN,#temp_MockupOrder_PMS
 END
+
 
 
 
