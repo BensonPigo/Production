@@ -46,6 +46,7 @@
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.checkForPrintOut = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -233,9 +234,21 @@
             this.txtbrand.Size = new System.Drawing.Size(85, 23);
             this.txtbrand.TabIndex = 8;
             // 
+            // checkForPrintOut
+            // 
+            this.checkForPrintOut.AutoSize = true;
+            this.checkForPrintOut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkForPrintOut.Location = new System.Drawing.Point(240, 158);
+            this.checkForPrintOut.Name = "checkForPrintOut";
+            this.checkForPrintOut.Size = new System.Drawing.Size(108, 21);
+            this.checkForPrintOut.TabIndex = 106;
+            this.checkForPrintOut.Text = "For Print Out";
+            this.checkForPrintOut.UseVisualStyleBackColor = true;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(486, 327);
+            this.Controls.Add(this.checkForPrintOut);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.dateBuyerDelivery);
@@ -280,6 +293,7 @@
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.checkForPrintOut, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -305,5 +319,6 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Class.txtbrand txtbrand;
+        private Win.UI.CheckBox checkForPrintOut;
     }
 }
