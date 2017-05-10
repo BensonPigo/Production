@@ -411,6 +411,22 @@ namespace Sci.Production.Subcon
             };
             #endregion
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            ns2.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (EditMode) return;
+                var frm = new Sci.Production.Subcon.P30_InComingList(CurrentDetailData["Ukey"].ToString());
+                DialogResult result = frm.ShowDialog(this);
+            };
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns3 = new DataGridViewGeneratorNumericColumnSettings();
+            ns3.EditingMouseDoubleClick += (s, e) =>
+            {
+                if (EditMode) return;
+                var frm = new Sci.Production.Subcon.P30_AccountPayble(CurrentDetailData["Ukey"].ToString());
+                DialogResult result = frm.ShowDialog(this);
+            };
+
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
@@ -429,8 +445,8 @@ namespace Sci.Production.Subcon
             .Numeric("std_price", header: "Standard Price", width: Widths.AnsiChars(6), decimal_places: 3, integer_places: 4, iseditingreadonly: true) //13
             .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10)) //14
             .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //15
-            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //16
-            .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true) //17
+            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) //16
+            .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) //17
             .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) //18
             ;     
             #endregion

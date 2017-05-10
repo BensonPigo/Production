@@ -2810,9 +2810,15 @@ Sci.Production.Subcon/P10_PrintData.cs -text
 Sci.Production.Subcon/P30.Designer.cs -text
 Sci.Production.Subcon/P30.cs -text
 Sci.Production.Subcon/P30.resx -text
+Sci.Production.Subcon/P30_AccountPayble.Designer.cs -text
+Sci.Production.Subcon/P30_AccountPayble.cs -text
+Sci.Production.Subcon/P30_AccountPayble.resx -text
 Sci.Production.Subcon/P30_Import.Designer.cs -text
 Sci.Production.Subcon/P30_Import.cs -text
 Sci.Production.Subcon/P30_Import.resx -text
+Sci.Production.Subcon/P30_InComingList.Designer.cs -text
+Sci.Production.Subcon/P30_InComingList.cs -text
+Sci.Production.Subcon/P30_InComingList.resx -text
 Sci.Production.Subcon/P30_Print.rdlc -text
 Sci.Production.Subcon/P30_PrintData.cs -text
 Sci.Production.Subcon/P32.Designer.cs -text

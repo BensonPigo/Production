@@ -44,6 +44,22 @@ namespace Sci.Production.Subcon
                  ;
             #endregion
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.EditingMouseDoubleClick += (s, e) =>
+            {
+                DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
+                var frm = new Sci.Production.Subcon.P30_InComingList(thisRow["Ukey"].ToString());
+                DialogResult result = frm.ShowDialog(this);
+            };
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
+            ns2.EditingMouseDoubleClick += (s, e) =>
+            {
+                DataRow thisRow = this.grid2.GetDataRow(this.listControlBindingSource2.Position);
+                var frm = new Sci.Production.Subcon.P30_AccountPayble(thisRow["Ukey"].ToString());
+                DialogResult result = frm.ShowDialog(this);
+            };
+
             #region -- Grid2 Setting --
             this.grid2.IsEditingReadOnly = true;
             this.grid2.DataSource = listControlBindingSource2;
@@ -60,9 +76,10 @@ namespace Sci.Production.Subcon
                  .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Date("Delivery", header: "Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("ID", header: "ID#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("RequestID", header: "RequestID", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true)
-                 .Numeric("APQty", header: "APQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true)
+                 .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true, settings: ns)
+                 .Numeric("APQty", header: "APQty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 0, iseditingreadonly: true, settings: ns2)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: true)
                  ;
             #endregion  
@@ -232,10 +249,12 @@ namespace Sci.Production.Subcon
 	                       LD.Price,
 	                       Amount=LD.Qty*LD.Price,
 	                       LD.Delivery,
+                           LD.ID,
 	                       LD.RequestID,
 	                       LD.InQty,
 	                       LD.APQty,
-	                       LD.Remark
+	                       LD.Remark,
+                           LD.Ukey                          
                     from LocalPO_Detail LD WITH (NOLOCK)
                     left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
                     left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID=S.ID
@@ -298,7 +317,10 @@ namespace Sci.Production.Subcon
         {
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dtGrid1);
-            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(dtGrid2);
+            DataView dataView = dtGrid2.DefaultView;
+            DataTable NewdataTable = dataView.ToTable(false);
+            if (NewdataTable.Columns.Contains("Ukey")) NewdataTable.Columns.Remove("Ukey");
+            Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt2 = new SaveXltReportCls.xltRptTable(NewdataTable);
             x1.dicDatas.Add("##dt1", dt1);
             x1.dicDatas.Add("##dt2", dt2);
             dt1.ShowHeader = false;
