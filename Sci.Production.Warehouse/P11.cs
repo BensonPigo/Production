@@ -96,7 +96,7 @@ namespace Sci.Production.Warehouse
                     string sqlcmd = string.Format(@"select a.*,
 CASE b.FabricType WHEN 'A' THEN 'Accessory' WHEN 'F' THEN 'Fabric'  WHEN 'O' THEN 'Other' END AS FabricType
 ,b.SCIRefno,f.MtlTypeID,m.IssueType,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) seq
-,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description],b.StockUnit
 ,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
                          from dbo.issue WITH (NOLOCK) 
                          inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
@@ -148,6 +148,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                     CurrentDetailData["description"] = x[0]["description"];
                     CurrentDetailData["accu_issue"] = x[0]["accu_issue"];
                     CurrentDetailData["balanceqty"] = x[0]["balanceqty"];
+                    CurrentDetailData["StockUnit"] = x[0]["StockUnit"];
                 }
             };
 
@@ -177,7 +178,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                         }
 
                         if (!MyUtility.Check.Seek(string.Format(@"select a.*,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,left(a.seq1+'   ',3)+a.seq2 seq
-,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+,b.Colorid,b.SizeSpec,b.UsedQty,b.SizeUnit,dbo.Getlocation(a.ukey) [location],dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description],b.StockUnit
 ,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
                          from dbo.issue WITH (NOLOCK) 
                          inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
@@ -216,6 +217,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
                             CurrentDetailData["description"] = dr["description"];
                             CurrentDetailData["accu_issue"] = dr["accu_issue"];
                             CurrentDetailData["balanceqty"] = dr["balanceqty"];
+                            CurrentDetailData["StockUnit"] = dr["StockUnit"];
                         }
                     }
                 }
@@ -235,6 +237,7 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
             .Text("location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //8
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10)    //5
+            .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Text("output", header: "Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts) //9
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
                 //.Text("ftyinventoryukey", header: "FtyInventoryUkey", width: Widths.AnsiChars(10), iseditingreadonly: true)  //12
@@ -278,6 +281,7 @@ a.Id
 ,p.SizeSpec
 ,p.UsedQty
 ,p.SizeUnit
+,p.StockUnit
 ,dbo.Getlocation(fi.ukey) [location]
 ,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
@@ -1445,6 +1449,7 @@ a.POID
 ,b.SizeSpec
 ,b.UsedQty
 ,b.SizeUnit
+,b.StockUnit
 ,dbo.Getlocation(a.ukey) [location]
 ,[Production].[dbo].getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
 ,isnull((select a.InQty-a.OutQty+a.AdjustQty ),0.00) as balanceqty
@@ -1477,6 +1482,7 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, this.po
                 //CurrentDetailData["mdivisionid"] = Sci.Env.User.Keyword;
                 CurrentDetailData["stocktype"] = dr["stocktype"];
                 CurrentDetailData["ftyinventoryukey"] = dr["ukey"];
+                CurrentDetailData["StockUnit"] = dr["StockUnit"];
 
 //                DetailDatas.Add(ndr);
 
