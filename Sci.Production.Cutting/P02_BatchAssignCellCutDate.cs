@@ -126,6 +126,10 @@ namespace Sci.Production.Cutting
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
+            filter();
+        }
+        private void filter()
+        {
             string sp = txtSPNo.Text;
             string article = txtArticle.Text;
             string markername = txtMarkerName.Text;
@@ -146,8 +150,7 @@ namespace Sci.Production.Cutting
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
             curTb.DefaultView.RowFilter = filter;
             curTb.DefaultView.Sort = orderby;
-            gridBatchAssignCellEstCutDate.DataSource = curTb;
-
+            gridBatchAssignCellEstCutDate.DataSource = curTb;        
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -264,6 +267,7 @@ namespace Sci.Production.Cutting
             DialogResult result = sele.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             txtSPNo.Text = sele.GetSelectedString();
+            filter();
         }
     }
 }
