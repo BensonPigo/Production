@@ -318,6 +318,7 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
             if (checkForPrintOut.Checked == true)
             {
+                #region PPIC_R01_PrintOut
                 printData.Columns.Remove("MDivisionID");
                 printData.Columns.Remove("PFRemark");
                 printData.Columns.Remove("BuyerDelivery");
@@ -325,28 +326,55 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 printData.Columns.Remove("ShipModeList");
                 printData.Columns.Remove("Alias");
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
-                result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 1);
-                if (!result)
+                Excel.Application objApp = null;
+                Excel.Worksheet worksheet = null;
+                try
                 {
-                    MyUtility.Msg.WarningBox(result.ToString(), "Warning");
-                    return false;
-                }
+                    objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_PrintOut.xltx"); //預先開啟excel app
+                    result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_PrintOut.xltx", headerRow: 1, showExcel: false, excelApp: objApp);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                        return false;
+                    }
+                    this.ShowWaitMessage("Excel Processing...");
+                    worksheet = objApp.Sheets[1];
 
-                this.ShowWaitMessage("Excel Processing...");
-                Excel.Worksheet worksheet = objApp.Sheets[1];
-                worksheet.Columns[26].ColumnWidth = 30;
-                if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
-                if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                    for (int i = 1; i < printData.Rows.Count; i++)
+                    {
+                        DataRow frontRow = printData.Rows[i - 1];
+                        DataRow Row = printData.Rows[i];
+
+                        //當前後 SyleID 不同時，中間加上虛線
+                        if ( !frontRow["StyleID"].EqualString(Row["StyleID"]))
+                        {
+                            // [2] = header 所佔的行數 + Excel 從 1 開始編號 = 1 + 1 
+                            Excel.Range excelRange = worksheet.get_Range("A" + (i + 2) + ":Z" + (i + 2));
+                            excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlDash;
+                        }
+                    }
+                    
+                    worksheet.Columns[26].ColumnWidth = 30;
+                    objApp.Visible = true;
+                    this.HideWaitMessage();
+                }
+                finally
+                {
+                    if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+                    if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);    //釋放worksheet
+                }
+                #endregion
             }
             else
-            {               
+            {
+                #region PPIC_R01_SewingLineScheduleReport
                 result = MyUtility.Excel.CopyToXls(printData, "", xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox(result.ToString(), "Warning");
                     return false;
                 }
+                #endregion
             }            
             return true;
         }
