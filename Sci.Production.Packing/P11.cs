@@ -387,9 +387,9 @@ where od.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Confirm failed, Please re-try");
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //UnConfirm
@@ -412,9 +412,9 @@ where od.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("UnConfirm failed, Please re-try");
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
 

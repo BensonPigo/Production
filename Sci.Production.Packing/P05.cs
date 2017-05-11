@@ -785,9 +785,9 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 return;
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //UnConfirm
@@ -823,9 +823,9 @@ and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
     }
 }

@@ -829,9 +829,9 @@ where ID = @INVNo";
                 return;
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //UnConfirm
@@ -862,9 +862,9 @@ where ID = @INVNo";
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Download excel format

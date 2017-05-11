@@ -1692,8 +1692,8 @@ order by id,article,sizecode"
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            RenewData();
-            OnDetailEntered();
+            //RenewData();
+            //OnDetailEntered();
         }
         private void insertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {

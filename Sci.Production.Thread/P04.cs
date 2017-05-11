@@ -323,9 +323,9 @@ namespace Sci.Production.Thread
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            this.RenewData();
-            this.OnDetailEntered();
-            EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //EnsureToolbarExt();
         }
         protected override void ClickConfirm()
         {
@@ -396,9 +396,9 @@ namespace Sci.Production.Thread
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            this.RenewData();
-            this.OnDetailEntered();
-            EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //EnsureToolbarExt();
         }
     }
 }

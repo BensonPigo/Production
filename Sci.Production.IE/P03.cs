@@ -738,8 +738,8 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Unconfirm
@@ -756,8 +756,8 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Not hit target reason
