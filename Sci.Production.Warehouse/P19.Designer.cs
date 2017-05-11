@@ -43,8 +43,8 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
+            this.txtFromFactory = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,8 +61,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtFromFactory);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -93,8 +93,8 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
             // 
             // detailpanel
             // 
@@ -315,16 +315,6 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToMDivisionId", true));
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.Location = new System.Drawing.Point(98, 42);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 60;
-            // 
             // label1
             // 
             this.label1.Lines = 0;
@@ -333,6 +323,19 @@
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 61;
             this.label1.Text = "To Factory";
+            // 
+            // txtFromFactory
+            // 
+            this.txtFromFactory.BackColor = System.Drawing.Color.White;
+            this.txtFromFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToMDivisionId", true));
+            this.txtFromFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFromFactory.Location = new System.Drawing.Point(98, 42);
+            this.txtFromFactory.MaxLength = 8;
+            this.txtFromFactory.Name = "txtFromFactory";
+            this.txtFromFactory.Size = new System.Drawing.Size(67, 23);
+            this.txtFromFactory.TabIndex = 62;
+            this.txtFromFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFromFactory_PopUp);
+            this.txtFromFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFromFactory_Validating);
             // 
             // P19
             // 
@@ -392,6 +395,6 @@
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnImport;
         private Win.UI.Label label1;
-        private Class.txtfactory txtfactory1;
+        private Win.UI.TextBox txtFromFactory;
     }
 }

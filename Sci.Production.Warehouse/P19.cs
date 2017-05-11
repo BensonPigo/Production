@@ -754,5 +754,26 @@ where a.id= @ID", pars, out dd);
             return true;
 
         }
+        private void txtFromFactory_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
+            {
+                MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
+                this.txtFromFactory.Text = "";
+                this.txtFromFactory.Focus();
+                this.txtFromFactory.Select();
+            }
+        }
+
+
+        private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (!this.EditMode) return;
+            string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtFromFactory.Text = item.GetSelectedString();
+        }
     }
 }
