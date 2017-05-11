@@ -414,7 +414,7 @@
             this.displayAirNo.Location = new System.Drawing.Point(69, 3);
             this.displayAirNo.Name = "displayAirNo";
             this.displayAirNo.Size = new System.Drawing.Size(110, 21);
-            this.displayAirNo.TabIndex = 24;
+            this.displayAirNo.TabIndex = 150;
             // 
             // txtSpNo
             // 
@@ -435,7 +435,7 @@
             this.displayStyleNo.Location = new System.Drawing.Point(69, 47);
             this.displayStyleNo.Name = "displayStyleNo";
             this.displayStyleNo.Size = new System.Drawing.Size(108, 21);
-            this.displayStyleNo.TabIndex = 7;
+            this.displayStyleNo.TabIndex = 151;
             // 
             // numOrderQty
             // 
@@ -451,7 +451,7 @@
             0});
             this.numOrderQty.ReadOnly = true;
             this.numOrderQty.Size = new System.Drawing.Size(52, 21);
-            this.numOrderQty.TabIndex = 8;
+            this.numOrderQty.TabIndex = 152;
             this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
@@ -547,7 +547,7 @@
             this.dateCreatedate.Name = "dateCreatedate";
             this.dateCreatedate.ReadOnly = true;
             this.dateCreatedate.Size = new System.Drawing.Size(109, 21);
-            this.dateCreatedate.TabIndex = 17;
+            this.dateCreatedate.TabIndex = 153;
             // 
             // displayBrand
             // 
@@ -556,7 +556,7 @@
             this.displayBrand.Location = new System.Drawing.Point(340, 25);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(88, 21);
-            this.displayBrand.TabIndex = 18;
+            this.displayBrand.TabIndex = 154;
             // 
             // displayDescription
             // 
@@ -565,7 +565,7 @@
             this.displayDescription.Location = new System.Drawing.Point(340, 47);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(318, 21);
-            this.displayDescription.TabIndex = 19;
+            this.displayDescription.TabIndex = 155;
             // 
             // dateBuyerDelivery
             // 
@@ -574,7 +574,7 @@
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.ReadOnly = true;
             this.dateBuyerDelivery.Size = new System.Drawing.Size(109, 21);
-            this.dateBuyerDelivery.TabIndex = 20;
+            this.dateBuyerDelivery.TabIndex = 156;
             // 
             // dateETA
             // 
@@ -623,7 +623,7 @@
             this.displayFactory.Location = new System.Drawing.Point(573, 3);
             this.displayFactory.Name = "displayFactory";
             this.displayFactory.Size = new System.Drawing.Size(66, 21);
-            this.displayFactory.TabIndex = 26;
+            this.displayFactory.TabIndex = 157;
             // 
             // displayShipMode
             // 
@@ -632,7 +632,7 @@
             this.displayShipMode.Location = new System.Drawing.Point(573, 25);
             this.displayShipMode.Name = "displayShipMode";
             this.displayShipMode.Size = new System.Drawing.Size(78, 21);
-            this.displayShipMode.TabIndex = 27;
+            this.displayShipMode.TabIndex = 158;
             // 
             // dateRcvDoxDate
             // 
@@ -642,7 +642,7 @@
             this.dateRcvDoxDate.Name = "dateRcvDoxDate";
             this.dateRcvDoxDate.ReadOnly = true;
             this.dateRcvDoxDate.Size = new System.Drawing.Size(109, 21);
-            this.dateRcvDoxDate.TabIndex = 29;
+            this.dateRcvDoxDate.TabIndex = 160;
             // 
             // labelGrossWeight
             // 
@@ -1994,7 +1994,7 @@
             this.txtCountryDestination.Location = new System.Drawing.Point(573, 69);
             this.txtCountryDestination.Name = "txtCountryDestination";
             this.txtCountryDestination.Size = new System.Drawing.Size(208, 22);
-            this.txtCountryDestination.TabIndex = 28;
+            this.txtCountryDestination.TabIndex = 159;
             this.txtCountryDestination.TextBox1Binding = "";
             // 
             // P01
