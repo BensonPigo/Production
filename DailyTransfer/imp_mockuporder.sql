@@ -58,7 +58,7 @@ BEGIN
 			t.CMPUnit = s.CMPUnit ,
 			t.CMPPrice = s.CMPPrice ,
 			t.FTYGroup = s.FTYGroup ,
-			t.CPUFactor =3 ,
+			t.CPUFactor =1 ,
 			t.MDivisionID = s.MDivisionID ,
 			t.AddName = s.AddName ,
 			t.AddDate = s.AddDate ,
@@ -69,7 +69,7 @@ BEGIN
 			,SCIDelivery ,MRHandle ,SMR ,Junk ,Remark ,CMPUnit ,CMPPrice ,FTYGroup ,CPUFactor ,MDivisionID ,AddName 
 			,AddDate ,EditName ,EditDate )
 			values(s.ID ,s.MockupID ,s.Description ,s.Cpu ,s.BrandID ,s.StyleID ,s.SeasonID ,s.ProgramID ,s.FactoryID ,s.Qty ,s.CfmDate
-			,s.SCIDelivery,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,FTYGroup ,3 ,s.MDivisionID,s.AddName 
+			,s.SCIDelivery,s.MRHandle ,s.SMR ,s.Junk ,s.Remark ,s.CMPUnit ,s.CMPPrice ,FTYGroup ,1 ,s.MDivisionID,s.AddName 
 			,s.AddDate ,s.EditName ,s.EditDate );
 
 		---------Merge2 insert-----------------
