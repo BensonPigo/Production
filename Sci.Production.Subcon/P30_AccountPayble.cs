@@ -25,7 +25,7 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
             string selectCommand1 = string.Format(@"
-                    select LD.Id,L.IssueDate,LD.Qty,LD.Price,P.ID+' '+P.Name+' Ext.'+P.ExtNo as Handle,L.ApvDate
+                    select LD.Id,L.IssueDate,LD.Qty,LD.Price,P.ID+' '+P.Name+ IIF(P.ExtNo='','',' Ext.'+P.ExtNo) as Handle,L.ApvDate
                     from LocalAP_Detail LD
                     inner join LocalAP L on L.Id=LD.Id
                     left join Pass1 P on L.Handle=P.ID
