@@ -326,6 +326,8 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
                 return false;
             }
 
+            this.ShowWaitMessage("Data Loading...");
+           
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R11.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData, "", "Planning_R11.xltx", 3, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -415,6 +417,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
 
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
+            this.HideWaitMessage();
             return true;
         }
     }
