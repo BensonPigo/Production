@@ -200,6 +200,7 @@ from (
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
+    left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(@" 
@@ -212,6 +213,8 @@ from (
         and i.seq2 = @seq2 ");
             if (!MyUtility.Check.Empty(Refno))
                 sqlcmd.Append(" and i.Refno = @Refno");
+            if (!MyUtility.Check.Empty(ColorID))
+                sqlcmd.Append(" and b.ColorID = @ColorID");
 
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@"
@@ -235,6 +238,7 @@ from (
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
+    left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(@" 
@@ -245,10 +249,10 @@ from (
             if (!txtSeq.checkSeq2Empty())
                 sqlcmd.Append(@" 
         and i.seq2 = @seq2 ");
-
             if (!MyUtility.Check.Empty(Refno))
                 sqlcmd.Append(" and i.Refno = @Refno");
-
+            if (!MyUtility.Check.Empty(ColorID))
+                sqlcmd.Append(" and b.ColorID = @ColorID");
             sqlcmd.Append(@" 
 ) tmp
 order by InventoryUkey,ConfirmDate,ID");
@@ -265,6 +269,7 @@ order by InventoryUkey,ConfirmDate,ID");
         , f.AdjustQty
         , dbo.Getlocation(f.ukey)  Location
 from FtyInventory f WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail b WITH (NOLOCK) on f.PoID= b.id and f.Seq1 = b.SEQ1 and f.Seq2 = b.SEQ2
 where   stocktype='I'");
             if (!MyUtility.Check.Empty(spno))
                 sqlcmd.Append(@" 
