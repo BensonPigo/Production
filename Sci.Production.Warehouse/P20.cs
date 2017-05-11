@@ -117,7 +117,12 @@ namespace Sci.Production.Warehouse
                 DialogResult dResult = MyUtility.Msg.QuestionBox("It will take a lot of time for searching data if condition of SP# is empty, Do you continue?");
                 if (dResult == DialogResult.No) return;
             }
-            
+
+            string Refno;
+            Refno = txtRefNo.Text;
+            string ColorID;
+            ColorID = txtColorID.Text;
+
             #region -- SQL Command --
             StringBuilder sqlcmd = new StringBuilder();
             sqlcmd.Append(@"
@@ -152,6 +157,10 @@ where f.Junk = 0 ");
                 sqlcmd.Append(" and i.seq1 = @seq1");
             if (!txtSeq.checkSeq2Empty())
                 sqlcmd.Append(" and i.seq2 = @seq2");
+            if (!MyUtility.Check.Empty(Refno))
+                sqlcmd.Append(" and i.Refno = @Refno");
+            if (!MyUtility.Check.Empty(ColorID))
+                sqlcmd.Append(" and b.ColorID = @ColorID");
 
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@";
@@ -196,11 +205,14 @@ from (
                 sqlcmd.Append(@" 
         and i.poid = @spno");
             if (!txtSeq.checkSeq1Empty())
-                sqlcmd.Append(@"
+                sqlcmd.Append(@" 
         and i.seq1 = @seq1");
             if (!txtSeq.checkSeq2Empty())
                 sqlcmd.Append(@" 
         and i.seq2 = @seq2 ");
+            if (!MyUtility.Check.Empty(Refno))
+                sqlcmd.Append(" and i.Refno = @Refno");
+
             sqlcmd.Append(Environment.NewLine);
             sqlcmd.Append(@"
     
@@ -234,6 +246,9 @@ from (
                 sqlcmd.Append(@" 
         and i.seq2 = @seq2 ");
 
+            if (!MyUtility.Check.Empty(Refno))
+                sqlcmd.Append(" and i.Refno = @Refno");
+
             sqlcmd.Append(@" 
 ) tmp
 order by InventoryUkey,ConfirmDate,ID");
@@ -261,6 +276,7 @@ where   stocktype='I'");
                 sqlcmd.Append(@" 
         and f.seq2 = @seq2");
 
+
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
             sp1.ParameterName = "@spno";
             sp1.Value = spno;
@@ -273,10 +289,20 @@ where   stocktype='I'");
             sp3.ParameterName = "@seq2";
             sp3.Value = txtSeq.seq2;
 
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+            sp4.ParameterName = "@Refno";
+            sp4.Value = Refno;
+
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
+            sp5.ParameterName = "@ColorID";
+            sp5.Value = ColorID;
+
             IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
             paras.Add(sp1);
             paras.Add(sp2);
             paras.Add(sp3);
+            paras.Add(sp4);
+            paras.Add(sp5);
             #endregion
             this.ShowWaitMessage("Data Loading....");
             DataSet data;

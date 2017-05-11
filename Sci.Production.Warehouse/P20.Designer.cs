@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panel2 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
-            this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
+            this.bindingSource1 = new Sci.Win.UI.BindingSource();
             this.panel3 = new Sci.Win.UI.Panel();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.checkQty = new Sci.Win.UI.CheckBox();
@@ -39,13 +38,17 @@
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.bindingSource2 = new Sci.Win.UI.BindingSource(this.components);
-            this.bindingSource3 = new Sci.Win.UI.BindingSource(this.components);
+            this.bindingSource2 = new Sci.Win.UI.BindingSource();
+            this.bindingSource3 = new Sci.Win.UI.BindingSource();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridStockList = new Sci.Win.UI.Grid();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.gridTransactionID = new Sci.Win.UI.Grid();
             this.gridRoll = new Sci.Win.UI.Grid();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtRefNo = new Sci.Win.UI.TextBox();
+            this.txtColorID = new Sci.Win.UI.TextBox();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -91,6 +94,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtColorID);
+            this.panel3.Controls.Add(this.txtRefNo);
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.txtSeq);
             this.panel3.Controls.Add(this.checkQty);
             this.panel3.Controls.Add(this.labelSeq);
@@ -100,13 +107,13 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1008, 43);
+            this.panel3.Size = new System.Drawing.Size(1008, 72);
             this.panel3.TabIndex = 1;
             // 
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(272, 9);
+            this.txtSeq.Location = new System.Drawing.Point(286, 9);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
@@ -120,7 +127,7 @@
             this.checkQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkQty.IsSupportEditMode = false;
-            this.checkQty.Location = new System.Drawing.Point(436, 11);
+            this.checkQty.Location = new System.Drawing.Point(436, 37);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
             this.checkQty.TabIndex = 3;
@@ -130,10 +137,9 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Lines = 0;
             this.labelSeq.Location = new System.Drawing.Point(224, 9);
             this.labelSeq.Name = "labelSeq";
-            this.labelSeq.Size = new System.Drawing.Size(45, 23);
+            this.labelSeq.Size = new System.Drawing.Size(59, 23);
             this.labelSeq.TabIndex = 17;
             this.labelSeq.Text = "Seq";
             // 
@@ -151,7 +157,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 9);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -161,7 +166,7 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(350, 5);
+            this.btnQuery.Location = new System.Drawing.Point(350, 31);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 2;
@@ -172,7 +177,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 43);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 72);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -183,8 +188,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1008, 570);
-            this.splitContainer1.SplitterDistance = 175;
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 541);
+            this.splitContainer1.SplitterDistance = 166;
             this.splitContainer1.TabIndex = 4;
             // 
             // gridStockList
@@ -207,7 +212,7 @@
             this.gridStockList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridStockList.RowTemplate.Height = 24;
             this.gridStockList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridStockList.Size = new System.Drawing.Size(1008, 175);
+            this.gridStockList.Size = new System.Drawing.Size(1008, 166);
             this.gridStockList.TabIndex = 1;
             this.gridStockList.TabStop = false;
             // 
@@ -225,8 +230,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridRoll);
-            this.splitContainer2.Size = new System.Drawing.Size(1008, 391);
-            this.splitContainer2.SplitterDistance = 244;
+            this.splitContainer2.Size = new System.Drawing.Size(1008, 371);
+            this.splitContainer2.SplitterDistance = 231;
             this.splitContainer2.TabIndex = 0;
             // 
             // gridTransactionID
@@ -249,7 +254,7 @@
             this.gridTransactionID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransactionID.RowTemplate.Height = 24;
             this.gridTransactionID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridTransactionID.Size = new System.Drawing.Size(1008, 244);
+            this.gridTransactionID.Size = new System.Drawing.Size(1008, 231);
             this.gridTransactionID.TabIndex = 6;
             this.gridTransactionID.TabStop = false;
             // 
@@ -273,9 +278,49 @@
             this.gridRoll.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRoll.RowTemplate.Height = 24;
             this.gridRoll.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridRoll.Size = new System.Drawing.Size(1008, 143);
+            this.gridRoll.Size = new System.Drawing.Size(1008, 136);
             this.gridRoll.TabIndex = 8;
             this.gridRoll.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "RefNo";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(224, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 23);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "Color ID";
+            // 
+            // txtRefNo
+            // 
+            this.txtRefNo.BackColor = System.Drawing.Color.White;
+            this.txtRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefNo.IsSupportEditMode = false;
+            this.txtRefNo.IsSupportSytsemContextMenu = false;
+            this.txtRefNo.Location = new System.Drawing.Point(87, 35);
+            this.txtRefNo.MaxLength = 13;
+            this.txtRefNo.Name = "txtRefNo";
+            this.txtRefNo.Size = new System.Drawing.Size(134, 23);
+            this.txtRefNo.TabIndex = 20;
+            // 
+            // txtColorID
+            // 
+            this.txtColorID.BackColor = System.Drawing.Color.White;
+            this.txtColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColorID.IsSupportEditMode = false;
+            this.txtColorID.IsSupportSytsemContextMenu = false;
+            this.txtColorID.Location = new System.Drawing.Point(286, 35);
+            this.txtColorID.MaxLength = 13;
+            this.txtColorID.Name = "txtColorID";
+            this.txtColorID.Size = new System.Drawing.Size(58, 23);
+            this.txtColorID.TabIndex = 21;
             // 
             // P20
             // 
@@ -328,5 +373,9 @@
         private Win.UI.Grid gridRoll;
         private Win.UI.CheckBox checkQty;
         private Class.txtSeq txtSeq;
+        private Win.UI.TextBox txtColorID;
+        private Win.UI.TextBox txtRefNo;
+        private Win.UI.Label label2;
+        private Win.UI.Label label1;
     }
 }
