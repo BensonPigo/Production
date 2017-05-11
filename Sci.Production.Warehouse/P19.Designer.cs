@@ -43,6 +43,8 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +61,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.txtfactory1);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -73,7 +77,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 184);
+            this.masterpanel.Size = new System.Drawing.Size(1058, 201);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -89,16 +93,18 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 293);
+            this.detailpanel.Location = new System.Drawing.Point(0, 201);
+            this.detailpanel.Size = new System.Drawing.Size(1058, 276);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 144);
+            this.gridicon.Location = new System.Drawing.Point(928, 165);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -108,7 +114,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(1058, 276);
             // 
             // detail2
             // 
@@ -211,7 +217,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(1058, 201);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -220,13 +226,13 @@
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
             this.lineShape1.X2 = 1039;
-            this.lineShape1.Y1 = 137;
-            this.lineShape1.Y2 = 137;
+            this.lineShape1.Y1 = 160;
+            this.lineShape1.Y2 = 160;
             // 
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Location = new System.Drawing.Point(279, 165);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 6;
@@ -239,7 +245,7 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
+            this.txtLocateForSP.Location = new System.Drawing.Point(128, 169);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 5;
@@ -247,7 +253,7 @@
             // labelLocateForSP
             // 
             this.labelLocateForSP.Lines = 0;
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 148);
+            this.labelLocateForSP.Location = new System.Drawing.Point(16, 169);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -256,7 +262,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 165);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 7;
@@ -267,7 +273,7 @@
             // labelRemark
             // 
             this.labelRemark.Lines = 0;
-            this.labelRemark.Location = new System.Drawing.Point(16, 43);
+            this.labelRemark.Location = new System.Drawing.Point(16, 71);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 59;
@@ -278,7 +284,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(97, 43);
+            this.editRemark.Location = new System.Drawing.Point(97, 71);
             this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
@@ -289,7 +295,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(883, 80);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(883, 108);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 3;
@@ -301,13 +307,32 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(939, 45);
+            this.btnImport.Location = new System.Drawing.Point(939, 73);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 2;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ToMDivisionId", true));
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(98, 42);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 60;
+            // 
+            // label1
+            // 
+            this.label1.Lines = 0;
+            this.label1.Location = new System.Drawing.Point(16, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 61;
+            this.label1.Text = "To Factory";
             // 
             // P19
             // 
@@ -366,5 +391,7 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnImport;
+        private Win.UI.Label label1;
+        private Class.txtfactory txtfactory1;
     }
 }
