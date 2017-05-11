@@ -234,16 +234,14 @@
             this.detailcont.Controls.Add(this.labelResponsible);
             this.detailcont.Controls.Add(this.editComments);
             this.detailcont.Controls.Add(this.txttpeuserTask);
-            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.txttpeuserPOHandle);
+            this.detailcont.Controls.Add(this.txttpeuserPOSMR);
             this.detailcont.Controls.Add(this.txttpeuserMR);
             this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.txtSubconForwarder1);
-            this.detailcont.Controls.Add(this.txtUserPPICmgr);
             this.detailcont.Controls.Add(this.txtsubcon3);
             this.detailcont.Controls.Add(this.txtSubconForwarderN);
-            this.detailcont.Controls.Add(this.txtUserPreparedBy);
-            this.detailcont.Controls.Add(this.txtUserFactorymgr);
+            this.detailcont.Controls.Add(this.txtUserPPICmgr);
             this.detailcont.Controls.Add(this.labelComments);
             this.detailcont.Controls.Add(this.displayRemark);
             this.detailcont.Controls.Add(this.labelRemark);
@@ -276,9 +274,11 @@
             this.detailcont.Controls.Add(this.labelForwarder2);
             this.detailcont.Controls.Add(this.labelForwarder1);
             this.detailcont.Controls.Add(this.labelForwarderN);
+            this.detailcont.Controls.Add(this.txtUserPreparedBy);
             this.detailcont.Controls.Add(this.numExchangeRate);
             this.detailcont.Controls.Add(this.numVWeight);
             this.detailcont.Controls.Add(this.numGrossWeight);
+            this.detailcont.Controls.Add(this.txtUserFactorymgr);
             this.detailcont.Controls.Add(this.labelExchangeRate);
             this.detailcont.Controls.Add(this.labelVWeight);
             this.detailcont.Controls.Add(this.labelGrossWeight);
@@ -368,7 +368,6 @@
             // 
             // labelAirNo
             // 
-            this.labelAirNo.Lines = 0;
             this.labelAirNo.Location = new System.Drawing.Point(5, 4);
             this.labelAirNo.Name = "labelAirNo";
             this.labelAirNo.Size = new System.Drawing.Size(62, 18);
@@ -377,7 +376,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(5, 26);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(62, 18);
@@ -386,7 +384,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(5, 48);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(62, 18);
@@ -395,7 +392,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(5, 70);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(62, 18);
@@ -404,7 +400,6 @@
             // 
             // labelAirQty
             // 
-            this.labelAirQty.Lines = 0;
             this.labelAirQty.Location = new System.Drawing.Point(5, 92);
             this.labelAirQty.Name = "labelAirQty";
             this.labelAirQty.Size = new System.Drawing.Size(62, 18);
@@ -485,7 +480,6 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Lines = 0;
             this.labelSeq.Location = new System.Drawing.Point(187, 26);
             this.labelSeq.Name = "labelSeq";
             this.labelSeq.Size = new System.Drawing.Size(29, 18);
@@ -507,7 +501,6 @@
             // 
             // labelCreatedate
             // 
-            this.labelCreatedate.Lines = 0;
             this.labelCreatedate.Location = new System.Drawing.Point(251, 4);
             this.labelCreatedate.Name = "labelCreatedate";
             this.labelCreatedate.Size = new System.Drawing.Size(87, 18);
@@ -516,7 +509,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(251, 26);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(87, 18);
@@ -525,7 +517,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(251, 48);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(87, 18);
@@ -534,7 +525,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(251, 70);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(87, 18);
@@ -543,7 +533,6 @@
             // 
             // labelETA
             // 
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(251, 92);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(87, 18);
@@ -597,7 +586,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(504, 4);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(67, 18);
@@ -606,7 +594,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(504, 26);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(67, 18);
@@ -615,7 +602,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(504, 70);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(67, 18);
@@ -624,7 +610,6 @@
             // 
             // labelRcvDoxDate
             // 
-            this.labelRcvDoxDate.Lines = 0;
             this.labelRcvDoxDate.Location = new System.Drawing.Point(504, 92);
             this.labelRcvDoxDate.Name = "labelRcvDoxDate";
             this.labelRcvDoxDate.Size = new System.Drawing.Size(85, 18);
@@ -661,7 +646,6 @@
             // 
             // labelGrossWeight
             // 
-            this.labelGrossWeight.Lines = 0;
             this.labelGrossWeight.Location = new System.Drawing.Point(5, 120);
             this.labelGrossWeight.Name = "labelGrossWeight";
             this.labelGrossWeight.Size = new System.Drawing.Size(110, 18);
@@ -670,7 +654,6 @@
             // 
             // labelVWeight
             // 
-            this.labelVWeight.Lines = 0;
             this.labelVWeight.Location = new System.Drawing.Point(249, 120);
             this.labelVWeight.Name = "labelVWeight";
             this.labelVWeight.Size = new System.Drawing.Size(87, 18);
@@ -679,8 +662,7 @@
             // 
             // labelExchangeRate
             // 
-            this.labelExchangeRate.Lines = 0;
-            this.labelExchangeRate.Location = new System.Drawing.Point(552, 120);
+            this.labelExchangeRate.Location = new System.Drawing.Point(552, 186);
             this.labelExchangeRate.Name = "labelExchangeRate";
             this.labelExchangeRate.Size = new System.Drawing.Size(90, 18);
             this.labelExchangeRate.TabIndex = 32;
@@ -757,7 +739,7 @@
             this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Rate", true));
             this.numExchangeRate.DecimalPlaces = 3;
             this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numExchangeRate.Location = new System.Drawing.Point(644, 119);
+            this.numExchangeRate.Location = new System.Drawing.Point(644, 185);
             this.numExchangeRate.Maximum = new decimal(new int[] {
             99999999,
             0,
@@ -775,7 +757,7 @@
             0,
             0});
             this.numExchangeRate.Size = new System.Drawing.Size(68, 21);
-            this.numExchangeRate.TabIndex = 5;
+            this.numExchangeRate.TabIndex = 13;
             this.numExchangeRate.Value = new decimal(new int[] {
             0,
             0,
@@ -784,7 +766,6 @@
             // 
             // labelForwarderN
             // 
-            this.labelForwarderN.Lines = 0;
             this.labelForwarderN.Location = new System.Drawing.Point(5, 142);
             this.labelForwarderN.Name = "labelForwarderN";
             this.labelForwarderN.Size = new System.Drawing.Size(80, 18);
@@ -793,7 +774,6 @@
             // 
             // labelForwarder1
             // 
-            this.labelForwarder1.Lines = 0;
             this.labelForwarder1.Location = new System.Drawing.Point(5, 164);
             this.labelForwarder1.Name = "labelForwarder1";
             this.labelForwarder1.Size = new System.Drawing.Size(80, 18);
@@ -802,7 +782,6 @@
             // 
             // labelForwarder2
             // 
-            this.labelForwarder2.Lines = 0;
             this.labelForwarder2.Location = new System.Drawing.Point(5, 186);
             this.labelForwarder2.Name = "labelForwarder2";
             this.labelForwarder2.Size = new System.Drawing.Size(80, 18);
@@ -811,7 +790,6 @@
             // 
             // labelForwarderNQuotation
             // 
-            this.labelForwarderNQuotation.Lines = 0;
             this.labelForwarderNQuotation.Location = new System.Drawing.Point(283, 142);
             this.labelForwarderNQuotation.Name = "labelForwarderNQuotation";
             this.labelForwarderNQuotation.Size = new System.Drawing.Size(120, 18);
@@ -820,7 +798,6 @@
             // 
             // labelForwarder1Quotation
             // 
-            this.labelForwarder1Quotation.Lines = 0;
             this.labelForwarder1Quotation.Location = new System.Drawing.Point(283, 164);
             this.labelForwarder1Quotation.Name = "labelForwarder1Quotation";
             this.labelForwarder1Quotation.Size = new System.Drawing.Size(120, 18);
@@ -829,7 +806,6 @@
             // 
             // labelForwarder2Quotation
             // 
-            this.labelForwarder2Quotation.Lines = 0;
             this.labelForwarder2Quotation.Location = new System.Drawing.Point(283, 186);
             this.labelForwarder2Quotation.Name = "labelForwarder2Quotation";
             this.labelForwarder2Quotation.Size = new System.Drawing.Size(120, 18);
@@ -860,7 +836,7 @@
             0,
             0});
             this.numForwarderNQuotation.Size = new System.Drawing.Size(74, 21);
-            this.numForwarderNQuotation.TabIndex = 7;
+            this.numForwarderNQuotation.TabIndex = 6;
             this.numForwarderNQuotation.Value = new decimal(new int[] {
             0,
             0,
@@ -892,7 +868,7 @@
             0,
             0});
             this.numForwarder1Quotation.Size = new System.Drawing.Size(74, 21);
-            this.numForwarder1Quotation.TabIndex = 10;
+            this.numForwarder1Quotation.TabIndex = 8;
             this.numForwarder1Quotation.Value = new decimal(new int[] {
             0,
             0,
@@ -923,7 +899,7 @@
             0,
             0});
             this.numForwarder2Quotation.Size = new System.Drawing.Size(74, 21);
-            this.numForwarder2Quotation.TabIndex = 13;
+            this.numForwarder2Quotation.TabIndex = 10;
             this.numForwarder2Quotation.Value = new decimal(new int[] {
             0,
             0,
@@ -932,7 +908,6 @@
             // 
             // labelEstAmt
             // 
-            this.labelEstAmt.Lines = 0;
             this.labelEstAmt.Location = new System.Drawing.Point(552, 142);
             this.labelEstAmt.Name = "labelEstAmt";
             this.labelEstAmt.Size = new System.Drawing.Size(85, 18);
@@ -941,7 +916,6 @@
             // 
             // labelActAmt
             // 
-            this.labelActAmt.Lines = 0;
             this.labelActAmt.Location = new System.Drawing.Point(552, 164);
             this.labelActAmt.Name = "labelActAmt";
             this.labelActAmt.Size = new System.Drawing.Size(85, 18);
@@ -972,7 +946,7 @@
             0,
             0});
             this.numEstAmt.Size = new System.Drawing.Size(104, 21);
-            this.numEstAmt.TabIndex = 8;
+            this.numEstAmt.TabIndex = 11;
             this.numEstAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -1003,7 +977,7 @@
             0,
             0});
             this.numActAmt.Size = new System.Drawing.Size(104, 21);
-            this.numActAmt.TabIndex = 11;
+            this.numActAmt.TabIndex = 12;
             this.numActAmt.Value = new decimal(new int[] {
             0,
             0,
@@ -1012,7 +986,6 @@
             // 
             // labelSRNo
             // 
-            this.labelSRNo.Lines = 0;
             this.labelSRNo.Location = new System.Drawing.Point(5, 208);
             this.labelSRNo.Name = "labelSRNo";
             this.labelSRNo.Size = new System.Drawing.Size(45, 18);
@@ -1031,7 +1004,6 @@
             // 
             // labelVoucher
             // 
-            this.labelVoucher.Lines = 0;
             this.labelVoucher.Location = new System.Drawing.Point(283, 208);
             this.labelVoucher.Name = "labelVoucher";
             this.labelVoucher.Size = new System.Drawing.Size(52, 18);
@@ -1050,7 +1022,6 @@
             // 
             // labelPayDate
             // 
-            this.labelPayDate.Lines = 0;
             this.labelPayDate.Location = new System.Drawing.Point(647, 208);
             this.labelPayDate.Name = "labelPayDate";
             this.labelPayDate.Size = new System.Drawing.Size(55, 18);
@@ -1071,7 +1042,6 @@
             // 
             this.label30.BackColor = System.Drawing.Color.Transparent;
             this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
-            this.label30.Lines = 0;
             this.label30.Location = new System.Drawing.Point(808, 13);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(177, 23);
@@ -1139,7 +1109,6 @@
             // 
             // labelResponsibilityJustifcation
             // 
-            this.labelResponsibilityJustifcation.Lines = 0;
             this.labelResponsibilityJustifcation.Location = new System.Drawing.Point(4, 236);
             this.labelResponsibilityJustifcation.Name = "labelResponsibilityJustifcation";
             this.labelResponsibilityJustifcation.Size = new System.Drawing.Size(148, 18);
@@ -1153,11 +1122,10 @@
             this.displayResponsibilityJustifcation.Location = new System.Drawing.Point(186, 235);
             this.displayResponsibilityJustifcation.Name = "displayResponsibilityJustifcation";
             this.displayResponsibilityJustifcation.Size = new System.Drawing.Size(449, 21);
-            this.displayResponsibilityJustifcation.TabIndex = 66;
+            this.displayResponsibilityJustifcation.TabIndex = 15;
             // 
             // labelExplanation
             // 
-            this.labelExplanation.Lines = 0;
             this.labelExplanation.Location = new System.Drawing.Point(4, 258);
             this.labelExplanation.Name = "labelExplanation";
             this.labelExplanation.Size = new System.Drawing.Size(70, 18);
@@ -1177,7 +1145,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(4, 280);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(70, 18);
@@ -1198,7 +1165,6 @@
             // 
             // labelComments
             // 
-            this.labelComments.Lines = 0;
             this.labelComments.Location = new System.Drawing.Point(511, 260);
             this.labelComments.Name = "labelComments";
             this.labelComments.Size = new System.Drawing.Size(69, 37);
@@ -1220,7 +1186,6 @@
             // 
             // labelResponsible
             // 
-            this.labelResponsible.Lines = 0;
             this.labelResponsible.Location = new System.Drawing.Point(4, 325);
             this.labelResponsible.Name = "labelResponsible";
             this.labelResponsible.Size = new System.Drawing.Size(75, 47);
@@ -1235,7 +1200,7 @@
             this.checkFactory.Location = new System.Drawing.Point(83, 328);
             this.checkFactory.Name = "checkFactory";
             this.checkFactory.Size = new System.Drawing.Size(65, 19);
-            this.checkFactory.TabIndex = 16;
+            this.checkFactory.TabIndex = 17;
             this.checkFactory.Text = "Factory";
             this.checkFactory.UseVisualStyleBackColor = true;
             this.checkFactory.CheckedChanged += new System.EventHandler(this.checkFactory_CheckedChanged);
@@ -1248,7 +1213,7 @@
             this.checkSubcon.Location = new System.Drawing.Point(83, 351);
             this.checkSubcon.Name = "checkSubcon";
             this.checkSubcon.Size = new System.Drawing.Size(68, 19);
-            this.checkSubcon.TabIndex = 19;
+            this.checkSubcon.TabIndex = 20;
             this.checkSubcon.Text = "Subcon";
             this.checkSubcon.UseVisualStyleBackColor = true;
             this.checkSubcon.CheckedChanged += new System.EventHandler(this.checkSubcon_CheckedChanged);
@@ -1261,7 +1226,7 @@
             this.checkSCI.Location = new System.Drawing.Point(83, 398);
             this.checkSCI.Name = "checkSCI";
             this.checkSCI.Size = new System.Drawing.Size(45, 19);
-            this.checkSCI.TabIndex = 23;
+            this.checkSCI.TabIndex = 24;
             this.checkSCI.Text = "SCI";
             this.checkSCI.UseVisualStyleBackColor = true;
             this.checkSCI.CheckedChanged += new System.EventHandler(this.checkSCI_CheckedChanged);
@@ -1274,7 +1239,7 @@
             this.checkSupplier.Location = new System.Drawing.Point(83, 425);
             this.checkSupplier.Name = "checkSupplier";
             this.checkSupplier.Size = new System.Drawing.Size(72, 19);
-            this.checkSupplier.TabIndex = 25;
+            this.checkSupplier.TabIndex = 26;
             this.checkSupplier.Text = "Supplier";
             this.checkSupplier.UseVisualStyleBackColor = true;
             this.checkSupplier.CheckedChanged += new System.EventHandler(this.checkSupplier_CheckedChanged);
@@ -1287,14 +1252,13 @@
             this.checkBuyer.Location = new System.Drawing.Point(83, 454);
             this.checkBuyer.Name = "checkBuyer";
             this.checkBuyer.Size = new System.Drawing.Size(57, 19);
-            this.checkBuyer.TabIndex = 27;
+            this.checkBuyer.TabIndex = 28;
             this.checkBuyer.Text = "Buyer";
             this.checkBuyer.UseVisualStyleBackColor = true;
             this.checkBuyer.CheckedChanged += new System.EventHandler(this.checkBuyer_CheckedChanged);
             // 
             // labelFactoryRatio
             // 
-            this.labelFactoryRatio.Lines = 0;
             this.labelFactoryRatio.Location = new System.Drawing.Point(160, 328);
             this.labelFactoryRatio.Name = "labelFactoryRatio";
             this.labelFactoryRatio.Size = new System.Drawing.Size(45, 18);
@@ -1303,7 +1267,6 @@
             // 
             // labelSubconRatio
             // 
-            this.labelSubconRatio.Lines = 0;
             this.labelSubconRatio.Location = new System.Drawing.Point(160, 351);
             this.labelSubconRatio.Name = "labelSubconRatio";
             this.labelSubconRatio.Size = new System.Drawing.Size(45, 18);
@@ -1312,7 +1275,6 @@
             // 
             // labelSCIRatio
             // 
-            this.labelSCIRatio.Lines = 0;
             this.labelSCIRatio.Location = new System.Drawing.Point(160, 398);
             this.labelSCIRatio.Name = "labelSCIRatio";
             this.labelSCIRatio.Size = new System.Drawing.Size(45, 18);
@@ -1321,7 +1283,6 @@
             // 
             // labelSupplierRatio
             // 
-            this.labelSupplierRatio.Lines = 0;
             this.labelSupplierRatio.Location = new System.Drawing.Point(160, 425);
             this.labelSupplierRatio.Name = "labelSupplierRatio";
             this.labelSupplierRatio.Size = new System.Drawing.Size(45, 18);
@@ -1330,7 +1291,6 @@
             // 
             // labelBuyerRatio
             // 
-            this.labelBuyerRatio.Lines = 0;
             this.labelBuyerRatio.Location = new System.Drawing.Point(160, 454);
             this.labelBuyerRatio.Name = "labelBuyerRatio";
             this.labelBuyerRatio.Size = new System.Drawing.Size(45, 18);
@@ -1361,7 +1321,7 @@
             0,
             0});
             this.numFactoryRatio.Size = new System.Drawing.Size(51, 21);
-            this.numFactoryRatio.TabIndex = 17;
+            this.numFactoryRatio.TabIndex = 18;
             this.numFactoryRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1392,7 +1352,7 @@
             0,
             0});
             this.numSubconRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSubconRatio.TabIndex = 20;
+            this.numSubconRatio.TabIndex = 21;
             this.numSubconRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1401,7 +1361,6 @@
             // 
             // labelDebitMemo
             // 
-            this.labelDebitMemo.Lines = 0;
             this.labelDebitMemo.Location = new System.Drawing.Point(267, 351);
             this.labelDebitMemo.Name = "labelDebitMemo";
             this.labelDebitMemo.Size = new System.Drawing.Size(132, 18);
@@ -1416,7 +1375,7 @@
             this.txtDebitMemo.Location = new System.Drawing.Point(400, 350);
             this.txtDebitMemo.Name = "txtDebitMemo";
             this.txtDebitMemo.Size = new System.Drawing.Size(105, 21);
-            this.txtDebitMemo.TabIndex = 21;
+            this.txtDebitMemo.TabIndex = 22;
             // 
             // displayDebitMemo
             // 
@@ -1430,7 +1389,6 @@
             // 
             // labelSubconName
             // 
-            this.labelSubconName.Lines = 0;
             this.labelSubconName.Location = new System.Drawing.Point(267, 373);
             this.labelSubconName.Name = "labelSubconName";
             this.labelSubconName.Size = new System.Drawing.Size(132, 18);
@@ -1446,7 +1404,7 @@
             this.txtSubconName.Location = new System.Drawing.Point(401, 372);
             this.txtSubconName.Name = "txtSubconName";
             this.txtSubconName.Size = new System.Drawing.Size(170, 21);
-            this.txtSubconName.TabIndex = 22;
+            this.txtSubconName.TabIndex = 23;
             // 
             // numSCIRatio
             // 
@@ -1472,7 +1430,7 @@
             0,
             0});
             this.numSCIRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSCIRatio.TabIndex = 24;
+            this.numSCIRatio.TabIndex = 25;
             this.numSCIRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1561,7 +1519,6 @@
             // 
             // labelSCIICRNo
             // 
-            this.labelSCIICRNo.Lines = 0;
             this.labelSCIICRNo.Location = new System.Drawing.Point(267, 398);
             this.labelSCIICRNo.Name = "labelSCIICRNo";
             this.labelSCIICRNo.Size = new System.Drawing.Size(132, 18);
@@ -1612,7 +1569,7 @@
             0,
             0});
             this.numSupplierRatio.Size = new System.Drawing.Size(51, 21);
-            this.numSupplierRatio.TabIndex = 26;
+            this.numSupplierRatio.TabIndex = 27;
             this.numSupplierRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1621,7 +1578,6 @@
             // 
             // labelDebitNote
             // 
-            this.labelDebitNote.Lines = 0;
             this.labelDebitNote.Location = new System.Drawing.Point(267, 425);
             this.labelDebitNote.Name = "labelDebitNote";
             this.labelDebitNote.Size = new System.Drawing.Size(132, 18);
@@ -1672,7 +1628,7 @@
             0,
             0});
             this.numBuyerRatio.Size = new System.Drawing.Size(51, 21);
-            this.numBuyerRatio.TabIndex = 28;
+            this.numBuyerRatio.TabIndex = 29;
             this.numBuyerRatio.Value = new decimal(new int[] {
             0,
             0,
@@ -1681,7 +1637,6 @@
             // 
             // labelDebitMemoCustomer
             // 
-            this.labelDebitMemoCustomer.Lines = 0;
             this.labelDebitMemoCustomer.Location = new System.Drawing.Point(267, 454);
             this.labelDebitMemoCustomer.Name = "labelDebitMemoCustomer";
             this.labelDebitMemoCustomer.Size = new System.Drawing.Size(132, 18);
@@ -1710,7 +1665,6 @@
             // 
             // labelBuyerICRNo
             // 
-            this.labelBuyerICRNo.Lines = 0;
             this.labelBuyerICRNo.Location = new System.Drawing.Point(267, 476);
             this.labelBuyerICRNo.Name = "labelBuyerICRNo";
             this.labelBuyerICRNo.Size = new System.Drawing.Size(132, 18);
@@ -1746,11 +1700,10 @@
             this.txtBuyer.Location = new System.Drawing.Point(266, 497);
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(318, 21);
-            this.txtBuyer.TabIndex = 29;
+            this.txtBuyer.TabIndex = 30;
             // 
             // labelPreparedBy
             // 
-            this.labelPreparedBy.Lines = 0;
             this.labelPreparedBy.Location = new System.Drawing.Point(1, 529);
             this.labelPreparedBy.Name = "labelPreparedBy";
             this.labelPreparedBy.Size = new System.Drawing.Size(75, 18);
@@ -1759,7 +1712,6 @@
             // 
             // labelPPICmgr
             // 
-            this.labelPPICmgr.Lines = 0;
             this.labelPPICmgr.Location = new System.Drawing.Point(1, 551);
             this.labelPPICmgr.Name = "labelPPICmgr";
             this.labelPPICmgr.Size = new System.Drawing.Size(75, 18);
@@ -1768,7 +1720,6 @@
             // 
             // labelFactorymgr
             // 
-            this.labelFactorymgr.Lines = 0;
             this.labelFactorymgr.Location = new System.Drawing.Point(1, 573);
             this.labelFactorymgr.Name = "labelFactorymgr";
             this.labelFactorymgr.Size = new System.Drawing.Size(75, 18);
@@ -1777,7 +1728,6 @@
             // 
             // labelPOHandle
             // 
-            this.labelPOHandle.Lines = 0;
             this.labelPOHandle.Location = new System.Drawing.Point(1, 595);
             this.labelPOHandle.Name = "labelPOHandle";
             this.labelPOHandle.Size = new System.Drawing.Size(75, 18);
@@ -1806,7 +1756,6 @@
             // 
             // labelTask
             // 
-            this.labelTask.Lines = 0;
             this.labelTask.Location = new System.Drawing.Point(511, 595);
             this.labelTask.Name = "labelTask";
             this.labelTask.Size = new System.Drawing.Size(57, 18);
@@ -1815,7 +1764,6 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(511, 573);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(57, 18);
@@ -1824,7 +1772,6 @@
             // 
             // labelMR
             // 
-            this.labelMR.Lines = 0;
             this.labelMR.Location = new System.Drawing.Point(511, 551);
             this.labelMR.Name = "labelMR";
             this.labelMR.Size = new System.Drawing.Size(57, 18);
@@ -1833,7 +1780,6 @@
             // 
             // labelPOSMR
             // 
-            this.labelPOSMR.Lines = 0;
             this.labelPOSMR.Location = new System.Drawing.Point(511, 529);
             this.labelPOSMR.Name = "labelPOSMR";
             this.labelPOSMR.Size = new System.Drawing.Size(57, 18);
@@ -1863,7 +1809,6 @@
             // labelTPEEditDate
             // 
             this.labelTPEEditDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTPEEditDate.Lines = 0;
             this.labelTPEEditDate.Location = new System.Drawing.Point(536, 12);
             this.labelTPEEditDate.Name = "labelTPEEditDate";
             this.labelTPEEditDate.Size = new System.Drawing.Size(82, 18);
@@ -1872,7 +1817,6 @@
             // 
             // labelUpdTPEDate
             // 
-            this.labelUpdTPEDate.Lines = 0;
             this.labelUpdTPEDate.Location = new System.Drawing.Point(766, 12);
             this.labelUpdTPEDate.Name = "labelUpdTPEDate";
             this.labelUpdTPEDate.Size = new System.Drawing.Size(83, 19);
@@ -1929,7 +1873,7 @@
             this.txtsubcon3.Location = new System.Drawing.Point(87, 185);
             this.txtsubcon3.Name = "txtsubcon3";
             this.txtsubcon3.Size = new System.Drawing.Size(170, 23);
-            this.txtsubcon3.TabIndex = 12;
+            this.txtsubcon3.TabIndex = 9;
             this.txtsubcon3.TextBox1Binding = "";
             // 
             // txtSubconForwarder1
@@ -1940,7 +1884,7 @@
             this.txtSubconForwarder1.Location = new System.Drawing.Point(87, 163);
             this.txtSubconForwarder1.Name = "txtSubconForwarder1";
             this.txtSubconForwarder1.Size = new System.Drawing.Size(170, 23);
-            this.txtSubconForwarder1.TabIndex = 9;
+            this.txtSubconForwarder1.TabIndex = 7;
             this.txtSubconForwarder1.TextBox1Binding = "";
             // 
             // txtSubconForwarderN
@@ -1951,7 +1895,7 @@
             this.txtSubconForwarderN.Location = new System.Drawing.Point(87, 141);
             this.txtSubconForwarderN.Name = "txtSubconForwarderN";
             this.txtSubconForwarderN.Size = new System.Drawing.Size(170, 23);
-            this.txtSubconForwarderN.TabIndex = 6;
+            this.txtSubconForwarderN.TabIndex = 5;
             this.txtSubconForwarderN.TextBox1Binding = "";
             // 
             // txttpeuserPOSMR
@@ -2011,7 +1955,7 @@
             this.txtUserPPICmgr.Location = new System.Drawing.Point(78, 550);
             this.txtUserPPICmgr.Name = "txtUserPPICmgr";
             this.txtUserPPICmgr.Size = new System.Drawing.Size(302, 23);
-            this.txtUserPPICmgr.TabIndex = 17;
+            this.txtUserPPICmgr.TabIndex = 32;
             this.txtUserPPICmgr.TextBox1Binding = "";
             // 
             // txtUserPreparedBy
@@ -2021,7 +1965,7 @@
             this.txtUserPreparedBy.Location = new System.Drawing.Point(78, 528);
             this.txtUserPreparedBy.Name = "txtUserPreparedBy";
             this.txtUserPreparedBy.Size = new System.Drawing.Size(302, 23);
-            this.txtUserPreparedBy.TabIndex = 113;
+            this.txtUserPreparedBy.TabIndex = 31;
             this.txtUserPreparedBy.TextBox1Binding = "";
             // 
             // txtUserFactorymgr
@@ -2031,7 +1975,7 @@
             this.txtUserFactorymgr.Location = new System.Drawing.Point(78, 572);
             this.txtUserFactorymgr.Name = "txtUserFactorymgr";
             this.txtUserFactorymgr.Size = new System.Drawing.Size(302, 23);
-            this.txtUserFactorymgr.TabIndex = 18;
+            this.txtUserFactorymgr.TabIndex = 33;
             this.txtUserFactorymgr.TextBox1Binding = "";
             // 
             // txtfactory
@@ -2042,7 +1986,7 @@
             this.txtfactory.Location = new System.Drawing.Point(267, 327);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 21);
-            this.txtfactory.TabIndex = 18;
+            this.txtfactory.TabIndex = 19;
             // 
             // txtCountryDestination
             // 
