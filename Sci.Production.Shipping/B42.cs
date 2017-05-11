@@ -951,9 +951,7 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtili
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Unconfirm
@@ -971,9 +969,6 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'", MyUtili
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
         }
     }
 }

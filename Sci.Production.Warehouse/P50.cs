@@ -242,9 +242,7 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox(ex.Message);
                 return;
             }
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         

@@ -373,9 +373,7 @@ where id = '{4}'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+          
         }
 
         protected override void ClickSend()

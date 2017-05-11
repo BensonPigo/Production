@@ -819,9 +819,7 @@ order by oa.Seq,os.Seq", orderID, seq);
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //UnConfirm
@@ -858,9 +856,7 @@ and p.ID = pl.PulloutID", CurrentMaintain["ID"].ToString());
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
     }
 }

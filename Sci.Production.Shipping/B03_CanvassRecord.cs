@@ -219,9 +219,7 @@ namespace Sci.Production.Shipping
                 }
             }
 
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
     }
 }

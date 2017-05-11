@@ -341,9 +341,7 @@ namespace Sci.Production.Thread
             _transactionscope = null;
 
             #endregion
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
         private void btnFind_Click(object sender, EventArgs e)
         {

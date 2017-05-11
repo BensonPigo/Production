@@ -126,9 +126,7 @@ namespace Sci.Production.Cutting
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+           
             #endregion
 
         }
@@ -177,9 +175,7 @@ namespace Sci.Production.Cutting
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
         protected override void ClickNewAfter()
         {

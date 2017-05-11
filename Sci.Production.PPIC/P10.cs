@@ -612,9 +612,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n"+result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         protected override void ClickUnconfirm()
@@ -639,9 +637,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         protected override void ClickReceive()
@@ -660,9 +656,7 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 MyUtility.Msg.ErrorBox("Receive fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         protected override void OnDetailEntered()

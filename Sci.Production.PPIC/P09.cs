@@ -465,9 +465,7 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
                 MyUtility.Msg.ErrorBox("Junk fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Check
@@ -503,9 +501,7 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 MyUtility.Msg.ErrorBox("Check fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Uncheck
@@ -538,9 +534,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 MyUtility.Msg.ErrorBox("Uncheck fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         //Confirm
@@ -555,9 +549,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
             SendMail();
 
             //SendMail
@@ -582,9 +574,7 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
                 return;
             }
-            result = RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Mail to

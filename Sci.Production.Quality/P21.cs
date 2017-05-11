@@ -368,12 +368,10 @@ where a.ID='{0}'",
                     spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
                     spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                     DBProxy.Current.Execute(null, updOrders, spamO);
-                    this.RenewData();
+                   
 
                 }
-                //OnDetailEntered();
-                //this.RenewData();
-                //EnsureToolbarExt();
+              
         }
 
         protected override void ClickUnconfirm()
@@ -400,11 +398,9 @@ where a.ID='{0}'",
                 spamO.Add(new SqlParameter("@cfa", dt.Rows[0]["Cfa"]));
                 spamO.Add(new SqlParameter("@id", this.txtSP.Text));
                 DBProxy.Current.Execute(null, updOrders, spamO);
-                this.RenewData();
+                
             }
-            //OnDetailEntered();
-            //this.RenewData();
-            //EnsureToolbarExt();
+            
         }
        
         // save 前檢查

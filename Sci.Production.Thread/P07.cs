@@ -483,9 +483,7 @@ insert  ThreadStock(refno, mDivisionid, threadcolorid, threadlocationid, newcone
             _transactionscope = null;
 
             #endregion
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
         protected override void ClickUnconfirm()
         {
@@ -618,9 +616,7 @@ insert  ThreadStock (refno, mDivisionid, threadcolorid, threadlocationid, newcon
             _transactionscope = null;
 
             #endregion
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
         private void btnImportFromStock_Click(object sender, EventArgs e)
         {

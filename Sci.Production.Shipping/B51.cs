@@ -143,9 +143,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Unconfirm
@@ -163,9 +161,7 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Import Data

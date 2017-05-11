@@ -276,9 +276,7 @@ namespace Sci.Production.Quality
                                       where ID='{2}'"
                                    , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Execute(null, sql);
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         protected override void ClickUnconfirm()
@@ -289,9 +287,7 @@ namespace Sci.Production.Quality
                                       where ID='{2}'"
                                 , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
             DBProxy.Current.Execute(null, sql);
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         // save前檢查

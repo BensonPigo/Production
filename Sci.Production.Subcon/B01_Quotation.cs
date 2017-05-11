@@ -220,8 +220,7 @@ namespace Sci.Production.Subcon
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            result = RenewData();
-            OnDetailEntered();
+          
         }
 
         

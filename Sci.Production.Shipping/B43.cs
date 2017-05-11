@@ -173,9 +173,7 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+          
         }
 
         //Unconfirm
@@ -193,9 +191,7 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         //Import Data

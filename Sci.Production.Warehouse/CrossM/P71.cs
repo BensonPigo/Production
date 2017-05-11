@@ -240,9 +240,7 @@ namespace Sci.Production.Warehouse
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         protected override void ClickRecall()
@@ -303,9 +301,7 @@ namespace Sci.Production.Warehouse
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         //寫明細撈出的sql command

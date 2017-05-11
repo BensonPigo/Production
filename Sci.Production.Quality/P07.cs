@@ -175,7 +175,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+               
             };
             OvenScaleCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -184,7 +184,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+                
             };
             OvenDateCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -193,7 +193,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+               
             };
             OvenInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -202,7 +202,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+               
             };
             OvenRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -211,7 +211,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Oven(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+               
             };
 
             WashCell.CellMouseDoubleClick += (s, e) =>
@@ -221,7 +221,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-               // this.RenewData();
+               
             };
             WashScaleCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -230,7 +230,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+                
             };
             WashDateCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -239,7 +239,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+               
             };
             WashInspectorCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -248,7 +248,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+                
             };
             WashRemarkCell.CellMouseDoubleClick += (s, e) =>
             {
@@ -257,7 +257,7 @@ namespace Sci.Production.Quality
                 var frm = new Sci.Production.Quality.P07_Wash(false, this.CurrentDetailData["ID"].ToString(), this.displaySP.Text, this.CurrentDetailData["SEQ1"].ToString(), this.CurrentDetailData["SEQ2"].ToString(), dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
-                //this.RenewData();
+                
             };
             #endregion
 

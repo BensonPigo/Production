@@ -1206,9 +1206,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }           
 
         //Recall
@@ -1222,9 +1220,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Recall data faile.\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Junk
@@ -1254,9 +1250,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return;
             }
             SendMail();
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Approve
@@ -1323,9 +1317,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Approve data faile.\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         //Unapprove
@@ -1357,9 +1349,7 @@ select * from DeleteCtn", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Unapprove data faile.\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
 
         // Mail to

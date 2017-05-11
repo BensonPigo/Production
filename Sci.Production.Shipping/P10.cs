@@ -445,9 +445,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Check fail !\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Un Check
@@ -462,9 +460,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Uncheck fail !\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Confirm
@@ -544,9 +540,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Confirm fail !\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Un Confirm
@@ -561,9 +555,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + result.ToString());
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
     }
 }

@@ -673,9 +673,7 @@ else
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         //Unconfirm
@@ -984,9 +982,7 @@ else
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         //寫明細撈出的sql command

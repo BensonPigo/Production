@@ -336,9 +336,7 @@ when not matched then
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+          
         }
 
         //Unconfirm
@@ -474,9 +472,7 @@ when not matched then
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         private string DoUpdateLocalPoInQty()

@@ -834,9 +834,7 @@ where d.Id = '{0}' and f.id is null", CurrentMaintain["id"]);
             #endregion               
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+          
         }
 
         //Unconfirm
@@ -1048,9 +1046,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             #endregion
             _transactionscope.Dispose();
             _transactionscope = null;
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         //寫明細撈出的sql command

@@ -709,9 +709,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
         protected override void ClickUnconfirm()
         {
@@ -744,9 +742,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            //this.RenewData();
-            //this.OnDetailEntered();
-            //EnsureToolbarExt();
+            
         }
         #region 是否可編輯與變色
         private void change_record()

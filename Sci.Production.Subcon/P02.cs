@@ -387,9 +387,7 @@ namespace Sci.Production.Subcon
                 ShowErr(sqlcmd, result);
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+          
         }
 
         protected override void ClickUnconfirm()
@@ -407,9 +405,7 @@ namespace Sci.Production.Subcon
                 ShowErr(sqlcmd, result);
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+          
         }
 
         protected override void ClickClose()
@@ -430,9 +426,7 @@ namespace Sci.Production.Subcon
                 ShowErr(sqlcmd, result);
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+            
         }
 
         protected override void ClickUnclose()
@@ -456,9 +450,7 @@ namespace Sci.Production.Subcon
                 ShowErr(sqlcmd, result);
                 return;
             }
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         //batch import

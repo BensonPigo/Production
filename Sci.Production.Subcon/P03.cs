@@ -519,9 +519,7 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+         
         }
 
         protected override void ClickUnconfirm()
@@ -686,9 +684,7 @@ where b.bundleno !='' and b.id = '{0}'and a.artworktypeid = '{1}'", CurrentMaint
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            //RenewData();
-            //OnDetailEntered();
-            //this.EnsureToolbarExt();
+           
         }
 
         // P03_ImportFrom Real Time

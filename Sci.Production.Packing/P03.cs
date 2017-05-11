@@ -1267,9 +1267,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+          
         }
 
         //UnConfirm
@@ -1293,9 +1291,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
             }
             SelectReason();
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         private void SelectReason()

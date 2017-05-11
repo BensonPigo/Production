@@ -1151,9 +1151,7 @@ left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq 
                 return;
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //UnConfirm
@@ -1182,9 +1180,7 @@ left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq 
                 MyUtility.Msg.WarningBox("UnConfirm fail !\r\n" + result.ToString());
             }
 
-            //RenewData();
-            //OnDetailEntered();
-            //EnsureToolbarExt();
+           
         }
 
         //Terminal/Whse#
