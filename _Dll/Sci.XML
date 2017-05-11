@@ -15930,6 +15930,11 @@
             Store old value.
             </summary>
         </member>
+        <member name="P:Sci.Win.UI.DisplayBox.FormatString">
+            <summary>
+            自訂日期或數字的顯示格式
+            </summary>
+        </member>
         <member name="T:Sci.Win.UI.EditBoxPopUpEventArgs">
             <summary>
             Class of EditBoxPopUpEventArgs.
