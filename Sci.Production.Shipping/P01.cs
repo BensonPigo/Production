@@ -801,9 +801,9 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())", MyUtility.C
                     }
                 }
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
             SendMail(false);
         }
 
@@ -920,9 +920,9 @@ values ('{0}','Status','New','Checked','{1}',GetDate())", MyUtility.Convert.GetS
                 }
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //PPIC mgr UnApprove
@@ -967,9 +967,9 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())", MyUtility.
                     }
                 }
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Factory mgr Approve
@@ -1011,9 +1011,9 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())", MyUtility.Convert
                 }
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
             SendMail(false);
         }
 

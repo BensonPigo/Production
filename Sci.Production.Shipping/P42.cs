@@ -185,9 +185,9 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Unconfirm
@@ -205,9 +205,9 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 return;
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Import from excel

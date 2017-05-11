@@ -371,9 +371,9 @@ where a.ID='{0}'",
                     this.RenewData();
 
                 }
-                OnDetailEntered();
-                this.RenewData();
-                EnsureToolbarExt();
+                //OnDetailEntered();
+                //this.RenewData();
+                //EnsureToolbarExt();
         }
 
         protected override void ClickUnconfirm()
@@ -402,9 +402,9 @@ where a.ID='{0}'",
                 DBProxy.Current.Execute(null, updOrders, spamO);
                 this.RenewData();
             }
-            OnDetailEntered();
-            this.RenewData();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //this.RenewData();
+            //EnsureToolbarExt();
         }
        
         // save 前檢查

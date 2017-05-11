@@ -383,9 +383,9 @@ order by a.seq1,a.seq2,a.Refno "
             #endregion
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //EnsureToolbarExt();
             return Result.True;
         }
 

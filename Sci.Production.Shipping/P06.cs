@@ -521,9 +521,9 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Confirmed fail!!\r\n"+result.ToString());
                 return;
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Unconfirm
@@ -588,9 +588,9 @@ left join PulloutDate pd on pd.OrderID = po.OrderID", MyUtility.Convert.GetStrin
                 return;
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //History

@@ -304,9 +304,9 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Junk fail!!\r\n" + result.ToString());
                 return;
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
 
         }
 
@@ -400,9 +400,9 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 MyUtility.Msg.WarningBox("Confirm fail!!\r\n" + result.ToString());
                 return;
             }
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Unconfirm
@@ -434,9 +434,9 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 return;
             }
 
-            RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Contract No.
