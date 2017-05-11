@@ -15,9 +15,6 @@ BEGIN
 
 	--declare @oldDate date = (select max(UpdateDate) from Production.dbo.OrderComparisonList WITH (NOLOCK)) --上次匯入的最後日期
 	--declare @dToDay date = CONVERT(date, GETDATE()) --今天日期
-	declare @Sayfty table(id varchar(10)) --工廠代碼
-	insert @Sayfty select id from Production.dbo.Factory
-
 	
 	declare @Odate_s date  = (select DateStart from Trade_To_Pms.dbo.DateInfo WITH (NOLOCK) where name='MockupOrder')
 			
@@ -38,7 +35,7 @@ BEGIN
 		Merge Production.dbo.MockupOrder as t
 		Using #temp_MockupOrder_Trade as s
 		on t.id=s.id
-		when matched and s.qty = t.qty or s.styleid = t.styleid or s.SCIDelivery = t.SCIDelivery then
+		when matched then
 			update set 
 			t.MockupID = s.MockupID ,
 			t.Description = s.Description ,
@@ -117,7 +114,7 @@ BEGIN
 				--t.MDivisionID=s.MDivisionID			
 			when not matched by Target then
 			insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalQty ,NewQty ,MDivisionID)
-				values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.MDivisionID);
+			values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.MDivisionID);
 				--insert(orderid,UpdateDate ,TransferDate ,FactoryID,OriginalQty ,NewQty   ,OriginalSCIDelivery ,NewSCIDelivery   ,OriginalStyleID,NewStyleID,MDivisionID)
 				--values(s.id   ,@dToDay    ,@oldDate     ,FactoryID,s.[P_Qty]   ,s.[T_Qty],s.[P_SCIDelivery]   ,s.[T_SCIDelivery],s.[P_StyleID]  ,s.[T_StyleID],s.MDivisionID);
 				----------Merge3 Update---------------2.styleid-----------------(2017/05/10 Qty styleid SCIDelivery 分開CHECK)
