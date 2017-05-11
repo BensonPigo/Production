@@ -7535,6 +7535,11 @@
             Logical method of close buttion is pressed.
             </summary>
         </member>
+        <member name="M:Sci.Win.Tems.Base.Refresh_AfterToolbarStatusBtnClick">
+            <summary>
+            Toolbar 的Confirm, Send, Recall, Receive等狀態按鈕 click之後, 固定會執行的更新顯示流程
+            </summary>
+        </member>
         <member name="T:Sci.Win.Tems.Input1">
             <summary>
             Input1 subPage.
@@ -8690,6 +8695,11 @@
             控制夾檔畫面的使用權限 , 回傳true 代表user可以新增/刪除夾檔
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.Refresh_AfterToolbarStatusBtnClick">
+            <summary>
+            Toolbar 的Confirm, Send, Recall, Receive等狀態按鈕 click之後, 固定會執行的更新顯示流程
+            </summary>
         </member>
         <member name="F:Sci.Win.Tems.Input1.components">
             <summary>
