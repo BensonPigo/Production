@@ -1116,6 +1116,7 @@ Where a.id = '{0}'", masterID);
 
         private void txtFromFactory_Validating(object sender, CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtFromFactory.Text)) return;
             if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
                 MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
