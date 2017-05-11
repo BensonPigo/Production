@@ -1895,7 +1895,7 @@ order by id,article,sizecode"
                 return false;
             }
             CurrentMaintain["cutinline"]= ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
-            CurrentMaintain["CutOffLine"]= ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
+            CurrentMaintain["CutOffLine"]= ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
             return base.ClickSaveBefore();
         }
         protected override DualResult ClickSavePost()
