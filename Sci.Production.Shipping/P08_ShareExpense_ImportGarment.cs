@@ -17,18 +17,27 @@ namespace Sci.Production.Shipping
         DataTable detailData, gridData;
         IList<string> comboBox1_RowSource = new List<string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-
-        public P08_ShareExpense_ImportGarment(DataTable DetailData)
+        int Type;
+        public P08_ShareExpense_ImportGarment(DataTable DetailData,int T)
         {
             InitializeComponent();
             detailData = DetailData;
+            Type = T;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(comboDatafrom, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
-            comboDatafrom.SelectedIndex = -1;
+            if (Type==0)
+            {
+                MyUtility.Tool.SetupCombox(comboDatafrom, 1, 1, "Garment Booking,Packing Local Order");
+                comboDatafrom.SelectedIndex = -1;
+            }
+            else
+            {
+                MyUtility.Tool.SetupCombox(comboDatafrom, 1, 1, "Garment Booking,Packing FOC,Packing Local Order");
+                comboDatafrom.SelectedIndex = -1;
+            }
 
             //Grid設定
             this.gridImport.IsEditingReadOnly = false;
@@ -58,15 +67,16 @@ namespace Sci.Production.Shipping
             #region Garment Booking
             if (MyUtility.Check.Empty(comboDatafrom.SelectedValue) || MyUtility.Convert.GetString(comboDatafrom.SelectedValue) == "Garment Booking")
             {
-                sqlCmd.Append(@"with GB 
-as 
-(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
- '' as ShareBase, 0 as FtyWK 
- from GMTBooking g  WITH (NOLOCK) 
- left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
- where 1=1 ");
+                sqlCmd.Append(@"
+with GB as 
+(
+    select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+    '' as ShareBase, 0 as FtyWK 
+    from GMTBooking g  WITH (NOLOCK) 
+    left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+    left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
+    where 1=1 ");
 
                 if (!MyUtility.Check.Empty(dateFCRDate.Value1))
                 {
@@ -116,12 +126,13 @@ as
             }
             else
             {
-                sqlCmd.Append(@"with GB 
-as 
-(select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
- '' as ShareBase, 0 as FtyWK 
- from GMTBooking WITH (NOLOCK) where 1=0 
+                sqlCmd.Append(@"
+with GB as 
+(
+    select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
+    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
+    '' as ShareBase, 0 as FtyWK 
+    from GMTBooking WITH (NOLOCK) where 1=0 
 ), ");
             }
             #endregion
@@ -129,26 +140,35 @@ as
             #region PackingList
             if (!MyUtility.Check.Empty(comboDatafrom.SelectedValue) && MyUtility.Convert.GetString(comboDatafrom.SelectedValue) == "Garment Booking")
             {
-                sqlCmd.Append(@"PL 
-as 
-(select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
- '' as ShareBase, 0 as FtyWK 
- from PackingList WITH (NOLOCK) where 1=0 
+                sqlCmd.Append(@"
+PL as 
+(
+    select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
+    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
+    '' as ShareBase, 0 as FtyWK 
+    from PackingList WITH (NOLOCK) where 1=0 
 ) ");
             }
             else
             {
-                sqlCmd.Append(@"PL 
-as 
-(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
-'' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-'' as ShareBase, 0 as FtyWK 
- from PackingList WITH (NOLOCK) 
- where ");
+                sqlCmd.Append(@"
+PL as 
+(
+    select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
+    '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
+    '' as ShareBase, 0 as FtyWK 
+    from PackingList WITH (NOLOCK) 
+where ");
                 if (MyUtility.Check.Empty(comboDatafrom.SelectedValue))
                 {
-                    sqlCmd.Append(" (Type = 'F' or Type = 'L') ");
+                    if (Type ==0)
+                    {
+                        sqlCmd.Append(" Type = 'L' ");
+                    }
+                    else
+                    {
+                        sqlCmd.Append(" (Type = 'F' or Type = 'L') ");
+                    }                    
                 }
                 else
                 {

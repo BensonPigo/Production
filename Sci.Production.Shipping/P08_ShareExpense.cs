@@ -402,6 +402,8 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
         //Import
         private void btnImport_Click(object sender, EventArgs e)
         {
+            int T;
+            T = MyUtility.Convert.GetString(apData["Type"]) == "EXPORT" ? 0 : 1;//為EXPORT import時, "不要"將Packing FOC的資料query出來讓user選
             if (MyUtility.Convert.GetString(apData["SubType"]) == "OTHER" && MyUtility.Convert.GetString(apData["Type"])=="EXPORT")
             {
 
@@ -414,7 +416,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
                 {
                     if (buttonResult == System.Windows.Forms.DialogResult.Yes)
                     {
-                        Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(SEGroupData);
+                        Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(SEGroupData,T);
                         callNextForm.ShowDialog(this);
                     }
                     else
@@ -428,7 +430,7 @@ from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID
             {
                 if (MyUtility.Convert.GetString(apData["SubType"]) == "GARMENT")
                 {
-                    Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(SEGroupData);
+                    Sci.Production.Shipping.P08_ShareExpense_ImportGarment callNextForm = new Sci.Production.Shipping.P08_ShareExpense_ImportGarment(SEGroupData, T);
                     callNextForm.ShowDialog(this);
                 }
                 else

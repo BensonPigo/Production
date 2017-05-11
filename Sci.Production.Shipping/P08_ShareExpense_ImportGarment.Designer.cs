@@ -115,12 +115,13 @@
             // 
             // comboDatafrom
             // 
-            this.comboDatafrom.BackColor = System.Drawing.Color.White;
-            this.comboDatafrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDatafrom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboDatafrom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboDatafrom.FormattingEnabled = true;
             this.comboDatafrom.IsSupportUnselect = true;
             this.comboDatafrom.Location = new System.Drawing.Point(604, 38);
             this.comboDatafrom.Name = "comboDatafrom";
+            this.comboDatafrom.ReadOnly = true;
             this.comboDatafrom.Size = new System.Drawing.Size(151, 24);
             this.comboDatafrom.TabIndex = 15;
             // 
