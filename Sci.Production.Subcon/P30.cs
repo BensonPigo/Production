@@ -593,9 +593,9 @@ namespace Sci.Production.Subcon
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
             #endregion
         }
 
@@ -679,9 +679,9 @@ namespace Sci.Production.Subcon
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
 
             #endregion
         }

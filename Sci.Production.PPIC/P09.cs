@@ -466,8 +466,8 @@ group by a.Seq1,a.Seq2, left(a.Seq1+' ',3)+a.Seq2,a.Refno,[dbo].getMtlDesc(a.POI
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Check
@@ -504,8 +504,8 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Uncheck
@@ -539,8 +539,8 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Confirm
@@ -556,8 +556,8 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
             SendMail();
 
             //SendMail
@@ -583,8 +583,8 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain[
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         //Mail to

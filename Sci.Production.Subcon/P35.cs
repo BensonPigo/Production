@@ -441,9 +441,9 @@ where lapd.id = '{0}'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
             #endregion
         }
 
@@ -542,9 +542,9 @@ where lapd.id = '{0}'"
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
 
             #endregion
         }

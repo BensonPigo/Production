@@ -443,9 +443,9 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            RenewData();
-            OnDetailEntered();
-            this.EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         protected override void ClickUnconfirm()
@@ -587,9 +587,9 @@ group by b.artworkpo_detailukey ", dr["artworkpo_detailukey"]);
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            RenewData();
-            OnDetailEntered();
-            this.EnsureToolbarExt();
+            //RenewData();
+            //OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         private void btnImportFromRealTime_Click(object sender, EventArgs e)

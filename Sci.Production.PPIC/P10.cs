@@ -613,8 +613,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         protected override void ClickUnconfirm()
@@ -640,8 +640,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         protected override void ClickReceive()
@@ -661,8 +661,8 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                 return;
             }
             result = RenewData();
-            OnDetailEntered();
-            EnsureToolbarExt();
+            //OnDetailEntered();
+            //EnsureToolbarExt();
         }
 
         protected override void OnDetailEntered()

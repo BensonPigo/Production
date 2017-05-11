@@ -141,6 +141,7 @@ namespace Sci.Production.Cutting
                 DataRow dr = dts[0].Rows[0];
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachConsumptionCuttingCombo.xltx");
+                                                                           //Cutting_P01_EachConsumptionCuttingCombo.xltx
                 sxrc sxr = new sxrc(xltPath);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
