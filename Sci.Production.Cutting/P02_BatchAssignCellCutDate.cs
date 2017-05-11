@@ -24,20 +24,21 @@ namespace Sci.Production.Cutting
             txtCell2.FactoryId = Sci.Env.User.Keyword;
             detailTb = cursor;
             curTb = cursor.Copy();
-            curTb.Columns.Add("Sel", typeof(bool));            
+            curTb.Columns.Add("Sel", typeof(bool));
             gridsetup();
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
+            MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
         }
-     
-        
+
+
         private void gridsetup()
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
             this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            Cell.EditingMouseDown += (s, e) => 
+            Cell.EditingMouseDown += (s, e) =>
             {
-                 DualResult  DR; DataTable DT; SelectItem S;
+                DualResult DR; DataTable DT; SelectItem S;
                 if (e.Button == MouseButtons.Right)
                 {
                     string keyWord = Sci.Env.User.Keyword;
@@ -45,7 +46,7 @@ namespace Sci.Production.Cutting
                     if (!this.EditMode) { return; }
                     string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
                     DR = DBProxy.Current.Select(null, CUTCELL, out DT);
-                    S = new SelectItem(DT, "ID", "10",DT.Columns["id"].ToString(), false, ",");
+                    S = new SelectItem(DT, "ID", "10", DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = S.GetSelectedString();
@@ -54,7 +55,7 @@ namespace Sci.Production.Cutting
             Cell.CellValidating += (s, e) =>
             {
                 DualResult DR; DataTable DT;
-               
+
                 string keyWord = Sci.Env.User.Keyword;
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
@@ -65,7 +66,7 @@ namespace Sci.Production.Cutting
                 if (oldvalue == newvalue) return;
                 string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
                 DR = DBProxy.Current.Select(null, CUTCELL, out DT);
-              
+
                 DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
@@ -94,24 +95,6 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            #region SP
-            MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
-            DataGridViewGeneratorTextColumnSettings col_sp = new DataGridViewGeneratorTextColumnSettings();
-            col_sp.EditingMouseDown += (s, e) =>
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                    SelectItem sele;
-
-                    sele = new SelectItem(sp, "OrderID", "15@300,400", sp.Columns["OrderID"].ToString(), columndecimals: "50");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
-
-                }
-            };
-            #endregion
 
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -120,13 +103,13 @@ namespace Sci.Production.Cutting
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
              .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
-             .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2),settings:Cell,iseditingreadonly: false)
+             .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), settings: Cell, iseditingreadonly: false)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
              .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: col_sp, iseditingreadonly: false)
+             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
              .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -138,8 +121,6 @@ namespace Sci.Production.Cutting
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.ForeColor = Color.Red;
-            this.gridBatchAssignCellEstCutDate.Columns["orderid"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["orderid"].DefaultCellStyle.ForeColor = Color.Red;
 
         }
 
@@ -152,7 +133,7 @@ namespace Sci.Production.Cutting
             string cutcell = txtCutCell.Text;
             string fabriccombo = txtFabricCombo.Text;
             string estcutdate = txtEstCutDate.Text.ToString();
-            string filter="(cutref is null or cutref = '') and (cutplanid is null or cutplanid = '') ";
+            string filter = "(cutref is null or cutref = '') and (cutplanid is null or cutplanid = '') ";
             if (!MyUtility.Check.Empty(sp)) filter = filter + string.Format(" and OrderID ='{0}'", sp);
             if (!MyUtility.Check.Empty(article)) filter = filter + string.Format(" and article like '%{0}%'", article);
             if (!MyUtility.Check.Empty(markername)) filter = filter + string.Format(" and markername ='{0}'", markername);
@@ -163,10 +144,10 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(txtEstCutDate.Value)) filter = filter + string.Format(" and estcutdate ='{0}'", estcutdate);
             if (checkOnlyShowEmptyEstCutDate.Value == "True") filter = filter + " and estcutdate is null ";
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
-            curTb.DefaultView.RowFilter=filter;
+            curTb.DefaultView.RowFilter = filter;
             curTb.DefaultView.Sort = orderby;
             gridBatchAssignCellEstCutDate.DataSource = curTb;
-            
+
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -179,11 +160,11 @@ namespace Sci.Production.Cutting
             string cell = txtCell2.Text;
             foreach (DataRow dr in curTb.Rows)
             {
-                if(dr["Sel"].ToString()=="True")
+                if (dr["Sel"].ToString() == "True")
                 {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'",dr["Ukey"]));
-                  //  detaildr[0]["Cutcellid"] = cell;
-                   dr["Cutcellid"] = cell;
+                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    //  detaildr[0]["Cutcellid"] = cell;
+                    dr["Cutcellid"] = cell;
                 }
             }
 
@@ -191,11 +172,11 @@ namespace Sci.Production.Cutting
 
         private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)
         {
-            string cdate =""; 
-                if(!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
-                {
-                    cdate = txtBatchUpdateEstCutDate.Text;
-                };
+            string cdate = "";
+            if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
+            {
+                cdate = txtBatchUpdateEstCutDate.Text;
+            };
             foreach (DataRow dr in curTb.Rows)
             {
                 if (dr["Sel"].ToString() == "True")
@@ -203,13 +184,13 @@ namespace Sci.Production.Cutting
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
                     if (cdate != "")
                     {
-                       //  detaildr[0]["estcutdate"] = cdate;
-                       dr["estcutdate"] = cdate;
+                        //  detaildr[0]["estcutdate"] = cdate;
+                        dr["estcutdate"] = cdate;
                     }
                     else
                     {
-                     //  detaildr[0]["estcutdate"] = DBNull.Value;
-                         dr["estcutdate"] = DBNull.Value;
+                        //  detaildr[0]["estcutdate"] = DBNull.Value;
+                        dr["estcutdate"] = DBNull.Value;
                     }
                 }
             }
@@ -218,7 +199,7 @@ namespace Sci.Production.Cutting
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
-            string cell = txtCell2.Text;string cdate = ""; 
+            string cell = txtCell2.Text; string cdate = "";
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
                 cdate = txtBatchUpdateEstCutDate.Text;
@@ -232,14 +213,14 @@ namespace Sci.Production.Cutting
                     {
                         detaildr[0]["Cutcellid"] = cell;
                         dr["Cutcellid"] = cell;
-                    } 
+                    }
                     if (dr["Cutcellid"].ToString() != "")
                     {
                         string CUTCELL = dr["Cutcellid"].ToString();
                         detaildr[0]["Cutcellid"] = CUTCELL;
 
                     }
-                    else 
+                    else
                     {
                         detaildr[0]["Cutcellid"] = DBNull.Value;
                         dr["Cutcellid"] = DBNull.Value;
@@ -260,7 +241,7 @@ namespace Sci.Production.Cutting
                         dr["estcutdate"] = DBNull.Value;
                     }
                 }
-            }   
+            }
             Close();
         }
 
@@ -273,7 +254,16 @@ namespace Sci.Production.Cutting
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
                 }
-            }         
+            }
+        }
+
+        private void txtSPNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            SelectItem sele;
+            sele = new SelectItem(sp, "OrderID", "15@300,400", sp.Columns["OrderID"].ToString(), columndecimals: "50");
+            DialogResult result = sele.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            txtSPNo.Text = sele.GetSelectedString();
         }
     }
 }

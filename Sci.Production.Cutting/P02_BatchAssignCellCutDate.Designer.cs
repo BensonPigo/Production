@@ -178,6 +178,7 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 0;
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNo_PopUp);
             // 
             // labelCutCell
             // 
