@@ -64,16 +64,16 @@ namespace Sci.Production.Subcon
 
         private void numPOQty_Validating(object sender, CancelEventArgs e)
         {
-            if (!(dr["apqty"] == DBNull.Value) && ((Sci.Win.UI.NumericBox)sender).Value < int.Parse(dr["apqty"].ToString()))
-            {
-                MyUtility.Msg.WarningBox("PO Qty can't less than AP Qty", "Wanring");
-                e.Cancel = true;
-                return;
-            }
+            
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (!(dr["apqty"] == DBNull.Value) && (numPOQty.Value < int.Parse(dr["apqty"].ToString())))
+            {
+                ShowErr("PO Qty can't less than AP Qty");
+                return;
+            }
             DualResult result, result2;
             DataTable dt_out;
             TransactionScope _transactionscope = new TransactionScope();
@@ -81,18 +81,14 @@ namespace Sci.Production.Subcon
             {
                 try
                 {
-                    string sqlcmd = string.Format(@" select id from artworkpo_detail WITH (NOLOCK) 
-                                where exceedqty > 0 and id = '{0}'
-                                and orderid != '{1}'
-                                and artworktypeid != '{2}'
-                                and artworkid !='{3}'
-                                and patterncode != '{4}'", dr["poqty"]
-                                                                 , dr["exceedqty"]
-                                                                 , dr["id"]
-                                                                 , dr["orderid"]
-                                                                 , dr["artworktypeid"]
-                                                                 , dr["artworkid"]
-                                                                 , dr["patterncode"]);
+                    string sqlcmd = string.Format(@"
+select id from artworkpo_detail WITH (NOLOCK) 
+where exceedqty > 0 and id = '{0}'
+and orderid != '{1}'
+and artworktypeid != '{2}'
+and artworkid !='{3}'
+and patterncode != '{4}'"
+                        , dr["poqty"], dr["exceedqty"], dr["id"], dr["orderid"], dr["artworktypeid"], dr["artworkid"] , dr["patterncode"]);
                     if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt_out)))
                     {
                         _transactionscope.Dispose();
