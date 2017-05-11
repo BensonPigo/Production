@@ -202,9 +202,9 @@ where LID.ID = @ID";
                 }
             }
             #endregion 
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         protected override void ClickUnconfirm()
@@ -297,9 +297,9 @@ where LID.ID = @ID";
                 }
             }
             #endregion 
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         private void btnFind_Click(object sender, EventArgs e)

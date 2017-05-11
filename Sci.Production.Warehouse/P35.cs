@@ -420,9 +420,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         //Unconfirm
@@ -575,9 +575,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-            this.RenewData();
-            this.OnDetailEntered();
-            this.EnsureToolbarExt();
+            //this.RenewData();
+            //this.OnDetailEntered();
+            //this.EnsureToolbarExt();
         }
 
         //寫明細撈出的sql command
