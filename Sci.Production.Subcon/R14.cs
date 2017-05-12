@@ -29,7 +29,8 @@ namespace Sci.Production.Subcon
             txtMdivisionM.Text = Sci.Env.User.Keyword;
             txtdropdownlistOrderType.SelectedIndex = 0;
             //MyUtility.Tool.SetupCombox(txtFinanceEnReason1, 2, 1, "FX,Fixed Exchange Rate,KP,KPI Exchange Rate,DL,Daily Exchange Rate,3S,Custom Exchange Rate,RV,Currency Revaluation Rate,OT,One-time Exchange Rate");
-            txtFinanceEnReasonRateType.SelectedIndex= 0;
+            if (txtFinanceEnReasonRateType.Items.Count > 0)
+            { txtFinanceEnReasonRateType.SelectedIndex = 0; }
 
             MyUtility.Tool.SetupCombox(comboStatus, 1, 1, "Only Approved,Only Unapproved,All");
             comboStatus.SelectedIndex = 0;
