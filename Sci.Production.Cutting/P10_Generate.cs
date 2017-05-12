@@ -22,7 +22,8 @@ namespace Sci.Production.Cutting
         DataRow maindatarow;
         DataTable allpartTb, patternTb, artTb, detailTb, alltmpTb, bundle_detail_artTb, qtyTb, sizeTb, garmentTb;
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
-        string f_code;
+        //string f_code;
+        DataTable f_codeTb;
         int NoOfBunble,cutrefE;
 
         public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb,int c)
@@ -103,7 +104,13 @@ namespace Sci.Production.Cutting
         {
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
-            DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code, maindatarow["PatternPanel"]));
+            StringBuilder w = new StringBuilder();
+            w.Append("1 = 1");
+            foreach (DataRow dr in f_codeTb.Rows)
+            {
+                w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["PatternPanel"]));
+            }
+            DataRow[] garmentar = garmentTb.Select(w.ToString());
             foreach (DataRow dr in garmentar)
             {
                 if (MyUtility.Check.Empty(dr["annotation"])) //若無ANNOTATion直接寫入All Parts
@@ -228,7 +235,13 @@ namespace Sci.Production.Cutting
             }
             if (allpartTb.Rows.Count == 0)
             {
-                DataRow[] garmentar = garmentTb.Select(string.Format("{0} = '{1}'", f_code, maindatarow["PatternPanel"]));
+                StringBuilder w = new StringBuilder();
+                w.Append("1 = 1");
+                foreach (DataRow dr in f_codeTb.Rows)
+                {
+                    w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["PatternPanel"]));
+                }
+                DataRow[] garmentar = garmentTb.Select(w.ToString());
                 foreach (DataRow dr in garmentar)
                 {
                     bool f = false;
@@ -674,12 +687,14 @@ namespace Sci.Production.Cutting
              ", Styleyukey);
            string patternukey = MyUtility.GetValue.Lookup(patidsql);
            #endregion
-           string sqlcmd = String.Format(
-            @"Select a.ArticleGroup
-            from Pattern_GL_Article a WITH (NOLOCK) 
-            Where a.PatternUkey = '{0}' and article = '{1}'", patternukey,maindatarow["Article"]);
-            f_code = MyUtility.GetValue.Lookup(sqlcmd, null);
-            if (f_code == "") f_code = "F_Code";
+           string sqlcmd = String.Format(@"
+Select a.ArticleGroup
+from Pattern_GL_Article a WITH (NOLOCK) 
+Where a.PatternUkey = '{0}'"
+            , patternukey);
+           DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
+            //f_code = MyUtility.GetValue.Lookup(sqlcmd, null);
+            //if (f_code == "") f_code = "F_Code";
         }
 
         private void button_LefttoRight_Click(object sender, EventArgs e)

@@ -528,7 +528,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
             else
             {
                 CurrentMaintain["Cutno"] = Convert.ToInt32(cutdr["Cutno"].ToString());
-                CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
+                CurrentMaintain["sewinglineid"] = (cutdr["Sewline"].Empty()) ? "" : cutdr["Sewline"].ToString().Substring(0, 2);
                 CurrentMaintain["OrderID"] = cutdr["Workorder_Distribute_OrderID"].ToString();    //cutdr["OrderID"].ToString()
                 CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
