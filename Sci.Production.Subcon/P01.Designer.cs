@@ -65,6 +65,8 @@
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.labelTotalPoQty = new Sci.Win.UI.Label();
+            this.numTotalPOQty = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -81,6 +83,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTotalPOQty);
+            this.masterpanel.Controls.Add(this.labelTotalPoQty);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.labelDeliveryDate);
             this.masterpanel.Controls.Add(this.numTotal);
@@ -155,6 +159,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDeliveryDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTotalPoQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalPOQty, 0);
             // 
             // detailpanel
             // 
@@ -555,7 +561,7 @@
             0});
             // 
             // labelDeliveryDate
-            // 
+            //
             this.labelDeliveryDate.Lines = 0;
             this.labelDeliveryDate.Location = new System.Drawing.Point(16, 116);
             this.labelDeliveryDate.Name = "labelDeliveryDate";
@@ -650,6 +656,37 @@
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
             // 
+            // labelTotalPoQty
+            // 
+            this.labelTotalPoQty.Location = new System.Drawing.Point(502, 150);
+            this.labelTotalPoQty.Name = "labelTotalPoQty";
+            this.labelTotalPoQty.Size = new System.Drawing.Size(96, 23);
+            this.labelTotalPoQty.TabIndex = 70;
+            this.labelTotalPoQty.Text = "Total PO Qty";
+            // 
+            // numTotalPOQty
+            // 
+            this.numTotalPOQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalPOQty.DecimalPlaces = 2;
+            this.numTotalPOQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalPOQty.IsSupportEditMode = false;
+            this.numTotalPOQty.Location = new System.Drawing.Point(601, 150);
+            this.numTotalPOQty.Name = "numTotalPOQty";
+            this.numTotalPOQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalPOQty.ReadOnly = true;
+            this.numTotalPOQty.Size = new System.Drawing.Size(100, 23);
+            this.numTotalPOQty.TabIndex = 71;
+            this.numTotalPOQty.TabStop = false;
+            this.numTotalPOQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
@@ -734,5 +771,7 @@
         private Win.UI.Button btnBatchCreate;
         private Class.txtmfactory txtmfactory;
         private Win.UI.DateBox dateApproveDate;
+        private Win.UI.NumericBox numTotalPOQty;
+        private Win.UI.Label labelTotalPoQty;
     }
 }
