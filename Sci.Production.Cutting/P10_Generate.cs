@@ -105,7 +105,7 @@ namespace Sci.Production.Cutting
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
             StringBuilder w = new StringBuilder();
-            w.Append("1 = 1");
+            w.Append("1 = 0");
             foreach (DataRow dr in f_codeTb.Rows)
             {
                 w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["PatternPanel"]));
@@ -236,7 +236,7 @@ namespace Sci.Production.Cutting
             if (allpartTb.Rows.Count == 0)
             {
                 StringBuilder w = new StringBuilder();
-                w.Append("1 = 1");
+                w.Append("1 = 0");
                 foreach (DataRow dr in f_codeTb.Rows)
                 {
                     w.Append(string.Format(" or {0} = '{1}' ", dr[0], maindatarow["PatternPanel"]));
