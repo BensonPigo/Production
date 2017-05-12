@@ -109,6 +109,7 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(830, 1);
             this.refresh.TabIndex = 0;
             // 
@@ -164,7 +165,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -173,7 +173,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(241, 13);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
@@ -184,7 +183,6 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
             this.label25.Location = new System.Drawing.Point(904, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
@@ -208,7 +206,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(352, 13);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
-            this.dateIssueDate.TabIndex = 0;
+            this.dateIssueDate.TabIndex = 1;
             // 
             // shapeContainer1
             // 
@@ -252,7 +250,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(16, 169);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
@@ -272,7 +269,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(16, 71);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -289,7 +285,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(658, 86);
-            this.editRemark.TabIndex = 1;
+            this.editRemark.TabIndex = 2;
             // 
             // btnAccumulatedQty
             // 
@@ -298,7 +294,7 @@
             this.btnAccumulatedQty.Location = new System.Drawing.Point(883, 108);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
-            this.btnAccumulatedQty.TabIndex = 3;
+            this.btnAccumulatedQty.TabIndex = 4;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
@@ -310,14 +306,13 @@
             this.btnImport.Location = new System.Drawing.Point(939, 73);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
-            this.btnImport.TabIndex = 2;
+            this.btnImport.TabIndex = 3;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // label1
             // 
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(16, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
@@ -333,7 +328,7 @@
             this.txtFromFactory.MaxLength = 8;
             this.txtFromFactory.Name = "txtFromFactory";
             this.txtFromFactory.Size = new System.Drawing.Size(67, 23);
-            this.txtFromFactory.TabIndex = 62;
+            this.txtFromFactory.TabIndex = 0;
             this.txtFromFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFromFactory_PopUp);
             this.txtFromFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFromFactory_Validating);
             // 
@@ -341,8 +336,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1066, 577);
-            this.DefaultControl = "editRemark";
-            this.DefaultControlForEdit = "editRemark";
+            this.DefaultControl = "txtFromFactory";
+            this.DefaultControlForEdit = "txtFromFactory";
             this.DefaultOrder = "issuedate,ID";
             this.Grid2New = 0;
             this.GridAlias = "TransferOut_detail";

@@ -111,6 +111,12 @@ namespace Sci.Production.Warehouse
                 dateIssueDate.Focus();
                 return false;
             }
+            if (MyUtility.Check.Empty(this.txtFromFactory.Text))
+            {
+                MyUtility.Msg.WarningBox("To Factory cannot be null! ");
+                this.txtFromFactory.Focus();
+                return false;
+            }
 
             #endregion 必輸檢查
             this.detailgrid.ValidateControl();
@@ -752,9 +758,10 @@ where a.id= @ID", pars, out dd);
         }
         private void txtFromFactory_Validating(object sender, CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtFromFactory.Text)) return;
             if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
-                MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
+                MyUtility.Msg.WarningBox("To Factory : " + txtFromFactory.Text + " not found!");
                 this.txtFromFactory.Text = "";
                 this.txtFromFactory.Focus();
                 this.txtFromFactory.Select();
