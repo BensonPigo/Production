@@ -329,7 +329,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
             this.ShowWaitMessage("Data Loading...");
            
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Planning_R11.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Planning_R11.xltx", 3, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData, "", "Planning_R11.xltx", 3, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 1] = condition.ToString();   // 條件字串寫入excel
 
@@ -414,7 +414,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬，不知為何還要多跑一次才會讓格式變美，先讓他多跑一次
             objApp.Cells.EntireRow.AutoFit();       //自動欄高
-
+            objApp.Visible = true;
             if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp
             this.HideWaitMessage();
