@@ -35,7 +35,7 @@ namespace RFIDmiddleware
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string sqlcme = string.Format("select * from [{0}].[{1}].dbo.[{2}]", txtServerName.Text, txtDatabaseName.Text, txtTable.Text);
+            string sqlcme = string.Format("select * from [{0}].dbo.[{1}]",  txtDatabaseName.Text, txtTable.Text);
             DataTable m = new DataTable();
             SqlConnection conn = new SqlConnection(string.Format(@"Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}", txtServerName.Text, txtDatabaseName.Text, RFIDLoginId, RFIDLoginPwd));
             
