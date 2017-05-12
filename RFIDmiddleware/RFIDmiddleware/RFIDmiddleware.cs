@@ -14,6 +14,7 @@ using System.IO;
 using Sci;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Configuration;
+using System.Data.SqlClient;
 
 namespace RFIDmiddleware
 {
@@ -35,9 +36,21 @@ namespace RFIDmiddleware
         private void button1_Click(object sender, EventArgs e)
         {
             string sqlcme = string.Format("select * from [{0}].[{1}].dbo.[{2}]", txtServerName.Text, txtDatabaseName.Text, txtTable.Text);
-            DataTable m;
-            DualResult res = DBProxy.Current.Select("RFID", sqlcme, out m);
-            if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return; }
+            DataTable m = new DataTable();
+            SqlConnection conn = new SqlConnection(string.Format(@"Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}", txtServerName.Text, txtDatabaseName.Text, RFIDLoginId, RFIDLoginPwd));
+            
+            using (conn)
+            {
+                SqlCommand command = new SqlCommand(sqlcme, conn);
+                conn.Open();
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(m);
+                da.Dispose();
+            }
+            
+            //DualResult res = DBProxy.Current.Select("RFID", sqlcme, out m);
+            //if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return; }
+
             if (m.Rows.Count < 1) { MyUtility.Msg.ErrorBox("No datas.", ""); return; }
 
             string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir, "RFIDmiddleware.xltx");
