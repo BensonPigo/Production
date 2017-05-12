@@ -102,6 +102,11 @@ BEGIN
 	)C
 	where w.id = '''+@OrderID+N'''
 	order by w.FabricCombo, w.OrderID, A.Article
+
+	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
+	from WorkOrder wOrder
+	left join Fabric F on wOrder.SCIRefno = F.SCIRefno
+	where wOrder.ID = '''+@OrderID+N'''
 	'
 	EXEC sp_executesql @sql
 END
