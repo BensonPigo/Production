@@ -43,3 +43,24 @@
 [2017/05/12 10:43:15.252] [10] ***** ***** ***** [2017/05/12 10:43:13.568] ***** ***** *****
 [2017/05/12 10:43:15.253] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
 [2017/05/12 10:43:15.328] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  (x86) () RFIDmiddleware[RFIDmiddleware] - 叫用 OnFormLoaded 完成。
+[2017/05/12 14:46:18.712] [9] ***** ***** ***** [2017/05/12 14:46:07.585] ***** ***** *****
+[2017/05/12 14:46:18.712] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:46:43.744] [10] ***** ***** ***** [2017/05/12 14:46:29.534] ***** ***** *****
+[2017/05/12 14:46:43.745] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:52:23.843] [9] ***** ***** ***** [2017/05/12 14:49:12.831] ***** ***** *****
+[2017/05/12 14:52:23.843] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:53:47.116] [10] ***** ***** ***** [2017/05/12 14:53:45.529] ***** ***** *****
+[2017/05/12 14:53:47.117] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:53:47.136] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () () RFIDmiddleware[RFIDmiddleware] - 叫用 OnFormLoaded 完成。
+[2017/05/12 14:53:54.261] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'。
+[2017/05/12 14:53:54.262] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/05/12 14:53:54.264] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'、
+[2017/05/12 14:54:11.636] [9] ***** ***** ***** [2017/05/12 14:54:10.037] ***** ***** *****
+[2017/05/12 14:54:11.636] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:54:11.656] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () () RFIDmiddleware[RFIDmiddleware] - 叫用 OnFormLoaded 完成。
+[2017/05/12 14:54:13.558] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'。
+[2017/05/12 14:54:13.558] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosing  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'、Cancel:'False'。
+[2017/05/12 14:54:13.560] [9] Ict.Win.UI.dll  Ict.Win.Frms.Base.OnFormClosed  () () RFIDmiddleware[RFIDmiddleware] - CloseReason:'UserClosing'、
+[2017/05/12 14:55:09.266] [10] ***** ***** ***** [2017/05/12 14:55:07.642] ***** ***** *****
+[2017/05/12 14:55:09.266] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () RFIDmiddleware[RFIDmiddleware] - 開始叫用 OnFormLoaded。
+[2017/05/12 14:55:09.286] [10] Ict.Win.UI.dll  Ict.Win.Frms.Base.Base_VisibleChanged  () () RFIDmiddleware[RFIDmiddleware] - 叫用 OnFormLoaded 完成。

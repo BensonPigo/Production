@@ -479,3 +479,388 @@
 [2017/05/12 10:43:15.112][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
 [2017/05/12 10:43:15.112][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
 [2017/05/12 10:43:15.112][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:46:18.515][9] ***** ***** ***** [2017/05/12 14:46:07.585] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:46:18.520][9] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:46:18.523][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:46:18.523][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:46:18.523][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:46:32.379][10] ***** ***** ***** [2017/05/12 14:46:29.534] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:46:32.384][10] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:46:32.387][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:46:32.387][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:46:32.387][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:46:56.794][9] ***** ***** ***** [2017/05/12 14:46:55.252] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:46:56.798][9] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:46:56.801][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:46:56.802][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:46:56.802][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:52:21.585][9] ***** ***** ***** [2017/05/12 14:49:12.831] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:52:21.589][9] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:52:21.593][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:52:21.593][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:52:21.593][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:53:47.022][10] ***** ***** ***** [2017/05/12 14:53:45.529] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:53:47.027][10] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:53:47.030][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:53:47.030][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:53:47.030][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:53:47.134][10] Error: Sci.dll  Sci.LanguageHelper.Refresh  由 DDTABLE 載入語系資料時發生錯誤。
+Default connect string is not exist。
+   at Sci.Data.DBProxy.Result.F(String description) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 787
+   at Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 3293
+   at Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1382
+   at Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1328
+   at Sci.LanguageHelper.Refresh() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 79
+   at Sci.LanguageHelper.Ensure() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 64
+   at Sci.Win.Forms.Base.ChangeLanguage() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 211
+   at Sci.Win.Forms.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 49
+   at Sci.Win.Tems.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Tems\Base.cs:line 92
+   at Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   at System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Control.WmShowWindow(Message& m)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   at System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   at System.Windows.Forms.Form.WmShowWindow(Message& m)
+   at System.Windows.Forms.Form.WndProc(Message& m)
+   at Ict.Win.Frms.Base.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   at System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   at System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Control.set_Visible(Boolean value)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.Run(Form mainForm)
+   at RFIDmiddleware.Program.Main() in d:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\Program.cs:line 26
+   at System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   at System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   at Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()
+
+[2017/05/12 14:54:11.536][9] ***** ***** ***** [2017/05/12 14:54:10.037] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:54:11.540][9] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:54:11.543][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:54:11.544][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:54:11.544][9] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:54:11.655][9] Error: Sci.dll  Sci.LanguageHelper.Refresh  由 DDTABLE 載入語系資料時發生錯誤。
+Default connect string is not exist。
+   at Sci.Data.DBProxy.Result.F(String description) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 787
+   at Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 3293
+   at Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1382
+   at Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1328
+   at Sci.LanguageHelper.Refresh() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 79
+   at Sci.LanguageHelper.Ensure() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 64
+   at Sci.Win.Forms.Base.ChangeLanguage() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 211
+   at Sci.Win.Forms.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 49
+   at Sci.Win.Tems.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Tems\Base.cs:line 92
+   at Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   at System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Control.WmShowWindow(Message& m)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   at System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   at System.Windows.Forms.Form.WmShowWindow(Message& m)
+   at System.Windows.Forms.Form.WndProc(Message& m)
+   at Ict.Win.Frms.Base.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   at System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   at System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Control.set_Visible(Boolean value)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.Run(Form mainForm)
+   at RFIDmiddleware.Program.Main() in d:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\Program.cs:line 26
+   at System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   at System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   at Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()
+
+[2017/05/12 14:55:09.151][10] ***** ***** ***** [2017/05/12 14:55:07.642] ***** ***** *****
+
+** 應用程式開始 [2017/05/12 14:55:09.155][10] - RFIDmiddleware, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+   mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.VisualStudio.HostingProcess.Utilities.Sync, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.VisualStudio.Debugger.Runtime, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   vshost32, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91
+   Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   System.Deployment, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+   System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+   mscorlib.resources, Version=4.0.0.0, Culture=zh-Hant, PublicKeyToken=b77a5c561934e089
+   Sci, Version=1.0.1701.1800, Culture=neutral, PublicKeyToken=null
+   Ict.Win.UI, Version=1.0.1705.1000, Culture=neutral, PublicKeyToken=null
+   Ict, Version=1.0.1705.800, Culture=neutral, PublicKeyToken=null
+   Ict.Win, Version=1.0.1612.1500, Culture=neutral, PublicKeyToken=null
+   Ict.Win.App, Version=1.0.1611.2300, Culture=neutral, PublicKeyToken=null
+   log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a
+   Anonymously Hosted DynamicMethods Assembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+   System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+[2017/05/12 14:55:09.158][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始載入 'Ict.3rdparty.*.dll' 組件。
+[2017/05/12 14:55:09.159][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  開始由 'D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\bin\x86\Release\' 載入組件。
+[2017/05/12 14:55:09.159][10] Ict.dll  Ict.Env.Ensure3rdPartyAssemblies  共取得 '0' 個組件檔。
+[2017/05/12 14:55:09.285][10] Error: Sci.dll  Sci.LanguageHelper.Refresh  由 DDTABLE 載入語系資料時發生錯誤。
+Default connect string is not exist。
+   at Sci.Data.DBProxy.Result.F(String description) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 787
+   at Sci.Data.DBProxy.OpenConnection(String connname, SqlConnection& connection) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 3293
+   at Sci.Data.DBProxy.Select[TABLE](String connname, String cmdtext, IList`1 parameters, TABLE& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1382
+   at Sci.Data.DBProxy.Select(String connname, String cmdtext, DataTable& datas) in D:\System2014\publicclass\Sci\Data\DBProxy.cs:line 1328
+   at Sci.LanguageHelper.Refresh() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 79
+   at Sci.LanguageHelper.Ensure() in D:\System2014\publicclass\Sci\LanguageHelper.cs:line 64
+   at Sci.Win.Forms.Base.ChangeLanguage() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 211
+   at Sci.Win.Forms.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Forms\Base.cs:line 49
+   at Sci.Win.Tems.Base.OnFormLoaded() in D:\System2014\publicclass\Sci\Win\Tems\Base.cs:line 92
+   at Ict.Win.Frms.Base.Base_VisibleChanged(Object sender, EventArgs e)
+   at System.Windows.Forms.Control.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.ScrollableControl.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Form.OnVisibleChanged(EventArgs e)
+   at System.Windows.Forms.Control.WmShowWindow(Message& m)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+   at System.Windows.Forms.ContainerControl.WndProc(Message& m)
+   at System.Windows.Forms.Form.WmShowWindow(Message& m)
+   at System.Windows.Forms.Form.WndProc(Message& m)
+   at Ict.Win.Frms.Base.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+   at System.Windows.Forms.SafeNativeMethods.ShowWindow(HandleRef hWnd, Int32 nCmdShow)
+   at System.Windows.Forms.Control.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Form.SetVisibleCore(Boolean value)
+   at System.Windows.Forms.Control.set_Visible(Boolean value)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoopInner(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.ThreadContext.RunMessageLoop(Int32 reason, ApplicationContext context)
+   at System.Windows.Forms.Application.Run(Form mainForm)
+   at RFIDmiddleware.Program.Main() in d:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\Program.cs:line 26
+   at System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   at System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   at Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   at System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()
+
