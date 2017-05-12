@@ -163,6 +163,7 @@ namespace Sci.Production.Cutting
             #endregion
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
             {
+                spList = "";
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 worksheet.Select();
                 string Cutplanid = Cutrefdr["Cutplanid"].ToString();
@@ -487,6 +488,7 @@ Cutplanid, str_PIVOT);
             nSheet = 1;
             foreach (DataRow Cutrefdr in CutrefTb.Rows)
             {
+                spList = "";
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 worksheet.Select();
                 string cutref = Cutrefdr["Cutref"].ToString();
