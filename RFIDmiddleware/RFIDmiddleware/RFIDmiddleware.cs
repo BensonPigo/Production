@@ -36,7 +36,7 @@ namespace RFIDmiddleware
         {
             string sqlcme = string.Format("select * from [{0}].[{1}].dbo.[{2}]", txtServerName.Text, txtDatabaseName.Text, txtTable.Text);
             DataTable m;
-            DualResult res = DBProxy.Current.Select(null, sqlcme, out m);
+            DualResult res = DBProxy.Current.Select("RFID", sqlcme, out m);
             if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return; }
             if (m.Rows.Count < 1) { MyUtility.Msg.ErrorBox("No datas.", ""); return; }
 

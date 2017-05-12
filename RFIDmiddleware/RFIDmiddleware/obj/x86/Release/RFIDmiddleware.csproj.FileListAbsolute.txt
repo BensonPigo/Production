@@ -31,3 +31,4 @@ D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\x86\Release\RFI
 D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\x86\Release\RFIDmiddleware.csproj.GenerateResource.Cache
 D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\x86\Release\RFIDmiddleware.exe
 D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\x86\Release\RFIDmiddleware.pdb
+D:\System2014\Production\trunk\RFIDmiddleware\RFIDmiddleware\obj\x86\Release\RFIDmiddleware.csprojResolveAssemblyReference.cache
