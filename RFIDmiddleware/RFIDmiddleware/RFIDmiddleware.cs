@@ -13,38 +13,27 @@ using System.Linq;
 using System.IO;
 using Sci;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using System.Configuration;
 
 namespace RFIDmiddleware
 {
     public partial class RFIDmiddleware : Sci.Win.Tems.QueryForm
     {
         private string RFIDLoginId, RFIDLoginPwd;
+
         public RFIDmiddleware()
         {
             InitializeComponent();
-            DataTable s;
-            DBProxy.Current.Select(null,"select s.RFIDServerName,s.RFIDDatabaseName,s.RFIDTable,s.RFIDLoginId,s.RFIDLoginPwd from System s", out s);
-            txtServerName.Text = MyUtility.Convert.GetString(s.Rows[0]["RFIDServerName"]);
-            txtDatabaseName.Text = MyUtility.Convert.GetString(s.Rows[0]["RFIDDatabaseName"]);
-            txtTable.Text = MyUtility.Convert.GetString(s.Rows[0]["RFIDTable"]);
-            RFIDLoginId = MyUtility.Convert.GetString(s.Rows[0]["RFIDLoginId"]);
-            RFIDLoginPwd = MyUtility.Convert.GetString(s.Rows[0]["RFIDLoginPwd"]);
+
+            txtServerName.Text = ConfigurationManager.AppSettings["RFIDServerName"];;
+            txtDatabaseName.Text = ConfigurationManager.AppSettings["RFIDDatabaseName"]; ;
+            txtTable.Text = ConfigurationManager.AppSettings["RFIDTable"]; ;
+            RFIDLoginId = ConfigurationManager.AppSettings["RFIDLoginId"]; ;
+            RFIDLoginPwd = ConfigurationManager.AppSettings["RFIDLoginPwd"]; ;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string sqlexc = string.Format(@"
---若不存在則新增連線	
-IF NOT EXISTS (SELECT * FROM sys.servers WHERE name = '{0}')
-BEGIN
-	--新建連線
-	EXEC master.dbo.sp_addlinkedserver @server = [{0}], @srvproduct=N'SQL Server'
-	--設定連線登入資訊
-	EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = [{0}], @locallogin = NULL , @useself = N'False', @rmtuser = [{1}], @rmtpassword = [{2}]
-END
-", txtServerName.Text, RFIDLoginId, RFIDLoginPwd);
-            DBProxy.Current.Execute(null, sqlexc);
-
             string sqlcme = string.Format("select * from [{0}].[{1}].dbo.[{2}]", txtServerName.Text, txtDatabaseName.Text, txtTable.Text);
             DataTable m;
             DualResult res = DBProxy.Current.Select(null, sqlcme, out m);
