@@ -247,9 +247,11 @@ namespace Sci.Production.Subcon
                 }
 
                 decimal x = 0; decimal x1 = 0; decimal x2 = 0;
+                decimal totalPoQty = 0;
                 foreach (DataRow drr in ((DataTable)detailgridbs.DataSource).Rows)
                 {
                     x += (decimal)drr["amount"];
+                    totalPoQty += (decimal)drr["PoQty"];
                 }
                 x2 = x * (decimal)CurrentMaintain["VatRate"]/100;
                 x1 += x + x2;
@@ -257,7 +259,9 @@ namespace Sci.Production.Subcon
                 numAmount.Text = x.ToString();
                 numTotal.Text = x1.ToString();
                 numVat.Text = x2.ToString();
+                numTotalPOQty.Text = totalPoQty.ToString();
             }
+
             #endregion
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
