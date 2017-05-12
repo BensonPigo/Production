@@ -643,6 +643,8 @@ namespace Sci.Production.Subcon
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TEL", TEL));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ADDRESS", ADDRESS));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", numTotalPOQty.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", numAmount.Text));
 
             // 傳 list 資料            
             List<P01_PrintData> data = dtDetail.AsEnumerable()

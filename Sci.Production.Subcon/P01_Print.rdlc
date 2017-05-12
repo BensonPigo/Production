@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.88635cm</Height>
+              <Height>0.91281cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -243,7 +243,9 @@
                                   <Style />
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>poQTY</rd:DefaultName>
@@ -291,7 +293,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Top>8.41527cm</Top>
         <Left>0.31432cm</Left>
-        <Height>0.88635cm</Height>
+        <Height>0.91281cm</Height>
         <Width>19.99403cm</Width>
         <Style>
           <Border>
@@ -318,7 +320,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox35</rd:DefaultName>
-        <Top>9.33249cm</Top>
+        <Top>10.60249cm</Top>
         <Left>1.46092cm</Left>
         <Height>2.14313cm</Height>
         <Width>10.66271cm</Width>
@@ -376,7 +378,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>9.33249cm</Top>
+        <Top>10.60249cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
         <Width>2.12453cm</Width>
@@ -428,7 +430,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>10.04687cm</Top>
+        <Top>11.31687cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
         <Width>2.12453cm</Width>
@@ -480,7 +482,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>10.76125cm</Top>
+        <Top>12.03125cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
         <Width>2.12453cm</Width>
@@ -532,7 +534,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>9.3325cm</Top>
+        <Top>10.6025cm</Top>
         <Left>14.24816cm</Left>
         <Height>0.71438cm</Height>
         <Width>4.60785cm</Width>
@@ -584,7 +586,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>10.04687cm</Top>
+        <Top>11.31687cm</Top>
         <Left>14.24815cm</Left>
         <Height>0.71438cm</Height>
         <Width>4.60785cm</Width>
@@ -636,7 +638,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>10.76125cm</Top>
+        <Top>12.03125cm</Top>
         <Left>14.24816cm</Left>
         <Height>0.71438cm</Height>
         <Width>4.60785cm</Width>
@@ -686,7 +688,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
-        <Top>11.47563cm</Top>
+        <Top>12.74563cm</Top>
         <Left>1.46092cm</Left>
         <Height>2.09021cm</Height>
         <Width>5.77791cm</Width>
@@ -736,7 +738,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
-        <Top>11.47562cm</Top>
+        <Top>12.74562cm</Top>
         <Left>7.23882cm</Left>
         <Height>2.09021cm</Height>
         <Width>5.90044cm</Width>
@@ -786,7 +788,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
-        <Top>11.47562cm</Top>
+        <Top>12.74562cm</Top>
         <Left>13.13926cm</Left>
         <Height>2.09021cm</Height>
         <Width>5.71674cm</Width>
@@ -1498,7 +1500,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>SP#:</Value>
+                <Value>SP#</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1528,7 +1530,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Style#:</Value>
+                <Value>Style#</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1558,18 +1560,20 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Q'ty:</Value>
+                <Value>Q'ty</Value>
                 <Style />
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>7.55386cm</Top>
         <Left>6.69709cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.18967cm</Width>
+        <Width>1.52289cm</Width>
         <ZIndex>41</ZIndex>
         <Style>
           <Border>
@@ -1743,6 +1747,111 @@
           </Border>
         </Style>
       </Line>
+      <Textbox Name="Textbox29">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Total</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox1</rd:DefaultName>
+        <Top>9.53974cm</Top>
+        <Left>0.57521cm</Left>
+        <Height>0.6cm</Height>
+        <Width>1.18967cm</Width>
+        <ZIndex>48</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="TotalQty">
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Parameters!TotalQty.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>TotalQty</rd:DefaultName>
+        <Top>9.53974cm</Top>
+        <Left>6.00917cm</Left>
+        <Height>0.6cm</Height>
+        <Width>2.21081cm</Width>
+        <ZIndex>49</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="TotalAmount">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Parameters!TotalAmount.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>TotalAmount</rd:DefaultName>
+        <Top>9.53974cm</Top>
+        <Left>17.34272cm</Left>
+        <Height>0.6cm</Height>
+        <Width>2.91748cm</Width>
+        <ZIndex>50</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Line Name="Line12">
+        <Top>9.43391cm</Top>
+        <Left>0.54609cm</Left>
+        <Height>0cm</Height>
+        <Width>19.73581cm</Width>
+        <ZIndex>51</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
     </ReportItems>
     <Height>6.30208in</Height>
     <Style />
@@ -1898,6 +2007,16 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TotalQty">
+      <DataType>Float</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TotalAmount">
+      <DataType>Float</DataType>
+      <Nullable>true</Nullable>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
