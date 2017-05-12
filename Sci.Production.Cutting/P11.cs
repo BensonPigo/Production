@@ -408,65 +408,105 @@ namespace Sci.Production.Cutting
                 return;
             }
             #region 條件式
-            string query_cmd = string.Format(
-            @"Select distinct 0 as sel,a.cutref,ord.poid,a.estcutdate,b.patternPanel,a.cutno,
-                (Select Reason.Name 
-                from Reason WITH (NOLOCK) , Style WITH (NOLOCK) 
-                where Reason.Reasontypeid ='Style_Apparel_Type' and 
-                Style.ukey = ord.styleukey and Style.ApparelType = Reason.id ) 
-                as item
-                ,a.Ukey
-            from workorder a WITH (NOLOCK) ,orders ord WITH (NOLOCK) , workorder_PatternPanel b WITH (NOLOCK)  
-            Where a.ukey = b.workorderukey and a.orderid = ord.id and ord.mDivisionid = '{0}' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
+            string query_cmd = string.Format(@"
+Select  distinct 0 as sel
+        , a.cutref
+        , ord.poid
+        , a.estcutdate
+        , b.patternPanel
+        , a.cutno
+        , item = ( Select Reason.Name 
+                   from   Reason WITH (NOLOCK) 
+                          , Style WITH (NOLOCK) 
+                   where   Reason.Reasontypeid ='Style_Apparel_Type' 
+                           and Style.ukey = ord.styleukey 
+                           and Style.ApparelType = Reason.id ) 
+        , a.Ukey
+from    workorder a WITH (NOLOCK) 
+        ,orders ord WITH (NOLOCK) 
+        , workorder_PatternPanel b WITH (NOLOCK)  
+Where   a.ukey = b.workorderukey 
+        and a.orderid = ord.id 
+        and ord.mDivisionid = '{0}' 
+        and a.id = ord.cuttingsp 
+        and a.CutRef is not null ", keyWord);
+            
             string distru_cmd = string.Format(@"
-Select distinct 0 as sel,0 as iden,a.cutref,b.orderid,b.article,a.colorid,b.sizecode,c.PatternPanel, '' as Ratio,a.cutno,
-    Sewingline=ord.SewLine,
-    SewingCell=a.CutCellid,
-    item = (
-		Select Reason.Name 
-		from Reason WITH (NOLOCK) , Style WITH (NOLOCK) 
-		where Reason.Reasontypeid ='Style_Apparel_Type' and 
-		Style.ukey = ord.styleukey and Style.ApparelType = Reason.id
-	)
-	,1 as Qty,isnull(sum(b.Qty),0) as cutoutput,0 as TotalParts,ord.poid, 0 as startno
-	,a.Ukey
-	,ord.StyleUkey
-	,ag.ArticleGroup
+Select  distinct 0 as sel
+        , 0 as iden
+        , a.cutref
+        , b.orderid
+        , b.article
+        , a.colorid
+        , b.sizecode
+        , c.PatternPanel
+        , '' as Ratio
+        , a.cutno
+        , Sewingline = ord.SewLine
+        , SewingCell= a.CutCellid
+        , item = (  Select Reason.Name 
+		            from Reason WITH (NOLOCK) 
+                         , Style WITH (NOLOCK) 
+		            where   Reason.Reasontypeid = 'Style_Apparel_Type' 
+                            and Style.ukey = ord.styleukey 
+                            and Style.ApparelType = Reason.id )
+	    , 1 as Qty
+        , isnull(sum(b.Qty),0) as cutoutput
+        , 0 as TotalParts
+        , ord.poid
+        , 0 as startno
+	    , a.Ukey
+	    , ord.StyleUkey
+	    , ag.ArticleGroup
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
 inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
-outer apply
-(
-	select a.ArticleGroup
+outer apply (
+	select  a.ArticleGroup
 	from pattern p
 	inner join Pattern_GL_Article a on  a.PatternUkey = p.ukey
-	where p.STYLEUKEY = ord.Styleukey
-	and a.article = b.article
-	and Status = 'Completed' 
-	AND p.EDITdATE = (SELECT MAX(EditDate) from pattern where styleukey = ord.Styleukey and Status = 'Completed')	
+	where   p.STYLEUKEY = ord.Styleukey
+	        and a.article = b.article
+	        and Status = 'Completed' 
+	        AND p.EDITdATE = (  SELECT MAX(EditDate) 
+                                from pattern 
+                                where   styleukey = ord.Styleukey 
+                                        and Status = 'Completed')	
 )ag
-Where a.CutRef is not null  
-and ord.mDivisionid = '{0}'", keyWord);
+Where   a.CutRef is not null  
+        and ord.mDivisionid = '{0}'", keyWord);
 
-            string Excess_cmd = string.Format(
-            @"Select distinct a.cutref,a.orderid
-            from workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) ,orders ord WITH (NOLOCK) 
-            Where a.ukey = b.workorderukey and ord.mDivisionid = '{0}'   and a.id = b.id and b.orderid = 'EXCESS' and a.id = ord.cuttingsp and a.CutRef is not null ", keyWord);
+            string Excess_cmd = string.Format(@"
+Select  distinct a.cutref
+        , a.orderid
+from    workorder a WITH (NOLOCK) 
+        , workorder_Distribute b WITH (NOLOCK) 
+        , orders ord WITH (NOLOCK) 
+Where   a.ukey = b.workorderukey 
+        and ord.mDivisionid = '{0}'   
+        and a.id = b.id 
+        and b.orderid = 'EXCESS' 
+        and a.id = ord.cuttingsp 
+        and a.CutRef is not null ", keyWord);
             
             StringBuilder SizeRatio = new StringBuilder();
             SizeRatio.Append(string.Format(@"
 ;with tmp as(
-	Select distinct a.cutref,b.sizecode,a.Ukey
+	Select  distinct a.cutref
+            , b.sizecode
+            , a.Ukey
 	from workorder a WITH (NOLOCK) 
 	inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 	inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
 	inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
-	Where a.CutRef is not null and ord.mDivisionid = '{0}'
+	Where   a.CutRef is not null 
+            and ord.mDivisionid = '{0}'
 ", keyWord));
             if (!MyUtility.Check.Empty(cutref))
             {
-                query_cmd = query_cmd + string.Format(" and a.cutref='{0}'", cutref);
+                query_cmd = query_cmd + string.Format(@" 
+            and a.cutref='{0}'", cutref);
                 distru_cmd = distru_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 Excess_cmd = Excess_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 SizeRatio.Append(string.Format(" and a.cutref='{0}'", cutref));
@@ -506,7 +546,9 @@ order by b.sizecode,b.orderid,c.PatternPanel";
             
             SizeRatio.Append(@"
 )
-Select b.Cutref,a.SizeCode,a.Qty
+Select  b.Cutref
+        , a.SizeCode
+        , a.Qty
 From Workorder_SizeRatio a WITH (NOLOCK)
 inner join workorder c WITH (NOLOCK) on c.ukey = a.workorderukey 
 inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
