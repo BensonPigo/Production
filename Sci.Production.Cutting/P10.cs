@@ -528,7 +528,7 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
             else
             {
                 CurrentMaintain["Cutno"] = Convert.ToInt32(cutdr["Cutno"].ToString());
-                CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
+                CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
                 CurrentMaintain["OrderID"] = cutdr["Workorder_Distribute_OrderID"].ToString();    //cutdr["OrderID"].ToString()
                 CurrentMaintain["POID"] = cutdr["POID"].ToString();
                 CurrentMaintain["PatternPanel"] = cutdr["Fabriccombo"].ToString();
@@ -628,7 +628,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     DataRow cutdr;
                     if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
                     {
-                        CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
+                        CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
                         CurrentMaintain["OrderID"] = cutdr["id"].ToString();
                         CurrentMaintain["POID"] = cutdr["POID"].ToString();
                         displaySeason.Text = cutdr["Seasonid"].ToString();
