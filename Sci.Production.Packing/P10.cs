@@ -53,7 +53,7 @@ namespace Sci.Production.Packing
             }
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, convert(int,b.CTNStartNo) as OrderbyCTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
                                                          from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
                                                          where b.OrderId = c.Id 
                                                          and a.Id = b.Id 
@@ -73,6 +73,7 @@ namespace Sci.Production.Packing
             {
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
+            sqlCmd.Append(" ORDER BY b.Id,OrderID,convert(int ,b.CTNStartNo);");
 
             DataTable selectDataTable;
             DualResult selectResult;
