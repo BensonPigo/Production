@@ -92,7 +92,7 @@ iseditingreadonly: true)
                     DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue;
                     decimal total_qty = curentgridrowChild.Sum(row => (decimal)row["qty"]);
-                    if (total_qty > 0)
+                    if (total_qty != 0)
                     {
                         currentrow.GetParentRow("rel1")["total_qty"] = total_qty;
                     }
@@ -101,7 +101,7 @@ iseditingreadonly: true)
                         currentrow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
                     }
                     //currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
-                    if (Convert.ToDecimal(e.FormattedValue) > 0)
+                    if (Convert.ToDecimal(e.FormattedValue) != 0)
                     {
                         currentrow["selected"] = true;
                         currentrow.GetParentRow("rel1")["selected"] = true;
@@ -192,7 +192,7 @@ WHERE   StockType='{0}'
                     DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
                     DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     decimal total_qty =curentgridrowChild.Sum(row => (decimal)row["qty"]);
-                    if (total_qty > 0)
+                    if (total_qty != 0)
                     {
                         currentrow.GetParentRow("rel1")["total_qty"] = total_qty;
                     }
@@ -252,7 +252,7 @@ WHERE   StockType='{0}'
                             if (selected.Count <= 1)
                             {
                                 thisRow.GetParentRow("rel1")["selected"] = false;
-                                thisRow.GetParentRow("rel1")["total_qty"] = 0.00;
+                                thisRow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
                             }
                             else
                                 thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
@@ -583,7 +583,7 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
             if (!master.Columns.Contains("TransID")) master.Columns.Add("TransID", typeof(string));
             foreach (DataRow Alldetailrows in detail.Rows)
             {
-                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE" && Convert.ToDecimal(Alldetailrows["qty"]) > 0)
+                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
                     Alldetailrows.GetParentRow("rel1")["selected"] = true;
                     Alldetailrows.GetParentRow("rel1")["TransID"] = tmpId;
@@ -635,6 +635,11 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridRel.ValidateControl();
         }
     }
 }

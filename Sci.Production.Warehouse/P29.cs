@@ -65,7 +65,7 @@ namespace Sci.Production.Warehouse
                 {
                     if (((bool)this.gridComplete.Rows[e.RowIndex].Cells[e.ColumnIndex].Value))
                     {
-                        thisRow["total_qty"] = 0.00;
+                        thisRow["total_qty"] = DBNull.Value;
                         foreach (DataRow dr in thisRow.GetChildRows("rel1"))
                         {
                             dr["selected"] = false;
@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
                     DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
                     currentrow["qty"] = e.FormattedValue; 
                     currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
-                    if (Convert.ToDecimal(e.FormattedValue) > 0)
+                    if (Convert.ToDecimal(e.FormattedValue) != 0)
                     {
                         currentrow["selected"] = true;
                         currentrow.GetParentRow("rel1")["selected"] = true;
@@ -233,7 +233,7 @@ WHERE   StockType='{0}'
                             {
                                 thisRow.GetParentRow("rel1")["selected"] = false;
                                 //thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
-                                thisRow.GetParentRow("rel1")["total_qty"] = 0.00;
+                                thisRow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
                             }
                             else
                                 thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
@@ -525,7 +525,7 @@ drop table #tmp");
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
             if (dResult == DialogResult.No) return;
 
-            DataRow[] findrow = detail.Select(@"selected = true and qty > 0");
+            DataRow[] findrow = detail.Select(@"selected = true and qty <> 0");
             if (findrow.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
@@ -604,7 +604,7 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
             if (!master.Columns.Contains("TransID")) master.Columns.Add("TransID", typeof(string));
             foreach (DataRow Alldetailrows in detail.Rows)
             {
-                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE" && Convert.ToDecimal(Alldetailrows["qty"]) > 0)
+                if (Alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
                     Alldetailrows.GetParentRow("rel1")["selected"] = true;
                     Alldetailrows.GetParentRow("rel1")["TransID"] = tmpId;
@@ -655,6 +655,11 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void gridComplete_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridRel.ValidateControl();
         }
     }
 }

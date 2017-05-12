@@ -102,7 +102,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(637, 42);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(89, 23);
@@ -126,7 +125,6 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Lines = 0;
             this.labelFabricType.Location = new System.Drawing.Point(637, 9);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(89, 23);
@@ -178,7 +176,6 @@
             // 
             // labelInputDate
             // 
-            this.labelInputDate.Lines = 0;
             this.labelInputDate.Location = new System.Drawing.Point(218, 42);
             this.labelInputDate.Name = "labelInputDate";
             this.labelInputDate.Size = new System.Drawing.Size(113, 23);
@@ -187,7 +184,6 @@
             // 
             // labelMaterialATA
             // 
-            this.labelMaterialATA.Lines = 0;
             this.labelMaterialATA.Location = new System.Drawing.Point(218, 9);
             this.labelMaterialATA.Name = "labelMaterialATA";
             this.labelMaterialATA.Size = new System.Drawing.Size(113, 23);
@@ -196,7 +192,6 @@
             // 
             // labelIssueSP
             // 
-            this.labelIssueSP.Lines = 0;
             this.labelIssueSP.Location = new System.Drawing.Point(9, 9);
             this.labelIssueSP.Name = "labelIssueSP";
             this.labelIssueSP.Size = new System.Drawing.Size(75, 23);
@@ -300,6 +295,7 @@
             this.gridComplete.Size = new System.Drawing.Size(571, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
+            this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridComplete_RowEnter);
             // 
             // gridRel
             // 
