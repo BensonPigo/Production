@@ -299,7 +299,7 @@ Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 from (
 		Select frompoid,fromseq1,fromseq2,fromRoll,sum(Qty) as Qty,FromStockType
 		from dbo.SubTransfer_Detail d WITH (NOLOCK) 
-		where Id = '{0}'
+		where Id = '{0}' and Qty > 0
 		Group by frompoid,fromseq1,fromseq2,fromRoll,FromStockType
 	 ) as d 
 left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 AND D.FromStockType = F.StockType
@@ -319,6 +319,36 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) ", Cu
                             , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
                     }
                     MyUtility.Msg.WarningBox("Balance Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                    return;
+                }
+            }
+
+            sqlcmd = string.Format(@"
+Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+from (
+		Select topoid,toseq1,toseq2,toRoll,sum(Qty) as Qty,toStocktype
+		from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+		where Id = '{0}' and Qty < 0
+		Group by topoid,toseq1,toseq2,toRoll,toStocktype
+	 ) as d
+left join FtyInventory f WITH (NOLOCK) on  d.toPoId = f.PoId and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2 and d.toStocktype = f.StockType and d.toRoll = f.Roll
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) ", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"]);
+                    }
+                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
             }
@@ -603,7 +633,7 @@ Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
 from (
 		Select topoid,toseq1,toseq2,toRoll,sum(Qty) as Qty,toStocktype
 		from dbo.SubTransfer_Detail d WITH (NOLOCK) 
-		where Id = '{0}'
+		where Id = '{0}' and Qty > 0
 		Group by topoid,toseq1,toseq2,toRoll,toStocktype
 	 ) as d
 left join FtyInventory f WITH (NOLOCK) on  d.toPoId = f.PoId and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2 and d.toStocktype = f.StockType and d.toRoll = f.Roll
@@ -623,6 +653,36 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) "
                             , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                    return;
+                }
+            }
+
+            sqlcmd = string.Format(@"
+Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+from (
+		Select frompoid,fromseq1,fromseq2,fromRoll,sum(Qty) as Qty,FromStockType
+		from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+		where Id = '{0}' and Qty < 0
+		Group by frompoid,fromseq1,fromseq2,fromRoll,FromStockType
+	 ) as d 
+left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 AND D.FromStockType = F.StockType
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < -d.Qty) ", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
+                    }
+                    MyUtility.Msg.WarningBox("Balance Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
             }
