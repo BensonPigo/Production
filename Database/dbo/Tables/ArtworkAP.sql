@@ -8,7 +8,7 @@
     [Amount]        NUMERIC (12, 2) CONSTRAINT [DF_ArtworkAP_Amount] DEFAULT ((0)) NULL,
     [VatRate]       NUMERIC (3, 1)  CONSTRAINT [DF_ArtworkAP_VatRate] DEFAULT ((0)) NOT NULL,
     [Vat]           NUMERIC (11, 2) CONSTRAINT [DF_ArtworkAP_Vat] DEFAULT ((0)) NULL,
-    [PayTermID]     VARCHAR (5)     CONSTRAINT [DF_ArtworkAP_PayTermID] DEFAULT ('') NOT NULL,
+    [PayTermID]     VARCHAR (6)     CONSTRAINT [DF_ArtworkAP_PayTermID] DEFAULT ('') NOT NULL,
     [InvNo]         VARCHAR (100)   CONSTRAINT [DF_ArtworkAP_InvNo] DEFAULT ('') NULL,
     [Handle]        VARCHAR (10)    CONSTRAINT [DF_ArtworkAP_Handle] DEFAULT ('') NOT NULL,
     [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_ArtworkAP_ArtworkTypeID] DEFAULT ('') NOT NULL,

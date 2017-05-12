@@ -8,7 +8,7 @@
     [Amount]      NUMERIC (12, 2) CONSTRAINT [DF_LocalAP_Amount] DEFAULT ((0)) NULL,
     [VatRate]     NUMERIC (3, 1)  CONSTRAINT [DF_LocalAP_VatRate] DEFAULT ((0)) NULL,
     [Vat]         NUMERIC (11, 2) CONSTRAINT [DF_LocalAP_Vat] DEFAULT ((0)) NULL,
-    [PaytermID]   VARCHAR (5)     CONSTRAINT [DF_LocalAP_PaytermID] DEFAULT ('') NULL,
+    [PaytermID]   VARCHAR (6)     CONSTRAINT [DF_LocalAP_PaytermID] DEFAULT ('') NULL,
     [Category]    VARCHAR (20)    CONSTRAINT [DF_LocalAP_Category] DEFAULT ('') NOT NULL,
     [InvNo]       VARCHAR (100)   CONSTRAINT [DF_LocalAP_InvNo] DEFAULT ('') NULL,
     [Remark]      NVARCHAR (120)  CONSTRAINT [DF_LocalAP_Remark] DEFAULT ('') NULL,
