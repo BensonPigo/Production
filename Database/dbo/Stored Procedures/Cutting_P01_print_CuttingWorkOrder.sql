@@ -27,51 +27,58 @@ BEGIN
 	--
 	select distinct sizecode
 	into #tmp
-	from WorkOrder_SizeRatio ws inner join workorder w on ws.WorkOrderUkey = w.Ukey
+	from WorkOrder_SizeRatio ws 
+	inner join workorder w on ws.WorkOrderUkey = w.Ukey
 	where w.id = @OrderID
 	order by sizecode
+
 	DECLARE @cols NVARCHAR(MAX)= N''
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
+	order by SizeCode
 	drop table #tmp
+
 	DECLARE @sql NVARCHAR(MAX)
 	SET @sql = N'
 	select *
 	into #tmp2
 	from(
-		select Ukey,sizecode,Qty
-		from WorkOrder w left join WorkOrder_SizeRatio ws on ws.WorkOrderUkey =w.Ukey 
+		select	Ukey
+				, sizecode,Qty
+		from WorkOrder w 
+		left join WorkOrder_SizeRatio ws on ws.WorkOrderUkey = w.Ukey 
 		where w.id = '''+ @OrderID +N'''
 	) asp
 	pivot(
 		max(Qty) for sizecode in ('+@cols+N')
 	) as pt
 
-	select 
-	[CutRef#] = w.CutRef,
-	[Marker Name]=w.Markername,
-	[Fabric Combo] = w.FabricCombo,w.Cutno,
-	'+@cols+N',
-	[SP#]=w.OrderID,
-	w.MarkerLength,
-	[Cut Perimeter] = C.ActCuttingPerimeter,
-	[Unit Cons] = w.ConsPC,[Layers]=w.Layer,
-	[Article] = stuff(A.Article,1,1,''''),--[Article]=舊系統的ColorWay
-	[Color] = w.Colorid,
-	[Cut Qty] = B.cutqty,
-	[Acumm.Qty] = sum(B.cutqty) over (order by w.cutref),
-	[Cons] = w.Cons,
-	[Acumm.Con] = sum(w.Cons) over (order by w.cutref)
+	select	[CutRef#] = w.CutRef
+			, [Marker Name] = w.Markername
+			, [Fabric Combo] = w.FabricCombo
+			, w.Cutno
+			, '+@cols+N'
+			, [SP#] = w.OrderID
+			, w.MarkerLength
+			, [Cut Perimeter] = C.ActCuttingPerimeter
+			, [Unit Cons] = w.ConsPC
+			, [Layers] = w.Layer
+			, [Article] = A.Article
+			--[Article]=舊系統的ColorWay
+			, [Color] = w.Colorid
+			, [Cut Qty] = B.cutqty
+			, [Acumm.Qty] = sum(B.cutqty) over (order by w.cutref)
+			, [Cons] = w.Cons
+			, [Acumm.Con] = sum(w.Cons) over (order by w.cutref)
 	from WorkOrder w inner join #tmp2 t on w.Ukey = t.Ukey
 	outer apply
 	(
-		Select Article =
-		( 
-			select distinct concat(''/'',Article )
-			From dbo.WorkOrder_Distribute b
-			Where b.workorderukey = w.Ukey and b.article!=''''
-			For XML path('''')
-		)
+		Select Article = stuff(( 
+							select distinct concat(''/'',Article )
+							From dbo.WorkOrder_Distribute b
+							Where b.workorderukey = w.Ukey and b.article!=''''
+							For XML path('''')
+						), 1, 1, '''')
 	)A
 	outer apply
 	(
@@ -94,7 +101,7 @@ BEGIN
 		)
 	)C
 	where w.id = '''+@OrderID+N'''
-	order by w.CutRef,w.Markername,w.FabricCombo,w.Cutno
+	order by w.FabricCombo, w.OrderID, A.Article
 	'
 	EXEC sp_executesql @sql
 END
