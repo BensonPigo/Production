@@ -1404,5 +1404,20 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
         }
 
+        private void gridArticleSize_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridQty.ValidateControl();
+            gridCutpart.ValidateControl();
+            gridAllPart.ValidateControl();
+        }
+
+        private void gridCutRef_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            gridArticleSize.ValidateControl();
+            gridQty.ValidateControl();
+            gridCutpart.ValidateControl();
+            gridAllPart.ValidateControl();
+        }
+
     }
 }
