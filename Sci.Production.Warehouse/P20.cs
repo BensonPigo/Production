@@ -41,6 +41,7 @@ namespace Sci.Production.Warehouse
                  .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10))
                  .Text("projectid", header: "Project ID", width: Widths.AnsiChars(8))
                  .Text("refno", header: "Refno", width: Widths.AnsiChars(18))
+                 .Text("ColorID", header: "ColorID", width: Widths.AnsiChars(6))
                  .Text("POunit", header: "PO Unit", width: Widths.AnsiChars(10))
                  .Numeric("InputQty_unit", header: "Input Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutputQty_unit", header: "Output Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -140,6 +141,7 @@ select  i.poid
         , i.ProjectID
         , i.Deadline
         , i.Refno
+        , b.ColorID
         , i.Ukey
         , I.SCIRefno
         , I.UnitID POUNIT
