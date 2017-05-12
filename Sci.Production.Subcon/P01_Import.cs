@@ -90,7 +90,7 @@ namespace Sci.Production.Subcon
                 inner join order_qty q WITH (NOLOCK) on q.id = o.ID
                 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
                 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-                outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID ) IssueQty
+                outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID and ad.PatternCode= oa.PatternCode) IssueQty
                 where 1=1 ");
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
@@ -149,7 +149,7 @@ namespace Sci.Production.Subcon
                 if ((decimal)e.FormattedValue > SourcePoqty)
                 {
                     MyUtility.Msg.WarningBox("Po Qty can't be more than [Order Qty]-[Issue Qty]");
-                    e.Cancel = true;
+                    //e.Cancel = true;
                     return;
                 }                
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
