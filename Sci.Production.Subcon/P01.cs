@@ -303,9 +303,9 @@ namespace Sci.Production.Subcon
                                 where id = '{2}'", numAmount.Value, numVat.Value, this.CurrentMaintain["ID"].ToString());
                         DBProxy.Current.Execute(null, sqlcmd2);
                     }
-                    this.OnDetailEntered();
                 }
-
+                this.RenewData();
+                this.OnDetailEntered();
             };
             #endregion
             #region farm out qty 開窗
