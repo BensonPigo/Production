@@ -38,7 +38,7 @@ namespace Sci.Production.Cutting
                 DualResult res = DBProxy.Current.SelectSP("", "Cutting_P01_print_CuttingWorkOrder", new List<SqlParameter> { new SqlParameter("@OrderID", _id) }, out dts);
 
                 if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return false; }
-                if (dts.Length < 2) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
+                if (dts.Length < 3) { MyUtility.Msg.ErrorBox("no data.", ""); return false; }
 
                 DataRow dr = dts[0].Rows[0];
                 DataRow dr2 = dts[1].Rows[0];
@@ -79,20 +79,24 @@ namespace Sci.Production.Cutting
                 wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
                 wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
                 wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
-                wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).Merge();
-                wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
-                // Fabric Desc
-                string txtFabricDesc = "";
-                for(int i = 0; i < dts[3].Rows.Count; i++)
+                if (dts.Length == 4)
                 {
-                    if (i > 0)
+                    wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).Merge();
+                    wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+
+                    // Fabric Desc
+                    string txtFabricDesc = "";
+                    for (int i = 0; i < dts[3].Rows.Count; i++)
                     {
-                        txtFabricDesc += "\n\r";
+                        if (i > 0)
+                        {
+                            txtFabricDesc += "\n\r";
+                        }
+                        txtFabricDesc += dts[3].Rows[i][0].ToString();
                     }
-                    txtFabricDesc += dts[3].Rows[i][0].ToString();
+                    wks.Cells[6, 2] = txtFabricDesc;
                 }
-                wks.Cells[6, 2] = txtFabricDesc;
 
                 wks.get_Range("A5").RowHeight = 16.5;
                 wks.get_Range("A6").RowHeight = 16.5;
