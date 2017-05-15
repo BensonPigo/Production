@@ -570,7 +570,10 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             }
             if (ExcessTb.Rows.Count > 0)
             {
-                MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
+                var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");                
+                m.Width = 500;
+                m.grid1.Columns[1].Width = 140;
+                m.text_Find.Width = 140;
             }
             #endregion
             #region GarmentList Table
@@ -1390,7 +1393,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
+                    MyUtility.Msg.InfoBox("Successfully");
                 }
                 catch (Exception ex)
                 {
