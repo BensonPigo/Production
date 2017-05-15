@@ -847,7 +847,7 @@ and t.ComboType = '{1}'", CurrentMaintain["StyleUkey"].ToString(), CurrentMainta
 o.DescEN as Description,'' as EmployeeName,'' as EmployeeSkill,100 as Efficiency
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-where td.ID = {0} order by td.Seq", timeStudy["ID"].ToString());
+where td.ID = {0} and td.SMV > 0 order by td.Seq", timeStudy["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
             {
