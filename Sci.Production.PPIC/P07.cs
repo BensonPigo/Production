@@ -77,7 +77,7 @@ namespace Sci.Production.PPIC
 
         private void setcuttingdate()
         {
-            string sewdate = DateTime.Now.AddDays(45).ToShortDateString();
+            string sewdate = DateTime.Now.AddDays(90).ToShortDateString();
             DualResult dresult;
 
             #region 先刪除不在SewingSchedule 內的Cutting 資料
