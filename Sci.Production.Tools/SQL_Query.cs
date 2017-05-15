@@ -10,7 +10,13 @@ using System.Windows.Forms;
 using System.IO;
 using Ict.Win;
 using System.Transactions;
-
+using System.Data.SqlClient;
+using System.Data.Sql;
+using System.Data.Common;
+using System.Configuration;
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Server;
+using Microsoft.SqlServer.Management.Smo;
 
 namespace Sci.Production.Tools
 {
@@ -74,12 +80,24 @@ namespace Sci.Production.Tools
                 {
                     try
                     {
-                        if (!(upResult = DBProxy.Current.Execute(null, script)))
-                        {
-                            _transactionscope.Dispose();
-                            ShowErr(script, upResult);
-                            return;
+                        //script = script.Replace("GO\r\n", "");
+                        //if (!(upResult = DBProxy.Current.Execute(null, script)))
+                        //{
+                        //    _transactionscope.Dispose();
+                        //    ShowErr(script, upResult);
+                        //    return;
+                        //}
+
+                        SqlConnection connection;
+                        DBProxy.Current.OpenConnection("Production", out connection);
+
+                       using (connection)
+                       {
+                            Server db = new Server(new ServerConnection(connection));
+                            db.ConnectionContext.ExecuteNonQuery(script);
                         }
+
+                        
                         _transactionscope.Complete();
                         _transactionscope.Dispose();                     
                     }
@@ -94,6 +112,7 @@ namespace Sci.Production.Tools
                 _transactionscope = null;              
             }
             MyUtility.Msg.InfoBox("Update completed !!");
+            
         }
     }
 }

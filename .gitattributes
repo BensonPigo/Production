@@ -3865,6 +3865,10 @@ _Dll/Ict.dll -text
 _Dll/Microsoft.ReportViewer.Common.dll -text
 _Dll/Microsoft.ReportViewer.ProcessingObjectModel.dll -text
 _Dll/Microsoft.ReportViewer.WinForms.dll -text
+_Dll/Microsoft.SqlServer.ConnectionInfo.dll -text
+_Dll/Microsoft.SqlServer.Management.Sdk.Sfc.dll -text
+_Dll/Microsoft.SqlServer.Smo.dll -text
+_Dll/Microsoft.SqlServer.SqlEnum.dll -text
 _Dll/Microsoft.SqlServer.Types.dll -text
 _Dll/ObjectListView.XML -text
 _Dll/ObjectListView.dll -text
