@@ -22,6 +22,7 @@ namespace Sci.Production.Cutting
         StringBuilder condition_CuttingDate = new StringBuilder();
         string tmpFile;
         DataTable Cutcelltb;
+        string NameEN;
 
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -91,6 +92,7 @@ namespace Sci.Production.Cutting
         //非同步讀取資料
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             //準備CutCell包含非數字
             string scell;
             if (radioByDetail.Checked || radioBySummary.Checked)
@@ -651,6 +653,7 @@ where 1 = 1
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBydetail.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = NameEN;
                 //先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
@@ -731,6 +734,7 @@ where 1 = 1
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportByonedaydetail.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = NameEN;
                 //先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
@@ -809,6 +813,7 @@ where 1 = 1
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R02_CuttingDailyPlanSummaryReportBySummary.xltx"); //預先開啟excel app
                 objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
+                objApp.Cells[1, 1] = NameEN;
                 //先準備複製幾頁
                 for (int i = 0; i < CutCellcount; i++)
                 {
