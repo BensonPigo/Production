@@ -628,7 +628,14 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     DataRow cutdr;
                     if (MyUtility.Check.Seek(selectCommand, out cutdr, null))
                     {
-                        CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
+                        if (cutdr["Sewline"].ToString().Length > 2)
+                        {
+                            CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString().Substring(0, 2);
+                        }
+                        else {
+                            CurrentMaintain["sewinglineid"] = cutdr["Sewline"].ToString();
+                        }
+                        
                         CurrentMaintain["OrderID"] = cutdr["id"].ToString();
                         CurrentMaintain["POID"] = cutdr["POID"].ToString();
                         displaySeason.Text = cutdr["Seasonid"].ToString();
