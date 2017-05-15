@@ -244,7 +244,7 @@ namespace Sci.Production.Cutting
             chcutref.CellValidating += (s, e) =>
             {
                 DataRow dr = gridCutRef.GetDataRow(e.RowIndex);
-                if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1"?true:false)) return;
+                if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false)) return;
                 int oldvalue = Convert.ToInt16(dr["sel"]);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 DataRow[] ArticleAry = ArticleSizeTb.Select(string.Format("Ukey ='{0}' and patternPanel = '{1}'", dr["Ukey"], dr["patternPanel"]));
@@ -430,7 +430,7 @@ Where   a.ukey = b.workorderukey
         and ord.mDivisionid = '{0}' 
         and a.id = ord.cuttingsp 
         and a.CutRef is not null ", keyWord);
-            
+
             string distru_cmd = string.Format(@"
 Select  distinct 0 as sel
         , 0 as iden
@@ -489,7 +489,7 @@ Where   a.ukey = b.workorderukey
         and b.orderid = 'EXCESS' 
         and a.id = ord.cuttingsp 
         and a.CutRef is not null ", keyWord);
-            
+
             StringBuilder SizeRatio = new StringBuilder();
             SizeRatio.Append(string.Format(@"
 ;with tmp as(
@@ -543,7 +543,7 @@ order by b.sizecode,b.orderid,c.PatternPanel";
                 ShowErr(distru_cmd, query_dResult);
                 return;
             }
-            
+
             SizeRatio.Append(@"
 )
 Select  b.Cutref
@@ -570,10 +570,12 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             }
             if (ExcessTb.Rows.Count > 0)
             {
-                var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");                
+                var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
                 m.Width = 500;
                 m.grid1.Columns[1].Width = 140;
                 m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
             }
             #endregion
             #region GarmentList Table
@@ -596,7 +598,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
             #endregion
 
             #region articleSizeTb 繞PO 找出QtyTb,PatternTb,AllPartTb
-            int iden = 1;            
+            int iden = 1;
 
             foreach (DataRow dr in ArticleSizeTb.Rows)
             {
@@ -617,7 +619,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                 dr["TotalParts"] = totalpart;
                 iden++;
             }
-            #endregion            
+            #endregion
 
             gridCutRef.DataSource = CutRefTb;
             gridArticleSize.DataSource = ArticleSizeTb;
@@ -1256,7 +1258,7 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
                 ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',{7},
                 GetDate(),'{8}','{9}','{10}','{11}','{12}',
                 '{13}',{14},{15},'{16}','{17}',GetDate())",
-                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["PatternPanel"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" :artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
+                                                          id_list[idcount], artar["POID"], keyWord, artar["SizeCode"], artar["colorid"], artar["Article"], artar["PatternPanel"], artar["Cutno"], artar["orderid"], (artar["SewingLine"].Empty() ? "" : artar["SewingLine"].ToString().Substring(0, 2)), artar["item"], artar["SewingCell"],
                  artar["Ratio"], startno, artar["Qty"], artar["TotalParts"], artar["Cutref"], loginID);
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion
