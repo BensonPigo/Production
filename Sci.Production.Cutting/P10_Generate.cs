@@ -468,17 +468,18 @@ namespace Sci.Production.Cutting
             //輸入的數量必須超過[No of Bundle]
             if (qtyTb.Rows.Count == 0) return;                      
             if (cutrefE == 1) //c
-            {                            
+            {
+                int rowindex = grid_qty.CurrentRow.Index;
                 int bundleCount = MyUtility.Convert.GetInt( numNoOfBundle.Value);
+                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
                 if (!MyUtility.Check.Empty(bundleCount))
                 {
                     qtyTb.Clear();    
                 }
-                int count = 1;
+                int count = 0;
                 foreach (DataRow dr in sizeTb.Rows)
-                {
-                            
-                    if (count<=bundleCount)
+                {                           
+                    if (count<bundleCount)
                     {                        
                         DataRow ndr = qtyTb.NewRow();
                         ndr["SizeCode"] = dr["SizeCode"];
@@ -486,7 +487,17 @@ namespace Sci.Production.Cutting
                         count++;
                     }
                 }
-
+                //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
+                if (bundleCount>count)
+                {
+                    for (int i = 0; i < bundleCount - count; i++)
+                    {
+                        DataRow ndr = qtyTb.NewRow();
+                        ndr["SizeCode"] = SizeCode;
+                        qtyTb.Rows.Add(ndr);
+                    } 
+                }
+               
                 //賦予流水號
                 int serial = 1;
                 foreach (DataRow dr in qtyTb.Rows)
@@ -497,26 +508,39 @@ namespace Sci.Production.Cutting
                         serial++;
                     }
                 }
+                //重新排序,避免qtyTD排序被SizeTB給打亂
+                qtyTb.DefaultView.Sort = "No";
                 calQty();
             }
             else
             {
-              
+                int rowindex = grid_qty.CurrentRow.Index;
                 int bundleCount = MyUtility.Convert.GetInt(numNoOfBundle.Value);
+                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
                 if (!MyUtility.Check.Empty(bundleCount))
                 {
                     qtyTb.Clear();
                 }
-                int count = 1;
+                int count = 0;
                 foreach (DataRow dr in sizeTb.Rows)
                 {
 
-                    if (count <= bundleCount)
+                    if (count < bundleCount)
                     {
                         DataRow ndr = qtyTb.NewRow();
                         ndr["SizeCode"] = dr["SizeCode"];
                         qtyTb.Rows.Add(ndr);
                         count++;
+                    }
+                }
+                //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
+                if (bundleCount > count)
+                {
+                    for (int i = 0; i < bundleCount - count; i++)
+                    {
+                        DataRow ndr = qtyTb.NewRow();
+                        ndr["SizeCode"] = SizeCode;
+                        qtyTb.Rows.Add(ndr);
                     }
                 }
             
@@ -531,6 +555,8 @@ namespace Sci.Production.Cutting
                         serial++;
                     }
                 }
+                //重新排序,避免qtyTD排序被SizeTB給打亂
+                qtyTb.DefaultView.Sort = "No";
                 calQty();
             }
 
