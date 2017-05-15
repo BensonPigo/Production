@@ -667,7 +667,6 @@
             // numTotalPOQty
             // 
             this.numTotalPOQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTotalPOQty.DecimalPlaces = 2;
             this.numTotalPOQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalPOQty.IsSupportEditMode = false;
             this.numTotalPOQty.Location = new System.Drawing.Point(601, 150);
