@@ -121,7 +121,7 @@
             this.txtColorID.MaxLength = 13;
             this.txtColorID.Name = "txtColorID";
             this.txtColorID.Size = new System.Drawing.Size(58, 23);
-            this.txtColorID.TabIndex = 21;
+            this.txtColorID.TabIndex = 3;
             // 
             // txtRefNo
             // 
@@ -133,7 +133,7 @@
             this.txtRefNo.MaxLength = 13;
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(134, 23);
-            this.txtRefNo.TabIndex = 20;
+            this.txtRefNo.TabIndex = 2;
             // 
             // label2
             // 
@@ -171,7 +171,7 @@
             this.checkQty.Location = new System.Drawing.Point(803, 11);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
-            this.checkQty.TabIndex = 3;
+            this.checkQty.TabIndex = 5;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
             this.checkQty.CheckedChanged += new System.EventHandler(this.checkQty_CheckedChanged);
@@ -210,7 +210,7 @@
             this.btnQuery.Location = new System.Drawing.Point(708, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 2;
+            this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
