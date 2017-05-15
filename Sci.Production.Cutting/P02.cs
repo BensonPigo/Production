@@ -99,123 +99,158 @@ namespace Sci.Production.Cutting
             #region 主Table
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(@"
-            Select a.*,
-            (
-                Select distinct Article+'/' 
-			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-			    Where b.workorderukey = a.Ukey and b.article!=''
-                For XML path('')
-            ) as article,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as SizeCode,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty*a.layer)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as CutQty,
-            (
-                Select FabricPanelCode+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as FabricPanelCode,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as PatternPanel,
-			(
-				Select iif(e.Complete=1,e.FinalETA,iif(e.Eta is not null,e.eta,iif(e.shipeta is not null,e.shipeta,e.finaletd)))
-				From PO_Supp_Detail e WITH (NOLOCK) 
-				Where e.id = (Select distinct poid from orders WITH (NOLOCK) where orders.cuttingsp = '{0}') and e.seq1 = a.seq1 and e.seq2 = a.seq2
-			) as fabeta,
-			(
-				Select Min(sew.Inline)
-				From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b WITH (NOLOCK) ,WorkOrder_Distribute h WITH (NOLOCK) 
-				Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
-						and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
-			)  as Sewinline,
-			(
-				Select Min(cut.cdate)
-				From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
-				Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
-			)  as actcutdate,
-            (
-                Select Name 
-                From Pass1 ps WITH (NOLOCK) 
-                Where ps.id = a.addName
-            ) as adduser,
-            (
-                Select Name 
-                From Pass1 ps WITH (NOLOCK) 
-                Where ps.id = a.editName
-            ) as edituser,
-            (
-               Select sum(layer)
-                From Order_EachCons ea WITH (NOLOCK) ,Order_EachCons_color ea_b WITH (NOLOCK) 
-                Where ea.id = a.id and ea.id = '{0}' and ea.ukey = ea_b.order_eachConsUkey 
-                    and ea.Markername = a.markername and ea_b.colorid = a.colorid
-            ) as totallayer,
-			(
-				Select iif(count(size.sizecode)>1,2,1) 
-				From WorkOrder_SizeRatio size WITH (NOLOCK) 
-				Where a.ukey = size.WorkOrderUkey
-			) as multisize,
-
-			(
-				select SEQ
-				from (select WO.Ukey , max(c.Seq) SEQ
-						from WorkOrder WO WITH (NOLOCK) 
-						left join WorkOrder_SizeRatio b WITH (NOLOCK) on b.WorkOrderUkey=WO.Ukey
-						left join Order_SizeCode c WITH (NOLOCK) on c.Id=b.ID and c.SizeCode=b.SizeCode
-						where WO.ID='{0}'
-						group by WO.Ukey) tmp
-				where tmp.Ukey=a.Ukey
-			) as Order_SizeCode_Seq,
-
-            0 As SORT_NUM,
-			c.MtlTypeID,c.DescDetail,0 as newkey
-            ,substring(a.MarkerLength,1,2) as MarkerLengthY
-            ,substring(a.MarkerLength,4,13) as MarkerLengthE
-			from Workorder a WITH (NOLOCK) 
-			left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
-            where a.id = '{0}'
+Select
+	a.*
+	,article.article
+	,SizeCode.SizeCode
+	,CutQty.CutQty
+	,FabricPanelCode.FabricPanelCode
+	,PatternPanel.PatternPanel
+	,fabeta.fabeta
+	,Sewinline.Sewinline
+	,actcutdate.actcutdate
+	,adduser.adduser
+	,edituser.edituser
+	,totallayer =
+	(
+		Select sum(layer)
+		From Order_EachCons ea WITH (NOLOCK) 
+		inner join Order_EachCons_color ea_b WITH (NOLOCK) on ea.ukey = ea_b.order_eachConsUkey 
+		Where ea.id = a.ID and ea.Markername = a.markername and ea_b.colorid = a.colorid
+	)
+	,multisize.multisize
+	,Order_SizeCode_Seq.Order_SizeCode_Seq
+	,SORT_NUM =0
+	,c.MtlTypeID
+	,c.DescDetail
+	,newkey = 0
+	,MarkerLengthY = substring(a.MarkerLength,1,2)
+	,MarkerLengthE = substring(a.MarkerLength,4,13) 
+from Workorder a WITH (NOLOCK) left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
+outer apply
+(
+	select article = stuff(
+	(
+		Select distinct concat('/' ,Article)
+		From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
+		Where b.workorderukey = a.Ukey and b.article!=''
+		For XML path('')
+	),1,1,'')
+) as article
+outer apply
+(
+	select SizeCode = stuff(
+	(
+		Select concat(', ' , c.sizecode, '/ ', c.qty)
+		From WorkOrder_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =a.Ukey 
+		For XML path('')
+	),1,1,'')
+) as SizeCode
+outer apply
+(
+	select CutQty = stuff(
+	(
+		Select concat(', ', c.sizecode, '/ ', c.qty * a.layer)
+		From WorkOrder_SizeRatio c WITH (NOLOCK) 
+		Where  c.WorkOrderUkey =a.Ukey 
+		For XML path('')
+	),1,1,'')
+) as CutQty
+outer apply
+(
+	select FabricPanelCode = stuff(
+	(
+		Select concat('+ ', FabricPanelCode)
+		From WorkOrder_PatternPanel c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =a.Ukey 
+		For XML path('')
+	),1,1,'')
+) as FabricPanelCode
+outer apply
+(
+	select PatternPanel = stuff(
+	(
+		Select concat('+ ', PatternPanel)
+		From WorkOrder_PatternPanel c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =a.Ukey 
+		For XML path('')
+	),1,1,'')
+) as PatternPanel
+outer apply
+(
+	Select fabeta = iif(e.Complete=1, e.FinalETA, iif(e.Eta is not null, e.eta, iif(e.shipeta is not null, e.shipeta,e.finaletd)))
+	From PO_Supp_Detail e WITH (NOLOCK) 
+	Where e.id = (Select distinct poid from orders WITH (NOLOCK) where orders.cuttingsp = a.ID) and e.seq1 = a.seq1 and e.seq2 = a.seq2
+) as fabeta
+outer apply
+(
+	Select Sewinline = Min(sew.Inline)
+	From SewingSchedule sew WITH (NOLOCK)
+	inner join SewingSchedule_detail sew_b WITH (NOLOCK) on sew_b.id = sew.id
+	inner join WorkOrder_Distribute h WITH (NOLOCK) on h.orderid = sew_b.OrderID and h.Article = sew_b.Article and h.orderid = sew.orderid
+	Where h.WorkOrderUkey = a.ukey 
+) as Sewinline
+outer apply
+(
+	Select actcutdate = Min(cut.cdate)
+	From cuttingoutput cut WITH (NOLOCK) 
+	inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
+	Where cut_b.workorderukey = a.Ukey
+)  as actcutdate
+outer apply(Select adduser = Name From Pass1 ps WITH (NOLOCK) Where ps.id = a.addName) as adduser
+outer apply(Select edituser = Name From Pass1 ps WITH (NOLOCK) Where ps.id = a.editName) as edituser
+outer apply
+(
+	Select multisize = iif(count(size.sizecode)>1,2,1) 
+	From WorkOrder_SizeRatio size WITH (NOLOCK) 
+	Where a.ukey = size.WorkOrderUkey
+) as multisize
+outer apply
+(
+	select Order_SizeCode_Seq = max(c.Seq)
+	from WorkOrder_SizeRatio b WITH (NOLOCK)
+	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
+	where b.WorkOrderUkey = a.Ukey
+) as Order_SizeCode_Seq
+where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             #endregion
+
             #region SizeRatio
             cmdsql = string.Format("Select *,0 as newKey from Workorder_SizeRatio WITH (NOLOCK) where id = '{0}'", masterID);
             DualResult dr = DBProxy.Current.Select(null, cmdsql, out sizeratioTb);
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
-            #region layer
-            cmdsql = string.Format(
-                @"Select a.MarkerName,a.Colorid,a.Order_EachconsUkey,isnull(sum(a.layer),0) as layer,                    
-                    (Select isnull(sum(c.layer),0) as TL
-	                from Order_EachCons b WITH (NOLOCK) , Order_EachCons_Color c WITH (NOLOCK) 
-	                where b.id = '{0}' and b.id = c.id and a.MarkerName = b.Markername and a.Colorid = c.Colorid
-                    and b.ukey=c.Order_EachConsUkey and a.Order_EachconsUkey = b.Ukey )  as TotallayerUkey,
 
-                    (Select isnull(sum(c.layer),0) as TL2
-				    from Order_EachCons b WITH (NOLOCK) , Order_EachCons_Color c WITH (NOLOCK) 
-				    where b.id = '{0}' and b.id = c.id and 
-                    b.ukey=c.Order_EachConsUkey and a.MarkerName = b.Markername 
-                    and a.Colorid = c.Colorid )  
-                    as TotallayerMarker
-                From WorkOrder a WITH (NOLOCK) 
-                Where a.id = '{0}' 
-                group by a.MarkerName,a.Colorid,a.Order_EachconsUkey
-                Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
+            #region layer
+            cmdsql = string.Format(@"
+Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
+	,layer = isnull(sum(a.layer),0)
+    ,TotallayerUkey =             
+    (
+        Select isnull(sum(c.layer),0) as TL
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on c.id = b.id and c.Order_EachConsUkey = b.ukey
+	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid and b.Ukey = a.Order_EachconsUkey 
+    )
+    ,TotallayerMarker =
+    (
+        Select isnull(sum(c.layer),0) as TL2
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on b.id = c.id and c.Order_EachConsUkey = b.ukey
+	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid
+    )
+From WorkOrder a WITH (NOLOCK) 
+Where a.id = '{0}' 
+group by a.MarkerName,a.Colorid,a.Order_EachconsUkey,a.id 
+Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
                 ", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out layersTb);
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
+
             #region distqtyTb / PatternPanelTb
             cmdsql = string.Format(@"Select *,0 as newKey From Workorder_distribute WITH (NOLOCK) Where id='{0}'", masterID);
             dr = DBProxy.Current.Select(null, cmdsql, out distqtyTb);
@@ -225,8 +260,36 @@ namespace Sci.Production.Cutting
             dr = DBProxy.Current.Select(null, cmdsql, out PatternPanelTb);
             if (!dr) ShowErr(cmdsql, dr);
             #endregion
+            
+            #region 建立要使用右鍵開窗Grid
+            string settbsql = string.Format(@"
+Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
+From Order_Qty a WITH (NOLOCK)
+inner join orders b WITH (NOLOCK) on a.id = b.id 
+outer apply
+(
+    Select workorder_Distribute_Qty = Sum(Qty) 
+    from workorder_Distribute WD WITH (NOLOCK) 
+    where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode
+) c
+Where b.cuttingsp ='{0}'
+order by id,article,sizecode"
+                , masterID);
+            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
+            sizeGroup = qtybreakTb.DefaultView.ToTable(true, "sizecode");
+            artTb = qtybreakTb.DefaultView.ToTable(true, "article");
+            spTb = qtybreakTb.DefaultView.ToTable(true, "id");            
 
-            getqtybreakdown(masterID);
+            // 若訂單數量超過裁切分配數量，則更新balance
+            foreach (DataRow dr2 in qtybreakTb.Rows)
+            {
+                if (MyUtility.Convert.GetDecimal(dr2["qty"]) > MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]))
+                {
+                    dr2["balance"] = MyUtility.Convert.GetDecimal(dr2["qty"]) - MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]);
+                }
+            }
+            #endregion
+
             return base.OnDetailSelectCommandPrepare(e);
         }
         protected override void OnDetailEntered()
@@ -1323,38 +1386,7 @@ namespace Sci.Production.Cutting
             base.OnFormDispose();
             bindingSource2.Dispose();
         }
-
-        private void getqtybreakdown(string masterID)
-        {
-            #region 建立Grid
-            string settbsql = string.Format(@"
-Select a.id, a.article, a.sizecode, a.qty, 0 as balance, c.workorder_Distribute_Qty
-From Order_Qty a WITH (NOLOCK)
-inner join orders b WITH (NOLOCK) on a.id = b.id 
-outer apply(Select Sum(Qty) workorder_Distribute_Qty
-			from workorder_Distribute WD WITH (NOLOCK) 
-			where WD.ID='{0}' and WD.OrderID=a.id and WD.Article=a.Article and WD.SizeCode=a.SizeCode) c
-Where b.cuttingsp ='{0}'
-order by id,article,sizecode"
-                , masterID);
-
-            DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
-            MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "sizecode", "Select distinct SizeCode from #tmp", out sizeGroup);
-            MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "article", "Select distinct Article from #tmp", out artTb);
-            MyUtility.Tool.ProcessWithDatatable(qtybreakTb, "id", "Select distinct id from #tmp", out spTb);
-            #endregion
-
-            #region 若訂單數量超過裁切分配數量，則更新balance
-            foreach (DataRow dr in qtybreakTb.Rows)
-            {
-                if (MyUtility.Convert.GetDecimal(dr["qty"]) > MyUtility.Convert.GetDecimal(dr["workorder_Distribute_Qty"]))
-                {
-                    dr["balance"] = MyUtility.Convert.GetDecimal(dr["qty"]) - MyUtility.Convert.GetDecimal(dr["workorder_Distribute_Qty"]);
-                }
-            }
-            #endregion
-        }
-
+        
         private void sorting(string sort)
         {
             grid.ValidateControl();
