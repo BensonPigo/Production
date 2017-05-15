@@ -828,30 +828,31 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            
-            worksheet.Cells[2, 3] = MyUtility.Convert.GetString(PLdr["ID"]);
-            worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[4, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[4, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[4, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[4, 13] = MyUtility.Convert.GetString(PLdr["INVNo"]);
-            worksheet.Cells[6, 1] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
-            worksheet.Cells[6, 3] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
-            worksheet.Cells[6, 6] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
-            worksheet.Cells[6, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
-            worksheet.Cells[6, 13] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            worksheet.Cells[1, 1] = NameEN;
+            worksheet.Cells[2+1, 3] = MyUtility.Convert.GetString(PLdr["ID"]);
+            worksheet.Cells[4+1, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+            worksheet.Cells[4+1, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[4+1, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[4+1, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[4+1, 13] = MyUtility.Convert.GetString(PLdr["INVNo"]);
+            worksheet.Cells[6+1, 1] = MyUtility.Convert.GetString(PLdr["CustCDID"]);
+            worksheet.Cells[6+1, 3] = MyUtility.Convert.GetString(PLdr["ShipModeID"]);
+            worksheet.Cells[6+1, 6] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(PrintData.Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(PLdr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(PrintData.Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(PLdr["CTNQty"]), 4) * 100) + "% )";
+            worksheet.Cells[6+1, 10] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
+            worksheet.Cells[6+1, 13] = MyUtility.Check.Empty(PrintData.Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(PrintData.Rows[0]["EstPulloutDate"]).ToString("d");
 
             //當要列印的筆數超過22筆，就要插入Row，因為範本只留22筆記錄的空間
             if (PrintData.Rows.Count > 22)
             {
                 for (int i = 1; i <= PrintData.Rows.Count - 22; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A9:A9", Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A10:A10", Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 }
             }
 
-            int excelRow = 8;
+            int excelRow = 9;
             string ctnStartNo = "XXXXXX";
             foreach (DataRow dr in PrintData.Rows)
             {
@@ -894,9 +895,9 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 worksheet.Cells[excelRow, 14] = string.Format("=SUM(N8:N{0})", MyUtility.Convert.GetString(excelRow - 1));
                 worksheet.Cells[excelRow, 15] = string.Format("=SUM(O8:O{0})", MyUtility.Convert.GetString(excelRow - 1));
             }
-            if (excelRow <= 30)
+            if (excelRow <= 31)
             {
-                excelRow = 30;
+                excelRow = 31;
             }
 
             //Carton Dimension:
@@ -997,10 +998,6 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
                 }
             }
-            Microsoft.Office.Interop.Excel.Range first = worksheet.get_Range(("A1"), Type.Missing).EntireRow;
-            first.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, first.Copy(Type.Missing));
-            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
-            worksheet.Cells[1, 1] = NameEN;
             //MyUtility.Msg.WaitClear();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
@@ -1147,18 +1144,19 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            
-            worksheet.Cells[3, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
-            worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[3, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[3, 9] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[3, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
-            worksheet.Cells[3, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
-            worksheet.Cells[3, 18] = OrderQty;
-            worksheet.Cells[3, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
-            worksheet.Cells[3, 21] = "=R3-T3";
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            worksheet.Cells[1, 1] = NameEN;
+            worksheet.Cells[3+1, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
+            worksheet.Cells[3+1, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[3+1, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[3+1, 9] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[3+1, 12] = MyUtility.Convert.GetInt(PrintData.Rows[0]["CTNQty"]);
+            worksheet.Cells[3+1, 14] = MyUtility.Convert.GetString(PrintData.Rows[0]["DestAlias"]);
+            worksheet.Cells[3+1, 18] = OrderQty;
+            worksheet.Cells[3+1, 20] = MyUtility.Convert.GetInt(PacklistData["ShipQty"]);
+            worksheet.Cells[3+1, 21] = "=R3-T3";
 
-            int groupRec = PrintGroupData.Rows.Count, excelRow = 4, printRec = 1, printCtnCount = 0;
+            int groupRec = PrintGroupData.Rows.Count, excelRow = 5, printRec = 1, printCtnCount = 0;
 
             string seq = "000000", article = "XXXX0000", size = "XXXX0000";
             int qtyPerCTN = -1;
@@ -1238,7 +1236,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             }
 
             //刪除多餘的Row
-            if (excelRow >= 262)
+            if (excelRow >= 263)
             {
                 Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing];
                 rng.Select();
@@ -1246,7 +1244,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
             }
             else
             {
-                for (int i = excelRow + 1; i <= 262; i++)
+                for (int i = excelRow + 1; i <= 263; i++)
                 {
                     Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                     rng.Select();
@@ -1367,10 +1365,6 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
             }
 
-            Microsoft.Office.Interop.Excel.Range first = worksheet.get_Range(("A1"), Type.Missing).EntireRow;
-            first.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, first.Copy(Type.Missing));
-            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
-            worksheet.Cells[1, 1] = NameEN;
             //MyUtility.Msg.WaitClear();
 
             excel.Visible = true;
