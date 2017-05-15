@@ -263,12 +263,23 @@ namespace Sci.Production.Cutting
 
         public void grid_setup()
         {
+            DataGridViewGeneratorNumericColumnSettings NoCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qtyCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings patterncell2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
+
+            NoCell.CellValidating += (s, e) =>
+            {               
+                if (MyUtility.Convert.GetInt(numNoOfBundle.Text) < MyUtility.Convert.GetInt( e.FormattedValue))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<No: {0} >  can't greater than <No of Bundle>",e.FormattedValue));                    
+                    e.Cancel = true;
+                    return;
+                }
+            };
 
             qtyCell.CellValidating += (s, e) =>
             {
@@ -412,9 +423,10 @@ namespace Sci.Production.Cutting
             
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
-            .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
+            .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5 , settings:NoCell)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5, settings: qtyCell);
+            grid_qty.Columns["No"].DefaultCellStyle.BackColor = Color.Pink;
             grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             grid_art.DataSource = patternTb;
@@ -449,47 +461,29 @@ namespace Sci.Production.Cutting
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5);
         }
-        
-        public void distributeQty(int Qtycount)
+
+        public void distributeQty(int Qtycount) // Qtycount=初始化從上一層傳回來的Bundle.Qty
         {
             #region Qty 的筆數分配
             //輸入的數量必須超過[No of Bundle]
-            if (qtyTb.Rows.Count == 0) return;
-            if (cutrefE == 1)
-            {
-                if (Qtycount < NoOfBunble)
+            if (qtyTb.Rows.Count == 0) return;                      
+            if (cutrefE == 1) //c
+            {                            
+                int bundleCount = MyUtility.Convert.GetInt( numNoOfBundle.Value);
+                if (!MyUtility.Check.Empty(bundleCount))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("[No of Bundle] must exceed {0} !!", NoOfBunble));
-                    return;
+                    qtyTb.Clear();    
                 }
-                int rowindex = grid_qty.CurrentRow.Index;
-                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-                int NowCount = qtyTb.Select(string.Format("SizeCode='{0}'", SizeCode)).Length;  //現在有幾筆
-                int BeforeAddCount = NowCount - 1;  //之前新增筆數
-                int AddCount = Qtycount - NoOfBunble;  //想要新增幾筆  6-4=2
-                int Modify = AddCount - BeforeAddCount;
-                if (Modify > 0)  //新增
+                int count = 1;
+                foreach (DataRow dr in sizeTb.Rows)
                 {
-                    for (int i = 0; i < Modify; i++)
-                    {
+                            
+                    if (count<=bundleCount)
+                    {                        
                         DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = SizeCode;
+                        ndr["SizeCode"] = dr["SizeCode"];
                         qtyTb.Rows.Add(ndr);
-                    }
-                }
-                else if (Modify < 0)  //刪除(從後面)
-                {
-                    for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
-                    {
-                        if (Modify >= 0) break;
-                        if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
-                        {
-                            if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
-                            {
-                                qtyTb.Rows[i].Delete();
-                                Modify++;
-                            }
-                        }
+                        count++;
                     }
                 }
 
@@ -507,36 +501,25 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                int rowindex = grid_qty.CurrentRow.Index;
-                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-                int NowCount = qtyTb.Select().Length;  //現在有幾筆
-                int BeforeAddCount = NowCount - 1;  //之前新增筆數
-                int AddCount = Qtycount - 1;  //-1是因為cutref為空時，Default只有一筆
-                int Modify = AddCount - BeforeAddCount;
-                if (Modify > 0)  //新增
+              
+                int bundleCount = MyUtility.Convert.GetInt(numNoOfBundle.Value);
+                if (!MyUtility.Check.Empty(bundleCount))
                 {
-                    for (int i = 0; i < Modify; i++)
+                    qtyTb.Clear();
+                }
+                int count = 1;
+                foreach (DataRow dr in sizeTb.Rows)
+                {
+
+                    if (count <= bundleCount)
                     {
                         DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = SizeCode;
+                        ndr["SizeCode"] = dr["SizeCode"];
                         qtyTb.Rows.Add(ndr);
+                        count++;
                     }
                 }
-                else if (Modify < 0)  //刪除(從後面)
-                {
-                    for (int i = qtyTb.Rows.Count - 1; i > 0; i--)
-                    {
-                        if (Modify >= 0) break;
-                        if (qtyTb.Rows[i].RowState != DataRowState.Deleted)
-                        {
-                            if (qtyTb.Rows[i]["SizeCode"].ToString() == SizeCode)
-                            {
-                                qtyTb.Rows[i].Delete();
-                                Modify++;
-                            }
-                        }
-                    }
-                }
+            
 
                 //賦予流水號
                 int serial = 1;
@@ -559,7 +542,6 @@ namespace Sci.Production.Cutting
         {
             int newvalue = (int)numNoOfBundle.Value;
             int oldvalue = (int)numNoOfBundle.OldValue;
-            //if (newvalue == oldvalue) return;
             distributeQty(newvalue);
         }
 
@@ -632,6 +614,10 @@ namespace Sci.Production.Cutting
                 int j = 1;
                 foreach (DataRow dr in sizeTb.Rows)
                 {
+                    if (MyUtility.Convert.GetInt(numNoOfBundle.Value)<j)
+                    {
+                        return;
+                    }
                     DataRow row = qtyTb.NewRow();
                     row["No"] = j;
                     row["SizeCode"] = dr["SizeCode"];
@@ -648,9 +634,10 @@ namespace Sci.Production.Cutting
             DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
             qtyTb.DefaultView.Sort="SizeCode,No";
+            int i = 1;
             foreach(DataRow dr in sizeTb.Rows)
             {
-                int i = 1;
+                
                 DataRow[] qtyArr = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), ""); //重新撈取
                 foreach (DataRow dr2 in qtyArr)
                 {

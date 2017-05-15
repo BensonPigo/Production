@@ -263,7 +263,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(18, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -272,7 +271,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(19, 47);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(75, 23);
@@ -281,7 +279,6 @@
             // 
             // labelCutNo
             // 
-            this.labelCutNo.Lines = 0;
             this.labelCutNo.Location = new System.Drawing.Point(19, 81);
             this.labelCutNo.Name = "labelCutNo";
             this.labelCutNo.Size = new System.Drawing.Size(75, 23);
@@ -290,7 +287,6 @@
             // 
             // labelLineNo
             // 
-            this.labelLineNo.Lines = 0;
             this.labelLineNo.Location = new System.Drawing.Point(441, 149);
             this.labelLineNo.Name = "labelLineNo";
             this.labelLineNo.Size = new System.Drawing.Size(75, 23);
@@ -299,7 +295,6 @@
             // 
             // labelBeginBundleGroup
             // 
-            this.labelBeginBundleGroup.Lines = 0;
             this.labelBeginBundleGroup.Location = new System.Drawing.Point(19, 183);
             this.labelBeginBundleGroup.Name = "labelBeginBundleGroup";
             this.labelBeginBundleGroup.Size = new System.Drawing.Size(131, 23);
@@ -308,7 +303,6 @@
             // 
             // labelFabricCombo
             // 
-            this.labelFabricCombo.Lines = 0;
             this.labelFabricCombo.Location = new System.Drawing.Point(236, 81);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(95, 23);
@@ -317,7 +311,6 @@
             // 
             // labelSewCell
             // 
-            this.labelSewCell.Lines = 0;
             this.labelSewCell.Location = new System.Drawing.Point(441, 183);
             this.labelSewCell.Name = "labelSewCell";
             this.labelSewCell.Size = new System.Drawing.Size(75, 23);
@@ -326,7 +319,6 @@
             // 
             // labelCutRef
             // 
-            this.labelCutRef.Lines = 0;
             this.labelCutRef.Location = new System.Drawing.Point(236, 13);
             this.labelCutRef.Name = "labelCutRef";
             this.labelCutRef.Size = new System.Drawing.Size(75, 23);
@@ -335,7 +327,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(441, 13);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -344,7 +335,6 @@
             // 
             // labelQtyperBundleGroup
             // 
-            this.labelQtyperBundleGroup.Lines = 0;
             this.labelQtyperBundleGroup.Location = new System.Drawing.Point(661, 149);
             this.labelQtyperBundleGroup.Name = "labelQtyperBundleGroup";
             this.labelQtyperBundleGroup.Size = new System.Drawing.Size(139, 23);
@@ -353,7 +343,6 @@
             // 
             // labelItem
             // 
-            this.labelItem.Lines = 0;
             this.labelItem.Location = new System.Drawing.Point(441, 115);
             this.labelItem.Name = "labelItem";
             this.labelItem.Size = new System.Drawing.Size(75, 23);
@@ -362,7 +351,6 @@
             // 
             // labelNoofBundle
             // 
-            this.labelNoofBundle.Lines = 0;
             this.labelNoofBundle.Location = new System.Drawing.Point(236, 183);
             this.labelNoofBundle.Name = "labelNoofBundle";
             this.labelNoofBundle.Size = new System.Drawing.Size(88, 23);
@@ -371,7 +359,6 @@
             // 
             // labelPOID
             // 
-            this.labelPOID.Lines = 0;
             this.labelPOID.Location = new System.Drawing.Point(661, 13);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(75, 23);
@@ -380,7 +367,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(441, 47);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -389,7 +375,6 @@
             // 
             // labelSize
             // 
-            this.labelSize.Lines = 0;
             this.labelSize.Location = new System.Drawing.Point(19, 149);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(75, 23);
@@ -398,7 +383,6 @@
             // 
             // labelSizeRatio
             // 
-            this.labelSizeRatio.Lines = 0;
             this.labelSizeRatio.Location = new System.Drawing.Point(236, 149);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(75, 23);
@@ -407,7 +391,6 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Lines = 0;
             this.labelArticle.Location = new System.Drawing.Point(19, 115);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(75, 23);
@@ -416,7 +399,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(236, 47);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(75, 23);
@@ -425,7 +407,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(661, 47);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -434,7 +415,6 @@
             // 
             // labelPrintDate
             // 
-            this.labelPrintDate.Lines = 0;
             this.labelPrintDate.Location = new System.Drawing.Point(661, 81);
             this.labelPrintDate.Name = "labelPrintDate";
             this.labelPrintDate.Size = new System.Drawing.Size(75, 23);
@@ -443,7 +423,6 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(661, 115);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(106, 23);
@@ -452,7 +431,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(236, 115);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -764,7 +742,6 @@
             // 
             // labelFabPanelCode
             // 
-            this.labelFabPanelCode.Lines = 0;
             this.labelFabPanelCode.Location = new System.Drawing.Point(441, 81);
             this.labelFabPanelCode.Name = "labelFabPanelCode";
             this.labelFabPanelCode.Size = new System.Drawing.Size(110, 23);
