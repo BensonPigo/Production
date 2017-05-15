@@ -48,6 +48,7 @@ namespace Sci.Production.Warehouse
             #endregion 
             #region IssueQty != 0
             Ict.Win.DataGridViewGeneratorNumericColumnSettings setQty = new DataGridViewGeneratorNumericColumnSettings();
+            setQty.IsSupportNegative = true;
             setQty.CellValidating = (s, e) =>
             {
                 DataRow dr = gridImport.GetDataRow(e.RowIndex);
@@ -64,7 +65,7 @@ namespace Sci.Production.Warehouse
                 .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("unit", header: "Unit", iseditingreadonly: true)
                 .Numeric("stockQty", header: "Stock Qty", iseditingreadonly: true)
-                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -999999, settings: setQty)
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: setQty)
                 .EditText("desc", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true);
             #endregion 
         }

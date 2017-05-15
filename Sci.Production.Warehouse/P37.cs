@@ -335,6 +335,8 @@ where R.id= @ID";
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
+            SupportNegative.IsSupportNegative = true;
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellFormatting = (s, e) =>
             {
@@ -361,7 +363,7 @@ where R.id= @ID";
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Text("StockType", header: "StockType", iseditingreadonly: true, settings: ns)    //5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: -9999999999)    //6
+            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: SupportNegative)    //6
             .Text("Location", header: "Location", iseditingreadonly: true)    //7
             ;     //
             #endregion 欄位設定

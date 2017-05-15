@@ -51,6 +51,9 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
 
         protected override void OnDetailGridSetup()
         {
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings SupportNegative = new DataGridViewGeneratorNumericColumnSettings();
+            SupportNegative.IsSupportNegative = true;
+
             #region Set Grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false)
@@ -58,7 +61,7 @@ where LI.ID = '{0}' and LI.MDivisionID = '{1}'", ID, Sci.Env.User.Keyword);
                 .Text("ThreadColorID", header: "ThreadColor", width: Widths.AnsiChars(4), iseditingreadonly: false)
                 .EditText("desc", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: false)
                 .Text("unit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: false)
-                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, minimum: -999999);
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: false, settings: SupportNegative);
             #endregion 
         }
 
