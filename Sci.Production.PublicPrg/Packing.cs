@@ -828,7 +828,7 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+            
             worksheet.Cells[2, 3] = MyUtility.Convert.GetString(PLdr["ID"]);
             worksheet.Cells[4, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
             worksheet.Cells[4, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
@@ -997,7 +997,10 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                     mark.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, mark.Copy(Type.Missing));
                 }
             }
-
+            Microsoft.Office.Interop.Excel.Range first = worksheet.get_Range(("A1"), Type.Missing).EntireRow;
+            first.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, first.Copy(Type.Missing));
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            worksheet.Cells[1, 1] = NameEN;
             //MyUtility.Msg.WaitClear();
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
             excel.Visible = true;
@@ -1138,13 +1141,13 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
         /// <param name="Special Instruction"></param>
         /// <returns></returns>
         public static void PackingListToExcel_PackingGuideReport(string XltxName, DataTable PrintData, DataTable CtnDim, DataTable QtyCtn, DataTable ArticleSizeTtlShipQty, DataTable PrintGroupData, DataTable ClipData, DataRow PacklistData, int OrderQty, string SpecialInstruction)
-        {
+        {            
             string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return;
             //MyUtility.Msg.WaitWindows("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
+            
             worksheet.Cells[3, 1] = MyUtility.Convert.GetString(PrintData.Rows[0]["OrderID"]);
             worksheet.Cells[3, 3] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
             worksheet.Cells[3, 6] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
@@ -1364,6 +1367,10 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                 worksheet.Shapes.AddPicture(targetFile, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoTrue, PicLeft, PicTop, 450, 400);
             }
 
+            Microsoft.Office.Interop.Excel.Range first = worksheet.get_Range(("A1"), Type.Missing).EntireRow;
+            first.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, first.Copy(Type.Missing));
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            worksheet.Cells[1, 1] = NameEN;
             //MyUtility.Msg.WaitClear();
 
             excel.Visible = true;

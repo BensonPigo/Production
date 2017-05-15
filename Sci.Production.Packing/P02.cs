@@ -397,9 +397,10 @@ namespace Sci.Production.Packing
             {
                 minCtnQty = MyUtility.GetValue.Lookup(string.Format("select isnull(min(ShipQty/QtyPerCTN),0) from PackingGuide_Detail WITH (NOLOCK) where Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"])));
             }
-            string sqlCmd = string.Format(@"select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,
-IIF(pd.ShipQty=0 or pd.QtyPerCTN=0,0,pd.ShipQty/pd.QtyPerCTN)as CtnQty,
-o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
+            string sqlCmd = string.Format(@"
+select pd.Article,pd.Color,pd.SizeCode,pd.QtyPerCTN,pd.ShipQty,
+    IIF(pd.ShipQty=0 or pd.QtyPerCTN=0,0,pd.ShipQty/pd.QtyPerCTN)as CtnQty,
+    o.CustCDID,o.StyleID,o.CustPONo,o.Customize1,c.Alias,oq.BuyerDelivery
 from PackingGuide p WITH (NOLOCK) 
 left join PackingGuide_Detail pd WITH (NOLOCK) on p.Id = pd.Id
 left join Orders o WITH (NOLOCK) on o.ID = p.OrderID
@@ -423,14 +424,16 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             }
 
             DataTable CtnDim, QtyCtn;
-            sqlCmd = string.Format(@"select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
+            sqlCmd = string.Format(@"
+select distinct pd.RefNo, li.Description, STR(li.CtnLength,8,4)+'*'+STR(li.CtnWidth,8,4)+'*'+STR(li.CtnHeight,8,4) as Dimension, li.CtnUnit
 from PackingGuide_Detail pd WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
 where pd.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out CtnDim);
 
-            sqlCmd = string.Format(@"select isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
+            sqlCmd = string.Format(@"
+select isnull(oq.Article,'') as Article,isnull(oq.SizeCode,'') as SizeCode,isnull(oq.Qty,0) as Qty
 from Orders o WITH (NOLOCK) 
 left join Order_QtyCTN oq WITH (NOLOCK) on o.ID = oq.Id
 left join Order_Article oa WITH (NOLOCK) on o.ID = oa.id and oq.Article = oa.Article
@@ -444,7 +447,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             if (excel == null) return false;
             this.ShowWaitMessage("Starting to excel...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-            
             worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
             worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
@@ -655,7 +657,10 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 }
             }
             worksheet.Cells[row, 2] = ctnDimension.Length > 0 ? cds : "";
-
+            Microsoft.Office.Interop.Excel.Range first = worksheet.get_Range(("A1"), Type.Missing).EntireRow;
+            first.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, first.Copy(Type.Missing));
+            string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
+            worksheet.Cells[1, 1] = NameEN;
             this.HideWaitMessage();
             
             excel.Visible = true;
