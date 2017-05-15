@@ -25,17 +25,21 @@ BEGIN
 	--
 	Select isnull(sum(Qty),0) as OrderQty from Orders where CuttingSp = @OrderID
 	--
-	select distinct sizecode
+	select	distinct Seq		
+			, SizeCode
 	into #tmp
-	from WorkOrder_SizeRatio ws 
-	inner join workorder w on ws.WorkOrderUkey = w.Ukey
-	where w.id = @OrderID
-	order by sizecode
+	from Order_SizeCode os
+	where	os.SizeCode in (select SizeCode 
+							from WorkOrder_SizeRatio ws 
+							inner join workorder w on ws.WorkOrderUkey = w.Ukey
+							where w.id = @OrderID)
+			and os.Id = @OrderID
+	order by Seq
+	--
 
 	DECLARE @cols NVARCHAR(MAX)= N''
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
-	order by SizeCode
 	drop table #tmp
 
 	DECLARE @sql NVARCHAR(MAX)
@@ -70,7 +74,8 @@ BEGIN
 			, [Acumm.Qty] = sum(B.cutqty) over (order by w.cutref)
 			, [Cons] = w.Cons
 			, [Acumm.Con] = sum(w.Cons) over (order by w.cutref)
-	from WorkOrder w inner join #tmp2 t on w.Ukey = t.Ukey
+	from WorkOrder w 
+	inner join #tmp2 t on w.Ukey = t.Ukey
 	outer apply
 	(
 		Select Article = stuff(( 
@@ -101,7 +106,7 @@ BEGIN
 		)
 	)C
 	where w.id = '''+@OrderID+N'''
-	order by w.FabricCombo, w.OrderID, A.Article
+	order by w.FabricCombo, w.OrderID, A.Article, w.Cutno
 
 	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
 	from WorkOrder wOrder
