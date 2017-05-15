@@ -74,7 +74,7 @@ namespace Sci.Production.Tools
             {
                 string script = File.ReadAllText(dir);
              
-                DualResult upResult;
+                //DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
                 {
