@@ -449,19 +449,19 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = NameEN;
-            worksheet.Cells[2, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToString("d");
-            worksheet.Cells[2, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
-            worksheet.Cells[3, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
-            worksheet.Cells[5, 1] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
-            worksheet.Cells[5, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
-            worksheet.Cells[5, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
-            worksheet.Cells[5, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
-            worksheet.Cells[5, 11] = MyUtility.Convert.GetInt(CurrentMaintain["CTNQty"]);
-            worksheet.Cells[5, 13] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
-            worksheet.Cells[5, 17] = orderQty;
-            worksheet.Cells[5, 19] = ttlShipQty;
-            worksheet.Cells[5, 20] = "=Q5-S5";
-            int row = 7, ctnNum = MyUtility.Convert.GetInt(CurrentMaintain["CTNStartNo"]), ttlCtn = 0;
+            worksheet.Cells[3, 2] = MyUtility.Check.Empty(PrintData.Rows[0]["BuyerDelivery"]) ? "" : Convert.ToDateTime(PrintData.Rows[0]["BuyerDelivery"]).ToShortDateString();
+            worksheet.Cells[3, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[4, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustCDID"]);
+            worksheet.Cells[6, 1] = MyUtility.Convert.GetString(CurrentMaintain["OrderID"]);
+            worksheet.Cells[6, 2] = MyUtility.Convert.GetString(PrintData.Rows[0]["StyleID"]);
+            worksheet.Cells[6, 5] = MyUtility.Convert.GetString(PrintData.Rows[0]["Customize1"]);
+            worksheet.Cells[6, 8] = MyUtility.Convert.GetString(PrintData.Rows[0]["CustPONo"]);
+            worksheet.Cells[6, 11] = MyUtility.Convert.GetInt(CurrentMaintain["CTNQty"]);
+            worksheet.Cells[6, 13] = MyUtility.Convert.GetString(PrintData.Rows[0]["Alias"]);
+            worksheet.Cells[6, 17] = orderQty;
+            worksheet.Cells[6, 19] = ttlShipQty;
+            worksheet.Cells[6, 20] = "=Q6-S6";
+            int row = 8, ctnNum = MyUtility.Convert.GetInt(CurrentMaintain["CTNStartNo"]), ttlCtn = 0;
 
             #region 先算出總共會有幾筆record
             int tmpCtnQty = 0;
@@ -487,7 +487,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(CurrentMaintain["OrderID"])
                 {
                     for (int i = 1; i <= 258-tmpCtnQty; i++) //Insert row
                     {
-                        Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[7, Type.Missing];
+                        Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[8, Type.Missing];
                         rng.Select();
                         rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
                     }
