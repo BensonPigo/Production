@@ -43,6 +43,14 @@ namespace Sci.Production.Subcon
         {
             base.OnFormLoaded();
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings pos = new DataGridViewGeneratorNumericColumnSettings();
+            pos.CellValidating += (s, e) =>
+            {
+                DataRow ddr = gridSpecialRecord.GetDataRow<DataRow>(e.RowIndex);
+                ddr["poqty"] = (decimal)e.FormattedValue;
+                ddr["Amount"] = Convert.ToDecimal(ddr["UnitPrice"].ToString()) * (decimal)e.FormattedValue;
+            };
+
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
                 {
@@ -57,7 +65,7 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.gridSpecialRecord)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("orderid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-                .Numeric("poqty", header: "PO QTY", iseditingreadonly: true)
+                .Numeric("poqty", header: "PO QTY", settings: pos)
                 .Numeric("qtygarment", header: "Qty/GMT", iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "UnitPrice", decimal_places: 4, settings: ns, iseditable: flag)
                 .Numeric("Price", header: "Price/GMT", iseditingreadonly: true)
@@ -65,6 +73,7 @@ namespace Sci.Production.Subcon
 
             this.gridSpecialRecord.Columns["UnitPrice"].Visible = flag;
             this.gridSpecialRecord.Columns["UnitPrice"].DefaultCellStyle.BackColor = Color.Pink;  //UnitPrice
+            this.gridSpecialRecord.Columns["poqty"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridSpecialRecord.Columns["Price"].Visible = flag;
             this.gridSpecialRecord.Columns["Amount"].Visible = flag;
 
@@ -86,13 +95,30 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor
 
 
-                string strSQLCmd = string.Format("Select 0 as Selected, '' as id, aaa.id as orderid, sum(bbb.qty) poqty ,0.0000 as unitprice,0.0000 as price,1 as qtygarment,0.0000 as pricegmt," +
-                 " 0.0000 as amount ,ccc.id as artworktypeid, rtrim(ccc.id) as artworkid, ccc.id as  patterncode  ,"+
-                 " ccc.id as  patterndesc "+
-                 " from orders aaa WITH (NOLOCK) , order_qty bbb WITH (NOLOCK) , artworktype  ccc WITH (NOLOCK) " +
-                 " ,(Select a.id orderid,c.id as artworktypeid, rtrim(c.id) as artwork, c.id as  patterncode "+
-                 "     from orders a WITH (NOLOCK) , artworktype  c WITH (NOLOCK) " +
-	             "     where c.id = '{0}'", dr["artworktypeid"]);
+                string strSQLCmd = string.Format(@"
+Select  0 as Selected
+        , '' as id
+        , aaa.id as orderid
+        , sum(bbb.qty) poqty 
+        , 0.0000 as unitprice
+        , 0.0000 as price
+        , 1 as qtygarment
+        , 0.0000 as pricegmt
+        , 0.0000 as amount 
+        , ccc.id as artworktypeid
+        , rtrim(ccc.id) as artworkid
+        , patterncode = (select PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , patterndesc = (select PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+from    orders aaa WITH (NOLOCK) 
+        , order_qty bbb WITH (NOLOCK) 
+        , artworktype  ccc WITH (NOLOCK) 
+        , (Select   a.id orderid
+                    , c.id as artworktypeid
+                    , rtrim(c.id) as artwork
+                    , c.id as  patterncode 
+           from orders a WITH (NOLOCK) 
+                , artworktype  c WITH (NOLOCK) 
+           where c.id = '{0}'", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
                 strSQLCmd +=" EXCEPT"+
@@ -106,11 +132,12 @@ namespace Sci.Production.Subcon
                 if (!(string.IsNullOrWhiteSpace(dr["id"].ToString()))) { strSQLCmd += string.Format("  and a1.id !='{0}'", dr["id"]); }
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and b1.OrderID = '{0}'", poid); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and c1.poid = '{0}'", poid); }
-                 strSQLCmd += "     ) as aa" +
-                 " where aaa.id = bbb.id" +
-                 " and aaa.ID = aa.orderid" +
-                 " and ccc.ID= aa.artworktypeid" +
-                 " group by bbb.id,ccc.id,aaa.id";
+                 strSQLCmd += @"
+           ) as aa
+where   aaa.id = bbb.id
+        and aaa.ID = aa.orderid
+        and ccc.ID = aa.artworktypeid
+group by bbb.id,ccc.id,aaa.id";
 
 
                 Ict.DualResult result;
