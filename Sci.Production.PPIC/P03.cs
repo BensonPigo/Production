@@ -142,7 +142,7 @@ isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where I
 iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-where sp.ReceiveDate is null and sp.SendDate is null "));
+where sp.ReceiveDate is null and sp.SendDate is not null "));
             
             if (!MyUtility.Check.Empty(txtStyleNo.Text))
             {
@@ -256,5 +256,16 @@ where sp.ReceiveDate is null and sp.SendDate is null "));
             Sci.Production.PPIC.P03_Detail DoForm = new Sci.Production.PPIC.P03_Detail();
             DoForm.Set(false, ((DataTable)listControlBindingSource1.DataSource).ToList(), gridProductionKitsConfirm.GetDataRow(gridProductionKitsConfirm.GetSelectedRowIndex())); DoForm.ShowDialog(this);
         }
+
+        //[send Date]改變時，同步更新GRID資料
+        private void dateSendDate_ValueChanged(object sender, EventArgs e)
+        {
+            if(MyUtility.Check.Empty(dateSendDate.Value))
+                listControlBindingSource1.Filter = "";
+            else
+                listControlBindingSource1.Filter = string.Format("SendDate='{0}'", dateSendDate.Text);
+        }
+
+
     }
 }

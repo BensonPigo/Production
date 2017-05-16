@@ -173,6 +173,7 @@
             this.dateSendDate.Location = new System.Drawing.Point(675, 13);
             this.dateSendDate.Name = "dateSendDate";
             this.dateSendDate.Size = new System.Drawing.Size(110, 23);
+            this.dateSendDate.ValueChanged += new System.EventHandler(this.dateSendDate_ValueChanged);
             this.dateSendDate.TabIndex = 4;
             // 
             // labelSenddate
