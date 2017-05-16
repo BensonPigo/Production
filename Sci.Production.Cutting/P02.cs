@@ -1943,8 +1943,8 @@ order by id,article,sizecode"
             foreach (DataRow dr_d in Dg.Rows)
             {
                 int ttlcutqty = 0, ttldisqty = 0;
-                DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["workorderUkey"].ToString()));
-                DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["workorderUkey"].ToString()));
+                DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
+                DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
                 ttlcutqty = sizedr.Sum(x => x.Field<int>("Qty"));
                 ttldisqty = distdr.Sum(x => x.Field<int>("Qty"));
                 if (ttlcutqty<ttldisqty)
