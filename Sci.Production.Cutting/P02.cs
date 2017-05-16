@@ -12,6 +12,7 @@ using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Linq;
 
 namespace Sci.Production.Cutting
 {
@@ -1171,13 +1172,7 @@ order by id,article,sizecode"
             };
             #endregion
         }
-
-        //重算Distribute 改主table的Layer | 改SizeRatio的Qty
-        private void DistributeQty_Recalculate(Ict.Win.UI.DataGridViewCellEditableEventArgs e)
-        { 
-            
-        }
-
+        
         //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
         {
@@ -1869,6 +1864,7 @@ order by id,article,sizecode"
         protected override bool ClickSaveBefore()
         {
             gridValid();
+            
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
             for (int i = Dg.Rows.Count; i > 0; i--)
             {
@@ -1943,6 +1939,21 @@ order by id,article,sizecode"
                 MyUtility.Msg.WarningBox("The Distribute Qty data duplicate ,Please see below <Ukey> \n" + msg2);
                 return false;
             }
+            #region 檢查每一筆 Total distributionQty是否大於TotalCutQty總和
+            foreach (DataRow dr_d in Dg.Rows)
+            {
+                int ttlcutqty = 0, ttldisqty = 0;
+                DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["workorderUkey"].ToString()));
+                DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["workorderUkey"].ToString()));
+                ttlcutqty = sizedr.Sum(x => x.Field<int>("Qty"));
+                ttldisqty = distdr.Sum(x => x.Field<int>("Qty"));
+                if (ttlcutqty<ttldisqty)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("Key:{0} Distribution Qty can not exceed total Cut qty", dr_d["workorderUkey"].ToString()));
+                    return false;
+                }
+            }
+            #endregion
             CurrentMaintain["cutinline"]= ((DataTable)detailgridbs.DataSource).Compute("Min(estcutdate)", null);
             CurrentMaintain["CutOffLine"]= ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
             return base.ClickSaveBefore();
