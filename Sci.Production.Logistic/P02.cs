@@ -53,7 +53,7 @@ namespace Sci.Production.Logistic
         //Find
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
+            if ((MyUtility.Check.Empty(this.txtSPNo.Text)&& MyUtility.Check.Empty(this.txtSPNo2.Text)) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -71,7 +71,11 @@ namespace Sci.Production.Logistic
                                                          and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and b.OrderID >= '{0}'", this.txtSPNo.Text.ToString().Trim()));
+            }
+            if (!MyUtility.Check.Empty(this.txtSPNo2.Text))
+            {
+                sqlCmd.Append(string.Format(" and b.OrderID <= '{0}'", this.txtSPNo2.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {

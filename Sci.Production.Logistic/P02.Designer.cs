@@ -56,6 +56,8 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.txtSPNo2 = new Sci.Win.UI.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -99,14 +101,13 @@
             // 
             this.txtPONo.BackColor = System.Drawing.Color.White;
             this.txtPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPONo.Location = new System.Drawing.Point(240, 15);
+            this.txtPONo.Location = new System.Drawing.Point(330, 15);
             this.txtPONo.Name = "txtPONo";
-            this.txtPONo.Size = new System.Drawing.Size(153, 23);
+            this.txtPONo.Size = new System.Drawing.Size(120, 23);
             this.txtPONo.TabIndex = 3;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(12, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(40, 23);
@@ -124,8 +125,7 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
-            this.labelPONo.Location = new System.Drawing.Point(196, 15);
+            this.labelPONo.Location = new System.Drawing.Point(287, 15);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(40, 23);
             this.labelPONo.TabIndex = 2;
@@ -133,8 +133,7 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Lines = 0;
-            this.labelPackID.Location = new System.Drawing.Point(433, 15);
+            this.labelPackID.Location = new System.Drawing.Point(456, 15);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(52, 23);
             this.labelPackID.TabIndex = 4;
@@ -144,9 +143,9 @@
             // 
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID.Location = new System.Drawing.Point(489, 15);
+            this.txtPackID.Location = new System.Drawing.Point(511, 15);
             this.txtPackID.Name = "txtPackID";
-            this.txtPackID.Size = new System.Drawing.Size(120, 23);
+            this.txtPackID.Size = new System.Drawing.Size(110, 23);
             this.txtPackID.TabIndex = 5;
             // 
             // btnFind
@@ -224,6 +223,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.txtSPNo2);
             this.panel3.Controls.Add(this.txtcloglocationLocationNo);
             this.panel3.Controls.Add(this.btnUpdateAllLocation);
             this.panel3.Controls.Add(this.labelLocationNo);
@@ -269,7 +270,6 @@
             // 
             // labelLocationNo
             // 
-            this.labelLocationNo.Lines = 0;
             this.labelLocationNo.Location = new System.Drawing.Point(12, 92);
             this.labelLocationNo.Name = "labelLocationNo";
             this.labelLocationNo.Size = new System.Drawing.Size(81, 23);
@@ -331,6 +331,24 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // txtSPNo2
+            // 
+            this.txtSPNo2.BackColor = System.Drawing.Color.White;
+            this.txtSPNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo2.Location = new System.Drawing.Point(176, 15);
+            this.txtSPNo2.Name = "txtSPNo2";
+            this.txtSPNo2.Size = new System.Drawing.Size(100, 23);
+            this.txtSPNo2.TabIndex = 17;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(159, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "~";
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(712, 478);
@@ -385,5 +403,7 @@
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.Label labelLocationNo;
         private Class.txtcloglocation txtcloglocationLocationNo;
+        private System.Windows.Forms.Label label1;
+        private Win.UI.TextBox txtSPNo2;
     }
 }
