@@ -106,7 +106,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(12, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(40, 23);
@@ -124,7 +123,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(196, 15);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(40, 23);
@@ -133,7 +131,6 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Lines = 0;
             this.labelPackID.Location = new System.Drawing.Point(433, 15);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(52, 23);
@@ -269,7 +266,6 @@
             // 
             // labelLocationNo
             // 
-            this.labelLocationNo.Lines = 0;
             this.labelLocationNo.Location = new System.Drawing.Point(12, 92);
             this.labelLocationNo.Name = "labelLocationNo";
             this.labelLocationNo.Size = new System.Drawing.Size(81, 23);
