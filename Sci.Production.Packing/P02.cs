@@ -301,26 +301,63 @@ namespace Sci.Production.Packing
             int ttlCTN = 0, ctns = 0;
             double ctn, ttlCBM = 0.0;
             string cbm;
-
-            if (comboPackingMethod.SelectedValue.ToString().EqualString("2"))
+            if (comboPackingMethod.SelectedIndex != -1)
             {
-                DataTable groupData;
-                DualResult result;
-                if (result = DBProxy.Current.Select(null, "select '' as Article, 10 as ctn, 0.0 as CBM, 0 as Remainder where 1=0", out groupData))
+                if (comboPackingMethod.SelectedValue.ToString().EqualString("2"))
                 {
-                    string article = "";
-                    int recordNo = -1;
+                    DataTable groupData;
+                    DualResult result;
+                    if (result = DBProxy.Current.Select(null, "select '' as Article, 10 as ctn, 0.0 as CBM, 0 as Remainder where 1=0", out groupData))
+                    {
+                        string article = "";
+                        int recordNo = -1;
+                        foreach (DataRow dr in detailData)
+                        {
+                            if (article != dr["Article"].ToString())
+                            {
+                                article = dr["Article"].ToString();
+                                DataRow dr1 = groupData.NewRow();
+                                dr1["Article"] = article;
+                                dr1["CBM"] = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo"));
+                                groupData.Rows.Add(dr1);
+                                recordNo += 1;
+                            }
+                            if (MyUtility.Check.Empty(MyUtility.Convert.GetDouble(dr["QtyPerCTN"])))
+                            {
+                                ctn = 0;
+                            }
+                            else
+                            {
+                                ctn = MyUtility.Convert.GetDouble(dr["ShipQty"]) / MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
+                                if ((MyUtility.Convert.GetInt(dr["ShipQty"].ToString()) % MyUtility.Convert.GetInt(dr["QtyPerCTN"].ToString())) != 0)
+                                {
+                                    groupData.Rows[recordNo]["Remainder"] = 1;
+                                }
+                            }
+                            ctns = (int)Math.Floor(ctn);
+                            if (MyUtility.Check.Empty(groupData.Rows[recordNo]["ctn"]) || (MyUtility.Convert.GetInt(groupData.Rows[recordNo]["ctn"]) > ctns))
+                            {
+                                groupData.Rows[recordNo]["ctn"] = ctns;
+                            }
+                        }
+
+                        foreach (DataRow dr in groupData.Rows)
+                        {
+                            int remainder = 0;
+                            if (dr["Remainder"].ToString() == "1")
+                            {
+                                remainder = 1;
+                            }
+                            ttlCTN = ttlCTN + MyUtility.Convert.GetInt(dr["ctn"].ToString()) + remainder;
+                            ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder);
+                        }
+                    }
+                }
+                else
+                {
+                    //Total Cartons: 表身每一列資料的訂單件數/每箱件數無條件進位後加總
                     foreach (DataRow dr in detailData)
                     {
-                        if (article != dr["Article"].ToString())
-                        {
-                            article = dr["Article"].ToString();
-                            DataRow dr1 = groupData.NewRow();
-                            dr1["Article"] = article;
-                            dr1["CBM"] = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo"));
-                            groupData.Rows.Add(dr1);
-                            recordNo += 1;
-                        }
                         if (MyUtility.Check.Empty(MyUtility.Convert.GetDouble(dr["QtyPerCTN"])))
                         {
                             ctn = 0;
@@ -328,47 +365,12 @@ namespace Sci.Production.Packing
                         else
                         {
                             ctn = MyUtility.Convert.GetDouble(dr["ShipQty"]) / MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
-                            if ((MyUtility.Convert.GetInt(dr["ShipQty"].ToString()) % MyUtility.Convert.GetInt(dr["QtyPerCTN"].ToString())) != 0)
-                            {
-                                groupData.Rows[recordNo]["Remainder"] = 1;
-                            }
                         }
-                        ctns = (int)Math.Floor(ctn);
-                        if (MyUtility.Check.Empty(groupData.Rows[recordNo]["ctn"]) || (MyUtility.Convert.GetInt(groupData.Rows[recordNo]["ctn"]) > ctns))
-                        {
-                            groupData.Rows[recordNo]["ctn"] = ctns;
-                        }
+                        ctns = (int)Math.Ceiling(ctn);
+                        ttlCTN = ttlCTN + ctns;
+                        cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
+                        ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(cbm) * ctns;
                     }
-
-                    foreach (DataRow dr in groupData.Rows)
-                    {
-                        int remainder = 0;
-                        if (dr["Remainder"].ToString() == "1")
-                        {
-                            remainder = 1;
-                        }
-                        ttlCTN = ttlCTN + MyUtility.Convert.GetInt(dr["ctn"].ToString()) + remainder;
-                        ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(dr["CBM"]) * (MyUtility.Convert.GetInt(dr["ctn"]) + remainder);
-                    }
-                }
-            }
-            else
-            {
-                //Total Cartons: 表身每一列資料的訂單件數/每箱件數無條件進位後加總
-                foreach (DataRow dr in detailData)
-                {
-                    if (MyUtility.Check.Empty(MyUtility.Convert.GetDouble(dr["QtyPerCTN"])))
-                    {
-                        ctn = 0;
-                    }
-                    else
-                    {
-                        ctn = MyUtility.Convert.GetDouble(dr["ShipQty"]) / MyUtility.Convert.GetDouble(dr["QtyPerCTN"]);
-                    }
-                    ctns = (int)Math.Ceiling(ctn);
-                    ttlCTN = ttlCTN + ctns;
-                    cbm = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
-                    ttlCBM = ttlCBM + MyUtility.Convert.GetDouble(cbm) * ctns;
                 }
             }
             #endregion
