@@ -228,7 +228,7 @@ namespace Sci.Production.Cutting
                             if (fd.Length > fl * i)
                             {
                                 Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
-                                rangeRow13.RowHeight = 16.875 * (i + 1);
+                                rangeRow13.RowHeight = 19.125 * (i + 1);
                             }
                         }
 
@@ -529,7 +529,7 @@ Cutplanid, str_PIVOT);
                         if (fd.Length > fl * i)
                         {
                             Microsoft.Office.Interop.Excel.Range rangeRow13 = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[13, System.Type.Missing];
-                            rangeRow13.RowHeight = 16.875 * (i + 1);
+                            rangeRow13.RowHeight = 19.125 * (i + 1);
                         }
                     }        
                     worksheet.Cells[13, 20] = WorkorderArry[0]["width"].ToString();
