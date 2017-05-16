@@ -555,7 +555,7 @@ order by id,article,sizecode"
                         }
                         else
                         {
-                            drr["Qty"] = MyUtility.Convert.GetInt(sizeR[1]["Qty"]) * MyUtility.Convert.GetInt(newvalue);
+                            drr["Qty"] = MyUtility.Convert.GetInt(sizeR[0]["Qty"]) * MyUtility.Convert.GetInt(newvalue);
                         }
                         sizetmp = drr["SizeCode"].ToString();
                         if (drr["OrderID"].ToString() == "EXCESS")
