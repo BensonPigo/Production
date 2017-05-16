@@ -511,7 +511,7 @@
             this.dateCartonEstBooking.Location = new System.Drawing.Point(650, 110);
             this.dateCartonEstBooking.Name = "dateCartonEstBooking";
             this.dateCartonEstBooking.Size = new System.Drawing.Size(130, 23);
-            this.dateCartonEstBooking.TabIndex = 5;
+            this.dateCartonEstBooking.TabIndex = 6;
             // 
             // dateCartonEstArrived
             // 
@@ -519,7 +519,7 @@
             this.dateCartonEstArrived.Location = new System.Drawing.Point(650, 139);
             this.dateCartonEstArrived.Name = "dateCartonEstArrived";
             this.dateCartonEstArrived.Size = new System.Drawing.Size(130, 23);
-            this.dateCartonEstArrived.TabIndex = 6;
+            this.dateCartonEstArrived.TabIndex = 7;
             // 
             // editRemark
             // 
@@ -756,7 +756,7 @@
             this.txtfactory.Location = new System.Drawing.Point(651, 4);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 64;
+            this.txtfactory.TabIndex = 5;
             // 
             // P03
             // 

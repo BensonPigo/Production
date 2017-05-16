@@ -376,7 +376,7 @@
             0,
             0});
             this.numTtlCBM.Size = new System.Drawing.Size(75, 23);
-            this.numTtlCBM.TabIndex = 2;
+            this.numTtlCBM.TabIndex = 3;
             this.numTtlCBM.Value = new decimal(new int[] {
             0,
             0,
@@ -438,7 +438,7 @@
             this.datePullOutDate.Location = new System.Drawing.Point(602, 31);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
-            this.datePullOutDate.TabIndex = 1;
+            this.datePullOutDate.TabIndex = 2;
             this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePullOutDate_Validating);
             // 
             // displayPullOutNo
@@ -464,7 +464,7 @@
             0,
             0});
             this.numTtlGW.Size = new System.Drawing.Size(75, 23);
-            this.numTtlGW.TabIndex = 3;
+            this.numTtlGW.TabIndex = 4;
             this.numTtlGW.Value = new decimal(new int[] {
             0,
             0,
@@ -527,7 +527,7 @@
             this.txtfactory.Location = new System.Drawing.Point(604, 4);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 68;
+            this.txtfactory.TabIndex = 1;
             // 
             // label1
             // 

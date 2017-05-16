@@ -376,7 +376,7 @@
             this.datePullOutDate.Location = new System.Drawing.Point(570, 32);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
-            this.datePullOutDate.TabIndex = 4;
+            this.datePullOutDate.TabIndex = 5;
             this.datePullOutDate.Validating += new System.ComponentModel.CancelEventHandler(this.datePullOutDate_Validating);
             // 
             // displayPullOutNo
@@ -455,7 +455,7 @@
             this.txtfactory.Location = new System.Drawing.Point(570, 5);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 66;
+            this.txtfactory.TabIndex = 4;
             // 
             // label1
             // 
