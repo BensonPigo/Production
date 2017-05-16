@@ -53,7 +53,7 @@ namespace Sci.Production.Logistic
         //Find
         private void btnFind_Click(object sender, EventArgs e)
         {
-            if ((MyUtility.Check.Empty(this.txtSPNo.Text)&& MyUtility.Check.Empty(this.txtSPNo2.Text)) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && (MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtPackID2.Text)))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -71,19 +71,23 @@ namespace Sci.Production.Logistic
                                                          and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
-                sqlCmd.Append(string.Format(" and b.OrderID >= '{0}'", this.txtSPNo.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
             }
-            if (!MyUtility.Check.Empty(this.txtSPNo2.Text))
-            {
-                sqlCmd.Append(string.Format(" and b.OrderID <= '{0}'", this.txtSPNo2.Text.ToString().Trim()));
-            }
+            //if (!MyUtility.Check.Empty(this.txtSPNo2.Text))
+            //{
+            //    sqlCmd.Append(string.Format(" and b.OrderID <= '{0}'", this.txtSPNo2.Text.ToString().Trim()));
+            //}
             if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
                 sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.txtPackID.Text.ToString().Trim()));
+            }
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
+            {
+                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.txtPackID2.Text.ToString().Trim()));
             }
 
             DataTable selectDataTable;
