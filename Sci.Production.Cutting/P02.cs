@@ -96,7 +96,7 @@ namespace Sci.Production.Cutting
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            #region 主Table
+            #region 主Table 左邊grid
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(@"
 Select
@@ -292,6 +292,7 @@ order by id,article,sizecode"
 
             return base.OnDetailSelectCommandPrepare(e);
         }
+
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -494,7 +495,6 @@ order by id,article,sizecode"
             {
                 if (!this.EditMode || e.RowIndex == -1) return; 
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
@@ -527,6 +527,7 @@ order by id,article,sizecode"
                     if (!Sq.Empty()) newsumQty = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
                 }
 
+                //重算DistributeqQty
                 int oldttlqty = (int)numTotalDistributionQty.Value;
                 int diff = newsumQty - oldttlqty;
                 numTotalDistributionQty.Value = newsumQty;
@@ -541,10 +542,25 @@ order by id,article,sizecode"
                 }
                 if (diff<0)
                 {
+                    string sizetmp = "";
                     DataRow[] dist = distqtyTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = '{1}' ", CurrentDetailData["Ukey"].ToString(), CurrentDetailData["NewKey"].ToString()));
+                    
                     foreach (DataRow drr in dist)
                     {
-                        drr["Qty"] = 0;
+                        DataRow[] sizeR = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = '{1}' and SizeCode = '{2}'", CurrentDetailData["Ukey"].ToString(), CurrentDetailData["NewKey"].ToString(), drr["SizeCode"].ToString()));
+                        if (sizetmp == drr["SizeCode"].ToString())//size是否和前一筆相同，判斷是否有重複的size
+                        {
+                            drr["Qty"] = 0;
+                        }
+                        else
+                        {
+                            drr["Qty"] = MyUtility.Convert.GetInt(sizeR[1]["Qty"]) * MyUtility.Convert.GetInt(newvalue);
+                        }
+                        sizetmp = drr["SizeCode"].ToString();
+                        if (drr["OrderID"].ToString() == "EXCESS")
+                        {
+                              drr["Qty"] = 0;
+                        }
                     }
                 }
             };
@@ -1156,6 +1172,12 @@ order by id,article,sizecode"
             #endregion
         }
 
+        //重算Distribute 改主table的Layer | 改SizeRatio的Qty
+        private void DistributeQty_Recalculate(Ict.Win.UI.DataGridViewCellEditableEventArgs e)
+        { 
+            
+        }
+
         //計算Excess
         private void updateExcess(int workorderukey, int newkey, string sizecode)
         {
@@ -1721,11 +1743,7 @@ order by id,article,sizecode"
             }
             base.OnDetailGridDelete();
         }
-        protected override void ClickUndo()
-        {
-            base.ClickUndo();
-           
-        }
+
         private void insertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DataRow ndr = sizeratioTb.NewRow();
