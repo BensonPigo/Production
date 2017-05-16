@@ -51,9 +51,9 @@ namespace Sci.Production.Logistic
         }
 
         //Find
-        private void btnFind_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && (MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtPackID2.Text)))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
             {
                 MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
                 return;
@@ -73,21 +73,13 @@ namespace Sci.Production.Logistic
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
             }
-            //if (!MyUtility.Check.Empty(this.txtSPNo2.Text))
-            //{
-            //    sqlCmd.Append(string.Format(" and b.OrderID <= '{0}'", this.txtSPNo2.Text.ToString().Trim()));
-            //}
             if (!MyUtility.Check.Empty(this.txtPONo.Text))
             {
                 sqlCmd.Append(string.Format(" and c.CustPONo = '{0}'", this.txtPONo.Text.ToString().Trim()));
             }
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
             {
-                sqlCmd.Append(string.Format(" and a.ID >= '{0}'", this.txtPackID.Text.ToString().Trim()));
-            }
-            if (!MyUtility.Check.Empty(this.txtPackID.Text))
-            {
-                sqlCmd.Append(string.Format(" and a.ID <= '{0}'", this.txtPackID2.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
 
             DataTable selectDataTable;
@@ -108,7 +100,7 @@ namespace Sci.Production.Logistic
         }
 
         //Import From Barcode
-        private void btnImportFromBarcode_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             //設定只能選txt檔
             openFileDialog1.Filter = "txt files (*.txt)|*.txt";
@@ -201,7 +193,7 @@ namespace Sci.Production.Logistic
         }
 
         //Save
-        private void btnSave_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             //檢查是否有勾選資料
             this.gridImport.ValidateControl();
@@ -284,13 +276,13 @@ where a.Selected = 1", out selectData);
         }
 
         //Cancel
-        private void btnClose_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         //Update All Location
-        private void btnUpdateAllLocation_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;     //記錄目前指標位置

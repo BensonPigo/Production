@@ -56,8 +56,6 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtPackID2 = new Sci.Win.UI.TextBox();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -101,13 +99,14 @@
             // 
             this.txtPONo.BackColor = System.Drawing.Color.White;
             this.txtPONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPONo.Location = new System.Drawing.Point(202, 15);
+            this.txtPONo.Location = new System.Drawing.Point(240, 15);
             this.txtPONo.Name = "txtPONo";
-            this.txtPONo.Size = new System.Drawing.Size(120, 23);
+            this.txtPONo.Size = new System.Drawing.Size(153, 23);
             this.txtPONo.TabIndex = 3;
             // 
             // labelSPNo
             // 
+            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(12, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(40, 23);
@@ -125,7 +124,8 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Location = new System.Drawing.Point(159, 15);
+            this.labelPONo.Lines = 0;
+            this.labelPONo.Location = new System.Drawing.Point(196, 15);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(40, 23);
             this.labelPONo.TabIndex = 2;
@@ -133,7 +133,8 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Location = new System.Drawing.Point(328, 15);
+            this.labelPackID.Lines = 0;
+            this.labelPackID.Location = new System.Drawing.Point(433, 15);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(52, 23);
             this.labelPackID.TabIndex = 4;
@@ -143,9 +144,9 @@
             // 
             this.txtPackID.BackColor = System.Drawing.Color.White;
             this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID.Location = new System.Drawing.Point(383, 15);
+            this.txtPackID.Location = new System.Drawing.Point(489, 15);
             this.txtPackID.Name = "txtPackID";
-            this.txtPackID.Size = new System.Drawing.Size(110, 23);
+            this.txtPackID.Size = new System.Drawing.Size(120, 23);
             this.txtPackID.TabIndex = 5;
             // 
             // btnFind
@@ -157,7 +158,7 @@
             this.btnFind.TabIndex = 6;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            this.btnFind.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel2
             // 
@@ -176,7 +177,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.Click += new System.EventHandler(this.button3_Click);
             // 
             // btnClose
             // 
@@ -188,7 +189,7 @@
             this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.button4_Click);
             // 
             // panel1
             // 
@@ -207,7 +208,7 @@
             this.btnImportFromBarcode.TabIndex = 7;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
-            this.btnImportFromBarcode.Click += new System.EventHandler(this.btnImportFromBarcode_Click);
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel4
             // 
@@ -223,7 +224,6 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.txtPackID2);
             this.panel3.Controls.Add(this.txtcloglocationLocationNo);
             this.panel3.Controls.Add(this.btnUpdateAllLocation);
             this.panel3.Controls.Add(this.labelLocationNo);
@@ -238,7 +238,6 @@
             this.panel3.Controls.Add(this.btnFind);
             this.panel3.Controls.Add(this.btnImportFromBarcode);
             this.panel3.Controls.Add(this.shapeContainer2);
-            this.panel3.Controls.Add(this.label1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
@@ -266,10 +265,11 @@
             this.btnUpdateAllLocation.TabIndex = 15;
             this.btnUpdateAllLocation.Text = "Update All Location";
             this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateAllLocation.Click += new System.EventHandler(this.btnUpdateAllLocation_Click);
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.button5_Click);
             // 
             // labelLocationNo
             // 
+            this.labelLocationNo.Lines = 0;
             this.labelLocationNo.Location = new System.Drawing.Point(12, 92);
             this.labelLocationNo.Name = "labelLocationNo";
             this.labelLocationNo.Size = new System.Drawing.Size(81, 23);
@@ -331,24 +331,6 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(491, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(16, 17);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "~";
-            // 
-            // txtPackID2
-            // 
-            this.txtPackID2.BackColor = System.Drawing.Color.White;
-            this.txtPackID2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID2.Location = new System.Drawing.Point(508, 15);
-            this.txtPackID2.Name = "txtPackID2";
-            this.txtPackID2.Size = new System.Drawing.Size(110, 23);
-            this.txtPackID2.TabIndex = 19;
-            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(712, 478);
@@ -403,7 +385,5 @@
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.Label labelLocationNo;
         private Class.txtcloglocation txtcloglocationLocationNo;
-        private System.Windows.Forms.Label label1;
-        private Win.UI.TextBox txtPackID2;
     }
 }
