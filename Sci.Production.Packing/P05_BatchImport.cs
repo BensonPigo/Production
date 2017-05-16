@@ -56,7 +56,7 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with OrderData
 as
-(select o.ID, oq.Seq, o.StyleID, oq.BuyerDelivery, o.CustPONo, oqd.Article, oqd.SizeCode, oqd.Qty, o.POID
+(select o.ID, oq.Seq, o.StyleID, oq.BuyerDelivery, o.CustPONo, oqd.Article, oqd.SizeCode, oqd.Qty, o.POID ,o.SeasonID
  from Orders o WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) , Order_QtyShip_Detail oqd WITH (NOLOCK) 
  where o.BrandID = @brand
  and o.MDivisionID = @mdivisionid
@@ -114,7 +114,7 @@ as
  and pd.UKey = pdd.Pullout_DetailUKey
  group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode
 )
-select 0 as Selected, od.ID as OrderID, od.Seq as OrderShipmodeSeq, od.StyleID, od.BuyerDelivery, od.CustPONo, od.Article, od.SizeCode, (od.Qty-isnull(pd.PulloutQty,0)) as ShipQty, isnull(voc.ColorID,'') as Color, isnull(pd.PulloutQty,0) as PulloutQty, isnull(fd.Price,-1) as Price
+select 0 as Selected, od.ID as OrderID, od.Seq as OrderShipmodeSeq, od.StyleID, od.BuyerDelivery, od.CustPONo, od.Article, od.SizeCode, (od.Qty-isnull(pd.PulloutQty,0)) as ShipQty, isnull(voc.ColorID,'') as Color, isnull(pd.PulloutQty,0) as PulloutQty, isnull(fd.Price,-1) as Price,od.SeasonID
 from OrderData od
 left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCode = fd.SizeCode
 left join PulloutData pd on pd.OrderID = od.ID and pd.OrderShipmodeSeq = od.Seq and pd.Article = od.Article and pd.SizeCode = od.SizeCode
