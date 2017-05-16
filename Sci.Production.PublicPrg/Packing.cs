@@ -1276,6 +1276,7 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
                         ctmpc += 1;
                     }
                 }
+                ctmpc += 1;
             }
 
             for (int i = 1; ; i++)
