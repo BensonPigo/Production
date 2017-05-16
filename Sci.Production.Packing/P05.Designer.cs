@@ -50,6 +50,8 @@
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelConfirmed = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,6 +68,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtfactory);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.displayHCNo);
@@ -113,6 +117,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
             // 
             // detailpanel
             // 
@@ -134,15 +140,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(913, 483);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(907, 437);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(907, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -180,7 +186,6 @@
             // 
             // labelNo
             // 
-            this.labelNo.Lines = 0;
             this.labelNo.Location = new System.Drawing.Point(4, 5);
             this.labelNo.Name = "labelNo";
             this.labelNo.Size = new System.Drawing.Size(60, 23);
@@ -189,7 +194,6 @@
             // 
             // labelShipQty
             // 
-            this.labelShipQty.Lines = 0;
             this.labelShipQty.Location = new System.Drawing.Point(4, 59);
             this.labelShipQty.Name = "labelShipQty";
             this.labelShipQty.Size = new System.Drawing.Size(60, 23);
@@ -198,7 +202,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(4, 86);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(60, 23);
@@ -250,7 +253,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(4, 32);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(60, 23);
@@ -259,7 +261,6 @@
             // 
             // labelTtlCBM
             // 
-            this.labelTtlCBM.Lines = 0;
             this.labelTtlCBM.Location = new System.Drawing.Point(233, 32);
             this.labelTtlCBM.Name = "labelTtlCBM";
             this.labelTtlCBM.Size = new System.Drawing.Size(70, 23);
@@ -268,7 +269,6 @@
             // 
             // labelTtlGW
             // 
-            this.labelTtlGW.Lines = 0;
             this.labelTtlGW.Location = new System.Drawing.Point(233, 59);
             this.labelTtlGW.Name = "labelTtlGW";
             this.labelTtlGW.Size = new System.Drawing.Size(70, 23);
@@ -340,7 +340,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(233, 5);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(70, 23);
@@ -349,8 +348,7 @@
             // 
             // labelPullOutDate
             // 
-            this.labelPullOutDate.Lines = 0;
-            this.labelPullOutDate.Location = new System.Drawing.Point(479, 5);
+            this.labelPullOutDate.Location = new System.Drawing.Point(480, 32);
             this.labelPullOutDate.Name = "labelPullOutDate";
             this.labelPullOutDate.Size = new System.Drawing.Size(87, 23);
             this.labelPullOutDate.TabIndex = 16;
@@ -358,8 +356,7 @@
             // 
             // labelPullOutNo
             // 
-            this.labelPullOutNo.Lines = 0;
-            this.labelPullOutNo.Location = new System.Drawing.Point(479, 32);
+            this.labelPullOutNo.Location = new System.Drawing.Point(480, 59);
             this.labelPullOutNo.Name = "labelPullOutNo";
             this.labelPullOutNo.Size = new System.Drawing.Size(87, 23);
             this.labelPullOutNo.TabIndex = 17;
@@ -367,8 +364,7 @@
             // 
             // labelHCNo
             // 
-            this.labelHCNo.Lines = 0;
-            this.labelHCNo.Location = new System.Drawing.Point(479, 60);
+            this.labelHCNo.Location = new System.Drawing.Point(480, 86);
             this.labelHCNo.Name = "labelHCNo";
             this.labelHCNo.Size = new System.Drawing.Size(87, 23);
             this.labelHCNo.TabIndex = 18;
@@ -377,7 +373,7 @@
             // datePullOutDate
             // 
             this.datePullOutDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
-            this.datePullOutDate.Location = new System.Drawing.Point(570, 5);
+            this.datePullOutDate.Location = new System.Drawing.Point(570, 32);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 4;
@@ -388,7 +384,7 @@
             this.displayPullOutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPullOutNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutID", true));
             this.displayPullOutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPullOutNo.Location = new System.Drawing.Point(570, 32);
+            this.displayPullOutNo.Location = new System.Drawing.Point(570, 59);
             this.displayPullOutNo.Name = "displayPullOutNo";
             this.displayPullOutNo.Size = new System.Drawing.Size(120, 23);
             this.displayPullOutNo.TabIndex = 21;
@@ -398,7 +394,7 @@
             this.displayHCNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayHCNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpressID", true));
             this.displayHCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayHCNo.Location = new System.Drawing.Point(570, 60);
+            this.displayHCNo.Location = new System.Drawing.Point(570, 86);
             this.displayHCNo.Name = "displayHCNo";
             this.displayHCNo.Size = new System.Drawing.Size(120, 23);
             this.displayHCNo.TabIndex = 22;
@@ -441,7 +437,6 @@
             // 
             this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelConfirmed.Lines = 0;
             this.labelConfirmed.Location = new System.Drawing.Point(697, 6);
             this.labelConfirmed.Name = "labelConfirmed";
             this.labelConfirmed.Size = new System.Drawing.Size(148, 25);
@@ -451,6 +446,24 @@
             this.labelConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelConfirmed.Visible = false;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(570, 5);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 66;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(480, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(87, 22);
+            this.label1.TabIndex = 65;
+            this.label1.Text = "Factory";
             // 
             // P05
             // 
@@ -517,5 +530,7 @@
         private Class.txtshipmode txtshipmode;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labelConfirmed;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label label1;
     }
 }

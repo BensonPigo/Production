@@ -71,7 +71,7 @@ namespace Sci.Production.Packing
                         cmds.Add(sp2);
                         cmds.Add(sp3);
 
-                        string sqlCmd = "Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid  and BrandID = @brandid and IsForecast = 0 and LocalOrder = 0 and Junk = 0";
+                        string sqlCmd = "Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid  and BrandID = @brandid and IsForecast = 0 and LocalOrder = 0 and Junk = 0";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
@@ -96,6 +96,7 @@ namespace Sci.Production.Packing
                                 dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
                                 dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
                                 dr["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString();
+                                dr["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString();
                                 dr["Article"] = "";
                                 dr["Color"] = "";
                                 dr["SizeCode"] = "";
@@ -341,6 +342,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -480,6 +482,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Type"] = "F";
             CurrentMaintain["Dest"] = "ZZ";
             CurrentMaintain["Status"] = "New";

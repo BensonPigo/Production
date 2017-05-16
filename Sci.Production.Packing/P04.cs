@@ -98,7 +98,7 @@ namespace Sci.Production.Packing
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
-                        string sqlCmd = "Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and Category = 'S' and BrandID = @brandid";
+                        string sqlCmd = "Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and Category = 'S' and BrandID = @brandid";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
@@ -123,6 +123,7 @@ namespace Sci.Production.Packing
                                 dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
                                 dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
                                 dr["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString();
+                                dr["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString();
                                 dr["Article"] = "";
                                 dr["Color"] = "";
                                 dr["SizeCode"] = "";
@@ -289,6 +290,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_orderid)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq).Get(out col_seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)

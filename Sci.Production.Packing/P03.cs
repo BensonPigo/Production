@@ -157,7 +157,7 @@ namespace Sci.Production.Packing
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
                         DataRow orderData;
-                        if (!MyUtility.Check.Seek(string.Format("Select ID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString()), out orderData))
+                        if (!MyUtility.Check.Seek(string.Format("Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString()), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = "";
@@ -167,6 +167,7 @@ namespace Sci.Production.Packing
                             dr["SizeCode"] = "";
                             dr["StyleID"] = "";
                             dr["CustPONo"] = "";
+                            dr["SeasonID"] = "";                         
                             dr.EndEdit();
                             e.Cancel = true;
                             return;
@@ -176,6 +177,7 @@ namespace Sci.Production.Packing
                             dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
                             dr["StyleID"] = orderData["StyleID"].ToString();
                             dr["CustPONo"] = orderData["CustPONo"].ToString();
+                            dr["SeasonID"] = orderData["SeasonID"].ToString(); 
                             dr["Article"] = "";
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
@@ -364,6 +366,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
 
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_orderid)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq).Get(out col_seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)

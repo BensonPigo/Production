@@ -331,6 +331,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Type"] = "L";
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Dest"] = "ZZ";

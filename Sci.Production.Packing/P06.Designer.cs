@@ -57,6 +57,8 @@
             this.numTtlCtns = new Sci.Win.UI.NumericBox();
             this.txtShipMode = new Sci.Win.UI.TextBox();
             this.labelConfirmed = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,6 +75,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtfactory);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.txtShipMode);
             this.masterpanel.Controls.Add(this.numTtlCtns);
@@ -133,6 +137,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numTtlCtns, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtShipMode, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
             // 
             // detailpanel
             // 
@@ -154,15 +160,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(911, 481);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(905, 435);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(905, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -200,7 +206,6 @@
             // 
             // labelNo
             // 
-            this.labelNo.Lines = 0;
             this.labelNo.Location = new System.Drawing.Point(5, 4);
             this.labelNo.Name = "labelNo";
             this.labelNo.Size = new System.Drawing.Size(53, 23);
@@ -209,7 +214,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(5, 31);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(53, 23);
@@ -218,7 +222,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 58);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(53, 23);
@@ -227,7 +230,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(269, 4);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(70, 23);
@@ -236,7 +238,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(5, 112);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(53, 23);
@@ -301,7 +302,6 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Lines = 0;
             this.labelSeq.Location = new System.Drawing.Point(192, 31);
             this.labelSeq.Name = "labelSeq";
             this.labelSeq.Size = new System.Drawing.Size(31, 23);
@@ -310,7 +310,6 @@
             // 
             // labelShipQty
             // 
-            this.labelShipQty.Lines = 0;
             this.labelShipQty.Location = new System.Drawing.Point(269, 31);
             this.labelShipQty.Name = "labelShipQty";
             this.labelShipQty.Size = new System.Drawing.Size(70, 23);
@@ -319,7 +318,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(5, 85);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(53, 23);
@@ -328,8 +326,7 @@
             // 
             // labelTtlCBM
             // 
-            this.labelTtlCBM.Lines = 0;
-            this.labelTtlCBM.Location = new System.Drawing.Point(514, 58);
+            this.labelTtlCBM.Location = new System.Drawing.Point(514, 85);
             this.labelTtlCBM.Name = "labelTtlCBM";
             this.labelTtlCBM.Size = new System.Drawing.Size(85, 23);
             this.labelTtlCBM.TabIndex = 18;
@@ -371,7 +368,7 @@
             this.numTtlCBM.BackColor = System.Drawing.Color.White;
             this.numTtlCBM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CBM", true));
             this.numTtlCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTtlCBM.Location = new System.Drawing.Point(602, 58);
+            this.numTtlCBM.Location = new System.Drawing.Point(602, 85);
             this.numTtlCBM.Name = "numTtlCBM";
             this.numTtlCBM.NullValue = new decimal(new int[] {
             0,
@@ -388,8 +385,7 @@
             // 
             // labelPullOutDate
             // 
-            this.labelPullOutDate.Lines = 0;
-            this.labelPullOutDate.Location = new System.Drawing.Point(514, 4);
+            this.labelPullOutDate.Location = new System.Drawing.Point(514, 31);
             this.labelPullOutDate.Name = "labelPullOutDate";
             this.labelPullOutDate.Size = new System.Drawing.Size(85, 23);
             this.labelPullOutDate.TabIndex = 23;
@@ -397,8 +393,7 @@
             // 
             // labelPullOutNo
             // 
-            this.labelPullOutNo.Lines = 0;
-            this.labelPullOutNo.Location = new System.Drawing.Point(514, 31);
+            this.labelPullOutNo.Location = new System.Drawing.Point(514, 58);
             this.labelPullOutNo.Name = "labelPullOutNo";
             this.labelPullOutNo.Size = new System.Drawing.Size(85, 23);
             this.labelPullOutNo.TabIndex = 24;
@@ -406,7 +401,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(269, 86);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(70, 23);
@@ -424,8 +418,7 @@
             // 
             // labelTtlGW
             // 
-            this.labelTtlGW.Lines = 0;
-            this.labelTtlGW.Location = new System.Drawing.Point(514, 85);
+            this.labelTtlGW.Location = new System.Drawing.Point(514, 112);
             this.labelTtlGW.Name = "labelTtlGW";
             this.labelTtlGW.Size = new System.Drawing.Size(85, 23);
             this.labelTtlGW.TabIndex = 27;
@@ -433,7 +426,6 @@
             // 
             // labelTtlCtns
             // 
-            this.labelTtlCtns.Lines = 0;
             this.labelTtlCtns.Location = new System.Drawing.Point(269, 58);
             this.labelTtlCtns.Name = "labelTtlCtns";
             this.labelTtlCtns.Size = new System.Drawing.Size(70, 23);
@@ -443,7 +435,7 @@
             // datePullOutDate
             // 
             this.datePullOutDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
-            this.datePullOutDate.Location = new System.Drawing.Point(602, 4);
+            this.datePullOutDate.Location = new System.Drawing.Point(602, 31);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 1;
@@ -454,7 +446,7 @@
             this.displayPullOutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPullOutNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutID", true));
             this.displayPullOutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPullOutNo.Location = new System.Drawing.Point(602, 31);
+            this.displayPullOutNo.Location = new System.Drawing.Point(602, 58);
             this.displayPullOutNo.Name = "displayPullOutNo";
             this.displayPullOutNo.Size = new System.Drawing.Size(130, 23);
             this.displayPullOutNo.TabIndex = 30;
@@ -464,7 +456,7 @@
             this.numTtlGW.BackColor = System.Drawing.Color.White;
             this.numTtlGW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "GW", true));
             this.numTtlGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTtlGW.Location = new System.Drawing.Point(602, 85);
+            this.numTtlGW.Location = new System.Drawing.Point(602, 112);
             this.numTtlGW.Name = "numTtlGW";
             this.numTtlGW.NullValue = new decimal(new int[] {
             0,
@@ -517,7 +509,6 @@
             // 
             this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelConfirmed.Lines = 0;
             this.labelConfirmed.Location = new System.Drawing.Point(735, 17);
             this.labelConfirmed.Name = "labelConfirmed";
             this.labelConfirmed.Size = new System.Drawing.Size(122, 25);
@@ -527,6 +518,24 @@
             this.labelConfirmed.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelConfirmed.Visible = false;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.Location = new System.Drawing.Point(604, 4);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 68;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(514, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(87, 22);
+            this.label1.TabIndex = 67;
+            this.label1.Text = "Factory";
             // 
             // P06
             // 
@@ -599,5 +608,7 @@
         private Win.UI.NumericBox numTtlCBM;
         private Win.UI.TextBox txtShipMode;
         private Win.UI.Label labelConfirmed;
+        private Class.txtfactory txtfactory;
+        private Win.UI.Label label1;
     }
 }
