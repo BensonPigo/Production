@@ -22,7 +22,6 @@ namespace Sci.Production.Cutting
         DataRow maindatarow;
         DataTable allpartTb, patternTb, artTb, detailTb, alltmpTb, bundle_detail_artTb, qtyTb, sizeTb, garmentTb;
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
-        //string f_code;
         DataTable f_codeTb;
         int NoOfBunble,cutrefE;
 
@@ -664,25 +663,16 @@ namespace Sci.Production.Cutting
             DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-            //qtyTb.DefaultView.Sort="SizeCode,No";
-            //int i = 1;
-            //foreach(DataRow dr in sizeTb.Rows)
-            //{
-                
-            //    DataRow[] qtyArr = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), ""); //重新撈取
-            //    foreach (DataRow dr2 in qtyArr)
-            //    {
-            //        dr2["No"] = i;
-            //        i++;
-            //    }
-            //}
             calQty();
+
+            #region 把左上的grid移至下一筆
             int currentRowIndexInt = grid_qty.CurrentRow.Index;
             if (currentRowIndexInt + 1 < grid_qty.RowCount)
             {
                 grid_qty.CurrentCell = grid_qty[0, currentRowIndexInt + 1];
                 grid_qty.FirstDisplayedScrollingRowIndex = currentRowIndexInt + 1;
-            }            
+            }
+            #endregion
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -878,7 +868,6 @@ Where a.PatternUkey = '{0}'"
             }
             #endregion 
 
-            maindatarow["Qty"] = numNoOfBundle.Value;
             DataTable bundle_detail_tmp;
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
             int bundlegroup = Convert.ToInt16(maindatarow["startno"]);
@@ -1037,15 +1026,19 @@ Where a.PatternUkey = '{0}'"
                 }
             }
 
+            #region 把處理好的資料塞回上層Table
             detailTb2.Clear();
             alltmpTb2.Clear();
             bundle_detail_artTb2.Clear();
             qtyTb2.Clear();
 
+            maindatarow["Qty"] = numNoOfBundle.Value;
             detailTb2.Merge(detailTb);
             alltmpTb2.Merge(alltmpTb);
             bundle_detail_artTb2.Merge(bundle_detail_artTb);
             qtyTb2.Merge(qtyTb);
+            #endregion
+
             this.Close();
         }
 
