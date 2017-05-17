@@ -246,7 +246,7 @@ namespace Sci
             return gen.Text(propertyname, header: header, width: width, settings: settings, iseditable: iseditable, iseditingreadonly: iseditingreadonly, alignment: alignment);
         }
         //ThreadLocation
-        public static IDataGridViewGenerator CellThreadLocation(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        public static IDataGridViewGenerator CellThreadLocation(this IDataGridViewGenerator gen, string propertyname, string header, IWidth width = null, DataGridViewGeneratorTextColumnSettings settings = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null, bool? isChangeSelItem = null)
         {
             if (settings == null) settings = new DataGridViewGeneratorTextColumnSettings();
             string keyword = Sci.Env.User.Keyword;
@@ -262,7 +262,26 @@ namespace Sci
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = g.GetDataRow<DataRow>(e.RowIndex);
-                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(string.Format("select ID,Description from ThreadLocation where mDivisionid = '{0}' and junk = 0 order by ID",keyword), "10,40", dr["ThreadLocationid"].ToString().Trim());
+                            string sql = "";
+                            string strwidth = "10,40";
+                            if (isChangeSelItem == true)
+                            {
+                                DataRow dd = g.GetDataRow<DataRow>(e.RowIndex);
+                                string ddsql = string.Format("select 1 from ThreadStock where Refno='{0}' and ThreadColorID='{1}' and MDivisionid='{2}'", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
+                                if (MyUtility.Check.Seek(ddsql))
+                                {
+                                    sql = string.Format("select ID,Description,UsedCone,NewCone from ThreadLocation a left join ThreadStock b on a.id=b.ThreadLocationID  where  junk = 0 and Refno='{0}' and ThreadColorID='{1}' and a.MDivisionid='{2}' order by ID", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
+                                    strwidth = "8,18,10,10";
+                                }
+                                else {
+                                    sql = string.Format("select ID,Description from ThreadLocation where mDivisionid = '{0}' and junk = 0 order by ID", keyword);
+                                }
+                            }
+                            else {
+                                sql = string.Format("select ID,Description from ThreadLocation where mDivisionid = '{0}' and junk = 0 order by ID", keyword);
+                            }
+
+                            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, strwidth, dr["ThreadLocationid"].ToString().Trim());
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
