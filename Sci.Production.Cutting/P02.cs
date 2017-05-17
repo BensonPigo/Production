@@ -1940,7 +1940,7 @@ order by id,article,sizecode"
                 decimal ttlcutqty = 0, ttldisqty = 0;
                 DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
                 DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
-                ttlcutqty = sizedr.Sum(x => x.Field<decimal>("Qty"));
+                ttlcutqty = sizedr.Sum(x => x.Field<decimal>("Qty")) * MyUtility.Convert.GetDecimal(dr_d["Layer"]);
                 ttldisqty = distdr.Sum(x => x.Field<decimal>("Qty"));
                 if (ttlcutqty<ttldisqty)
                 {
