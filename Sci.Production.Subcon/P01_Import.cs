@@ -78,20 +78,33 @@ namespace Sci.Production.Subcon
                 // 建立可以符合回傳的Cursor
 
                 string strSQLCmd = string.Format(@"
-                select 0 as Selected,ot.LocalSuppID
-                ,'' as id, q.id as orderid
-                ,sum(q.qty) OrderQty 
-                ,IssueQty.IssueQty 
-                ,sum(q.qty)-IssueQty.IssueQty poqty 
-                , oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery
-                ,oa.qty as coststitch,oa.qty Stitch,oa.PatternDesc,1 as qtygarment,oa.Cost
-                , oa.Cost unitprice, oa.Cost as  price, (sum(q.qty)-IssueQty.IssueQty)*cost as amount
-                from orders o WITH (NOLOCK) 
-                inner join order_qty q WITH (NOLOCK) on q.id = o.ID
-                inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
-                inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
-                outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID and ad.PatternCode= oa.PatternCode) IssueQty
-                where 1=1 ");
+select  0 as Selected
+        , ot.LocalSuppID
+        , '' as id
+        , q.id as orderid
+        , sum(q.qty) OrderQty 
+        , IssueQty.IssueQty 
+        , sum(q.qty)-IssueQty.IssueQty poqty 
+        , oa.ArtworkTypeID
+        , oa.ArtworkID
+        , oa.PatternCode
+        , o.SewInLIne
+        , o.SciDelivery
+        , oa.qty as coststitch
+        , oa.qty Stitch
+        , oa.PatternDesc
+        , 1 as qtygarment
+        , oa.Cost
+        , oa.Cost unitprice
+        , oa.Cost as  price
+        , (sum(q.qty)-IssueQty.IssueQty)*cost as amount
+        , Style = o.StyleID
+from orders o WITH (NOLOCK) 
+inner join order_qty q WITH (NOLOCK) on q.id = o.ID
+inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
+outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID and ad.PatternCode= oa.PatternCode) IssueQty
+where 1=1 ");
 
                 strSQLCmd += string.Format("     and oa.ArtworkTypeID = '{0}' and o.Junk=0 ", dr_artworkpo["artworktypeid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
@@ -103,7 +116,7 @@ namespace Sci.Production.Subcon
                 if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty";
+                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty, o.StyleID";
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
