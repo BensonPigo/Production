@@ -1786,11 +1786,11 @@ order by id,article,sizecode"
         {
             gridValid();
             if (numMarkerLengthY.Text.Trim() == "") return;
-            string me = txtMarkerLengthE.Text.Trim();
-            string[] me1 = me.Split('-'); if (me1[0].ToString().Trim().Length == 0) return;
-            string[] me2 = me1[1].Split('/'); if (me2[0].ToString().Trim().Length == 0) return;
-            string[] me3 = me2[1].Split('+'); if (me3[0].ToString().Trim().Length == 0) return;
-            if (me3[1].ToString().Trim().Length == 0) return;
+            //string me = txtMarkerLengthE.Text.Trim();
+            //string[] me1 = me.Split('-'); if (me1[0].ToString().Trim().Length == 0) return;
+            //string[] me2 = me1[1].Split('/'); if (me2[0].ToString().Trim().Length == 0) return;
+            //string[] me3 = me2[1].Split('+'); if (me3[0].ToString().Trim().Length == 0) return;
+            //if (me3[1].ToString().Trim().Length == 0) return;
 
             int sizeRatioQty;
             object comput;
