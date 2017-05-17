@@ -677,6 +677,12 @@ namespace Sci.Production.Cutting
             //    }
             //}
             calQty();
+            int currentRowIndexInt = grid_qty.CurrentRow.Index;
+            if (currentRowIndexInt + 1 < grid_qty.RowCount)
+            {
+                grid_qty.CurrentCell = grid_qty[0, currentRowIndexInt + 1];
+                grid_qty.FirstDisplayedScrollingRowIndex = currentRowIndexInt + 1;
+            }            
         }
 
         private void button3_Click(object sender, EventArgs e)
