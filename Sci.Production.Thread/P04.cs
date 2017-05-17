@@ -165,7 +165,7 @@ namespace Sci.Production.Thread
             .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .CellThreadColor("ThreadColorid", header: "Color", width: Widths.AnsiChars(15), settings: thcolor)
             .Text("Colordesc", header: "Color Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), settings: threadlocaion)
+            .CellThreadLocation("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10), settings: threadlocaion, isChangeSelItem:true)
             .Numeric("stocknew", header: "New Cone \nin Stock", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             .Numeric("stockused", header: "Used Cone \nin Stock", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
             .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(6), integer_places: 5)
