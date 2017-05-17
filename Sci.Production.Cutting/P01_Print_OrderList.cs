@@ -343,7 +343,8 @@ namespace Sci.Production.Cutting
                 dt.Borders.AllCellsBorders = true;
 
                 //合併儲存格
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
+                //配合Procedure Total Column 移到最後面
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 8, dt.Columns.Count-1) } });
 
                 //凍結窗格
                 dt.boFreezePanes = true;

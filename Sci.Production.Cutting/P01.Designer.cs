@@ -186,7 +186,6 @@
             // 
             // labelCuttingSPNo
             // 
-            this.labelCuttingSPNo.Lines = 0;
             this.labelCuttingSPNo.Location = new System.Drawing.Point(28, 21);
             this.labelCuttingSPNo.Name = "labelCuttingSPNo";
             this.labelCuttingSPNo.Size = new System.Drawing.Size(75, 23);
@@ -195,7 +194,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(28, 71);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -204,7 +202,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(28, 46);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(75, 23);
@@ -213,7 +210,6 @@
             // 
             // labelProject
             // 
-            this.labelProject.Lines = 0;
             this.labelProject.Location = new System.Drawing.Point(28, 121);
             this.labelProject.Name = "labelProject";
             this.labelProject.Size = new System.Drawing.Size(75, 23);
@@ -222,7 +218,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(28, 146);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -232,7 +227,6 @@
             // labelsewingschedule
             // 
             this.labelsewingschedule.BackColor = System.Drawing.Color.Transparent;
-            this.labelsewingschedule.Lines = 0;
             this.labelsewingschedule.Location = new System.Drawing.Point(28, 171);
             this.labelsewingschedule.Name = "labelsewingschedule";
             this.labelsewingschedule.Size = new System.Drawing.Size(311, 23);
@@ -242,7 +236,6 @@
             // 
             // labelSewingScheduleCuttingInLine
             // 
-            this.labelSewingScheduleCuttingInLine.Lines = 0;
             this.labelSewingScheduleCuttingInLine.Location = new System.Drawing.Point(28, 196);
             this.labelSewingScheduleCuttingInLine.Name = "labelSewingScheduleCuttingInLine";
             this.labelSewingScheduleCuttingInLine.Size = new System.Drawing.Size(109, 23);
@@ -251,7 +244,6 @@
             // 
             // labelSewingScheduleCuttingOffLine
             // 
-            this.labelSewingScheduleCuttingOffLine.Lines = 0;
             this.labelSewingScheduleCuttingOffLine.Location = new System.Drawing.Point(28, 221);
             this.labelSewingScheduleCuttingOffLine.Name = "labelSewingScheduleCuttingOffLine";
             this.labelSewingScheduleCuttingOffLine.Size = new System.Drawing.Size(109, 23);
@@ -260,7 +252,6 @@
             // 
             // labelSewingScheduleLastMtlETA
             // 
-            this.labelSewingScheduleLastMtlETA.Lines = 0;
             this.labelSewingScheduleLastMtlETA.Location = new System.Drawing.Point(28, 246);
             this.labelSewingScheduleLastMtlETA.Name = "labelSewingScheduleLastMtlETA";
             this.labelSewingScheduleLastMtlETA.Size = new System.Drawing.Size(109, 23);
@@ -269,7 +260,6 @@
             // 
             // labelSewingScheduleRMtlETA
             // 
-            this.labelSewingScheduleRMtlETA.Lines = 0;
             this.labelSewingScheduleRMtlETA.Location = new System.Drawing.Point(28, 271);
             this.labelSewingScheduleRMtlETA.Name = "labelSewingScheduleRMtlETA";
             this.labelSewingScheduleRMtlETA.Size = new System.Drawing.Size(109, 23);
@@ -278,7 +268,6 @@
             // 
             // labelPOCombo
             // 
-            this.labelPOCombo.Lines = 0;
             this.labelPOCombo.Location = new System.Drawing.Point(28, 296);
             this.labelPOCombo.Name = "labelPOCombo";
             this.labelPOCombo.Size = new System.Drawing.Size(109, 23);
@@ -287,7 +276,6 @@
             // 
             // labelCuttingCombo
             // 
-            this.labelCuttingCombo.Lines = 0;
             this.labelCuttingCombo.Location = new System.Drawing.Point(28, 349);
             this.labelCuttingCombo.Name = "labelCuttingCombo";
             this.labelCuttingCombo.Size = new System.Drawing.Size(109, 23);
@@ -379,7 +367,6 @@
             // 
             // labelSwitchtoWorkOrder
             // 
-            this.labelSwitchtoWorkOrder.Lines = 0;
             this.labelSwitchtoWorkOrder.Location = new System.Drawing.Point(352, 21);
             this.labelSwitchtoWorkOrder.Name = "labelSwitchtoWorkOrder";
             this.labelSwitchtoWorkOrder.Size = new System.Drawing.Size(144, 23);
@@ -388,7 +375,6 @@
             // 
             // labelEachConsApvDate
             // 
-            this.labelEachConsApvDate.Lines = 0;
             this.labelEachConsApvDate.Location = new System.Drawing.Point(352, 46);
             this.labelEachConsApvDate.Name = "labelEachConsApvDate";
             this.labelEachConsApvDate.Size = new System.Drawing.Size(144, 23);
@@ -397,7 +383,6 @@
             // 
             // labelFOCQty
             // 
-            this.labelFOCQty.Lines = 0;
             this.labelFOCQty.Location = new System.Drawing.Point(352, 71);
             this.labelFOCQty.Name = "labelFOCQty";
             this.labelFOCQty.Size = new System.Drawing.Size(75, 23);
@@ -406,7 +391,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(352, 96);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(75, 23);
@@ -415,7 +399,6 @@
             // 
             // labelEarliestSewingInline
             // 
-            this.labelEarliestSewingInline.Lines = 0;
             this.labelEarliestSewingInline.Location = new System.Drawing.Point(352, 121);
             this.labelEarliestSewingInline.Name = "labelEarliestSewingInline";
             this.labelEarliestSewingInline.Size = new System.Drawing.Size(144, 23);
@@ -424,7 +407,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(28, 96);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(75, 23);
@@ -451,7 +433,6 @@
             // 
             // labelEarliestSewingOffline
             // 
-            this.labelEarliestSewingOffline.Lines = 0;
             this.labelEarliestSewingOffline.Location = new System.Drawing.Point(352, 146);
             this.labelEarliestSewingOffline.Name = "labelEarliestSewingOffline";
             this.labelEarliestSewingOffline.Size = new System.Drawing.Size(144, 23);
@@ -461,7 +442,6 @@
             // labelWorkOrder
             // 
             this.labelWorkOrder.BackColor = System.Drawing.Color.Transparent;
-            this.labelWorkOrder.Lines = 0;
             this.labelWorkOrder.Location = new System.Drawing.Point(352, 171);
             this.labelWorkOrder.Name = "labelWorkOrder";
             this.labelWorkOrder.Size = new System.Drawing.Size(311, 23);
@@ -511,7 +491,6 @@
             // 
             // labelWorkOrderLastCutDate
             // 
-            this.labelWorkOrderLastCutDate.Lines = 0;
             this.labelWorkOrderLastCutDate.Location = new System.Drawing.Point(352, 271);
             this.labelWorkOrderLastCutDate.Name = "labelWorkOrderLastCutDate";
             this.labelWorkOrderLastCutDate.Size = new System.Drawing.Size(109, 23);
@@ -520,7 +499,6 @@
             // 
             // labelWorkOrderFirstCutDate
             // 
-            this.labelWorkOrderFirstCutDate.Lines = 0;
             this.labelWorkOrderFirstCutDate.Location = new System.Drawing.Point(352, 246);
             this.labelWorkOrderFirstCutDate.Name = "labelWorkOrderFirstCutDate";
             this.labelWorkOrderFirstCutDate.Size = new System.Drawing.Size(109, 23);
@@ -529,7 +507,6 @@
             // 
             // labelWorkOrderCuttingOffLine
             // 
-            this.labelWorkOrderCuttingOffLine.Lines = 0;
             this.labelWorkOrderCuttingOffLine.Location = new System.Drawing.Point(352, 221);
             this.labelWorkOrderCuttingOffLine.Name = "labelWorkOrderCuttingOffLine";
             this.labelWorkOrderCuttingOffLine.Size = new System.Drawing.Size(109, 23);
@@ -538,7 +515,6 @@
             // 
             // labelWorkOrderCuttingInLine
             // 
-            this.labelWorkOrderCuttingInLine.Lines = 0;
             this.labelWorkOrderCuttingInLine.Location = new System.Drawing.Point(352, 196);
             this.labelWorkOrderCuttingInLine.Name = "labelWorkOrderCuttingInLine";
             this.labelWorkOrderCuttingInLine.Size = new System.Drawing.Size(109, 23);
