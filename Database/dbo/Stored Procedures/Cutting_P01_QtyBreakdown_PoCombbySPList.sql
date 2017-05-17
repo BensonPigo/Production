@@ -14,54 +14,78 @@ BEGIN
 		RETURN;
 	END
 
-	select distinct sizecode
+	
+	select distinct sizecode,Seq
 	into #tmp
-	from WorkOrder_Distribute
+	from Order_SizeCode 
 	where id = @OrderID
-	order by sizecode
+	order by Seq
 	DECLARE @cols NVARCHAR(MAX)= N''
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
+	order by seq
+
 	DECLARE @cols2 NVARCHAR(MAX)= N''
 	SELECT @cols2 = @cols2 + iif(@cols2 = N'','sum('+QUOTENAME(sizecode)+')',N',sum(' + QUOTENAME(sizecode)+')')
 	from #tmp
-	drop table #tmp
+	order by seq
 
+	drop table #tmp
+		
 	DECLARE @sql NVARCHAR(MAX)
 	SET @sql = N'
-	;with a as(
-		select *
-		from (
-			select OrderID,SizeCode,Qty
-			from WorkOrder_Distribute 
-			where id = '''+@OrderID+N'''
-		) asp
-		pivot(
-			max(Qty) for sizecode in ('+@cols+N')
-		) as pt
-	)
-	SELECT distinct
-		[SP#] = o.ID,
-		[Style] = o.StyleID,
-		oa.Article,
-		oc.ColorID,
-		[OrderNo] = o.Customize1,
-		[PONo] = o.CustPONo,
-		[CustCD] = o.CustCDID,
-		[TTL] = o.Qty,
-		'+@cols+N'
-	into #tmp2
-	FROM orders o
-	inner join Order_Article oa on o.ID = oa.id
-	inner join a on a.OrderID = o.ID
-	left join Order_ColorCombo oc on oa.Article = oc.Article and oc.PatternPanel = ''FA'' and oc.id = o.poid
-	where o.POID = '''+@OrderID+N'''
-	order by o.ID
-	select * from #tmp2
-	union all
-	select ''Total'','''','''','''','''','''','''',sum(TTL),'+@cols2+N'
-	from #tmp2
-	drop table #tmp2
+	WITH tmpdata 
+     AS (SELECT 
+				[SP#]=o.id,
+				[Style]=o.StyleID, 
+                oa.article, 
+				oc.colorid, 
+				oq.sizecode,
+				[OrderNo] = o.customize1, 
+                [PONo] = o.custpono, 
+                [CustCD] = o.custcdid,                 
+                oq.qty 				
+         FROM   orders o WITH (nolock) 
+                INNER JOIN order_qty oq WITH (nolock) 
+                        ON o.id = oq.id 
+                LEFT JOIN order_article oa WITH (nolock) 
+                       ON oa.id = oq.id 
+                          AND oa.article = oq.article 
+				left join order_colorcombo oc
+				 ON oa.article = oc.article 
+                 AND oc.patternpanel = ''FA'' 
+                 AND oc.id = o.poid 
+         WHERE  o.poid = '''+@OrderID+N'''), 
+     subtotal 
+     AS (SELECT ''Total''       AS ID, 
+				''''       as StyleID,
+                ''''    AS Article, 
+				''''       as colorid,
+                sizecode, 
+				''''		 as OrderNo,
+				''''		 as PONo,                
+				''''		 as CustCD,
+				Sum(qty) AS Qty
+         FROM   tmpdata 
+         GROUP  BY sizecode), 
+     uniondata 
+     AS (SELECT * 
+         FROM   tmpdata 
+         UNION ALL 
+         SELECT * 
+         FROM   subtotal), 
+     pivotdata 
+     AS (SELECT * 
+         FROM   uniondata 
+                PIVOT( Sum(qty) 
+                     FOR sizecode IN ('+@cols+N' )) a) 			
+SELECT *, 
+
+       [TTL]=(SELECT Sum(qty) 
+        FROM   uniondata 
+        WHERE  SP# = p.SP#
+               AND article = p.article) 	
+FROM   pivotdata p 
 	'
 	EXEC sp_executesql @sql
 END
