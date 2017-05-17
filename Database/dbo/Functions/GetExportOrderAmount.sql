@@ -11,7 +11,7 @@ BEGIN
 	
 	select @return = round(sum(Amount),2) 
 	from (
-		SELECT Price * Qty * dbo.GetFinanceRate(@RateType,@APDate,(Select CurrencyID from Supp where ID = Export_Detail.SuppID),'USD') / iif(Export_Detail.UnitID = 'P',100,iif(Export_Detail.UnitID = 'PX',1000,1)) as Amount 
+		SELECT Price * (Foc + Qty) * dbo.GetFinanceRate(@RateType,@APDate,(Select CurrencyID from Supp where ID = Export_Detail.SuppID),'USD') / iif(Export_Detail.UnitID = 'P',100,iif(Export_Detail.UnitID = 'PX',1000,1)) as Amount 
 		FROM EXPORT_dETAIL 
 		Where id = @ExportID and POID = @OrderID ) as A
 
