@@ -34,7 +34,15 @@ namespace Sci.Production.Packing
         public Delegate Invoke(String APIName, Type t)
         {
             IntPtr api = GetProcAddress(hLib, APIName);
-            return (Delegate)Marshal.GetDelegateForFunctionPointer(api, t);
+            try
+            {
+                return (Delegate)Marshal.GetDelegateForFunctionPointer(api, t);
+            }
+            catch (Exception e)
+            {
+                MyUtility.Msg.ErrorBox(e.Message);
+                return null;
+            }
         }
     }
 
@@ -51,7 +59,10 @@ namespace Sci.Production.Packing
         }
         public void IdxCall(int command, string Request, int RequestSize)
         {
-            func(command, Request, RequestSize);
+            if (func != null)
+            {
+                func(command, Request, RequestSize);
+            }
         }
     }
 }
