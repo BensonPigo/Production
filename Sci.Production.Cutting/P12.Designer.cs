@@ -96,12 +96,12 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1187, 86);
+            this.panel1.Size = new System.Drawing.Size(1008, 86);
             this.panel1.TabIndex = 0;
             // 
             // dateBox1
             // 
-            this.dateBox1.Location = new System.Drawing.Point(687, 16);
+            this.dateBox1.Location = new System.Drawing.Point(575, 16);
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
             this.dateBox1.TabIndex = 3;
@@ -110,7 +110,7 @@
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
             this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(706, 49);
+            this.txtCell.Location = new System.Drawing.Point(750, 48);
             this.txtCell.Name = "txtCell";
             this.txtCell.Size = new System.Drawing.Size(100, 23);
             this.txtCell.TabIndex = 8;
@@ -119,7 +119,7 @@
             // 
             this.txtSize.BackColor = System.Drawing.Color.White;
             this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSize.Location = new System.Drawing.Point(883, 48);
+            this.txtSize.Location = new System.Drawing.Point(751, 16);
             this.txtSize.Name = "txtSize";
             this.txtSize.Size = new System.Drawing.Size(100, 23);
             this.txtSize.TabIndex = 9;
@@ -128,15 +128,14 @@
             // 
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOID.Location = new System.Drawing.Point(389, 15);
+            this.txtPOID.Location = new System.Drawing.Point(363, 15);
             this.txtPOID.Name = "txtPOID";
             this.txtPOID.Size = new System.Drawing.Size(100, 23);
             this.txtPOID.TabIndex = 2;
             // 
             // label10
             // 
-            this.label10.Lines = 0;
-            this.label10.Location = new System.Drawing.Point(509, 50);
+            this.label10.Location = new System.Drawing.Point(483, 50);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(22, 22);
             this.label10.TabIndex = 18;
@@ -146,7 +145,7 @@
             // 
             this.txtBundleEnd.BackColor = System.Drawing.Color.White;
             this.txtBundleEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleEnd.Location = new System.Drawing.Point(534, 49);
+            this.txtBundleEnd.Location = new System.Drawing.Point(508, 49);
             this.txtBundleEnd.Name = "txtBundleEnd";
             this.txtBundleEnd.Size = new System.Drawing.Size(99, 23);
             this.txtBundleEnd.TabIndex = 7;
@@ -155,15 +154,14 @@
             // 
             this.txtBundleStart.BackColor = System.Drawing.Color.White;
             this.txtBundleStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBundleStart.Location = new System.Drawing.Point(408, 50);
+            this.txtBundleStart.Location = new System.Drawing.Point(382, 50);
             this.txtBundleStart.Name = "txtBundleStart";
             this.txtBundleStart.Size = new System.Drawing.Size(99, 23);
             this.txtBundleStart.TabIndex = 6;
             // 
             // label8
             // 
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(189, 50);
+            this.label8.Location = new System.Drawing.Point(184, 50);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 22);
             this.label8.TabIndex = 15;
@@ -173,7 +171,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(214, 49);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(209, 49);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(99, 23);
             this.txtSPNoEnd.TabIndex = 5;
@@ -182,15 +180,14 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(88, 50);
+            this.txtSPNoStart.Location = new System.Drawing.Point(83, 50);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(99, 23);
             this.txtSPNoStart.TabIndex = 4;
             // 
             // label9
             // 
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(189, 16);
+            this.label9.Location = new System.Drawing.Point(184, 16);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 22);
             this.label9.TabIndex = 12;
@@ -198,7 +195,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(1041, 9);
+            this.btnQuery.Location = new System.Drawing.Point(889, 10);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(94, 35);
             this.btnQuery.TabIndex = 11;
@@ -210,7 +207,7 @@
             // 
             this.checkExtendAllParts.AutoSize = true;
             this.checkExtendAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkExtendAllParts.Location = new System.Drawing.Point(1009, 54);
+            this.checkExtendAllParts.Location = new System.Drawing.Point(859, 49);
             this.checkExtendAllParts.Name = "checkExtendAllParts";
             this.checkExtendAllParts.Size = new System.Drawing.Size(126, 21);
             this.checkExtendAllParts.TabIndex = 10;
@@ -221,7 +218,7 @@
             // 
             this.txtCutRefEnd.BackColor = System.Drawing.Color.White;
             this.txtCutRefEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefEnd.Location = new System.Drawing.Point(214, 15);
+            this.txtCutRefEnd.Location = new System.Drawing.Point(209, 15);
             this.txtCutRefEnd.Name = "txtCutRefEnd";
             this.txtCutRefEnd.Size = new System.Drawing.Size(99, 23);
             this.txtCutRefEnd.TabIndex = 1;
@@ -230,15 +227,14 @@
             // 
             this.txtCutRefStart.BackColor = System.Drawing.Color.White;
             this.txtCutRefStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefStart.Location = new System.Drawing.Point(88, 16);
+            this.txtCutRefStart.Location = new System.Drawing.Point(83, 16);
             this.txtCutRefStart.Name = "txtCutRefStart";
             this.txtCutRefStart.Size = new System.Drawing.Size(99, 23);
             this.txtCutRefStart.TabIndex = 0;
             // 
             // labelSize
             // 
-            this.labelSize.Lines = 0;
-            this.labelSize.Location = new System.Drawing.Point(844, 48);
+            this.labelSize.Location = new System.Drawing.Point(712, 16);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(36, 23);
             this.labelSize.TabIndex = 6;
@@ -246,8 +242,7 @@
             // 
             // labelCell
             // 
-            this.labelCell.Lines = 0;
-            this.labelCell.Location = new System.Drawing.Point(671, 48);
+            this.labelCell.Location = new System.Drawing.Point(716, 47);
             this.labelCell.Name = "labelCell";
             this.labelCell.Size = new System.Drawing.Size(32, 23);
             this.labelCell.TabIndex = 5;
@@ -255,8 +250,7 @@
             // 
             // label5
             // 
-            this.label5.Lines = 0;
-            this.label5.Location = new System.Drawing.Point(592, 15);
+            this.label5.Location = new System.Drawing.Point(480, 15);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(91, 23);
             this.label5.TabIndex = 4;
@@ -264,8 +258,7 @@
             // 
             // labelBundleNo
             // 
-            this.labelBundleNo.Lines = 0;
-            this.labelBundleNo.Location = new System.Drawing.Point(339, 49);
+            this.labelBundleNo.Location = new System.Drawing.Point(313, 49);
             this.labelBundleNo.Name = "labelBundleNo";
             this.labelBundleNo.Size = new System.Drawing.Size(66, 23);
             this.labelBundleNo.TabIndex = 3;
@@ -273,8 +266,7 @@
             // 
             // labelPOID
             // 
-            this.labelPOID.Lines = 0;
-            this.labelPOID.Location = new System.Drawing.Point(339, 15);
+            this.labelPOID.Location = new System.Drawing.Point(313, 15);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(47, 23);
             this.labelPOID.TabIndex = 2;
@@ -282,8 +274,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(10, 51);
+            this.labelSPNo.Location = new System.Drawing.Point(5, 51);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 21);
             this.labelSPNo.TabIndex = 1;
@@ -291,8 +282,7 @@
             // 
             // labelCutRef
             // 
-            this.labelCutRef.Lines = 0;
-            this.labelCutRef.Location = new System.Drawing.Point(10, 16);
+            this.labelCutRef.Location = new System.Drawing.Point(5, 16);
             this.labelCutRef.Name = "labelCutRef";
             this.labelCutRef.Size = new System.Drawing.Size(75, 22);
             this.labelCutRef.TabIndex = 0;
@@ -300,7 +290,6 @@
             // 
             // labelSortBy
             // 
-            this.labelSortBy.Lines = 0;
             this.labelSortBy.Location = new System.Drawing.Point(10, 11);
             this.labelSortBy.Name = "labelSortBy";
             this.labelSortBy.Size = new System.Drawing.Size(50, 22);
@@ -324,7 +313,7 @@
             // btnBundleCard
             // 
             this.btnBundleCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBundleCard.Location = new System.Drawing.Point(742, 11);
+            this.btnBundleCard.Location = new System.Drawing.Point(576, 6);
             this.btnBundleCard.Name = "btnBundleCard";
             this.btnBundleCard.Size = new System.Drawing.Size(123, 33);
             this.btnBundleCard.TabIndex = 1;
@@ -335,7 +324,7 @@
             // btnToExcel
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToExcel.Location = new System.Drawing.Point(881, 11);
+            this.btnToExcel.Location = new System.Drawing.Point(705, 6);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(136, 33);
             this.btnToExcel.TabIndex = 2;
@@ -346,7 +335,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1034, 11);
+            this.btnClose.Location = new System.Drawing.Point(847, 6);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(136, 33);
             this.btnClose.TabIndex = 3;
@@ -364,7 +353,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 368);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1187, 52);
+            this.panel3.Size = new System.Drawing.Size(1008, 52);
             this.panel3.TabIndex = 1;
             // 
             // panel5
@@ -373,7 +362,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(0, 86);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1187, 282);
+            this.panel5.Size = new System.Drawing.Size(1008, 282);
             this.panel5.TabIndex = 10;
             // 
             // grid1
@@ -404,13 +393,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1187, 282);
+            this.grid1.Size = new System.Drawing.Size(1008, 282);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
             // P12
             // 
-            this.ClientSize = new System.Drawing.Size(1187, 420);
+            this.ClientSize = new System.Drawing.Size(1008, 420);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
