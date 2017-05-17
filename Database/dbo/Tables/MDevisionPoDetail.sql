@@ -7,8 +7,8 @@
     [AdjustQty] NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_AdjustQty] DEFAULT ((0)) NULL,
     [LInvQty]   NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LInvQty] DEFAULT ((0)) NULL,
     [LObQty]    NUMERIC (11, 2) CONSTRAINT [DF_MDivisionPoDetail_LObQty] DEFAULT ((0)) NULL,
-    [ALocation] VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
-    [BLocation] VARCHAR (100)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
+    [ALocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_ALocation] DEFAULT ('') NULL,
+    [BLocation] VARCHAR (5000)   CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK__MDivisio__07AF6F03481FB32F] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
