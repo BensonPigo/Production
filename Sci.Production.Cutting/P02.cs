@@ -1239,10 +1239,10 @@ order by id,article,sizecode"
 
         private void totalDisQty()
         {
-            if (sizeratiobs.DataSource != null)
+            if (distributebs.DataSource != null)
             {
-                object Sq = ((DataTable)sizeratiobs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", "");
-                if (!Sq.Empty()) numTotalDistributionQty.Value = MyUtility.Convert.GetInt(CurrentDetailData["layer"]) * Convert.ToInt32(Sq);
+                object Sq = ((DataTable)distributebs.DataSource).DefaultView.ToTable().Compute("SUM(Qty)", "");
+                if (!Sq.Empty()) numTotalDistributionQty.Value = Convert.ToInt32(Sq);
             }
         }
 
