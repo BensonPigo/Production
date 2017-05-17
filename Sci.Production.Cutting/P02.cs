@@ -564,7 +564,7 @@ order by id,article,sizecode"
                         }
                     }
                 }
-                cal_Cons(false, true);
+                cal_Cons(true, true);
             };
             #endregion
             #region SP
