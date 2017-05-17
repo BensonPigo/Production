@@ -1944,7 +1944,7 @@ order by id,article,sizecode"
                 ttldisqty = distdr.Sum(x => x.Field<decimal>("Qty"));
                 if (ttlcutqty<ttldisqty)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Key:{0} Distribution Qty can not exceed total Cut qty", dr_d["Ukey"].ToString()));
+                    ShowErr(string.Format("Key:{0} Distribution Qty can not exceed total Cut qty", dr_d["Ukey"].ToString()));
                     return false;
                 }
             }
