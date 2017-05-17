@@ -2151,9 +2151,9 @@ order by id,article,sizecode"
 
         protected override void ClickUndo()
         {
+            base.ClickUndo();
             RenewData();
             OnDetailEntered();
-            base.ClickUndo();
         }
     }
 }
