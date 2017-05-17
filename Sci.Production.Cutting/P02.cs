@@ -1943,14 +1943,14 @@ order by id,article,sizecode"
             #region 檢查每一筆 Total distributionQty是否大於TotalCutQty總和
             foreach (DataRow dr_d in Dg.Rows)
             {
-                int ttlcutqty = 0, ttldisqty = 0;
+                decimal ttlcutqty = 0, ttldisqty = 0;
                 DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
                 DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
-                ttlcutqty = sizedr.Sum(x => x.Field<int>("Qty"));
-                ttldisqty = distdr.Sum(x => x.Field<int>("Qty"));
+                ttlcutqty = sizedr.Sum(x => x.Field<decimal>("Qty"));
+                ttldisqty = distdr.Sum(x => x.Field<decimal>("Qty"));
                 if (ttlcutqty<ttldisqty)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Key:{0} Distribution Qty can not exceed total Cut qty", dr_d["workorderUkey"].ToString()));
+                    MyUtility.Msg.WarningBox(string.Format("Key:{0} Distribution Qty can not exceed total Cut qty", dr_d["Ukey"].ToString()));
                     return false;
                 }
             }
