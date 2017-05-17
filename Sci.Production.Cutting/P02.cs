@@ -1786,11 +1786,6 @@ order by id,article,sizecode"
         {
             gridValid();
             if (numMarkerLengthY.Text.Trim() == "") return;
-            //string me = txtMarkerLengthE.Text.Trim();
-            //string[] me1 = me.Split('-'); if (me1[0].ToString().Trim().Length == 0) return;
-            //string[] me2 = me1[1].Split('/'); if (me2[0].ToString().Trim().Length == 0) return;
-            //string[] me3 = me2[1].Split('+'); if (me3[0].ToString().Trim().Length == 0) return;
-            //if (me3[1].ToString().Trim().Length == 0) return;
 
             int sizeRatioQty;
             object comput;
@@ -1805,10 +1800,9 @@ order by id,article,sizecode"
             if (MyUtility.Check.Empty(CurrentDetailData["MarkerLengthE"])) lenE = "0-0/0+0\"";
             else lenE = CurrentDetailData["MarkerLengthE"].ToString();
             MarkerLengthstr = lenY + "Y" + lenE;
-            MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));
-            //Conspc = MarkerLength / SizeRatio Qty
+            MarkerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", MarkerLengthstr)));            
             if (sizeRatioQty == 0) Conspc = 0;
-            else Conspc = MarkerLengthNum / sizeRatioQty;
+            else Conspc = MarkerLengthNum / sizeRatioQty;//Conspc = MarkerLength / SizeRatio Qty
             if (updateConsPC == true)
                 CurrentDetailData["Conspc"] = Conspc;
             if (updateCons == true)
