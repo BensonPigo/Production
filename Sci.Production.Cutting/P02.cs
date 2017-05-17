@@ -564,6 +564,7 @@ order by id,article,sizecode"
                         }
                     }
                 }
+                cal_Cons(false, true);
             };
             #endregion
             #region SP
@@ -2146,6 +2147,13 @@ order by id,article,sizecode"
             this.RenewData();
             sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered(); ;
+        }
+
+        protected override void ClickUndo()
+        {
+            RenewData();
+            OnDetailEntered();
+            base.ClickUndo();
         }
     }
 }
