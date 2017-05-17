@@ -291,6 +291,7 @@ select
 from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -333,6 +334,7 @@ select DISTINCT
 from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
