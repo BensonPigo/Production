@@ -109,6 +109,9 @@ Select  0 as Selected
         , rtrim(ccc.id) as artworkid
         , patterncode = (select PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
         , patterndesc = (select PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID)
+        , Style = aaa.StyleID
+        , sewinline = aaa.Sewinline
+        , scidelivery = aaa.Scidelivery
 from    orders aaa WITH (NOLOCK) 
         , order_qty bbb WITH (NOLOCK) 
         , artworktype  ccc WITH (NOLOCK) 
@@ -137,7 +140,7 @@ from    orders aaa WITH (NOLOCK)
 where   aaa.id = bbb.id
         and aaa.ID = aa.orderid
         and ccc.ID = aa.artworktypeid
-group by bbb.id,ccc.id,aaa.id";
+group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
 
 
                 Ict.DualResult result;
@@ -179,6 +182,9 @@ group by bbb.id,ccc.id,aaa.id";
                         findrow[0]["amount"] = tmp["amount"];
                         findrow[0]["poqty"] = tmp["poqty"];
                         findrow[0]["qtygarment"] = 1;
+                        findrow[0]["StyleID"] = tmp["StyleID"];
+                        findrow[0]["Sewinline"] = tmp["Sewinline"];
+                        findrow[0]["SciDelivery"] = tmp["SciDelivery"];
                     }
                     else
                     {

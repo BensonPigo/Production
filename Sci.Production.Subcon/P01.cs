@@ -203,28 +203,21 @@ namespace Sci.Production.Subcon
             return base.ClickSaveBefore();
         }
 
-         //grid 加工填值
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            if (!tabs.TabPages[0].Equals(tabs.SelectedTab))
-            {
-                (e.Details).Columns.Add("Style", typeof(String));
-                (e.Details).Columns.Add("sewinline", typeof(DateTime));
-                (e.Details).Columns.Add("scidelivery", typeof(DateTime));
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
 
-                foreach (DataRow dr in e.Details.Rows)
-                {
-                    dr["Price"] = (Decimal)dr["unitprice"] * (Decimal)dr["qtygarment"];
-                    DataTable order_dt;
-                    DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", dr["orderid"].ToString()), out order_dt);
-                    if (order_dt.Rows.Count == 0)
-                        break;
-                    dr["style"] = order_dt.Rows[0]["styleid"].ToString();
-                    dr["sewinline"] = order_dt.Rows[0]["sewinline"];
-                    dr["scidelivery"] = order_dt.Rows[0]["scidelivery"];
-                }
-            }
-            return base.OnRenewDataDetailPost(e);
+            this.DetailSelectCommand = string.Format(@"
+select  *
+        , Price = unitprice * qtygarment
+        , Style = o.styleid
+        , sewinline = o.sewinline
+        , scidelivery = o.scidelivery
+from dbo.ArtworkPO_Detail a
+left join dbo.Orders o on a.OrderID = o.id
+where a.id = '{0}'", masterID);
+
+            return base.OnDetailSelectCommandPrepare(e);
         }
 
         protected override void OnDetailEntered()
