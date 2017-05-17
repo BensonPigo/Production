@@ -98,6 +98,11 @@ namespace Sci.Production.Cutting
 
             int newvalue = (int)numNoOfBundle.Value;
             distributeQty(newvalue);
+            //因為資料顯示已有排序，所以按Grid Header不可以做排序
+            for (int i = 0; i < grid_qty.ColumnCount; i++)
+            {
+                grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         public void noexist_Table_Query() //第一次產生時需全部重新撈值
@@ -659,18 +664,18 @@ namespace Sci.Production.Cutting
             DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-            qtyTb.DefaultView.Sort="SizeCode,No";
-            int i = 1;
-            foreach(DataRow dr in sizeTb.Rows)
-            {
+            //qtyTb.DefaultView.Sort="SizeCode,No";
+            //int i = 1;
+            //foreach(DataRow dr in sizeTb.Rows)
+            //{
                 
-                DataRow[] qtyArr = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), ""); //重新撈取
-                foreach (DataRow dr2 in qtyArr)
-                {
-                    dr2["No"] = i;
-                    i++;
-                }
-            }
+            //    DataRow[] qtyArr = qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), ""); //重新撈取
+            //    foreach (DataRow dr2 in qtyArr)
+            //    {
+            //        dr2["No"] = i;
+            //        i++;
+            //    }
+            //}
             calQty();
         }
 
