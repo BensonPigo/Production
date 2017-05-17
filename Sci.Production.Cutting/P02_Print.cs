@@ -71,24 +71,24 @@ namespace Sci.Production.Cutting
             workorder_cmd = string.Format("Select {1},a.Cutno,a.Colorid,a.Layer,a.Cons,b.* from Workorder a WITH (NOLOCK) ,Workorder_Distribute b WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderDisTb);
             if (!dResult) return dResult;
-            workorder_cmd = string.Format("Select {1},a.MarkerName,a.MarkerNo,MarkerLength,Cons,a.Layer,a.Cutno,a.colorid,c.seq,FabricCombo,b.* from Workorder a WITH (NOLOCK) ,Workorder_SizeRatio b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq", detDr["ID"], byType);
+            workorder_cmd = string.Format("Select {1},a.MarkerName,a.MarkerNo,MarkerLength,Cons,a.Layer,a.Cutno,a.colorid,c.seq,a.FabricPanelCode,b.* from Workorder a WITH (NOLOCK) ,Workorder_SizeRatio b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderSizeTb);
             if (!dResult) return dResult;
-            workorder_cmd = string.Format("Select {1},b.*,Markername,FabricCombo from Workorder a,Workorder_PatternPanel b Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
+            workorder_cmd = string.Format("Select {1},b.*,Markername,a.FabricPanelCode from Workorder a,Workorder_PatternPanel b Where {1}>=@Cutref1 and {1}<=@Cutref2 and a.id='{0}' and a.ukey = b.workorderukey", detDr["ID"], byType);
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out WorkorderPatternTb);
             if (!dResult) return dResult;
             MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) Where id='{0}'", detDr["ID"]), out OrderDr);
             MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},estCutDate",byType), string.Format("Select distinct {0},estCutDate From #tmp ",byType), out CutrefTb);
             MyUtility.Tool.ProcessWithDatatable(WorkorderDisTb, string.Format("{0},OrderID",byType), string.Format("Select distinct {0},OrderID From #tmp",byType), out CutDisOrderIDTb); //整理sp
-            MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricCombo", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricCombo,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricCombo,MarkerName,seq", byType), out CutSizeTb); //整理SizeGroup,Qty
+            MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", byType), string.Format("Select distinct {0},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", byType), out CutSizeTb); //整理SizeGroup,Qty
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},SizeCode,seq", byType), string.Format("Select distinct {0},SizeCode,seq From #tmp order by seq ", byType), out SizeTb); //整理Size
             MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, string.Format("{0},MarkerName", byType), string.Format("Select distinct {0},MarkerName From #tmp ", byType), out MarkerTB); //整理MarkerName
-            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},FabricCombo,SCIRefno", byType), string.Format("Select distinct {0},a.FabricCombo,a.SCIRefno,b.Description,b.width  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", byType), out FabricComboTb); //整理FabricCombo     
+            MyUtility.Tool.ProcessWithDatatable(WorkorderTb, string.Format("{0},FabricPanelCode,SCIRefno", byType), string.Format("Select distinct {0},a.FabricPanelCode,a.SCIRefno,b.Description,b.width  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", byType), out FabricComboTb); //整理FabricPanelCode     
 
             if (radioByCutplanId.Checked)
             {
                 string Issue_cmd = string.Format("Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a WITH (NOLOCK) ,Issue_Detail b WITH (NOLOCK) , #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll", detDr["ID"], byType);
-                MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricCombo     
+                MyUtility.Tool.ProcessWithDatatable(WorkorderTb, "Cutplanid,SEQ1,SEQ2,yds,Colorid", Issue_cmd, out IssueTb); //整理FabricPanelCode     
             }
             return Result.True; 
         }
@@ -203,7 +203,7 @@ namespace Sci.Production.Cutting
                             r.Copy();
                             r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
                         }
-                        WorkorderPatternArry = WorkorderPatternTb.Select(string.Format("Cutplanid='{0}' and FabricCombo = '{1}'", Cutplanid, FabricComboDr["FabricCombo"]), "PatternPanel");
+                        WorkorderPatternArry = WorkorderPatternTb.Select(string.Format("Cutplanid='{0}' and FabricPanelCode = '{1}'", Cutplanid, FabricComboDr["FabricPanelCode"]), "PatternPanel");
                         pattern = "";
                         if (WorkorderPatternArry.Length > 0)
                         {
@@ -216,7 +216,7 @@ namespace Sci.Production.Cutting
                             }
                         }
                         int FabricRow = (12 + RowRange * copyRow);
-                        worksheet.Cells[FabricRow, 2] = FabricComboDr["FabricCombo"].ToString();
+                        worksheet.Cells[FabricRow, 2] = FabricComboDr["FabricPanelCode"].ToString();
                         worksheet.Cells[FabricRow, 5] = pattern;
 
                         string fd = FabricComboDr["Description"].ToString();
@@ -339,26 +339,26 @@ namespace Sci.Production.Cutting
                 string Pivot_cmd = string.Format(
                 @"Select * From
                 (
-                    Select FabricCombo,MarkerName,Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
+                    Select FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
                     #tmp
                     Where Cutplanid = '{0} '
                 ) as mTb
                 Pivot(Sum(TotalQty)
                 for SizeCode in ({1})) as pIvT 
-                order by FabricCombo,Cutno,Colorid",
+                order by FabricPanelCode,Cutno,Colorid",
 Cutplanid, str_PIVOT); 
                 if (CutQtyTb != null)
                 {
                     CutQtyTb.Clear();
                 }
-                MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "FabricCombo,MarkerName,Cutno,Colorid,SizeCode,Qty,Layer,Cutplanid,Cons", Pivot_cmd, out CutQtyTb);
+                MyUtility.Tool.ProcessWithDatatable(WorkorderSizeTb, "FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Qty,Layer,Cutplanid,Cons", Pivot_cmd, out CutQtyTb);
                 nRow = nRow + 1;
                 bool lfirstComb = true;
                 string fabColor = "";
                 DataRow[] FabricComboTbsi = FabricComboTb.Select(string.Format("Cutplanid = '{0}'", Cutplanid));
                 foreach (DataRow FabricComboDr in FabricComboTbsi)
                 {
-                    DataRow[] CutQtyArray = CutQtyTb.Select(string.Format("FabricCombo = '{0}'", FabricComboDr["FabricCombo"]));
+                    DataRow[] CutQtyArray = CutQtyTb.Select(string.Format("FabricPanelCode = '{0}'", FabricComboDr["FabricPanelCode"]));
                     if (CutQtyArray.Length > 0)
                     {
                         int copyrow = 0;
@@ -506,7 +506,7 @@ Cutplanid, str_PIVOT);
                 {
                     pattern = "";
                     worksheet.Cells[8, 13] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
-                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricCombo"].ToString();
+                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
                     if (WorkorderPatternArry.Length > 0)
                     {
                         foreach (DataRow patDr in WorkorderPatternArry)
@@ -518,7 +518,7 @@ Cutplanid, str_PIVOT);
                         }
                     }
 
-                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricCombo"].ToString();
+                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
                     worksheet.Cells[13, 5] = pattern;
                     string fd = "#" + WorkorderArry[0]["SCIRefno"].ToString().Trim() + " " + WorkorderArry[0]["Description"].ToString();
                     worksheet.Cells[13, 9] = fd;
