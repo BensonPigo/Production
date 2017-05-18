@@ -74,8 +74,6 @@
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
             this.numTtlGW = new Sci.Win.UI.NumericBox();
             this.labelTtlGW = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,8 +90,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtfactory);
-            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
@@ -187,9 +183,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
             // 
             // detailpanel
             // 
@@ -344,7 +338,7 @@
             // 
             // labelPurchaseCtn
             // 
-            this.labelPurchaseCtn.Location = new System.Drawing.Point(520, 167);
+            this.labelPurchaseCtn.Location = new System.Drawing.Point(520, 142);
             this.labelPurchaseCtn.Name = "labelPurchaseCtn";
             this.labelPurchaseCtn.Size = new System.Drawing.Size(126, 22);
             this.labelPurchaseCtn.TabIndex = 24;
@@ -430,14 +424,14 @@
             // 
             this.displayPurchaseCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPurchaseCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPurchaseCtn.Location = new System.Drawing.Point(651, 168);
+            this.displayPurchaseCtn.Location = new System.Drawing.Point(651, 143);
             this.displayPurchaseCtn.Name = "displayPurchaseCtn";
             this.displayPurchaseCtn.Size = new System.Drawing.Size(27, 23);
             this.displayPurchaseCtn.TabIndex = 30;
             // 
             // labelPullOutDate
             // 
-            this.labelPullOutDate.Location = new System.Drawing.Point(519, 31);
+            this.labelPullOutDate.Location = new System.Drawing.Point(519, 6);
             this.labelPullOutDate.Name = "labelPullOutDate";
             this.labelPullOutDate.Size = new System.Drawing.Size(127, 22);
             this.labelPullOutDate.TabIndex = 32;
@@ -445,7 +439,7 @@
             // 
             // labelInvoiceNo
             // 
-            this.labelInvoiceNo.Location = new System.Drawing.Point(519, 58);
+            this.labelInvoiceNo.Location = new System.Drawing.Point(519, 33);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(127, 22);
             this.labelInvoiceNo.TabIndex = 33;
@@ -453,7 +447,7 @@
             // 
             // labelShipPlanNo
             // 
-            this.labelShipPlanNo.Location = new System.Drawing.Point(520, 84);
+            this.labelShipPlanNo.Location = new System.Drawing.Point(520, 59);
             this.labelShipPlanNo.Name = "labelShipPlanNo";
             this.labelShipPlanNo.Size = new System.Drawing.Size(127, 22);
             this.labelShipPlanNo.TabIndex = 34;
@@ -461,7 +455,7 @@
             // 
             // labelCartonEstBooking
             // 
-            this.labelCartonEstBooking.Location = new System.Drawing.Point(519, 110);
+            this.labelCartonEstBooking.Location = new System.Drawing.Point(519, 85);
             this.labelCartonEstBooking.Name = "labelCartonEstBooking";
             this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstBooking.TabIndex = 35;
@@ -469,7 +463,7 @@
             // 
             // labelCartonEstArrived
             // 
-            this.labelCartonEstArrived.Location = new System.Drawing.Point(519, 139);
+            this.labelCartonEstArrived.Location = new System.Drawing.Point(519, 114);
             this.labelCartonEstArrived.Name = "labelCartonEstArrived";
             this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstArrived.TabIndex = 36;
@@ -479,7 +473,7 @@
             // 
             this.datePullOutDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
             this.datePullOutDate.IsSupportEditMode = false;
-            this.datePullOutDate.Location = new System.Drawing.Point(650, 31);
+            this.datePullOutDate.Location = new System.Drawing.Point(650, 6);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.ReadOnly = true;
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
@@ -490,7 +484,7 @@
             this.displayInvoiceNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayInvoiceNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "INVNo", true));
             this.displayInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayInvoiceNo.Location = new System.Drawing.Point(650, 58);
+            this.displayInvoiceNo.Location = new System.Drawing.Point(650, 33);
             this.displayInvoiceNo.Name = "displayInvoiceNo";
             this.displayInvoiceNo.Size = new System.Drawing.Size(160, 23);
             this.displayInvoiceNo.TabIndex = 39;
@@ -500,7 +494,7 @@
             this.displayShipPlanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayShipPlanNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipPlanID", true));
             this.displayShipPlanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayShipPlanNo.Location = new System.Drawing.Point(651, 84);
+            this.displayShipPlanNo.Location = new System.Drawing.Point(651, 59);
             this.displayShipPlanNo.Name = "displayShipPlanNo";
             this.displayShipPlanNo.Size = new System.Drawing.Size(120, 23);
             this.displayShipPlanNo.TabIndex = 40;
@@ -508,7 +502,7 @@
             // dateCartonEstBooking
             // 
             this.dateCartonEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNBooking", true));
-            this.dateCartonEstBooking.Location = new System.Drawing.Point(650, 110);
+            this.dateCartonEstBooking.Location = new System.Drawing.Point(650, 85);
             this.dateCartonEstBooking.Name = "dateCartonEstBooking";
             this.dateCartonEstBooking.Size = new System.Drawing.Size(130, 23);
             this.dateCartonEstBooking.TabIndex = 6;
@@ -516,7 +510,7 @@
             // dateCartonEstArrived
             // 
             this.dateCartonEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNArrive", true));
-            this.dateCartonEstArrived.Location = new System.Drawing.Point(650, 139);
+            this.dateCartonEstArrived.Location = new System.Drawing.Point(650, 114);
             this.dateCartonEstArrived.Name = "dateCartonEstArrived";
             this.dateCartonEstArrived.Size = new System.Drawing.Size(130, 23);
             this.dateCartonEstArrived.TabIndex = 7;
@@ -740,24 +734,6 @@
             this.labelTtlGW.TabIndex = 61;
             this.labelTtlGW.Text = "Ttl GW";
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(519, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 22);
-            this.label1.TabIndex = 63;
-            this.label1.Text = "Factory";
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.Location = new System.Drawing.Point(651, 4);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 5;
-            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -766,6 +742,7 @@
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "ID,CTNStartNo,Article,SizeCode";
@@ -846,7 +823,5 @@
         private Win.UI.Button btnDownloadSampleFile;
         private Win.UI.NumericBox numTtlGW;
         private Win.UI.Label labelTtlGW;
-        private Win.UI.Label label1;
-        private Class.txtfactory txtfactory;
     }
 }

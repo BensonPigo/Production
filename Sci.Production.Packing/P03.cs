@@ -397,7 +397,7 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Factory", header: "Factroy", width: Widths.AnsiChars(6))
+                .Text("Factory", header: "Factroy", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid).Get(out col_orderid)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq).Get(out col_seq)
