@@ -88,17 +88,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
-            this.DetailSelectCommand = string.Format(
-            @"SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone
-            FROM ThreadRequisition_Detail a WITH (NOLOCK) 
-            Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
-            Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
-            OUTER APPLY
-			(
-				select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
-				where d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'		
-			) X
-            WHERE a.OrderID = '{0}'", masterID,keyWord);
+            this.DetailSelectCommand = string.Format(@"
+SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone
+FROM ThreadRequisition_Detail a WITH (NOLOCK) 
+Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
+Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
+OUTER APPLY
+(
+	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
+	where d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'		
+) X
+WHERE a.OrderID = '{0}'"
+                , masterID,keyWord);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -456,6 +457,14 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 txtSP.Text = "";                
                 return;
             }
+            //確認orders.id + 工廠有沒有這筆,沒有則return
+            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FactoryID = '{1}'", id, factory)))
+            {
+                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not fund!!!!", id));
+                e.Cancel = true;
+                txtSP.Text = "";
+                return;
+            }
             //確認ThreadRequisition有沒有這筆,有則return
             if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition WITH (NOLOCK) where OrderID='{0}'", id)))
             {
@@ -464,6 +473,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 txtSP.Text = "";
                 return;
             }
+
             //輸入的POno帶出其他6個表頭
             if (!MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where poid='{0}'", id), out drOrder)) return;
             dateSCIDelivery.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);

@@ -119,18 +119,6 @@
             // 
             this.detailgridcont.Size = new System.Drawing.Size(912, 192);
             // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(912, 387);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(906, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(906, 40);
-            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(912, 387);
@@ -167,7 +155,7 @@
             // displayM
             // 
             this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mDivisionid", true));
+            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FactoryID", true));
             this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayM.Location = new System.Drawing.Point(616, 18);
             this.displayM.Name = "displayM";
@@ -230,7 +218,6 @@
             // 
             // labelEstArrived
             // 
-            this.labelEstArrived.Lines = 0;
             this.labelEstArrived.Location = new System.Drawing.Point(528, 101);
             this.labelEstArrived.Name = "labelEstArrived";
             this.labelEstArrived.Size = new System.Drawing.Size(85, 23);
@@ -239,7 +226,6 @@
             // 
             // labelEstBooking
             // 
-            this.labelEstBooking.Lines = 0;
             this.labelEstBooking.Location = new System.Drawing.Point(528, 59);
             this.labelEstBooking.Name = "labelEstBooking";
             this.labelEstBooking.Size = new System.Drawing.Size(85, 23);
@@ -248,16 +234,14 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(528, 18);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(85, 23);
             this.labelM.TabIndex = 25;
-            this.labelM.Text = "M";
+            this.labelM.Text = "Factory";
             // 
             // labelSewingInLine
             // 
-            this.labelSewingInLine.Lines = 0;
             this.labelSewingInLine.Location = new System.Drawing.Point(268, 100);
             this.labelSewingInLine.Name = "labelSewingInLine";
             this.labelSewingInLine.Size = new System.Drawing.Size(103, 23);
@@ -266,7 +250,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(268, 58);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(103, 23);
@@ -275,7 +258,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(268, 17);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(103, 23);
@@ -284,7 +266,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(40, 100);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -293,7 +274,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(40, 58);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -323,7 +303,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(40, 17);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(75, 23);
