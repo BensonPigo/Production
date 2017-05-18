@@ -84,7 +84,7 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            gridDetail.ValidateControl();
+            if (detailTb != null) detailTb.Clear();
             string cutsp = txtCuttingSPNo.Text;
             string sp = txtSPNo.Text;
             string seq = txtSEQ.Text;
@@ -138,7 +138,7 @@ From
             if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
             if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
             if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
-            if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM);
+            if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM.Text);
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate =''";
