@@ -78,7 +78,7 @@
             this.masterpanel.Controls.Add(this.labelCuttingDate);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.labelCutplanID);
-            this.masterpanel.Size = new System.Drawing.Size(1078, 111);
+            this.masterpanel.Size = new System.Drawing.Size(892, 111);
             this.masterpanel.Controls.SetChildIndex(this.labelCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
@@ -101,7 +101,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(1078, 307);
+            this.detailpanel.Size = new System.Drawing.Size(892, 238);
             // 
             // gridicon
             // 
@@ -113,7 +113,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1078, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 238);
             // 
             // detail2
             // 
@@ -129,16 +129,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1078, 456);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1078, 418);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 418);
-            this.detailbtm.Size = new System.Drawing.Size(1078, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -163,7 +163,6 @@
             // 
             // labelCutplanID
             // 
-            this.labelCutplanID.Lines = 0;
             this.labelCutplanID.Location = new System.Drawing.Point(18, 15);
             this.labelCutplanID.Name = "labelCutplanID";
             this.labelCutplanID.Size = new System.Drawing.Size(82, 23);
@@ -172,7 +171,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(18, 45);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(82, 23);
@@ -181,7 +179,6 @@
             // 
             // labelCuttingDate
             // 
-            this.labelCuttingDate.Lines = 0;
             this.labelCuttingDate.Location = new System.Drawing.Point(18, 75);
             this.labelCuttingDate.Name = "labelCuttingDate";
             this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
@@ -190,7 +187,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(247, 75);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(87, 23);
@@ -199,7 +195,6 @@
             // 
             // labelBulkMarkerReqNo
             // 
-            this.labelBulkMarkerReqNo.Lines = 0;
             this.labelBulkMarkerReqNo.Location = new System.Drawing.Point(461, 13);
             this.labelBulkMarkerReqNo.Name = "labelBulkMarkerReqNo";
             this.labelBulkMarkerReqNo.Size = new System.Drawing.Size(148, 23);
@@ -208,7 +203,6 @@
             // 
             // labelCuttingSPNo
             // 
-            this.labelCuttingSPNo.Lines = 0;
             this.labelCuttingSPNo.Location = new System.Drawing.Point(247, 15);
             this.labelCuttingSPNo.Name = "labelCuttingSPNo";
             this.labelCuttingSPNo.Size = new System.Drawing.Size(87, 23);
@@ -217,7 +211,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(247, 45);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(87, 23);
@@ -332,6 +325,7 @@
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1086, 518);
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.GridAlias = "Cutplan_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "id,workorderukey";
