@@ -471,38 +471,62 @@ order by poid.OrderID,oq.Article,oq.SizeCode", packingListID);
         /// <returns>string</returns>
         public static string QueryPackingListSQLCmd(string packingListID)
         {
-            return string.Format(@"with AllOrderID
-as
-(select Distinct OrderID,OrderShipmodeSeq
- from PackingList_Detail WITH (NOLOCK) 
- where ID = '{0}'
+            return string.Format(@"
+with AllOrderID as (
+    select  Distinct OrderID
+            , OrderShipmodeSeq
+    from PackingList_Detail WITH (NOLOCK) 
+    where ID = '{0}'
+), 
+AccuPKQty as (
+    select  pd.OrderID
+            , pd.OrderShipmodeSeq
+            , pd.Article
+            , pd.SizeCode
+            , sum(pd.ShipQty) as TtlShipQty
+    from     PackingList_Detail pd WITH (NOLOCK) 
+            , AllOrderID a
+    where   ID != '{0}'
+            and a.OrderID = pd.OrderID
+            and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
+    group by pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
 ),
-AccuPKQty
-as
-(select pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode,sum(pd.ShipQty) as TtlShipQty
- from PackingList_Detail pd WITH (NOLOCK) , AllOrderID a
- where ID != '{0}'
- and a.OrderID = pd.OrderID
- and a.OrderShipmodeSeq = pd.OrderShipmodeSeq
- group by pd.OrderID,pd.OrderShipmodeSeq,pd.Article,pd.SizeCode
+PulloutAdjQty as (
+    select  ia.OrderID
+            , ia.OrderShipmodeSeq
+            , iaq.Article
+            , iaq.SizeCode
+            , sum(iaq.DiffQty) as TtlDiffQty
+    from    InvAdjust ia WITH (NOLOCK) 
+            , InvAdjust_Qty iaq WITH (NOLOCK) 
+            , AllOrderID a
+    where   ia.OrderID = a.OrderID
+            and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
+            and ia.ID = iaq.ID
+    group by ia.OrderID, ia.OrderShipmodeSeq, iaq.Article, iaq.SizeCode
 ),
-PulloutAdjQty
-as
-(select ia.OrderID,ia.OrderShipmodeSeq,iaq.Article,iaq.SizeCode,sum(iaq.DiffQty) as TtlDiffQty
- from InvAdjust ia WITH (NOLOCK) , InvAdjust_Qty iaq WITH (NOLOCK) , AllOrderID a
- where ia.OrderID = a.OrderID
- and ia.OrderShipmodeSeq = a.OrderShipmodeSeq
- and ia.ID = iaq.ID
- group by ia.OrderID,ia.OrderShipmodeSeq,iaq.Article,iaq.SizeCode
-),
-PackQty
-as
-(select OrderID,OrderShipmodeSeq,Article,SizeCode,sum(ShipQty) as ShipQty
- from PackingList_Detail WITH (NOLOCK) 
- where ID = '{0}'
- group by OrderID,OrderShipmodeSeq,Article,SizeCode
+PackQty as (
+    select  OrderID
+            , OrderShipmodeSeq
+            , Article
+            , SizeCode
+            , sum(ShipQty) as ShipQty
+    from    PackingList_Detail WITH (NOLOCK) 
+    where   ID = '{0}'
+    group by OrderID, OrderShipmodeSeq, Article, SizeCode
 )
-select a.*, b.Description, oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty,o.StyleID,o.CustPONo,o.SeasonID
+select  a.*
+        , b.Description
+        , oqd.Qty-isnull(pd.TtlShipQty,0)+isnull(paq.TtlDiffQty,0)-pk.ShipQty as BalanceQty
+        , o.StyleID
+        , o.CustPONo
+        , o.SeasonID
+        , Factory = STUFF(( select CONCAT(',', FtyGroup) 
+                            from ( select distinct FtyGroup 
+                                   from orders o 
+                                   where o.id in (a.OrderID)) s 
+                            for xml path('')
+                          ),1,1,'')
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID and a.OrderShipmodeSeq = pd.OrderShipmodeSeq and pd.Article = a.Article and pd.SizeCode = a.SizeCode
