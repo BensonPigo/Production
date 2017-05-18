@@ -124,9 +124,6 @@ group by sizeCode"
             caltotalpart();
 
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
-
-            int newvalue = (int)numNoOfBundle.Value;
-            distributeQty(newvalue);
         }
 
         public void noexist_Table_Query() //第一次產生時需全部重新撈值
