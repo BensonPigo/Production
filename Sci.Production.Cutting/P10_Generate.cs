@@ -588,7 +588,6 @@ group by sizeCode"
             }
             //重新排序,避免qtyTD排序被SizeTB給打亂
             qtyTb.DefaultView.Sort = "No";
-            calQty();
         }
 
         private void numNoOfBundle_Validated(object sender, EventArgs e)
