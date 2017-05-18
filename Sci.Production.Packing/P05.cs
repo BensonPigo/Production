@@ -377,7 +377,7 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Factory", header: "Factory", width: Widths.AnsiChars(6))
+                .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: orderid)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: true, settings: seq)

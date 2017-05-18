@@ -50,8 +50,6 @@
             this.txtshipmode = new Sci.Production.Class.txtshipmode();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelConfirmed = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -68,8 +66,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtfactory);
-            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.displayHCNo);
@@ -117,8 +113,6 @@
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
             // 
             // detailpanel
             // 
@@ -348,7 +342,7 @@
             // 
             // labelPullOutDate
             // 
-            this.labelPullOutDate.Location = new System.Drawing.Point(480, 32);
+            this.labelPullOutDate.Location = new System.Drawing.Point(474, 4);
             this.labelPullOutDate.Name = "labelPullOutDate";
             this.labelPullOutDate.Size = new System.Drawing.Size(87, 23);
             this.labelPullOutDate.TabIndex = 16;
@@ -356,7 +350,7 @@
             // 
             // labelPullOutNo
             // 
-            this.labelPullOutNo.Location = new System.Drawing.Point(480, 59);
+            this.labelPullOutNo.Location = new System.Drawing.Point(474, 31);
             this.labelPullOutNo.Name = "labelPullOutNo";
             this.labelPullOutNo.Size = new System.Drawing.Size(87, 23);
             this.labelPullOutNo.TabIndex = 17;
@@ -364,7 +358,7 @@
             // 
             // labelHCNo
             // 
-            this.labelHCNo.Location = new System.Drawing.Point(480, 86);
+            this.labelHCNo.Location = new System.Drawing.Point(474, 58);
             this.labelHCNo.Name = "labelHCNo";
             this.labelHCNo.Size = new System.Drawing.Size(87, 23);
             this.labelHCNo.TabIndex = 18;
@@ -373,7 +367,7 @@
             // datePullOutDate
             // 
             this.datePullOutDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutDate", true));
-            this.datePullOutDate.Location = new System.Drawing.Point(570, 32);
+            this.datePullOutDate.Location = new System.Drawing.Point(564, 4);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(130, 23);
             this.datePullOutDate.TabIndex = 5;
@@ -384,7 +378,7 @@
             this.displayPullOutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPullOutNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutID", true));
             this.displayPullOutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPullOutNo.Location = new System.Drawing.Point(570, 59);
+            this.displayPullOutNo.Location = new System.Drawing.Point(564, 31);
             this.displayPullOutNo.Name = "displayPullOutNo";
             this.displayPullOutNo.Size = new System.Drawing.Size(120, 23);
             this.displayPullOutNo.TabIndex = 21;
@@ -394,7 +388,7 @@
             this.displayHCNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayHCNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExpressID", true));
             this.displayHCNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayHCNo.Location = new System.Drawing.Point(570, 86);
+            this.displayHCNo.Location = new System.Drawing.Point(564, 58);
             this.displayHCNo.Name = "displayHCNo";
             this.displayHCNo.Size = new System.Drawing.Size(120, 23);
             this.displayHCNo.TabIndex = 22;
@@ -447,24 +441,6 @@
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelConfirmed.Visible = false;
             // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.Location = new System.Drawing.Point(570, 5);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 4;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(480, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(87, 22);
-            this.label1.TabIndex = 65;
-            this.label1.Text = "Factory";
-            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -473,6 +449,7 @@
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "ID,OrderID,OrderShipmodeSeq,Article,SizeCode";
@@ -503,7 +480,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.ExpressQuery = true;
+
         }
 
         #endregion
@@ -530,7 +507,5 @@
         private Class.txtshipmode txtshipmode;
         private Win.UI.Button btnBatchImport;
         private Win.UI.Label labelConfirmed;
-        private Class.txtfactory txtfactory;
-        private Win.UI.Label label1;
     }
 }
