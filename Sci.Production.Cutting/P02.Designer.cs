@@ -177,7 +177,7 @@
             this.detailpanel.Controls.Add(this.masterpanel);
             this.detailpanel.Controls.Add(this.detailbtm);
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
-            this.detailpanel.Size = new System.Drawing.Size(1004, 713);
+            this.detailpanel.Size = new System.Drawing.Size(892, 387);
             this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
@@ -216,11 +216,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1004, 713);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1004, 713);
+            this.detailcont.Size = new System.Drawing.Size(892, 387);
             // 
             // detailbtm
             // 
@@ -233,8 +233,8 @@
             this.detailbtm.Controls.Add(this.textbox_LastCutRef);
             this.detailbtm.Controls.Add(this.btnQuantityBreakdown);
             this.detailbtm.Controls.Add(this.label2);
-            this.detailbtm.Location = new System.Drawing.Point(0, 678);
-            this.detailbtm.Size = new System.Drawing.Size(1004, 35);
+            this.detailbtm.Location = new System.Drawing.Point(0, 352);
+            this.detailbtm.Size = new System.Drawing.Size(892, 35);
             this.detailbtm.Controls.SetChildIndex(this.label2, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQuantityBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
@@ -280,7 +280,6 @@
             // 
             // labelCuttingSP
             // 
-            this.labelCuttingSP.Lines = 0;
             this.labelCuttingSP.Location = new System.Drawing.Point(5, 6);
             this.labelCuttingSP.Name = "labelCuttingSP";
             this.labelCuttingSP.Size = new System.Drawing.Size(75, 23);
@@ -289,7 +288,6 @@
             // 
             // label2
             // 
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(179, 8);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 23);
@@ -298,7 +296,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 33);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -307,7 +304,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(205, 7);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(40, 23);
@@ -364,7 +360,6 @@
             // 
             // labelMarkerName
             // 
-            this.labelMarkerName.Lines = 0;
             this.labelMarkerName.Location = new System.Drawing.Point(304, 5);
             this.labelMarkerName.Name = "labelMarkerName";
             this.labelMarkerName.Size = new System.Drawing.Size(90, 23);
@@ -373,7 +368,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(304, 32);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(90, 23);
@@ -382,7 +376,6 @@
             // 
             // labelTotalLayer
             // 
-            this.labelTotalLayer.Lines = 0;
             this.labelTotalLayer.Location = new System.Drawing.Point(466, 5);
             this.labelTotalLayer.Name = "labelTotalLayer";
             this.labelTotalLayer.Size = new System.Drawing.Size(95, 23);
@@ -391,7 +384,6 @@
             // 
             // labelBalanceLayer
             // 
-            this.labelBalanceLayer.Lines = 0;
             this.labelBalanceLayer.Location = new System.Drawing.Point(466, 32);
             this.labelBalanceLayer.Name = "labelBalanceLayer";
             this.labelBalanceLayer.Size = new System.Drawing.Size(95, 23);
@@ -472,7 +464,7 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(816, 1);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(704, 1);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
             this.btnQuantityBreakdown.Size = new System.Drawing.Size(181, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
@@ -483,7 +475,7 @@
             // btnPackingMethod
             // 
             this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Location = new System.Drawing.Point(660, 2);
+            this.btnPackingMethod.Location = new System.Drawing.Point(548, 2);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
             this.btnPackingMethod.TabIndex = 24;
@@ -493,7 +485,6 @@
             // 
             // labelMarkerLengthY
             // 
-            this.labelMarkerLengthY.Lines = 0;
             this.labelMarkerLengthY.Location = new System.Drawing.Point(3, 2);
             this.labelMarkerLengthY.Name = "labelMarkerLengthY";
             this.labelMarkerLengthY.Size = new System.Drawing.Size(97, 23);
@@ -502,7 +493,6 @@
             // 
             // labelUnitCons
             // 
-            this.labelUnitCons.Lines = 0;
             this.labelUnitCons.Location = new System.Drawing.Point(3, 29);
             this.labelUnitCons.Name = "labelUnitCons";
             this.labelUnitCons.Size = new System.Drawing.Size(97, 23);
@@ -511,7 +501,6 @@
             // 
             // labelCons
             // 
-            this.labelCons.Lines = 0;
             this.labelCons.Location = new System.Drawing.Point(3, 56);
             this.labelCons.Name = "labelCons";
             this.labelCons.Size = new System.Drawing.Size(97, 23);
@@ -520,7 +509,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(281, 2);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(54, 23);
@@ -529,7 +517,6 @@
             // 
             // labelFabricCombo
             // 
-            this.labelFabricCombo.Lines = 0;
             this.labelFabricCombo.Location = new System.Drawing.Point(204, 29);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(109, 23);
@@ -538,7 +525,6 @@
             // 
             // labelFabricPanelCode
             // 
-            this.labelFabricPanelCode.Lines = 0;
             this.labelFabricPanelCode.Location = new System.Drawing.Point(204, 83);
             this.labelFabricPanelCode.Name = "labelFabricPanelCode";
             this.labelFabricPanelCode.Size = new System.Drawing.Size(110, 23);
@@ -547,7 +533,6 @@
             // 
             // labelFabricRefno
             // 
-            this.labelFabricRefno.Lines = 0;
             this.labelFabricRefno.Location = new System.Drawing.Point(3, 137);
             this.labelFabricRefno.Name = "labelFabricRefno";
             this.labelFabricRefno.Size = new System.Drawing.Size(97, 23);
@@ -556,7 +541,6 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Lines = 0;
             this.labelFabricType.Location = new System.Drawing.Point(3, 110);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(97, 23);
@@ -566,7 +550,6 @@
             // label17
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
-            this.label17.Lines = 0;
             this.label17.Location = new System.Drawing.Point(140, 2);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(16, 23);
@@ -653,7 +636,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(3, 164);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(97, 23);
@@ -693,7 +675,6 @@
             // labelSizeRatio
             // 
             this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
-            this.labelSizeRatio.Lines = 0;
             this.labelSizeRatio.Location = new System.Drawing.Point(1, 267);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(71, 12);
@@ -756,7 +737,6 @@
             // 
             // labelCutplanNo
             // 
-            this.labelCutplanNo.Lines = 0;
             this.labelCutplanNo.Location = new System.Drawing.Point(141, 279);
             this.labelCutplanNo.Name = "labelCutplanNo";
             this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
@@ -765,7 +745,6 @@
             // 
             // labelTotalCutQty
             // 
-            this.labelTotalCutQty.Lines = 0;
             this.labelTotalCutQty.Location = new System.Drawing.Point(141, 306);
             this.labelTotalCutQty.Name = "labelTotalCutQty";
             this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
@@ -862,14 +841,13 @@
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 123);
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 1);
             this.gridQtyBreakdown.TabIndex = 49;
             this.gridQtyBreakdown.TabStop = false;
             // 
             // labelDistributetoSPNo
             // 
             this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
-            this.labelDistributetoSPNo.Lines = 0;
             this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 403);
             this.labelDistributetoSPNo.Name = "labelDistributetoSPNo";
             this.labelDistributetoSPNo.Size = new System.Drawing.Size(112, 15);
@@ -879,7 +857,6 @@
             // 
             // labelTotalDistributionQty
             // 
-            this.labelTotalDistributionQty.Lines = 0;
             this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 392);
             this.labelTotalDistributionQty.Name = "labelTotalDistributionQty";
             this.labelTotalDistributionQty.Size = new System.Drawing.Size(133, 23);
@@ -910,7 +887,6 @@
             // labelQtyBreakdown
             // 
             this.labelQtyBreakdown.BackColor = System.Drawing.Color.Transparent;
-            this.labelQtyBreakdown.Lines = 0;
             this.labelQtyBreakdown.Location = new System.Drawing.Point(1, 543);
             this.labelQtyBreakdown.Name = "labelQtyBreakdown";
             this.labelQtyBreakdown.Size = new System.Drawing.Size(112, 11);
@@ -922,7 +898,6 @@
             // 
             this.downloadid_Text.BackColor = System.Drawing.Color.Transparent;
             this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.downloadid_Text.Lines = 0;
             this.downloadid_Text.Location = new System.Drawing.Point(82, 61);
             this.downloadid_Text.Name = "downloadid_Text";
             this.downloadid_Text.Size = new System.Drawing.Size(186, 23);
@@ -933,7 +908,6 @@
             // 
             // label26
             // 
-            this.label26.Lines = 0;
             this.label26.Location = new System.Drawing.Point(364, 8);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(68, 23);
@@ -955,7 +929,6 @@
             // 
             // labelWorkOrderDownloadID
             // 
-            this.labelWorkOrderDownloadID.Lines = 0;
             this.labelWorkOrderDownloadID.Location = new System.Drawing.Point(3, 215);
             this.labelWorkOrderDownloadID.Name = "labelWorkOrderDownloadID";
             this.labelWorkOrderDownloadID.Size = new System.Drawing.Size(167, 23);
@@ -964,7 +937,6 @@
             // 
             // labelEachConsDownloadID
             // 
-            this.labelEachConsDownloadID.Lines = 0;
             this.labelEachConsDownloadID.Location = new System.Drawing.Point(3, 242);
             this.labelEachConsDownloadID.Name = "labelEachConsDownloadID";
             this.labelEachConsDownloadID.Size = new System.Drawing.Size(167, 23);
@@ -1021,7 +993,6 @@
             // 
             // labelPatternPanel
             // 
-            this.labelPatternPanel.Lines = 0;
             this.labelPatternPanel.Location = new System.Drawing.Point(3, 83);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(97, 23);
@@ -1072,7 +1043,7 @@
             // btn_Refresh
             // 
             this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.Location = new System.Drawing.Point(574, 3);
+            this.btn_Refresh.Location = new System.Drawing.Point(462, 3);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
             this.btn_Refresh.TabIndex = 49;
@@ -1084,7 +1055,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(631, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(519, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -1135,7 +1106,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
             this.splitContainer1.Panel2MinSize = 1;
-            this.splitContainer1.Size = new System.Drawing.Size(373, 678);
+            this.splitContainer1.Size = new System.Drawing.Size(373, 352);
             this.splitContainer1.SplitterDistance = 554;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 61;
@@ -1146,6 +1117,7 @@
             this.DefaultControlForEdit = "numMarkerLengthY";
             this.DefaultDetailOrder = "Markname";
             this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
             this.GridAlias = "WorkOrder";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;

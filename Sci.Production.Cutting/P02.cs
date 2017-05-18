@@ -93,6 +93,36 @@ namespace Sci.Production.Cutting
                 this.IsSupportEdit = false;
                 this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", keyWord);
             }
+
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
