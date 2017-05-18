@@ -26,7 +26,38 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}' and Status !='New'", keyWord);
+
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("(select CT.FactoryID from Cutplan CP left join Cutting CT on CP.CuttingID=CT.ID where CP.ID = MarkerReq.Cutplanid) = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
+        }
+
         protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
