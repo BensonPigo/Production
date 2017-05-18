@@ -460,7 +460,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //確認orders.id + 工廠有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FactoryID = '{1}'", id, factory)))
             {
-                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not fund!!!!", id));
+                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not found!!!!", id));
                 e.Cancel = true;
                 txtSP.Text = "";
                 return;
