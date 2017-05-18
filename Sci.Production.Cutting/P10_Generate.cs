@@ -105,7 +105,7 @@ group by sizeCode"
                 int j = 1;
                 foreach (DataRow dr in sizeTb.Rows)
                 {
-                    if (numNoOfBundle.Value >= j) break;
+                    if (numNoOfBundle.Value < j) break;
                     DataRow row = qtyTb.NewRow();
                     row["No"] = j;
                     row["SizeCode"] = dr["SizeCode"];
@@ -560,7 +560,15 @@ group by sizeCode"
                             qtyTb.Rows.Add(ndr);
                             count++;
                         }
-                    }                                                            
+                    }
+
+                    //增加時
+                    for (int i = 0; i < newvalue - (int)numNoOfBundle.OldValue; i++)
+                    {
+                        DataRow ndr = qtyTb.NewRow();
+                        ndr["Qty"] = 0;
+                        qtyTb.Rows.Add(ndr);
+                    }
                     qtyTb_serial();
                 }
             }
