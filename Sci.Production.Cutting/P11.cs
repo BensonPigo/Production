@@ -26,7 +26,6 @@ namespace Sci.Production.Cutting
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
 
@@ -40,6 +39,7 @@ namespace Sci.Production.Cutting
             string cmd_qty = "Select 0 as No,qty,'' as orderid,'' as cutref,'' as article, SizeCode, 0 as iden from Bundle_Detail_Qty WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_qty, out qtyTb);
             InitializeComponent();
+            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             gridSetup();
         }
         public void gridSetup()
