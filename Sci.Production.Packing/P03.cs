@@ -48,6 +48,26 @@ namespace Sci.Production.Packing
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
+
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format(@"
+'{0}' in (select distinct FtyGroup 
+          from orders o 
+          where o.id in (select distinct PackingList_Detail.OrderID 
+                         from PackingList_Detail 
+                         where PackingList_Detail.id = PackingList.id)
+         )", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -69,6 +89,18 @@ namespace Sci.Production.Packing
             comboBox1_RowSource.Add("Size");
             comboxbs1 = new BindingSource(comboBox1_RowSource, null);
             comboSortby.DataSource = comboxbs1;
+
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
         }
 
         protected override void OnDetailEntered()

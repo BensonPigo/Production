@@ -795,7 +795,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            this.ExpressQuery = true;
         }
 
         #endregion
