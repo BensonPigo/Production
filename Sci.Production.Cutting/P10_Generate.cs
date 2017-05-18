@@ -644,19 +644,11 @@ group by sizeCode"
         {
             if (qtyTb.Rows.Count != 0)
             {
-                if (!MyUtility.Check.Empty(maindatarow["cutref"]))
-                {
-                    DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
-                    DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
-                    selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-                    calQty();
-                }
-                else
-                {
-                    DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
-                    DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
-                    selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-                }
+                DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
+                DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
+                selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
+                if (!MyUtility.Check.Empty(maindatarow["cutref"])) calQty();
+                else selectQtyeDr["Qty"] = 0;
 
                 #region 把左上的grid移至下一筆
                 int currentRowIndexInt = grid_qty.CurrentRow.Index;
