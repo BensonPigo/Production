@@ -240,6 +240,7 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
             this.detailgrid.Columns["Locationto"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NewCone"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["UsedCone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["remark"].DefaultCellStyle.BackColor = Color.Pink;
 
             return base.OnGridSetup();
         }
