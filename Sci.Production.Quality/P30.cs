@@ -29,16 +29,16 @@ namespace Sci.Production.Quality
            
 
             //設定init()
-            string factoryId = Sci.Env.User.Factory;
+            string MDivisionID = Sci.Env.User.Keyword;
             if (history == "1".ToString())
             {
-                this.DefaultFilter = string.Format("FactoryId= '{0}' and MDClose is null and orders.IsForecast<>1", factoryId);
+                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is null and orders.IsForecast<>1", MDivisionID);
                 this.Text = "P30 .MD Master List";
                
             }
             else if (history == "2".ToString())
             {
-                this.DefaultFilter = string.Format("FactoryId= '{0}' and MDClose is not null", factoryId);
+                this.DefaultFilter = string.Format("MDivisionID= '{0}' and MDClose is not null", MDivisionID);
                 this.Text = "P31 .MD Master List(History)";
                 this.IsSupportEdit = false;
             }                    
