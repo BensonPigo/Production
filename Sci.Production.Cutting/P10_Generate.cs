@@ -491,10 +491,27 @@ group by sizeCode"
                 grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
-
-        public void distributeQty(int newvalue) // Qtycount=初始化從上一層傳回來的Bundle.Qty
+        
+        //賦予流水號
+        private void qtyTb_serial()
         {
-            //輸入的數量必須超過[No of Bundle]
+            int serial = 1;
+            foreach (DataRow dr in qtyTb.Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    dr["No"] = serial;
+                    serial++;
+                }
+            }
+        }
+
+        private void numNoOfBundle_Validated(object sender, EventArgs e)
+        {
+            int newvalue = (int)numNoOfBundle.Value;
+            int oldvalue = (int)numNoOfBundle.OldValue;
+            if (newvalue == oldvalue) return;
+
             if (qtyTb.Rows.Count == 0)
             {
                 for (int i = 0; i < newvalue; i++)
@@ -574,30 +591,6 @@ group by sizeCode"
             }
         }
 
-        //賦予流水號
-        private void qtyTb_serial()
-        {
-            int serial = 1;
-            foreach (DataRow dr in qtyTb.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    dr["No"] = serial;
-                    serial++;
-                }
-            }
-            //重新排序,避免qtyTD排序被SizeTB給打亂
-            qtyTb.DefaultView.Sort = "No";
-        }
-
-        private void numNoOfBundle_Validated(object sender, EventArgs e)
-        {
-            int newvalue = (int)numNoOfBundle.Value;
-            int oldvalue = (int)numNoOfBundle.OldValue;
-            if (newvalue == oldvalue) return;
-            distributeQty(newvalue);
-        }
-
         public void calQty() //分配Qty
         {
             foreach (DataRow dr in sizeTb.Rows)
@@ -651,10 +644,19 @@ group by sizeCode"
         {
             if (qtyTb.Rows.Count != 0)
             {
-                DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
-                DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
-                selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-                calQty();
+                if (!MyUtility.Check.Empty(maindatarow["cutref"]))
+                {
+                    DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
+                    DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
+                    selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
+                    calQty();
+                }
+                else
+                {
+                    DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
+                    DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
+                    selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
+                }
 
                 #region 把左上的grid移至下一筆
                 int currentRowIndexInt = grid_qty.CurrentRow.Index;
