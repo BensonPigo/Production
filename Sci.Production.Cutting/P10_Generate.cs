@@ -20,29 +20,21 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Sci.Win.Subs.Base
     {
         DataRow maindatarow;
-        DataTable allpartTb, patternTb, artTb, detailTb, alltmpTb, bundle_detail_artTb, qtyTb, sizeTb, garmentTb;
+        DataTable allpartTb, patternTb, artTb, sizeTb, garmentTb;
+        DataTable detailTb, alltmpTb, bundle_detail_artTb, qtyTb;
         DataTable detailTb2, alltmpTb2, bundle_detail_artTb2, qtyTb2;
         DataTable f_codeTb;
-        int NoOfBunble,cutrefE;
 
-        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb,int c)
+        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
         {
             InitializeComponent();
-            #region 取tabel的結構
-            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, cmd_st, out allpartTb);
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
-            DBProxy.Current.Select(null, pattern_cmd, out patternTb);            
-            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, cmd_art, out artTb);
-            #endregion
-            
+
             #region 準備要處理的table 和原本的table
-            maindatarow = maindr;
             detailTb = table_bundle_Detail.Copy();
             alltmpTb = bundle_Detail_allpart_Tb.Copy();
             bundle_detail_artTb = bundle_Detail_Art_Tb.Copy();
             qtyTb = bundle_Detail_Qty_Tb.Copy();
+            maindatarow = maindr;
 
             detailTb2 = table_bundle_Detail;
             alltmpTb2 = bundle_Detail_allpart_Tb;
@@ -50,15 +42,38 @@ namespace Sci.Production.Cutting
             qtyTb2 = bundle_Detail_Qty_Tb;
             #endregion
 
-            cutrefE = c;
-            
-            displayPatternPanel.Text = maindr["PatternPanel"].ToString();
-            garmentlist(); //排出所有GarmentList
+            #region 取tabel的結構
+            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
+            DBProxy.Current.Select(null, cmd_st, out allpartTb);
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
+            DBProxy.Current.Select(null, pattern_cmd, out patternTb);
+            string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
+            DBProxy.Current.Select(null, cmd_art, out artTb);
+            #endregion
 
-            int totalCutQty = 0;
+            #region 準備GarmentList & ArticleGroup
+            //GarmentList
+            PublicPrg.Prgs.GetGarmentListTable(maindatarow["poid"].ToString(), out garmentTb);
+            //ArticleGroup
+            string sqlcmd = String.Format(@"
+SELECT pga.ArticleGroup
+FROM Pattern_GL_Article pga WITH (NOLOCK)
+inner join Pattern p WITH (NOLOCK) on pga.PatternUKEY = p.ukey
+inner join orders o WITH (NOLOCK) on o.StyleUkey = p.StyleUkey
+WHERE o.ID = '{0}' and p.Status = 'Completed'
+AND p.EDITdATE =
+(
+	SELECT MAX(p2.EditDate) 
+	from pattern p2 WITH (NOLOCK) 
+	where p2.styleukey = o.StyleUkey and p2.Status = 'Completed'
+)"
+                , maindatarow["poid"].ToString());
+            DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
+            #endregion
 
             #region Size-CutQty
-            if (MyUtility.Check.Empty(maindr["cutref"])) //因為無CutRef 就直接抓取Order_Qty 的SizeCode
+            int totalCutQty = 0;
+            if (MyUtility.Check.Empty(maindr["cutref"])) //無CutRef 就直接抓取Order_Qty 的SizeCode
             {
                 labelTotalCutOutput.Visible = false;
                 displayTotalCutOutput.Visible = false;
@@ -67,25 +82,41 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                string size_cmd = string.Format("Select b.sizecode,isnull(sum(b.Qty),0)  as Qty from Workorder a WITH (NOLOCK) ,Workorder_distribute b WITH (NOLOCK) where a.cutref='{0}' and a.ukey = b.workorderukey and b.orderid='{1}' group by sizeCode", maindr["cutref"], maindr["Orderid"]);
+                string size_cmd = string.Format(@"
+Select b.sizecode,isnull(sum(b.Qty),0)  as Qty 
+from Workorder a WITH (NOLOCK) innerjoin Workorder_distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
+where a.cutref='{0}' and b.orderid='{1}'
+group by sizeCode"
+                    , maindr["cutref"], maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
                 if (sizeTb.Rows.Count != 0) totalCutQty = Convert.ToInt16(sizeTb.Compute("Sum(Qty)", ""));
                 else
                 {
                     size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
-                   dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
+                    dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
                 }
+                displayTotalCutOutput.Value = totalCutQty;
             }
-            displayTotalCutOutput.Value = totalCutQty;
             #endregion
 
+            #region 左上qtyTb
             numNoOfBundle.Value = (decimal)maindr["Qty"];
-            NoOfBunble = Convert.ToInt16(maindr["Qty"]) == 0 ? sizeTb.Rows.Count : Convert.ToInt16(maindr["Qty"]);
-
-            if (qtyTb.Rows.Count == 0)
+            if (!MyUtility.Check.Empty(maindatarow["cutref"]) && qtyTb.Rows.Count == 0)
             {
-                qtyTbclear();
+                int j = 1;
+                foreach (DataRow dr in sizeTb.Rows)
+                {
+                    if (numNoOfBundle.Value >= j) break;
+                    DataRow row = qtyTb.NewRow();
+                    row["No"] = j;
+                    row["SizeCode"] = dr["SizeCode"];
+                    row["Qty"] = dr["Qty"];
+                    qtyTb.Rows.Add(row);
+                    j++;
+                }
             }
+            #endregion
+
             calsumQty();
 
             if (detailTb.Rows.Count != 0) exist_Table_Query();
@@ -95,13 +126,10 @@ namespace Sci.Production.Cutting
             calAllPart();
             caltotalpart();
 
+            displayPatternPanel.Text = maindr["PatternPanel"].ToString();
+
             int newvalue = (int)numNoOfBundle.Value;
             distributeQty(newvalue);
-            //因為資料顯示已有排序，所以按Grid Header不可以做排序
-            for (int i = 0; i < grid_qty.ColumnCount; i++)
-            {
-                grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
         }
 
         public void noexist_Table_Query() //第一次產生時需全部重新撈值
@@ -124,7 +152,7 @@ namespace Sci.Production.Cutting
                     ndr["PatternDesc"] = dr["PatternDesc"];
                     ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
                     allpartTb.Rows.Add(ndr);
-                    npart = npart+Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                    npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
                 }
                 else
                 {
@@ -134,11 +162,11 @@ namespace Sci.Production.Cutting
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
                     {
-                        
+
                         bool lallpart;
                         #region 算Subprocess
-                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(),artTb ,out lallpart);
-                        #endregion 
+                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), artTb, out lallpart);
+                        #endregion
                         if (!lallpart)
                         {
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
@@ -195,7 +223,7 @@ namespace Sci.Production.Cutting
             pdr["PatternDesc"] = "All Parts";
             pdr["parts"] = npart;
             patternTb.Rows.Add(pdr);
-            
+
 
             #region Create Qtytb
             #endregion
@@ -214,13 +242,13 @@ namespace Sci.Production.Cutting
                 ndr["PatternDesc"] = dr["PatternDesc"];
                 ndr["Parts"] = dr["Parts"];
                 ndr["art"] = MyUtility.Check.Empty(dr["SubProcessid"]) ? "" : dr["SubProcessid"].ToString().Substring(0, dr["SubProcessid"].ToString().Length - 1);
-                string art ="";
+                string art = "";
                 DataRow[] dray = artTb.Select(string.Format("PatternCode = '{0}'", dr["PatternCode"]));
-                if (dray.Length!=0)
+                if (dray.Length != 0)
                 {
                     foreach (DataRow dr2 in dray)
                     {
-                        if(art != "") art = art+"+"+dr2["Subprocessid"].ToString();
+                        if (art != "") art = art + "+" + dr2["Subprocessid"].ToString();
                         else art = dr2["Subprocessid"].ToString();
                     }
                     ndr["art"] = art;
@@ -231,8 +259,8 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.ProcessWithDatatable(alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation", "Select distinct sel,PatternCode,PatternDesc,parts,annotation from #tmp", out allpartTb);
             foreach (DataRow dr in allpartTb.Rows)
             {
-                DataRow[] adr = garmentTb.Select(string.Format("PatternCode='{0}'",dr["patternCode"]));
-                if(adr.Length>0)
+                DataRow[] adr = garmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
+                if (adr.Length > 0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
                 }
@@ -276,15 +304,14 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
 
             NoCell.CellValidating += (s, e) =>
-            {               
-                if (MyUtility.Convert.GetInt(numNoOfBundle.Text) < MyUtility.Convert.GetInt( e.FormattedValue))
+            {
+                if (MyUtility.Convert.GetInt(numNoOfBundle.Text) < MyUtility.Convert.GetInt(e.FormattedValue))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<No: {0} >  can't greater than <No of Bundle>",e.FormattedValue));                    
+                    MyUtility.Msg.WarningBox(string.Format("<No: {0} >  can't greater than <No of Bundle>", e.FormattedValue));
                     e.Cancel = true;
                     return;
                 }
             };
-
             qtyCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid_qty.GetDataRow(listControlBindingSource1.Position);
@@ -336,7 +363,7 @@ namespace Sci.Production.Cutting
                     {
                         art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), artTb, out lallpart);
                     }
-                    #endregion 
+                    #endregion
                     dr["art"] = art;
                     dr["parts"] = 1;
                     dr.EndEdit();
@@ -350,7 +377,7 @@ namespace Sci.Production.Cutting
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode) return;
-                DataRow[] gemdr = garmentTb.Select(string.Format("PatternCode ='{0}'", patcode),"");
+                DataRow[] gemdr = garmentTb.Select(string.Format("PatternCode ='{0}'", patcode), "");
                 if (gemdr.Length > 0)
                 {
                     dr["PatternDesc"] = (gemdr[0]["PatternDesc"]).ToString();
@@ -368,7 +395,7 @@ namespace Sci.Production.Cutting
                     dr["parts"] = 1;
 
                 }
-                dr.EndEdit(); 
+                dr.EndEdit();
             };
             patterncell2.EditingMouseDown += (s, e) =>
             {
@@ -376,7 +403,7 @@ namespace Sci.Production.Cutting
                 if (dr["PatternCode"].ToString() == "ALLPARTS") return;
                 if (e.Button == MouseButtons.Right)
                 {
-                    
+
                     SelectItem sele;
 
                     sele = new SelectItem(garmentTb, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
@@ -392,7 +419,7 @@ namespace Sci.Production.Cutting
                     caltotalpart();
                 }
             };
-            
+
             subcell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
@@ -403,7 +430,7 @@ namespace Sci.Production.Cutting
                     sele = new SelectItem2("Select id from subprocess WITH (NOLOCK) where junk=0 and IsRfidProcess=1", "Subprocess", "23", dr["PatternCode"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    string subpro = sele.GetSelectedString().Replace(",","+");
+                    string subpro = sele.GetSelectedString().Replace(",", "+");
 
                     e.EditingControl.Text = subpro;
                     dr["art"] = subpro;
@@ -413,7 +440,7 @@ namespace Sci.Production.Cutting
                     {
                         adr.Delete();
                     }
-                    foreach(DataRow dt in sele.GetSelecteds())
+                    foreach (DataRow dt in sele.GetSelecteds())
                     {
                         DataRow ndr = artTb.NewRow();
                         ndr["PatternCode"] = dr["PatternCode"];
@@ -424,10 +451,10 @@ namespace Sci.Production.Cutting
             };
 
             listControlBindingSource1.DataSource = qtyTb;
-            
+
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
-            .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5 , settings:NoCell)
+            .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, settings: NoCell)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5, settings: qtyCell);
             grid_qty.Columns["No"].DefaultCellStyle.BackColor = Color.Pink;
@@ -438,7 +465,7 @@ namespace Sci.Production.Cutting
             Helper.Controls.Grid.Generator(this.grid_art)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
-            .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true,settings: subcell)
+            .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1);
             grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
@@ -449,7 +476,7 @@ namespace Sci.Production.Cutting
             this.grid_allpart.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.grid_allpart)
             .CheckBox("Sel", header: "Chk", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-            .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10),settings:patterncell2)
+            .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell2)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell2);
@@ -458,50 +485,31 @@ namespace Sci.Production.Cutting
             grid_allpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_allpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
-
             grid_Size.DataSource = sizeTb;
             grid_Size.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid_Size)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5);
+
+            //因為資料顯示已有排序，所以按Grid Header不可以做排序
+            for (int i = 0; i < grid_qty.ColumnCount; i++)
+            {
+                grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         public void distributeQty(int Qtycount) // Qtycount=初始化從上一層傳回來的Bundle.Qty
         {
             #region Qty 的筆數分配
             //輸入的數量必須超過[No of Bundle]
-            if (qtyTb.Rows.Count == 0) return;                      
-            if (cutrefE == 1) //c
+            if (qtyTb.Rows.Count == 0)
             {
-                int rowindex = grid_qty.CurrentRow.Index;
-                int bundleCount = MyUtility.Convert.GetInt( numNoOfBundle.Value);
-                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-                if (!MyUtility.Check.Empty(bundleCount))
+                for (int i = 0; i < Qtycount; i++)
                 {
-                    qtyTb.Clear();    
+                    DataRow ndr = qtyTb.NewRow();
+                    qtyTb.Rows.Add(ndr);
                 }
-                int count = 0;
-                foreach (DataRow dr in sizeTb.Rows)
-                {                           
-                    if (count<bundleCount)
-                    {                        
-                        DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = dr["SizeCode"];
-                        qtyTb.Rows.Add(ndr);
-                        count++;
-                    }
-                }
-                //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
-                if (bundleCount>count)
-                {
-                    for (int i = 0; i < bundleCount - count; i++)
-                    {
-                        DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = SizeCode;
-                        qtyTb.Rows.Add(ndr);
-                    } 
-                }
-               
+
                 //賦予流水號
                 int serial = 1;
                 foreach (DataRow dr in qtyTb.Rows)
@@ -512,59 +520,103 @@ namespace Sci.Production.Cutting
                         serial++;
                     }
                 }
-                //重新排序,避免qtyTD排序被SizeTB給打亂
-                qtyTb.DefaultView.Sort = "No";
-                calQty();
             }
             else
             {
-                int rowindex = grid_qty.CurrentRow.Index;
-                int bundleCount = MyUtility.Convert.GetInt(numNoOfBundle.Value);
-                string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
-                if (!MyUtility.Check.Empty(bundleCount))
+                if (!MyUtility.Check.Empty(maindatarow["cutref"]))
                 {
-                    qtyTb.Clear();
-                }
-                int count = 0;
-                foreach (DataRow dr in sizeTb.Rows)
-                {
+                    int rowindex = grid_qty.CurrentRow.Index;
+                    int bundleCount = MyUtility.Convert.GetInt(numNoOfBundle.Value);
+                    string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
+                    if (!MyUtility.Check.Empty(bundleCount))
+                    {
+                        qtyTb.Clear();
+                    }
+                    int count = 0;
+                    foreach (DataRow dr in sizeTb.Rows)
+                    {
+                        if (count < bundleCount)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = dr["SizeCode"];
+                            qtyTb.Rows.Add(ndr);
+                            count++;
+                        }
+                    }
+                    //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
+                    if (bundleCount > count)
+                    {
+                        for (int i = 0; i < bundleCount - count; i++)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = SizeCode;
+                            qtyTb.Rows.Add(ndr);
+                        }
+                    }
 
-                    if (count < bundleCount)
+                    //賦予流水號
+                    int serial = 1;
+                    foreach (DataRow dr in qtyTb.Rows)
                     {
-                        DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = dr["SizeCode"];
-                        qtyTb.Rows.Add(ndr);
-                        count++;
+                        if (dr.RowState != DataRowState.Deleted)
+                        {
+                            dr["No"] = serial;
+                            serial++;
+                        }
                     }
+                    //重新排序,避免qtyTD排序被SizeTB給打亂
+                    qtyTb.DefaultView.Sort = "No";
+                    calQty();
                 }
-                //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
-                if (bundleCount > count)
+                else
                 {
-                    for (int i = 0; i < bundleCount - count; i++)
+                    int rowindex = grid_qty.CurrentRow.Index;
+                    int bundleCount = MyUtility.Convert.GetInt(numNoOfBundle.Value);
+                    string SizeCode = grid_qty.Rows[rowindex].Cells["SizeCode"].Value.ToString();
+                    if (!MyUtility.Check.Empty(bundleCount))
                     {
-                        DataRow ndr = qtyTb.NewRow();
-                        ndr["SizeCode"] = SizeCode;
-                        qtyTb.Rows.Add(ndr);
+                        qtyTb.Clear();
                     }
-                }
-            
+                    int count = 0;
+                    foreach (DataRow dr in sizeTb.Rows)
+                    {
 
-                //賦予流水號
-                int serial = 1;
-                foreach (DataRow dr in qtyTb.Rows)
-                {
-                    if (dr.RowState != DataRowState.Deleted)
-                    {
-                        dr["No"] = serial;
-                        serial++;
+                        if (count < bundleCount)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = dr["SizeCode"];
+                            qtyTb.Rows.Add(ndr);
+                            count++;
+                        }
                     }
+                    //如果No of Bundle數量>右上SizeCode數量,就依照左上滑鼠選擇的SizeCode的值複製多出來的數量
+                    if (bundleCount > count)
+                    {
+                        for (int i = 0; i < bundleCount - count; i++)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["SizeCode"] = SizeCode;
+                            qtyTb.Rows.Add(ndr);
+                        }
+                    }
+
+
+                    //賦予流水號
+                    int serial = 1;
+                    foreach (DataRow dr in qtyTb.Rows)
+                    {
+                        if (dr.RowState != DataRowState.Deleted)
+                        {
+                            dr["No"] = serial;
+                            serial++;
+                        }
+                    }
+                    //重新排序,避免qtyTD排序被SizeTB給打亂
+                    qtyTb.DefaultView.Sort = "No";
+                    calQty();
                 }
-                //重新排序,避免qtyTD排序被SizeTB給打亂
-                qtyTb.DefaultView.Sort = "No";
-                calQty();
             }
 
-            
             #endregion
         }
 
@@ -572,6 +624,7 @@ namespace Sci.Production.Cutting
         {
             int newvalue = (int)numNoOfBundle.Value;
             int oldvalue = (int)numNoOfBundle.OldValue;
+            if (newvalue == oldvalue) return;
             distributeQty(newvalue);
         }
 
@@ -613,7 +666,7 @@ namespace Sci.Production.Cutting
                             else dr2.Delete();
                         }
                     }
-                    
+
                 }
             }
             calsumQty();
@@ -621,94 +674,36 @@ namespace Sci.Production.Cutting
 
         public void calsumQty()
         {
-            int qty=0;
-            if(qtyTb.Rows.Count>0) qty = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
+            int qty = 0;
+            if (qtyTb.Rows.Count > 0) qty = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
             displayTotalQty.Value = qty;
-        }
-
-        //將qtyTb資料清空，並將sizeTb的資料複製到qtyTb
-        private void qtyTbclear()
-        {
-            qtyTb.Rows.Clear();
-            if (cutrefE == 0)
-            {
-                DataRow row = qtyTb.NewRow();
-                row["No"] = 1;
-                row["SizeCode"] = sizeTb.Rows[0]["SizeCode"];
-                row["Qty"] = sizeTb.Rows[0]["Qty"];
-                qtyTb.Rows.Add(row);
-                numNoOfBundle.Value = 1;
-            }
-            else
-            {
-                int j = 1;
-                foreach (DataRow dr in sizeTb.Rows)
-                {
-                    if (MyUtility.Convert.GetInt(numNoOfBundle.Value)<j)
-                    {
-                        return;
-                    }
-                    DataRow row = qtyTb.NewRow();
-                    row["No"] = j;
-                    row["SizeCode"] = dr["SizeCode"];
-                    row["Qty"] = dr["Qty"];
-                    qtyTb.Rows.Add(row);
-                    j++;
-                }
-            }     
         }
 
         private void button_Qty_Click(object sender, EventArgs e)
         {
-            DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
-            DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
-            selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
-            calQty();
-
-            #region 把左上的grid移至下一筆
-            int currentRowIndexInt = grid_qty.CurrentRow.Index;
-            if (currentRowIndexInt + 1 < grid_qty.RowCount)
+            if (qtyTb.Rows.Count != 0)
             {
-                grid_qty.CurrentCell = grid_qty[0, currentRowIndexInt + 1];
-                grid_qty.FirstDisplayedScrollingRowIndex = currentRowIndexInt + 1;
+                DataRow selectSizeDr = ((DataRowView)grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
+                DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
+                selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
+                calQty();
+
+                #region 把左上的grid移至下一筆
+                int currentRowIndexInt = grid_qty.CurrentRow.Index;
+                if (currentRowIndexInt + 1 < grid_qty.RowCount)
+                {
+                    grid_qty.CurrentCell = grid_qty[0, currentRowIndexInt + 1];
+                    grid_qty.FirstDisplayedScrollingRowIndex = currentRowIndexInt + 1;
+                }
+                #endregion
             }
-            #endregion
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey,null);
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null);
             callNextForm.ShowDialog(this);
-        }
-
-        public void garmentlist() //產生GarmentList Table   garmentTb
-        {
-            PublicPrg.Prgs.GetGarmentListTable(maindatarow["poid"].ToString(), out garmentTb);
-            
-            #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
-            string Styleyukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            string patidsql = String.Format(
-                            @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
-                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-                              AND EDITdATE = 
-                              (
-                                SELECT MAX(EditDate) 
-                                from pattern WITH (NOLOCK) 
-                                where styleukey = '{0}' and Status = 'Completed'
-                              )
-             ", Styleyukey);
-           string patternukey = MyUtility.GetValue.Lookup(patidsql);
-           #endregion
-           string sqlcmd = String.Format(@"
-Select a.ArticleGroup
-from Pattern_GL_Article a WITH (NOLOCK) 
-Where a.PatternUkey = '{0}'"
-            , patternukey);
-           DBProxy.Current.Select(null, sqlcmd, out f_codeTb);
-            //f_code = MyUtility.GetValue.Lookup(sqlcmd, null);
-            //if (f_code == "") f_code = "F_Code";
         }
 
         private void button_LefttoRight_Click(object sender, EventArgs e)
@@ -784,14 +779,13 @@ Where a.PatternUkey = '{0}'"
                         bool lallpart;
                         #region 算Subprocess
                         art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), artTb, out lallpart);
-                        #endregion 
+                        #endregion
                     }
                     //新增PatternTb
                     DataRow ndr2 = patternTb.NewRow();
                     ndr2["PatternCode"] = chdr["PatternCode"];
                     ndr2["PatternDesc"] = chdr["PatternDesc"];
                     ndr2["Parts"] = chdr["Parts"]; ;
-                    //ndr2["art"] = art;
                     ndr2["art"] = "EMB";
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
@@ -821,7 +815,7 @@ Where a.PatternUkey = '{0}'"
                     .Where(row => row.RowState != DataRowState.Deleted)
                     .Sum(row => Convert.ToInt16(row["Parts"]));
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
-            if (dr.Length > 0)  dr[0]["Parts"] = allpart;
+            if (dr.Length > 0) dr[0]["Parts"] = allpart;
         }
 
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -852,7 +846,7 @@ Where a.PatternUkey = '{0}'"
         {
             DataRow selectartDr = ((DataRowView)grid_allpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectartDr.Delete();
-            calAllPart(); 
+            calAllPart();
             caltotalpart();
         }
 
@@ -860,13 +854,13 @@ Where a.PatternUkey = '{0}'"
         {
             DataTable at = artTb.Copy();
             #region 判斷Pattern的Artwork  不可為空
-            DataRow[] findr= patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)","");
-            if(findr.Length>0)
+            DataRow[] findr = patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
+            if (findr.Length > 0)
             {
                 MyUtility.Msg.WarningBox("<Art> can not be empty!");
                 return;
             }
-            #endregion 
+            #endregion
 
             DataTable bundle_detail_tmp;
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
@@ -888,10 +882,10 @@ Where a.PatternUkey = '{0}'"
                         nDetail["SizeCode"] = dr["SizeCode"];
                         nDetail["bundlegroup"] = bundlegroup;
                         nDetail["ukey1"] = ukey;
-                        
+
                         if (dr2["PatternCode"].ToString() != "ALLPARTS") //為了跟外面相同多加一個"+"
                         {
-                            nDetail["subprocessid"] = dr2["art"].ToString()+"+";
+                            nDetail["subprocessid"] = dr2["art"].ToString() + "+";
                         }
                         ukey++;
 
@@ -899,7 +893,7 @@ Where a.PatternUkey = '{0}'"
                     }
                     bundlegroup++;
                 }
-                
+
             }
             alltmpTb.Clear();
             bundle_detail_artTb.Clear();
@@ -911,7 +905,7 @@ Where a.PatternUkey = '{0}'"
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    
+
                     if (j < tmpRow)
                     {
                         DataRow tmpdr = bundle_detail_tmp.Rows[j];
@@ -969,7 +963,7 @@ Where a.PatternUkey = '{0}'"
                 int detailrow = detailTb.Rows.Count;
                 for (int i = detailrow - 1; i >= tmpRow; i--) //因為delete時Rowcount 會改變所以要重後面往前刪
                 {
-                     detailTb.Rows[i].Delete();
+                    detailTb.Rows[i].Delete();
                 }
             }
             if (tmpRow > j) //表示新增的比較多需要Insert
