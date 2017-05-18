@@ -31,6 +31,19 @@ namespace Sci.Production.Cutting
                 this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 1", keyWord);
                 this.IsSupportEdit = false;
             }
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
                 
         protected override void OnDetailEntered()
@@ -255,6 +268,22 @@ AND EDITDATE = (SELECT MAX(EditDate) from pattern WITH (NOLOCK) where styleukey 
                 frm.ShowDialog();
             }
             return base.ClickPrint();
+        }
+
+        private void P01_FormLoaded(object sender, EventArgs e)
+        {
+           // base.OnFormLoaded();
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
         }
     }
 }

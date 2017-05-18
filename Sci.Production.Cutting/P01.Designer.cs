@@ -92,10 +92,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(893, 442);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numOrderQty);
@@ -154,13 +150,7 @@
             this.detailcont.Controls.Add(this.labelStyleNo);
             this.detailcont.Controls.Add(this.labelSeason);
             this.detailcont.Controls.Add(this.labelCuttingSPNo);
-            this.detailcont.Size = new System.Drawing.Size(893, 404);
             this.detailcont.TabIndex = 1;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 404);
-            this.detailbtm.Size = new System.Drawing.Size(893, 38);
             // 
             // browse
             // 
@@ -730,6 +720,7 @@
             this.DefaultControl = "txtRemark";
             this.DefaultControlForEdit = "txtRemark";
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
@@ -737,6 +728,7 @@
             this.Name = "P01";
             this.Text = "() () ";
             this.WorkAlias = "Cutting";
+            this.FormLoaded += new System.EventHandler(this.P01_FormLoaded);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
