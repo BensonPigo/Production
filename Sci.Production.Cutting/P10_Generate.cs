@@ -563,11 +563,14 @@ group by sizeCode"
                     }
 
                     //增加時
-                    for (int i = 0; i < newvalue - (int)numNoOfBundle.OldValue; i++)
+                    if (numNoOfBundle.OldValue != null)
                     {
-                        DataRow ndr = qtyTb.NewRow();
-                        ndr["Qty"] = 0;
-                        qtyTb.Rows.Add(ndr);
+                        for (int i = 0; i < newvalue - (int)numNoOfBundle.OldValue; i++)
+                        {
+                            DataRow ndr = qtyTb.NewRow();
+                            ndr["Qty"] = 0;
+                            qtyTb.Rows.Add(ndr);
+                        }
                     }
                     qtyTb_serial();
                 }
