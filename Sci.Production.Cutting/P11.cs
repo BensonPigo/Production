@@ -26,6 +26,7 @@ namespace Sci.Production.Cutting
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
+            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
 
@@ -503,6 +504,7 @@ Where   a.ukey = b.workorderukey
 	Where   a.CutRef is not null 
             and ord.mDivisionid = '{0}'
 ", keyWord));
+
             if (!MyUtility.Check.Empty(cutref))
             {
                 query_cmd = query_cmd + string.Format(@" 
@@ -524,6 +526,13 @@ Where   a.ukey = b.workorderukey
                 distru_cmd = distru_cmd + string.Format(" and ord.poid='{0}'", poid);
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.poid='{0}'", poid);
                 SizeRatio.Append(string.Format(" and ord.poid='{0}'", poid));
+            }
+            if (txtfactoryByM.Text != "")
+            {
+                query_cmd = query_cmd + string.Format(" and ord.FtyGroup='{0}'", txtfactoryByM.Text);
+                distru_cmd = distru_cmd + string.Format(" and ord.FtyGroup='{0}'", txtfactoryByM.Text);
+                Excess_cmd = Excess_cmd + string.Format(" and  ord.FtyGroup='{0}'", txtfactoryByM.Text);
+                SizeRatio.Append(string.Format(" and ord.FtyGroup='{0}'", txtfactoryByM.Text));
             }
             #endregion
 

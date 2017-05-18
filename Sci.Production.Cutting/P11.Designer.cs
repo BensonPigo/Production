@@ -72,6 +72,8 @@
             this.gridCutRef = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelGroup = new Sci.Win.UI.Label();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
+            this.label1 = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -144,7 +146,6 @@
             // 
             this.label_TotalQty.BackColor = System.Drawing.Color.Transparent;
             this.label_TotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label_TotalQty.Lines = 0;
             this.label_TotalQty.Location = new System.Drawing.Point(87, 585);
             this.label_TotalQty.Name = "label_TotalQty";
             this.label_TotalQty.Size = new System.Drawing.Size(54, 23);
@@ -215,7 +216,6 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(362, 312);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(82, 23);
@@ -237,7 +237,6 @@
             // 
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(646, 320);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(116, 23);
@@ -292,7 +291,6 @@
             // 
             this.label_TotalCutOutput.BackColor = System.Drawing.Color.Transparent;
             this.label_TotalCutOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label_TotalCutOutput.Lines = 0;
             this.label_TotalCutOutput.Location = new System.Drawing.Point(250, 312);
             this.label_TotalCutOutput.Name = "label_TotalCutOutput";
             this.label_TotalCutOutput.Size = new System.Drawing.Size(54, 23);
@@ -304,7 +302,6 @@
             // labelNoOfBundle
             // 
             this.labelNoOfBundle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelNoOfBundle.Lines = 0;
             this.labelNoOfBundle.Location = new System.Drawing.Point(8, 311);
             this.labelNoOfBundle.Name = "labelNoOfBundle";
             this.labelNoOfBundle.Size = new System.Drawing.Size(90, 23);
@@ -314,7 +311,6 @@
             // labelTotalQty
             // 
             this.labelTotalQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTotalQty.Lines = 0;
             this.labelTotalQty.Location = new System.Drawing.Point(9, 585);
             this.labelTotalQty.Name = "labelTotalQty";
             this.labelTotalQty.Size = new System.Drawing.Size(75, 23);
@@ -325,7 +321,6 @@
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(139, 312);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(111, 23);
@@ -347,7 +342,7 @@
             this.txtPOID.BackColor = System.Drawing.Color.White;
             this.txtPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtPOID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOID.Location = new System.Drawing.Point(479, 9);
+            this.txtPOID.Location = new System.Drawing.Point(577, 9);
             this.txtPOID.Name = "txtPOID";
             this.txtPOID.Size = new System.Drawing.Size(108, 21);
             this.txtPOID.TabIndex = 2;
@@ -355,8 +350,7 @@
             // labelPOID
             // 
             this.labelPOID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPOID.Lines = 0;
-            this.labelPOID.Location = new System.Drawing.Point(401, 8);
+            this.labelPOID.Location = new System.Drawing.Point(499, 8);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(75, 23);
             this.labelPOID.TabIndex = 83;
@@ -365,7 +359,6 @@
             // labelEstCutDate
             // 
             this.labelEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(162, 8);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(83, 23);
@@ -385,7 +378,6 @@
             // labelCutref
             // 
             this.labelCutref.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCutref.Lines = 0;
             this.labelCutref.Location = new System.Drawing.Point(9, 8);
             this.labelCutref.Name = "labelCutref";
             this.labelCutref.Size = new System.Drawing.Size(75, 23);
@@ -593,7 +585,7 @@
             // btnQuery
             // 
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnQuery.Location = new System.Drawing.Point(593, 4);
+            this.btnQuery.Location = new System.Drawing.Point(695, 4);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 3;
@@ -605,7 +597,6 @@
             // 
             this.labelGroup.BackColor = System.Drawing.Color.Transparent;
             this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Lines = 0;
             this.labelGroup.Location = new System.Drawing.Point(657, 591);
             this.labelGroup.Name = "labelGroup";
             this.labelGroup.Size = new System.Drawing.Size(35, 23);
@@ -614,9 +605,30 @@
             this.labelGroup.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.labelGroup.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // txtfactoryByM
+            // 
+            this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.Location = new System.Drawing.Point(430, 8);
+            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.Name = "txtfactoryByM";
+            this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM.TabIndex = 96;
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label1.Location = new System.Drawing.Point(382, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(45, 23);
+            this.label1.TabIndex = 97;
+            this.label1.Text = "Factory";
+            // 
             // P11
             // 
             this.ClientSize = new System.Drawing.Size(1008, 630);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtfactoryByM);
             this.Controls.Add(this.labelGroup);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.radioGroup1);
@@ -684,6 +696,8 @@
             this.Controls.SetChildIndex(this.radioGroup1, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.labelGroup, 0);
+            this.Controls.SetChildIndex(this.txtfactoryByM, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
             this.radioGroup1.ResumeLayout(false);
             this.radioGroup1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
@@ -739,5 +753,7 @@
         private System.Windows.Forms.ToolStripMenuItem insertIntoRecordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteRecordToolStripMenuItem;
         private Win.UI.Label labelGroup;
+        private Class.txtfactoryByM txtfactoryByM;
+        private Win.UI.Label label1;
     }
 }
