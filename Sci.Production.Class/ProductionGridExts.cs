@@ -270,7 +270,7 @@ namespace Sci
                                 string ddsql = string.Format("select 1 from ThreadStock where Refno='{0}' and ThreadColorID='{1}' and MDivisionid='{2}'", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
                                 if (MyUtility.Check.Seek(ddsql))
                                 {
-                                    sql = string.Format("select ID,Description,UsedCone,NewCone from ThreadLocation a left join ThreadStock b on a.id=b.ThreadLocationID  where  junk = 0 and Refno='{0}' and ThreadColorID='{1}' and a.MDivisionid='{2}' order by ID", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
+                                    sql = string.Format("select ID,Description,NewCone,UsedCone from ThreadLocation a left join ThreadStock b on a.id=b.ThreadLocationID  where  junk = 0 and Refno='{0}' and ThreadColorID='{1}' and a.MDivisionid='{2}' order by ID", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
                                     strwidth = "8,18,10,10";
                                 }
                                 else {
