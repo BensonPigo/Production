@@ -102,7 +102,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(908, 142);
+            this.masterpanel.Size = new System.Drawing.Size(892, 142);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -137,7 +137,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(908, 307);
+            this.detailpanel.Size = new System.Drawing.Size(892, 207);
             // 
             // gridicon
             // 
@@ -150,7 +150,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(908, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 207);
             // 
             // detail2
             // 
@@ -166,16 +166,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(908, 487);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(908, 449);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 449);
-            this.detailbtm.Size = new System.Drawing.Size(908, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -202,7 +202,6 @@
             // 
             // labelNo
             // 
-            this.labelNo.Lines = 0;
             this.labelNo.Location = new System.Drawing.Point(5, 4);
             this.labelNo.Name = "labelNo";
             this.labelNo.Size = new System.Drawing.Size(55, 23);
@@ -211,7 +210,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(5, 31);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(55, 23);
@@ -220,7 +218,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(5, 58);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(55, 23);
@@ -229,7 +226,6 @@
             // 
             // labelShift
             // 
-            this.labelShift.Lines = 0;
             this.labelShift.Location = new System.Drawing.Point(5, 85);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(55, 23);
@@ -238,7 +234,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(5, 112);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(55, 23);
@@ -303,7 +298,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(239, 4);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
@@ -312,7 +306,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(239, 31);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(80, 23);
@@ -321,7 +314,6 @@
             // 
             // labelMasterSP
             // 
-            this.labelMasterSP.Lines = 0;
             this.labelMasterSP.Location = new System.Drawing.Point(239, 58);
             this.labelMasterSP.Name = "labelMasterSP";
             this.labelMasterSP.Size = new System.Drawing.Size(80, 23);
@@ -330,7 +322,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(239, 85);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(80, 23);
@@ -381,7 +372,6 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(492, 4);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(64, 23);
@@ -390,7 +380,6 @@
             // 
             // labelApprove
             // 
-            this.labelApprove.Lines = 0;
             this.labelApprove.Location = new System.Drawing.Point(492, 31);
             this.labelApprove.Name = "labelApprove";
             this.labelApprove.Size = new System.Drawing.Size(64, 23);
@@ -399,7 +388,6 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Lines = 0;
             this.labelApvDate.Location = new System.Drawing.Point(492, 57);
             this.labelApvDate.Name = "labelApvDate";
             this.labelApvDate.Size = new System.Drawing.Size(64, 23);
@@ -408,7 +396,6 @@
             // 
             // labelIssueNo
             // 
-            this.labelIssueNo.Lines = 0;
             this.labelIssueNo.Location = new System.Drawing.Point(393, 84);
             this.labelIssueNo.Name = "labelIssueNo";
             this.labelIssueNo.Size = new System.Drawing.Size(64, 23);
@@ -461,7 +448,6 @@
             // 
             this.lbStatus.BackColor = System.Drawing.Color.Transparent;
             this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
-            this.lbStatus.Lines = 0;
             this.lbStatus.Location = new System.Drawing.Point(700, 54);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(120, 31);
@@ -483,7 +469,6 @@
             // 
             // labelIssueLackDate
             // 
-            this.labelIssueLackDate.Lines = 0;
             this.labelIssueLackDate.Location = new System.Drawing.Point(584, 84);
             this.labelIssueLackDate.Name = "labelIssueLackDate";
             this.labelIssueLackDate.Size = new System.Drawing.Size(108, 23);
@@ -498,6 +483,7 @@
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq";
             this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
             this.GridAlias = "Lack_Detail";
             this.GridUniqueKey = "Seq";
             this.IsSupportConfirm = true;
@@ -511,6 +497,7 @@
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "Lack";
+            this.FormLoaded += new System.EventHandler(this.P11_FormLoaded);
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

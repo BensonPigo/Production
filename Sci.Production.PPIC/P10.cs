@@ -24,6 +24,19 @@ namespace Sci.Production.PPIC
             txtuserApprove.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
             displayIssueLackDate.ReadOnly = true;
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -554,16 +567,20 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                     if (!MyUtility.Check.Empty(txtSP.Text))
                     {
                         //sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSP.Text);
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSP.Text);
+                        //用登入的Factory 抓取對應的FtyGroup
+                        DataTable FtyGroupData;
+                        DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}'", Sci.Env.User.Factory), out FtyGroupData);
+                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", FtyGroupData.Rows[0]["FTYGroup"].ToString());
 
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                         cmds.Add(sp1);
                         cmds.Add(sp2);
 
                         DataTable OrderPOID;
-                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where ID = @id and MDivisionID = @mdivisionid";
+                        string sqlCmd = "select POID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderPOID);
+
                         if (result && OrderPOID.Rows.Count > 0)
                         {
                             CurrentMaintain["OrderID"] = txtSP.Text;
@@ -729,6 +746,21 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
             return selepoitem;
         }
         #endregion
+
+        private void P10_FormLoaded(object sender, EventArgs e)
+        {
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
+        }
 
     }
 }

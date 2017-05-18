@@ -108,7 +108,7 @@
             this.masterpanel.Controls.Add(this.labelPOSMR);
             this.masterpanel.Controls.Add(this.labelSPNo);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(917, 222);
+            this.masterpanel.Size = new System.Drawing.Size(892, 222);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPOSMR, 0);
@@ -146,7 +146,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 222);
-            this.detailpanel.Size = new System.Drawing.Size(917, 230);
+            this.detailpanel.Size = new System.Drawing.Size(892, 127);
             // 
             // gridicon
             // 
@@ -159,7 +159,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(917, 230);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 127);
             // 
             // detail2
             // 
@@ -175,16 +175,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(917, 490);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(917, 452);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 452);
-            this.detailbtm.Size = new System.Drawing.Size(917, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -211,7 +211,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(5, 4);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(115, 23);
@@ -220,7 +219,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(5, 31);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(115, 23);
@@ -229,7 +227,6 @@
             // 
             // labelPOSMR
             // 
-            this.labelPOSMR.Lines = 0;
             this.labelPOSMR.Location = new System.Drawing.Point(5, 58);
             this.labelPOSMR.Name = "labelPOSMR";
             this.labelPOSMR.Size = new System.Drawing.Size(115, 23);
@@ -238,7 +235,6 @@
             // 
             // labelPOHandle
             // 
-            this.labelPOHandle.Lines = 0;
             this.labelPOHandle.Location = new System.Drawing.Point(5, 85);
             this.labelPOHandle.Name = "labelPOHandle";
             this.labelPOHandle.Size = new System.Drawing.Size(115, 23);
@@ -247,7 +243,6 @@
             // 
             // labelPreparedby
             // 
-            this.labelPreparedby.Lines = 0;
             this.labelPreparedby.Location = new System.Drawing.Point(5, 112);
             this.labelPreparedby.Name = "labelPreparedby";
             this.labelPreparedby.Size = new System.Drawing.Size(115, 23);
@@ -256,7 +251,6 @@
             // 
             // labelPPICFactorymgr
             // 
-            this.labelPPICFactorymgr.Lines = 0;
             this.labelPPICFactorymgr.Location = new System.Drawing.Point(5, 139);
             this.labelPPICFactorymgr.Name = "labelPPICFactorymgr";
             this.labelPPICFactorymgr.Size = new System.Drawing.Size(115, 23);
@@ -265,7 +259,6 @@
             // 
             // labelConfirmby
             // 
-            this.labelConfirmby.Lines = 0;
             this.labelConfirmby.Location = new System.Drawing.Point(5, 166);
             this.labelConfirmby.Name = "labelConfirmby";
             this.labelConfirmby.Size = new System.Drawing.Size(115, 23);
@@ -274,7 +267,6 @@
             // 
             // labelTPELastEditDate
             // 
-            this.labelTPELastEditDate.Lines = 0;
             this.labelTPELastEditDate.Location = new System.Drawing.Point(5, 193);
             this.labelTPELastEditDate.Name = "labelTPELastEditDate";
             this.labelTPELastEditDate.Size = new System.Drawing.Size(115, 23);
@@ -362,7 +354,6 @@
             // 
             // labelCDate
             // 
-            this.labelCDate.Lines = 0;
             this.labelCDate.Location = new System.Drawing.Point(258, 4);
             this.labelCDate.Name = "labelCDate";
             this.labelCDate.Size = new System.Drawing.Size(53, 23);
@@ -371,7 +362,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(258, 31);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(53, 23);
@@ -401,7 +391,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(429, 32);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(71, 23);
@@ -410,7 +399,6 @@
             // 
             // labelPCSMR
             // 
-            this.labelPCSMR.Lines = 0;
             this.labelPCSMR.Location = new System.Drawing.Point(429, 59);
             this.labelPCSMR.Name = "labelPCSMR";
             this.labelPCSMR.Size = new System.Drawing.Size(71, 23);
@@ -419,7 +407,6 @@
             // 
             // labelPCHandle
             // 
-            this.labelPCHandle.Lines = 0;
             this.labelPCHandle.Location = new System.Drawing.Point(429, 86);
             this.labelPCHandle.Name = "labelPCHandle";
             this.labelPCHandle.Size = new System.Drawing.Size(71, 23);
@@ -483,7 +470,6 @@
             // label14
             // 
             this.label14.BackColor = System.Drawing.Color.Transparent;
-            this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(429, 4);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(350, 23);
@@ -498,7 +484,6 @@
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-            this.label15.Lines = 0;
             this.label15.Location = new System.Drawing.Point(740, 27);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(66, 23);
@@ -528,6 +513,7 @@
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq1,Seq2";
             this.DefaultOrder = "CDate,ID";
+            this.ExpressQuery = true;
             this.GridAlias = "ReplacementReport_Detail";
             this.GridNew = 0;
             this.IsSupportCheck = true;
@@ -544,6 +530,7 @@
             this.UncheckChkValue = "Checked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ReplacementReport";
+            this.FormLoaded += new System.EventHandler(this.P09_FormLoaded);
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();

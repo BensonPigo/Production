@@ -24,6 +24,19 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DefaultFilter = string.Format("Type = 'A' and MDivisionID = '{0}'",Sci.Env.User.Keyword);
             InsertDetailGridOnDoubleClick = false;
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -363,12 +376,15 @@ order by rd.Seq1,rd.Seq2", masterID);
                 {
                     //sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", txtSPNo.Text);
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", Sci.Env.User.Keyword);
+                    //用登入的Factory 抓取對應的FtyGroup
+                    DataTable FtyGroupData;
+                    DBProxy.Current.Select(null, string.Format("select FTYGroup from Factory where id='{0}'", Sci.Env.User.Factory), out FtyGroupData);
+                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@factoryid", FtyGroupData.Rows[0]["FTYGroup"].ToString());
 
                     IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                     cmds.Add(sp1);
                     cmds.Add(sp2);
-                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and MDivisionID = @mdivisionid";
+                    string sqlCmd = "select ID,FtyGroup from Orders WITH (NOLOCK) where POID = @poid and FtyGroup  = @factoryid";
                     DataTable OrdersData;
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrdersData);
 
@@ -669,6 +685,21 @@ If the replacement report can be accept and cfm to proceed, please approve it th
                         MyUtility.Msg.WarningBox("Delete excel file fail!!");
                     }
                 }
+        }
+
+        private void P09_FormLoaded(object sender, EventArgs e)
+        {
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
         }
     }
 }
