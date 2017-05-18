@@ -54,7 +54,10 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.gridbs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             this.SuspendLayout();
@@ -73,7 +76,7 @@
             // 
             this.txtCutRefNo.BackColor = System.Drawing.Color.White;
             this.txtCutRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefNo.Location = new System.Drawing.Point(488, 51);
+            this.txtCutRefNo.Location = new System.Drawing.Point(467, 45);
             this.txtCutRefNo.Name = "txtCutRefNo";
             this.txtCutRefNo.Size = new System.Drawing.Size(78, 23);
             this.txtCutRefNo.TabIndex = 5;
@@ -82,7 +85,7 @@
             // 
             this.txtSEQ.BackColor = System.Drawing.Color.White;
             this.txtSEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSEQ.Location = new System.Drawing.Point(302, 51);
+            this.txtSEQ.Location = new System.Drawing.Point(436, 13);
             this.txtSEQ.Mask = "000-00";
             this.txtSEQ.Name = "txtSEQ";
             this.txtSEQ.Size = new System.Drawing.Size(67, 23);
@@ -91,7 +94,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(572, 48);
+            this.btnQuery.Location = new System.Drawing.Point(564, 41);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 6;
@@ -101,7 +104,6 @@
             // 
             // labelNewEstCutDate
             // 
-            this.labelNewEstCutDate.Lines = 0;
             this.labelNewEstCutDate.Location = new System.Drawing.Point(669, 19);
             this.labelNewEstCutDate.Name = "labelNewEstCutDate";
             this.labelNewEstCutDate.Size = new System.Drawing.Size(89, 23);
@@ -118,23 +120,23 @@
             // 
             // dateSewingInline
             // 
-            this.dateSewingInline.Location = new System.Drawing.Point(511, 19);
+            this.dateSewingInline.Location = new System.Drawing.Point(300, 45);
             this.dateSewingInline.Name = "dateSewingInline";
-            this.dateSewingInline.Size = new System.Drawing.Size(130, 23);
+            this.dateSewingInline.Size = new System.Drawing.Size(97, 23);
             this.dateSewingInline.TabIndex = 2;
             // 
             // dateEstCutDate
             // 
             this.dateEstCutDate.Location = new System.Drawing.Point(104, 51);
             this.dateEstCutDate.Name = "dateEstCutDate";
-            this.dateEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateEstCutDate.Size = new System.Drawing.Size(100, 23);
             this.dateEstCutDate.TabIndex = 3;
             // 
             // txtSPNo
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.Location = new System.Drawing.Point(302, 19);
+            this.txtSPNo.Location = new System.Drawing.Point(267, 13);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(108, 23);
             this.txtSPNo.TabIndex = 1;
@@ -150,8 +152,7 @@
             // 
             // labelCutRefNo
             // 
-            this.labelCutRefNo.Lines = 0;
-            this.labelCutRefNo.Location = new System.Drawing.Point(420, 51);
+            this.labelCutRefNo.Location = new System.Drawing.Point(400, 45);
             this.labelCutRefNo.Name = "labelCutRefNo";
             this.labelCutRefNo.Size = new System.Drawing.Size(64, 23);
             this.labelCutRefNo.TabIndex = 26;
@@ -159,7 +160,6 @@
             // 
             // labelReason
             // 
-            this.labelReason.Lines = 0;
             this.labelReason.Location = new System.Drawing.Point(669, 51);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(89, 23);
@@ -168,8 +168,7 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
-            this.labelSEQ.Location = new System.Drawing.Point(243, 51);
+            this.labelSEQ.Location = new System.Drawing.Point(378, 13);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(55, 23);
             this.labelSEQ.TabIndex = 24;
@@ -177,8 +176,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(244, 19);
+            this.labelSPNo.Location = new System.Drawing.Point(209, 13);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(55, 23);
             this.labelSPNo.TabIndex = 23;
@@ -186,8 +184,7 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
-            this.labelSewingInline.Location = new System.Drawing.Point(420, 19);
+            this.labelSewingInline.Location = new System.Drawing.Point(209, 45);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(88, 23);
             this.labelSewingInline.TabIndex = 22;
@@ -195,7 +192,6 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(12, 51);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(89, 23);
@@ -204,7 +200,6 @@
             // 
             // labelCuttingSPNo
             // 
-            this.labelCuttingSPNo.Lines = 0;
             this.labelCuttingSPNo.Location = new System.Drawing.Point(12, 19);
             this.labelCuttingSPNo.Name = "labelCuttingSPNo";
             this.labelCuttingSPNo.Size = new System.Drawing.Size(89, 23);
@@ -240,12 +235,23 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDetail.Size = new System.Drawing.Size(992, 311);
+            this.gridDetail.Size = new System.Drawing.Size(994, 311);
             this.gridDetail.TabIndex = 9;
             this.gridDetail.TabStop = false;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtfactoryByM);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.labelSewingInline);
+            this.groupBox1.Controls.Add(this.dateSewingInline);
+            this.groupBox1.Controls.Add(this.labelSPNo);
+            this.groupBox1.Controls.Add(this.txtSEQ);
+            this.groupBox1.Controls.Add(this.txtCutRefNo);
+            this.groupBox1.Controls.Add(this.btnQuery);
+            this.groupBox1.Controls.Add(this.txtSPNo);
+            this.groupBox1.Controls.Add(this.labelCutRefNo);
+            this.groupBox1.Controls.Add(this.labelSEQ);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(655, 74);
@@ -274,7 +280,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(810, 405);
+            this.btnSave.Location = new System.Drawing.Point(812, 405);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(92, 30);
             this.btnSave.TabIndex = 9;
@@ -285,7 +291,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(908, 405);
+            this.btnClose.Location = new System.Drawing.Point(910, 405);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(92, 30);
             this.btnClose.TabIndex = 10;
@@ -293,26 +299,35 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(506, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 23);
+            this.label1.TabIndex = 27;
+            this.label1.Text = "Factory";
+            // 
+            // txtfactoryByM
+            // 
+            this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.Location = new System.Drawing.Point(564, 13);
+            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.Name = "txtfactoryByM";
+            this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM.TabIndex = 28;
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1006, 439);
+            this.ClientSize = new System.Drawing.Size(1008, 439);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnUpdate);
-            this.Controls.Add(this.txtCutRefNo);
-            this.Controls.Add(this.txtSEQ);
-            this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.labelNewEstCutDate);
             this.Controls.Add(this.dateNewEstCutDate);
-            this.Controls.Add(this.dateSewingInline);
             this.Controls.Add(this.dateEstCutDate);
-            this.Controls.Add(this.txtSPNo);
             this.Controls.Add(this.txtCuttingSPNo);
-            this.Controls.Add(this.labelCutRefNo);
             this.Controls.Add(this.labelReason);
-            this.Controls.Add(this.labelSEQ);
-            this.Controls.Add(this.labelSPNo);
-            this.Controls.Add(this.labelSewingInline);
             this.Controls.Add(this.labelEstCutDate);
             this.Controls.Add(this.labelCuttingSPNo);
             this.Controls.Add(this.gridDetail);
@@ -328,24 +343,17 @@
             this.Controls.SetChildIndex(this.gridDetail, 0);
             this.Controls.SetChildIndex(this.labelCuttingSPNo, 0);
             this.Controls.SetChildIndex(this.labelEstCutDate, 0);
-            this.Controls.SetChildIndex(this.labelSewingInline, 0);
-            this.Controls.SetChildIndex(this.labelSPNo, 0);
-            this.Controls.SetChildIndex(this.labelSEQ, 0);
             this.Controls.SetChildIndex(this.labelReason, 0);
-            this.Controls.SetChildIndex(this.labelCutRefNo, 0);
             this.Controls.SetChildIndex(this.txtCuttingSPNo, 0);
-            this.Controls.SetChildIndex(this.txtSPNo, 0);
             this.Controls.SetChildIndex(this.dateEstCutDate, 0);
-            this.Controls.SetChildIndex(this.dateSewingInline, 0);
             this.Controls.SetChildIndex(this.dateNewEstCutDate, 0);
             this.Controls.SetChildIndex(this.labelNewEstCutDate, 0);
-            this.Controls.SetChildIndex(this.btnQuery, 0);
-            this.Controls.SetChildIndex(this.txtSEQ, 0);
-            this.Controls.SetChildIndex(this.txtCutRefNo, 0);
             this.Controls.SetChildIndex(this.btnUpdate, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             this.ResumeLayout(false);
@@ -379,5 +387,7 @@
         private Win.UI.Button btnClose;
         private Class.txtcutReason txtcutReason;
         private Win.UI.ListControlBindingSource gridbs;
+        private Class.txtfactoryByM txtfactoryByM;
+        private Win.UI.Label label1;
     }
 }

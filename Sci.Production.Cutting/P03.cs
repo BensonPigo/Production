@@ -27,9 +27,11 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
+            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
             setDetailGrid();
+
 
         }
         public void setDetailGrid()
@@ -40,6 +42,7 @@ namespace Sci.Production.Cutting
             #region set grid
             Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
+                .Text("factoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -93,49 +96,49 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date>");
                 return;
             }
-            string sql =
-            @"
-            Select * 
-            From
-            (
-            Select a.*,
-            (
-                Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-			    Where b.workorderukey = a.Ukey and b.article!=''
-                For XML path('')
-            ) as article,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as SizeCode,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.Ukey 
-                For XML path('')
-            ) as PatternPanel,
-			(
-				Select  isnull(CONVERT (DATE, Min(sew.Inline),101),'')  as inline 
-				From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b,WorkOrder_Distribute h WITH (NOLOCK) 
-				Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
-						and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
-			)  as Sewinline,
-			(
-				Select isnull(Min(cut.cdate),'')
-				From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
-				Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
-			)  as actcutdate,
-            '' as NewestcutDate, '' as cutreasonid ,0 as sel
-			from Workorder a";
+            string sql = @"
+Select * 
+From
+(
+    Select a.*,
+    (
+        Select distinct Article+'/ ' 
+	    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
+	    Where b.workorderukey = a.Ukey and b.article!=''
+        For XML path('')
+    ) as article,
+    (
+        Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+        From WorkOrder_SizeRatio c WITH (NOLOCK) 
+        Where c.WorkOrderUkey =a.Ukey 
+        For XML path('')
+    ) as SizeCode,
+    (
+        Select PatternPanel+'+ ' 
+        From WorkOrder_PatternPanel c WITH (NOLOCK) 
+        Where c.WorkOrderUkey =a.Ukey 
+        For XML path('')
+    ) as PatternPanel,
+    (
+	    Select  isnull(CONVERT (DATE, Min(sew.Inline),101),'')  as inline 
+	    From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b,WorkOrder_Distribute h WITH (NOLOCK) 
+	    Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
+			    and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
+    )  as Sewinline,
+    (
+	    Select isnull(Min(cut.cdate),'')
+	    From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
+	    Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
+    )  as actcutdate,
+    '' as NewestcutDate, '' as cutreasonid ,0 as sel
+    from Workorder a";
             string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
             if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'",cutsp);
             if (!MyUtility.Check.Empty(sp)) where = where + string.Format(" and OrderID='{0}'", sp);
             if (!MyUtility.Check.Empty(seq)) where = where + string.Format(" and Seq1+SEQ2='{0}'", seq);
             if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
             if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
+            if (!MyUtility.Check.Empty(txtfactoryByM)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM);
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate =''";
