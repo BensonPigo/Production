@@ -25,6 +25,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
+            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             GridSetup();
             this.EditMode = true;
             this.comboSortBy.SelectedIndex = 0;
@@ -154,6 +155,12 @@ namespace Sci.Production.Cutting
             else if (this.comboSortBy.Text == "SP#")
             {
                 sb = "order by b.OrderID,b.CutRef,b.PatternPanel,b.Article,a.SizeCode";
+            }
+
+            if (!this.txtfactoryByM.Text.Empty())
+            {
+                sqlWheres.Add("c.FtyGroup  = @FtyGroup ");
+                lis.Add(new SqlParameter("@FtyGroup ", txtfactoryByM.Text));
             }
 
 
