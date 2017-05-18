@@ -122,7 +122,7 @@
             this.masterpanel.Controls.Add(this.labelAuditDate);
             this.masterpanel.Controls.Add(this.labelDestination);
             this.masterpanel.Controls.Add(this.dateAuditDate);
-            this.masterpanel.Size = new System.Drawing.Size(1037, 217);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 217);
             this.masterpanel.Controls.SetChildIndex(this.dateAuditDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelAuditDate, 0);
@@ -167,20 +167,19 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 217);
-            this.detailpanel.Size = new System.Drawing.Size(1037, 333);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 333);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(918, 182);
+            this.gridicon.Location = new System.Drawing.Point(892, 182);
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.refresh.Location = new System.Drawing.Point(918, 1);
+            this.refresh.Location = new System.Drawing.Point(917, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1037, 333);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 333);
             // 
             // detail2
             // 
@@ -196,24 +195,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1037, 588);
+            this.detail.Size = new System.Drawing.Size(1000, 588);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1037, 550);
+            this.detailcont.Size = new System.Drawing.Size(1000, 550);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 550);
-            this.detailbtm.Size = new System.Drawing.Size(1037, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1037, 588);
+            this.browse.Size = new System.Drawing.Size(1000, 588);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1045, 617);
+            this.tabs.Size = new System.Drawing.Size(1008, 617);
             // 
             // createby
             // 
@@ -230,7 +229,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(20, 98);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(82, 23);
@@ -239,7 +237,6 @@
             // 
             // labelAuditDate
             // 
-            this.labelAuditDate.Lines = 0;
             this.labelAuditDate.Location = new System.Drawing.Point(20, 13);
             this.labelAuditDate.Name = "labelAuditDate";
             this.labelAuditDate.Size = new System.Drawing.Size(82, 23);
@@ -248,7 +245,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(20, 41);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(82, 23);
@@ -257,7 +253,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(20, 70);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(82, 23);
@@ -266,7 +261,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(20, 126);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(82, 23);
@@ -275,7 +269,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(20, 182);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(82, 23);
@@ -284,7 +277,6 @@
             // 
             // labelSQR
             // 
-            this.labelSQR.Lines = 0;
             this.labelSQR.Location = new System.Drawing.Point(20, 154);
             this.labelSQR.Name = "labelSQR";
             this.labelSQR.Size = new System.Drawing.Size(82, 23);
@@ -293,7 +285,6 @@
             // 
             // labelPO
             // 
-            this.labelPO.Lines = 0;
             this.labelPO.Location = new System.Drawing.Point(269, 13);
             this.labelPO.Name = "labelPO";
             this.labelPO.Size = new System.Drawing.Size(90, 23);
@@ -302,7 +293,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(269, 41);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(90, 23);
@@ -311,7 +301,6 @@
             // 
             // labelInspectQty
             // 
-            this.labelInspectQty.Lines = 0;
             this.labelInspectQty.Location = new System.Drawing.Point(269, 70);
             this.labelInspectQty.Name = "labelInspectQty";
             this.labelInspectQty.Size = new System.Drawing.Size(90, 23);
@@ -320,7 +309,6 @@
             // 
             // labelDefectsQty
             // 
-            this.labelDefectsQty.Lines = 0;
             this.labelDefectsQty.Location = new System.Drawing.Point(269, 98);
             this.labelDefectsQty.Name = "labelDefectsQty";
             this.labelDefectsQty.Size = new System.Drawing.Size(90, 23);
@@ -329,7 +317,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(269, 126);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(90, 23);
@@ -338,7 +325,6 @@
             // 
             // labelTeam
             // 
-            this.labelTeam.Lines = 0;
             this.labelTeam.Location = new System.Drawing.Point(269, 154);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(90, 23);
@@ -347,7 +333,6 @@
             // 
             // labelGarmentOutput
             // 
-            this.labelGarmentOutput.Lines = 0;
             this.labelGarmentOutput.Location = new System.Drawing.Point(519, 13);
             this.labelGarmentOutput.Name = "labelGarmentOutput";
             this.labelGarmentOutput.Size = new System.Drawing.Size(112, 23);
@@ -356,7 +341,6 @@
             // 
             // labelInspectionStage
             // 
-            this.labelInspectionStage.Lines = 0;
             this.labelInspectionStage.Location = new System.Drawing.Point(519, 43);
             this.labelInspectionStage.Name = "labelInspectionStage";
             this.labelInspectionStage.Size = new System.Drawing.Size(112, 23);
@@ -365,7 +349,6 @@
             // 
             // labelCFA
             // 
-            this.labelCFA.Lines = 0;
             this.labelCFA.Location = new System.Drawing.Point(519, 72);
             this.labelCFA.Name = "labelCFA";
             this.labelCFA.Size = new System.Drawing.Size(112, 23);
@@ -374,7 +357,6 @@
             // 
             // labelShift
             // 
-            this.labelShift.Lines = 0;
             this.labelShift.Location = new System.Drawing.Point(519, 99);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(112, 23);
@@ -383,7 +365,6 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(519, 131);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(112, 23);
@@ -491,7 +472,6 @@
             // 
             // label19
             // 
-            this.label19.Lines = 0;
             this.label19.Location = new System.Drawing.Point(758, 13);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(28, 23);
@@ -515,10 +495,10 @@
             this.txtInspectionStage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtInspectionStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtInspectionStage.IsSupportEditMode = false;
-            this.txtInspectionStage.Location = new System.Drawing.Point(758, 38);
+            this.txtInspectionStage.Location = new System.Drawing.Point(756, 38);
             this.txtInspectionStage.Name = "txtInspectionStage";
             this.txtInspectionStage.ReadOnly = true;
-            this.txtInspectionStage.Size = new System.Drawing.Size(260, 23);
+            this.txtInspectionStage.Size = new System.Drawing.Size(241, 23);
             this.txtInspectionStage.TabIndex = 12;
             // 
             // numGarmentOutput
@@ -704,7 +684,7 @@
             // P21
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1045, 650);
+            this.ClientSize = new System.Drawing.Size(1008, 650);
             this.GridAlias = "CFA_Detail";
             this.IsSupportConfirm = true;
             this.IsSupportUnconfirm = true;

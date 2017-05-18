@@ -100,9 +100,9 @@
             // 
             // btnSPFind
             // 
-            this.btnSPFind.Location = new System.Drawing.Point(628, 13);
+            this.btnSPFind.Location = new System.Drawing.Point(512, 13);
             this.btnSPFind.Name = "btnSPFind";
-            this.btnSPFind.Size = new System.Drawing.Size(80, 30);
+            this.btnSPFind.Size = new System.Drawing.Size(53, 30);
             this.btnSPFind.TabIndex = 3;
             this.btnSPFind.Text = "Find";
             this.btnSPFind.UseVisualStyleBackColor = true;
@@ -110,7 +110,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(762, 105);
+            this.btnQuery.Location = new System.Drawing.Point(532, 123);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 10;
@@ -122,32 +122,30 @@
             // 
             this.txtLocateForSPNo.BackColor = System.Drawing.Color.White;
             this.txtLocateForSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateForSPNo.Location = new System.Drawing.Point(477, 17);
+            this.txtLocateForSPNo.Location = new System.Drawing.Point(385, 17);
             this.txtLocateForSPNo.Name = "txtLocateForSPNo";
-            this.txtLocateForSPNo.Size = new System.Drawing.Size(145, 23);
+            this.txtLocateForSPNo.Size = new System.Drawing.Size(124, 23);
             this.txtLocateForSPNo.TabIndex = 2;
             // 
             // labelLocateForSPNo
             // 
-            this.labelLocateForSPNo.Lines = 0;
-            this.labelLocateForSPNo.Location = new System.Drawing.Point(365, 17);
+            this.labelLocateForSPNo.Location = new System.Drawing.Point(287, 17);
             this.labelLocateForSPNo.Name = "labelLocateForSPNo";
-            this.labelLocateForSPNo.Size = new System.Drawing.Size(109, 23);
+            this.labelLocateForSPNo.Size = new System.Drawing.Size(98, 23);
             this.labelLocateForSPNo.TabIndex = 16;
             this.labelLocateForSPNo.Text = "Locate for SP#";
             // 
             // dateSewingInline
             // 
             this.dateSewingInline.IsRequired = false;
-            this.dateSewingInline.Location = new System.Drawing.Point(624, 44);
+            this.dateSewingInline.Location = new System.Drawing.Point(343, 44);
             this.dateSewingInline.Name = "dateSewingInline";
             this.dateSewingInline.Size = new System.Drawing.Size(218, 23);
             this.dateSewingInline.TabIndex = 8;
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
-            this.labelSewingInline.Location = new System.Drawing.Point(535, 44);
+            this.labelSewingInline.Location = new System.Drawing.Point(254, 44);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(87, 23);
             this.labelSewingInline.TabIndex = 11;
@@ -156,15 +154,14 @@
             // dateSCIDelivery
             // 
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(624, 15);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(343, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(218, 23);
             this.dateSCIDelivery.TabIndex = 7;
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
-            this.labelSCIDelivery.Location = new System.Drawing.Point(535, 15);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(254, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(87, 23);
             this.labelSCIDelivery.TabIndex = 9;
@@ -188,7 +185,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 616);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1232, 45);
+            this.panel3.Size = new System.Drawing.Size(1008, 45);
             this.panel3.TabIndex = 1;
             // 
             // numCheckedQty
@@ -197,7 +194,7 @@
             this.numCheckedQty.DecimalPlaces = 3;
             this.numCheckedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCheckedQty.IsSupportEditMode = false;
-            this.numCheckedQty.Location = new System.Drawing.Point(116, 12);
+            this.numCheckedQty.Location = new System.Drawing.Point(95, 12);
             this.numCheckedQty.Name = "numCheckedQty";
             this.numCheckedQty.NullValue = new decimal(new int[] {
             0,
@@ -217,7 +214,7 @@
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox4.Location = new System.Drawing.Point(911, 7);
+            this.pictureBox4.Location = new System.Drawing.Point(764, 5);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(25, 31);
             this.pictureBox4.TabIndex = 35;
@@ -228,7 +225,7 @@
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox3.Location = new System.Drawing.Point(744, 7);
+            this.pictureBox3.Location = new System.Drawing.Point(632, 5);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(25, 31);
             this.pictureBox3.TabIndex = 34;
@@ -237,24 +234,25 @@
             // 
             // dateArtworkOffLine
             // 
-            this.dateArtworkOffLine.Location = new System.Drawing.Point(775, 12);
+            this.dateArtworkOffLine.Location = new System.Drawing.Point(663, 12);
             this.dateArtworkOffLine.Name = "dateArtworkOffLine";
-            this.dateArtworkOffLine.Size = new System.Drawing.Size(130, 23);
+            this.dateArtworkOffLine.Size = new System.Drawing.Size(97, 23);
             this.dateArtworkOffLine.TabIndex = 3;
             // 
             // dateArtworkInLine
             // 
-            this.dateArtworkInLine.Location = new System.Drawing.Point(608, 12);
+            this.dateArtworkInLine.Location = new System.Drawing.Point(535, 12);
             this.dateArtworkInLine.Name = "dateArtworkInLine";
-            this.dateArtworkInLine.Size = new System.Drawing.Size(130, 23);
+            this.dateArtworkInLine.Size = new System.Drawing.Size(95, 23);
             this.dateArtworkInLine.TabIndex = 2;
+            this.dateArtworkInLine.Value = new System.DateTime(2017, 2, 1, 0, 0, 0, 0);
             // 
             // btnCheckData
             // 
             this.btnCheckData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckData.Location = new System.Drawing.Point(957, 8);
+            this.btnCheckData.Location = new System.Drawing.Point(795, 8);
             this.btnCheckData.Name = "btnCheckData";
-            this.btnCheckData.Size = new System.Drawing.Size(96, 30);
+            this.btnCheckData.Size = new System.Drawing.Size(93, 30);
             this.btnCheckData.TabIndex = 4;
             this.btnCheckData.Text = "Check Data";
             this.btnCheckData.UseVisualStyleBackColor = true;
@@ -266,16 +264,16 @@
             this.comboInHouseOSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboInHouseOSP.FormattingEnabled = true;
             this.comboInHouseOSP.IsSupportUnselect = true;
-            this.comboInHouseOSP.Location = new System.Drawing.Point(243, 12);
+            this.comboInHouseOSP.Location = new System.Drawing.Point(200, 12);
             this.comboInHouseOSP.Name = "comboInHouseOSP";
-            this.comboInHouseOSP.Size = new System.Drawing.Size(121, 24);
+            this.comboInHouseOSP.Size = new System.Drawing.Size(99, 24);
             this.comboInHouseOSP.TabIndex = 0;
             // 
             // txtsubconLocalSuppid
             // 
             this.txtsubconLocalSuppid.DisplayBox1Binding = "";
             this.txtsubconLocalSuppid.IsIncludeJunk = false;
-            this.txtsubconLocalSuppid.Location = new System.Drawing.Point(401, 12);
+            this.txtsubconLocalSuppid.Location = new System.Drawing.Point(335, 12);
             this.txtsubconLocalSuppid.Name = "txtsubconLocalSuppid";
             this.txtsubconLocalSuppid.Size = new System.Drawing.Size(170, 23);
             this.txtsubconLocalSuppid.TabIndex = 1;
@@ -284,9 +282,9 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1141, 8);
+            this.btnClose.Location = new System.Drawing.Point(947, 8);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.Size = new System.Drawing.Size(58, 30);
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -295,9 +293,9 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(1057, 8);
+            this.btnSave.Location = new System.Drawing.Point(890, 8);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.Size = new System.Drawing.Size(55, 30);
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -308,7 +306,7 @@
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.InitialImage = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox2.Location = new System.Drawing.Point(577, 5);
+            this.pictureBox2.Location = new System.Drawing.Point(506, 5);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(25, 31);
             this.pictureBox2.TabIndex = 6;
@@ -320,7 +318,7 @@
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox1.Location = new System.Drawing.Point(370, 5);
+            this.pictureBox1.Location = new System.Drawing.Point(304, 5);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(25, 31);
             this.pictureBox1.TabIndex = 2;
@@ -329,8 +327,7 @@
             // 
             // labelCheckedQty
             // 
-            this.labelCheckedQty.Lines = 0;
-            this.labelCheckedQty.Location = new System.Drawing.Point(25, 12);
+            this.labelCheckedQty.Location = new System.Drawing.Point(4, 12);
             this.labelCheckedQty.Name = "labelCheckedQty";
             this.labelCheckedQty.Size = new System.Drawing.Size(88, 23);
             this.labelCheckedQty.TabIndex = 1;
@@ -355,7 +352,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.gridFactoryID);
             this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer1.Size = new System.Drawing.Size(1232, 616);
+            this.splitContainer1.Size = new System.Drawing.Size(1008, 616);
             this.splitContainer1.SplitterDistance = 235;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -385,7 +382,7 @@
             this.groupBox2.Controls.Add(this.labelStyle);
             this.groupBox2.Location = new System.Drawing.Point(9, 10);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(855, 159);
+            this.groupBox2.Size = new System.Drawing.Size(618, 159);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
@@ -393,15 +390,14 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory.Location = new System.Drawing.Point(359, 15);
+            this.txtmfactory.Location = new System.Drawing.Point(120, 133);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 1;
             // 
             // label16
             // 
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(159, 105);
+            this.label16.Location = new System.Drawing.Point(446, 103);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(19, 23);
             this.label16.TabIndex = 41;
@@ -413,7 +409,7 @@
             this.numWorkHours.DecimalPlaces = 1;
             this.numWorkHours.DisplayStyle = Ict.Win.UI.NumericBoxDisplayStyle.ThousandSeparator;
             this.numWorkHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWorkHours.Location = new System.Drawing.Point(358, 105);
+            this.numWorkHours.Location = new System.Drawing.Point(406, 133);
             this.numWorkHours.Maximum = new decimal(new int[] {
             240,
             0,
@@ -443,7 +439,7 @@
             this.numEfficiency.BackColor = System.Drawing.Color.White;
             this.numEfficiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numEfficiency.IsSupportEditMode = false;
-            this.numEfficiency.Location = new System.Drawing.Point(117, 105);
+            this.numEfficiency.Location = new System.Drawing.Point(404, 103);
             this.numEfficiency.Maximum = new decimal(new int[] {
             200,
             0,
@@ -470,8 +466,7 @@
             // 
             // labelWorkHours
             // 
-            this.labelWorkHours.Lines = 0;
-            this.labelWorkHours.Location = new System.Drawing.Point(246, 105);
+            this.labelWorkHours.Location = new System.Drawing.Point(294, 133);
             this.labelWorkHours.Name = "labelWorkHours";
             this.labelWorkHours.Size = new System.Drawing.Size(109, 23);
             this.labelWorkHours.TabIndex = 38;
@@ -479,8 +474,7 @@
             // 
             // labelEfficiency
             // 
-            this.labelEfficiency.Lines = 0;
-            this.labelEfficiency.Location = new System.Drawing.Point(7, 105);
+            this.labelEfficiency.Location = new System.Drawing.Point(294, 103);
             this.labelEfficiency.Name = "labelEfficiency";
             this.labelEfficiency.Size = new System.Drawing.Size(109, 23);
             this.labelEfficiency.TabIndex = 36;
@@ -489,15 +483,14 @@
             // dateInlineDate
             // 
             this.dateInlineDate.IsRequired = false;
-            this.dateInlineDate.Location = new System.Drawing.Point(624, 73);
+            this.dateInlineDate.Location = new System.Drawing.Point(343, 73);
             this.dateInlineDate.Name = "dateInlineDate";
             this.dateInlineDate.Size = new System.Drawing.Size(218, 23);
             this.dateInlineDate.TabIndex = 9;
             // 
             // labelInlineDate
             // 
-            this.labelInlineDate.Lines = 0;
-            this.labelInlineDate.Location = new System.Drawing.Point(535, 73);
+            this.labelInlineDate.Location = new System.Drawing.Point(254, 73);
             this.labelInlineDate.Name = "labelInlineDate";
             this.labelInlineDate.Size = new System.Drawing.Size(87, 23);
             this.labelInlineDate.TabIndex = 34;
@@ -505,8 +498,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(246, 15);
+            this.labelFactory.Location = new System.Drawing.Point(7, 133);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(109, 23);
             this.labelFactory.TabIndex = 32;
@@ -524,7 +516,6 @@
             // 
             // labelOSPInHouse
             // 
-            this.labelOSPInHouse.Lines = 0;
             this.labelOSPInHouse.Location = new System.Drawing.Point(7, 73);
             this.labelOSPInHouse.Name = "labelOSPInHouse";
             this.labelOSPInHouse.Size = new System.Drawing.Size(109, 23);
@@ -544,8 +535,7 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
-            this.labelSupplier.Location = new System.Drawing.Point(246, 44);
+            this.labelSupplier.Location = new System.Drawing.Point(7, 103);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(109, 23);
             this.labelSupplier.TabIndex = 27;
@@ -555,7 +545,7 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(359, 44);
+            this.txtsubconSupplier.Location = new System.Drawing.Point(120, 103);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 3;
@@ -563,7 +553,6 @@
             // 
             // label9
             // 
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(7, 44);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 23);
@@ -582,7 +571,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(7, 15);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(75, 23);
@@ -604,13 +592,13 @@
             this.gridSupplier.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSupplier.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSupplier.Location = new System.Drawing.Point(870, 12);
+            this.gridSupplier.Location = new System.Drawing.Point(632, 12);
             this.gridSupplier.Name = "gridSupplier";
             this.gridSupplier.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSupplier.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSupplier.RowTemplate.Height = 24;
             this.gridSupplier.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSupplier.Size = new System.Drawing.Size(353, 159);
+            this.gridSupplier.Size = new System.Drawing.Size(369, 159);
             this.gridSupplier.TabIndex = 17;
             this.gridSupplier.TabStop = false;
             // 
@@ -628,15 +616,15 @@
             this.groupBox1.Controls.Add(this.btnUpdateInline);
             this.groupBox1.Location = new System.Drawing.Point(9, 175);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1214, 49);
+            this.groupBox1.Size = new System.Drawing.Size(996, 49);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             // 
             // btnStyleFind
             // 
-            this.btnStyleFind.Location = new System.Drawing.Point(986, 13);
+            this.btnStyleFind.Location = new System.Drawing.Point(829, 13);
             this.btnStyleFind.Name = "btnStyleFind";
-            this.btnStyleFind.Size = new System.Drawing.Size(80, 30);
+            this.btnStyleFind.Size = new System.Drawing.Size(61, 30);
             this.btnStyleFind.TabIndex = 5;
             this.btnStyleFind.Text = "Find";
             this.btnStyleFind.UseVisualStyleBackColor = true;
@@ -646,15 +634,14 @@
             // 
             this.txtLocateForStyleNo.BackColor = System.Drawing.Color.White;
             this.txtLocateForStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateForStyleNo.Location = new System.Drawing.Point(835, 17);
+            this.txtLocateForStyleNo.Location = new System.Drawing.Point(681, 17);
             this.txtLocateForStyleNo.Name = "txtLocateForStyleNo";
             this.txtLocateForStyleNo.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForStyleNo.TabIndex = 4;
             // 
             // labelLocateForStyleNo
             // 
-            this.labelLocateForStyleNo.Lines = 0;
-            this.labelLocateForStyleNo.Location = new System.Drawing.Point(723, 17);
+            this.labelLocateForStyleNo.Location = new System.Drawing.Point(569, 17);
             this.labelLocateForStyleNo.Name = "labelLocateForStyleNo";
             this.labelLocateForStyleNo.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForStyleNo.TabIndex = 36;
@@ -662,10 +649,9 @@
             // 
             // labelFilterEmpty
             // 
-            this.labelFilterEmpty.Lines = 0;
-            this.labelFilterEmpty.Location = new System.Drawing.Point(7, 17);
+            this.labelFilterEmpty.Location = new System.Drawing.Point(5, 17);
             this.labelFilterEmpty.Name = "labelFilterEmpty";
-            this.labelFilterEmpty.Size = new System.Drawing.Size(109, 23);
+            this.labelFilterEmpty.Size = new System.Drawing.Size(80, 23);
             this.labelFilterEmpty.TabIndex = 33;
             this.labelFilterEmpty.Text = "Filter empty";
             // 
@@ -673,7 +659,7 @@
             // 
             this.checkSuppID.AutoSize = true;
             this.checkSuppID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSuppID.Location = new System.Drawing.Point(130, 18);
+            this.checkSuppID.Location = new System.Drawing.Point(89, 18);
             this.checkSuppID.Name = "checkSuppID";
             this.checkSuppID.Size = new System.Drawing.Size(101, 21);
             this.checkSuppID.TabIndex = 0;
@@ -685,7 +671,7 @@
             // 
             this.checkInLine.AutoSize = true;
             this.checkInLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkInLine.Location = new System.Drawing.Point(244, 18);
+            this.checkInLine.Location = new System.Drawing.Point(190, 18);
             this.checkInLine.Name = "checkInLine";
             this.checkInLine.Size = new System.Drawing.Size(93, 21);
             this.checkInLine.TabIndex = 1;
@@ -695,9 +681,9 @@
             // 
             // btnUpdateInline
             // 
-            this.btnUpdateInline.Location = new System.Drawing.Point(1077, 13);
+            this.btnUpdateInline.Location = new System.Drawing.Point(891, 13);
             this.btnUpdateInline.Name = "btnUpdateInline";
-            this.btnUpdateInline.Size = new System.Drawing.Size(106, 30);
+            this.btnUpdateInline.Size = new System.Drawing.Size(99, 30);
             this.btnUpdateInline.TabIndex = 6;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;
@@ -725,13 +711,13 @@
             this.gridFactoryID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFactoryID.RowTemplate.Height = 24;
             this.gridFactoryID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridFactoryID.Size = new System.Drawing.Size(1226, 360);
+            this.gridFactoryID.Size = new System.Drawing.Size(1002, 360);
             this.gridFactoryID.TabIndex = 34;
             this.gridFactoryID.TabStop = false;
             // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(1232, 661);
+            this.ClientSize = new System.Drawing.Size(1008, 661);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
             this.DefaultControl = "txtstyle";

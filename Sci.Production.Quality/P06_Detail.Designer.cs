@@ -52,7 +52,7 @@
             // btmcont
             // 
             this.btmcont.Controls.Add(this.btnToExcel);
-            this.btmcont.Size = new System.Drawing.Size(1080, 40);
+            this.btmcont.Size = new System.Drawing.Size(1008, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -63,20 +63,20 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 113);
-            this.gridcont.Size = new System.Drawing.Size(1056, 322);
+            this.gridcont.Size = new System.Drawing.Size(984, 322);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(990, 5);
+            this.undo.Location = new System.Drawing.Point(918, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(910, 5);
+            this.save.Location = new System.Drawing.Point(838, 5);
             // 
             // btnToExcel
             // 
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnToExcel.Location = new System.Drawing.Point(784, 5);
+            this.btnToExcel.Location = new System.Drawing.Point(733, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(101, 30);
             this.btnToExcel.TabIndex = 95;
@@ -86,7 +86,7 @@
             // 
             // dateTestDate
             // 
-            this.dateTestDate.Location = new System.Drawing.Point(528, 23);
+            this.dateTestDate.Location = new System.Drawing.Point(516, 23);
             this.dateTestDate.Name = "dateTestDate";
             this.dateTestDate.Size = new System.Drawing.Size(130, 23);
             this.dateTestDate.TabIndex = 112;
@@ -95,7 +95,7 @@
             // btnEncode
             // 
             this.btnEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnEncode.Location = new System.Drawing.Point(865, 62);
+            this.btnEncode.Location = new System.Drawing.Point(853, 62);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(96, 30);
             this.btnEncode.TabIndex = 110;
@@ -107,7 +107,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(527, 67);
+            this.txtRemark.Location = new System.Drawing.Point(515, 67);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(315, 23);
             this.txtRemark.TabIndex = 108;
@@ -115,7 +115,7 @@
             // txtuserInspector
             // 
             this.txtuserInspector.DisplayBox1Binding = "";
-            this.txtuserInspector.Location = new System.Drawing.Point(109, 67);
+            this.txtuserInspector.Location = new System.Drawing.Point(97, 67);
             this.txtuserInspector.Name = "txtuserInspector";
             this.txtuserInspector.Size = new System.Drawing.Size(296, 23);
             this.txtuserInspector.TabIndex = 106;
@@ -129,7 +129,7 @@
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(922, 23);
+            this.comboResult.Location = new System.Drawing.Point(910, 23);
             this.comboResult.Name = "comboResult";
             this.comboResult.ReadOnly = true;
             this.comboResult.Size = new System.Drawing.Size(89, 24);
@@ -139,7 +139,7 @@
             // 
             this.txtArticle.BackColor = System.Drawing.Color.White;
             this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArticle.Location = new System.Drawing.Point(719, 23);
+            this.txtArticle.Location = new System.Drawing.Point(707, 23);
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(123, 23);
             this.txtArticle.TabIndex = 102;
@@ -151,7 +151,7 @@
             this.txtNoofTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtNoofTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtNoofTest.IsSupportEditMode = false;
-            this.txtNoofTest.Location = new System.Drawing.Point(109, 23);
+            this.txtNoofTest.Location = new System.Drawing.Point(97, 23);
             this.txtNoofTest.Name = "txtNoofTest";
             this.txtNoofTest.ReadOnly = true;
             this.txtNoofTest.Size = new System.Drawing.Size(81, 23);
@@ -159,8 +159,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
-            this.labelRemark.Location = new System.Drawing.Point(449, 67);
+            this.labelRemark.Location = new System.Drawing.Point(437, 67);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 100;
@@ -168,8 +167,7 @@
             // 
             // labelInspector
             // 
-            this.labelInspector.Lines = 0;
-            this.labelInspector.Location = new System.Drawing.Point(28, 67);
+            this.labelInspector.Location = new System.Drawing.Point(16, 67);
             this.labelInspector.Name = "labelInspector";
             this.labelInspector.Size = new System.Drawing.Size(74, 23);
             this.labelInspector.TabIndex = 103;
@@ -177,8 +175,7 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
-            this.labelResult.Location = new System.Drawing.Point(865, 23);
+            this.labelResult.Location = new System.Drawing.Point(853, 23);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(54, 23);
             this.labelResult.TabIndex = 109;
@@ -186,8 +183,7 @@
             // 
             // labelTestDate
             // 
-            this.labelTestDate.Lines = 0;
-            this.labelTestDate.Location = new System.Drawing.Point(449, 23);
+            this.labelTestDate.Location = new System.Drawing.Point(437, 23);
             this.labelTestDate.Name = "labelTestDate";
             this.labelTestDate.Size = new System.Drawing.Size(75, 23);
             this.labelTestDate.TabIndex = 111;
@@ -195,8 +191,7 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
-            this.labelSP.Location = new System.Drawing.Point(205, 23);
+            this.labelSP.Location = new System.Drawing.Point(193, 23);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(45, 23);
             this.labelSP.TabIndex = 107;
@@ -204,8 +199,7 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Lines = 0;
-            this.labelArticle.Location = new System.Drawing.Point(664, 23);
+            this.labelArticle.Location = new System.Drawing.Point(652, 23);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(52, 23);
             this.labelArticle.TabIndex = 105;
@@ -213,8 +207,7 @@
             // 
             // labelNoofTest
             // 
-            this.labelNoofTest.Lines = 0;
-            this.labelNoofTest.Location = new System.Drawing.Point(28, 23);
+            this.labelNoofTest.Location = new System.Drawing.Point(16, 23);
             this.labelNoofTest.Name = "labelNoofTest";
             this.labelNoofTest.Size = new System.Drawing.Size(74, 23);
             this.labelNoofTest.TabIndex = 101;
@@ -225,7 +218,7 @@
             this.txtSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSP.IsSupportEditMode = false;
-            this.txtSP.Location = new System.Drawing.Point(253, 23);
+            this.txtSP.Location = new System.Drawing.Point(241, 23);
             this.txtSP.Name = "txtSP";
             this.txtSP.ReadOnly = true;
             this.txtSP.Size = new System.Drawing.Size(153, 23);
@@ -233,7 +226,7 @@
             // 
             // P06_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(1080, 497);
+            this.ClientSize = new System.Drawing.Size(1008, 497);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.dateTestDate);
             this.Controls.Add(this.btnEncode);

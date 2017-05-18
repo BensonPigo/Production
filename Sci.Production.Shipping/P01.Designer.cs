@@ -177,10 +177,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(996, 684);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtResponsibilityJustifcation);
@@ -314,7 +310,7 @@
             this.detailcont.Controls.Add(this.labelAirNo);
             this.detailcont.Controls.Add(this.shapeContainer1);
             this.detailcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailcont.Size = new System.Drawing.Size(996, 623);
+            this.detailcont.Size = new System.Drawing.Size(897, 334);
             // 
             // detailbtm
             // 
@@ -323,8 +319,8 @@
             this.detailbtm.Controls.Add(this.labelUpdTPEDate);
             this.detailbtm.Controls.Add(this.labelTPEEditDate);
             this.detailbtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailbtm.Location = new System.Drawing.Point(0, 623);
-            this.detailbtm.Size = new System.Drawing.Size(996, 61);
+            this.detailbtm.Location = new System.Drawing.Point(0, 334);
+            this.detailbtm.Size = new System.Drawing.Size(897, 61);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -336,11 +332,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(996, 684);
+            this.browse.Size = new System.Drawing.Size(996, 668);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1004, 713);
+            this.tabs.Size = new System.Drawing.Size(1004, 697);
             // 
             // createby
             // 
@@ -1450,7 +1446,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(996, 623);
+            this.shapeContainer1.Size = new System.Drawing.Size(989, 617);
             this.shapeContainer1.TabIndex = 93;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2001,7 +1997,7 @@
             // 
             this.ApvChkValue = "Checked";
             this.CheckChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1004, 746);
+            this.ClientSize = new System.Drawing.Size(1004, 730);
             this.DefaultControl = "txtSpNo";
             this.DefaultControlForEdit = "txtSpNo";
             this.DefaultOrder = "CDate";

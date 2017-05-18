@@ -59,12 +59,12 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.displayResult = new Sci.Win.UI.DisplayBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
-            this.txtuserApprover = new Sci.Production.Class.txtuser();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.textID = new Sci.Win.UI.DisplayBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.btnPrintFormatReport = new Sci.Win.UI.Button();
+            this.txtuserApprover = new Sci.Production.Class.txtuser();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -75,7 +75,7 @@
             this.btmcont.Controls.Add(this.btnPrintFormatReport);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(1073, 40);
+            this.btmcont.Size = new System.Drawing.Size(1008, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -87,15 +87,15 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 163);
-            this.gridcont.Size = new System.Drawing.Size(1049, 520);
+            this.gridcont.Size = new System.Drawing.Size(984, 520);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(983, 5);
+            this.undo.Location = new System.Drawing.Point(918, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(903, 5);
+            this.save.Location = new System.Drawing.Point(838, 5);
             // 
             // displayBrand
             // 
@@ -130,7 +130,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(15, 101);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(61, 23);
@@ -140,7 +139,6 @@
             // labelStyle
             // 
             this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(15, 71);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(61, 23);
@@ -150,7 +148,6 @@
             // labelSP
             // 
             this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(15, 11);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(61, 23);
@@ -170,7 +167,6 @@
             // labelWKNo
             // 
             this.labelWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelWKNo.Lines = 0;
             this.labelWKNo.Location = new System.Drawing.Point(15, 41);
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(61, 23);
@@ -190,7 +186,6 @@
             // labelSEQ
             // 
             this.labelSEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(215, 11);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
@@ -200,7 +195,6 @@
             // labelSupplier
             // 
             this.labelSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(215, 41);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
@@ -210,7 +204,6 @@
             // labelRefno
             // 
             this.labelRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(215, 71);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -240,7 +233,6 @@
             // labelSCIRefno
             // 
             this.labelSCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(215, 101);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
@@ -270,7 +262,6 @@
             // labelColor
             // 
             this.labelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(461, 11);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -280,7 +271,6 @@
             // labelArriveQty
             // 
             this.labelArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(461, 41);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
@@ -300,7 +290,6 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Lines = 0;
             this.labelArriveWHDate.Location = new System.Drawing.Point(655, 11);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(123, 23);
@@ -310,7 +299,6 @@
             // labelLastInspectionDate
             // 
             this.labelLastInspectionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLastInspectionDate.Lines = 0;
             this.labelLastInspectionDate.Location = new System.Drawing.Point(655, 41);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(123, 23);
@@ -320,7 +308,6 @@
             // labelResult
             // 
             this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(461, 71);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(75, 23);
@@ -363,7 +350,6 @@
             // labelApprover
             // 
             this.labelApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelApprover.Lines = 0;
             this.labelApprover.Location = new System.Drawing.Point(15, 129);
             this.labelApprover.Name = "labelApprover";
             this.labelApprover.Size = new System.Drawing.Size(61, 23);
@@ -408,24 +394,6 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
             this.dateArriveWHDate.TabIndex = 135;
             // 
-            // txtuserApprover
-            // 
-            this.txtuserApprover.DisplayBox1Binding = "";
-            this.txtuserApprover.Location = new System.Drawing.Point(81, 129);
-            this.txtuserApprover.Name = "txtuserApprover";
-            this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
-            this.txtuserApprover.TabIndex = 131;
-            this.txtuserApprover.TextBox1Binding = "";
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(293, 41);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 109;
-            this.txtsupplier.TextBox1Binding = "";
-            // 
             // dateBox1
             // 
             this.dateBox1.Location = new System.Drawing.Point(429, 355);
@@ -463,9 +431,27 @@
             this.btnPrintFormatReport.UseVisualStyleBackColor = true;
             this.btnPrintFormatReport.Click += new System.EventHandler(this.btnPrintFormatReport_Click);
             // 
+            // txtuserApprover
+            // 
+            this.txtuserApprover.DisplayBox1Binding = "";
+            this.txtuserApprover.Location = new System.Drawing.Point(81, 129);
+            this.txtuserApprover.Name = "txtuserApprover";
+            this.txtuserApprover.Size = new System.Drawing.Size(305, 23);
+            this.txtuserApprover.TabIndex = 131;
+            this.txtuserApprover.TextBox1Binding = "";
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(293, 41);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 109;
+            this.txtsupplier.TextBox1Binding = "";
+            // 
             // P01_Continuity
             // 
-            this.ClientSize = new System.Drawing.Size(1073, 733);
+            this.ClientSize = new System.Drawing.Size(1008, 733);
             this.Controls.Add(this.dateLastInspectionDate);
             this.Controls.Add(this.dateBox1);
             this.Controls.Add(this.dateArriveWHDate);
