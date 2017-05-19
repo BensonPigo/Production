@@ -150,7 +150,6 @@
             // 
             // refresh
             // 
-            this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.refresh.Location = new System.Drawing.Point(898, 1);
             this.refresh.TabIndex = 3;
             // 
@@ -475,7 +474,6 @@
             // 
             // btnStdGSDList
             // 
-            this.btnStdGSDList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStdGSDList.Location = new System.Drawing.Point(773, 6);
             this.btnStdGSDList.Name = "btnStdGSDList";
             this.btnStdGSDList.Size = new System.Drawing.Size(119, 30);
