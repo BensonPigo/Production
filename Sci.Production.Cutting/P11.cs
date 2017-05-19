@@ -391,7 +391,7 @@ namespace Sci.Production.Cutting
             DBProxy.Current.DefaultTimeout = 300;
             //判斷必須有一條件存在
             string cutref = txtCutref.Text;
-            string cutdate = dateEstCutDate.Value.ToString();
+            string cutdate = dateEstCutDate.Value.Value.ToShortDateString();
             string poid = txtPOID.Text;
             if (CutRefTb != null) CutRefTb.Clear();
             if (ArticleSizeTb != null) ArticleSizeTb.Clear();
