@@ -53,6 +53,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -107,7 +108,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 82);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(128, 23);
@@ -140,6 +140,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtbrand);
             this.groupBox1.Controls.Add(this.labelBrand);
             this.groupBox1.Controls.Add(this.labelApproveDate);
@@ -174,7 +175,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(462, 117);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(125, 23);
@@ -183,7 +183,6 @@
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Lines = 0;
             this.labelApproveDate.Location = new System.Drawing.Point(462, 82);
             this.labelApproveDate.Name = "labelApproveDate";
             this.labelApproveDate.Size = new System.Drawing.Size(125, 23);
@@ -200,7 +199,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(462, 15);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(125, 23);
@@ -217,7 +215,6 @@
             // 
             // labelEstArrivedDate
             // 
-            this.labelEstArrivedDate.Lines = 0;
             this.labelEstArrivedDate.Location = new System.Drawing.Point(9, 48);
             this.labelEstArrivedDate.Name = "labelEstArrivedDate";
             this.labelEstArrivedDate.Size = new System.Drawing.Size(128, 23);
@@ -234,7 +231,6 @@
             // 
             // labelSewingInlineDate
             // 
-            this.labelSewingInlineDate.Lines = 0;
             this.labelSewingInlineDate.Location = new System.Drawing.Point(462, 48);
             this.labelSewingInlineDate.Name = "labelSewingInlineDate";
             this.labelSewingInlineDate.Size = new System.Drawing.Size(125, 23);
@@ -243,7 +239,6 @@
             // 
             // labelEstBookingDate
             // 
-            this.labelEstBookingDate.Lines = 0;
             this.labelEstBookingDate.Location = new System.Drawing.Point(9, 15);
             this.labelEstBookingDate.Name = "labelEstBookingDate";
             this.labelEstBookingDate.Size = new System.Drawing.Size(128, 23);
@@ -270,7 +265,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(268, 82);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(298, 82);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoEnd.TabIndex = 6;
@@ -307,6 +302,15 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 353);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(268, 85);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 20;
+            this.label8.Text = "～";
             // 
             // P30_Import
             // 
@@ -353,5 +357,6 @@
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Button btnToExcel;
+        private System.Windows.Forms.Label label8;
     }
 }

@@ -47,6 +47,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label8 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -101,7 +103,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -121,6 +122,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.labelDelivery);
             this.groupBox1.Controls.Add(this.labelPOIssueDate);
             this.groupBox1.Controls.Add(this.dateDelivery);
@@ -141,7 +144,6 @@
             // 
             // labelDelivery
             // 
-            this.labelDelivery.Lines = 0;
             this.labelDelivery.Location = new System.Drawing.Point(406, 48);
             this.labelDelivery.Name = "labelDelivery";
             this.labelDelivery.Size = new System.Drawing.Size(95, 23);
@@ -150,7 +152,6 @@
             // 
             // labelPOIssueDate
             // 
-            this.labelPOIssueDate.Lines = 0;
             this.labelPOIssueDate.Location = new System.Drawing.Point(9, 48);
             this.labelPOIssueDate.Name = "labelPOIssueDate";
             this.labelPOIssueDate.Size = new System.Drawing.Size(95, 23);
@@ -177,7 +178,7 @@
             // 
             this.txtPOIDEnd.BackColor = System.Drawing.Color.White;
             this.txtPOIDEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPOIDEnd.Location = new System.Drawing.Point(632, 15);
+            this.txtPOIDEnd.Location = new System.Drawing.Point(662, 15);
             this.txtPOIDEnd.Name = "txtPOIDEnd";
             this.txtPOIDEnd.Size = new System.Drawing.Size(122, 23);
             this.txtPOIDEnd.TabIndex = 3;
@@ -193,7 +194,6 @@
             // 
             // labelPOID
             // 
-            this.labelPOID.Lines = 0;
             this.labelPOID.Location = new System.Drawing.Point(406, 15);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(95, 23);
@@ -204,7 +204,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(235, 15);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(263, 15);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoEnd.TabIndex = 1;
@@ -241,6 +241,24 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 414);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(235, 19);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "～";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(634, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 17);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "～";
             // 
             // P35_Import
             // 
@@ -281,5 +299,7 @@
         private Win.UI.Label labelPOIssueDate;
         private Win.UI.DateRange dateDelivery;
         private Win.UI.DateRange datePOIssueDate;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label8;
     }
 }

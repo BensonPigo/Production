@@ -120,6 +120,7 @@ namespace Sci.Production.Subcon
                     if (dtlocal.Rows.Count == 0)
                     { MyUtility.Msg.WarningBox("Data not found!!"); }
                     listControlBindingSource1.DataSource = dtlocal;
+                    this.gridImport.AutoResizeColumns();
                 }
                 else { ShowErr(strSQLCmd, result); }
             }

@@ -43,6 +43,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImportFromPO = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label8 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -116,6 +118,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtArtworkPOIDEnd);
             this.groupBox1.Controls.Add(this.txtArtworkPOIDStart);
             this.groupBox1.Controls.Add(this.labelArtworkPOID);
@@ -134,7 +138,7 @@
             // 
             this.txtArtworkPOIDEnd.BackColor = System.Drawing.Color.White;
             this.txtArtworkPOIDEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArtworkPOIDEnd.Location = new System.Drawing.Point(632, 15);
+            this.txtArtworkPOIDEnd.Location = new System.Drawing.Point(660, 15);
             this.txtArtworkPOIDEnd.Name = "txtArtworkPOIDEnd";
             this.txtArtworkPOIDEnd.Size = new System.Drawing.Size(122, 23);
             this.txtArtworkPOIDEnd.TabIndex = 3;
@@ -160,7 +164,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(235, 15);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(263, 15);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoEnd.TabIndex = 1;
@@ -198,6 +202,24 @@
             this.gridImportFromPO.TabIndex = 0;
             this.gridImportFromPO.TabStop = false;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(235, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "～";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(632, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 17);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "～";
+            // 
             // P10_ImportFromPO
             // 
             this.ClientSize = new System.Drawing.Size(1004, 530);
@@ -233,5 +255,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.TextBox txtArtworkPOIDEnd;
         private Win.UI.TextBox txtArtworkPOIDStart;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label8;
     }
 }

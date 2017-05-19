@@ -67,6 +67,9 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
+            this.label7.Text = CurrentMaintain["Status"].ToString();
+
             DataRow dr;
             if (MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", CurrentMaintain["OrderID"].ToString()), out dr))
             {

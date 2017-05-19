@@ -46,6 +46,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridBatchImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -100,7 +101,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(419, 51);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -120,6 +120,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.dateInlineDate);
             this.groupBox1.Controls.Add(this.dateSCIDelivery);
             this.groupBox1.Controls.Add(this.dateApproveDate);
@@ -163,7 +164,6 @@
             // 
             // labelInlineDate
             // 
-            this.labelInlineDate.Lines = 0;
             this.labelInlineDate.Location = new System.Drawing.Point(419, 15);
             this.labelInlineDate.Name = "labelInlineDate";
             this.labelInlineDate.Size = new System.Drawing.Size(95, 23);
@@ -172,7 +172,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(9, 51);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
@@ -183,14 +182,13 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(645, 51);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(675, 51);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoEnd.TabIndex = 5;
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Lines = 0;
             this.labelApproveDate.Location = new System.Drawing.Point(9, 15);
             this.labelApproveDate.Name = "labelApproveDate";
             this.labelApproveDate.Size = new System.Drawing.Size(95, 23);
@@ -230,6 +228,15 @@
             this.gridBatchImport.TabIndex = 0;
             this.gridBatchImport.TabStop = false;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(647, 54);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "～";
+            // 
             // P01_Import
             // 
             this.ClientSize = new System.Drawing.Size(1364, 530);
@@ -268,5 +275,6 @@
         private Win.UI.Label labelInlineDate;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.Label label8;
     }
 }

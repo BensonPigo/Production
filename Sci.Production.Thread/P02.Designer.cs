@@ -46,6 +46,7 @@
             this.displayStyle = new Sci.Win.UI.DisplayBox();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labelSP = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.displayM);
             this.masterpanel.Controls.Add(this.displayBrand);
             this.masterpanel.Controls.Add(this.displaySeason);
@@ -100,6 +102,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             // 
             // detailpanel
             // 
@@ -309,6 +312,16 @@
             this.labelSP.TabIndex = 17;
             this.labelSP.Text = "SP#";
             // 
+            // label7
+            // 
+            this.label7.BackColor = System.Drawing.Color.Transparent;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label7.Location = new System.Drawing.Point(759, 18);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(130, 23);
+            this.label7.TabIndex = 39;
+            this.label7.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -317,6 +330,7 @@
             this.DefaultControlForEdit = "txtSP";
             this.DefaultDetailOrder = "Refno,ThreadColorid";
             this.DefaultOrder = "OrderID";
+            this.ExpressQuery = true;
             this.GridAlias = "ThreadRequisition_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "refno,threadcolorid";
@@ -349,7 +363,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.ExpressQuery = true;
+
         }
 
         #endregion
@@ -372,5 +386,6 @@
         private Win.UI.DisplayBox displayStyle;
         private Win.UI.TextBox txtSP;
         private Win.UI.Label labelSP;
+        private Win.UI.Label label7;
     }
 }
