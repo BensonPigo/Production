@@ -105,7 +105,7 @@
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(1041, 150);
+            this.masterpanel.Size = new System.Drawing.Size(987, 150);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -141,7 +141,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 150);
-            this.detailpanel.Size = new System.Drawing.Size(1041, 293);
+            this.detailpanel.Size = new System.Drawing.Size(987, 293);
             // 
             // gridicon
             // 
@@ -150,38 +150,39 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(954, -1);
+            this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.refresh.Location = new System.Drawing.Point(898, 1);
             this.refresh.TabIndex = 3;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1041, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(987, 293);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1041, 481);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1035, 435);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1035, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1041, 481);
+            this.detail.Size = new System.Drawing.Size(987, 481);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1041, 443);
+            this.detailcont.Size = new System.Drawing.Size(987, 443);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnStdGSDList);
             this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(1041, 38);
+            this.detailbtm.Size = new System.Drawing.Size(987, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -191,29 +192,28 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1041, 481);
+            this.browse.Size = new System.Drawing.Size(987, 481);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1049, 510);
+            this.tabs.Size = new System.Drawing.Size(995, 510);
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(296, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(471, 7);
+            this.editby.Location = new System.Drawing.Point(417, 7);
             this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.TabIndex = 1;
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(423, 13);
+            this.lbleditby.Location = new System.Drawing.Point(369, 13);
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 4);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(91, 23);
@@ -222,7 +222,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(5, 33);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(91, 23);
@@ -231,7 +230,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(5, 62);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(91, 23);
@@ -240,7 +238,6 @@
             // 
             // labelNumOfSewer
             // 
-            this.labelNumOfSewer.Lines = 0;
             this.labelNumOfSewer.Location = new System.Drawing.Point(5, 91);
             this.labelNumOfSewer.Name = "labelNumOfSewer";
             this.labelNumOfSewer.Size = new System.Drawing.Size(91, 23);
@@ -281,7 +278,6 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Lines = 0;
             this.labelStatus.Location = new System.Drawing.Point(335, 4);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(54, 23);
@@ -302,7 +298,6 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Lines = 0;
             this.labelVersion.Location = new System.Drawing.Point(337, 35);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(52, 23);
@@ -311,7 +306,6 @@
             // 
             // labelCD
             // 
-            this.labelCD.Lines = 0;
             this.labelCD.Location = new System.Drawing.Point(337, 64);
             this.labelCD.Name = "labelCD";
             this.labelCD.Size = new System.Drawing.Size(52, 23);
@@ -320,7 +314,6 @@
             // 
             // labelTotalSewingTimePc
             // 
-            this.labelTotalSewingTimePc.Lines = 0;
             this.labelTotalSewingTimePc.Location = new System.Drawing.Point(5, 120);
             this.labelTotalSewingTimePc.Name = "labelTotalSewingTimePc";
             this.labelTotalSewingTimePc.Size = new System.Drawing.Size(133, 23);
@@ -371,7 +364,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(203, 120);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(29, 23);
@@ -483,7 +475,8 @@
             // 
             // btnStdGSDList
             // 
-            this.btnStdGSDList.Location = new System.Drawing.Point(827, 3);
+            this.btnStdGSDList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStdGSDList.Location = new System.Drawing.Point(773, 6);
             this.btnStdGSDList.Name = "btnStdGSDList";
             this.btnStdGSDList.Size = new System.Drawing.Size(119, 30);
             this.btnStdGSDList.TabIndex = 2;
@@ -493,7 +486,6 @@
             // 
             // labelApplyNo
             // 
-            this.labelApplyNo.Lines = 0;
             this.labelApplyNo.Location = new System.Drawing.Point(580, 4);
             this.labelApplyNo.Name = "labelApplyNo";
             this.labelApplyNo.Size = new System.Drawing.Size(67, 23);
@@ -502,7 +494,6 @@
             // 
             // labelApplyVersion
             // 
-            this.labelApplyVersion.Lines = 0;
             this.labelApplyVersion.Location = new System.Drawing.Point(580, 35);
             this.labelApplyVersion.Name = "labelApplyVersion";
             this.labelApplyVersion.Size = new System.Drawing.Size(89, 23);
@@ -554,7 +545,7 @@
             // 
             // P01
             // 
-            this.ClientSize = new System.Drawing.Size(1049, 543);
+            this.ClientSize = new System.Drawing.Size(995, 543);
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
             this.DefaultOrder = "StyleID";
