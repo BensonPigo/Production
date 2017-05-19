@@ -388,11 +388,10 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            this.ShowWaitMessage("Query");
             DBProxy.Current.DefaultTimeout = 300;
             //判斷必須有一條件存在
             string cutref = txtCutref.Text;
-            string cutdate = dateEstCutDate.Text;
+            string cutdate = dateEstCutDate.Value.ToString();
             string poid = txtPOID.Text;
             if (CutRefTb != null) CutRefTb.Clear();
             if (ArticleSizeTb != null) ArticleSizeTb.Clear();
@@ -408,6 +407,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("The Condition can not empty.");
                 return;
             }
+            this.ShowWaitMessage("Query");
             #region 條件式
             string query_cmd = string.Format(@"
 Select  distinct 0 as sel
