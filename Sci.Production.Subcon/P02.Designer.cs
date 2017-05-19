@@ -97,7 +97,7 @@
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 248);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 248);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
@@ -129,21 +129,21 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 248);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 229);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 229);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 210);
+            this.gridicon.Location = new System.Drawing.Point(897, 210);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(978, 0);
+            this.refresh.Location = new System.Drawing.Point(911, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 229);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 229);
             // 
             // detail2
             // 
@@ -159,16 +159,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(1000, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(1000, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -177,7 +177,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(1008, 544);
             this.tabs.TabIndex = 0;
             // 
             // createby
@@ -196,7 +196,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(16, 14);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(75, 23);
@@ -205,8 +204,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(264, 14);
+            this.labelFactory.Location = new System.Drawing.Point(260, 14);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(92, 23);
             this.labelFactory.TabIndex = 4;
@@ -214,7 +212,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(16, 119);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -223,7 +220,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(16, 48);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
@@ -232,8 +228,7 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
-            this.labelArtworkType.Location = new System.Drawing.Point(264, 48);
+            this.labelArtworkType.Location = new System.Drawing.Point(260, 48);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(92, 23);
             this.labelArtworkType.TabIndex = 7;
@@ -241,7 +236,6 @@
             // 
             // labelInternalRemark
             // 
-            this.labelInternalRemark.Lines = 0;
             this.labelInternalRemark.Location = new System.Drawing.Point(16, 153);
             this.labelInternalRemark.Name = "labelInternalRemark";
             this.labelInternalRemark.Size = new System.Drawing.Size(109, 23);
@@ -250,7 +244,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(16, 82);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
@@ -259,8 +252,7 @@
             // 
             // labelApproveName
             // 
-            this.labelApproveName.Lines = 0;
-            this.labelApproveName.Location = new System.Drawing.Point(512, 14);
+            this.labelApproveName.Location = new System.Drawing.Point(500, 14);
             this.labelApproveName.Name = "labelApproveName";
             this.labelApproveName.Size = new System.Drawing.Size(92, 23);
             this.labelApproveName.TabIndex = 11;
@@ -268,8 +260,7 @@
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Lines = 0;
-            this.labelApproveDate.Location = new System.Drawing.Point(512, 47);
+            this.labelApproveDate.Location = new System.Drawing.Point(500, 47);
             this.labelApproveDate.Name = "labelApproveDate";
             this.labelApproveDate.Size = new System.Drawing.Size(92, 23);
             this.labelApproveDate.TabIndex = 14;
@@ -277,8 +268,7 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
-            this.labelHandle.Location = new System.Drawing.Point(512, 81);
+            this.labelHandle.Location = new System.Drawing.Point(500, 81);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(75, 23);
             this.labelHandle.TabIndex = 19;
@@ -288,8 +278,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(920, 14);
+            this.label25.Location = new System.Drawing.Point(881, 14);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -300,8 +289,7 @@
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(922, 110);
+            this.label17.Location = new System.Drawing.Point(886, 110);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(108, 23);
             this.label17.TabIndex = 44;
@@ -311,9 +299,9 @@
             // btnBatchImport
             // 
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchImport.Location = new System.Drawing.Point(909, 40);
+            this.btnBatchImport.Location = new System.Drawing.Point(881, 40);
             this.btnBatchImport.Name = "btnBatchImport";
-            this.btnBatchImport.Size = new System.Drawing.Size(134, 30);
+            this.btnBatchImport.Size = new System.Drawing.Size(115, 30);
             this.btnBatchImport.TabIndex = 8;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
@@ -322,9 +310,9 @@
             // btnSpecialRecord
             // 
             this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSpecialRecord.Location = new System.Drawing.Point(909, 75);
+            this.btnSpecialRecord.Location = new System.Drawing.Point(881, 75);
             this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(134, 30);
+            this.btnSpecialRecord.Size = new System.Drawing.Size(115, 30);
             this.btnSpecialRecord.TabIndex = 9;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
@@ -353,9 +341,9 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(94, 119);
+            this.txtRemark.Location = new System.Drawing.Point(88, 119);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(796, 23);
+            this.txtRemark.Size = new System.Drawing.Size(790, 23);
             this.txtRemark.TabIndex = 2;
             // 
             // txtInternalRemark
@@ -365,13 +353,12 @@
             this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInternalRemark.Location = new System.Drawing.Point(128, 153);
             this.txtInternalRemark.Name = "txtInternalRemark";
-            this.txtInternalRemark.Size = new System.Drawing.Size(762, 23);
+            this.txtInternalRemark.Size = new System.Drawing.Size(750, 23);
             this.txtInternalRemark.TabIndex = 3;
             // 
             // labelDeliveryDate
             // 
-            this.labelDeliveryDate.Lines = 0;
-            this.labelDeliveryDate.Location = new System.Drawing.Point(264, 82);
+            this.labelDeliveryDate.Location = new System.Drawing.Point(260, 82);
             this.labelDeliveryDate.Name = "labelDeliveryDate";
             this.labelDeliveryDate.Size = new System.Drawing.Size(92, 23);
             this.labelDeliveryDate.TabIndex = 69;
@@ -380,7 +367,7 @@
             // dateDeliveryDate
             // 
             this.dateDeliveryDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "delivery", true));
-            this.dateDeliveryDate.Location = new System.Drawing.Point(359, 81);
+            this.dateDeliveryDate.Location = new System.Drawing.Point(355, 81);
             this.dateDeliveryDate.Name = "dateDeliveryDate";
             this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
             this.dateDeliveryDate.TabIndex = 6;
@@ -389,7 +376,7 @@
             // 
             this.btnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchCreate.Location = new System.Drawing.Point(932, 12);
+            this.btnBatchCreate.Location = new System.Drawing.Point(874, 12);
             this.btnBatchCreate.Name = "btnBatchCreate";
             this.btnBatchCreate.Size = new System.Drawing.Size(115, 30);
             this.btnBatchCreate.TabIndex = 0;
@@ -401,7 +388,7 @@
             // 
             this.dateApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "apvdate", true));
             this.dateApproveDate.IsSupportEditMode = false;
-            this.dateApproveDate.Location = new System.Drawing.Point(607, 47);
+            this.dateApproveDate.Location = new System.Drawing.Point(595, 47);
             this.dateApproveDate.Name = "dateApproveDate";
             this.dateApproveDate.ReadOnly = true;
             this.dateApproveDate.Size = new System.Drawing.Size(130, 23);
@@ -413,7 +400,7 @@
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory.Location = new System.Drawing.Point(359, 14);
+            this.txtmfactory.Location = new System.Drawing.Point(355, 14);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
@@ -423,7 +410,7 @@
             this.txtuserApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserApproveName.DisplayBox1Binding = "";
             this.txtuserApproveName.Enabled = false;
-            this.txtuserApproveName.Location = new System.Drawing.Point(607, 14);
+            this.txtuserApproveName.Location = new System.Drawing.Point(595, 14);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(283, 23);
             this.txtuserApproveName.TabIndex = 2;
@@ -433,7 +420,7 @@
             // 
             this.txtuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "handle", true));
             this.txtuserHandle.DisplayBox1Binding = "";
-            this.txtuserHandle.Location = new System.Drawing.Point(590, 81);
+            this.txtuserHandle.Location = new System.Drawing.Point(578, 81);
             this.txtuserHandle.Name = "txtuserHandle";
             this.txtuserHandle.Size = new System.Drawing.Size(300, 23);
             this.txtuserHandle.TabIndex = 7;
@@ -446,7 +433,7 @@
             this.txtartworktype_ftyArtworkType.cSubprocess = "Y";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
             this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(359, 47);
+            this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(355, 47);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 5;
@@ -466,7 +453,7 @@
             // P02
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(1008, 577);
             this.CloseChkValue = "Approved";
             this.Controls.Add(this.btnBatchCreate);
             this.DefaultControl = "txtsubconSupplier";
