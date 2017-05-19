@@ -125,8 +125,8 @@ group by sizeCode"
 
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
         }
-
-        public void noexist_Table_Query() //第一次產生時需全部重新撈值
+        //第一次產生時需全部重新撈值
+        public void noexist_Table_Query() 
         {
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
@@ -222,8 +222,8 @@ group by sizeCode"
             #region Create Qtytb
             #endregion
         }
-
-        public void exist_Table_Query() //當bundle_allPart, bundle_art 存在時的對應資料
+        //當bundle_allPart, bundle_art 存在時的對應資料
+        public void exist_Table_Query()
         {
             //將Bundle_Detial_Art distinct PatternCode,
             DataTable tmp;
@@ -297,6 +297,7 @@ group by sizeCode"
             DataGridViewGeneratorNumericColumnSettings partsCell1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings partsCell2 = new DataGridViewGeneratorNumericColumnSettings();
 
+            #region 左上grid
             NoCell.CellValidating += (s, e) =>
             {
                 if (MyUtility.Convert.GetInt(numNoOfBundle.Text) < MyUtility.Convert.GetInt(e.FormattedValue))
@@ -315,26 +316,9 @@ group by sizeCode"
                 dr.EndEdit();
                 calsumQty();
             };
-            partsCell1.CellValidating += (s, e) =>
-            {
-                DataRow dr = grid_art.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Parts"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                dr["Parts"] = newvalue;
-                dr.EndEdit();
-                calAllPart();
-                caltotalpart();
-            };
-            partsCell2.CellValidating += (s, e) =>
-            {
-                DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Parts"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                dr["Parts"] = newvalue;
-                dr.EndEdit();
-                calAllPart();
-                caltotalpart();
-            };
+            #endregion
+
+            #region 左下grid
             patterncell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
@@ -391,29 +375,6 @@ group by sizeCode"
                 }
                 dr.EndEdit();
             };
-            patterncell2.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
-                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
-                if (e.Button == MouseButtons.Right)
-                {
-
-                    SelectItem sele;
-
-                    sele = new SelectItem(garmentTb, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
-                    dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
-                    dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
-                    dr["Annotation"] = (sele.GetSelecteds()[0]["Annotation"]).ToString();
-                    dr["parts"] = 1;
-                    dr.EndEdit();
-                    calAllPart();
-                    caltotalpart();
-                }
-            };
-
             subcell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = grid_art.GetDataRow(e.RowIndex);
@@ -443,9 +404,55 @@ group by sizeCode"
                     }
                 }
             };
+            partsCell1.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid_art.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Parts"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                dr["Parts"] = newvalue;
+                dr.EndEdit();
+                calAllPart();
+                caltotalpart();
+            };
+            #endregion
 
+            #region 右下grid
+            patterncell2.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
+                if (dr["PatternCode"].ToString() == "ALLPARTS") return;
+                if (e.Button == MouseButtons.Right)
+                {
+
+                    SelectItem sele;
+
+                    sele = new SelectItem(garmentTb, "PatternCode,PatternDesc,Annotation", "10,20,20", dr["PatternCode"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    e.EditingControl.Text = sele.GetSelectedString();
+                    dr["PatternDesc"] = (sele.GetSelecteds()[0]["PatternDesc"]).ToString();
+                    dr["PatternCode"] = (sele.GetSelecteds()[0]["PatternCode"]).ToString();
+                    dr["Annotation"] = (sele.GetSelecteds()[0]["Annotation"]).ToString();
+                    dr["parts"] = 1;
+                    dr.EndEdit();
+                    calAllPart();
+                    caltotalpart();
+                }
+            };
+            partsCell2.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Parts"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                dr["Parts"] = newvalue;
+                dr.EndEdit();
+                calAllPart();
+                caltotalpart();
+            };
+            #endregion
+
+            //左上
             listControlBindingSource1.DataSource = qtyTb;
-
             grid_qty.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, settings: NoCell)
@@ -454,6 +461,7 @@ group by sizeCode"
             grid_qty.Columns["No"].DefaultCellStyle.BackColor = Color.Pink;
             grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
+            //左下
             grid_art.DataSource = patternTb;
             grid_art.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid_art)
@@ -466,6 +474,7 @@ group by sizeCode"
             grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
+            //右下
             grid_allpart.DataSource = allpartTb;
             this.grid_allpart.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.grid_allpart)
@@ -479,33 +488,20 @@ group by sizeCode"
             grid_allpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_allpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
+            //右上
             grid_Size.DataSource = sizeTb;
             grid_Size.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid_Size)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8))
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5);
 
-            //因為資料顯示已有排序，所以按Grid Header不可以做排序
+            //左上因為資料顯示已有排序，所以按Grid Header不可以做排序
             for (int i = 0; i < grid_qty.ColumnCount; i++)
             {
                 grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
         
-        //賦予流水號
-        private void qtyTb_serial()
-        {
-            int serial = 1;
-            foreach (DataRow dr in qtyTb.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    dr["No"] = serial;
-                    serial++;
-                }
-            }
-        }
-
         private void numNoOfBundle_Validated(object sender, EventArgs e)
         {
             int newvalue = (int)numNoOfBundle.Value;
@@ -590,8 +586,21 @@ group by sizeCode"
                 }
             }
         }
-
-        public void calQty() //分配Qty
+        //賦予流水號
+        private void qtyTb_serial()
+        {
+            int serial = 1;
+            foreach (DataRow dr in qtyTb.Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    dr["No"] = serial;
+                    serial++;
+                }
+            }
+        }
+        //分配Qty
+        public void calQty() 
         {
             foreach (DataRow dr in sizeTb.Rows)
             {
@@ -648,7 +657,7 @@ group by sizeCode"
                 DataRow selectQtyeDr = ((DataRowView)grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
                 selectQtyeDr["SizeCode"] = selectSizeDr["SizeCode"];
                 if (!MyUtility.Check.Empty(maindatarow["cutref"])) calQty();
-                else selectQtyeDr["Qty"] = 0;
+                else selectQtyeDr["Qty"] = 0;//cutref為空指定行qty為0
 
                 #region 把左上的grid移至下一筆
                 int currentRowIndexInt = grid_qty.CurrentRow.Index;
@@ -661,11 +670,9 @@ group by sizeCode"
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void grid_Size_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
-            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null);
-            callNextForm.ShowDialog(this);
+            button_Qty_Click(sender, e);
         }
 
         private void button_LefttoRight_Click(object sender, EventArgs e)
@@ -764,9 +771,7 @@ group by sizeCode"
 
         public void caltotalpart() //計算total part
         {
-            decimal totalpart = 0;
-            if (patternTb.Rows.Count > 0) totalpart = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
-            numTotalParts.Value = totalpart;
+            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
         }
 
         public void calAllPart() //計算all part
@@ -997,10 +1002,12 @@ group by sizeCode"
 
             this.Close();
         }
-
-        private void grid_Size_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        
+        private void btnGarment_Click(object sender, EventArgs e)
         {
-            button_Qty_Click(sender, e);
+            string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
+            Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null);
+            callNextForm.ShowDialog(this);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
