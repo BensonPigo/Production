@@ -550,18 +550,19 @@
             <summary>
             Get Directory list from FTp server.
             </summary>
-            <param name="ftppath">Server path name.</param>
+            <param name="ftppath">Server path name.  "" 空字串代表Ftp 的 Root dir</param>
             <param name="directories">list of directory information.</param>
             <returns>Result of process.</returns>
         </member>
         <member name="M:Sci.MyUtility.FTP.FTP_GetFileList(System.String,System.Collections.Generic.IList{System.String}@)">
             <summary>
-            Get File list from FTp server.
+            Get File list from FTp server. (只列出指定目錄的檔案 , 不會將全部子目錄檔案列出 )
             </summary>
             <param name="ftpPath">Server path name.</param>
-            <param name="directories">list of directory information.</param>
+            <param name="files">list of fileNames.</param>
             <returns>Result of process.</returns>
         </member>
+        <!-- 已忽略成員 "M:Sci.MyUtility.FTP.FTP_GetFileList(System.String,System.Collections.Generic.IList{Sci.MyUtility.FTP.FtpFile}@)" 中格式錯誤的 XML 註解 -->
         <member name="M:Sci.MyUtility.FTP.FTP_Ping">
             <summary>
             Ping a IP.
