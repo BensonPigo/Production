@@ -305,6 +305,7 @@ order by ID,Seq", txtSP.Text);
                 dr["ScanQty"] = "0";
                 dr["Barcode"] = "";
                 dr["NotYetScan"] = 1;
+                this.btnUncomplete.Enabled = false;
             }
         }
         
@@ -328,6 +329,7 @@ order by ID,Seq", txtSP.Text);
                 DialogResult result = callNextForm.ShowDialog(this);
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
+                    btnUncomplete.Enabled = canUnConfirm && MyUtility.Convert.GetString(dr["NotYetScan"]) == "0";
                 }
             }
         }
