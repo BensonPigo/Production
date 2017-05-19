@@ -82,6 +82,8 @@ namespace Sci.Production.Cutting
             {
                 MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
                 txtCutRefStart.Focus();
+                if (dtt !=null) dtt.Clear();
+                this.HideWaitMessage();
                 return;
             }
 
