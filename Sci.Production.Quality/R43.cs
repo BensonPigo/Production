@@ -36,13 +36,15 @@ namespace Sci.Production.Quality
             this.comboyear.DisplayMember = "M";
            
 
-            DataTable Month = null;
-            string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain WITH (NOLOCK) ");
-            DBProxy.Current.Select("", scmd, out Month);
-            Month.DefaultView.Sort = "md";
-            this.comboMonth.DataSource = Month;
-            this.comboMonth.ValueMember = "md";
-            this.comboMonth.DisplayMember = "md";
+            //DataTable Month = null;
+            //string scmd = (@"select  distinct month(startdate) as md from dbo.ADIDASComplain WITH (NOLOCK) ");
+            //DBProxy.Current.Select("", scmd, out Month);
+            //Month.DefaultView.Sort = "md";
+            //this.comboMonth.DataSource = Month;
+            //this.comboMonth.ValueMember = "md";
+            //this.comboMonth.DisplayMember = "md";
+
+            this.comboMonth.SelectedIndex = 0;
             this.combobrand.SelectedIndex = 0;
             print.Enabled = false;
           

@@ -70,6 +70,20 @@
             this.comboMonth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboMonth.FormattingEnabled = true;
             this.comboMonth.IsSupportUnselect = true;
+            this.comboMonth.Items.AddRange(new object[] {
+            "",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"});
             this.comboMonth.Location = new System.Drawing.Point(88, 144);
             this.comboMonth.Name = "comboMonth";
             this.comboMonth.Size = new System.Drawing.Size(121, 24);
@@ -102,7 +116,6 @@
             // 
             // labelMonth
             // 
-            this.labelMonth.Lines = 0;
             this.labelMonth.Location = new System.Drawing.Point(22, 145);
             this.labelMonth.Name = "labelMonth";
             this.labelMonth.Size = new System.Drawing.Size(49, 23);
@@ -111,7 +124,6 @@
             // 
             // labelYear
             // 
-            this.labelYear.Lines = 0;
             this.labelYear.Location = new System.Drawing.Point(22, 88);
             this.labelYear.Name = "labelYear";
             this.labelYear.Size = new System.Drawing.Size(49, 23);
@@ -120,7 +132,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(22, 33);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(49, 23);
