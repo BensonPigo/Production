@@ -75,13 +75,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1046, 65);
+            this.panel1.Size = new System.Drawing.Size(1004, 65);
             this.panel1.TabIndex = 1;
             // 
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(927, 11);
+            this.btnQuery.Location = new System.Drawing.Point(885, 11);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(107, 30);
             this.btnQuery.TabIndex = 8;
@@ -98,7 +98,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(433, 34);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(109, 23);
@@ -114,7 +113,6 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
             this.labelSewingInline.Location = new System.Drawing.Point(9, 34);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(96, 23);
@@ -132,7 +130,6 @@
             // 
             // label2
             // 
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(257, 8);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(23, 23);
@@ -150,7 +147,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 8);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(96, 23);
@@ -164,13 +160,13 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 530);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1046, 44);
+            this.panel3.Size = new System.Drawing.Size(1004, 44);
             this.panel3.TabIndex = 3;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(954, 8);
+            this.btnClose.Location = new System.Drawing.Point(912, 8);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
@@ -181,7 +177,7 @@
             // btnToExcel
             // 
             this.btnToExcel.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnToExcel.Location = new System.Drawing.Point(859, 8);
+            this.btnToExcel.Location = new System.Drawing.Point(817, 8);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(89, 30);
             this.btnToExcel.TabIndex = 0;
@@ -207,7 +203,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
-            this.splitContainer1.Size = new System.Drawing.Size(1046, 465);
+            this.splitContainer1.Size = new System.Drawing.Size(1004, 465);
             this.splitContainer1.SplitterDistance = 228;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -239,7 +235,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(1046, 228);
+            this.grid1.Size = new System.Drawing.Size(1004, 228);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -271,13 +267,13 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(1046, 233);
+            this.grid2.Size = new System.Drawing.Size(1004, 233);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
             // P32
             // 
-            this.ClientSize = new System.Drawing.Size(1046, 574);
+            this.ClientSize = new System.Drawing.Size(1004, 574);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);

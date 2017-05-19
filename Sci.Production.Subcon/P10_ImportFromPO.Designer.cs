@@ -54,7 +54,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(1216, 15);
+            this.btnCancel.Location = new System.Drawing.Point(908, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 2;
@@ -66,7 +66,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(1120, 16);
+            this.btnImport.Location = new System.Drawing.Point(812, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 1;
@@ -78,7 +78,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(1205, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(897, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 4;
@@ -97,7 +97,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 15);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -111,7 +110,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1312, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1004, 53);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
@@ -127,7 +126,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1312, 52);
+            this.groupBox1.Size = new System.Drawing.Size(1004, 52);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -151,7 +150,6 @@
             // 
             // labelArtworkPOID
             // 
-            this.labelArtworkPOID.Lines = 0;
             this.labelArtworkPOID.Location = new System.Drawing.Point(406, 15);
             this.labelArtworkPOID.Name = "labelArtworkPOID";
             this.labelArtworkPOID.Size = new System.Drawing.Size(95, 23);
@@ -173,7 +171,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 52);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1312, 425);
+            this.panel1.Size = new System.Drawing.Size(1004, 425);
             this.panel1.TabIndex = 20;
             // 
             // gridImportFromPO
@@ -196,13 +194,13 @@
             this.gridImportFromPO.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImportFromPO.RowTemplate.Height = 24;
             this.gridImportFromPO.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImportFromPO.Size = new System.Drawing.Size(1312, 425);
+            this.gridImportFromPO.Size = new System.Drawing.Size(1004, 425);
             this.gridImportFromPO.TabIndex = 0;
             this.gridImportFromPO.TabStop = false;
             // 
             // P10_ImportFromPO
             // 
-            this.ClientSize = new System.Drawing.Size(1312, 530);
+            this.ClientSize = new System.Drawing.Size(1004, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
