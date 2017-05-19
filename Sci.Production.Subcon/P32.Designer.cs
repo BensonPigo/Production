@@ -38,7 +38,6 @@
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.labelSewingInline = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.txtSPStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -49,6 +48,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -63,13 +63,13 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.dateSCIDelivery);
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Controls.Add(this.dateSewingInline);
             this.panel1.Controls.Add(this.labelSewingInline);
             this.panel1.Controls.Add(this.txtSPEnd);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtSPStart);
             this.panel1.Controls.Add(this.labelSPNo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -123,18 +123,10 @@
             // 
             this.txtSPEnd.BackColor = System.Drawing.Color.White;
             this.txtSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPEnd.Location = new System.Drawing.Point(283, 8);
+            this.txtSPEnd.Location = new System.Drawing.Point(288, 8);
             this.txtSPEnd.Name = "txtSPEnd";
             this.txtSPEnd.Size = new System.Drawing.Size(146, 23);
             this.txtSPEnd.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(257, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(23, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "～";
             // 
             // txtSPStart
             // 
@@ -271,6 +263,15 @@
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(260, 11);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "～";
+            // 
             // P32
             // 
             this.ClientSize = new System.Drawing.Size(1004, 574);
@@ -306,7 +307,6 @@
         private Win.UI.DateRange dateSewingInline;
         private Win.UI.Label labelSewingInline;
         private Win.UI.TextBox txtSPEnd;
-        private Win.UI.Label label2;
         private Win.UI.TextBox txtSPStart;
         private Win.UI.Label labelSPNo;
         private Win.UI.Panel panel3;
@@ -317,5 +317,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid grid1;
         private Win.UI.Grid grid2;
+        private System.Windows.Forms.Label label8;
     }
 }
