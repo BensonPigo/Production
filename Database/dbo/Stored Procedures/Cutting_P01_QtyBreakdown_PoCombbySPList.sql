@@ -18,17 +18,28 @@ BEGIN
 	select distinct sizecode,Seq
 	into #tmp
 	from Order_SizeCode 
-	where id = @OrderID
+	where sizecode in (
+	SELECT oq.sizecode	
+         FROM   orders o WITH (nolock) 
+                INNER JOIN order_qty oq WITH (nolock) 
+                        ON o.id = oq.id 
+                LEFT JOIN order_article oa WITH (nolock) 
+                       ON oa.id = oq.id 
+                          AND oa.article = oq.article 
+				left join order_colorcombo oc
+				 ON oa.article = oc.article 
+                 AND oc.patternpanel = 'FA' 
+                 AND oc.id = o.poid 
+         WHERE  o.poid = @OrderID
+	)
+	and id = @OrderID
 	order by Seq
+
 	DECLARE @cols NVARCHAR(MAX)= N''
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
 	order by seq
 
-	DECLARE @cols2 NVARCHAR(MAX)= N''
-	SELECT @cols2 = @cols2 + iif(@cols2 = N'','sum('+QUOTENAME(sizecode)+')',N',sum(' + QUOTENAME(sizecode)+')')
-	from #tmp
-	order by seq
 
 	drop table #tmp
 		
