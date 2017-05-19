@@ -176,15 +176,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -272,7 +272,7 @@
             // 
             // labelAmount
             // 
-            this.labelAmount.Location = new System.Drawing.Point(683, 15);
+            this.labelAmount.Location = new System.Drawing.Point(677, 15);
             this.labelAmount.Name = "labelAmount";
             this.labelAmount.Size = new System.Drawing.Size(59, 23);
             this.labelAmount.TabIndex = 10;
@@ -288,7 +288,7 @@
             // 
             // labelVat
             // 
-            this.labelVat.Location = new System.Drawing.Point(683, 49);
+            this.labelVat.Location = new System.Drawing.Point(677, 49);
             this.labelVat.Name = "labelVat";
             this.labelVat.Size = new System.Drawing.Size(59, 23);
             this.labelVat.TabIndex = 13;
@@ -312,7 +312,7 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Location = new System.Drawing.Point(683, 84);
+            this.labelTotal.Location = new System.Drawing.Point(677, 84);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(59, 23);
             this.labelTotal.TabIndex = 16;
@@ -348,9 +348,9 @@
             // btnImportFromPO
             // 
             this.btnImportFromPO.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromPO.Location = new System.Drawing.Point(861, 45);
+            this.btnImportFromPO.Location = new System.Drawing.Point(844, 45);
             this.btnImportFromPO.Name = "btnImportFromPO";
-            this.btnImportFromPO.Size = new System.Drawing.Size(135, 30);
+            this.btnImportFromPO.Size = new System.Drawing.Size(152, 30);
             this.btnImportFromPO.TabIndex = 9;
             this.btnImportFromPO.Text = "Import From PO#";
             this.btnImportFromPO.UseVisualStyleBackColor = true;
@@ -432,7 +432,7 @@
             this.numVat.DecimalPlaces = 2;
             this.numVat.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numVat.IsSupportEditMode = false;
-            this.numVat.Location = new System.Drawing.Point(743, 49);
+            this.numVat.Location = new System.Drawing.Point(737, 49);
             this.numVat.Name = "numVat";
             this.numVat.NullValue = new decimal(new int[] {
             0,
@@ -456,7 +456,7 @@
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(743, 15);
+            this.numAmount.Location = new System.Drawing.Point(737, 15);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -479,7 +479,7 @@
             this.numTotal.DecimalPlaces = 2;
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
-            this.numTotal.Location = new System.Drawing.Point(743, 84);
+            this.numTotal.Location = new System.Drawing.Point(737, 84);
             this.numTotal.Name = "numTotal";
             this.numTotal.NullValue = new decimal(new int[] {
             0,
