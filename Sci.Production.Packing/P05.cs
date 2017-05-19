@@ -408,10 +408,10 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 .Numeric("ShipQty", header: "Qty", settings: balance)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true);
 
-            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            {
-                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            //{
+            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
         }
 
         protected override void OnDetailEntered()

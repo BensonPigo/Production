@@ -339,10 +339,10 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                 #endregion
             };
 
-            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
-            {
-                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            //for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            //{
+            //    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
         }
 
         //清空Order相關欄位值
