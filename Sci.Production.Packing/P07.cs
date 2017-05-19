@@ -110,7 +110,8 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading....");
-            if (MyUtility.Check.Empty(listControlBindingSource1)) return;
+            if (MyUtility.Check.Empty(gridData)) { this.HideWaitMessage(); return; }
+            if (gridData.Rows.Count == 0) { this.HideWaitMessage(); return; }
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
