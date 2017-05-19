@@ -482,7 +482,7 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     }
                     else
                     {
-                        CurrentMaintain["sendDate"] = NOW;
+                      
                         this.OnDetailEntered();
                     }
                 }
