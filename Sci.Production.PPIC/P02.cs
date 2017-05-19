@@ -87,7 +87,18 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 this.gridUpdateOrder.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);                       
+            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);
+
+            for (int i = 0; i < gridData.Rows.Count; i++)
+            {
+                if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
+                    gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
+                    gridData.Rows[i]["DeleteOrder"].ToString() == "V")
+                {
+                    gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
+                    gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                }
+            } 
         }
 
         //Query Data
@@ -125,8 +136,11 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             {
                 dateLastDate.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
             }
+        }
 
-            for (int i = 0; i < gridData.Rows.Count; i++)
+        private void changcolor()
+        {
+            for (int i = 0; i < gridUpdateOrder.Rows.Count; i++)
             {
                 if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
                     gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
@@ -135,7 +149,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
                     gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
                     gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
                 }
-            }
+            }    
         }
 
         //Close
@@ -143,7 +157,6 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         {
             this.Close();
         }
-
         
         //Factory
         private void comboFactory_SelectedValueChanged(object sender, EventArgs e)
@@ -156,6 +169,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             {
                 QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);//
             }
+            changcolor();
         }
 
         //Excel
@@ -220,6 +234,7 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
         private void dateUpdatedDate_ValueChanged(object sender, EventArgs e)
         {
             QueryDate((string)comboFactory.SelectedValue, (DateTime?)dateUpdatedDate.Value);
+            changcolor();
         }
     }
 }

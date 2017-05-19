@@ -95,7 +95,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(680, 10);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(55, 23);
@@ -112,7 +111,6 @@
             // 
             // labelUpdatedDate
             // 
-            this.labelUpdatedDate.Lines = 0;
             this.labelUpdatedDate.Location = new System.Drawing.Point(331, 10);
             this.labelUpdatedDate.Name = "labelUpdatedDate";
             this.labelUpdatedDate.Size = new System.Drawing.Size(90, 23);
@@ -130,7 +128,6 @@
             // 
             // labelLastDate
             // 
-            this.labelLastDate.Lines = 0;
             this.labelLastDate.Location = new System.Drawing.Point(8, 10);
             this.labelLastDate.Name = "labelLastDate";
             this.labelLastDate.Size = new System.Drawing.Size(64, 23);
