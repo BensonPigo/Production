@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Pattern] (
+CREATE TABLE [dbo].[Pattern] (
     [ID]            VARCHAR (10)   CONSTRAINT [DF_Pattern_ID] DEFAULT ('') NOT NULL,
     [Version]       VARCHAR (3)    CONSTRAINT [DF_Pattern_Version] DEFAULT ('') NOT NULL,
     [BrandID]       VARCHAR (8)    CONSTRAINT [DF_Pattern_Brand] DEFAULT ('') NULL,
@@ -25,6 +25,8 @@
     [EditDate]      DATETIME       NULL,
     CONSTRAINT [PK_Pattern] PRIMARY KEY CLUSTERED ([ID] ASC, [Version] ASC)
 );
+
+
 
 
 
@@ -138,3 +140,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際完�
 
 
 GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20170519-110832]
+    ON [dbo].[Pattern]([StyleUkey] ASC);
+
