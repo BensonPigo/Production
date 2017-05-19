@@ -100,7 +100,7 @@
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(922, 115);
+            this.masterpanel.Size = new System.Drawing.Size(892, 115);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
@@ -134,7 +134,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(922, 310);
+            this.detailpanel.Size = new System.Drawing.Size(892, 234);
             // 
             // gridicon
             // 
@@ -147,20 +147,10 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(922, 310);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(922, 463);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(922, 425);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 234);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 425);
-            this.detailbtm.Size = new System.Drawing.Size(922, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -187,7 +177,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(5, 4);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(40, 23);
@@ -196,7 +185,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(5, 31);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(40, 23);
@@ -205,7 +193,6 @@
             // 
             // labelShift
             // 
-            this.labelShift.Lines = 0;
             this.labelShift.Location = new System.Drawing.Point(5, 58);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(40, 23);
@@ -214,7 +201,6 @@
             // 
             // labelTeam
             // 
-            this.labelTeam.Lines = 0;
             this.labelTeam.Location = new System.Drawing.Point(5, 85);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(40, 23);
@@ -254,7 +240,6 @@
             // 
             // labelManpower
             // 
-            this.labelManpower.Lines = 0;
             this.labelManpower.Location = new System.Drawing.Point(235, 4);
             this.labelManpower.Name = "labelManpower";
             this.labelManpower.Size = new System.Drawing.Size(92, 23);
@@ -263,7 +248,6 @@
             // 
             // labelWHours
             // 
-            this.labelWHours.Lines = 0;
             this.labelWHours.Location = new System.Drawing.Point(235, 31);
             this.labelWHours.Name = "labelWHours";
             this.labelWHours.Size = new System.Drawing.Size(92, 23);
@@ -272,7 +256,6 @@
             // 
             // labelManhours
             // 
-            this.labelManhours.Lines = 0;
             this.labelManhours.Location = new System.Drawing.Point(235, 58);
             this.labelManhours.Name = "labelManhours";
             this.labelManhours.Size = new System.Drawing.Size(92, 23);
@@ -281,7 +264,6 @@
             // 
             // labelCostingTMS
             // 
-            this.labelCostingTMS.Lines = 0;
             this.labelCostingTMS.Location = new System.Drawing.Point(235, 85);
             this.labelCostingTMS.Name = "labelCostingTMS";
             this.labelCostingTMS.Size = new System.Drawing.Size(115, 23);
@@ -391,7 +373,6 @@
             // 
             // labelQAOutput
             // 
-            this.labelQAOutput.Lines = 0;
             this.labelQAOutput.Location = new System.Drawing.Point(475, 4);
             this.labelQAOutput.Name = "labelQAOutput";
             this.labelQAOutput.Size = new System.Drawing.Size(93, 23);
@@ -400,7 +381,6 @@
             // 
             // labelDefectOutput
             // 
-            this.labelDefectOutput.Lines = 0;
             this.labelDefectOutput.Location = new System.Drawing.Point(475, 31);
             this.labelDefectOutput.Name = "labelDefectOutput";
             this.labelDefectOutput.Size = new System.Drawing.Size(93, 23);
@@ -409,7 +389,6 @@
             // 
             // labelInLineOutput
             // 
-            this.labelInLineOutput.Lines = 0;
             this.labelInLineOutput.Location = new System.Drawing.Point(475, 58);
             this.labelInLineOutput.Name = "labelInLineOutput";
             this.labelInLineOutput.Size = new System.Drawing.Size(93, 23);
@@ -418,7 +397,6 @@
             // 
             // labelEff
             // 
-            this.labelEff.Lines = 0;
             this.labelEff.Location = new System.Drawing.Point(475, 85);
             this.labelEff.Name = "labelEff";
             this.labelEff.Size = new System.Drawing.Size(93, 23);
@@ -541,7 +519,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(120, 30);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(50, 23);
@@ -578,7 +555,7 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "txtdropdownlistShift";
             this.DefaultDetailOrder = "OrderID,ComboType,Article";
-            this.DefaultOrder = "OutputDate,SewingLineID,Shift";
+            this.DefaultOrder = "OutputDate,SewingLineID,Shift,Team";
             this.GridAlias = "SewingOutput_Detail";
             this.GridUniqueKey = "ID,OrderID,ComboType,Article";
             this.IsSupportCopy = false;
