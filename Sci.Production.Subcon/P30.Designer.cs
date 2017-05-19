@@ -262,7 +262,7 @@
             // 
             // labelAmount
             // 
-            this.labelAmount.Location = new System.Drawing.Point(706, 13);
+            this.labelAmount.Location = new System.Drawing.Point(685, 13);
             this.labelAmount.Name = "labelAmount";
             this.labelAmount.Size = new System.Drawing.Size(57, 23);
             this.labelAmount.TabIndex = 10;
@@ -278,7 +278,7 @@
             // 
             // labelVat
             // 
-            this.labelVat.Location = new System.Drawing.Point(706, 47);
+            this.labelVat.Location = new System.Drawing.Point(685, 47);
             this.labelVat.Name = "labelVat";
             this.labelVat.Size = new System.Drawing.Size(57, 23);
             this.labelVat.TabIndex = 13;
@@ -294,7 +294,7 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Location = new System.Drawing.Point(495, 13);
+            this.labelCurrency.Location = new System.Drawing.Point(482, 13);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(75, 23);
             this.labelCurrency.TabIndex = 15;
@@ -302,7 +302,7 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Location = new System.Drawing.Point(706, 80);
+            this.labelTotal.Location = new System.Drawing.Point(685, 80);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(57, 23);
             this.labelTotal.TabIndex = 16;
@@ -310,7 +310,7 @@
             // 
             // labelVatRate
             // 
-            this.labelVatRate.Location = new System.Drawing.Point(495, 47);
+            this.labelVatRate.Location = new System.Drawing.Point(482, 47);
             this.labelVatRate.Name = "labelVatRate";
             this.labelVatRate.Size = new System.Drawing.Size(95, 23);
             this.labelVatRate.TabIndex = 18;
@@ -320,9 +320,9 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(879, 14);
+            this.label25.Location = new System.Drawing.Point(867, 14);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
+            this.label25.Size = new System.Drawing.Size(127, 23);
             this.label25.TabIndex = 43;
             this.label25.Text = "Not Approve";
             this.label25.TextStyle.Color = System.Drawing.Color.Red;
@@ -330,9 +330,9 @@
             // btnImportThread
             // 
             this.btnImportThread.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportThread.Location = new System.Drawing.Point(879, 47);
+            this.btnImportThread.Location = new System.Drawing.Point(851, 47);
             this.btnImportThread.Name = "btnImportThread";
-            this.btnImportThread.Size = new System.Drawing.Size(115, 43);
+            this.btnImportThread.Size = new System.Drawing.Size(143, 43);
             this.btnImportThread.TabIndex = 8;
             this.btnImportThread.Text = "Import Thread, Carton request";
             this.btnImportThread.UseVisualStyleBackColor = true;
@@ -361,7 +361,7 @@
             this.displayCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCurrency.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CurrencyID", true));
             this.displayCurrency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCurrency.Location = new System.Drawing.Point(573, 13);
+            this.displayCurrency.Location = new System.Drawing.Point(560, 13);
             this.displayCurrency.Name = "displayCurrency";
             this.displayCurrency.Size = new System.Drawing.Size(100, 23);
             this.displayCurrency.TabIndex = 2;
@@ -391,7 +391,7 @@
             this.numVatRate.BackColor = System.Drawing.Color.White;
             this.numVatRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "vatrate", true));
             this.numVatRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numVatRate.Location = new System.Drawing.Point(593, 47);
+            this.numVatRate.Location = new System.Drawing.Point(580, 47);
             this.numVatRate.Maximum = new decimal(new int[] {
             100,
             0,
@@ -435,7 +435,7 @@
             this.numVat.DecimalPlaces = 2;
             this.numVat.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numVat.IsSupportEditMode = false;
-            this.numVat.Location = new System.Drawing.Point(766, 47);
+            this.numVat.Location = new System.Drawing.Point(745, 47);
             this.numVat.Name = "numVat";
             this.numVat.NullValue = new decimal(new int[] {
             0,
@@ -459,7 +459,7 @@
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(766, 13);
+            this.numAmount.Location = new System.Drawing.Point(745, 13);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -482,7 +482,7 @@
             this.numTotal.DecimalPlaces = 2;
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
-            this.numTotal.Location = new System.Drawing.Point(766, 80);
+            this.numTotal.Location = new System.Drawing.Point(745, 80);
             this.numTotal.Name = "numTotal";
             this.numTotal.NullValue = new decimal(new int[] {
             0,

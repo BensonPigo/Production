@@ -353,9 +353,9 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(881, 14);
+            this.label25.Location = new System.Drawing.Point(870, 14);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
+            this.label25.Size = new System.Drawing.Size(126, 23);
             this.label25.TabIndex = 16;
             this.label25.Text = "Not Approve";
             this.label25.TextStyle.Color = System.Drawing.Color.Red;
@@ -364,9 +364,9 @@
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label17.Location = new System.Drawing.Point(884, 116);
+            this.label17.Location = new System.Drawing.Point(879, 116);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(108, 23);
+            this.label17.Size = new System.Drawing.Size(113, 23);
             this.label17.TabIndex = 44;
             this.label17.Text = "Exceed Qty";
             this.label17.TextStyle.Color = System.Drawing.Color.Red;
@@ -374,9 +374,9 @@
             // btnBatchImport
             // 
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchImport.Location = new System.Drawing.Point(885, 44);
+            this.btnBatchImport.Location = new System.Drawing.Point(870, 44);
             this.btnBatchImport.Name = "btnBatchImport";
-            this.btnBatchImport.Size = new System.Drawing.Size(95, 30);
+            this.btnBatchImport.Size = new System.Drawing.Size(127, 30);
             this.btnBatchImport.TabIndex = 9;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
@@ -385,9 +385,9 @@
             // btnSpecialRecord
             // 
             this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSpecialRecord.Location = new System.Drawing.Point(884, 79);
+            this.btnSpecialRecord.Location = new System.Drawing.Point(870, 79);
             this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(115, 30);
+            this.btnSpecialRecord.Size = new System.Drawing.Size(129, 30);
             this.btnSpecialRecord.TabIndex = 10;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
@@ -428,7 +428,7 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(539, 14);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(339, 23);
+            this.txtRemark.Size = new System.Drawing.Size(325, 23);
             this.txtRemark.TabIndex = 7;
             // 
             // numVatRate
@@ -469,7 +469,7 @@
             this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInternalRemark.Location = new System.Drawing.Point(590, 48);
             this.txtInternalRemark.Name = "txtInternalRemark";
-            this.txtInternalRemark.Size = new System.Drawing.Size(288, 23);
+            this.txtInternalRemark.Size = new System.Drawing.Size(274, 23);
             this.txtInternalRemark.TabIndex = 8;
             // 
             // numVat
@@ -598,7 +598,7 @@
             this.txtuserApproveName.Enabled = false;
             this.txtuserApproveName.Location = new System.Drawing.Point(578, 82);
             this.txtuserApproveName.Name = "txtuserApproveName";
-            this.txtuserApproveName.Size = new System.Drawing.Size(300, 23);
+            this.txtuserApproveName.Size = new System.Drawing.Size(286, 23);
             this.txtuserApproveName.TabIndex = 24;
             this.txtuserApproveName.TabStop = false;
             this.txtuserApproveName.TextBox1Binding = "";

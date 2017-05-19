@@ -622,9 +622,9 @@
             // 
             // btnStyleFind
             // 
-            this.btnStyleFind.Location = new System.Drawing.Point(829, 13);
+            this.btnStyleFind.Location = new System.Drawing.Point(828, 13);
             this.btnStyleFind.Name = "btnStyleFind";
-            this.btnStyleFind.Size = new System.Drawing.Size(61, 30);
+            this.btnStyleFind.Size = new System.Drawing.Size(50, 30);
             this.btnStyleFind.TabIndex = 5;
             this.btnStyleFind.Text = "Find";
             this.btnStyleFind.UseVisualStyleBackColor = true;
@@ -634,14 +634,14 @@
             // 
             this.txtLocateForStyleNo.BackColor = System.Drawing.Color.White;
             this.txtLocateForStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateForStyleNo.Location = new System.Drawing.Point(681, 17);
+            this.txtLocateForStyleNo.Location = new System.Drawing.Point(680, 17);
             this.txtLocateForStyleNo.Name = "txtLocateForStyleNo";
             this.txtLocateForStyleNo.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForStyleNo.TabIndex = 4;
             // 
             // labelLocateForStyleNo
             // 
-            this.labelLocateForStyleNo.Location = new System.Drawing.Point(569, 17);
+            this.labelLocateForStyleNo.Location = new System.Drawing.Point(568, 17);
             this.labelLocateForStyleNo.Name = "labelLocateForStyleNo";
             this.labelLocateForStyleNo.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForStyleNo.TabIndex = 36;
@@ -681,9 +681,9 @@
             // 
             // btnUpdateInline
             // 
-            this.btnUpdateInline.Location = new System.Drawing.Point(891, 13);
+            this.btnUpdateInline.Location = new System.Drawing.Point(879, 13);
             this.btnUpdateInline.Name = "btnUpdateInline";
-            this.btnUpdateInline.Size = new System.Drawing.Size(99, 30);
+            this.btnUpdateInline.Size = new System.Drawing.Size(115, 30);
             this.btnUpdateInline.TabIndex = 6;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;

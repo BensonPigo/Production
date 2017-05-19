@@ -216,7 +216,7 @@
             // 
             this.pictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox4.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox4.Location = new System.Drawing.Point(771, 7);
+            this.pictureBox4.Location = new System.Drawing.Point(766, 7);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(25, 31);
             this.pictureBox4.TabIndex = 35;
@@ -227,7 +227,7 @@
             // 
             this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox3.Image = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox3.Location = new System.Drawing.Point(639, 7);
+            this.pictureBox3.Location = new System.Drawing.Point(634, 7);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(25, 31);
             this.pictureBox3.TabIndex = 34;
@@ -236,14 +236,14 @@
             // 
             // dateArtworkOffLine
             // 
-            this.dateArtworkOffLine.Location = new System.Drawing.Point(669, 12);
+            this.dateArtworkOffLine.Location = new System.Drawing.Point(664, 12);
             this.dateArtworkOffLine.Name = "dateArtworkOffLine";
             this.dateArtworkOffLine.Size = new System.Drawing.Size(95, 23);
             this.dateArtworkOffLine.TabIndex = 4;
             // 
             // dateArtworkInLine
             // 
-            this.dateArtworkInLine.Location = new System.Drawing.Point(536, 12);
+            this.dateArtworkInLine.Location = new System.Drawing.Point(531, 12);
             this.dateArtworkInLine.Name = "dateArtworkInLine";
             this.dateArtworkInLine.Size = new System.Drawing.Size(97, 23);
             this.dateArtworkInLine.TabIndex = 3;
@@ -251,9 +251,9 @@
             // btnCheckData
             // 
             this.btnCheckData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckData.Location = new System.Drawing.Point(802, 8);
+            this.btnCheckData.Location = new System.Drawing.Point(793, 8);
             this.btnCheckData.Name = "btnCheckData";
-            this.btnCheckData.Size = new System.Drawing.Size(90, 30);
+            this.btnCheckData.Size = new System.Drawing.Size(101, 30);
             this.btnCheckData.TabIndex = 5;
             this.btnCheckData.Text = "Check Data";
             this.btnCheckData.UseVisualStyleBackColor = true;
@@ -274,7 +274,7 @@
             // 
             this.txtsubconLocalSuppid.DisplayBox1Binding = "";
             this.txtsubconLocalSuppid.IsIncludeJunk = false;
-            this.txtsubconLocalSuppid.Location = new System.Drawing.Point(331, 12);
+            this.txtsubconLocalSuppid.Location = new System.Drawing.Point(330, 12);
             this.txtsubconLocalSuppid.Name = "txtsubconLocalSuppid";
             this.txtsubconLocalSuppid.Size = new System.Drawing.Size(170, 23);
             this.txtsubconLocalSuppid.TabIndex = 2;
@@ -294,7 +294,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(893, 8);
+            this.btnSave.Location = new System.Drawing.Point(894, 8);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(54, 30);
             this.btnSave.TabIndex = 6;
@@ -307,7 +307,7 @@
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.InitialImage = global::Sci.Production.Planning.Properties.Resources.trffc15;
-            this.pictureBox2.Location = new System.Drawing.Point(502, 5);
+            this.pictureBox2.Location = new System.Drawing.Point(501, 5);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(25, 31);
             this.pictureBox2.TabIndex = 6;
@@ -643,7 +643,7 @@
             // 
             // btnLocateForStyleNoFind
             // 
-            this.btnLocateForStyleNoFind.Location = new System.Drawing.Point(830, 13);
+            this.btnLocateForStyleNoFind.Location = new System.Drawing.Point(824, 13);
             this.btnLocateForStyleNoFind.Name = "btnLocateForStyleNoFind";
             this.btnLocateForStyleNoFind.Size = new System.Drawing.Size(57, 30);
             this.btnLocateForStyleNoFind.TabIndex = 5;
@@ -655,14 +655,14 @@
             // 
             this.txtLocateForStyleNo.BackColor = System.Drawing.Color.White;
             this.txtLocateForStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocateForStyleNo.Location = new System.Drawing.Point(679, 17);
+            this.txtLocateForStyleNo.Location = new System.Drawing.Point(676, 17);
             this.txtLocateForStyleNo.Name = "txtLocateForStyleNo";
             this.txtLocateForStyleNo.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForStyleNo.TabIndex = 4;
             // 
             // labelLocateForStyleNo
             // 
-            this.labelLocateForStyleNo.Location = new System.Drawing.Point(567, 17);
+            this.labelLocateForStyleNo.Location = new System.Drawing.Point(564, 17);
             this.labelLocateForStyleNo.Name = "labelLocateForStyleNo";
             this.labelLocateForStyleNo.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForStyleNo.TabIndex = 36;
@@ -702,9 +702,9 @@
             // 
             // btnUpdateInline
             // 
-            this.btnUpdateInline.Location = new System.Drawing.Point(894, 13);
+            this.btnUpdateInline.Location = new System.Drawing.Point(882, 13);
             this.btnUpdateInline.Name = "btnUpdateInline";
-            this.btnUpdateInline.Size = new System.Drawing.Size(99, 30);
+            this.btnUpdateInline.Size = new System.Drawing.Size(114, 30);
             this.btnUpdateInline.TabIndex = 6;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;

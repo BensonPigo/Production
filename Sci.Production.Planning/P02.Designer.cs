@@ -96,7 +96,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(6, 237);
+            this.btnQuery.Location = new System.Drawing.Point(5, 237);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(72, 30);
             this.btnQuery.TabIndex = 8;
@@ -495,9 +495,9 @@
             // 
             // btnUpdateInline
             // 
-            this.btnUpdateInline.Location = new System.Drawing.Point(84, 237);
+            this.btnUpdateInline.Location = new System.Drawing.Point(78, 237);
             this.btnUpdateInline.Name = "btnUpdateInline";
-            this.btnUpdateInline.Size = new System.Drawing.Size(103, 30);
+            this.btnUpdateInline.Size = new System.Drawing.Size(116, 30);
             this.btnUpdateInline.TabIndex = 10;
             this.btnUpdateInline.Text = "Update Inline";
             this.btnUpdateInline.UseVisualStyleBackColor = true;
