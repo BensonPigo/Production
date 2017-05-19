@@ -54,19 +54,31 @@ namespace Sci.Production.Packing
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"with OrderData
-as
-(select o.ID, oq.Seq, o.StyleID, oq.BuyerDelivery, o.CustPONo, oqd.Article, oqd.SizeCode, oqd.Qty, o.POID ,o.SeasonID
- from Orders o WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) , Order_QtyShip_Detail oqd WITH (NOLOCK) 
- where o.BrandID = @brand
- and o.MDivisionID = @mdivisionid
- and o.IsForecast = 0
- and o.PulloutComplete = 0
- and o.LocalOrder = 0
- and o.Junk = 0
- and oq.Id = o.ID
- and oqd.Id = oq.Id
- and oqd.Seq = oq.Seq");
+            sqlCmd.Append(@"
+with OrderData as ( 
+    select  o.ID
+            , oq.Seq
+            , o.StyleID
+            , oq.BuyerDelivery
+            , o.CustPONo
+            , oqd.Article
+            , oqd.SizeCode
+            , oqd.Qty
+            , o.POID
+            , o.SeasonID
+            , Factory = o.FtyGroup
+    from    Orders o WITH (NOLOCK) 
+            , Order_QtyShip oq WITH (NOLOCK) 
+            , Order_QtyShip_Detail oqd WITH (NOLOCK) 
+    where   o.BrandID = @brand
+            and o.MDivisionID = @mdivisionid
+            and o.IsForecast = 0
+            and o.PulloutComplete = 0
+            and o.LocalOrder = 0
+            and o.Junk = 0
+            and oq.Id = o.ID
+            and oqd.Id = oq.Id
+            and oqd.Seq = oq.Seq");
             if (!MyUtility.Check.Empty(txtSPNoStart.Text))
             {
                 sqlCmd.Append("\r\n and o.ID >= @orderID1");
@@ -91,35 +103,59 @@ as
             {
                 sqlCmd.Append("\r\n and o.SciDelivery <= @sciDelivery2");
             }
-            sqlCmd.Append(@"),
-DistOrderData
-as
-(select distinct ID,Article,SizeCode
- from OrderData
+            sqlCmd.Append(@"
 ),
-FOCData
-as
-(select a.*
- from (select dod.ID, dod.Article, dod.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-       from DistOrderData dod
-       left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = dod.ID and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-       left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = dod.ID and ou1.Article = dod.Article and ou1.SizeCode = dod.SizeCode and ou2.POPrice = 0) a
- where a.Price = 0
+DistOrderData as (
+    select  distinct ID
+            , Article
+            , SizeCode
+    from OrderData
 ),
-PulloutData
-as
-(select pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode, sum(pdd.ShipQty) as PulloutQty
- from FOCData fd, Pullout_Detail pd WITH (NOLOCK) , Pullout_Detail_Detail pdd WITH (NOLOCK) 
- where pdd.OrderID = fd.ID
- and pd.UKey = pdd.Pullout_DetailUKey
- group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode
+FOCData as (
+    select  a.*
+    from (
+        select  dod.ID
+                , dod.Article
+                , dod.SizeCode
+                , isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
+        from DistOrderData dod
+        left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = dod.ID and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+        left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = dod.ID and ou1.Article = dod.Article and ou1.SizeCode = dod.SizeCode and ou2.POPrice = 0) a
+    where a.Price = 0
+),
+PulloutData as (
+    select  pdd.OrderID
+            , pd.OrderShipmodeSeq
+            , pdd.Article
+            , pdd.SizeCode
+            , sum(pdd.ShipQty) as PulloutQty
+    from    FOCData fd
+            , Pullout_Detail pd WITH (NOLOCK) 
+            , Pullout_Detail_Detail pdd WITH (NOLOCK) 
+    where   pdd.OrderID = fd.ID
+            and pd.UKey = pdd.Pullout_DetailUKey
+    group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode
 )
-select 0 as Selected, od.ID as OrderID, od.Seq as OrderShipmodeSeq, od.StyleID, od.BuyerDelivery, od.CustPONo, od.Article, od.SizeCode, (od.Qty-isnull(pd.PulloutQty,0)) as ShipQty, isnull(voc.ColorID,'') as Color, isnull(pd.PulloutQty,0) as PulloutQty, isnull(fd.Price,-1) as Price,od.SeasonID
+select  0 as Selected
+        , od.ID as OrderID
+        , od.Seq as OrderShipmodeSeq
+        , od.StyleID
+        , od.BuyerDelivery
+        , od.CustPONo
+        , od.Article
+        , od.SizeCode
+        , (od.Qty-isnull(pd.PulloutQty,0)) as ShipQty
+        , isnull(voc.ColorID,'') as Color
+        , isnull(pd.PulloutQty,0) as PulloutQty
+        , isnull(fd.Price,-1) as Price
+        , od.SeasonID
+        , od.Factory
 from OrderData od
 left join FOCData fd on od.ID = fd.ID and od.Article = fd.Article and od.SizeCode = fd.SizeCode
 left join PulloutData pd on pd.OrderID = od.ID and pd.OrderShipmodeSeq = od.Seq and pd.Article = od.Article and pd.SizeCode = od.SizeCode
 left join View_OrderFAColor voc on voc.ID = od.ID and voc.Article = od.Article
-where (od.Qty-isnull(pd.PulloutQty,0)) > 0 and isnull(fd.Price,-1) = 0");
+where   (od.Qty-isnull(pd.PulloutQty,0)) > 0 
+        and isnull(fd.Price,-1) = 0");
             #region 準備sql參數資料
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@brand", displayBrand.Value);
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", displayM.Value);

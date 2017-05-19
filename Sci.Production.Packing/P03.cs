@@ -189,7 +189,18 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
                         DataRow orderData;
-                        if (!MyUtility.Check.Seek(string.Format("Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = '{0}' and Category = 'B' and BrandID = '{1}' and Dest = '{2}' and CustCDID = '{3}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString()), out orderData))
+                        if (!MyUtility.Check.Seek(string.Format(@"
+Select  ID
+        , SeasonID
+        , StyleID
+        , CustPONo 
+        , FtyGroup
+from Orders WITH (NOLOCK) 
+where   ID = '{0}' 
+        and Category = 'B' 
+        and BrandID = '{1}' 
+        and Dest = '{2}' 
+        and CustCDID = '{3}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString()), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = "";
@@ -199,7 +210,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                             dr["SizeCode"] = "";
                             dr["StyleID"] = "";
                             dr["CustPONo"] = "";
-                            dr["SeasonID"] = "";                         
+                            dr["SeasonID"] = "";
+                            dr["Factory"] = "";
                             dr.EndEdit();
                             e.Cancel = true;
                             return;
@@ -207,6 +219,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         else
                         {
                             dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
+                            dr["Factory"] = orderData["FtyGroup"].ToString();
                             dr["StyleID"] = orderData["StyleID"].ToString();
                             dr["CustPONo"] = orderData["CustPONo"].ToString();
                             dr["SeasonID"] = orderData["SeasonID"].ToString(); 

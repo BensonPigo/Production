@@ -107,7 +107,19 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         cmds.Add(sp2);
                         cmds.Add(sp3);
 
-                        string sqlCmd = "Select ID,SeasonID,StyleID,CustPONo from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid  and BrandID = @brandid and IsForecast = 0 and LocalOrder = 0 and Junk = 0";
+                        string sqlCmd = @"
+Select  ID
+        , SeasonID
+        , StyleID
+        , CustPONo 
+        , FtyGroup
+from Orders WITH (NOLOCK) 
+where   ID = @orderid 
+        and MDivisionID = @mdivisionid  
+        and BrandID = @brandid 
+        and IsForecast = 0 
+        and LocalOrder = 0 
+        and Junk = 0";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
@@ -130,6 +142,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                             else
                             {
                                 dr["OrderID"] = e.FormattedValue.ToString().ToUpper();
+                                dr["Factory"] = orderData.Rows[0]["FtyGroup"].ToString();
                                 dr["StyleID"] = orderData.Rows[0]["StyleID"].ToString();
                                 dr["CustPONo"] = orderData.Rows[0]["CustPONo"].ToString();
                                 dr["SeasonID"] = orderData.Rows[0]["SeasonID"].ToString();
@@ -341,13 +354,18 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     }
                     if (e.FormattedValue.ToString() != dr["SizeCode"].ToString())
                     {
-                        sqlCmd = string.Format(@"select a.SizeCode
-from (select oqd.Article, oqd.SizeCode, isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
-      from Order_QtyShip_Detail oqd WITH (NOLOCK) 
-	  left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
-	  left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
-	  where oqd.Id = '{0}'
-	  and oqd.Seq = '{1}') a
+                        sqlCmd = string.Format(@"
+select a.SizeCode
+from (
+    select  oqd.Article
+            , oqd.SizeCode
+            , isnull(ou2.POPrice,isnull(ou1.POPrice,-1)) as Price
+    from Order_QtyShip_Detail oqd WITH (NOLOCK) 
+	left join Order_UnitPrice ou1 WITH (NOLOCK) on ou1.Id = oqd.Id and ou1.Article = '----' and ou1.SizeCode = '----' and ou1.POPrice = 0
+	left join Order_UnitPrice ou2 WITH (NOLOCK) on ou2.Id = oqd.Id and ou2.Article = oqd.Article and ou2.SizeCode = oqd.SizeCode and ou2.POPrice = 0
+	where oqd.Id = '{0}'
+	and oqd.Seq = '{1}'
+) a
 where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(sqlCmd))
                         {
