@@ -46,7 +46,7 @@ namespace Sci.Production.Packing
         }
     }
 
-    class P09_IDX_CTRL
+    public class P09_IDX_CTRL
     {
         private delegate int IdxCallVB_func(int command, string Request, int RequestSize);
         DllInvoke dll;
@@ -57,11 +57,16 @@ namespace Sci.Production.Packing
             dll = new DllInvoke(".\\IDX_CTRL.dll");
             func = (IdxCallVB_func)dll.Invoke("IdxCallVB", typeof(IdxCallVB_func));
         }
-        public void IdxCall(int command, string Request, int RequestSize)
+        public bool IdxCall(int command, string Request, int RequestSize)
         {
             if (func != null)
             {
                 func(command, Request, RequestSize);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

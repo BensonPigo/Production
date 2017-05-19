@@ -322,11 +322,13 @@ order by ID,Seq", txtSP.Text);
                 return;
             }
             P09_IDX_CTRL IDX = new P09_IDX_CTRL();
-            IDX.IdxCall(1, "8:?", 4);
-            Sci.Production.Packing.P09_StartToScan callNextForm = new Sci.Production.Packing.P09_StartToScan(dr);
-            DialogResult result = callNextForm.ShowDialog(this);
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (IDX.IdxCall(1, "8:?", 4))
             {
+                Sci.Production.Packing.P09_StartToScan callNextForm = new Sci.Production.Packing.P09_StartToScan(dr, IDX);
+                DialogResult result = callNextForm.ShowDialog(this);
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                }
             }
         }
 

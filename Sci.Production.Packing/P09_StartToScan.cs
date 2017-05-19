@@ -13,11 +13,12 @@ namespace Sci.Production.Packing
 {
     public partial class P09_StartToScan : Sci.Win.Subs.Base
     {
-        P09_IDX_CTRL IDX = new P09_IDX_CTRL();
+        P09_IDX_CTRL IDX;
         DataRow MasterDR;
-        public P09_StartToScan(DataRow MasterDataRow)
+        public P09_StartToScan(DataRow MasterDataRow, P09_IDX_CTRL IDX)
         {
             InitializeComponent();
+            this.IDX = IDX;
             MasterDR = MasterDataRow;
         }
 
