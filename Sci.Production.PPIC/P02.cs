@@ -87,18 +87,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 this.gridUpdateOrder.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);
-
-            for (int i = 0; i < gridData.Rows.Count; i++)
-            {
-                if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
-                    gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
-                    gridData.Rows[i]["DeleteOrder"].ToString() == "V")
-                {
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
-                    gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-                }
-            }
+            QueryDate((string)comboFactory.SelectedValue,dateUpdatedDate.Value);                       
         }
 
         //Query Data
@@ -136,7 +125,17 @@ order by FactoryID,OrderId", MyUtility.Check.Empty(factoryID) ? string.Format("M
             {
                 dateLastDate.Value = Convert.ToDateTime(gridData.Rows[0]["TransferDate"]);
             }
-            
+
+            for (int i = 0; i < gridData.Rows.Count; i++)
+            {
+                if ((gridData.Rows[i]["OriginalQty"].ToString() != gridData.Rows[i]["NewQty"].ToString() && gridData.Rows[i]["NewQty"].ToString() == "0") ||
+                    gridData.Rows[i]["JunkOrder"].ToString() == "V" ||
+                    gridData.Rows[i]["DeleteOrder"].ToString() == "V")
+                {
+                    gridUpdateOrder.Rows[i].DefaultCellStyle.ForeColor = Color.Red;
+                    gridUpdateOrder.Rows[i].DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                }
+            }
         }
 
         //Close
