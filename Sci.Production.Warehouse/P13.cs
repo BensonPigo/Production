@@ -297,7 +297,7 @@ where t.id= @ID";
             this.txtwhseReason.DisplayBox1.Text = MyUtility.GetValue.Lookup("Description", this.txtwhseReason.Type.ToString() + this.txtwhseReason.TextBox1.Text.ToString(), "WhseReason", "Type+ID");
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }

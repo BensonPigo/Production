@@ -187,7 +187,7 @@ namespace Sci.Production.Warehouse
             base.OnDetailEntered();
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }

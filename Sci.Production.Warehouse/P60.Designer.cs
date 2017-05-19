@@ -80,7 +80,7 @@
             this.masterpanel.Controls.Add(this.label25);
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 189);
+            this.masterpanel.Size = new System.Drawing.Size(998, 189);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
@@ -104,22 +104,22 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 189);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 288);
+            this.detailpanel.Size = new System.Drawing.Size(998, 288);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 146);
+            this.gridicon.Location = new System.Drawing.Point(889, 146);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(948, 1);
+            this.refresh.Location = new System.Drawing.Point(909, 1);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 288);
+            this.detailgridcont.Size = new System.Drawing.Size(998, 288);
             // 
             // detail2
             // 
@@ -135,24 +135,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(998, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(998, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(998, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1058, 515);
+            this.browse.Size = new System.Drawing.Size(998, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(1006, 544);
             // 
             // createby
             // 
@@ -169,7 +169,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -178,7 +177,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(241, 13);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
@@ -189,8 +187,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(904, 13);
+            this.label25.Location = new System.Drawing.Point(864, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -238,7 +235,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(16, 150);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
@@ -258,7 +254,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(16, 82);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -279,7 +274,7 @@
             // btnImport
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(799, 148);
+            this.btnImport.Location = new System.Drawing.Point(759, 148);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(123, 30);
             this.btnImport.TabIndex = 7;
@@ -300,7 +295,6 @@
             // 
             // labelLocalSupplier
             // 
-            this.labelLocalSupplier.Lines = 0;
             this.labelLocalSupplier.Location = new System.Drawing.Point(524, 13);
             this.labelLocalSupplier.Name = "labelLocalSupplier";
             this.labelLocalSupplier.Size = new System.Drawing.Size(108, 23);
@@ -309,7 +303,6 @@
             // 
             // labelInvoice
             // 
-            this.labelInvoice.Lines = 0;
             this.labelInvoice.Location = new System.Drawing.Point(16, 48);
             this.labelInvoice.Name = "labelInvoice";
             this.labelInvoice.Size = new System.Drawing.Size(75, 23);
@@ -337,7 +330,6 @@
             // 
             // lblTotal
             // 
-            this.lblTotal.Lines = 0;
             this.lblTotal.Location = new System.Drawing.Point(524, 48);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(108, 23);
@@ -347,7 +339,7 @@
             // P60
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(1006, 577);
             this.DefaultControl = "txtsubconLocalSupplier";
             this.DefaultControlForEdit = "txtsubconLocalSupplier";
             this.DefaultDetailOrder = "localpoid,localpo_detailUkey";

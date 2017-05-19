@@ -77,7 +77,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 201);
+            this.masterpanel.Size = new System.Drawing.Size(972, 201);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -99,23 +99,22 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 201);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 276);
+            this.detailpanel.Size = new System.Drawing.Size(972, 276);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 165);
+            this.gridicon.Location = new System.Drawing.Point(845, 165);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.refresh.Location = new System.Drawing.Point(830, 1);
+            this.refresh.Location = new System.Drawing.Point(865, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 276);
+            this.detailgridcont.Size = new System.Drawing.Size(972, 276);
             // 
             // detail2
             // 
@@ -131,24 +130,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(972, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(972, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(972, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1058, 515);
+            this.browse.Size = new System.Drawing.Size(972, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(980, 544);
             // 
             // createby
             // 
@@ -183,7 +182,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(904, 13);
+            this.label25.Location = new System.Drawing.Point(830, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -215,7 +214,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 201);
+            this.shapeContainer1.Size = new System.Drawing.Size(972, 201);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -223,7 +222,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 1039;
+            this.lineShape1.X2 = 952;
             this.lineShape1.Y1 = 160;
             this.lineShape1.Y2 = 160;
             // 
@@ -291,7 +290,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(883, 108);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(800, 108);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
@@ -303,7 +302,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(939, 73);
+            this.btnImport.Location = new System.Drawing.Point(856, 71);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
@@ -335,7 +334,7 @@
             // P19
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(980, 577);
             this.DefaultControl = "txtFromFactory";
             this.DefaultControlForEdit = "txtFromFactory";
             this.DefaultOrder = "issuedate,ID";

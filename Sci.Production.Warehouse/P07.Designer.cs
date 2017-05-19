@@ -36,7 +36,7 @@
             this.labelSendDate = new Sci.Win.UI.Label();
             this.labelPLRcvDate = new Sci.Win.UI.Label();
             this.labelDoxRcvDate = new Sci.Win.UI.Label();
-            this.label25 = new Sci.Win.UI.Label();
+            this.labelNotApprove = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.dateETA = new Sci.Win.UI.DateBox();
             this.txtInvoiceNo = new Sci.Win.UI.TextBox();
@@ -55,7 +55,7 @@
             this.btnUpdateActkg = new Sci.Win.UI.Button();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label4 = new Sci.Win.UI.Label();
+            this.lbWhenWKNo = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
@@ -88,7 +88,7 @@
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
-            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.lbWhenWKNo);
             this.masterpanel.Controls.Add(this.btnUpdateActkg);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.displayWKNO);
             this.masterpanel.Controls.Add(this.txtInvoiceNo);
             this.masterpanel.Controls.Add(this.displayID);
-            this.masterpanel.Controls.Add(this.label25);
+            this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.labelDoxRcvDate);
             this.masterpanel.Controls.Add(this.labelPLRcvDate);
             this.masterpanel.Controls.Add(this.labelSendDate);
@@ -115,7 +115,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1076, 215);
+            this.masterpanel.Size = new System.Drawing.Size(1007, 215);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -126,7 +126,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSendDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPLRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDoxRcvDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvoiceNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayWKNO, 0);
@@ -143,7 +143,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateActkg, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbWhenWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
@@ -156,22 +156,22 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(1076, 262);
+            this.detailpanel.Size = new System.Drawing.Size(1007, 262);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 174);
+            this.gridicon.Location = new System.Drawing.Point(893, 173);
             this.gridicon.TabIndex = 20;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(996, 0);
+            this.refresh.Location = new System.Drawing.Point(913, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1076, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(1007, 262);
             // 
             // detail2
             // 
@@ -187,24 +187,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1076, 515);
+            this.detail.Size = new System.Drawing.Size(1007, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1076, 477);
+            this.detailcont.Size = new System.Drawing.Size(1007, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1076, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1007, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1076, 515);
+            this.browse.Size = new System.Drawing.Size(1007, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1084, 544);
+            this.tabs.Size = new System.Drawing.Size(1015, 544);
             // 
             // createby
             // 
@@ -221,7 +221,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -230,7 +229,6 @@
             // 
             // labelInvoiceNo
             // 
-            this.labelInvoiceNo.Lines = 0;
             this.labelInvoiceNo.Location = new System.Drawing.Point(16, 47);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(75, 23);
@@ -239,7 +237,6 @@
             // 
             // labelWKNO
             // 
-            this.labelWKNO.Lines = 0;
             this.labelWKNO.Location = new System.Drawing.Point(16, 80);
             this.labelWKNO.Name = "labelWKNO";
             this.labelWKNO.Size = new System.Drawing.Size(75, 23);
@@ -248,8 +245,7 @@
             // 
             // labelETA
             // 
-            this.labelETA.Lines = 0;
-            this.labelETA.Location = new System.Drawing.Point(264, 47);
+            this.labelETA.Location = new System.Drawing.Point(253, 47);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(75, 23);
             this.labelETA.TabIndex = 9;
@@ -257,8 +253,7 @@
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Lines = 0;
-            this.labelArriveWHDate.Location = new System.Drawing.Point(264, 80);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(253, 80);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(108, 23);
             this.labelArriveWHDate.TabIndex = 11;
@@ -266,8 +261,7 @@
             // 
             // labelSendDate
             // 
-            this.labelSendDate.Lines = 0;
-            this.labelSendDate.Location = new System.Drawing.Point(515, 80);
+            this.labelSendDate.Location = new System.Drawing.Point(480, 80);
             this.labelSendDate.Name = "labelSendDate";
             this.labelSendDate.Size = new System.Drawing.Size(75, 23);
             this.labelSendDate.TabIndex = 14;
@@ -275,8 +269,7 @@
             // 
             // labelPLRcvDate
             // 
-            this.labelPLRcvDate.Lines = 0;
-            this.labelPLRcvDate.Location = new System.Drawing.Point(515, 47);
+            this.labelPLRcvDate.Location = new System.Drawing.Point(480, 47);
             this.labelPLRcvDate.Name = "labelPLRcvDate";
             this.labelPLRcvDate.Size = new System.Drawing.Size(95, 23);
             this.labelPLRcvDate.TabIndex = 15;
@@ -284,24 +277,22 @@
             // 
             // labelDoxRcvDate
             // 
-            this.labelDoxRcvDate.Lines = 0;
-            this.labelDoxRcvDate.Location = new System.Drawing.Point(264, 112);
+            this.labelDoxRcvDate.Location = new System.Drawing.Point(253, 112);
             this.labelDoxRcvDate.Name = "labelDoxRcvDate";
             this.labelDoxRcvDate.Size = new System.Drawing.Size(95, 23);
             this.labelDoxRcvDate.TabIndex = 18;
             this.labelDoxRcvDate.Text = "Dox Rcv Date";
             // 
-            // label25
+            // labelNotApprove
             // 
-            this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(761, 13);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
-            this.label25.TabIndex = 43;
-            this.label25.Text = "Not Approve";
-            this.label25.TextStyle.Color = System.Drawing.Color.Red;
+            this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
+            this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.labelNotApprove.Location = new System.Drawing.Point(720, 13);
+            this.labelNotApprove.Name = "labelNotApprove";
+            this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
+            this.labelNotApprove.TabIndex = 43;
+            this.labelNotApprove.Text = "Not Approve";
+            this.labelNotApprove.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // displayID
             // 
@@ -316,9 +307,9 @@
             // dateETA
             // 
             this.dateETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "eta", true));
-            this.dateETA.Location = new System.Drawing.Point(342, 47);
+            this.dateETA.Location = new System.Drawing.Point(332, 47);
             this.dateETA.Name = "dateETA";
-            this.dateETA.Size = new System.Drawing.Size(130, 23);
+            this.dateETA.Size = new System.Drawing.Size(110, 23);
             this.dateETA.TabIndex = 3;
             // 
             // txtInvoiceNo
@@ -344,7 +335,6 @@
             // 
             // labelArrivePortDate
             // 
-            this.labelArrivePortDate.Lines = 0;
             this.labelArrivePortDate.Location = new System.Drawing.Point(16, 112);
             this.labelArrivePortDate.Name = "labelArrivePortDate";
             this.labelArrivePortDate.Size = new System.Drawing.Size(109, 23);
@@ -358,33 +348,33 @@
             this.dateArrivePortDate.Location = new System.Drawing.Point(129, 112);
             this.dateArrivePortDate.Name = "dateArrivePortDate";
             this.dateArrivePortDate.ReadOnly = true;
-            this.dateArrivePortDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArrivePortDate.Size = new System.Drawing.Size(110, 23);
             this.dateArrivePortDate.TabIndex = 2;
             // 
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "whseArrival", true));
-            this.dateArriveWHDate.Location = new System.Drawing.Point(375, 80);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(365, 80);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
-            this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
+            this.dateArriveWHDate.Size = new System.Drawing.Size(110, 23);
             this.dateArriveWHDate.TabIndex = 4;
             // 
             // datePLRcvDate
             // 
             this.datePLRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingReceive", true));
-            this.datePLRcvDate.Location = new System.Drawing.Point(613, 47);
+            this.datePLRcvDate.Location = new System.Drawing.Point(580, 47);
             this.datePLRcvDate.Name = "datePLRcvDate";
-            this.datePLRcvDate.Size = new System.Drawing.Size(130, 23);
+            this.datePLRcvDate.Size = new System.Drawing.Size(110, 23);
             this.datePLRcvDate.TabIndex = 6;
             // 
             // dateDoxRcvDate
             // 
             this.dateDoxRcvDate.IsSupportCalendar = false;
             this.dateDoxRcvDate.IsSupportEditMode = false;
-            this.dateDoxRcvDate.Location = new System.Drawing.Point(362, 112);
+            this.dateDoxRcvDate.Location = new System.Drawing.Point(352, 112);
             this.dateDoxRcvDate.Name = "dateDoxRcvDate";
             this.dateDoxRcvDate.ReadOnly = true;
-            this.dateDoxRcvDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDoxRcvDate.Size = new System.Drawing.Size(110, 23);
             this.dateDoxRcvDate.TabIndex = 5;
             // 
             // dateSendDate
@@ -392,17 +382,17 @@
             this.dateSendDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Transfer2Taipei", true));
             this.dateSendDate.IsSupportCalendar = false;
             this.dateSendDate.IsSupportEditMode = false;
-            this.dateSendDate.Location = new System.Drawing.Point(593, 80);
+            this.dateSendDate.Location = new System.Drawing.Point(560, 80);
             this.dateSendDate.Name = "dateSendDate";
             this.dateSendDate.ReadOnly = true;
-            this.dateSendDate.Size = new System.Drawing.Size(130, 23);
+            this.dateSendDate.Size = new System.Drawing.Size(110, 23);
             this.dateSendDate.TabIndex = 7;
             // 
             // btnModifyRollDyelot
             // 
             this.btnModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnModifyRollDyelot.Location = new System.Drawing.Point(743, 76);
+            this.btnModifyRollDyelot.Location = new System.Drawing.Point(683, 76);
             this.btnModifyRollDyelot.Name = "btnModifyRollDyelot";
             this.btnModifyRollDyelot.Size = new System.Drawing.Size(131, 43);
             this.btnModifyRollDyelot.TabIndex = 9;
@@ -414,7 +404,7 @@
             // 
             this.btnDownloadSample.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDownloadSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDownloadSample.Location = new System.Drawing.Point(880, 125);
+            this.btnDownloadSample.Location = new System.Drawing.Point(820, 125);
             this.btnDownloadSample.Name = "btnDownloadSample";
             this.btnDownloadSample.Size = new System.Drawing.Size(178, 30);
             this.btnDownloadSample.TabIndex = 12;
@@ -426,7 +416,7 @@
             // 
             this.btnPrintSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPrintSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintSticker.Location = new System.Drawing.Point(880, 76);
+            this.btnPrintSticker.Location = new System.Drawing.Point(820, 76);
             this.btnPrintSticker.Name = "btnPrintSticker";
             this.btnPrintSticker.Size = new System.Drawing.Size(178, 43);
             this.btnPrintSticker.TabIndex = 10;
@@ -438,7 +428,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(880, 39);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(820, 39);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(178, 31);
             this.btnAccumulatedQty.TabIndex = 8;
@@ -450,7 +440,7 @@
             // 
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportFromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromExcel.Location = new System.Drawing.Point(743, 175);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(723, 175);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(161, 30);
             this.btnImportFromExcel.TabIndex = 18;
@@ -461,7 +451,7 @@
             // btnUpdateActkg
             // 
             this.btnUpdateActkg.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUpdateActkg.Location = new System.Drawing.Point(743, 125);
+            this.btnUpdateActkg.Location = new System.Drawing.Point(683, 125);
             this.btnUpdateActkg.Name = "btnUpdateActkg";
             this.btnUpdateActkg.Size = new System.Drawing.Size(131, 30);
             this.btnUpdateActkg.TabIndex = 11;
@@ -476,7 +466,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1076, 215);
+            this.shapeContainer1.Size = new System.Drawing.Size(1007, 215);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -484,21 +474,20 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 1057;
+            this.lineShape1.X2 = 994;
             this.lineShape1.Y1 = 163;
             this.lineShape1.Y2 = 163;
             // 
-            // label4
+            // lbWhenWKNo
             // 
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Lines = 0;
-            this.label4.Location = new System.Drawing.Point(390, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(338, 23);
-            this.label4.TabIndex = 55;
-            this.label4.Text = "(When \"WK No\" is empty. 3rd country will  be checked)";
-            this.label4.TextStyle.Color = System.Drawing.Color.Red;
+            this.lbWhenWKNo.BackColor = System.Drawing.Color.Transparent;
+            this.lbWhenWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbWhenWKNo.Location = new System.Drawing.Point(375, 13);
+            this.lbWhenWKNo.Name = "lbWhenWKNo";
+            this.lbWhenWKNo.Size = new System.Drawing.Size(338, 23);
+            this.lbWhenWKNo.TabIndex = 55;
+            this.lbWhenWKNo.Text = "(When \"WK No\" is empty. 3rd country will  be checked)";
+            this.lbWhenWKNo.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // btnFind
             // 
@@ -522,7 +511,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(16, 179);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
@@ -531,8 +519,7 @@
             // 
             // labelTypeFilter
             // 
-            this.labelTypeFilter.Lines = 0;
-            this.labelTypeFilter.Location = new System.Drawing.Point(463, 178);
+            this.labelTypeFilter.Location = new System.Drawing.Point(458, 178);
             this.labelTypeFilter.Name = "labelTypeFilter";
             this.labelTypeFilter.Size = new System.Drawing.Size(75, 23);
             this.labelTypeFilter.TabIndex = 16;
@@ -548,7 +535,7 @@
             "ALL",
             "Fabric",
             "Accessory"});
-            this.comboTypeFilter.Location = new System.Drawing.Point(541, 177);
+            this.comboTypeFilter.Location = new System.Drawing.Point(535, 177);
             this.comboTypeFilter.Name = "comboTypeFilter";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
             this.comboTypeFilter.TabIndex = 16;
@@ -557,7 +544,7 @@
             // btnDeleteAll
             // 
             this.btnDeleteAll.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDeleteAll.Location = new System.Drawing.Point(647, 174);
+            this.btnDeleteAll.Location = new System.Drawing.Point(640, 174);
             this.btnDeleteAll.Name = "btnDeleteAll";
             this.btnDeleteAll.Size = new System.Drawing.Size(80, 30);
             this.btnDeleteAll.TabIndex = 17;
@@ -571,7 +558,7 @@
             this.check3rdCountry.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "third", true));
             this.check3rdCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.check3rdCountry.IsSupportEditMode = false;
-            this.check3rdCountry.Location = new System.Drawing.Point(264, 15);
+            this.check3rdCountry.Location = new System.Drawing.Point(253, 15);
             this.check3rdCountry.Name = "check3rdCountry";
             this.check3rdCountry.ReadOnly = true;
             this.check3rdCountry.Size = new System.Drawing.Size(101, 21);
@@ -592,7 +579,7 @@
             // P07
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1084, 577);
+            this.ClientSize = new System.Drawing.Size(1015, 577);
             this.DefaultControl = "txtInvoiceNo";
             this.DefaultControlForEdit = "txtInvoiceNo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -642,8 +629,8 @@
         private Win.UI.Label labelID;
         private Win.UI.DateBox dateETA;
         private Win.UI.DisplayBox displayID;
-        private Win.UI.Label label25;
-        private Win.UI.Label label4;
+        private Win.UI.Label labelNotApprove;
+        private Win.UI.Label lbWhenWKNo;
         private Win.UI.Button btnUpdateActkg;
         private Win.UI.Button btnImportFromExcel;
         private Win.UI.Button btnAccumulatedQty;

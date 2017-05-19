@@ -58,7 +58,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(1054, 15);
+            this.btnCancel.Location = new System.Drawing.Point(864, 16);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 1;
@@ -71,7 +71,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(958, 16);
+            this.btnImport.Location = new System.Drawing.Point(768, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 0;
@@ -83,7 +83,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(1028, 50);
+            this.btnFindNow.Location = new System.Drawing.Point(827, 50);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 5;
@@ -108,7 +108,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 617);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1150, 53);
+            this.groupBox2.Size = new System.Drawing.Size(966, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -128,14 +128,13 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1150, 93);
+            this.groupBox1.Size = new System.Drawing.Size(966, 93);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(232, 57);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(19, 23);
@@ -145,7 +144,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(383, 54);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(104, 23);
@@ -165,7 +163,6 @@
             // 
             // labelLocalPO
             // 
-            this.labelLocalPO.Lines = 0;
             this.labelLocalPO.Location = new System.Drawing.Point(9, 19);
             this.labelLocalPO.Name = "labelLocalPO";
             this.labelLocalPO.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -177,7 +174,6 @@
             // labelPOIssueDate
             // 
             this.labelPOIssueDate.BackColor = System.Drawing.Color.PaleGreen;
-            this.labelPOIssueDate.Lines = 0;
             this.labelPOIssueDate.Location = new System.Drawing.Point(383, 19);
             this.labelPOIssueDate.Name = "labelPOIssueDate";
             this.labelPOIssueDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -195,7 +191,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 54);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -228,7 +223,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 93);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1150, 524);
+            this.panel1.Size = new System.Drawing.Size(966, 524);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -251,13 +246,13 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.Size = new System.Drawing.Size(1150, 524);
+            this.gridImport.Size = new System.Drawing.Size(966, 524);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
             // P60_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1150, 670);
+            this.ClientSize = new System.Drawing.Size(966, 670);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);

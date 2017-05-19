@@ -595,7 +595,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }

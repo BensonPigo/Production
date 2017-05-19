@@ -302,7 +302,7 @@ namespace Sci.Production.Warehouse
 
             #region Status Label
 
-            label25.Text = CurrentMaintain["status"].ToString();
+            labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
         }

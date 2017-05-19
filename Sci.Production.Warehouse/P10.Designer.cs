@@ -43,7 +43,7 @@
             this.labelCutNo = new Sci.Win.UI.Label();
             this.editCutNo = new Sci.Win.UI.EditBox();
             this.btnAutoPick = new Sci.Win.UI.Button();
-            this.label25 = new Sci.Win.UI.Label();
+            this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnCutRef = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -62,7 +62,7 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.btnCutRef);
-            this.masterpanel.Controls.Add(this.label25);
+            this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.btnAutoPick);
             this.masterpanel.Controls.Add(this.editCutNo);
             this.masterpanel.Controls.Add(this.labelCutNo);
@@ -78,7 +78,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1001, 105);
+            this.masterpanel.Size = new System.Drawing.Size(982, 105);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -95,47 +95,47 @@
             this.masterpanel.Controls.SetChildIndex(this.labelCutNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.editCutNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCutRef, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 105);
-            this.detailpanel.Size = new System.Drawing.Size(1001, 338);
+            this.detailpanel.Size = new System.Drawing.Size(982, 338);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2520, 70);
+            this.gridicon.Location = new System.Drawing.Point(3359, 70);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(921, 0);
+            this.refresh.Location = new System.Drawing.Point(893, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1001, 338);
+            this.detailgridcont.Size = new System.Drawing.Size(982, 338);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1001, 481);
+            this.detail.Size = new System.Drawing.Size(982, 481);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1001, 443);
+            this.detailcont.Size = new System.Drawing.Size(982, 443);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(1001, 38);
+            this.detailbtm.Size = new System.Drawing.Size(982, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1001, 481);
+            this.browse.Size = new System.Drawing.Size(982, 481);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1009, 510);
+            this.tabs.Size = new System.Drawing.Size(990, 510);
             // 
             // createby
             // 
@@ -152,7 +152,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(9, 9);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -171,7 +170,6 @@
             // 
             // labelRequest
             // 
-            this.labelRequest.Lines = 0;
             this.labelRequest.Location = new System.Drawing.Point(224, 9);
             this.labelRequest.Name = "labelRequest";
             this.labelRequest.Size = new System.Drawing.Size(75, 23);
@@ -191,7 +189,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(9, 40);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
@@ -217,7 +214,6 @@
             // 
             // labelLineNo
             // 
-            this.labelLineNo.Lines = 0;
             this.labelLineNo.Location = new System.Drawing.Point(224, 40);
             this.labelLineNo.Name = "labelLineNo";
             this.labelLineNo.Size = new System.Drawing.Size(75, 23);
@@ -235,7 +231,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(9, 71);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(75, 23);
@@ -254,7 +249,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(224, 71);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -263,7 +257,6 @@
             // 
             // labelCutNo
             // 
-            this.labelCutNo.Lines = 0;
             this.labelCutNo.Location = new System.Drawing.Point(441, 9);
             this.labelCutNo.Name = "labelCutNo";
             this.labelCutNo.Size = new System.Drawing.Size(75, 23);
@@ -282,14 +275,14 @@
             this.editCutNo.Multiline = true;
             this.editCutNo.Name = "editCutNo";
             this.editCutNo.ReadOnly = true;
-            this.editCutNo.Size = new System.Drawing.Size(357, 54);
+            this.editCutNo.Size = new System.Drawing.Size(326, 54);
             this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(905, 32);
+            this.btnAutoPick.Location = new System.Drawing.Point(874, 32);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 15;
@@ -297,24 +290,23 @@
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
-            // label25
+            // labelNotApprove
             // 
-            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(881, 8);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
-            this.label25.TabIndex = 44;
-            this.label25.Text = "Not Approve";
-            this.label25.TextStyle.Color = System.Drawing.Color.Red;
+            this.labelNotApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
+            this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.labelNotApprove.Location = new System.Drawing.Point(851, 8);
+            this.labelNotApprove.Name = "labelNotApprove";
+            this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
+            this.labelNotApprove.TabIndex = 44;
+            this.labelNotApprove.Text = "Not Approve";
+            this.labelNotApprove.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // btnCutRef
             // 
             this.btnCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCutRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCutRef.Location = new System.Drawing.Point(905, 64);
+            this.btnCutRef.Location = new System.Drawing.Point(874, 64);
             this.btnCutRef.Name = "btnCutRef";
             this.btnCutRef.Size = new System.Drawing.Size(80, 30);
             this.btnCutRef.TabIndex = 45;
@@ -325,7 +317,7 @@
             // P10
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1009, 543);
+            this.ClientSize = new System.Drawing.Size(990, 543);
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "txtRequest";
             this.DefaultDetailOrder = "poid,scirefno,colorid,sizespec";
@@ -381,7 +373,7 @@
         private Win.UI.TextBox txtRequest;
         private Win.UI.Label labelRequest;
         private Win.UI.Button btnAutoPick;
-        private Win.UI.Label label25;
+        private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnCutRef;
     }
 }

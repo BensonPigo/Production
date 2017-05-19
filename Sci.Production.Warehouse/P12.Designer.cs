@@ -30,7 +30,7 @@
         {
             this.labelID = new Sci.Win.UI.Label();
             this.labelIssueDate = new Sci.Win.UI.Label();
-            this.label25 = new Sci.Win.UI.Label();
+            this.labelNotApprove = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
             this.btnImport = new Sci.Win.UI.Button();
@@ -67,15 +67,15 @@
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.displayID);
-            this.masterpanel.Controls.Add(this.label25);
+            this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1058, 155);
+            this.masterpanel.Size = new System.Drawing.Size(978, 155);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label25, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
@@ -90,22 +90,22 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 155);
-            this.detailpanel.Size = new System.Drawing.Size(1058, 322);
+            this.detailpanel.Size = new System.Drawing.Size(978, 322);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(928, 115);
+            this.gridicon.Location = new System.Drawing.Point(855, 115);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(904, 1);
+            this.refresh.Location = new System.Drawing.Point(875, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1058, 322);
+            this.detailgridcont.Size = new System.Drawing.Size(978, 322);
             // 
             // detail2
             // 
@@ -121,24 +121,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1058, 515);
+            this.detail.Size = new System.Drawing.Size(978, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1058, 477);
+            this.detailcont.Size = new System.Drawing.Size(978, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1058, 38);
+            this.detailbtm.Size = new System.Drawing.Size(978, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1058, 515);
+            this.browse.Size = new System.Drawing.Size(978, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1066, 544);
+            this.tabs.Size = new System.Drawing.Size(986, 544);
             // 
             // createby
             // 
@@ -155,7 +155,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -164,24 +163,22 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(241, 13);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
             this.labelIssueDate.TabIndex = 11;
             this.labelIssueDate.Text = "Issue Date";
             // 
-            // label25
+            // labelNotApprove
             // 
-            this.label25.BackColor = System.Drawing.Color.Transparent;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(904, 13);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(115, 23);
-            this.label25.TabIndex = 43;
-            this.label25.Text = "Not Approve";
-            this.label25.TextStyle.Color = System.Drawing.Color.Red;
+            this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
+            this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.labelNotApprove.Location = new System.Drawing.Point(764, 13);
+            this.labelNotApprove.Name = "labelNotApprove";
+            this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
+            this.labelNotApprove.TabIndex = 43;
+            this.labelNotApprove.Text = "Not Approve";
+            this.labelNotApprove.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // displayID
             // 
@@ -205,7 +202,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(939, 43);
+            this.btnImport.Location = new System.Drawing.Point(775, 43);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 2;
@@ -220,7 +217,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1058, 155);
+            this.shapeContainer1.Size = new System.Drawing.Size(978, 155);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -228,7 +225,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 1039;
+            this.lineShape1.X2 = 957;
             this.lineShape1.Y1 = 106;
             this.lineShape1.Y2 = 106;
             // 
@@ -255,7 +252,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(16, 119);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
@@ -275,7 +271,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(16, 47);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -296,7 +291,7 @@
             // P12
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1066, 577);
+            this.ClientSize = new System.Drawing.Size(986, 577);
             this.DefaultControl = "editRemark";
             this.DefaultControlForEdit = "editRemark";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -339,7 +334,7 @@
         private Win.UI.Label labelIssueDate;
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayID;
-        private Win.UI.Label label25;
+        private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnImport;
         private Win.UI.DateBox dateIssueDate;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;

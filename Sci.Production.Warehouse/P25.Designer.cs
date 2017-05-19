@@ -73,7 +73,7 @@
             this.masterpanel.Controls.Add(this.label11);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1025, 161);
+            this.masterpanel.Size = new System.Drawing.Size(995, 161);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.label11, 0);
@@ -93,12 +93,12 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 161);
-            this.detailpanel.Size = new System.Drawing.Size(1025, 316);
+            this.detailpanel.Size = new System.Drawing.Size(995, 316);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(909, 125);
+            this.gridicon.Location = new System.Drawing.Point(872, 125);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -108,7 +108,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1025, 316);
+            this.detailgridcont.Size = new System.Drawing.Size(995, 316);
             // 
             // detail2
             // 
@@ -124,24 +124,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1025, 515);
+            this.detail.Size = new System.Drawing.Size(995, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1025, 477);
+            this.detailcont.Size = new System.Drawing.Size(995, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1025, 38);
+            this.detailbtm.Size = new System.Drawing.Size(995, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1025, 515);
+            this.browse.Size = new System.Drawing.Size(995, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1033, 544);
+            this.tabs.Size = new System.Drawing.Size(1003, 544);
             // 
             // createby
             // 
@@ -158,7 +158,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(108, 23);
@@ -167,7 +166,6 @@
             // 
             // label11
             // 
-            this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(291, 13);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(108, 23);
@@ -178,8 +176,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
-            this.label25.Location = new System.Drawing.Point(900, 13);
+            this.label25.Location = new System.Drawing.Point(853, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -210,7 +207,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(922, 43);
+            this.btnImport.Location = new System.Drawing.Point(879, 43);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 4;
@@ -225,7 +222,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1025, 161);
+            this.shapeContainer1.Size = new System.Drawing.Size(995, 161);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -233,7 +230,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 1039;
+            this.lineShape1.X2 = 975;
             this.lineShape1.Y1 = 117;
             this.lineShape1.Y2 = 117;
             // 
@@ -250,7 +247,6 @@
             // 
             // labelLocateForSEQ
             // 
-            this.labelLocateForSEQ.Lines = 0;
             this.labelLocateForSEQ.Location = new System.Drawing.Point(16, 129);
             this.labelLocateForSEQ.Name = "labelLocateForSEQ";
             this.labelLocateForSEQ.Size = new System.Drawing.Size(109, 23);
@@ -270,7 +266,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(17, 43);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(108, 23);
@@ -292,7 +287,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(866, 80);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(823, 80);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 63;
@@ -313,7 +308,7 @@
             // P25
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1033, 577);
+            this.ClientSize = new System.Drawing.Size(1003, 577);
             this.DefaultControl = "editRemark";
             this.DefaultControlForEdit = "editRemark";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
