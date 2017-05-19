@@ -91,7 +91,7 @@
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
             this.gridBatchAssignCellEstCutDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(996, 338);
+            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(983, 338);
             this.gridBatchAssignCellEstCutDate.TabIndex = 0;
             this.gridBatchAssignCellEstCutDate.TabStop = false;
             // 
@@ -99,7 +99,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.AutoSize = true;
-            this.btnClose.Location = new System.Drawing.Point(916, 467);
+            this.btnClose.Location = new System.Drawing.Point(909, 467);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 15;
@@ -109,7 +109,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(12, 9);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(65, 23);
@@ -118,7 +117,6 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Lines = 0;
             this.labelArticle.Location = new System.Drawing.Point(12, 46);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(65, 23);
@@ -127,7 +125,6 @@
             // 
             // labelSizeCode
             // 
-            this.labelSizeCode.Lines = 0;
             this.labelSizeCode.Location = new System.Drawing.Point(197, 46);
             this.labelSizeCode.Name = "labelSizeCode";
             this.labelSizeCode.Size = new System.Drawing.Size(73, 23);
@@ -136,7 +133,6 @@
             // 
             // labelCutNo
             // 
-            this.labelCutNo.Lines = 0;
             this.labelCutNo.Location = new System.Drawing.Point(197, 9);
             this.labelCutNo.Name = "labelCutNo";
             this.labelCutNo.Size = new System.Drawing.Size(73, 23);
@@ -145,7 +141,6 @@
             // 
             // labelFabricCombo
             // 
-            this.labelFabricCombo.Lines = 0;
             this.labelFabricCombo.Location = new System.Drawing.Point(359, 9);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(88, 23);
@@ -154,7 +149,6 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Lines = 0;
             this.labelEstCutDate.Location = new System.Drawing.Point(359, 46);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(88, 23);
@@ -163,7 +157,6 @@
             // 
             // labelMarkerName
             // 
-            this.labelMarkerName.Lines = 0;
             this.labelMarkerName.Location = new System.Drawing.Point(517, 9);
             this.labelMarkerName.Name = "labelMarkerName";
             this.labelMarkerName.Size = new System.Drawing.Size(92, 23);
@@ -182,7 +175,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(598, 46);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(92, 23);
@@ -274,7 +266,6 @@
             // 
             // labelBatchUpdateEstCutCell
             // 
-            this.labelBatchUpdateEstCutCell.Lines = 0;
             this.labelBatchUpdateEstCutCell.Location = new System.Drawing.Point(12, 87);
             this.labelBatchUpdateEstCutCell.Name = "labelBatchUpdateEstCutCell";
             this.labelBatchUpdateEstCutCell.Size = new System.Drawing.Size(92, 23);
@@ -291,7 +282,6 @@
             // 
             // labelBatchUpdateEstCutDate
             // 
-            this.labelBatchUpdateEstCutDate.Lines = 0;
             this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(359, 87);
             this.labelBatchUpdateEstCutDate.Name = "labelBatchUpdateEstCutDate";
             this.labelBatchUpdateEstCutDate.Size = new System.Drawing.Size(88, 23);
@@ -302,7 +292,7 @@
             // 
             this.panel1.Location = new System.Drawing.Point(6, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(996, 75);
+            this.panel1.Size = new System.Drawing.Size(990, 75);
             this.panel1.TabIndex = 23;
             // 
             // btnBatchUpdateEstCutCell
@@ -332,7 +322,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1010, 503);
+            this.shapeContainer1.Size = new System.Drawing.Size(1003, 503);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -340,7 +330,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 2;
-            this.lineShape1.X2 = 1004;
+            this.lineShape1.X2 = 997;
             this.lineShape1.Y1 = 79;
             this.lineShape1.Y2 = 78;
             // 
@@ -368,7 +358,7 @@
             // 
             this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConfirm.AutoSize = true;
-            this.btnConfirm.Location = new System.Drawing.Point(819, 467);
+            this.btnConfirm.Location = new System.Drawing.Point(812, 467);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(80, 30);
             this.btnConfirm.TabIndex = 14;
@@ -378,7 +368,7 @@
             // 
             // P02_BatchAssignCellCutDate
             // 
-            this.ClientSize = new System.Drawing.Size(1010, 503);
+            this.ClientSize = new System.Drawing.Size(1003, 503);
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.btnBatchUpdateEstCutDate);
             this.Controls.Add(this.btnBatchUpdateEstCutCell);
