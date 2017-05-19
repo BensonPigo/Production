@@ -197,44 +197,44 @@ BEGIN
 		Using (select	ID					= A.ID
 						, FactoryID			= A.FactoryID
 						, MDivisionID		= A.MDivisionID
-						, O_Qty				= iif(a.qty != b.qty, a.qty, 0)
-						, N_Qty				= iif(a.qty != b.qty, b.qty, 0)
-						, O_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, A.BuyerDelivery, null)
-						, N_BuyerDelivery	= iif(a.BuyerDelivery != b.BuyerDelivery, b.BuyerDelivery, null)
-						, O_SciDelivery		= iif(a.SciDelivery != b.SciDelivery, A.SciDelivery, null)
-						, N_SciDelivery		= iif(a.SciDelivery != b.SciDelivery, b.SciDelivery, null)
-						, O_CMPQDate		= iif(a.CMPQDate != b.CMPQDate, A.CMPQDate, null)
-						, N_CMPQDate		= iif(a.CMPQDate != b.CMPQDate, b.CMPQDate, null)
-						, O_EachConsApv		= iif(a.EachConsApv != b.EachConsApv, A.EachConsApv, null)
-						, N_EachConsApv		= iif(a.EachConsApv != b.EachConsApv, b.EachConsApv, null)
-						, O_MnorderApv		= iif(a.MnorderApv != b.MnorderApv, A.MnorderApv, null)
-						, N_MnorderApv		= iif(a.MnorderApv != b.MnorderApv, b.MnorderApv, null)
-						, O_SMnorderApv		= iif(a.SMnorderApv != b.SMnorderApv, A.SMnorderApv, null)
-						, N_SMnorderApv		= iif(a.SMnorderApv != b.SMnorderApv, b.SMnorderApv, null)
-						, O_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, A.MnorderApv2, null)
-						, N_MnorderApv2		= iif(a.MnorderApv2 != b.MnorderApv2, b.MnorderApv2, null)
-						, O_Junk			= iif(a.Junk != b.Junk, A.Junk, 0)
-						, N_Junk			= iif(a.Junk != b.Junk, b.Junk, 0)
-						, O_KPILETA			= iif(a.KPILETA != b.KPILETA, A.KPILETA, null)
-						, N_KPILETA			= iif(a.KPILETA != b.KPILETA, b.KPILETA, null)
-						, O_LETA			= IIF( A.LETA != B.LETA, A.LETA, null)
-						, N_LETA			= IIF( A.LETA != B.LETA, b.LETA, null)
-						, O_Style			= IIF(a.StyleID != b.StyleID , a.StyleID, '')
-						, N_Style			= IIF(a.StyleID != b.StyleID , b.StyleID, '')
+						, O_Qty				= iif(isnull(a.qty, 0) != isnull(b.qty, 0), a.qty, 0)
+						, N_Qty				= iif(isnull(a.qty, 0) != isnull(b.qty, 0), b.qty, 0)
+						, O_BuyerDelivery	= iif(isnull(a.BuyerDelivery, '') != isnull(b.BuyerDelivery, ''), A.BuyerDelivery, null)
+						, N_BuyerDelivery	= iif(isnull(a.BuyerDelivery, '') != isnull(b.BuyerDelivery, ''), b.BuyerDelivery, null)
+						, O_SciDelivery		= iif(isnull(a.SciDelivery, '') != isnull(b.SciDelivery, ''), A.SciDelivery, null)
+						, N_SciDelivery		= iif(isnull(a.SciDelivery, '') != isnull(b.SciDelivery, ''), b.SciDelivery, null)
+						, O_CMPQDate		= iif(isnull(a.CMPQDate, '') != isnull(b.CMPQDate, ''), A.CMPQDate, null)
+						, N_CMPQDate		= iif(isnull(a.CMPQDate, '') != isnull(b.CMPQDate, ''), b.CMPQDate, null)
+						, O_EachConsApv		= iif(isnull(a.EachConsApv, '') != isnull(b.EachConsApv, ''), A.EachConsApv, null)
+						, N_EachConsApv		= iif(isnull(a.EachConsApv, '') != isnull(b.EachConsApv, ''), b.EachConsApv, null)
+						, O_MnorderApv		= iif(isnull(a.MnorderApv, '') != isnull(b.MnorderApv, ''), A.MnorderApv, null)
+						, N_MnorderApv		= iif(isnull(a.MnorderApv, '') != isnull(b.MnorderApv, ''), b.MnorderApv, null)
+						, O_SMnorderApv		= iif(isnull(a.SMnorderApv, '') != isnull(b.SMnorderApv, ''), A.SMnorderApv, null)
+						, N_SMnorderApv		= iif(isnull(a.SMnorderApv, '') != isnull(b.SMnorderApv, ''), b.SMnorderApv, null)
+						, O_MnorderApv2		= iif(isnull(a.MnorderApv2, '') != isnull(b.MnorderApv2, ''), A.MnorderApv2, null)
+						, N_MnorderApv2		= iif(isnull(a.MnorderApv2, '') != isnull(b.MnorderApv2, ''), b.MnorderApv2, null)
+						, O_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), A.Junk, 0)
+						, N_Junk			= iif(isnull(a.Junk, '') != isnull(b.Junk, ''), b.Junk, 0)
+						, O_KPILETA			= iif(isnull(a.KPILETA, '') != isnull(b.KPILETA, ''), A.KPILETA, null)
+						, N_KPILETA			= iif(isnull(a.KPILETA, '') != isnull(b.KPILETA, ''), b.KPILETA, null)
+						, O_LETA			= IIF(isnull(A.LETA, '') != isnull(B.LETA, ''), A.LETA, null)
+						, N_LETA			= IIF(isnull(A.LETA, '') != isnull(B.LETA, ''), b.LETA, null)
+						, O_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , a.StyleID, '')
+						, N_Style			= IIF(isnull(a.StyleID, '') != isnull(b.StyleID, '') , b.StyleID, '')
 				from #tmpOrders a WITH (NOLOCK)
 				inner join Trade_To_Pms.dbo.Orders b on a.id = b.id and a.FactoryID = b.FactoryID
-				where	A.QTY != B.QTY 
-						OR A.BuyerDelivery != B.BuyerDelivery 
-						OR A.StyleID != B.StyleID 
-						OR A.EachConsApv != B.EachConsApv 
-						OR A.CMPQDate != B.CMPQDate 
-						OR A.SciDelivery != B.SciDelivery 
-						OR A.MnorderApv != B.MnorderApv 
-						OR A.SMnorderApv != B.SMnorderApv 
-						OR A.MnorderApv2 != B.MnorderApv2 
-						OR A.Junk != B.Junk 
-						OR A.KPILETA != B.KPILETA
-						OR A.LETA != B.LETA	
+				where	isnull(A.QTY, 0) != isnull(B.QTY, 0) 
+						OR isnull(A.BuyerDelivery, '') != isnull(B.BuyerDelivery, '')
+						OR isnull(A.StyleID, '') != isnull(B.StyleID, '') 
+						OR isnull(A.EachConsApv, '') != isnull(B.EachConsApv, '') 
+						OR isnull(A.CMPQDate, '') != isnull(B.CMPQDate, '') 
+						OR isnull(A.SciDelivery, '') != isnull(B.SciDelivery, '') 
+						OR isnull(A.MnorderApv, '') != isnull(B.MnorderApv, '') 
+						OR isnull(A.SMnorderApv, '') != isnull(B.SMnorderApv, '') 
+						OR isnull(A.MnorderApv2, '') != isnull(B.MnorderApv2, '') 
+						OR isnull(A.Junk, '') != isnull(B.Junk, '') 
+						OR isnull(A.KPILETA, '') != isnull(B.KPILETA, '')
+						OR isnull(A.LETA, '') != isnull(B.LETA, '')	
 						and b.FactoryID in (select ID from Factory)) s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToday
 		when matched then 
