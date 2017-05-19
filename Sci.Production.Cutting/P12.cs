@@ -209,6 +209,7 @@ select
 from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -252,6 +253,7 @@ from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
 outer apply
 (
@@ -298,7 +300,7 @@ select
 from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -341,7 +343,7 @@ select DISTINCT
 from dbo.Bundle_Detail a WITH (NOLOCK)
 left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
