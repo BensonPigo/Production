@@ -89,7 +89,7 @@ namespace Sci.Production.Subcon
             Location_Poid2 = txtLocalPoidEnd.Text.ToString();
             Factory1 = comboFactory.Text.ToString();
             Category = txtartworktype_ftyCategory.Text.ToString();
-            Supplier = txtsubconSupplier.Text.ToString();
+            Supplier = txtsubconSupplier.TextBox1.Text.ToString();
             Report_Type = comboReportType.SelectedItem.ToString();
             Shipping_Mark = checkShippingMark.Checked.ToString();
             
