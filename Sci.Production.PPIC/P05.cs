@@ -19,6 +19,7 @@ namespace Sci.Production.PPIC
         private DataTable gridData;
         Ict.Win.DataGridViewGeneratorDateColumnSettings readyDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
         Ict.Win.DataGridViewGeneratorDateColumnSettings estPulloutDate = new Ict.Win.DataGridViewGeneratorDateColumnSettings();
+        Ict.Win.DataGridViewGeneratorComboBoxColumnSettings outReasonSet = new Ict.Win.DataGridViewGeneratorComboBoxColumnSettings();
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -132,6 +133,39 @@ namespace Sci.Production.PPIC
                 }
             };
 
+
+            #region OutStandingReason
+            //event
+            outReasonSet.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridProductionSchedule.GetDataRow<DataRow>(e.RowIndex);
+                dr["OutReason"] = e.FormattedValue;
+                dr["OutReasonDesc"] = MyUtility.GetValue.Lookup(string.Format(@"
+select Name 
+from Reason 
+where	ReasonTypeID='Delivery_OutStand'
+		and id = '{0}'", e.FormattedValue));
+            };
+
+            //set comboBoxData
+            DataTable comboBoxData;
+            DBProxy.Current.Select(null, @"
+select '' id
+
+union all
+select '' + id 
+from Reason 
+where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
+
+            Dictionary<string, string> di_OutReason = new Dictionary<string, string>();
+            foreach (DataRow dr in comboBoxData.Rows)
+            {
+                di_OutReason.Add(dr[0].ToString(), dr[0].ToString());
+            }
+
+            Ict.Win.UI.DataGridViewComboBoxColumn cbb_outReason;            
+            #endregion  
+
             //Grid設定
             this.gridProductionSchedule.IsEditingReadOnly = !EditMode;
             this.gridProductionSchedule.DataSource = listControlBindingSource1;
@@ -157,7 +191,15 @@ namespace Sci.Production.PPIC
                 .Numeric("Diff", header: "Diff", iseditingreadonly: true)
                 .Text("SewLine", header: "Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Del", iseditingreadonly: true)
+                .ComboBox("OutReason", header: "Outstanding" + Environment.NewLine + "Reason", settings: outReasonSet).Get(out cbb_outReason)
+                .ExtText("OutReasonDesc", header: "Outstanding" + Environment.NewLine + "Reason Desc", iseditingreadonly: true)
+                .Text("OutRemark", header: "Outstanding" + Environment.NewLine + "Remark")
                 .Text("ProdRemark", header: "Remark", width: Widths.AnsiChars(20));
+
+
+            cbb_outReason.DataSource = new BindingSource(di_OutReason, null);
+            cbb_outReason.ValueMember = "Key";
+            cbb_outReason.DisplayMember = "Value";
 
             gridProductionSchedule.Columns["Inconsistent"].DefaultCellStyle.ForeColor = Color.Red;
             if (EditMode)
@@ -168,6 +210,8 @@ namespace Sci.Production.PPIC
                 gridProductionSchedule.Columns["ReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["EstPulloutDate"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["ProdRemark"].DefaultCellStyle.BackColor = Color.Pink;
+                gridProductionSchedule.Columns["OutReason"].DefaultCellStyle.BackColor = Color.Pink;
+                gridProductionSchedule.Columns["OutRemark"].DefaultCellStyle.BackColor = Color.Pink;
             }
 
             gridProductionSchedule.RowPostPaint += (s, e) =>
@@ -255,6 +299,9 @@ select  *
                                                                             , 0)
                      )
         , Inconsistent = iif (AlloQty = OrderQty, '', '*') 
+        , OutReason = ''
+        , OutReasonDesc = ''
+        , OutRemark = ''
 from tempData 
 Order by tempData.Id");
             DualResult result;
@@ -305,7 +352,14 @@ Order by tempData.Id");
                 {
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        updateCmds.Add(string.Format(@"update Order_QtyShip set EstPulloutDate = {0}, ReadyDate = {1}, ProdRemark = '{2}', EditName = '{3}', EditDate = GETDATE() where ID = '{4}' and Seq = '{5}'",
+                        updateCmds.Add(string.Format(@"
+update Order_QtyShip 
+set     EstPulloutDate = {0}
+        , ReadyDate = {1}
+        , ProdRemark = '{2}'
+        , EditName = '{3}'
+        , EditDate = GETDATE() 
+where ID = '{4}' and Seq = '{5}'",
                             MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
                             MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
                             dr["ProdRemark"].ToString(),Sci.Env.User.UserID, dr["ID"].ToString(), dr["Seq"].ToString()));
