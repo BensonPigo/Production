@@ -589,6 +589,8 @@ where a.id = '{0}'", masterID);
             string TOTAL = numAmount.Text;
             string VAT = row["Vat"].ToString();
             string GRATOTAL = numTotal.Text;
+            string CurrencyID = row["CurrencyID"].ToString();
+            string VatRate = row["VatRate"].ToString();
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -602,6 +604,8 @@ where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TOTAL", TOTAL));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VAT", VAT));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GRATOTAL", GRATOTAL));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
 
             #endregion
             #region -- 撈表身資料 --
