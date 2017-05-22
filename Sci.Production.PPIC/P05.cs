@@ -138,7 +138,7 @@ namespace Sci.Production.PPIC
 
             Helper.Controls.Grid.Generator(this.gridProductionSchedule)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
                 .Numeric("OrderQty", header: "Total Order Qty", iseditingreadonly: true)
                 .Numeric("Qty", header: "Order Qty by Shipmode", iseditingreadonly: true)
@@ -246,7 +246,6 @@ iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.I
             dateUptoSCIDelivery.ReadOnly = true;
             btnQuery.Enabled = false;
             btnToExcel.Enabled = true;
-            this.gridProductionSchedule.AutoResizeColumns();
         }
 
         //Quit or Quit without Save
