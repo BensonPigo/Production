@@ -63,7 +63,7 @@ namespace Sci.Production.PPIC
             gridProductionKitsConfirm.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.gridProductionKitsConfirm)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .EditText("Article", header: "Colorway", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(22), iseditingreadonly: true)
@@ -112,21 +112,6 @@ namespace Sci.Production.PPIC
             }
              query = 1;
             QueryData();
-            this.gridProductionKitsConfirm.AutoResizeColumn(0);
-            this.gridProductionKitsConfirm.AutoResizeColumn(1);
-            this.gridProductionKitsConfirm.AutoResizeColumn(2);
-            this.gridProductionKitsConfirm.AutoResizeColumn(4);
-            this.gridProductionKitsConfirm.AutoResizeColumn(5);
-            this.gridProductionKitsConfirm.AutoResizeColumn(6);
-            this.gridProductionKitsConfirm.AutoResizeColumn(7);
-            this.gridProductionKitsConfirm.AutoResizeColumn(8);
-            this.gridProductionKitsConfirm.AutoResizeColumn(9);
-            this.gridProductionKitsConfirm.AutoResizeColumn(10);
-            this.gridProductionKitsConfirm.AutoResizeColumn(11);
-            this.gridProductionKitsConfirm.AutoResizeColumn(12);
-            this.gridProductionKitsConfirm.AutoResizeColumn(13);
-            this.gridProductionKitsConfirm.AutoResizeColumn(14);
-            this.gridProductionKitsConfirm.AutoResizeColumn(15);
         }
 
         private void QueryData()
