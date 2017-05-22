@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Packing
 {
@@ -69,18 +70,87 @@ namespace Sci.Production.Packing
                 DualResult result = PublicPrg.Prgs.QueryPackingGuideReportData(MyUtility.Convert.GetString(masterData["ID"]), out printData, out ctnDim, out qtyCtn, out articleSizeTtlShipQty, out printGroupData, out clipData, out specialInstruction);
                 return result;
             }
-            else
-            {
-                DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(masterData["ID"]), ctn1, ctn2, out printData);
-                if (!result)
-                {
-                    return result;
-                }
-                
-                e.Report.ReportDataSource = printData;
 
-            }
             return Result.True;
+        }
+
+        protected override bool ToPrint()
+        {
+            this.ValidateInput();
+            DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(masterData["ID"]), ctn1, ctn2, out printData);
+            if (!result)
+            {
+                return result;
+            }
+            else if (printData == null || printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found.");
+                return false;
+            }
+            //e.Report.ReportDataSource = printData;
+
+            Object printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode.dotx";
+            this.ShowWaitMessage("Data Loading ...");
+            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            winword.Visible = false;
+
+            Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref printFile);
+            Word.Table tables = null;
+
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                for (int i = 1; i < printData.Rows.Count; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (printData.Rows.Count > 1)
+                        winword.Selection.InsertNewPage();
+                    winword.Selection.Paste();
+                }
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < printData.Rows.Count; i++)
+                {
+                    tables = table[i + 1];
+
+                    #region 準備資料
+                    string barcode = "*" + printData.Rows[i]["ID"] + printData.Rows[i]["CTNStartNo"] + "*";
+                    string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
+                    string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
+                    string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                    string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
+                    #endregion
+
+                    tables.Cell(1, 1).Range.Text = barcode;
+                    tables.Cell(2, 1).Range.Text = packingNo;
+                    tables.Cell(3, 1).Range.Text = spNo;
+                    tables.Cell(4, 1).Range.Text = cartonNo;
+                    tables.Cell(5, 1).Range.Text = poNo;
+                }
+                #endregion
+
+                winword.Visible = true;
+                winword = null;
+            }
+            catch (Exception ex)
+            {
+                if (null != winword)
+                    winword.Quit();
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            this.HideWaitMessage();
+            return true;
         }
 
         // 產生Excel
