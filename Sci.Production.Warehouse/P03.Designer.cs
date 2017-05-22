@@ -82,7 +82,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 12);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(109, 23);
@@ -113,7 +112,6 @@
             // 
             // labelSortBy
             // 
-            this.labelSortBy.Lines = 0;
             this.labelSortBy.Location = new System.Drawing.Point(9, 15);
             this.labelSortBy.Name = "labelSortBy";
             this.labelSortBy.Size = new System.Drawing.Size(109, 23);
