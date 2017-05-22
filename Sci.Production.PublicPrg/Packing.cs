@@ -1409,8 +1409,12 @@ and UPPER(c.SourceFile) like '%.JPG'", PackingListID);
         {
             printBarcodeData = null;
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select pd.ID,pd.OrderID,pd.CTNStartNo,(select CTNQty from PackingList WITH (NOLOCK) where ID = pd.ID) as CTNQty,
-isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'') as PONo
+            sqlCmd.Append(@"
+select  pd.ID
+        , pd.OrderID
+        , pd.CTNStartNo
+        , (select CTNQty from PackingList WITH (NOLOCK) where ID = pd.ID) as CTNQty
+        , isnull((select CustPONo from Orders WITH (NOLOCK) where ID = pd.OrderID),'') as PONo
 from PackingList_Detail pd WITH (NOLOCK) 
 where pd.CTNQty > 0");
             if (!MyUtility.Check.Empty(packingListID))
@@ -1420,12 +1424,12 @@ where pd.CTNQty > 0");
 
             if (!MyUtility.Check.Empty(ctnStartNo))
             {
-                sqlCmd.Append(string.Format(" and pd.CTNStartNo >= '{0}'", ctnStartNo));
+                sqlCmd.Append(string.Format(" and pd.CTNStartNo >= {0}", ctnStartNo));
             }
 
             if (!MyUtility.Check.Empty(ctnEndNo))
             {
-                sqlCmd.Append(string.Format(" and pd.CTNStartNo <= '{0}'", ctnEndNo));
+                sqlCmd.Append(string.Format(" and pd.CTNStartNo <= {0}", ctnEndNo));
             }
             sqlCmd.Append(" order by pd.Seq");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printBarcodeData);
