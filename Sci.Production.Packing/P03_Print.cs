@@ -96,6 +96,10 @@ namespace Sci.Production.Packing
             winword.Visible = false;
 
             Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref printFile);
+
+            winword.ActiveDocument.PageSetup.PageHeight = winword.CentimetersToPoints(10.16f);
+            winword.ActiveDocument.PageSetup.PageWidth = winword.CentimetersToPoints(10.16f);
+
             Word.Table tables = null;
 
             try
@@ -134,6 +138,8 @@ namespace Sci.Production.Packing
                     tables.Cell(5, 1).Range.Text = poNo;
                 }
                 #endregion
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                
 
                 winword.Visible = true;
                 winword = null;
