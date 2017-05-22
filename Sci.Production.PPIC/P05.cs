@@ -357,12 +357,19 @@ update Order_QtyShip
 set     EstPulloutDate = {0}
         , ReadyDate = {1}
         , ProdRemark = '{2}'
-        , EditName = '{3}'
+        , OutstandingReason = '{3}'
+        , OutstandingRemark = '{4}'
+        , EditName = '{5}'
         , EditDate = GETDATE() 
-where ID = '{4}' and Seq = '{5}'",
-                            MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'",
-                            MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'",
-                            dr["ProdRemark"].ToString(),Sci.Env.User.UserID, dr["ID"].ToString(), dr["Seq"].ToString()));
+where ID = '{6}' and Seq = '{7}'"
+, MyUtility.Check.Empty(dr["EstPulloutDate"]) ? "null" : "'" + Convert.ToDateTime(dr["EstPulloutDate"]).ToString("d") + "'"
+, MyUtility.Check.Empty(dr["ReadyDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReadyDate"]).ToString("d") + "'"
+, dr["ProdRemark"].ToString()
+, dr["OutReason"].ToString()
+, dr["OutRemark"].ToString()
+, Sci.Env.User.UserID
+, dr["ID"].ToString()
+, dr["Seq"].ToString()));
                         allSP.Append(string.Format("'{0}',", dr["ID"].ToString()));
                     }
                 }
