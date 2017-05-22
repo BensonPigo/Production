@@ -278,6 +278,12 @@ with tempData as (
                                                          )
                                                    , oq.ReadyDate)  
             , MTLDelay = iif (p.MTLDelay is null, '', 'Y')
+            , OutReason = oq.OutstandingReason
+            , OutReasonDesc = ( select Reason.Name 
+                                from Reason 
+                                where   Reason.ReasonTypeID = 'Delivery_OutStand' 
+                                        and Reason.id = oq.OutstandingReason)
+            , OutRemark = oq.OutstandingRemark
     from Order_QtyShip oq WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on o.ID = oq.Id
     left join PO p WITH (NOLOCK) on p.ID = o.POID
@@ -299,9 +305,6 @@ select  *
                                                                             , 0)
                      )
         , Inconsistent = iif (AlloQty = OrderQty, '', '*') 
-        , OutReason = ''
-        , OutReasonDesc = ''
-        , OutRemark = ''
 from tempData 
 Order by tempData.Id");
             DualResult result;
