@@ -22,7 +22,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P01 : Sci.Win.Tems.Input6
     {
-
+        string artworkunit;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -225,7 +225,7 @@ where a.id = '{0}'", masterID);
             base.OnDetailEntered();
             dateApproveDate.ReadOnly = true;
             #region --動態unit header --
-            string artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
+            artworkunit = MyUtility.GetValue.Lookup(string.Format("select artworkunit from artworktype WITH (NOLOCK) where id='{0}'", CurrentMaintain["artworktypeid"])).ToString().Trim();
             if (artworkunit == "") artworkunit = "PCS";
             this.detailgrid.Columns[6].HeaderText = "Cost"+ Environment.NewLine+"(" + artworkunit + ")";
             this.detailgrid.Columns[7].HeaderText = artworkunit;
@@ -591,6 +591,8 @@ where a.id = '{0}'", masterID);
             string GRATOTAL = numTotal.Text;
             string CurrencyID = row["CurrencyID"].ToString();
             string VatRate = row["VatRate"].ToString();
+            string handle = row["handle"].ToString();
+            string name = txtuserHandle.DisplayBox1.Text;
 
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -606,7 +608,10 @@ where a.id = '{0}'", masterID);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GRATOTAL", GRATOTAL));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CurrencyID", CurrencyID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("VatRate", VatRate));
-
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("artworkunit", artworkunit));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", handle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", name));
+            //handle
             #endregion
             #region -- 撈表身資料 --
             pars = new List<SqlParameter>();

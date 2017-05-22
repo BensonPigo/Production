@@ -780,6 +780,24 @@
             </TextRuns>
             <Style />
           </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Parameters!handle.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Parameters!name.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
         <Top>12.74562cm</Top>
@@ -825,7 +843,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Title1.Value</Value>
-                <Style />
+                <Style>
+                  <FontSize>16pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -857,7 +877,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Title2.Value</Value>
-                <Style />
+                <Style>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -1616,7 +1638,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>PCS</Value>
+                <Value>=Parameters!artworkunit.Value</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1627,7 +1649,7 @@
         <Top>7.55386cm</Top>
         <Left>11.6411cm</Left>
         <Height>0.6cm</Height>
-        <Width>0.978cm</Width>
+        <Width>1.49261cm</Width>
         <ZIndex>43</ZIndex>
         <Style>
           <Border>
@@ -2093,6 +2115,20 @@
     <ReportParameter Name="VatRate">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="artworkunit">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="name">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="handle">
+      <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
