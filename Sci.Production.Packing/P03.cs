@@ -49,25 +49,6 @@ namespace Sci.Production.Packing
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
 
-            queryfors.SelectedIndexChanged += (s, e) =>
-            {
-                switch (queryfors.SelectedIndex)
-                {
-                    case 0:
-                        this.DefaultWhere = "";
-                        break;
-                    default:
-                        this.DefaultWhere = string.Format(@"
-'{0}' in (select distinct FtyGroup 
-          from orders o 
-          where o.id in (select distinct PackingList_Detail.OrderID 
-                         from PackingList_Detail 
-                         where PackingList_Detail.id = PackingList.id)
-         )", queryfors.SelectedValue);
-                        break;
-                }
-                this.ReloadDatas();
-            };
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -101,6 +82,25 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
             queryfors.SelectedIndex = 0;
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format(@"
+'{0}' in (select distinct FtyGroup 
+          from orders o 
+          where o.id in (select distinct PackingList_Detail.OrderID 
+                         from PackingList_Detail 
+                         where PackingList_Detail.id = PackingList.id)
+         )", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override void OnDetailEntered()
