@@ -183,6 +183,10 @@ order by a.GroupKey", MyUtility.Convert.GetString(masterData["ID"]));
             chartData.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
             #endregion
 
+            //填入printed date and print by
+            worksheet.Cells[36, 16] = Sci.Env.User.UserName;
+            worksheet.Cells[33, 16] = DateTime.Today.ToShortDateString();
+
             //填Line Mapping
             worksheet.Cells[7, 5] = MyUtility.Convert.GetString(masterData["Version"]);
             worksheet.Cells[9, 5] = MyUtility.Convert.GetString(masterData["FactoryID"]);
