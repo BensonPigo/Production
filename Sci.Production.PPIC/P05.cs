@@ -195,41 +195,68 @@ namespace Sci.Production.PPIC
         private void btnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"with tempData
-as 
-(select oq.Id,oq.Seq,o.StyleID,oq.SDPDate,o.Qty as OrderQty,oq.Qty,
- (select isnull(MIN(a.AlloQty),0)
-  from (select sl.Location,isnull(SUM(ss.AlloQty),0) as AlloQty
-        from Style_Location sl WITH (NOLOCK) 
-	    left join Orders o WITH (NOLOCK) on o.ID = oq.ID and o.StyleUKey = sl.StyleUkey
-	    left join SewingSchedule ss WITH (NOLOCK) on ss.OrderID = o.ID and ss.ComboType = sl.Location
-	    where sl.StyleUkey = o.StyleUkey
-	    group by sl.Location) a) as AlloQty,o.KPILETA,o.MTLETA,o.MTLExport,o.SewETA,o.PackETA,
- o.SewInLine,o.SewOffLine
-
+            sqlCmd.Append(string.Format(@"
+with tempData as (
+    select  oq.Id
+            , oq.Seq
+            , o.StyleID
+            , oq.SDPDate
+            , OrderQty = o.Qty
+            , oq.Qty
+            , AlloQty = (select isnull(MIN(a.AlloQty),0)
+                         from (   
+                             select  sl.Location
+                                     , isnull(SUM(ss.AlloQty),0) as AlloQty
+                             from Style_Location sl WITH (NOLOCK) 
+	                         left join Orders o WITH (NOLOCK) on o.ID = oq.ID and o.StyleUKey = sl.StyleUkey
+	                         left join SewingSchedule ss WITH (NOLOCK) on ss.OrderID = o.ID and ss.ComboType = sl.Location
+	                         where sl.StyleUkey = o.StyleUkey
+	                         group by sl.Location
+                         ) a
+                        )
+            , o.KPILETA
+            , o.MTLETA
+            , o.MTLExport
+            , o.SewETA
+            , o.PackETA
+            , o.SewInLine
+            , o.SewOffLine
 --,oq.EstPulloutDate  改成跟舊系統一樣，先抓Order_QtyShip.EstPulloutDate。若為NULL，再抓Orders.BuyerDelivery
-,iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate) EstPulloutDate
-
-,oq.BuyerDelivery,o.SewLine,o.SciDelivery,oq.ProdRemark,
- iif(oq.ReadyDate is null,iif(o.SewOffLine is null, null,(iif(DATEPART(WEEKDAY,DATEADD(day,s.ReadyDay,o.SewOffLine)) <= s.ReadyDay,DATEADD(day,s.ReadyDay+1,o.SewOffLine),DATEADD(day,s.ReadyDay,o.SewOffLine)))),oq.ReadyDate) as ReadyDate,
- iif(p.MTLDelay is null,'','Y') as MTLDelay
- from Order_QtyShip oq WITH (NOLOCK) 
- left join Orders o WITH (NOLOCK) on o.ID = oq.Id
- left join PO p WITH (NOLOCK) on p.ID = o.POID
- left join System s WITH (NOLOCK) on 1=1
- where (o.Category = 'B' or o.Category = 'S')
- and o.PulloutComplete = 0
- and oq.Qty > 0
- and o.FtyGroup = '{0}'
- and o.Finished = 0 ", Sci.Env.User.Factory));
+            , EstPulloutDate = iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate) 
+            , oq.BuyerDelivery
+            , o.SewLine
+            , o.SciDelivery
+            , oq.ProdRemark
+            , ReadyDate = iif (oq.ReadyDate is null, iif (o.SewOffLine is null, null
+                                                                              , (iif (DATEPART (WEEKDAY, DATEADD (day, s.ReadyDay, o.SewOffLine)) <= s.ReadyDay, DATEADD(day, s.ReadyDay + 1, o.SewOffLine)
+                                                                                                                                                               , DATEADD(day, s.ReadyDay, o.SewOffLine))
+                                                                                )
+                                                         )
+                                                   , oq.ReadyDate)  
+            , MTLDelay = iif (p.MTLDelay is null, '', 'Y')
+    from Order_QtyShip oq WITH (NOLOCK) 
+    left join Orders o WITH (NOLOCK) on o.ID = oq.Id
+    left join PO p WITH (NOLOCK) on p.ID = o.POID
+    left join System s WITH (NOLOCK) on 1=1
+    where   (o.Category = 'B' or o.Category = 'S')
+            and o.PulloutComplete = 0
+            and oq.Qty > 0
+            and o.FtyGroup = '{0}'
+            and o.Finished = 0 ", Sci.Env.User.Factory));
             if (!MyUtility.Check.Empty(dateUptoSCIDelivery.Value))
             {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'",Convert.ToDateTime(dateUptoSCIDelivery.Value).ToString("d")));
             }
-            sqlCmd.Append(@")
-select *,
-iif(EstPulloutDate is not null, datediff(day,EstPulloutDate,BuyerDelivery), iif(ReadyDate is not null,datediff(day,ReadyDate,BuyerDelivery),0)) as Diff,
-iif(AlloQty = OrderQty,'','*') as Inconsistent from tempData Order by tempData.Id");
+            sqlCmd.Append(@"
+)
+select  *
+        , Diff = iif (EstPulloutDate is not null, datediff(day, EstPulloutDate, BuyerDelivery)
+                                                , iif (ReadyDate is not null, datediff (day,ReadyDate, BuyerDelivery)
+                                                                            , 0)
+                     )
+        , Inconsistent = iif (AlloQty = OrderQty, '', '*') 
+from tempData 
+Order by tempData.Id");
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out gridData))
             {
