@@ -17,6 +17,7 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
+            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
@@ -143,40 +144,5 @@ namespace Sci.Production.Basic
                 CurrentMaintain["PPH"] = 0;
             }
         }
-
-        private void txtFactory_Validating(object sender, CancelEventArgs e)
-        {
-            DataTable FactoryData; string fac = "";
-            string sqlCmd = "select distinct FactoryID from Manpower WITH (NOLOCK) ";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out FactoryData);
-            foreach (DataRow dr in FactoryData.Rows)
-            {
-                fac = dr["FactoryID"].ToString();
-                if (txtFactory.Text == fac) { return; }
-            }
-            if (txtFactory.Text == "")
-            {
-                txtFactory.Text = "";
-                return;
-            }
-            if (txtFactory.Text != fac)
-            {
-                MyUtility.Msg.WarningBox("This Factory is wrong!");
-                txtFactory.Text = "";
-                return;
-            }
-        }
-
-        private void txtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string sqlCmd = "select distinct FactoryID from Manpower WITH (NOLOCK) ";
-
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "8", txtFactory.Text, "Factory");
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel) { return; }
-            txtFactory.Text = item.GetSelectedString();
-        }
-
-
     }
 }

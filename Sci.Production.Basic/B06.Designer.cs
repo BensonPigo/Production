@@ -61,7 +61,7 @@
             this.numericBox13 = new Sci.Win.UI.NumericBox();
             this.numericBox14 = new Sci.Win.UI.NumericBox();
             this.lbFactory = new Sci.Win.UI.Label();
-            this.txtFactory = new Sci.Win.UI.TextBox();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -76,7 +76,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtFactory);
+            this.detailcont.Controls.Add(this.txtfactoryByM);
             this.detailcont.Controls.Add(this.lbFactory);
             this.detailcont.Controls.Add(this.numericBox14);
             this.detailcont.Controls.Add(this.numericBox13);
@@ -126,7 +126,6 @@
             // 
             // lbYear
             // 
-            this.lbYear.Lines = 0;
             this.lbYear.Location = new System.Drawing.Point(29, 25);
             this.lbYear.Name = "lbYear";
             this.lbYear.Size = new System.Drawing.Size(36, 23);
@@ -135,7 +134,6 @@
             // 
             // lbMonthly
             // 
-            this.lbMonthly.Lines = 0;
             this.lbMonthly.Location = new System.Drawing.Point(147, 25);
             this.lbMonthly.Name = "lbMonthly";
             this.lbMonthly.Size = new System.Drawing.Size(55, 23);
@@ -144,7 +142,6 @@
             // 
             // label5
             // 
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(342, 60);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(145, 23);
@@ -154,7 +151,6 @@
             // 
             // label6
             // 
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(29, 130);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(145, 23);
@@ -164,7 +160,6 @@
             // 
             // lbActiveManpower
             // 
-            this.lbActiveManpower.Lines = 0;
             this.lbActiveManpower.Location = new System.Drawing.Point(29, 60);
             this.lbActiveManpower.Name = "lbActiveManpower";
             this.lbActiveManpower.Size = new System.Drawing.Size(145, 23);
@@ -173,7 +168,6 @@
             // 
             // label8
             // 
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(29, 165);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(145, 23);
@@ -183,7 +177,6 @@
             // 
             // label9
             // 
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(29, 200);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(145, 23);
@@ -193,7 +186,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(29, 235);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(145, 23);
@@ -203,7 +195,6 @@
             // 
             // label11
             // 
-            this.label11.Lines = 0;
             this.label11.Location = new System.Drawing.Point(29, 270);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(145, 23);
@@ -213,7 +204,6 @@
             // 
             // label12
             // 
-            this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(342, 95);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(208, 23);
@@ -223,7 +213,6 @@
             // 
             // label13
             // 
-            this.label13.Lines = 0;
             this.label13.Location = new System.Drawing.Point(342, 130);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(208, 23);
@@ -233,7 +222,6 @@
             // 
             // label14
             // 
-            this.label14.Lines = 0;
             this.label14.Location = new System.Drawing.Point(342, 165);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(208, 23);
@@ -243,7 +231,6 @@
             // 
             // label15
             // 
-            this.label15.Lines = 0;
             this.label15.Location = new System.Drawing.Point(342, 200);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(208, 23);
@@ -253,7 +240,6 @@
             // 
             // label16
             // 
-            this.label16.Lines = 0;
             this.label16.Location = new System.Drawing.Point(342, 235);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(208, 23);
@@ -263,7 +249,6 @@
             // 
             // label17
             // 
-            this.label17.Lines = 0;
             this.label17.Location = new System.Drawing.Point(342, 270);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(208, 23);
@@ -273,7 +258,6 @@
             // 
             // label18
             // 
-            this.label18.Lines = 0;
             this.label18.Location = new System.Drawing.Point(342, 305);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(208, 23);
@@ -674,24 +658,22 @@
             // 
             // lbFactory
             // 
-            this.lbFactory.Lines = 0;
             this.lbFactory.Location = new System.Drawing.Point(261, 25);
             this.lbFactory.Name = "lbFactory";
             this.lbFactory.Size = new System.Drawing.Size(75, 23);
             this.lbFactory.TabIndex = 46;
             this.lbFactory.Text = "Factory";
             // 
-            // txtFactory
+            // txtfactoryByM
             // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.Location = new System.Drawing.Point(342, 25);
-            this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(55, 23);
-            this.txtFactory.TabIndex = 47;
-            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFactory_PopUp);
-            this.txtFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFactory_Validating);
+            this.txtfactoryByM.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.Location = new System.Drawing.Point(342, 25);
+            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.Name = "txtfactoryByM";
+            this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM.TabIndex = 48;
             // 
             // B06
             // 
@@ -750,7 +732,7 @@
         private Win.UI.NumericBox numericBox10;
         private Win.UI.NumericBox numericBox9;
         private Win.UI.NumericBox numericBox8;
-        private Win.UI.TextBox txtFactory;
         private Win.UI.Label lbFactory;
+        private Class.txtfactoryByM txtfactoryByM;
     }
 }
