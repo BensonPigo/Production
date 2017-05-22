@@ -406,7 +406,9 @@
     <None Include="XLT\Packing_P02.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Packing_P03_Barcode.dotx" />
+    <None Include="XLT\Packing_P03_Barcode.dotx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Packing_P03_ImportExcelFormat.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
