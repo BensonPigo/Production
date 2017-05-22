@@ -11,15 +11,6 @@ using Sci.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-
-
-
-//using Sci.Production.PublicPrg;
-//using System.Data.SqlClient;
-//using System.IO;
-//using System.Transactions;
-
-
 namespace Sci.Production.Warehouse
 {
     public partial class P07_ExcelImport : Sci.Win.Subs.Base
@@ -244,51 +235,6 @@ namespace Sci.Production.Warehouse
                             if (ItemPosition[x] == 0) columnName.Append("< " + ItemCheck[x].ToString()+ " >, ");
                         }
 
-                        //舊寫法
-                        //string wkno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
-                        //string sp = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C");
-                        //string seq1 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");
-                        //string seq2 = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
-                        //string ctnno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C");
-                        //string lotno = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C");
-                        ////string unit = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C");
-                        //string qty = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]], "C");
-                        //string foc = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]], "C");
-                        //string net = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]], "C");
-                        //string weight = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "C");
-                        //string location = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]], "C");
-
-
-                        //if (wkno.ToUpper() != "WK#" ||
-                        //    sp.ToUpper() != "SP#" ||
-                        //    seq1.ToUpper() != "SEQ1" ||
-                        //    seq2.ToUpper() != "SEQ2" ||
-                        //    ctnno.ToUpper() != "C/NO" ||
-                        //    lotno.ToUpper() != "LOT NO." ||
-                        //    (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") ||
-                        //    foc.ToUpper() != "F.O.C" ||
-                        //    weight.ToUpper() != "WEIKG" ||
-                        //    net.ToUpper() != "NETKG" ||
-                        //    location.ToUpper() != "LOCATION"
-                        //    )
-                        //{
-                        //    #region 將不存在欄位顯示於status
-                        //    StringBuilder columnName = new StringBuilder();
-                        //    if (wkno.ToUpper() != "WK#") { columnName.Append("< WK# >, "); }
-                        //    if (sp.ToUpper() != "SP#") { columnName.Append("< SP# >, "); }
-                        //    if (seq1.ToUpper() != "SEQ1") { columnName.Append("< SEQ1 >, "); }
-                        //    if (seq2.ToUpper() != "SEQ2") { columnName.Append("< SEQ2 >, "); }
-                        //    if (ctnno.ToUpper() != "C/NO") { columnName.Append("< C/NO >, "); }
-                        //    if (lotno.ToUpper() != "LOT NO.") { columnName.Append("< LOT NO. >, "); }
-                        //    if (qty.ToUpper() != "QTY" && qty.ToUpper() != "Q'TY") { columnName.Append("< Qty >, "); }
-                        //    if (foc.ToUpper() != "F.O.C") { columnName.Append("< F.O.C >, "); }
-                        //    if (net.ToUpper() != "NETKG") { columnName.Append("< NetKg >, "); }
-                        //    if (weight.ToUpper() != "WEIKG") { columnName.Append("< WeiKg >, "); }
-                        //    if (location.ToUpper() != "LOCATION") { columnName.Append("< Location >, "); }
-
-                        //    dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
-                        //    #endregion
-                        //}
                         if (!MyUtility.Check.Empty(columnName.Length))
                         {
                             dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
@@ -470,17 +416,25 @@ where   stocktype='{0}'
                     return;
                 }
 
-                //刪除表身重新匯入
-                foreach (DataRow del in detailData.ToList())
-                {
-                    detailData.Rows.Remove(del);
-                }
+                ////刪除表身重新匯入
+                //foreach (DataRow del in detailData.ToList())
+                //{
+                //    detailData.Rows.Remove(del);
+                //}
+                
                 foreach (DataRow dr2 in tmpPacking.Rows)
                 {
-                    dr2["id"] = master["id"];
-                    dr2.AcceptChanges();
-                    dr2.SetAdded();
-                    detailData.ImportRow(dr2);
+                    //刪除 Import 重複的資料 by SP# Seq Carton#
+                    DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
+                                                                                && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
+                                                                                && row["roll"].EqualString(dr2["roll"])).ToArray();
+                    if (checkRow.Length == 0)
+                    {
+                        dr2["id"] = master["id"];
+                        dr2.AcceptChanges();
+                        dr2.SetAdded();
+                        detailData.ImportRow(dr2);
+                    }
                 }
             }
             catch (Exception ex)
