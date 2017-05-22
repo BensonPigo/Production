@@ -397,7 +397,7 @@ from dbo.Export_Detail e WITH (NOLOCK)
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on e.PoID = p.ID and e.Seq1 = p.SEQ1 and e.Seq2 = p.seq2
 INNER JOIN MDivisionPoDetail M WITH (NOLOCK) ON E.PoID = M.POID and e.Seq1 = M.SEQ1 and e.Seq2 = M.seq2 
 where e.PoID ='{0}' and e.id = '{1}'
-Ordery By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
+Order By e.Seq1, e.Seq2, e.Refno", CurrentDetailData["poid"], CurrentMaintain["exportid"]);
 
                         DBProxy.Current.Select(null, sqlcmd, out poitems);
 
