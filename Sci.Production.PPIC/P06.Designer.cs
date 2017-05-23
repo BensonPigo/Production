@@ -114,7 +114,6 @@
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Lines = 0;
             this.labelLocateForSP.Location = new System.Drawing.Point(4, 77);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(99, 23);
@@ -165,7 +164,6 @@
             // 
             // labelExpPoutDate
             // 
-            this.labelExpPoutDate.Lines = 0;
             this.labelExpPoutDate.Location = new System.Drawing.Point(4, 24);
             this.labelExpPoutDate.Name = "labelExpPoutDate";
             this.labelExpPoutDate.Size = new System.Drawing.Size(99, 23);
@@ -182,7 +180,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(263, 23);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(62, 23);
