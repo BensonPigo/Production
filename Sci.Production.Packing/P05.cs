@@ -33,8 +33,23 @@ namespace Sci.Production.Packing
             InitializeComponent();
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'F'";
             detailgrid.AllowUserToOrderColumns = true;
-            InsertDetailGridOnDoubleClick = false;
+            InsertDetailGridOnDoubleClick = false;            
+        }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)
@@ -54,22 +69,6 @@ namespace Sci.Production.Packing
                 }
                 this.ReloadDatas();
             };
-        }
-
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-            DataTable queryDT;
-            string querySql = string.Format(@"
-select '' FTYGroup
-
-union 
-select distinct FTYGroup 
-from Factory 
-where MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
-            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
