@@ -32,7 +32,7 @@ namespace Sci.Production.Packing
             Helper.Controls.Grid.Generator(this.gridDetail)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
