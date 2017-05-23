@@ -824,9 +824,9 @@ namespace Sci.Production.Subcon
         private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
         {
             //int deleteIndex = 0;
-            foreach (DataRow dr in this.DetailDatas)
+            foreach (DataGridViewRow dr in this.detailgrid.SelectedRows)
             {
-                dr["Delivery"] = dateDeliveryDate.Text;
+                dr.Cells["Delivery"].Value = dateDeliveryDate.Text;
             }
         }
     }
