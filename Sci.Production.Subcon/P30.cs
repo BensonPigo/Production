@@ -264,6 +264,7 @@ namespace Sci.Production.Subcon
             
             #region Batch Import, Special record button
             btnImportThread.Enabled = this.EditMode;
+            btnBatchUpdateDellivery.Enabled = this.EditMode;
             #endregion
 
         }
@@ -820,6 +821,15 @@ namespace Sci.Production.Subcon
 
             return true;
 
+        }
+
+        private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
+        {
+            //int deleteIndex = 0;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["Delivery"] = dateDeliveryDate.Text;
+            }
         }
     }
 }

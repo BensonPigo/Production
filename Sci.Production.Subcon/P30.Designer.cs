@@ -58,6 +58,10 @@
             this.txtuserApprove = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.dateDeliveryDate = new Sci.Win.UI.DateBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.btnBatchUpdateDellivery = new Sci.Win.UI.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,10 +74,12 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.groupBox1);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.numTotal);
             this.masterpanel.Controls.Add(this.numAmount);
@@ -136,6 +142,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numAmount, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.groupBox1, 0);
             // 
             // detailpanel
             // 
@@ -545,6 +552,43 @@
             this.txtsubconSupplier.TabIndex = 0;
             this.txtsubconSupplier.TextBox1Binding = "";
             // 
+            // dateDeliveryDate
+            // 
+            this.dateDeliveryDate.Location = new System.Drawing.Point(70, 12);
+            this.dateDeliveryDate.Name = "dateDeliveryDate";
+            this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
+            this.dateDeliveryDate.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 23);
+            this.label1.TabIndex = 44;
+            this.label1.Text = "Delivery";
+            // 
+            // btnBatchUpdateDellivery
+            // 
+            this.btnBatchUpdateDellivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(205, 8);
+            this.btnBatchUpdateDellivery.Name = "btnBatchUpdateDellivery";
+            this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(210, 29);
+            this.btnBatchUpdateDellivery.TabIndex = 45;
+            this.btnBatchUpdateDellivery.Text = "Batch update Delivery";
+            this.btnBatchUpdateDellivery.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateDellivery.Click += new System.EventHandler(this.btnBatchUpdateDellivery_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnBatchUpdateDellivery);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.dateDeliveryDate);
+            this.groupBox1.Location = new System.Drawing.Point(503, 103);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(425, 39);
+            this.groupBox1.TabIndex = 46;
+            this.groupBox1.TabStop = false;
+            // 
             // P30
             // 
             this.ApvChkValue = "New";
@@ -581,6 +625,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -618,5 +663,9 @@
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
         private Class.txtmfactory txtmfactory;
+        private Win.UI.Button btnBatchUpdateDellivery;
+        private Win.UI.Label label1;
+        private Win.UI.DateBox dateDeliveryDate;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
