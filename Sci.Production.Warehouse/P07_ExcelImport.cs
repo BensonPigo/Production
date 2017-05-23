@@ -31,6 +31,7 @@ namespace Sci.Production.Warehouse
             DataTable ExcelFile = new DataTable();
             ExcelFile.Columns.Add("Filename", typeof(String));
             ExcelFile.Columns.Add("Status", typeof(String));
+            ExcelFile.Columns.Add("Count", typeof(String));
             ExcelFile.Columns.Add("FullFileName", typeof(String));
 
             listControlBindingSource1.DataSource = ExcelFile;
@@ -38,7 +39,10 @@ namespace Sci.Production.Warehouse
             gridAttachFile.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.gridAttachFile)
                 .Text("Filename", header: "File Name", width: Widths.AnsiChars(15))
-                .Text("Status", header: "Status", width: Widths.AnsiChars(100));
+                .Text("Status", header: "Status", width: Widths.AnsiChars(30))
+                .Text("Count", header: "Count", width: Widths.AnsiChars(10))
+                ;
+                
 
             //取Grid結構
             //string sqlCmd = "select SPACE(13) as OrderID, null as BuyerDelivery,SPACE(10) as ShipmodeID,SPACE(8) as Article,SPACE(6) as ColorID,SPACE(8) as SizeCode,0.0 as Qty,SPACE(100) as ErrMsg";
@@ -172,7 +176,7 @@ namespace Sci.Production.Warehouse
                  --   2. Grid中的檔案都可以正常開啟，無法開啟時顯示於status欄位
                  --   3.檢查開啟的excel檔存在必要的欄位，將不存在欄位顯示於status。當檢查都沒問題時，就將資料寫入第2個Grid*/
             #region
-            
+            int count = 0;
             foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
             {
                 if (!MyUtility.Check.Empty(dr["Filename"]))
@@ -367,8 +371,10 @@ where   stocktype='{0}'
                                     return;
                                 }
                                 grid2Data.Rows.Add(newRow);
+                                count++;
                             }
                             dr["Status"] = "Check & Import Completed.";
+                            dr["Count"] = count;
                         }
 
                         excel.Workbooks.Close();
