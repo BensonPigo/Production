@@ -31,9 +31,8 @@ namespace Sci.Production.Quality
                  season_empty = !txtseason.Text.Empty();
             if (DateArr_empty)
             {
-                MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
-
                 dateArriveWHDate.Focus();
+                MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
                 return false;
             }
             DateArrStart = dateArriveWHDate.Value1;

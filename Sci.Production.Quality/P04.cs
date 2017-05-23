@@ -258,13 +258,14 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Inspector: {0}> not found!!!", e.FormattedValue));
                     dr["EditName"] = loginID;
                     dr["EditDate"] = DateTime.Now.ToShortDateString();
                     dr["inspector"] = "";
                     dr["Showname"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; return;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Inspector: {0}> not found!!!", e.FormattedValue));
+                    return;
                 }                
                 CurrentDetailData.EndEdit();
                 this.update_detailgrid_CellValidated(e.RowIndex);
@@ -500,9 +501,9 @@ left join Order_Qty c WITH (NOLOCK) on a.ID=c.ID and c.Article=b.Article where a
             {
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<The OrderID: {0}> is not verify", this.txtSP.Text));
                     txtSP.Text = "";
                     this.txtSP.Focus();
+                    MyUtility.Msg.WarningBox(string.Format("<The OrderID: {0}> is not verify", this.txtSP.Text));
                     return;
                 }
             }

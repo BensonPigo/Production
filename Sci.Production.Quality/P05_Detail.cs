@@ -355,7 +355,6 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, sql_cmd, out dt1);
                 if (dt1.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SEQ#: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["SEQ"] = "";
                     dr["seq1"] = "";
                     dr["seq2"] = "";
@@ -363,7 +362,8 @@ and a.seq1=@seq1";
                     dr["refno"] = "";
                     dr["colorid"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; 
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ#: {0}> doesn't exist in Data!", e.FormattedValue));
                     return;
                 }
                 dr["SEQ"].ToString().Replace("_", " ");
@@ -385,9 +385,9 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!", e.FormattedValue));
                     return;
                 }             
 
@@ -533,11 +533,11 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> doesn't exist in Data!", e.FormattedValue));
                     return;
                 }
                 else
@@ -603,10 +603,10 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Color Change Scal: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["Changescale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Color Change Scal: {0}> doesn't exist in Data!", e.FormattedValue));
                     return;
                 }
             };
@@ -665,10 +665,10 @@ and a.seq1=@seq1";
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Color Staining Scale: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["StainingScale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Color Staining Scale: {0}> doesn't exist in Data!", e.FormattedValue));
                     return;
                 }
             };
@@ -695,8 +695,8 @@ and a.seq1=@seq1";
         {
             if (MyUtility.Check.Empty(this.txtArticle.Text))
             {
-                MyUtility.Msg.WarningBox("<Article> cannot be empty!!");
                 this.txtArticle.Select();
+                MyUtility.Msg.WarningBox("<Article> cannot be empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtuserInspector.TextBox1.Text))
@@ -898,12 +898,11 @@ SET IDENTITY_INSERT oven off";
             {
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Article: {0}> doesn't exist in orders", txtArticle.Text));
                     txtArticle.Text = "";
                     txtArticle.Select();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Article: {0}> doesn't exist in orders", txtArticle.Text));
                     return;
-
                 }
             }
             else

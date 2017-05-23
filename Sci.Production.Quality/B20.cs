@@ -29,8 +29,8 @@ namespace Sci.Production.Quality
         {
             if (MyUtility.Check.Empty(txtDefectType.Text))
             {
-                MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
                 this.txtDefectType.Focus();
+                MyUtility.Msg.WarningBox("<Defect Type> cannot be empty! ");
                 return false;
             }
             return base.ClickSaveBefore();

@@ -31,14 +31,14 @@ namespace Sci.Production.Quality
             #region 必輸檢查 
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 return false;      
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
             {
-                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.editDescription.Focus();
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 return false;
             }
 

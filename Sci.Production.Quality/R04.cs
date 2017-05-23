@@ -55,9 +55,8 @@ namespace Sci.Production.Quality
                 checkOuter_empty = checkOutstandingOnly.Checked.Empty();
             if (DateReceived_empty && DateArr_empty)
             {
-                MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
-
                 dateReceivedSampleDate.Focus();
+                MyUtility.Msg.ErrorBox("Please select 'Received Sample Date' or 'Arrive W/H Date' at least one field entry");
                 return false;
             }
             if (checkOutstandingOnly.Checked == true)

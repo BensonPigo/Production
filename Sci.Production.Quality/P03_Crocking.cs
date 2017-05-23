@@ -231,11 +231,11 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };
@@ -257,10 +257,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     DataRow roll_dr;
                     if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<Dry Scale: {0}> data not found!",e.FormattedValue));
                         dr["DryScale"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<Dry Scale: {0}> data not found!", e.FormattedValue));
                         return;
                     }
 
@@ -282,10 +282,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow roll_dr;
                 if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Wet Scale: {0}> data not found!",e.FormattedValue));
                     dr["wetScale"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Wet Scale: {0}> data not found!", e.FormattedValue));
                     return;
                 }
 
@@ -306,11 +306,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 DataRow roll_dr;
                 if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
                 {
-
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!",e.FormattedValue));
                     dr["Inspector"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
                     return;
                 }
 

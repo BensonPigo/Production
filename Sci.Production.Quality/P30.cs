@@ -158,10 +158,11 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Item: {0}> does not exist!",e.FormattedValue));
                     dr["Item"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; return;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Item: {0}> does not exist!", e.FormattedValue));
+                    return;
                 }
 
             };
@@ -198,10 +199,11 @@ where a.id=b.POID and a.fabrictype='A'
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Color: {0}> does not exist!", e.FormattedValue));
                     dr["Colorid"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; return;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Color: {0}> does not exist!", e.FormattedValue));
+                    return;
                 }
             };
 

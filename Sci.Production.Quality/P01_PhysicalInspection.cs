@@ -220,13 +220,13 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     dr["Ticketyds"] = 0.00;
                     dr["CutWidth"] = 0.00;
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
                 }  
             };

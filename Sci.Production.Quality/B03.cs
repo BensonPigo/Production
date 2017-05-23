@@ -30,8 +30,8 @@ namespace Sci.Production.Quality
             #region 必輸檢查
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("< Scale Code > can not be empty!");
                 this.txtScaleCode.Focus();
+                MyUtility.Msg.WarningBox("< Scale Code > can not be empty!");
                 return false;
             }
 

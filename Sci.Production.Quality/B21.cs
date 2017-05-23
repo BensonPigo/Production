@@ -37,14 +37,14 @@ namespace Sci.Production.Quality
              #region 必輸檢查
              if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
              {
-                 MyUtility.Msg.WarningBox("< Defect code > can not be empty!");
                  this.txtDefectcode.Focus();
+                 MyUtility.Msg.WarningBox("< Defect code > can not be empty!");
                  return false;
              }
              if (MyUtility.Check.Empty(CurrentMaintain["Description"]))
              {
-                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                  this.editDescription.Focus();
+                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                  return false;
              }
 
@@ -70,18 +70,18 @@ namespace Sci.Production.Quality
              {
                  if (MyUtility.Check.Empty(dtCode) || dtCode.Rows.Count == 0)
                  {
-                     MyUtility.Msg.WarningBox(string.Format("<The first word: {0}> does not exist in <GarmentDefectType-ID>",this.txtDefectcode.Text.Substring(0,1)));
                      this.txtDefectcode.Text = "";
                      this.txtDefectcode.Focus();
                      e.Cancel = true;
+                     MyUtility.Msg.WarningBox(string.Format("<The first word: {0}> does not exist in <GarmentDefectType-ID>", this.txtDefectcode.Text.Substring(0, 1)));
                      return;
                  }
                  else if (dtCode.Rows[0]["junk"].ToString() == "1")
                  {
-                     MyUtility.Msg.WarningBox(string.Format("<Defect code: {0}> junk is true,cannot use it !"), this.txtDefectcode.Text.Substring(0, 1));
                      this.txtDefectcode.Text = "";
                      this.txtDefectcode.Focus();
                      e.Cancel = true;
+                     MyUtility.Msg.WarningBox(string.Format("<Defect code: {0}> junk is true,cannot use it !"), this.txtDefectcode.Text.Substring(0, 1));
                      return;
                  }                           
              }

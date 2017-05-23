@@ -52,8 +52,8 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.dateReceiveDate.Value))
             {
-                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
                 this.txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Receive Date > or < P.O. No. > can not be empty!");
                 return;
             }
             StringBuilder sqlCmd = new StringBuilder();

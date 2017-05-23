@@ -22,8 +22,8 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.dateReceiveDate.Text))
             {
-                MyUtility.Msg.WarningBox("Date can't be empty!");
                 this.dateReceiveDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't be empty!");
                 return;
             }
 

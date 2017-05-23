@@ -37,26 +37,26 @@ namespace Sci.Production.Quality
             #region 必輸檢查
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("< Level > can not be empty!");
                 this.txtLevel.Focus();
+                MyUtility.Msg.WarningBox("< Level > can not be empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Range1"]) && CurrentMaintain["ID"].ToString()!="A")
             {
-                MyUtility.Msg.WarningBox("< Lower Rate Range > can not be empty!");
                 this.txtRateRangeStart.Focus();
+                MyUtility.Msg.WarningBox("< Lower Rate Range > can not be empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Range2"]))
             {
-                MyUtility.Msg.WarningBox("< Higher Rate Range > can not be empty!");
                 this.txtRateRangeEnd.Focus();
+                MyUtility.Msg.WarningBox("< Higher Rate Range > can not be empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
-                MyUtility.Msg.WarningBox("< Material Type > can not be empty!");
                 this.comboMaterialType.Focus();
+                MyUtility.Msg.WarningBox("< Material Type > can not be empty!");
                 return false;
             }
 

@@ -120,28 +120,27 @@ namespace Sci.Production.Quality
                 {
                     if (MyUtility.Check.Empty(txtInspectedQty.Text))
                     {
-                        MyUtility.Msg.InfoBox("<Inspected> can not be null");
                         this.txtInspectedQty.Focus();
+                        MyUtility.Msg.InfoBox("<Inspected> can not be null");
                         return;
                     }
                     else if (MyUtility.Check.Empty(comboResult.SelectedValue))
                     {
-                        MyUtility.Msg.InfoBox("<Result> can not be null");
                         this.comboResult.Focus();
+                        MyUtility.Msg.InfoBox("<Result> can not be null");
                         return;
                     }
                     else if (MyUtility.Check.Empty(dateInspectDate))
                     {
-                        MyUtility.Msg.InfoBox("<Inspdate> can not be null");
                         this.dateInspectDate.Focus();
+                        MyUtility.Msg.InfoBox("<Inspdate> can not be null");
                         return;
                     }
                     else if (MyUtility.Check.Empty(txtInspector))
                     {
-                        MyUtility.Msg.InfoBox("<Inspector> can not be null");
                         this.txtInspector.Focus();
+                        MyUtility.Msg.InfoBox("<Inspector> can not be null");
                         return;
-
                     }
                 }
                 #region  寫入實體Table Encode
@@ -279,45 +278,44 @@ namespace Sci.Production.Quality
                     {
                         if (MyUtility.Check.Empty(txtInspectedQty.Text))
                         {
-                            MyUtility.Msg.InfoBox("<Inspected> can not be null");
                             this.txtInspectedQty.Focus();
+                            MyUtility.Msg.InfoBox("<Inspected> can not be null");
                             return;
                         }
                         if (MyUtility.Check.Empty(comboResult.SelectedValue))
                         {
-                            MyUtility.Msg.InfoBox("<Result> can not be null");
                             this.comboResult.Focus();
+                            MyUtility.Msg.InfoBox("<Result> can not be null");
                             return;
                         }
                         if (MyUtility.Check.Empty(dateInspectDate))
                         {
-                            MyUtility.Msg.InfoBox("<Inspdate> can not be null");
                             this.dateInspectDate.Focus();
+                            MyUtility.Msg.InfoBox("<Inspdate> can not be null");
                             return;
                         }
                         if (MyUtility.Check.Empty(txtInspector))
                         {
-                            MyUtility.Msg.InfoBox("<Inspector> can not be null");
                             this.txtInspector.Focus();
+                            MyUtility.Msg.InfoBox("<Inspector> can not be null");
                             return;
-
                         }
                         if ((txtRejectedQty.Text != "0.00" || txtRejectedQty.Text != "") && (MyUtility.Check.Empty(editDefect)))
                         {
-                            MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
                             this.editDefect.Focus();
+                            MyUtility.Msg.InfoBox("When <Rejected Qty> has any value then <Defect> can not be empty !");
                             return;
                         }
                         if ((!MyUtility.Check.Empty(editDefect.Text)) && (this.txtRejectedQty.Text == "0.00"))
                         {
-                            MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
                             this.txtRejectedQty.Focus();
+                            MyUtility.Msg.InfoBox("<Rejected Qty> can not be empty ,when <Defect> has not empty ! ");
                             return;
                         }
                         if ((this.comboResult.Text.ToString() == "Fail") && (this.txtRejectedQty.Text == "0.00" || MyUtility.Check.Empty(editDefect)))
                         {
-                            MyUtility.Msg.InfoBox("When <Result> is Fail then <Rejected Qty> can not be empty !");
                             this.txtRejectedQty.Focus();
+                            MyUtility.Msg.InfoBox("When <Result> is Fail then <Rejected Qty> can not be empty !");
                             return;
                         }
                         string updatesql = "";
@@ -369,8 +367,8 @@ namespace Sci.Production.Quality
                         this.EditMode = true;//因為從上一層進來是false,導致popup功能無法使用,所以才改變EditMode
                         if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                         {
-                            MyUtility.Msg.InfoBox("It's already Confirmed");
                             this.btnAmend.Enabled = true;
+                            MyUtility.Msg.InfoBox("It's already Confirmed");
                             return;
                         }
                         if (dt.Rows[0]["Status"].ToString().Trim() != "Confirmed")

@@ -222,11 +222,11 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!",e.FormattedValue));
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";                    
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };
@@ -413,8 +413,8 @@ where a.ID='{0}'"
                 {
                     if (MyUtility.Convert.GetDecimal(e.FormattedValue) >= 100)
                     {
-                        MyUtility.Msg.InfoBox("<Skewness 1> cannot over than 100 !");
                         dr["SkewnessTest1"] = MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]);
+                        MyUtility.Msg.InfoBox("<Skewness 1> cannot over than 100 !");
                         return;
                     }
                     else
@@ -462,10 +462,10 @@ where a.ID='{0}'"
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!",e.FormattedValue));
                     dr["Inspector"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };

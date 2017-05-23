@@ -33,15 +33,15 @@ namespace Sci.Production.Logistic
         {
             if (string.IsNullOrWhiteSpace(CurrentMaintain["ID"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(CurrentMaintain["Description"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.txtDescription.Focus();
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 return false;
             }
             return base.ClickSaveBefore();

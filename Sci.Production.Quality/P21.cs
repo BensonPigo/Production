@@ -275,12 +275,13 @@ where a.ID='{0}'",
                 {
                     if (dt.Rows.Count < 1)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> is not exist",e.FormattedValue));
                         dr["GarmentDefectCodeid"] = "";
                         dr["Description"] = "";
                         dr["GarmentDefectTypeID"] = "";
                         dr.EndEdit();
-                        e.Cancel = true; return;
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> is not exist", e.FormattedValue));
+                        return;
                     }
                 }
                 DataRow drDesc;
@@ -306,8 +307,8 @@ where a.ID='{0}'",
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 if (Convert.ToInt32(e.FormattedValue) < 0)
                 {
-                    MyUtility.Msg.WarningBox("<No.Of Defects> cannot less than 0"); 
                     dr["Qty"] = "";
+                    MyUtility.Msg.WarningBox("<No.Of Defects> cannot less than 0");
                     return;
                 }
             };
@@ -325,11 +326,12 @@ where a.ID='{0}'",
                     dr["CFAAreaID"] = e.FormattedValue;                }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Area Code: {0}> is not exist",e.FormattedValue));
                     dr["CFAAreaID"] = "";
                     dr["AreaDesc"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; return;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Area Code: {0}> is not exist", e.FormattedValue));
+                    return;
                 }
             };
             #endregion
@@ -415,44 +417,44 @@ where a.ID='{0}'",
 
             if (MyUtility.Check.Empty(this.dateAuditDate.Text))
             {
-                MyUtility.Msg.WarningBox("<Audit Date> cannot be empty", "Warning");
                 this.dateAuditDate.Select();
+                MyUtility.Msg.WarningBox("<Audit Date> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtSP.Text))
             {
-                MyUtility.Msg.WarningBox("<SP#> cannot be empty", "Warning");
                 this.txtSP.Select();
+                MyUtility.Msg.WarningBox("<SP#> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtsewingline.Text))
             {
-                MyUtility.Msg.WarningBox("<Line#> cannot be empty", "Warning");
                 this.txtsewingline.Select();
+                MyUtility.Msg.WarningBox("<Line#> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.txtdropdownlistShift.Text))
             {
-                MyUtility.Msg.WarningBox("<Shift> cannot be empty", "Warning");
                 this.txtdropdownlistShift.Select();
+                MyUtility.Msg.WarningBox("<Shift> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.comboTeam.Text))
             {
-                MyUtility.Msg.WarningBox("<Team> cannot be empty", "Warning");
                 this.comboTeam.Select();
+                MyUtility.Msg.WarningBox("<Team> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.comboInspectionStage.Text))
             {
-                MyUtility.Msg.WarningBox("<InspectStage> cannot be empty", "Warning");
                 this.comboInspectionStage.Select();
+                MyUtility.Msg.WarningBox("<InspectStage> cannot be empty", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(this.comboResult.Text))
             {
-                MyUtility.Msg.WarningBox("<Result> cannot be empty", "Warning");
                 this.comboResult.Select();
+                MyUtility.Msg.WarningBox("<Result> cannot be empty", "Warning");
                 return false;
             }
             foreach (DataRow dr in afterDT.Rows)
@@ -619,7 +621,6 @@ where a.ID='{0}'", txtSP.Text);
             {
                 if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ",this.txtSP.Text));
                     this.txtSP.Text = "";
                     this.txtStyle.Text = "";
                     this.txtDestination.Text = "";                    
@@ -627,7 +628,8 @@ where a.ID='{0}'", txtSP.Text);
                     this.numOrderQty.Text = "0";
                     this.numSQR.Text = "0";
                     this.txtSP.Focus();
-                    e.Cancel = true;  
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ", this.txtSP.Text));
                     return;
                 }
                 else

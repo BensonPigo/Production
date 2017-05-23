@@ -62,18 +62,18 @@ namespace Sci.Production.Quality
                  report_Empty = this.radioPanel.Value.Empty();
             if (dateSciDelivery_Empty)
             {
-                MyUtility.Msg.ErrorBox("Please entry the 'SCI Delivery'");
                 dateSCIDelivery.Focus();
+                MyUtility.Msg.ErrorBox("Please entry the 'SCI Delivery'");
                 return false;
             } if (comboCategory_Empty)
             {
-                MyUtility.Msg.ErrorBox("Please entry the 'Category'");
                 comboCategory.Focus();
+                MyUtility.Msg.ErrorBox("Please entry the 'Category'");
                 return false;
             } if (comboMaterial_Empty)
             {
-                MyUtility.Msg.ErrorBox("Please entry the 'MaterialType'");
                 comboMaterialType.Focus();
+                MyUtility.Msg.ErrorBox("Please entry the 'MaterialType'");
                 return false;
             }
             DateSCIStart = dateSCIDelivery.Value1;

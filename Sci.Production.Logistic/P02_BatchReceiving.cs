@@ -59,8 +59,8 @@ namespace Sci.Production.Logistic
         {
             if (MyUtility.Check.Empty(this.txtTransferClogNoStart) && MyUtility.Check.Empty(this.txtTransferClogNoEnd))
             {
-                MyUtility.Msg.WarningBox("< Transfer Clog No > can not be empty!");
                 this.txtTransferClogNoStart.Focus();
+                MyUtility.Msg.WarningBox("< Transfer Clog No > can not be empty!");
                 return;
             }
 

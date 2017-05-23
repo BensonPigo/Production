@@ -60,13 +60,13 @@ namespace Sci.Production.Quality
                 {                    
                     if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< SP#: {0}> does not exist OR Factory is not match !!", textValue));
                         this.txtSP.Text = "";
                         displayStyle.Text = "";
                         displayDestination.Text = "";
                         this.txtCPU.Text = "0";
                         this.txtSP.Focus(); 
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< SP#: {0}> does not exist OR Factory is not match !!", textValue));
                         return;
                     }
                     else
@@ -232,12 +232,13 @@ namespace Sci.Production.Quality
                 DBProxy.Current.Select(null, cmd, spam, out dt);
                 if (dt.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> doesn't exist in Data!",e.FormattedValue));
                     dr["GarmentDefectCodeID"] = "";
                     dr["Description"] = "";
                     dr["GarmentDefectTypeid"] = "";
                     dr.EndEdit();
-                    e.Cancel = true; return;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Defect Code: {0}> doesn't exist in Data!", e.FormattedValue));
+                    return;
                 }
 
                 //帶出 Type and desc 資料
@@ -298,32 +299,32 @@ namespace Sci.Production.Quality
             #region 必輸檢查
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
-                MyUtility.Msg.WarningBox("< Date >  can't be empty!", "Warning");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("< Date >  can't be empty!", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MyUtility.Msg.WarningBox("< SP# >  can't be empty!", "Warning");
                 txtSP.Select();
+                MyUtility.Msg.WarningBox("< SP# >  can't be empty!", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SewinglineID"]))
             {
-                MyUtility.Msg.WarningBox("< Line# >  can't be empty!", "Warning");
                 txtLine.Select();
+                MyUtility.Msg.WarningBox("< Line# >  can't be empty!", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shift"]))
             {
-                MyUtility.Msg.WarningBox("< Shift >  can't be empty!", "Warning");
                 comboShift.Select();
+                MyUtility.Msg.WarningBox("< Shift >  can't be empty!", "Warning");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Team"]))
             {
-                MyUtility.Msg.WarningBox("< Team >  can't be empty!", "Warning");
                 comboTeam.Select();
+                MyUtility.Msg.WarningBox("< Team >  can't be empty!", "Warning");
                 return false;
             }
             #endregion 必輸檢查
@@ -416,10 +417,10 @@ namespace Sci.Production.Quality
                     inner join SewingLine b on a.SewinglineID=b.ID
                     where orderid = '{0}' and b.ID='{1}' and b.factoryID='{2}'", this.txtSP.Text, textValue,Sci.Env.User.Factory),out dr))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     this.txtLine.Text = "";
                     this.displayCell.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Line# : {0} > not found !!", textValue));
                     return;
                 }
                 else

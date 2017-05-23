@@ -131,9 +131,9 @@ namespace Sci.Production.Quality
             {
                 if (!MyUtility.Check.Seek(string.Format(@"Select id from Scale WITH (NOLOCK) where junk=0 and id = '{0}'", textValue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Scale: {0} > not found!!!", textValue));
                     this.txtScale.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Scale: {0} > not found!!!", textValue));
                     return;
                 }
             }
