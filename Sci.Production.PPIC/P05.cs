@@ -139,31 +139,52 @@ namespace Sci.Production.PPIC
             outReasonSet.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridProductionSchedule.GetDataRow<DataRow>(e.RowIndex);
-                dr["OutReason"] = e.FormattedValue;
-                dr["OutReasonDesc"] = MyUtility.GetValue.Lookup(string.Format(@"
+                bool junk = MyUtility.Check.Seek(string.Format(@"
+select * 
+from Reason 
+where	ReasonTypeID='Delivery_OutStand'
+		and id = '{0}'
+        and Junk = 1", e.FormattedValue));
+                if (junk)
+                {
+                    MyUtility.Msg.InfoBox(string.Format("The reason 「{0}」 is Junked! It cann't be selected!", e.FormattedValue));
+                    dr["OutReason"] = "";
+                    dr["OutReasonDesc"] = "";
+                }
+                else
+                {
+                    dr["OutReason"] = e.FormattedValue;
+                    dr["OutReasonDesc"] = MyUtility.GetValue.Lookup(string.Format(@"
 select Name 
 from Reason 
 where	ReasonTypeID='Delivery_OutStand'
 		and id = '{0}'", e.FormattedValue));
+                }
             };
 
             //set comboBoxData
             DataTable comboBoxData;
             DBProxy.Current.Select(null, @"
-select '' id
+select  '' id
+        , '' display
 
 union all
-select '' + id 
+select  id
+        , display = concat(id, ' ', name) 
 from Reason 
 where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
 
             Dictionary<string, string> di_OutReason = new Dictionary<string, string>();
             foreach (DataRow dr in comboBoxData.Rows)
             {
-                di_OutReason.Add(dr[0].ToString(), dr[0].ToString());
+                di_OutReason.Add(dr["id"].ToString(), dr["display"].ToString());
             }
 
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_outReason;            
+            outReasonSet.DataSource = new BindingSource(di_OutReason, null);
+            outReasonSet.ValueMember = "key";
+            outReasonSet.DisplayMember = "value";
+
+            outReasonSet.EditingControlShowing += this.EditShowing;
             #endregion  
 
             //Grid設定
@@ -191,15 +212,10 @@ where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
                 .Numeric("Diff", header: "Diff", iseditingreadonly: true)
                 .Text("SewLine", header: "Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("SCIDelivery", header: "SCI Del", iseditingreadonly: true)
-                .ComboBox("OutReason", header: "Outstanding" + Environment.NewLine + "Reason", settings: outReasonSet).Get(out cbb_outReason)
+                .ComboBox("OutReason", header: "Outstanding" + Environment.NewLine + "Reason", settings: outReasonSet)
                 .ExtText("OutReasonDesc", header: "Outstanding" + Environment.NewLine + "Reason Desc", iseditingreadonly: true)
                 .Text("OutRemark", header: "Outstanding" + Environment.NewLine + "Remark")
                 .Text("ProdRemark", header: "Remark", width: Widths.AnsiChars(20));
-
-
-            cbb_outReason.DataSource = new BindingSource(di_OutReason, null);
-            cbb_outReason.ValueMember = "Key";
-            cbb_outReason.DisplayMember = "Value";
 
             gridProductionSchedule.Columns["Inconsistent"].DefaultCellStyle.ForeColor = Color.Red;
             if (EditMode)
@@ -207,6 +223,8 @@ where ReasonTypeID = 'Delivery_OutStand'", out comboBoxData);
                 gridProductionSchedule.Columns["ReadyDate"].DefaultCellStyle.ForeColor = Color.Red;
                 gridProductionSchedule.Columns["EstPulloutDate"].DefaultCellStyle.ForeColor = Color.Red;
                 gridProductionSchedule.Columns["ProdRemark"].DefaultCellStyle.ForeColor = Color.Red;
+                gridProductionSchedule.Columns["OutReason"].DefaultCellStyle.ForeColor = Color.Red;
+                gridProductionSchedule.Columns["OutRemark"].DefaultCellStyle.ForeColor = Color.Red;
                 gridProductionSchedule.Columns["ReadyDate"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["EstPulloutDate"].DefaultCellStyle.BackColor = Color.Pink;
                 gridProductionSchedule.Columns["ProdRemark"].DefaultCellStyle.BackColor = Color.Pink;
@@ -423,6 +441,11 @@ where ID = '{6}' and Seq = '{7}'"
             }
             Sci.Production.PPIC.P05_Print callNextForm = new Sci.Production.PPIC.P05_Print((DataTable)listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
+        }
+
+        void EditShowing(object sender, Ict.Win.UI.DataGridViewEditingControlShowingEventArgs e)
+        {
+            ((Ict.Win.UI.DataGridViewComboBoxEditingControl)e.Control).DropDownWidth = (int)400;
         }
     }
 }
