@@ -57,8 +57,8 @@ namespace Sci.Production.Thread
             string color1 = txtthreadcolorStart.Text, color2 = txtthreadcolorEnd.Text;
             if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2))
             {
-                MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
                 this.txtlocalitemStart.Focus();
+                MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
                 return;
             }
             string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,

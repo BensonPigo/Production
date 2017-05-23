@@ -165,10 +165,10 @@ namespace Sci.Production.Thread
                                     (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
                                        from dbo.ThreadStock WITH (NOLOCK) 
                                        where Refno='{0}'",txtRefnoStart.Text),null))
-            {
-                MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
+            { 
                 e.Cancel = true;
                 txtRefnoStart.Text = "";
+                MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
             }
         }
 
@@ -180,9 +180,9 @@ namespace Sci.Production.Thread
                                        from dbo.ThreadStock WITH (NOLOCK) 
                                        where Refno='{0}'", txtRefnoEnd.Text), null))
             {
-                MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
                 e.Cancel = true;
                 txtRefnoEnd.Text = "";
+                MyUtility.Msg.WarningBox("Refno is not exist!!", "Data not found");
             }
         }
 
@@ -206,9 +206,10 @@ namespace Sci.Production.Thread
                                from ThreadStock WITH (NOLOCK) 
                                where threadcolorid ='{0}'", txtShade.Text), null))
             {
-                MyUtility.Msg.WarningBox("Shade is not exist!!", "Data not found");
+               
                 e.Cancel = true;
                 txtShade.Text = "";
+                MyUtility.Msg.WarningBox("Shade is not exist!!", "Data not found");
             }
         }
         private void txtType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -232,9 +233,10 @@ namespace Sci.Production.Thread
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
                                where l.category ='{0}'", txtType.Text), null))
             {
-                MyUtility.Msg.WarningBox("Type is not exist!!", "Data not found");
+                
                 e.Cancel = true;
                 txtType.Text = "";
+                MyUtility.Msg.WarningBox("Type is not exist!!", "Data not found");
             }
         }
 
@@ -259,9 +261,10 @@ namespace Sci.Production.Thread
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
                                where l.category='{0}'", txtThreadItem.Text), null))
             {
-                MyUtility.Msg.WarningBox("Thread Item is not exist!!", "Data not found");
+               
                 e.Cancel = true;
                 txtThreadItem.Text = "";
+                MyUtility.Msg.WarningBox("Thread Item is not exist!!", "Data not found");
             }
         }
 
@@ -286,9 +289,10 @@ namespace Sci.Production.Thread
                                from dbo.ThreadStock  WITH (NOLOCK) 
                                where ThreadlocationID='{0}'", txtLocationStart.Text), null))
             {
-                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
+                
                 e.Cancel = true;
                 txtLocationStart.Text = "";
+                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
 
@@ -312,10 +316,10 @@ namespace Sci.Production.Thread
                                     (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = ThreadStock.ThreadLocationID) [Description]
                                from dbo.ThreadStock  WITH (NOLOCK) 
                                where ThreadlocationID='{0}'", txtLocationEnd.Text), null))
-            {
-                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
+            { 
                 e.Cancel = true;
                 txtLocationEnd.Text = "";
+                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
 

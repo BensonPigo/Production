@@ -315,10 +315,10 @@ where S.Ukey = '{0}'", styleUkey);
             {
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
-                {
-                    MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
+                {                   
                     this.txtMachineType.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Machine Type : {0}> not found!!!", str));
                     return;
                 }
                 //string cjunk = MyUtility.GetValue.Lookup("Junk", str, "Machinetype", "id");

@@ -163,8 +163,8 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                     if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationfrom"] = newvalue;
                     else
                     {
-                        MyUtility.Msg.WarningBox(string.Format(@"<Location: {0}> not found.", newvalue));
                         CurrentDetailData["Locationfrom"] = "";
+                        MyUtility.Msg.WarningBox(string.Format(@"<Location: {0}> not found.", newvalue));
                     }
                     CurrentDetailData.EndEdit();
                 };
@@ -189,8 +189,8 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
                 if (MyUtility.Check.Seek(newvalue, "ThreadLocation", "ID")) CurrentDetailData["locationto"] = newvalue;
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format(@"<Location: {0}> not found", newvalue));
                     CurrentDetailData["Locationto"] = "";
+                    MyUtility.Msg.WarningBox(string.Format(@"<Location: {0}> not found", newvalue));
                 }
                 CurrentDetailData.EndEdit();
             };
@@ -282,8 +282,8 @@ left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id where a.id = '{0
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
             {
-                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
                 this.dateDate.Focus();
+                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
                 return false;
             }
             foreach (DataRow dr in this.DetailDatas)

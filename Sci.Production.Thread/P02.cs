@@ -399,15 +399,15 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["estbookDate"]))
-            {
-                MyUtility.Msg.WarningBox("<Est. Booking> can not be empty.");
+            {                
                 dateEstBooking.Focus();
+                MyUtility.Msg.WarningBox("<Est. Booking> can not be empty.");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EstArriveDate"]))
             {
-                MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
                 dateEstArrived.Focus();
+                 MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
                 return false;
             }
             //foreach (DataRow dr in DetailDatas)
@@ -454,26 +454,26 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (txtSP.Text == "") return;
             //確認order.poid 同(po.id)有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from PO WITH (NOLOCK) where id='{0}'", id)))
-            {
-                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >does not exists in Purchase Order!!!", id));
+            {              
                 e.Cancel = true;
-                txtSP.Text = "";                
+                txtSP.Text = "";
+                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >does not exists in Purchase Order!!!", id));
                 return;
             }
             //確認orders.id + 工廠有沒有這筆,沒有則return
             if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FtyGroup = '{1}'", id, factory)))
             {
-                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not found!!!!", id));
                 e.Cancel = true;
                 txtSP.Text = "";
+                MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not found!!!!", id));
                 return;
             }
             //確認ThreadRequisition有沒有這筆,有則return
             if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition WITH (NOLOCK) where OrderID='{0}'", id)))
             {
-                MyUtility.Msg.WarningBox("Order number exists already.");
                 e.Cancel = true;
                 txtSP.Text = "";
+                MyUtility.Msg.WarningBox("Order number exists already.");
                 return;
             }
 

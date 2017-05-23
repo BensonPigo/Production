@@ -246,8 +246,9 @@ namespace Sci.Production.Thread
         {
             if (MyUtility.Check.Empty(CurrentMaintain["cDate"].ToString()))
             {
-                MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning");
+                
                 this.dateDate.Focus();
+               MyUtility.Msg.WarningBox("<Date> can not be empty!", "Warning"); 
                 return false;
             }
             foreach (DataRow dr in this.DetailDatas)

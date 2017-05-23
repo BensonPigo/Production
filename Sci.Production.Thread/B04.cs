@@ -33,8 +33,8 @@ namespace Sci.Production.Thread
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("<Thread Location> can not be empty.");
                 txtThreadLocation.Focus();
+                MyUtility.Msg.WarningBox("<Thread Location> can not be empty.");
                 return false;
             }
             return base.ClickSaveBefore();

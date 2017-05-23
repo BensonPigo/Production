@@ -23,9 +23,9 @@ namespace Sci.Production.Thread
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                MyUtility.Msg.WarningBox("<Thread Color> can not be empty.");
+            {  
                 txtThreadColor.Focus();
+                MyUtility.Msg.WarningBox("<Thread Color> can not be empty.");
                 return false;
             }
             return base.ClickSaveBefore();

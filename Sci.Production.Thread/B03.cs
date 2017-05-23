@@ -24,8 +24,9 @@ namespace Sci.Production.Thread
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("<Thread Type> can not be empty.");
+                
                 txtThreadType.Focus();
+                MyUtility.Msg.WarningBox("<Thread Type> can not be empty.");
                 return false;
             }
             return base.ClickSaveBefore();
