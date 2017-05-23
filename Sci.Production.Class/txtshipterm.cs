@@ -34,9 +34,9 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str,"shipterm","id")==false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Ship Term : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Ship Term : {0} > not found!!!", str));
                     return;
                 }
             }

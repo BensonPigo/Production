@@ -51,9 +51,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "PayTermAR", "ID"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Pay Term: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Pay Term: {0} > not found!!!", textValue));
                     return;
                 }
             }

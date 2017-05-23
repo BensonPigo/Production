@@ -30,9 +30,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "CDCode", "Id"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< CD Code : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< CD Code : {0} > not found!!!", textValue));
                     return;
                 }
             }

@@ -40,16 +40,17 @@ namespace Sci.Production.Class
                 string tmp = MyUtility.GetValue.Lookup("id", str, "threadcomb", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Thread Combination> : {0} not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Combination> : {0} not found!!!", str));
                     return;
                 }
                 string cjunk = MyUtility.GetValue.Lookup("Junk", str, "threadcomb", "id");
                 if (cjunk == "True")
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Thread Combination already junk, you can't choose!!"));
                     this.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("Thread Combination already junk, you can't choose!!"));
+                    
                 }
             }
         }
@@ -104,10 +105,10 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(sql))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<Thread Combination > : {0} not found!!!", newValue));
                         row["threadcombid"] = "";
                         row.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<Thread Combination > : {0} not found!!!", newValue));
                         return;
                     }
                 }

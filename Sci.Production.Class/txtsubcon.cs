@@ -65,9 +65,9 @@ namespace Sci.Production.Class
                 string Sql = string.Format("Select Junk from LocalSupp WITH (NOLOCK) where ID = '{0}'", textValue);
                 if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                     return;
                 }
                 else
@@ -77,9 +77,9 @@ namespace Sci.Production.Class
                         string lookupresult = MyUtility.GetValue.Lookup(Sql, "Production");
                         if (lookupresult == "True")
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                             this.textBox1.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Subcon Code: {0} > not found!!!", textValue));
                             return;
                         }
                     }
@@ -182,10 +182,10 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(sql, out sqlRow,"Production"))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Local Supplier > : {0} not found!!!", newValue));
                         row[suppid] = "";
                         row.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Local Supplier > : {0} not found!!!", newValue));
                         return;
                     }
                 }

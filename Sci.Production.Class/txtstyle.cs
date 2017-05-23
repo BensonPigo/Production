@@ -38,9 +38,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Style", "ID"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Style : {0} > not found!!!", textValue));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Style : {0} > not found!!!", textValue));
                     return;
                 }
                 else
@@ -52,9 +52,9 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from Style WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}'", (string)this.brandObject.Text, this.Text.ToString());
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
                                 this.Text = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Brand + Style: {0} + {1} > not found!!!", (string)this.brandObject.Text, textValue));
                                 return;
                             }
                         }

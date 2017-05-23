@@ -56,9 +56,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "Country", "ID"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", textValue));
                 }
             }
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());

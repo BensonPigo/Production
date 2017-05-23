@@ -34,9 +34,9 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "ToMdivision", "id") == false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< ToMdivision ID : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< ToMdivision ID : {0} > not found!!!", str));
                     return;
                 }
             }

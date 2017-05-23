@@ -40,16 +40,16 @@ namespace Sci.Production.Class
                 string tmp = MyUtility.GetValue.Lookup("id", str, "Machinetype", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Machine Type> : {0} not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Machine Type> : {0} not found!!!", str));
                     return;
                 }
                 string cjunk = MyUtility.GetValue.Lookup("Junk", str, "Machinetype", "id");
                 if (cjunk == "True")
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Machine Type already junk, you can't choose!!"));
                     this.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("Machine Type already junk, you can't choose!!"));
                 }
             }
         }
@@ -104,10 +104,10 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(sql))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Machine Type > : {0} not found!!!", newValue));
                         row["machinetypeid"] = "";
                         row.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Machine Type > : {0} not found!!!", newValue));
                         return;
                     }
                 }

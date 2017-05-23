@@ -141,17 +141,17 @@ namespace Sci.Production.Class
                         aa = (sqlTable.Rows[0])["Junk"].ToString();
                         if (aa == "True")
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Local item: {0} >is Junk!!!", str));
                             this.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Local item: {0} >is Junk!!!", str));
                             return;
                         }
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Local item: {0}>not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Local item: {0}>not found!!!", str));
                         return;
                     }
                 }
@@ -254,10 +254,10 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(sql))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Local item: {0}> not found.", newValue));
                         row["refno"] = "";
                         row.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Local item: {0}> not found.", newValue));
                         return;
                     }
                 }

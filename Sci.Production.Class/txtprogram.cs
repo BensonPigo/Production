@@ -59,9 +59,9 @@ namespace Sci.Production.Class
                     string tmp = MyUtility.GetValue.Lookup("Id", str, "Program", "Id");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         return;
                     }
                 }
@@ -71,9 +71,9 @@ namespace Sci.Production.Class
                     string tmp = MyUtility.GetValue.Lookup("id", str+brand, "Program", "Id+Brandid");
                     if (string.IsNullOrWhiteSpace(tmp))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Program> : {0} not found!!!", str));
                         return;
                     }
                 }

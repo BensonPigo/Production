@@ -58,9 +58,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(textValue, "LocalSupp", "ID"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< LocalSupplier Code: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< LocalSupplier Code: {0} > not found!!!", textValue));
                     return;
                 }
             }

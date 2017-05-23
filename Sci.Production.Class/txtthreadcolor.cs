@@ -40,16 +40,17 @@ namespace Sci.Production.Class
                 string tmp = MyUtility.GetValue.Lookup("id", str, "threadcolor", "id");
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Thread Color> : {0} not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Color> : {0} not found!!!", str));
                     return;
                 }
                 string cjunk = MyUtility.GetValue.Lookup("Junk", str, "threadcolor", "id");
                 if (cjunk == "True")
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Thread Color already junk, you can't choose!!"));
                     this.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("Thread Color already junk, you can't choose!!"));
+                    
                 }
             }
         }

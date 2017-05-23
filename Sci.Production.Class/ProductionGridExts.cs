@@ -50,9 +50,9 @@ namespace Sci
                     {
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "ClogLocation", "id") == false)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["ClogLocationId"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -81,10 +81,10 @@ namespace Sci
                     if (!MyUtility.Check.Empty(e.FormattedValue.ToString()))
                     {
                         if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
-                        {
-                            MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
+                        { 
                             dr["orderid"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -117,9 +117,9 @@ namespace Sci
                         {
                             if (!MyUtility.Check.Seek(string.Format("select * from dbo.orders inner join dbo.factory on orders.FtyGroup=factory.id where orders.ID='{0}' and factory.MDivisionID='{1}'", e.FormattedValue.ToString(),Sci.Env.User.Keyword), null))
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                                 dr["poid"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                             else
@@ -137,9 +137,9 @@ namespace Sci
                         {
                             if (MyUtility.Check.Seek(e.FormattedValue.ToString(), "Orders", "id") == false)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                                 dr["poid"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Order Id : {0} > is not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                             else
@@ -186,9 +186,9 @@ namespace Sci
                         string seekSql = string.Format("select RefNo from LocalItem where Category = 'CARTON' and Junk = 0 and RefNo = '{0}'", e.FormattedValue.ToString());
                         if (MyUtility.Check.Seek(seekSql) == false)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["RefNo"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Ref No. : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -235,9 +235,9 @@ namespace Sci
                         string seekSql = string.Format("select id from ThreadColor where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(seekSql))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Threadcolorid"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Thread Color : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -302,9 +302,9 @@ namespace Sci
                         string seekSql = string.Format("select id from ThreadLocation where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(seekSql))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Thread Location : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["ThreadLocationid"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Thread Location : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -351,9 +351,9 @@ namespace Sci
                         string seekSql = string.Format("select id,Name from Pass1 where id = '{0}'", e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(seekSql, out pass_dr))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< User ID : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr[propertyname] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< User ID : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -408,9 +408,9 @@ namespace Sci
                         string seekSql = string.Format("select id from Scale where Junk = 0 and id = '{0}'", e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(seekSql))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Scale : {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["Scale"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Scale : {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }

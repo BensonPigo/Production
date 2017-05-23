@@ -35,9 +35,9 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(string.Format("select ID from dbo.MDivision WITH (NOLOCK) where id = '{0}'", str)) == false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< M : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< M : {0} > not found!!!", str));
                     return;
                 }
             }

@@ -62,9 +62,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(Type + str, "CutReason", "type+ID"))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
                     return;
                 }
             }
@@ -120,10 +120,10 @@ namespace Sci.Production.Class
                 {
                     if (!MyUtility.Check.Seek(ctype+newValue, "cutreason", "Type+ID"))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Cut Reason > : {0} not found!!!", newValue));
                         row["cutreasonid"] = "";
                         row.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Cut Reason > : {0} not found!!!", newValue));
                         return;
                     }
                 }

@@ -50,18 +50,18 @@ namespace Sci.Production.Class
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out FactoryData);
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                     return;
                 }
                 else
                 {
                     if (FactoryData.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                         return;
                     }
                 }

@@ -51,9 +51,9 @@ namespace Sci.Production.Class
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select name from [FinanceEN].[dbo].[AccountNo] where id = '{0}'", textValue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", textValue));
                     this.textBox1.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Account No: {0} > not found!!!", textValue));
                     return;
                 }
                 this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());

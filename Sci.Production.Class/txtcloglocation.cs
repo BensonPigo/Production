@@ -64,9 +64,9 @@ namespace Sci.Production.Class
                 {
                     if (MyUtility.Check.Seek(str, "ClogLocation", "id") == false)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                         return;
                     }
                 }
@@ -79,9 +79,9 @@ namespace Sci.Production.Class
                             string selectCommand = string.Format("select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and ID = '{1}'", (string)this.mDivisionObject.Text, str);
                             if (!MyUtility.Check.Seek(selectCommand, null))
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                                 this.Text = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< ClogLocation : {0} > not found!!!", str));
                                 return;
                             }
                         }

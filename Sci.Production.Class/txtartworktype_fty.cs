@@ -88,9 +88,9 @@ namespace Sci.Production.Class
 
                 if (MyUtility.Check.Seek(sqlCmd) == false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                     this.Text = "";
-                    e.Cancel = true;
+                    e.Cancel = true; 
+                    MyUtility.Msg.WarningBox(string.Format("< Artworktype : {0} > not found!!!", str));
                     return;
                 }
             }

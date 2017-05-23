@@ -40,17 +40,17 @@ namespace Sci.Production.Class
                 {
                     if (dt != null && dt.Rows.Count == 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                         this.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                         return;
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(result.Description);
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(result.Description);
                     return;
                 }
             }

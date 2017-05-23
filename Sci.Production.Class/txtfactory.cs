@@ -34,9 +34,9 @@ namespace Sci.Production.Class
             {
                 if (MyUtility.Check.Seek(str, "factory", "id") == false)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                     this.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
                     return;
                 }
             }
