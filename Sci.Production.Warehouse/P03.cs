@@ -603,9 +603,10 @@ where ROW_NUMBER_D =1
             ChangeDetailColor();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnNewSearch_Click(object sender, EventArgs e)
         {
             txtSPNo.ResetText();
+            txtSPNo.Select();
         }
     }
 }

@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnNewSearch = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -45,7 +45,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnNewSearch);
             this.panel1.Controls.Add(this.txtSPNo);
             this.panel1.Controls.Add(this.labelSPNo);
             this.panel1.Controls.Add(this.btnQuery);
@@ -57,13 +57,13 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(272, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 30);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "New Search";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnNewSearch.Location = new System.Drawing.Point(272, 8);
+            this.btnNewSearch.Name = "button1";
+            this.btnNewSearch.Size = new System.Drawing.Size(104, 30);
+            this.btnNewSearch.TabIndex = 7;
+            this.btnNewSearch.Text = "New Search";
+            this.btnNewSearch.UseVisualStyleBackColor = true;
+            this.btnNewSearch.Click += new System.EventHandler(this.btnNewSearch_Click);
             // 
             // txtSPNo
             // 
@@ -175,7 +175,7 @@
         private Win.UI.Grid gridMaterialStatus;
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnClose;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnNewSearch;
 
     }
 }
