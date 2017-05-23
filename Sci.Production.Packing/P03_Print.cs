@@ -88,73 +88,154 @@ namespace Sci.Production.Packing
                 return false;
             }
             //e.Report.ReportDataSource = printData;
-
-            Object printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode.dotx";
             this.ShowWaitMessage("Data Loading ...");
             Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
             winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
             winword.Visible = false;
-
-            Microsoft.Office.Interop.Word._Document document = winword.Documents.Add(ref printFile);
-
-            winword.ActiveDocument.PageSetup.PageHeight = winword.CentimetersToPoints(10.16f);
-            winword.ActiveDocument.PageSetup.PageWidth = winword.CentimetersToPoints(10.16f);
-
+            Object printFile;
+            Microsoft.Office.Interop.Word._Document document;
             Word.Table tables = null;
 
-            try
+            #region check Factory
+            switch (Sci.Env.User.Keyword)
             {
-                document.Activate();
-                Word.Tables table = document.Tables;
+                case "SNP":
+                case "SPT":
+                case "ESP":
+                    printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
+                    document = winword.Documents.Add(ref printFile);
+                    #region VN
+                    try
+                    {
+                        int Left = 1, Right = 2;
 
-                #region 計算頁數
-                winword.Selection.Tables[1].Select();
-                winword.Selection.Copy();
-                for (int i = 1; i < printData.Rows.Count; i++)
-                {
-                    winword.Selection.MoveDown();
-                    if (printData.Rows.Count > 1)
-                        winword.Selection.InsertNewPage();
-                    winword.Selection.Paste();
-                }
-                #endregion
-                #region 填入資料
-                for (int i = 0; i < printData.Rows.Count; i++)
-                {
-                    tables = table[i + 1];
+                        document.Activate();
+                        Word.Tables table = document.Tables;
 
-                    #region 準備資料
-                    string barcode = "*" + printData.Rows[i]["ID"] + printData.Rows[i]["CTNStartNo"] + "*";
-                    string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
-                    string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
-                    string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
-                    string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
-                    #endregion
+                        #region 計算頁數
+                        winword.Selection.Tables[1].Select();
+                        winword.Selection.Copy();
+                        int page = (printData.Rows.Count / 12) + ((printData.Rows.Count % 12 > 0) ? 1 : 0);
+                        for (int i = 1; i < page; i++)
+                        {
+                            winword.Selection.MoveDown();
+                            if (page > 1)
+                                winword.Selection.InsertNewPage();
+                            winword.Selection.Paste();
+                        }
+                        #endregion
+                        #region 填入資料
+                        for (int i = 0; i < page; i++)
+                        {
+                            tables = table[i + 1];
 
-                    tables.Cell(1, 1).Range.Text = barcode;
-                    tables.Cell(2, 1).Range.Text = packingNo;
-                    tables.Cell(3, 1).Range.Text = spNo;
-                    tables.Cell(4, 1).Range.Text = cartonNo;
-                    tables.Cell(5, 1).Range.Text = poNo;
-                }
-                #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
-                
+                            for (int p = i * 12; p < i * 12 + 12; p++)
+                            {
+                                if (p >= printData.Rows.Count) break;
 
-                winword.Visible = true;
-                winword = null;
+                                #region 準備資料
+                                string barcode = "*" + printData.Rows[p]["ID"] + printData.Rows[p]["CTNStartNo"] + "*";
+                                string packingNo = "　　　　PackingNo.: " + printData.Rows[p]["ID"];
+                                string spNo = "　　　　SP No.: " + printData.Rows[p]["OrderID"];
+                                string cartonNo = "　　　　Carton No.: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
+                                string poNo = "　　　　PO No.: " + printData.Rows[p]["PONo"];
+                                #endregion
+
+                                int column = (p % 12 < 6) ? Left : Right;
+
+                                tables.Cell(p % 6 * 6 + 1, column).Range.Text = barcode;
+                                tables.Cell(p % 6 * 6 + 2, column).Range.Text = packingNo;
+                                tables.Cell(p % 6 * 6 + 3, column).Range.Text = spNo;
+                                tables.Cell(p % 6 * 6 + 4, column).Range.Text = cartonNo;
+                                tables.Cell(p % 6 * 6 + 5, column).Range.Text = poNo;
+                            }
+                        }
+                        #endregion
+                        winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+
+                        winword.Visible = true;
+                        winword = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (null != winword)
+                            winword.Quit();
+                        return new DualResult(false, "Export word error.", ex);
+                    }
+                    finally
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                    #endregion  
+                    break;
+                default:
+                    printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode.dotx";
+                    document = winword.Documents.Add(ref printFile);
+                    #region PH
+                    try
+                    {
+                        document.Activate();
+                        Word.Tables table = document.Tables;
+
+                        #region 計算頁數
+                        winword.Selection.Tables[1].Select();
+                        winword.Selection.Copy();
+                        for (int i = 1; i < printData.Rows.Count; i++)
+                        {
+                            winword.Selection.MoveDown();
+                            if (printData.Rows.Count > 1)
+                                winword.Selection.InsertNewPage();
+                            winword.Selection.Paste();
+                        }
+                        #endregion
+                        #region 填入資料
+                        for (int i = 0; i < printData.Rows.Count; i++)
+                        {
+                            tables = table[i + 1];
+
+                            #region 準備資料
+                            string barcode = "*" + printData.Rows[i]["ID"] + printData.Rows[i]["CTNStartNo"] + "*";
+                            string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
+                            string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
+                            string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                            string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
+                            #endregion
+
+                            tables.Cell(1, 1).Range.Text = barcode;
+                            tables.Cell(2, 1).Range.Text = packingNo;
+                            tables.Cell(3, 1).Range.Text = spNo;
+                            tables.Cell(4, 1).Range.Text = cartonNo;
+                            tables.Cell(5, 1).Range.Text = poNo;
+                        }
+                        #endregion
+                        winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+
+                        winword.Visible = true;
+                        winword = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (null != winword)
+                            winword.Quit();
+                        return new DualResult(false, "Export word error.", ex);
+                    }
+                    finally
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                    #endregion 
+                    break;
             }
-            catch (Exception ex)
-            {
-                if (null != winword)
-                    winword.Quit();
-                return new DualResult(false, "Export word error.", ex);
-            }
-            finally
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
+
+            #endregion 
+
+            
+
+            
             this.HideWaitMessage();
             return true;
         }
