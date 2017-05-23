@@ -152,8 +152,8 @@ Where b.Qty - b.InQty >0
                     DataRow dr = gridImport.GetDataRow(gridImport.GetSelectedRowIndex());
                     if (decimal.Parse(e.FormattedValue.ToString()) > decimal.Parse(dr["onRoad"].ToString()))
                     {
+                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("Qty can't be over on road qty!!");
-                        e.Cancel = true;
                     }
                 }
             };

@@ -117,8 +117,9 @@ select 0 as selected ,* from cte
             if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
                 , sp), null))
             {
-                MyUtility.Msg.WarningBox("SP# is not found!!");
+                
                 e.Cancel = true;
+                MyUtility.Msg.WarningBox("SP# is not found!!");
                 return;
             }
 

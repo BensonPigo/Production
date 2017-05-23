@@ -172,8 +172,9 @@ and m.IssueType='Sewing' order by poid,seq1,seq2", Sci.Env.User.Keyword, Current
                         string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         if (seq.Length < 2)
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                            
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             return;
                         }
 
@@ -197,8 +198,8 @@ inner join MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID
 where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-outqty+adjustqty > 0  and stocktype='B' "
                             , CurrentDetailData["poid"], seq[0], seq[1], Sci.Env.User.Keyword), out dr, null))
                         {
+                           e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                            e.Cancel = true;
                             return;
                         }
                         else
@@ -593,7 +594,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             }
             if (MyUtility.Check.Empty(this.poid))
             {
-                MyUtility.Msg.WarningBox("Can't found data");
+               
                 CurrentMaintain["cutplanid"] = "";
                 txtRequest.Text = "";
                 dtIssueBreakDown = null;
@@ -603,7 +604,8 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     //刪除SubDetail資料
                     ((DataTable)detailgridbs.DataSource).Rows.Remove(dr);
                     dr.Delete();
-                }
+                } 
+                MyUtility.Msg.WarningBox("Can't found data");
                 return;
             }
             //getpoid();
@@ -1392,10 +1394,11 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             {
                 if (MyUtility.Check.Empty(this.poid))
                 {
-                    MyUtility.Msg.WarningBox("Can't found data");
+                    
                     CurrentMaintain["cutplanid"] = "";
                     txtRequest.Text = "";
                     txtOrderID.Text = "";
+                    MyUtility.Msg.WarningBox("Can't found data");
                     return;
                 }
                 this.displayPOID.Text = this.poid;

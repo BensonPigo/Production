@@ -210,8 +210,8 @@ Where   c.lock = 0
                         if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
                             return;
                         }
                         else
@@ -330,8 +330,8 @@ where exists(
             and junk != '1'
 )", txtLocation.Text, Sci.Env.User.Keyword), null))
             {
-                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
                 e.Cancel = true;
+                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
             }
         }
         //Location  右鍵

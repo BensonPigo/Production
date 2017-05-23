@@ -387,8 +387,8 @@ where POID ='{0}'", CurrentDetailData["poid"].ToString());
                         string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         if (seq.Length < 2)
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             return;
                         }
 
@@ -408,8 +408,8 @@ where poid = '{0}' and seq1 ='{1}'and seq2 = '{2}' and factoryid='{3}'", Current
                                              , e.FormattedValue.ToString().PadRight(5).Substring(3, 2)
                                              , CurrentMaintain["fromftyid"]), out dr, null))
                             {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
                             else
@@ -474,8 +474,9 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
+                        e.Cancel = true; 
                         MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        e.Cancel = true;
+                        
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
@@ -532,8 +533,9 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        e.Cancel = true;
+                       e.Cancel = true; 
+                       MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+                        
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
@@ -1115,8 +1117,8 @@ Where a.id = '{0}'", masterID);
             if (MyUtility.Check.Empty(this.txtFromFactory.Text)) return;
             if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
-                MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
                 this.txtFromFactory.Text = "";
+                MyUtility.Msg.WarningBox("From Factory : " + txtFromFactory.Text + " not found!");
                 this.txtFromFactory.Focus();
                 this.txtFromFactory.Select();
             }

@@ -761,8 +761,8 @@ where a.id= @ID", pars, out dd);
             if (MyUtility.Check.Empty(this.txtFromFactory.Text)) return;
             if (!MyUtility.Check.Seek(string.Format(@"select * from scifty WITH (NOLOCK) where id='{0}'", this.txtFromFactory.Text)))
             {
-                MyUtility.Msg.WarningBox("To Factory : " + txtFromFactory.Text + " not found!");
                 this.txtFromFactory.Text = "";
+                MyUtility.Msg.WarningBox("To Factory : " + txtFromFactory.Text + " not found!");
                 this.txtFromFactory.Focus();
                 this.txtFromFactory.Select();
             }

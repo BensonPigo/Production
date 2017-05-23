@@ -135,8 +135,9 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
+                        e.Cancel = true; 
                         MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        e.Cancel = true;
+                       
                     }
                     trueLocation.Sort();
                     dr["location"] = string.Join(",", (trueLocation).ToArray());
@@ -181,8 +182,8 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");      
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());

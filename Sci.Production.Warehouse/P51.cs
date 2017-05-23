@@ -251,16 +251,17 @@ namespace Sci.Production.Warehouse
                         string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' });
                         if (seq.Length < 2)
                         {
+                            e.Cancel = true;  
                             MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                            e.Cancel = true;
+                            
                             return;
                         }
 
                         if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                     @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq"); 
                             return;
                         }
                         else
@@ -358,8 +359,8 @@ namespace Sci.Production.Warehouse
                                                                         ,CurrentDetailData["stocktype"]
                                                                         , e.FormattedValue.ToString()), out dr, null))
                         {
-                            MyUtility.Msg.WarningBox("Data not found! or Item is lock!!", "Roll#");
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found! or Item is lock!!", "Roll#");
                             return;
                         }
                         else

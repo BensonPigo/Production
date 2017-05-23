@@ -242,8 +242,8 @@ namespace Sci.Production.Warehouse
                         if (!MyUtility.Check.Seek(string.Format(@"select id, Name from Reason WITH (NOLOCK) where id = '{0}' 
 and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Reason ID");
                             return;
                         }
                         else

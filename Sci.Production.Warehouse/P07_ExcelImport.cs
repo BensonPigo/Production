@@ -202,10 +202,10 @@ namespace Sci.Production.Warehouse
 
                         if (intColumnsCount >= 30)
                         {
-                            MyUtility.Msg.WarningBox("Column count can not more than 30!!");
                             excel.Workbooks.Close();
                             excel.Quit();
                             excel = null;
+                            MyUtility.Msg.WarningBox("Column count can not more than 30!!");
                             return;
                         }
                         //檢查Excel格式
@@ -310,17 +310,18 @@ where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"], newRo
                                     // po unit 空白不匯入
                                     if (MyUtility.Check.Empty(dr2["pounit"]))
                                     {
-                                        MyUtility.Msg.WarningBox(string.Format("PO Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
                                         excel.Workbooks.Close();
                                         excel.Quit();
+                                        MyUtility.Msg.WarningBox(string.Format("PO Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
                                         return;
                                     }
                                     // stock unit空白不匯入
                                     if (MyUtility.Check.Empty(dr2["stockunit"]))
                                     {
-                                        MyUtility.Msg.WarningBox(string.Format("Stock Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
+                                        
                                         excel.Workbooks.Close();
                                         excel.Quit();
+                                        MyUtility.Msg.WarningBox(string.Format("Stock Unit of SP#:{0}-Seq1:{1}-Seq2:{2} is empty!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
                                         return;
                                     }
                                     newRow["fabrictype"] = dr2["fabrictype"].ToString();

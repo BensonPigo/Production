@@ -278,9 +278,9 @@ namespace Sci.Production.Warehouse
                             string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             if (seq.Length < 2)
                             {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
-                                return;
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
+                                return; 
                             }
 
                             //jimmy 105/11/14
@@ -288,9 +288,9 @@ namespace Sci.Production.Warehouse
                             if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                     @"and p.seq1 ='{2}'and p.seq2 = '{3}' and left(p.seq1,1) !='7'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 CurrentDetailData["seq"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
                             else
@@ -357,8 +357,8 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());

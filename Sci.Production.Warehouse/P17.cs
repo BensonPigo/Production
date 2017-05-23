@@ -376,16 +376,16 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         if (seq.Length < 2)
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                            e.Cancel = true;
+                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");    
                             return;
                         }
                         string x = Prgs.selePoItemSqlCmd;
                         if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                     @" and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                         {
-                            MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                            e.Cancel = true;
+                            e.Cancel = true; 
+                            MyUtility.Msg.WarningBox("Data not found!", "Seq");  
                             return;
                         }
 
@@ -487,16 +487,17 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                             dr.EndEdit();
                         }
                         else {
-                            MyUtility.Msg.WarningBox("Data not found!", "Roll#");
                             e.Cancel = true;
                             CurrentDetailData["roll"] = "";
+                            MyUtility.Msg.WarningBox("Data not found!", "Roll#");
                             return;
                         }
                     }
                     else {
-                        MyUtility.Msg.WarningBox("Data not found!", "Roll#");
+                        
                         e.Cancel = true;
                         CurrentDetailData["roll"] = "";
+                        MyUtility.Msg.WarningBox("Data not found!", "Roll#");
                         return;
                     }
                                        

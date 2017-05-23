@@ -150,9 +150,9 @@ Where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"])); //
                         {
                             if ((decimal)e.FormattedValue > (decimal)gridLack_Detail.GetDataRow(e.RowIndex)["balance"])
                             {
-                                MyUtility.Msg.WarningBox("Issue qty can't be more than Stock qty!!");
-                                e.Cancel = true;
-                                return;
+                               e.Cancel = true;
+                               MyUtility.Msg.WarningBox("Issue qty can't be more than Stock qty!!");
+                               return;
                             }
                         }
                         gridLack_Detail.GetDataRow(e.RowIndex)["selected"] = true;

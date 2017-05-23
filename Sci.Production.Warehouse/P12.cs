@@ -211,8 +211,9 @@ namespace Sci.Production.Warehouse
                 {
                     if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po WITH (NOLOCK) where id = '{0}')", e.FormattedValue), null))
                     {
-                        MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
+                        
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("SP# is not exist!!", "Data not found");
                         return;
                     }
                     CurrentDetailData["poid"] = e.FormattedValue;
@@ -273,8 +274,8 @@ namespace Sci.Production.Warehouse
                             string[] seq = e.FormattedValue.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             if (seq.Length < 2)
                             {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                                e.Cancel = true;
+                                
+                                e.Cancel = true;MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
                             
@@ -282,8 +283,8 @@ namespace Sci.Production.Warehouse
                             if (!MyUtility.Check.Seek(string.Format(Prgs.selePoItemSqlCmd +
                                     @"and f.MDivisionID = '{1}' and p.seq1 ='{2}' and p.seq2 = '{3}'", CurrentDetailData["poid"], Sci.Env.User.Keyword, seq[0], seq[1]), out dr, null))
                             {
-                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("Data not found!", "Seq");
                                 return;
                             }
                             else
@@ -291,8 +292,8 @@ namespace Sci.Production.Warehouse
                                 string productiontype = MyUtility.GetValue.Lookup(string.Format(@"select productiontype from fabric WITH (NOLOCK) inner join mtltype WITH (NOLOCK) on fabric.mtltypeid = mtltype.id where SCIRefno = '{0}'", dr["scirefno"]), null);
                                 if (productiontype.ToUpper().TrimEnd() != "PACKING")
                                 {
-                                    MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype,e.FormattedValue), "Seq");
                                     e.Cancel = true;
+                                    MyUtility.Msg.WarningBox(string.Format("Seq ({1}) : Production type is  {0}  not packing!!", productiontype,e.FormattedValue), "Seq");
                                     return;
                                 }
                                 else
