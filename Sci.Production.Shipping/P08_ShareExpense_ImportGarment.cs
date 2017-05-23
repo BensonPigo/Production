@@ -57,7 +57,7 @@ namespace Sci.Production.Shipping
                 MyUtility.Check.Empty(txtCountryDestination.TextBox1.Text) && MyUtility.Check.Empty(txtShipmode.SelectedValue) && MyUtility.Check.Empty(txtbrand.Text) &&
                 MyUtility.Check.Empty(txtSubconForwarder.TextBox1.Text) && MyUtility.Check.Empty(txtTruck.Text) && MyUtility.Check.Empty(datePulloutDate.Value1) && MyUtility.Check.Empty(datePulloutDate.Value2))
             {
-                MyUtility.Msg.WarningBox("< FCR Date > or < Pullout Date > or < Destination > or < Ship Mode > or < Data from > or < Brand > or < Forwarder > or < Truck# > can not be empty!");
+                
                 dateFCRDate.TextBox1.Focus();
                 return;
             }

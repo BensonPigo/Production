@@ -35,22 +35,22 @@ namespace Sci.Production.Shipping
             //檢查必輸欄位
             if (MyUtility.Check.Empty(txtDescriptionofGoods.Text))
             {
-                MyUtility.Msg.WarningBox("Description of Goods can't empty!!");
                 txtDescriptionofGoods.Focus();
+                MyUtility.Msg.WarningBox("Description of Goods can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(txtHSCode.Text))
             {
-                MyUtility.Msg.WarningBox("HS Code can't empty!!");
                 txtHSCode.Focus();
+                MyUtility.Msg.WarningBox("HS Code can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(comboCategory.Text))
             {
-                MyUtility.Msg.WarningBox("Category can't empty!!");
                 comboCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 

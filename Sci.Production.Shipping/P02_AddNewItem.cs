@@ -139,44 +139,44 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentData["Description"]))
             {
-                MyUtility.Msg.WarningBox("Description can't empty!");
                 editDescription.Focus();
+                MyUtility.Msg.WarningBox("Description can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
-                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 txtCTNNo.Focus();
+                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
-                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 numNW.Focus();
+                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Category"]))
             {
-                MyUtility.Msg.WarningBox("Category can't empty!");
                 comboCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
-                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 txtReceiver.Focus();
+                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Leader"]))
             {
-                MyUtility.Msg.WarningBox("Team Leader can't empty!");
                 txtTeamLeader.Focus();
+                MyUtility.Msg.WarningBox("Team Leader can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("Brand can't empty!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("Brand can't empty!");
                 return false;
             }
 
@@ -184,8 +184,8 @@ from Style s WITH (NOLOCK) where s.ID = '{0}' and s.SeasonID = '{1}'", txtstyle.
             {
                 if (MyUtility.Check.Empty(CurrentData["StyleID"]))
                 {
-                    MyUtility.Msg.WarningBox("Style can't empty!");
                     txtstyle.Focus();
+                    MyUtility.Msg.WarningBox("Style can't empty!");
                     return false;
                 }
             }
@@ -246,9 +246,9 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             {
                 if (!MyUtility.Check.Seek(txtTeamLeader.Text, "TPEPass1", "ID"))
                 {
-                    MyUtility.Msg.WarningBox("Data not found!!");
                     CurrentData["Leader"] = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!!");
                     return;
                 }
             }

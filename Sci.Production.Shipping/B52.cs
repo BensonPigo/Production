@@ -111,11 +111,11 @@ order by GoodsDescription", "50,10,8,0", this.Text, false, ",", headercaptions: 
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("The Good's Description is not in the Contract!!");
                         txtGoodsDescription.Text = "";
                         CurrentMaintain["NLCode"] = "";
                         CurrentMaintain["CustomsUnit"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("The Good's Description is not in the Contract!!");
                         return;
                     }
                 }

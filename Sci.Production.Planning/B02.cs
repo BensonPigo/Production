@@ -28,22 +28,22 @@ namespace Sci.Production.Planning
         {
             if (String.IsNullOrWhiteSpace(CurrentMaintain["BeginStitch"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Begin Stitch > can not be empty!");
                 this.numBeginStitch.Focus();
+                MyUtility.Msg.WarningBox("< Begin Stitch > can not be empty!");
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["EndStitch"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< End Stitch > can not be empty!");
                 this.numEndStitch.Focus();
+                MyUtility.Msg.WarningBox("< End Stitch > can not be empty!");
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Batchno"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Batch Number > can not be empty!");
                 this.numBatchNumber.Focus();
+                MyUtility.Msg.WarningBox("< Batch Number > can not be empty!");
                 return false;
             }
 
@@ -97,8 +97,8 @@ namespace Sci.Production.Planning
             Sci.Data.DBProxy.Current.Exists(null, s1, cmds,out flag);
             if (flag)
             {
-                MyUtility.Msg.WarningBox("This Data ranage already cover existed data");
                 NeedCheck = false;  //初始化
+                MyUtility.Msg.WarningBox("This Data ranage already cover existed data");
                 return false;
             }
             NeedCheck = false;  //初始化

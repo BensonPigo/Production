@@ -34,22 +34,22 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("< Brand > can not be empty!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("< Brand > can not be empty!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Ship Mode > can not be empty!");
                 txtShipMode.Focus();
+                MyUtility.Msg.WarningBox("< Ship Mode > can not be empty!");
                 return false;
             }
 
             if (String.IsNullOrWhiteSpace(CurrentMaintain["Forwarder"].ToString()))
             {
-                MyUtility.Msg.WarningBox("< Forwarder > can not be empty!");
                 this.txtubconForwarder.Focus();
+                MyUtility.Msg.WarningBox("< Forwarder > can not be empty!");
                 return false;
             }
 

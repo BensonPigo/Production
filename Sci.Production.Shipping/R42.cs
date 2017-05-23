@@ -44,8 +44,8 @@ namespace Sci.Production.Shipping
 
             if (comboCategory.SelectedIndex == -1)
             {
-                MyUtility.Msg.WarningBox("Category can't empty!!");
                 comboCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 

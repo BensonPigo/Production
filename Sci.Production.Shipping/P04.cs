@@ -69,14 +69,14 @@ where ed.ID = '{0}'", masterID);
         {
             if (MyUtility.Check.Empty(CurrentMaintain["Forwarder"]))
             {
-                MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 txtSubconForwarder.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MyUtility.Msg.WarningBox("ShipMode can't empty!!");
                 txtShipmodeShippingMode.Focus();
+                MyUtility.Msg.WarningBox("ShipMode can't empty!!");
                 return false;
             }
 
@@ -92,8 +92,8 @@ where ed.ID = '{0}'", masterID);
                 string sqlCmd = string.Format("select ID from FtyExport WITH (NOLOCK) where BLNo = '{0}' and ID != '{1}'", MyUtility.Convert.GetString(CurrentMaintain["BLNo"]), MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 if (MyUtility.Check.Seek(sqlCmd))
                 {
-                    MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
                     txtBLAWBNo.Focus();
+                    MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
                     return false;
                 }
             }

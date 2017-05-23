@@ -173,9 +173,9 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                                 {
                                     if (MyUtility.Convert.GetString(e.FormattedValue) != "Y")
                                     {
-                                        MyUtility.Msg.WarningBox("It should be only 'Y' or ''!");
                                         dr["GMTBookingLock"] = "Y";
                                         e.Cancel = true;
+                                        MyUtility.Msg.WarningBox("It should be only 'Y' or ''!");
                                         return;
                                     }
                                 }
@@ -192,9 +192,9 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
 
                                     if (MyUtility.Check.Seek(sqlCmd))
                                     {
-                                        MyUtility.Msg.WarningBox("Pullout report already confirmed, can't  unlock!");
                                         dr["GMTBookingLock"] = "Y";
                                         e.Cancel = true;
+                                        MyUtility.Msg.WarningBox("Pullout report already confirmed, can't  unlock!");
                                         return;
                                     }
                                 }
@@ -207,9 +207,9 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                             {
                                 if (Convert.ToDateTime(e.FormattedValue) > DateTime.Today.AddMonths(12) || Convert.ToDateTime(e.FormattedValue) < DateTime.Today.AddMonths(-12))
                                 {
-                                    MyUtility.Msg.WarningBox("< Cargo Ready Date > is invalid!!");
                                     dr["CargoReadyDate"] = null;
                                     e.Cancel = true;
+                                    MyUtility.Msg.WarningBox("< Cargo Ready Date > is invalid!!");
                                     return;
                                 }
                             }
@@ -352,74 +352,74 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["InvSerial"]))
             {
-                MyUtility.Msg.WarningBox("Inv. Serial can't empty!!");
                 txtInvSerial.Focus();
+                MyUtility.Msg.WarningBox("Inv. Serial can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["InvDate"]))
             {
-                MyUtility.Msg.WarningBox("Inv. Date can't empty!!");
                 dateInvDate.Focus();
+                MyUtility.Msg.WarningBox("Inv. Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shipper"]))
             {
-                MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 txtfactoryShipper.Focus();
+                MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["FCRDate"]))
             {
-                MyUtility.Msg.WarningBox("FCR Date can't empty!!");
                 dateFCRDate.Focus();
+                MyUtility.Msg.WarningBox("FCR Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
-                MyUtility.Msg.WarningBox("CustCD can't empty!!");
                 txtCustCD.Focus();
+                MyUtility.Msg.WarningBox("CustCD can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
-                MyUtility.Msg.WarningBox("Destination can't empty!!");
                 txtCountryDestination.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Destination can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PayTermARID"]))
             {
-                MyUtility.Msg.WarningBox("Payment Term can't empty!!");
                 txtpaytermarPaymentTerm.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Payment Term can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MyUtility.Msg.WarningBox("Shipping Mode can't empty!!");
                 txtShipmodeShippingMode.Focus();
+                MyUtility.Msg.WarningBox("Shipping Mode can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipTermID"]))
             {
-                MyUtility.Msg.WarningBox("Shipment Term can't empty!!");
                 txtShiptermShipmentTerm.Focus();
+                MyUtility.Msg.WarningBox("Shipment Term can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
-                MyUtility.Msg.WarningBox("Handle can't empty!!");
                 txtUserHandle.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Handle can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Forwarder"]))
             {
-                MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 txtSubconForwarder.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Forwarder can't empty!!");
                 return false;
             }
             #endregion
@@ -431,8 +431,8 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))
                 string newID = MyUtility.GetValue.Lookup("NegoRegion", MyUtility.Convert.GetString(CurrentMaintain["Shipper"]), "Factory", "ID").Trim() + Convert.ToDateTime(CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode",MyUtility.Convert.GetString(CurrentMaintain["BrandID"]),"Brand","ID").Trim();
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
-                    MyUtility.Msg.WarningBox("Inv. Serial already exist!!");
                     txtInvSerial.Focus();
+                    MyUtility.Msg.WarningBox("Inv. Serial already exist!!");
                     return false;
                 }
                 CurrentMaintain["ID"] = newID;
@@ -659,9 +659,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (dateInvDate.Value > DateTime.Today.AddDays(180) || dateInvDate.Value < DateTime.Today.AddDays(-180))
                 {
-                    MyUtility.Msg.WarningBox("< Inv. Date > is invalid, it exceeds +/-180 days!!");
                     dateInvDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Inv. Date > is invalid, it exceeds +/-180 days!!");
                     return;
                 }
             }
@@ -683,9 +683,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateFCRDate.Value), -12, 12))
                 {
-                    MyUtility.Msg.WarningBox("< FCR Date > is invalid!!");
                     dateFCRDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< FCR Date > is invalid!!");
                     return;
                 }
 
@@ -815,16 +815,16 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                 {
                     if (!CheckDate((DateTime)MyUtility.Convert.GetDate(cutOffDate), -12, 12))
                     {
-                        MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                         txtCutoffDate.Text = null;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                         return;
                     }
                 }
                 catch (Exception )
                 {
-                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                     return;
                 }
                 
@@ -839,9 +839,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateETD.Value), -12, 12))
                 {
-                    MyUtility.Msg.WarningBox("< ETD > is invalid!!");
                     dateETD.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< ETD > is invalid!!");
                     return;
                 }
             }
@@ -854,9 +854,9 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (!CheckDate((DateTime)MyUtility.Convert.GetDate(dateETA.Value), -12, 12))
                 {
-                    MyUtility.Msg.WarningBox("< ETA > is invalid!!");
                     dateETA.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< ETA > is invalid!!");
                     return;
                 }
             }
@@ -1035,26 +1035,26 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())", MyUtility.Convert
             //Brand, CustCD, Destination, Ship Mode不可以為空
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("< Brand > can't empty!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("< Brand > can't empty!");
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
-                MyUtility.Msg.WarningBox("< CustCD > can't empty!");
                 txtCustCD.Focus();
+                MyUtility.Msg.WarningBox("< CustCD > can't empty!");
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
-                MyUtility.Msg.WarningBox("< Destination > can't empty!");
                 txtCountryDestination.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("< Destination > can't empty!");
                 return;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MyUtility.Msg.WarningBox("< Shipping Mode > can't empty!");
                 txtShipmodeShippingMode.Focus();
+                MyUtility.Msg.WarningBox("< Shipping Mode > can't empty!");
                 return;
             }
 
@@ -1227,9 +1227,9 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("Whse# is not found!!");
                     CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
                     this.txtTerminalWhse.Text = "";
+                    MyUtility.Msg.WarningBox("Whse# is not found!!");
                     e.Cancel = true;                    
                 }
             }           

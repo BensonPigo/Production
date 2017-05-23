@@ -97,13 +97,13 @@ namespace Sci.Production.Shipping
                         DataRow seekrow;
                         if (!MyUtility.Check.Seek(string.Format("select UnitID,Waste,HSCode from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'", contract, e.FormattedValue.ToString()), out seekrow))
                         {
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             dr["NLCode"] = "";
                             dr["HSCode"] = "";
                             dr["Qty"] = 0;
                             dr["Unit"] = "";
                             dr["Waste"] = 0;
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             return;
                         }
                         else

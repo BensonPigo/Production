@@ -85,9 +85,9 @@ for xml path('')) as ShipModeID");
                         {
                             shipMode = shipMode.Substring(0, shipMode.Length - 1);
                         }
-                        MyUtility.Msg.WarningBox(string.Format("Ship mode must be '{0}'",shipMode));
                         CurrentData["OrderID"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("Ship mode must be '{0}'", shipMode));
                         return;
                     }
                 }
@@ -185,56 +185,56 @@ where DutyNo = '{0}' and ed.ID <> '{1}'", txtAirPPNo.Text, MyUtility.Convert.Get
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentData["OrderID"]))
             {
-                MyUtility.Msg.WarningBox("SP# can't empty!");
                 txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("SP# can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Description"]))
             {
-                MyUtility.Msg.WarningBox("Description can't empty!");
                 editDescription.Focus();
+                MyUtility.Msg.WarningBox("Description can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
-                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 txtCTNNo.Focus();
+                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Qty"]))
             {
-                MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 numQty.Focus();
+                MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["UnitID"]))
             {
-                MyUtility.Msg.WarningBox("Unit can't empty!");
                 txtunit_ftyUnit.Focus();
+                MyUtility.Msg.WarningBox("Unit can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
-                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 numNW.Focus();
+                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Category"]))
             {
-                MyUtility.Msg.WarningBox("Category can't empty!");
                 comboCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
-                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 txtReceiver.Focus();
+                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["DutyNo"]))
             {
-                MyUtility.Msg.WarningBox("Air PP No. can't empty!");
                 txtAirPPNo.Focus();
+                MyUtility.Msg.WarningBox("Air PP No. can't empty!");
                 return false;
             }
             #endregion

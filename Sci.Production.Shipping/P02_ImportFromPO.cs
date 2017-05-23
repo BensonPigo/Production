@@ -68,8 +68,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtSPNo.Text))
             {
-                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 return;
             }
             if (MyUtility.Convert.GetString(txtSPNo.Text).IndexOf("'") != -1)
@@ -137,8 +137,8 @@ where psd.ID = '{0}'{1}{2}) a", txtSPNo.Text, MyUtility.Check.Empty(txtSEQ1.Text
 
             if (MyUtility.Check.Empty(txtRemark.Text))
             {
-                MyUtility.Msg.WarningBox("Remark can't empty!!");
                 txtRemark.Focus();
+                MyUtility.Msg.WarningBox("Remark can't empty!!");
                 return;
             }
 

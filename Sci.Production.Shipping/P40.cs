@@ -122,12 +122,12 @@ namespace Sci.Production.Shipping
                             if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                                 MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                             {
-                                MyUtility.Msg.WarningBox("NL Code not found!!");
                                 dr["HSCode"] = "";
                                 dr["NLCode"] = "";
                                 dr["Qty"] = 0;
                                 dr["UnitID"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("NL Code not found!!");
                                 return;
                             }
                             else
@@ -196,14 +196,14 @@ namespace Sci.Production.Shipping
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
-                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
             #endregion
@@ -326,17 +326,17 @@ namespace Sci.Production.Shipping
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
-                        MyUtility.Msg.WarningBox("This Contract can't use.");
                         txtContractNo.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("This Contract can't use.");
                         return;
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     txtContractNo.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
             }
@@ -379,13 +379,13 @@ namespace Sci.Production.Shipping
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("BL No. not found!!");
                             CurrentMaintain["IsFtyExport"] = isFtyExport;
                             CurrentMaintain["IsLocalPO"] = localPurchase ? 1 : 0;
                             CurrentMaintain["BLNo"] = "";
                             CurrentMaintain["ShipModeID"] = "";
                             CurrentMaintain["FromSite"] = "";
                             CurrentMaintain["IsSystemCalculate"] = 0;
+                            MyUtility.Msg.WarningBox("BL No. not found!!");
                             e.Cancel = true;
                             return;
                         }
@@ -483,24 +483,24 @@ namespace Sci.Production.Shipping
                         {
                             if (MyUtility.Convert.GetString(export["Type"]) == "1")
                             {
-                                MyUtility.Msg.WarningBox("The Fty WK No. is < 3rd Country>!!");
                                 CurrentMaintain["WKNo"] = "";
                                 CurrentMaintain["ShipModeID"] = "";
                                 CurrentMaintain["FromSite"] = "";
                                 CurrentMaintain["IsSystemCalculate"] = 0;
                                 CurrentMaintain["IsLocalPO"] = 0;
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("The Fty WK No. is < 3rd Country>!!");
                                 return;
                             }
                             if (MyUtility.Convert.GetString(export["Type"]) == "3")
                             {
-                                MyUtility.Msg.WarningBox("The Fty WK No. is < Transfer Out>!!");
                                 CurrentMaintain["WKNo"] = "";
                                 CurrentMaintain["ShipModeID"] = "";
                                 CurrentMaintain["FromSite"] = "";
                                 CurrentMaintain["IsSystemCalculate"] = 0;
                                 CurrentMaintain["IsLocalPO"] = 0;
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("The Fty WK No. is < Transfer Out>!!");
                                 return;
                             }
                             localPurchase = MyUtility.Convert.GetString(export["Type"]) == "4" ? true : false;
@@ -524,7 +524,6 @@ namespace Sci.Production.Shipping
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("WK No. not found!!");
                             CurrentMaintain["IsFtyExport"] = 0;
                             CurrentMaintain["IsLocalPO"] = 0;
                             CurrentMaintain["WKNo"] = "";
@@ -532,6 +531,7 @@ namespace Sci.Production.Shipping
                             CurrentMaintain["FromSite"] = "";
                             CurrentMaintain["IsSystemCalculate"] = 0;
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("WK No. not found!!");
                             return;
                         }
                     }

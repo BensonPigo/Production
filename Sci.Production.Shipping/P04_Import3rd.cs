@@ -47,14 +47,14 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtSPNo.Text))
             {
-                MyUtility.Msg.WarningBox("SP# can't be empty!");
                 txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("SP# can't be empty!");
                 return;
             }
             if (MyUtility.Check.Empty(txtsupplier.TextBox1.Text))
             {
-                MyUtility.Msg.WarningBox("Supplier can't be empty!");
                 txtsupplier.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Supplier can't be empty!");
                 return;
             }
 

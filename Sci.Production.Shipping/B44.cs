@@ -54,9 +54,9 @@ from VNContract_Detail WITH (NOLOCK)
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
 and NLCode = '{0}'", txtNLCode.Text)))
                     {
-                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         CurrentMaintain["NLCode"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         return;
                     }
             }

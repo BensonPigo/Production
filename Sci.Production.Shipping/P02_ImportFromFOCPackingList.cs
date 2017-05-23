@@ -65,8 +65,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtFOCPL.Text))
             {
-                MyUtility.Msg.WarningBox("FOC PL# can't empty!!");
                 txtFOCPL.Focus();
+                MyUtility.Msg.WarningBox("FOC PL# can't empty!!");
                 return;
             }
 

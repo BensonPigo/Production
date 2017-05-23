@@ -345,44 +345,44 @@ where sd.ID = '{0}'", masterID);
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Type"]))
             {
-                MyUtility.Msg.WarningBox("Type can't empty!!");
                 comboType.Focus();
+                MyUtility.Msg.WarningBox("Type can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SubType"]))
             {
-                MyUtility.Msg.WarningBox("SubType can't empty!!");
                 comboType2.Focus();
+                MyUtility.Msg.WarningBox("SubType can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["LocalSuppID"]))
             {
-                MyUtility.Msg.WarningBox("Supplier can't empty!!");
                 txtSubconSupplier.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Supplier can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PayTermID"]))
             {
-                MyUtility.Msg.WarningBox("Terms can't empty!!");
                 txtpayterm_ftyTerms.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Terms can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
-                MyUtility.Msg.WarningBox("B/L No. can't empty!!");
                 txtBLNo.Focus();
+                MyUtility.Msg.WarningBox("B/L No. can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
-                MyUtility.Msg.WarningBox("Handle can't empty!!");
                 txtUserHandle.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Handle can't empty!!");
                 return false;
             }
             #endregion

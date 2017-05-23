@@ -47,8 +47,8 @@ namespace Sci.Production.Shipping
             if (MyUtility.Check.Empty(dateArrivePortDate.Value1) && MyUtility.Check.Empty(dateArrivePortDate.Value2) && MyUtility.Check.Empty(txtInvoiceNo.Text) && 
                 MyUtility.Check.Empty(txtBLNo.Text) && MyUtility.Check.Empty(txtWKNo.Text))
             {
-                MyUtility.Msg.WarningBox("< Arrive Port Date > or < Invoice No. > or < B/L No. > or < WK No. > can not be empty!");
                 dateArrivePortDate.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("< Arrive Port Date > or < Invoice No. > or < B/L No. > or < WK No. > can not be empty!");
                 return;
             }
 

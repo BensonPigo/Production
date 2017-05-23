@@ -47,8 +47,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtSPNo.Text) && MyUtility.Check.Empty(txtLocalPurchase.Text))
             {
-                MyUtility.Msg.WarningBox("< SP# > or < Local Purchase# > can't be empty!");
                 txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("< SP# > or < Local Purchase# > can't be empty!");
                 return;
             }
 

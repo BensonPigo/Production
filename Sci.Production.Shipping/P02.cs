@@ -568,68 +568,68 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["FromSite"]))
             {
-                MyUtility.Msg.WarningBox("From (Site) can't empty");
                 txtFrom.Focus();
+                MyUtility.Msg.WarningBox("From (Site) can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ToSite"]))
             {
-                MyUtility.Msg.WarningBox("To (Site) can't empty");
                 txtTO.Focus();
+                MyUtility.Msg.WarningBox("To (Site) can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
-                MyUtility.Msg.WarningBox("Destination can't empty");
                 txtCountryDestination.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Destination can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["PortAir"]))
             {
-                MyUtility.Msg.WarningBox("Port can't empty");
                 txtPort.Focus();
+                MyUtility.Msg.WarningBox("Port can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ShipDate"]))
             {
-                MyUtility.Msg.WarningBox("Ship. Date can't empty");
                 dateShipDate.Focus();
+                MyUtility.Msg.WarningBox("Ship. Date can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ETD"]))
             {
-                MyUtility.Msg.WarningBox("ETD can't empty");
                 dateETD.Focus();
+                MyUtility.Msg.WarningBox("ETD can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ETA"]))
             {
-                MyUtility.Msg.WarningBox("ETA can't empty");
                 dateETA.Focus();
+                MyUtility.Msg.WarningBox("ETA can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CarrierID"]))
             {
-                MyUtility.Msg.WarningBox("Carrier can't empty");
                 txtCarrier.Focus();
+                MyUtility.Msg.WarningBox("Carrier can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["BLNo"]))
             {
-                MyUtility.Msg.WarningBox("B/L No. can't empty");
                 txtBLNo.Focus();
+                MyUtility.Msg.WarningBox("B/L No. can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Handle"]))
             {
-                MyUtility.Msg.WarningBox("Handle can't empty");
                 txtUserHandle.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Handle can't empty");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Manager"]))
             {
-                MyUtility.Msg.WarningBox("Manager can't empty");
                 txtUserManager.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Manager can't empty");
                 return false;
             }
             #endregion
@@ -1027,9 +1027,9 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
             {
                 if (!MyUtility.Check.Empty(CurrentMaintain["ETA"]) && dateETD.Value > MyUtility.Convert.GetDate(CurrentMaintain["ETA"]))
                 {
-                    MyUtility.Msg.WarningBox("ETD can't later than ETA!");
                     CurrentMaintain["ETD"] = DBNull.Value;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("ETD can't later than ETA!");
                     return;
                 }
             }
@@ -1044,18 +1044,18 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
                 {
                     if (dateETA.Value < MyUtility.Convert.GetDate(CurrentMaintain["ETD"]))
                     {
-                        MyUtility.Msg.WarningBox("ETA can't early than ETD!");
                         CurrentMaintain["ETA"] = DBNull.Value;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("ETA can't early than ETD!");
                         return;
                     }
                     else
                     {
                         if (dateETA.Value > Convert.ToDateTime(CurrentMaintain["ETD"]).AddDays(90))
                         {
-                            MyUtility.Msg.WarningBox("ETA can't later than ETD more than 90 days!");
                             CurrentMaintain["ETA"] = DBNull.Value;
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("ETA can't later than ETD more than 90 days!");
                             return;
                         }
                     }
@@ -1103,9 +1103,9 @@ left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
                     var asc = ASCIIEncoding.ASCII.GetBytes(txtBLNo.Text.Substring(i, 1));
                     if (!((asc[0] >= 48 && asc[0] <= 57) || (asc[0] >= 65 && asc[0] <= 90)))
                     {
-                        MyUtility.Msg.WarningBox("B/L No. format error, only keyin (0-9,A-Z)!");
                         CurrentMaintain["BLNo"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("B/L No. format error, only keyin (0-9,A-Z)!");
                         return;
                     }
                 }

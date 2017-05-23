@@ -57,8 +57,8 @@ namespace Sci.Production.Planning
             }
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
             {
-                MyUtility.Msg.WarningBox(warningmsg.ToString());
                 detailgridbs.Filter = "ukey=" + gridArtworkType.GetDataRow(gridArtworkType.GetSelectedRowIndex())["ukey"].ToString();
+                MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return false;
             }
             return base.ClickSaveBefore();
@@ -122,12 +122,11 @@ namespace Sci.Production.Planning
                     }
                     else 
                     {
-                        MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
                         CurrentDetailData["localsuppid"] = "";
                         CurrentDetailData["suppname"] = "";
                         CurrentDetailData["currencyid"] = "";
                         e.Cancel = true;
-                        
+                        MyUtility.Msg.WarningBox("Supplier is not found!", "Warning");
                        return;
                     }
                 }

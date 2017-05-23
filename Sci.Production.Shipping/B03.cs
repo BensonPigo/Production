@@ -69,22 +69,22 @@ namespace Sci.Production.Shipping
         {
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["ID"])))
             {
-                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 this.txtCode.Focus();
+                MyUtility.Msg.WarningBox("< Code > can not be empty!");
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["Description"])))
             {
-                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.editDescription.Focus();
+                MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(MyUtility.Convert.GetString(CurrentMaintain["AccountID"])))
             {
-                MyUtility.Msg.WarningBox("< Account No > can not be empty!");
                 this.txtAccountNo.Focus();
+                MyUtility.Msg.WarningBox("< Account No > can not be empty!");
                 return false;
             }
 
@@ -105,18 +105,18 @@ namespace Sci.Production.Shipping
             {
                 if (txtCode.Text.IndexOf("'") != -1)
                 {
-                    MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     txtCode.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     return;
                 }
 
                 string selectCommand = string.Format("select ID from ShipExpense WITH (NOLOCK) where ID = '{0}'", txtCode.Text);
                 if (MyUtility.Check.Seek(selectCommand, null))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", txtCode.Text.Trim()));
                     txtCode.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("Code: '{0}' is duplicate!", txtCode.Text.Trim()));
                     return;
                 }
             }

@@ -80,9 +80,9 @@ from FtyExport WITH (NOLOCK)
                         if (MyUtility.Check.Empty(dtExp)) return;
                         if (dtExp.Rows.Count == 0)
                         {
-                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
                             e.Cancel = true;
+                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             return;
                         }
                         else
@@ -124,9 +124,9 @@ select * from Expt", e.FormattedValue.ToString());
                         if (MyUtility.Check.Empty(dtImp)) return;
                         if (dtImp.Rows.Count == 0)
                         {
-                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
                             e.Cancel = true;
+                            MyUtility.Msg.InfoBox("<BLNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             return;
                         }
                         else
@@ -213,9 +213,9 @@ SELECT * FROM FTY
                         DBProxy.Current.Select(null, chkExp, out dtExp);
                         if (dtExp == null && dtExp.Rows.Count == 0)
                         {
-                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
                             e.Cancel = true;
+                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             return;
                         }
                         else
@@ -251,9 +251,9 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         if (MyUtility.Check.Empty(dtImp)) return;
                         if (dtImp.Rows.Count == 0)
                         {
-                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             drGrid.Delete();
                             e.Cancel = true;
+                            MyUtility.Msg.InfoBox("<WKNo:>" + e.FormattedValue.ToString() + " Not Found!!");
                             return;
                         }
                         else

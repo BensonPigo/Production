@@ -76,26 +76,26 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
             {
-                MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 dateStartDate.Focus();
+                MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
             {
-                MyUtility.Msg.WarningBox("End Date can't empty!!");
                 dateEndDate.Focus();
+                MyUtility.Msg.WarningBox("End Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("CDC No. can't empty!!");
                 txtCDCNo.Focus();
+                MyUtility.Msg.WarningBox("CDC No. can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["FactoryID"]))
             {
-                MyUtility.Msg.WarningBox("Factory can't empty!!");
                 txtFactory.Focus();
+                MyUtility.Msg.WarningBox("Factory can't empty!!");
                 return false;
             }
             
@@ -105,8 +105,8 @@ where kd.ID = '{0}' order by CONVERT(INT,SUBSTRING(Seq,PATINDEX('%-%',Seq)+1,len
             //End Date：輸入日期一定不能小於Start Date
             if (dateEndDate.Value < dateStartDate.Value)
             {
-                MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 dateEndDate.Focus();
+                MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 return false;
             }
             #endregion

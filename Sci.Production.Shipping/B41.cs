@@ -42,8 +42,8 @@ namespace Sci.Production.Shipping
             CurrentMaintain["NLCodeEditDate"] = DateTime.Now;
             if (MyUtility.Check.Empty(this.txtNLCode.Text))
             {
-                MyUtility.Msg.InfoBox("<NL Code> can't be empty!!");
                 this.txtNLCode.Focus();
+                MyUtility.Msg.InfoBox("<NL Code> can't be empty!!");
                 return false;
             }
             
@@ -105,11 +105,11 @@ and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         CurrentMaintain["NLCode"] = "";
                         CurrentMaintain["HSCode"] = "";
                         CurrentMaintain["CustomsUnit"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         return;
                     }
                 }

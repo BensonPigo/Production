@@ -191,64 +191,64 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CustomSP"]))
             {
-                MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
                 txtCustomSPNo.Focus();
+                MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
-                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["StyleID"]))
             {
-                MyUtility.Msg.WarningBox("Style can't empty!!");
                 txtStyle.Focus();
+                MyUtility.Msg.WarningBox("Style can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Category"]))
             {
-                MyUtility.Msg.WarningBox("Category can't empty!!");
                 comboCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SizeCode"]))
             {
-                MyUtility.Msg.WarningBox("Size can't empty!!");
                 txtSize.Focus();
+                MyUtility.Msg.WarningBox("Size can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Qty"]))
             {
-                MyUtility.Msg.WarningBox("Q'ty can't empty!!");
                 numQty.Focus();
+                MyUtility.Msg.WarningBox("Q'ty can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(editColorway.Text))
             {
-                MyUtility.Msg.WarningBox("Color way can't empty!!");
                 editColorway.Focus();
+                MyUtility.Msg.WarningBox("Color way can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(editSizeGroup.Text))
             {
-                MyUtility.Msg.WarningBox("Size Group can't empty!!");
                 editSizeGroup.Focus();
+                MyUtility.Msg.WarningBox("Size Group can't empty!!");
                 return false;
             }
             #endregion
@@ -403,16 +403,16 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtContractNo.Text)))
                 {
-                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     txtContractNo.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
                 else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate'", txtContractNo.Text)))
                 {
-                    MyUtility.Msg.WarningBox("This Contract can't use.");
                     txtContractNo.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("This Contract can't use.");
                     return;
                 }
             }

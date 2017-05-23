@@ -199,10 +199,10 @@ namespace Sci.Production.Planning
                 }
                 if (Code != dtid)
                 {
-                    MyUtility.Msg.WarningBox("This supp id is wrong");
                     ddr["localSuppid"] = "";
                     ddr["suppnm"] = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("This supp id is wrong");
                     return;
                 }
             };
@@ -312,22 +312,22 @@ namespace Sci.Production.Planning
             if ((sewinline_b == null && sewinline_e == null) &&
                 (sciDelivery_b == null && sciDelivery_e == null))
             {
-                MyUtility.Msg.WarningBox("< SCI Delivery > or < Sewing Inline Date > can't be empty!!");
                 dateSCIDelivery.Focus1();
+                MyUtility.Msg.WarningBox("< SCI Delivery > or < Sewing Inline Date > can't be empty!!");
                 return;
             }
 
             if (MyUtility.Check.Empty(numEfficiency.Text))
             {
-                MyUtility.Msg.WarningBox("Efficiency can't be empty!!");
                 numEfficiency.Focus();
+                MyUtility.Msg.WarningBox("Efficiency can't be empty!!");
                 return;
             }
 
             if (MyUtility.Check.Empty(numWorkHours.Text))
             {
-                MyUtility.Msg.WarningBox("Work hours can't be empty!!");
                 numWorkHours.Focus();
+                MyUtility.Msg.WarningBox("Work hours can't be empty!!");
                 return;
             }
             string orderby="";

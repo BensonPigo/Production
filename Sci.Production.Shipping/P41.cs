@@ -79,9 +79,9 @@ and exists (select 1 from VNConsumption_SizeCode cs WITH (NOLOCK) where cs.ID = 
 order by c.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(dr["StyleID"]), MyUtility.Convert.GetString(dr["Category"]), MyUtility.Convert.GetString(dr["BrandID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(e.FormattedValue));
                             if (!MyUtility.Check.Seek(sqlCmd))
                             {
-                                MyUtility.Msg.WarningBox("Custom SP# not found!!");
                                 dr["CustomSP"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("Custom SP# not found!!");
                                 return;
                             }
                         }
@@ -200,26 +200,26 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'", MyUtility.Convert.GetString(Cur
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["CDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
-                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["InvNo"]))
             {
-                MyUtility.Msg.WarningBox("Inv No. can't empty!!");
                 txtInvNo.Focus();
+                MyUtility.Msg.WarningBox("Inv No. can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNExportPortID"]))
             {
-                MyUtility.Msg.WarningBox("Port of Export can't empty!!");
                 txtPortofExport.Focus();
+                MyUtility.Msg.WarningBox("Port of Export can't empty!!");
                 return false;
             }
 
@@ -452,17 +452,17 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where  ID = '{0}' and StartDate <= {1} and EndDate >= {1} and Status = 'Confirmed'", txtContractNo.Text, MyUtility.Check.Empty(CurrentMaintain["CDate"]) ? "GETDATE()" : "'" + Convert.ToDateTime(CurrentMaintain["CDate"]).ToString("d") + "'")))
                     {
-                        MyUtility.Msg.WarningBox("This Contract can't use.");
                         txtContractNo.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("This Contract can't use.");
                         return;
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     txtContractNo.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
             }
@@ -484,9 +484,9 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from VNExportPort WITH (NOLOCK) where ID = '{0}'", txtPortofExport.Text)))
                 {
-                    MyUtility.Msg.WarningBox("Data not found!!");
                     txtPortofExport.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!!");
                     return;
                 }
             }
@@ -514,9 +514,9 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
                     {
                         if (!MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where INVNo = '{0}'", txtInvNo.Text)))
                         {
-                            MyUtility.Msg.WarningBox("Data not found!!");
                             txtInvNo.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Data not found!!");
                             return;
                         }
                         else
@@ -533,10 +533,10 @@ group by ed.CustomSP", MyUtility.Convert.GetString(CurrentMaintain["ID"]));
 
                     if (MyUtility.Check.Seek(string.Format("select ID from VNExportDeclaration WITH (NOLOCK) where ID <> '{0}' and InvNo = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]), MyUtility.Convert.GetString(CurrentMaintain["InvNo"]))))
                     {
-                        MyUtility.Msg.WarningBox("This <Inv No.> already created!!");
                         CurrentMaintain["InvNo"] = "";
                         CurrentMaintain["DataFrom"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("This <Inv No.> already created!!");
                         return;
                     }
                 }

@@ -76,9 +76,9 @@ namespace Sci.Production.Shipping
                 {
                     if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", e.FormattedValue.ToString())))
                     {
-                        MyUtility.Msg.WarningBox("Contract no. not found!!");
                         dr["VNContractID"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Contract no. not found!!");
                         return;
                     }
                 }
@@ -125,8 +125,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(dateBuyerDelivery.Value1))
             {
-                MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
                 dateBuyerDelivery.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Buyer Delivery can't empty!");
                 return;
             }
             DataTable GroupData, gridData;
@@ -632,8 +632,8 @@ select * from @tempCombColor order by StyleID,SeasonID,Category,Article,SizeCode
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", txtVNContractID.Text)))
                 {
-                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     txtVNContractID.Text = "";
+                    MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
             }

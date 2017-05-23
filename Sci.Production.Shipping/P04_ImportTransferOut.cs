@@ -47,8 +47,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtTransferOutNo.Text))
             {
-                MyUtility.Msg.WarningBox("< Transfer Out No. > can't be empty!");
                 txtTransferOutNo.Focus();
+                MyUtility.Msg.WarningBox("< Transfer Out No. > can't be empty!");
                 return;
             }
             //sql參數

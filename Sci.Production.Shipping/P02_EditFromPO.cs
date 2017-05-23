@@ -36,26 +36,26 @@ namespace Sci.Production.Shipping
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentData["CTNNo"]))
             {
-                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 txtCTNNo.Focus();
+                MyUtility.Msg.WarningBox("CTN No. can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Qty"]))
             {
-                MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 numQty.Focus();
+                MyUtility.Msg.WarningBox("Q'ty can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["NW"]))
             {
-                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 numNW.Focus();
+                MyUtility.Msg.WarningBox("N.W. (kg) can't empty!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentData["Receiver"]))
             {
-                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 txtReceiver.Focus();
+                MyUtility.Msg.WarningBox("Receiver can't empty!");
                 return false;
             }
             #endregion

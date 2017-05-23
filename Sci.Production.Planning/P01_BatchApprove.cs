@@ -89,8 +89,8 @@ namespace Sci.Production.Planning
                 MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && 
                 MyUtility.Check.Empty(artworktype) )
             {
-                MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
                 txtSPNoStart.Focus();
+                MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
                 return;
             }
             else

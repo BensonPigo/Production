@@ -28,9 +28,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(dateDate.Value1) || MyUtility.Check.Empty(dateDate.Value2))
             {
-                MyUtility.Msg.WarningBox("Date can't empty");
                 dateDate.TextBox1.Focus();
-
+                MyUtility.Msg.WarningBox("Date can't empty");
                 return false;
             }
             date1 = dateDate.Value1;

@@ -47,21 +47,21 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtSPNo.Text))
             {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!");
                 txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("< SP# > can't be empty!");
                 return;
             }
             if (MyUtility.Check.Empty(txtScifactoryFromFactory.Text))
             {
-                MyUtility.Msg.WarningBox("< From Factory > can't be empty!");
                 txtScifactoryFromFactory.Focus();
+                MyUtility.Msg.WarningBox("< From Factory > can't be empty!");
                 return;
             }
 
             if (MyUtility.Check.Empty(txtScifactoryToFactory.Text))
             {
-                MyUtility.Msg.WarningBox("< To Factory > can't be empty!");
                 txtScifactoryToFactory.Focus();
+                MyUtility.Msg.WarningBox("< To Factory > can't be empty!");
                 return;
             }
 

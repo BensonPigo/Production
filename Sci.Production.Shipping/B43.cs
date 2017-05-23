@@ -99,26 +99,26 @@ namespace Sci.Production.Shipping
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("Contract No. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract No. can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["StartDate"]))
             {
-                MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 dateStartDate.Focus();
+                MyUtility.Msg.WarningBox("Start Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["EndDate"]))
             {
-                MyUtility.Msg.WarningBox("End Date can't empty!!");
                 dateEndDate.Focus();
+                MyUtility.Msg.WarningBox("End Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["TotalQty"]))
             {
-                MyUtility.Msg.WarningBox("Grand Total Q'ty can't empty!!");
                 numGrandTotalQty.Focus();
+                MyUtility.Msg.WarningBox("Grand Total Q'ty can't empty!!");
                 return false;
             }
             #endregion
@@ -127,16 +127,16 @@ namespace Sci.Production.Shipping
             //Start Date：輸入的日期年份一定要跟建檔當天同一年
             if (Convert.ToDateTime(dateStartDate.Value).Year != DateTime.Today.Year)
             {
-                MyUtility.Msg.WarningBox("Pls double check the start date!!");
                 dateStartDate.Focus();
+                MyUtility.Msg.WarningBox("Pls double check the start date!!");
                 return false;
             }
 
             //End Date：輸入的日期年份一定要是建檔當天的隔年
             if (Convert.ToDateTime(dateEndDate.Value).Year != DateTime.Today.Year + 1)
             {
-                MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 dateEndDate.Focus();
+                MyUtility.Msg.WarningBox("Pls double check the end date!!");
                 return false;
             }
             #endregion

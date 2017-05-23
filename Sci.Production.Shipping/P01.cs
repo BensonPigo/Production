@@ -175,78 +175,78 @@ where o.Id = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["OrderID"]), My
             //檢查必輸欄位
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MyUtility.Msg.WarningBox("SP No. can't empty!!");
                 txtSpNo.Focus();
+                MyUtility.Msg.WarningBox("SP No. can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
-                MyUtility.Msg.WarningBox("Seq can't empty!!");
                 txtSeq.Focus();
+                MyUtility.Msg.WarningBox("Seq can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["PPICMgr"]))
             {
-                MyUtility.Msg.WarningBox("PPIC mgr can't empty!!");
                 txtUserPPICmgr.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("PPIC mgr can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["FtyMgr"]))
             {
-                MyUtility.Msg.WarningBox("Factory mgr can't empty!!");
                 txtUserFactorymgr.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Factory mgr can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleFty"]) && MyUtility.Check.Empty(CurrentMaintain["RatioFty"]))
             {
-                MyUtility.Msg.WarningBox("Factory Ratio% can't empty!!");
                 numFactoryRatio.Focus();
+                MyUtility.Msg.WarningBox("Factory Ratio% can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSubcon"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSubcon"]))
             {
-                MyUtility.Msg.WarningBox("Subcon Ratio% can't empty!!");
                 numSubconRatio.Focus();
+                MyUtility.Msg.WarningBox("Subcon Ratio% can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSCI"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSCI"]))
             {
-                MyUtility.Msg.WarningBox("SCI Ratio% can't empty!!");
                 numSCIRatio.Focus();
+                MyUtility.Msg.WarningBox("SCI Ratio% can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSupp"]) && MyUtility.Check.Empty(CurrentMaintain["RatioSupp"]))
             {
-                MyUtility.Msg.WarningBox("Supplier Ratio% can't empty!!");
                 numSupplierRatio.Focus();
+                MyUtility.Msg.WarningBox("Supplier Ratio% can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleBuyer"]) && MyUtility.Check.Empty(CurrentMaintain["RatioBuyer"]))
             {
-                MyUtility.Msg.WarningBox("Buyer Ratio% can't empty!!");
                 numBuyerRatio.Focus();
+                MyUtility.Msg.WarningBox("Buyer Ratio% can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleFty"]) && MyUtility.Check.Empty(CurrentMaintain["ResponsibleFtyNo"]))
             {
-                MyUtility.Msg.WarningBox("Factory can't empty!!");
                 txtfactory.Focus();
+                MyUtility.Msg.WarningBox("Factory can't empty!!");
                 return false;
             }
 
             if (!MyUtility.Check.Empty(CurrentMaintain["ResponsibleSubcon"]) && MyUtility.Check.Empty(CurrentMaintain["SubConName"]))
             {
-                MyUtility.Msg.WarningBox("Subcon Name can't empty!!");
                 txtSubconName.Focus();
+                MyUtility.Msg.WarningBox("Subcon Name can't empty!!");
                 return false;
             }
 
@@ -657,8 +657,8 @@ where oq.Id = b.Id and oq.Seq = b.Seq", orderID, MyUtility.Convert.GetString(Cur
                             txttpeuserSMR.DisplayBox2.Text = "";
                             txttpeuserTask.DisplayBox1.Text = "";
                             txttpeuserTask.DisplayBox2.Text = "";
-                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} The Air Pre-Paid is already created.", orderID));
                             txtSpNo.Text = "";
+                            MyUtility.Msg.InfoBox(string.Format("SP#:{0} The Air Pre-Paid is already created.", orderID));
                             return;
                         }
                         if (orderQtyData.Rows.Count == 1)

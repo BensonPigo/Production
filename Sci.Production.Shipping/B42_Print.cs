@@ -35,7 +35,7 @@ namespace Sci.Production.Shipping
 
             if (MyUtility.Check.Empty(txtCustomSPNoStart.Text) != MyUtility.Check.Empty(txtCustomSPNoEnd.Text))
             {
-                MyUtility.Msg.WarningBox("Custom SP# can't be empty!!");
+               
                 if (MyUtility.Check.Empty(txtCustomSPNoStart.Text))
                 {
                     txtCustomSPNoStart.Focus();
@@ -44,6 +44,7 @@ namespace Sci.Production.Shipping
                 {
                     txtCustomSPNoEnd.Focus();
                 }
+                MyUtility.Msg.WarningBox("Custom SP# can't be empty!!");
                 return false;
             }
 

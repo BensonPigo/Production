@@ -46,11 +46,11 @@ namespace Sci.Production.Shipping
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             dr["NLCode"] = "";
                             dr["HSCode"] = "";
                             dr["CustomsUnit"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             return;
                         }
                     }
@@ -73,11 +73,11 @@ namespace Sci.Production.Shipping
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             dr["NLCode"] = "";
                             dr["HSCode"] = "";
                             dr["CustomsUnit"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("NL Code not found!!");
                             return;
                         }
                     }

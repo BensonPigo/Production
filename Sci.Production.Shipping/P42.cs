@@ -65,12 +65,12 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                                 if (!MyUtility.Check.Seek(string.Format("select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
                                     MyUtility.Convert.GetString(CurrentMaintain["VNContractID"]), MyUtility.Convert.GetString(e.FormattedValue)), out seekData))
                                 {
-                                    MyUtility.Msg.WarningBox("NL Code not found!!");
                                     dr["HSCode"] = "";
                                     dr["NLCode"] = "";
                                     dr["Qty"] = 0;
                                     dr["UnitID"] = "";
                                     e.Cancel = true;
+                                    MyUtility.Msg.WarningBox("NL Code not found!!");
                                     return;
                                 }
                                 else
@@ -145,8 +145,8 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             }
             if (MyUtility.Check.Empty(CurrentMaintain["VNContractID"]))
             {
-                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
             #endregion

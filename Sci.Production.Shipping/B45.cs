@@ -86,11 +86,11 @@ and NLCode = '{0}'", txtNLCode.Text), out NLCodeDate))
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         CurrentMaintain["NLCode"] = "";
                         CurrentMaintain["HSCode"] = "";
                         CurrentMaintain["UnitID"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("The NL Code is not in the Contract!!");
                         return;
                     }
                 }

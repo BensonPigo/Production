@@ -424,10 +424,10 @@ select ID,AbbEN from Supp WITH (NOLOCK) ) a
 where a.ID = '{0}'", txtForwarder.Text);
                     if (!MyUtility.Check.Seek(Sql, out inputData))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", txtForwarder.Text));
                         txtForwarder.Text = "";
                         displayBox1.Value = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Forwarder: {0} > not found!!!", txtForwarder.Text));
                         return;
                     }
                     else

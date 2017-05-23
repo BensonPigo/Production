@@ -28,8 +28,8 @@ namespace Sci.Production.Shipping
         {
             if (MyUtility.Check.Empty(txtContractNo.Text))
             {
-                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 txtContractNo.Focus();
+                MyUtility.Msg.WarningBox("Contract no. can't empty!!");
                 return false;
             }
 
@@ -37,8 +37,8 @@ namespace Sci.Production.Shipping
             {
                 if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
                 {
-                    MyUtility.Msg.WarningBox("SP# start from can't empty!!");
                     txtSPNoStartFrom.Focus();
+                    MyUtility.Msg.WarningBox("SP# start from can't empty!!");
                     return false;
                 }
             }
