@@ -640,7 +640,7 @@ namespace Sci.Production.Subcon
             }
 
             sqlupd3 = string.Format(@"update Localpo set status='New',apvname='', apvdate = null , editname = '{0}' 
-                                                    , editdate = GETDATE(), ApvDate='' where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+                                                    , editdate = GETDATE(), ApvDate = null where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
