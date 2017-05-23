@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Transactions;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
@@ -71,6 +72,16 @@ namespace Sci.Production.Warehouse
                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P03_Refno(dr);
+                frm.ShowDialog(this);
+            };
+            #endregion
+
+            #region OrderList 開窗
+            Ict.Win.DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
+            OrderList.CellMouseDoubleClick += (s, e) =>
+            {
+                DataRow dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                var frm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
                 frm.ShowDialog(this);
             };
             #endregion
@@ -197,7 +208,7 @@ namespace Sci.Production.Warehouse
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true)  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true)  //21
             .Date("FinalETA", header: "Act. ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
-            .Text("OrderIdList", header: "Order List", iseditingreadonly: true)  //23
+            .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList)  //23
             .Numeric("InQty", header: "Arrived Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
             .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true)  //25
             .Numeric("OutQty", header: "Released Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts5)    //26
