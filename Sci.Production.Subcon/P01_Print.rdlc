@@ -844,6 +844,7 @@
               <TextRun>
                 <Value>=Parameters!Title1.Value</Value>
                 <Style>
+                  <FontFamily>Times New Roman</FontFamily>
                   <FontSize>16pt</FontSize>
                 </Style>
               </TextRun>
