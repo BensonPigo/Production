@@ -11,9 +11,8 @@ CREATE PROCEDURE [dbo].[insert_Air_Fir]
 AS
 BEGIN
 	
-	SET NOCOUNT ON;
+		SET NOCOUNT ON;
 
---Drop table #tempTableAll
 select 
 [ID] = a.id,
 [PoId]=a.PoId,
@@ -40,6 +39,67 @@ inner join Receiving e on a.Id=e.Id
 where a.Id = @ID
 
 
+declare @InspDeadLine date
+
+if exists (select 1 from #tempTableAll where fabricType='F')
+	begin 
+		select	@InspDeadLine =(
+		select InspDeadLine from (
+		select CONVERT(date,dateadd(DAY,+7,WhseArrival)) as InspDeadLine,* from #tempTableAll
+		where Category='M'
+		union 
+		select  Kpileta,* from #tempTableAll
+		where Category<>'M'
+		and  (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
+		and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))<1
+		union 
+		select CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
+		and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))>=1
+		union 
+		select CONVERT(date,DATEADD(day,-21,[MinSciDelivery])),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
+		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))< 1
+		union 
+		select  CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
+		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))>= 1
+		)a
+		where a.fabricType='F'		)
+	end
+else	
+	begin 
+		select	@InspDeadLine =(
+		select InspDeadLine from (
+		select CONVERT(date,dateadd(DAY,+7,WhseArrival)) as InspDeadLine,* from #tempTableAll
+		where Category='M'
+		union 
+		select  Kpileta,* from #tempTableAll
+		where Category<>'M'
+		and  (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
+		and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))<1
+		union 
+		select CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
+		and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))>=1
+		union 
+		select CONVERT(date,DATEADD(day,-21,[MinSciDelivery])),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
+		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))< 1
+		union 
+		select  CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
+		where Category<>'M'
+		and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
+		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))>= 1
+		)a
+		where a.fabricType='A'		)
+	end
+
 --Fir
 
 	declare @tempFir table(id bigint,deID bigint )	
@@ -47,33 +107,7 @@ where a.Id = @ID
 RAISERROR('insert_Air_Fir - Starts',0,0)
 Merge Production.dbo.Fir as t
 using (
-
-select * from (
-select CONVERT(date,dateadd(DAY,+7,WhseArrival)) as InspDeadLine,* from #tempTableAll
-where Category='M'
-union 
-select  Kpileta,* from #tempTableAll
-where Category<>'M'
-and  (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
-and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))<1
-union 
-select CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
-and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))>=1
-union 
-select CONVERT(date,DATEADD(day,-21,[MinSciDelivery])),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
-and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))< 1
-union 
-select  CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
-and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))>= 1
-)a
-where a.fabricType='F'
-
+	select * from #tempTableAll	where fabricType='F'
  ) as s
 on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
 when matched then
@@ -82,12 +116,12 @@ when matched then
  t.scirefno=s.scirefno,
  t.refno=s.refno,
  t.ArriveQty = s.ArriveQty,
- t.InspDeadLine = s.InspDeadLine,
+ t.InspDeadLine = @InspDeadLine,
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID
@@ -114,31 +148,7 @@ declare @tempAir table(id bigint,deID bigint )
 RAISERROR('insert_Air_Fir - Starts',0,0)
 Merge Production.dbo.Air as t
 using (
-select * from (
-select CONVERT(date,dateadd(DAY,+7,WhseArrival)) as InspDeadLine,* from #tempTableAll
-where Category='M'
-union 
-select  Kpileta,* from #tempTableAll
-where Category<>'M'
-and  (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
-and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))<1
-union 
-select CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) >= 21 
-and (datediff(day,convert(date,DATEADD(day,-3, Kpileta)),CONVERT(date,[WhseArrival])))>=1
-union 
-select CONVERT(date,DATEADD(day,-21,[MinSciDelivery])),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
-and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))< 1
-union 
-select  CONVERT(date,DATEADD(day,+7,WhseArrival)),* from #tempTableAll
-where Category<>'M'
-and (DATEDIFF(day,CONVERT(date,Kpileta),convert(date,MinSciDelivery))) < 21 
-and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))>= 1
-)a
-where a.fabricType='A'
+	select * from #tempTableAll	where fabricType='A'
  ) as s
 on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
 when matched then
@@ -147,12 +157,12 @@ when matched then
  t.scirefno=s.scirefno,
  t.refno=s.refno,
  t.ArriveQty = s.ArriveQty,
- t.InspDeadLine = s.InspDeadLine,
+ t.InspDeadLine = @InspDeadLine,
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
  insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
+ values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,@InspDeadLine,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID
