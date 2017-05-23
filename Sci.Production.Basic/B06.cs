@@ -68,16 +68,16 @@ namespace Sci.Production.Basic
                 int n;
                 if (!int.TryParse(txtYear.Text, out n))
                 {
-                    MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                     this.txtYear.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                     return;
                 }
                 if (!(2015 <= int.Parse(textValue) && int.Parse(textValue) <= 2100))
                     {
-                        MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                         this.txtYear.Text = "";
-                        e.Cancel = true;
+                        e.Cancel = true; 
+                        MyUtility.Msg.WarningBox("< Year > must be between 2015 ~ 2100");
                         return;
                     }
             }
@@ -92,16 +92,18 @@ namespace Sci.Production.Basic
                 int n;
                 if (!int.TryParse(txtMonthly.Text, out n))
                 {
-                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
+                    
                     this.txtMonthly.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
                     return;
                 }
                 if (!(1 <= int.Parse(textValue) && int.Parse(textValue) <= 12))
                 {
-                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
+                    
                     this.txtMonthly.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Monthly > must be between 1 ~ 12");
                     return;
                 }
             }

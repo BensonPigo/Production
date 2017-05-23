@@ -55,9 +55,9 @@ namespace Sci.Production.Basic
                     {
                         if (!MyUtility.Check.Seek(e.FormattedValue.ToString(),"Country","ID"))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["CountryID"] = "";
                             dr["CountryName"] = "";
+                            MyUtility.Msg.WarningBox(string.Format("< Country: {0} > not found!!!", e.FormattedValue.ToString()));
                         }
                         else
                         {

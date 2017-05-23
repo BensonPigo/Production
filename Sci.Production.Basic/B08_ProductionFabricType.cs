@@ -63,17 +63,19 @@ namespace Sci.Production.Basic
                 {
                     if (reasonID.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
+                        
                         prodTextValue.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Prod. Type : {0} > not found!!!", prodTextValue.Text));
                         return;
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                    
                     prodTextValue.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                     return;
                 }
             }
@@ -99,17 +101,17 @@ namespace Sci.Production.Basic
                 {
                     if (reasonID.Rows.Count <= 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                         fabricTextValue.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Fabric Type : {0} > not found!!!", fabricTextValue.Text));
                         return;
                     }
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                     fabricTextValue.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
                     return;
                 }
             }
