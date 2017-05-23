@@ -32,8 +32,8 @@ namespace Sci.Production.Subcon
             if (!MyUtility.Check.Seek(string.Format(@"select id from dbo.orders WITH (NOLOCK) 
                     where factoryid='{0}' and id = @id", Sci.Env.User.Factory), cmds))
             {
-                MyUtility.Msg.WarningBox("SP# is not found, Please check value is right and belong to login factory!!");
                 e.Cancel = true;
+                MyUtility.Msg.WarningBox("SP# is not found, Please check value is right and belong to login factory!!");
                 return;
             }
         }

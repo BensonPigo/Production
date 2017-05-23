@@ -321,9 +321,9 @@ namespace Sci.Production.Subcon
             {
                 if (!MyUtility.Check.Seek(string.Format(@"select ID from ThreadType WITH (NOLOCK) WHERE Junk=0 and id = '{0}'", textValue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
                     this.txtThreadType.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Thread Type: {0} > not found !!", textValue));
                     return;
                 }
             }

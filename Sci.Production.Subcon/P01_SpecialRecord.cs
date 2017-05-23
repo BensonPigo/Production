@@ -230,9 +230,9 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery";
 
             if (cat != "S" && isArtwork.ToUpper() == "TRUE")
             {
-                MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
                 ((Sci.Win.UI.TextBox)sender).Text = "";
                 e.Cancel = true;
+                MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
                 return;
             }
         }

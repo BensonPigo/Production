@@ -306,8 +306,8 @@ namespace Sci.Production.Subcon
                     if ((decimal)e.FormattedValue > (decimal)CurrentDetailData["balance"]||
                         (decimal)e.FormattedValue + (decimal)CurrentDetailData["accumulatedqty"] > (decimal)CurrentDetailData["PoQty"])
                     {
-                        MyUtility.Msg.WarningBox("can't over balance and can't over poqty", "Warning");
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("can't over balance and can't over poqty", "Warning");
                         return;
                     }
                     CurrentDetailData["amount"] = (decimal)e.FormattedValue * (decimal)CurrentDetailData["price"];

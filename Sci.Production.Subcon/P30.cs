@@ -288,15 +288,15 @@ namespace Sci.Production.Subcon
                     {
                         if ((decimal)dr["price"] == 0m)
                         {
+                            e.Cancel=true; 
                             MyUtility.Msg.WarningBox("TmsCost price is Zero","Warning");
-                            e.Cancel=true;
                             return;
                         }
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("SP# is not in Order_TmsCost","Data not found");
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("SP# is not in Order_TmsCost","Data not found");
                         return;
                     }
                 }
@@ -311,8 +311,8 @@ namespace Sci.Production.Subcon
                 }
                 else
                 {
-                    MyUtility.Msg.ErrorBox("< SP# :" + e.FormattedValue + " > not found!!!");
                     CurrentDetailData["orderid"] = "";
+                    MyUtility.Msg.ErrorBox("< SP# :" + e.FormattedValue + " > not found!!!");
                     return;
                 }
 
@@ -346,8 +346,8 @@ namespace Sci.Production.Subcon
                                                                     ,e.FormattedValue.ToString(),CurrentMaintain["category"],CurrentMaintain["localsuppid"])
                                                                     ,out dr,null))
                     {
-                        MyUtility.Msg.WarningBox("Data not found!","Ref#");
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Data not found!","Ref#");
                         return;
                     }
                     else
@@ -389,8 +389,8 @@ namespace Sci.Production.Subcon
                                                                 , e.FormattedValue.ToString())
                                                                 , out dr, null))
                 {
-                    MyUtility.Msg.WarningBox("Data not found!","Color Shade");
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Data not found!","Color Shade");
                     return;
                 }
                 
