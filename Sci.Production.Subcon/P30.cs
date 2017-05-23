@@ -118,7 +118,7 @@ namespace Sci.Production.Subcon
 
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
                 if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
-
+                else displayApvDate.Text = "";
                 return false;
             }
 
@@ -250,10 +250,8 @@ namespace Sci.Production.Subcon
                 }
 
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
-                if (!(CurrentMaintain["ApvDate"] == DBNull.Value))
-                {
-                    displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
-                }
+                if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
+                else displayApvDate.Text = "";
             }
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
