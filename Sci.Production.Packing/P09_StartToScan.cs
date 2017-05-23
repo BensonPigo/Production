@@ -205,10 +205,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     DataRow dr = gridDetail.GetDataRow(gridDetail.GetSelectedRowIndex());
                     if (MyUtility.Convert.GetInt(dr["ScanQty"]) >= MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                     {
-                        MyUtility.Msg.WarningBox("PC/Ctn Scanned exceed PC/CTN, can't scanned!!");
                         IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
                         txtScanBarcode.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("PC/Ctn Scanned exceed PC/CTN, can't scanned!!");
                         return;
                     }
                     else
@@ -226,10 +226,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out SelectItemData);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox("Query structure fail!! Pls scan again.\r\n"+result.ToString());
                         IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
                         txtScanBarcode.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Query structure fail!! Pls scan again.\r\n" + result.ToString());
                         return;
                     }
 
@@ -250,10 +250,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
 
                     if (noBarcodeRecCount == 0)
                     {
-                        MyUtility.Msg.WarningBox("Wrong barcode, please check barcode again!!");
                         IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
                         txtScanBarcode.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Wrong barcode, please check barcode again!!");
                         return;
                     }
                     else if (noBarcodeRecCount == 1)
@@ -301,10 +301,10 @@ order by Seq", MyUtility.Convert.GetString(MasterDR["ID"]), MyUtility.Convert.Ge
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("Selected data not found! Please scan again.");
                             IDX.IdxCall(254, "a:" + txtScanBarcode.Text.Trim(), ("a:" + txtScanBarcode.Text.Trim()).Length);
                             txtScanBarcode.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Selected data not found! Please scan again.");
                             return;
                         }
                     }

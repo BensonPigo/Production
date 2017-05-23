@@ -220,8 +220,8 @@ where sd.ID = '{0}'", masterID);
                     {
                         if (MyUtility.Convert.GetInt(e.FormattedValue) > MyUtility.Convert.GetInt(dr["VarQty"]))
                         {
-                            MyUtility.Msg.WarningBox("Output Qty can't exceed Variance!");
                             dr["QAQty"] = dr["QAQty"];
+                            MyUtility.Msg.WarningBox("Output Qty can't exceed Variance!");
                             return;
                         }
                         else
@@ -325,29 +325,29 @@ where sd.ID = '{0}'", masterID);
             //檢查欄位值不可為空
             if (MyUtility.Check.Empty(CurrentMaintain["OutputDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
-                MyUtility.Msg.WarningBox("Line can't empty!!");
                 txtsewinglineLine.Focus();
+                MyUtility.Msg.WarningBox("Line can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Manpower"]))
             {
-                MyUtility.Msg.WarningBox("Manpower can't empty!!");
                 numManpower.Focus();
+                MyUtility.Msg.WarningBox("Manpower can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["WorkHour"]))
             {
-                MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
                 numWHours.Focus();
+                MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
                 return false;
             }
 
@@ -393,8 +393,8 @@ where sd.ID = '{0}'", masterID);
 
             if (recCnt == 0)
             {
-                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 detailgrid.Focus();
+                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 return false;
             }
 
@@ -454,16 +454,16 @@ where sd.ID = '{0}'", masterID);
             {
                 if (dateDate.Value > DateTime.Today)
                 {
-                    MyUtility.Msg.WarningBox("< Date > is greater than today, please pay attention!!");
                     dateDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Date > is greater than today, please pay attention!!");
                     return;
                 }
                 if (dateDate.Value < systemLockDate)
                 {
-                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + systemLockDate.ToString("d"));
                     dateDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< Date > can't early than System Lock Date:" + systemLockDate.ToString("d"));
                     return;
                 }
             }

@@ -399,9 +399,9 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select SizeCode from Order_QtyShip_Detail WITH (NOLOCK) where ID = '{0}' and Seq = '{1}' and Article = '{2}' and SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString())))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["SizeCode"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                     }
@@ -513,9 +513,9 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
                             {
                                 if (e.FormattedValue.ToString() != "0" && e.FormattedValue.ToString() != "1")
                                 {
-                                    MyUtility.Msg.WarningBox("# of CTN only keyin 1 or 0");
                                     dr["CTNQty"] = 0;
                                     e.Cancel = true;
+                                    MyUtility.Msg.WarningBox("# of CTN only keyin 1 or 0");
                                     return;
                                 }
                             }
@@ -621,29 +621,29 @@ order by os.Seq", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), d
             //檢查欄位值不可為空
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["CustCDID"]))
             {
-                MyUtility.Msg.WarningBox("CustCD can't empty!!");
                 txtcustcd.Focus();
+                MyUtility.Msg.WarningBox("CustCD can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["Dest"]))
             {
-                MyUtility.Msg.WarningBox("Destination can't empty!!");
                 txtcountry.Focus();
+                MyUtility.Msg.WarningBox("Destination can't empty!!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
                 txtshipmode.Focus();
+                MyUtility.Msg.WarningBox("Ship Mode can't empty!!");
                 return false;
             }
            
@@ -842,8 +842,8 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             //表身重新計算後,再判斷CBM or GW 是不是0
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
-                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 numTtlCBM.Focus();
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 return false;
             }
             return base.ClickSaveBefore();

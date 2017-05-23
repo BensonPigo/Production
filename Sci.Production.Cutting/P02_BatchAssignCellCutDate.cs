@@ -70,10 +70,10 @@ namespace Sci.Production.Cutting
                 DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     dr["Cutcellid"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     return;
                 }
 

@@ -80,10 +80,10 @@ namespace Sci.Production.Cutting
             if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
                 && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty())
             {
-                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
                 txtCutRefStart.Focus();
                 if (dtt !=null) dtt.Clear();
                 this.HideWaitMessage();
+                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date] can not be all null !!");
                 return;
             }
 
@@ -393,8 +393,8 @@ outer apply
             }
             if (!checkone)
             {
-                MyUtility.Msg.ErrorBox("Grid must be chose one");
                 grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
@@ -495,8 +495,8 @@ outer apply
             }
             if (!checkone)
             {
-                MyUtility.Msg.ErrorBox("Grid must be chose one");
                 grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
             DataTable selects = dtt.AsEnumerable()

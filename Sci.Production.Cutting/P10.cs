@@ -550,9 +550,9 @@ Where a.cutref='{0}' and a.mDivisionid = '{1}' and a.orderid = b.id"
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
-                MyUtility.Msg.WarningBox("<Cut Ref#> data not found!");
                 clear();
                 e.Cancel = true;
+                MyUtility.Msg.WarningBox("<Cut Ref#> data not found!");
                 return;
             }
             else
@@ -619,9 +619,9 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                 string cuttingid = MyUtility.GetValue.Lookup("id", CurrentMaintain["Cutref"].ToString(), "workorder", "Cutref");
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
-                    MyUtility.Msg.WarningBox("<Cutref> is different.");
                     txtSPNo.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("<Cutref> is different.");
                     return;
                 }
                 string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}'", CurrentMaintain["Cutref"], newvalue);
@@ -630,9 +630,9 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                 {
                     if (articleTb.Rows.Count == 0)
                     {
-                        MyUtility.Msg.WarningBox("<Cutref> is different.");
                         txtSPNo.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("<Cutref> is different.");
                         return;
                     }
                     CurrentMaintain["Qty"] = articleTb.Rows.Count; //一筆distribute 表示一個bundle
@@ -861,9 +861,9 @@ where Article!='' and WorkorderUkey={0} and Article='{1}'"
                 {
                     if (dtTEMP.Rows.Count == 0)
                     {
-                        MyUtility.Msg.WarningBox("<Article> can't find !!");
                         txtArticle.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("<Article> can't find !!");
                         return;
                     }
                 }
@@ -877,9 +877,9 @@ where Article!='' and WorkorderUkey={0} and Article='{1}'"
                     {
                         if (dtTEMP.Rows.Count == 0)
                         {
-                            MyUtility.Msg.WarningBox("<Article> can't find !!");
                             txtArticle.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("<Article> can't find !!");
                             return;
                         }
                     }

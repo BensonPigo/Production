@@ -266,20 +266,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DataRow cutdr;
             if (!MyUtility.Check.Seek(cmd, out cutdr, null))
             {
-                MyUtility.Msg.WarningBox("<Cutplan ID> data not found!");
                 txtCutplan.Text = "";
+                MyUtility.Msg.WarningBox("<Cutplan ID> data not found!");
                 return;
             }
             if (cutdr["markerreqid"].ToString() != "")
             {
-                MyUtility.Msg.WarningBox(string.Format("<Cutplan ID> already created Bulk Marker Request<{0}>", cutdr["markerreqid"]));
                 txtCutplan.Text = "";
+                MyUtility.Msg.WarningBox(string.Format("<Cutplan ID> already created Bulk Marker Request<{0}>", cutdr["markerreqid"]));
                 return;
             }
             if (cutdr["Status"].ToString() != "Confirmed")
             {
-                MyUtility.Msg.WarningBox("The Cutplan not yet confirm.");
                 txtCutplan.Text = "";
+                MyUtility.Msg.WarningBox("The Cutplan not yet confirm.");
                 return;
             }
             foreach (DataRow dr in this.DetailDatas)

@@ -48,8 +48,8 @@ namespace Sci.Production.Packing
         {
             if (MyUtility.Check.Empty(txtSPStart.Text) && MyUtility.Check.Empty(txtSPEnd.Text) && MyUtility.Check.Empty(dateSCIDelivery.Value1) && MyUtility.Check.Empty(dateSCIDelivery.Value2) && MyUtility.Check.Empty(dateSewingInlineDate.Value1) && MyUtility.Check.Empty(dateSewingInlineDate.Value2) && MyUtility.Check.Empty(dateCartonEstBooking.Value1) && MyUtility.Check.Empty(dateCartonEstBooking.Value2) && MyUtility.Check.Empty(dateCartonEstArrived.Value1) && MyUtility.Check.Empty(dateCartonEstArrived.Value2))
             {
-                MyUtility.Msg.WarningBox("< SP# > or < SCI Delivery > or < Sewing Inline Date > or < Carton Est. Booking > or < Carton Est. Arrived > can not empty!");
                 txtSPStart.Focus();
+                MyUtility.Msg.WarningBox("< SP# > or < SCI Delivery > or < Sewing Inline Date > or < Carton Est. Booking > or < Carton Est. Arrived > can not empty!");
                 return;
             }
 

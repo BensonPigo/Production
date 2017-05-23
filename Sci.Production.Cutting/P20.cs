@@ -93,7 +93,6 @@ namespace Sci.Production.Cutting
                 {
                     if (dt.Rows.Count==0)
                     {
-                        MyUtility.Msg.WarningBox("<Cut Ref> data not found.");
                         dr["Orderid"] = "";
                         dr["Cuttingid"] = "";
                         dr["Cutref"] = "";
@@ -106,6 +105,7 @@ namespace Sci.Production.Cutting
                         dr["SizeRatio"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("<Cut Ref> data not found.");
                         return;
                     }
                 }

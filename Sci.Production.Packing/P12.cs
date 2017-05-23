@@ -78,14 +78,14 @@ namespace Sci.Production.Packing
         {
             if (MyUtility.Check.Empty(dateExpPoutDate.Value))
             {
-                MyUtility.Msg.WarningBox("Exp P/out Date can't be empty!");
                 dateExpPoutDate.Focus();
+                MyUtility.Msg.WarningBox("Exp P/out Date can't be empty!");
                 return;
             }
             if (MyUtility.Check.Empty(txtdropdownlistCategory.SelectedValue))
             {
-                MyUtility.Msg.WarningBox("Category can't be empty!");
                 txtdropdownlistCategory.Focus();
+                MyUtility.Msg.WarningBox("Category can't be empty!");
                 return;
             }
             StringBuilder sqlCmd = new StringBuilder();

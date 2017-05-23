@@ -119,8 +119,8 @@ select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                     DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), radioFormA.Checked?"1":"2", out printData, out ctnDim, out qtyBDown);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
                         this.HideWaitMessage();
+                        MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
                         return;
                     }
                     PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, radioFormA.Checked ? "1" : "2", printData, ctnDim, qtyBDown);

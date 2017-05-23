@@ -225,9 +225,9 @@ where od.ID = '{0}'", masterID);
                     {
                         if (!MyUtility.Check.Seek(string.Format("Select ID, Description from PackingReason WITH (NOLOCK) where Type = 'OG' and Junk = 0 and ID = '{0}'", e.FormattedValue.ToString()), out dr1))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Reason ID: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["PackingReasonID"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Reason ID: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -277,14 +277,14 @@ where od.ID = '{0}'", masterID);
         {
             if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
             {
-                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 txtSP.Focus();
+                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CloseDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
 
@@ -306,8 +306,8 @@ where od.ID = '{0}'", masterID);
             }
             if (count == 0)
             {
-                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 detailgrid.Focus();
+                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 return false;
             }
             return base.ClickSaveBefore();

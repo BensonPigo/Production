@@ -190,9 +190,9 @@ order by a.OrderId,os.Seq"
                         {
                             if (MyUtility.Convert.GetBool(OrdersData.Rows[0]["IsForecast"]))
                             {
-                                MyUtility.Msg.WarningBox("SP# can't be PreOrder!!");
                                 dr["OrderID"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("SP# can't be PreOrder!!");
                                 return;
                             }
                             //當該SP#+Line不屬於排程時，跳出確認訊息
@@ -644,38 +644,38 @@ order by a.OrderId,os.Seq";
             #region 檢查不可為空值
             if (MyUtility.Check.Empty(CurrentMaintain["OutputDate"]))
             {
-                MyUtility.Msg.WarningBox("Date can't empty!!");
                 dateDate.Focus();
+                MyUtility.Msg.WarningBox("Date can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["SewingLineID"]))
             {
-                MyUtility.Msg.WarningBox("Line# can't empty!!");
                 txtsewinglineLine.Focus();
+                MyUtility.Msg.WarningBox("Line# can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Shift"]))
             {
-                MyUtility.Msg.WarningBox("Shift can't empty!!");
                 txtdropdownlistShift.Focus();
+                MyUtility.Msg.WarningBox("Shift can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Team"]))
             {
-                MyUtility.Msg.WarningBox("Team can't empty!!");
                 comboTeam.Focus();
+                MyUtility.Msg.WarningBox("Team can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["Manpower"]))
             {
-                MyUtility.Msg.WarningBox("Manpower can't empty!!");
                 numManpower.Focus();
+                MyUtility.Msg.WarningBox("Manpower can't empty!!");
                 return false;
             }
             if (MyUtility.Check.Empty(CurrentMaintain["WorkHour"]))
             {
-                MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
                 numWHours.Focus();
+                MyUtility.Msg.WarningBox("W/Hours(Day) can't empty!!");
                 return false;
             }
           
@@ -686,8 +686,8 @@ order by a.OrderId,os.Seq";
             {
                 if (MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     dateDate.Focus();
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     return false;
                 }
             }
@@ -793,8 +793,8 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             #region 表身資料不可為空
             if (recCnt == 0)
             {
-                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 detailgrid.Focus();
+                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 return false;
             }
             #endregion
@@ -1023,16 +1023,16 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
             {
                 if (dateDate.Value > DateTime.Today)
                 {
-                    MyUtility.Msg.WarningBox("Date is later than today, pls pay attention!!");
                     dateDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Date is later than today, pls pay attention!!");
                     return;
                 }
                 if (dateDate.Value <= MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     dateDate.Value = null;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("Date can't earlier than Sewing Lock Date: {0}.", Convert.ToDateTime(MyUtility.GetValue.Lookup("select SewLock from System WITH (NOLOCK) ")).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat))));
                     return;
                 }
             }

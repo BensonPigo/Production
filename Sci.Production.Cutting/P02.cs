@@ -651,10 +651,10 @@ order by id,article,sizecode"
                 DataRow[] seledr = spTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SP> : {0} data not found!", newvalue));
                     dr["orderid"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SP> : {0} data not found!", newvalue));
                     return;
                 }
 
@@ -719,10 +719,10 @@ order by id,article,sizecode"
                 string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
                 if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}'", poid, newvalue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
                     dr["SEQ1"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
                     return;
                 }
                 else
@@ -801,10 +801,10 @@ order by id,article,sizecode"
                 string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
                 if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq2 ='{1}'", poid, newvalue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
                     dr["SEQ2"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
                     return;
                 }
                 else
@@ -906,10 +906,10 @@ order by id,article,sizecode"
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     dr["cutCellid"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     return;
                 }
 
@@ -1026,10 +1026,10 @@ order by id,article,sizecode"
                 DataRow[] seledr = spTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<SP> : {0} data not found!", newvalue));
                     dr["orderid"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SP> : {0} data not found!", newvalue));
                     return;
                 }
                 if (!MyUtility.Check.Empty(dr["SizeCode"]) && !MyUtility.Check.Empty(dr["Article"]))
@@ -1037,10 +1037,10 @@ order by id,article,sizecode"
                     seledr = qtybreakTb.Select(string.Format("id = '{0}' and SizeCode = '{1}' and Article ='{2}'", newvalue, dr["SizeCode"], dr["Article"]));
                     if (seledr.Length == 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["Article"]));
                         dr["OrderID"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["Article"]));
                         return;
                     }
                 }
@@ -1091,10 +1091,10 @@ order by id,article,sizecode"
                 DataRow[] seledr = sizeGroup.Select(string.Format("SizeCode='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Size> : {0} data not found!", newvalue));
                     dr["SizeCode"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Size> : {0} data not found!", newvalue));
                     return;
                 }
                 if (!MyUtility.Check.Empty(dr["OrderID"]) && !MyUtility.Check.Empty(dr["Article"]))
@@ -1102,10 +1102,10 @@ order by id,article,sizecode"
                     seledr = qtybreakTb.Select(string.Format("id = '{0}' and SizeCode = '{1}' and Article ='{2}'", dr["OrderID"], newvalue, dr["Article"]));
                     if (seledr.Length == 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["Article"]));
                         dr["SizeCode"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["Article"]));
                         return;
                     }
                 }
@@ -1153,10 +1153,10 @@ order by id,article,sizecode"
                 DataRow[] seledr = artTb.Select(string.Format("Article='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    MyUtility.Msg.WarningBox(string.Format("<Article> : {0} data not found!", newvalue));
                     dr["Article"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Article> : {0} data not found!", newvalue));
                     return;
                 }
                 if (!MyUtility.Check.Empty(dr["OrderID"]) && !MyUtility.Check.Empty(dr["SizeCode"]))
@@ -1164,10 +1164,10 @@ order by id,article,sizecode"
                     seledr = qtybreakTb.Select(string.Format("id = '{0}' and SizeCode = '{1}' and Article ='{2}'", dr["OrderID"], dr["SizeCode"], newvalue));
                     if (seledr.Length == 0)
                     {
-                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["SizeCode"]));
                         dr["Article"] = "";
                         dr.EndEdit();
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("<SP#>:{0},<Article>:{1},<SizeCode>:{2}", dr["OrderID"], newvalue, dr["SizeCode"]));
                         return;
                     }
                 }

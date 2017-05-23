@@ -243,22 +243,22 @@ namespace Sci.Production.Packing
         {
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MyUtility.Msg.WarningBox("< SP No. > can not be empty!");
                 this.txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("< SP No. > can not be empty!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["OrderShipmodeSeq"]))
             {
-                MyUtility.Msg.WarningBox("< Seq > can not be empty!");
                 this.txtSeq.Focus();
+                MyUtility.Msg.WarningBox("< Seq > can not be empty!");
                 return false;
             }
 
             if (MyUtility.Check.Empty(CurrentMaintain["ShipModeID"]))
             {
-                MyUtility.Msg.WarningBox("< Shipping Mode > can not be empty!");
                 this.txtshipmode.Focus();
+                MyUtility.Msg.WarningBox("< Shipping Mode > can not be empty!");
                 return false;
             }
 

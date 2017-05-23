@@ -124,22 +124,22 @@ namespace Sci.Production.Packing
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out QrderQty);
                         if (!result)
                         {
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             dr["Article"] = "";
                             dr["SizeCode"] = "";
                             dr.EndEdit();
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             return;
                         }
                         else
                         {
                             if (QrderQty.Rows.Count <= 0)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
                                 dr["Article"] = "";
                                 dr["SizeCode"] = "";
                                 dr.EndEdit();
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Article: {0} > not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                             else
@@ -212,18 +212,18 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out QrderQty);
                         if (!result)
                         {
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             dr["SizeCode"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             return;
                         }
                         else
                         {
                             if (QrderQty.Rows.Count <= 0)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                                 dr["SizeCode"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                         }
@@ -308,9 +308,9 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                             {
                                 if (e.FormattedValue.ToString() != "0" && e.FormattedValue.ToString() != "1")
                                 {
-                                    MyUtility.Msg.WarningBox("# of CTN only keyin 1 or 0");
                                     dr["CTNQty"] = 0;
                                     e.Cancel = true;
+                                    MyUtility.Msg.WarningBox("# of CTN only keyin 1 or 0");
                                     return;
                                 }
                             }
@@ -367,8 +367,8 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                 string pullLock = MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ");
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(pullLock))
                 {
-                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     datePullOutDate.Focus();
+                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     return false;
                 }
 
@@ -378,8 +378,8 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
                 {
                     if (dr["Status"].ToString() != "New")
                     {
-                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         datePullOutDate.Focus();
+                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         return false;
                     }
                 }
@@ -388,8 +388,8 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
             //檢查欄位值不可為空
             if (MyUtility.Check.Empty(CurrentMaintain["OrderID"]))
             {
-                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 txtSP.Focus();
+                MyUtility.Msg.WarningBox("SP# can't empty!!");
                 return false;
             }
             
@@ -528,8 +528,8 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty", CurrentMaintain["ID"].ToString(), C
             }
             if (MyUtility.Check.Empty(CurrentMaintain["CBM"]) || MyUtility.Check.Empty(CurrentMaintain["GW"]))
             {
-                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 numTtlCBM.Focus();
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 return false;
             }
             return base.ClickSaveBefore();
@@ -586,33 +586,33 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out OrderData);
                     if (!result)
                     {
-                        MyUtility.Msg.WarningBox("Sql connectionfail!!\r\n" + result.ToString());
                         //OrderID異動，其他相關欄位要跟著異動
                         ChangeOtherData("");
                         txtSP.Text = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Sql connectionfail!!\r\n" + result.ToString());
                         return;
                     }
                     else
                     {
                         if (OrderData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             //OrderID異動，其他相關欄位要跟著異動
                             ChangeOtherData("");
                             txtSP.Text = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("< SP# > does not exist!");
                             return;
                         }
                         else
                         {
                             if (OrderData.Rows[0]["LocalOrder"].ToString() == "False")
                             {
-                                MyUtility.Msg.WarningBox("This SP# is not local order!");
                                 //OrderID異動，其他相關欄位要跟著異動
                                 ChangeOtherData("");
                                 txtSP.Text = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("This SP# is not local order!");
                                 return;
                             }
                         }
@@ -779,9 +779,9 @@ order by oa.Seq,os.Seq", orderID, seq);
                 {
                     if (dr["Status"].ToString() != "New")
                     {
-                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         datePullOutDate.Value = null;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         return;
                     }
                 }

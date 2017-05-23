@@ -125,9 +125,9 @@ where   ID = @orderid
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                         if (!result)
                         {
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             ClearGridRowData(dr);
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                             return;
                         }
                         else
@@ -369,12 +369,12 @@ from (
 where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].ToString(), dr["OrderShipmodeSeq"].ToString(), dr["Article"].ToString(), e.FormattedValue.ToString());
                         if (!MyUtility.Check.Seek(sqlCmd))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["SizeCode"] = "";
                             dr["qty"] = 0;
                             dr["ShipQty"] = 0;
                             dr["BalanceQty"] = 0;
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< SizeCode: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         dr["SizeCode"] = e.FormattedValue.ToString();
@@ -568,8 +568,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 //string pullLock = MyUtility.GetValue.Lookup("select PullLock from System");
                 if (MyUtility.Convert.GetDate(CurrentMaintain["PulloutDate"]) < MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup("select PullLock from System WITH (NOLOCK) ")))
                 {
-                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     datePullOutDate.Focus();
+                    MyUtility.Msg.WarningBox("Pullout date less then pullout lock date!!");
                     return false;
                 }
 
@@ -578,8 +578,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 {
                     if (dr["Status"].ToString() != "New")
                     {
-                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         datePullOutDate.Focus();
+                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         return false;
                     }
                 }
@@ -594,8 +594,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
 
             if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
             {
-                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 txtbrand.Focus();
+                MyUtility.Msg.WarningBox("Brand can't empty!!");
                 return false;
             }           
 
@@ -635,8 +635,8 @@ where a.Price = 0 and a.Article = '{2}' and a.SizeCode = '{3}'", dr["OrderID"].T
                 #region 表身的Color Way與Size不可以為空值
                 if (MyUtility.Check.Empty(dr["Article"]))
                 {
-                    MyUtility.Msg.WarningBox("< ColorWay >  can't empty!");
                     detailgrid.Focus();
+                    MyUtility.Msg.WarningBox("< ColorWay >  can't empty!");
                     return false;
                 }
 
@@ -739,8 +739,8 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
             //表身Grid不可為空
             if (count == 0)
             {
-                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 detailgrid.Focus();
+                MyUtility.Msg.WarningBox("< Detail > can't be empty!");
                 return false;
             }
 
@@ -790,9 +790,9 @@ group by oqd.Id,oqd.Seq,oqd.Article,oqd.SizeCode,oqd.Qty", CurrentMaintain["ID"]
                 {
                     if (dr["Status"].ToString() != "New")
                     {
-                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         datePullOutDate.Value = null;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Pullout date already exist pullout report and have been confirmed!");
                         return;
                     }
                 }
