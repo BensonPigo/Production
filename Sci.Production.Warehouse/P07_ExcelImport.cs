@@ -279,7 +279,7 @@ namespace Sci.Production.Warehouse
                                     continue;
                                 }
 
-                                if (newRow["seq1"].ToString().Substring(1, 1) == "7")
+                                if (newRow["seq1"].ToString().Substring(0, 1) == "7")
                                 {
                                     continue;
                                     //MyUtility.Msg.WarningBox(string.Format("Can't not import 7X item (SP#:{0}-Seq1:{1}-Seq2:{2})!!", newRow["poid"], newRow["seq1"], newRow["seq2"]));
