@@ -251,9 +251,9 @@ namespace Sci.Production.PPIC
                     {
                         if (MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where ID = '{0}'", txtBrand.Text)))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", txtBrand.Text));
                             CurrentMaintain["BrandID"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", txtBrand.Text));
                             return;
                         }
                     }

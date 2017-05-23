@@ -615,8 +615,9 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             {
                 if (MyUtility.Check.Seek(string.Format("select ID from SewingOutput_Detail WITH (NOLOCK) where OrderId = '{0}' and QAQty > 0", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
                 {
+                    CurrentMaintain["Junk"] = 0; 
                     MyUtility.Msg.WarningBox("This record had sewing daily output, can't cancel!!");
-                    CurrentMaintain["Junk"] = 0;
+                   
                 }
             }
         }

@@ -136,17 +136,17 @@ order by ld.Seq1,ld.Seq2", masterID);
                     {
                         if (MyUtility.Check.Empty(CurrentMaintain["POID"]))
                         {
-                            MyUtility.Msg.WarningBox("SP# can't empty!!");
                             ClearGridData(dr);
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("SP# can't empty!!");
                             return;
                         }
 
                         if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
                         {
-                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                             ClearGridData(dr);
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                             return;
                         }
 
@@ -175,10 +175,9 @@ order by ld.Seq1,ld.Seq2", masterID);
 
                         if (!MyUtility.Check.Seek(sqlCmd, out poData))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
-
                             ClearGridData(dr);
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                             return;
                         }
                         else
@@ -256,11 +255,11 @@ order by ld.Seq1,ld.Seq2", masterID);
                     {
                         if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
                         {
-                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                             dr["PPICReasonID"] = "";
                             dr["PPICReasonDesc"] = "";
                             dr.EndEdit();
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                             return;
                         }
 
@@ -268,11 +267,11 @@ order by ld.Seq1,ld.Seq2", masterID);
                         string sqlCmd = string.Format(@"select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
                         if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                             dr["PPICReasonID"] = "";
                             dr["PPICReasonDesc"] = "";
                             dr.EndEdit();
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                             return;
                         }
                         else
@@ -589,12 +588,12 @@ where a.RequestQty > a.StockQty", MyUtility.Convert.GetString(CurrentMaintain["P
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("SP# not exist!!");
                             CurrentMaintain["OrderID"] = "";
                             CurrentMaintain["POID"] = "";
                             CurrentMaintain["FactoryID"] = "";
                             DeleteAllGridData();
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("SP# not exist!!");
                             return;
                         }
                     }

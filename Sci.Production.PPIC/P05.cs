@@ -49,9 +49,9 @@ namespace Sci.Production.PPIC
                         {
                             if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                             {
-                                MyUtility.Msg.WarningBox("< Ready date > is invalid!!");
                                 dr["ReadyDate"] = DBNull.Value;
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox("< Ready date > is invalid!!");
                                 return;
                             }
                             else
@@ -147,9 +147,9 @@ where	ReasonTypeID='Delivery_OutStand'
         and Junk = 1", e.FormattedValue));
                 if (junk)
                 {
-                    MyUtility.Msg.InfoBox(string.Format("The reason 「{0}」 is Junked! It cann't be selected!", e.FormattedValue));
                     dr["OutReason"] = "";
                     dr["OutReasonDesc"] = "";
+                    MyUtility.Msg.InfoBox(string.Format("The reason 「{0}」 is Junked! It cann't be selected!", e.FormattedValue));
                 }
                 else
                 {

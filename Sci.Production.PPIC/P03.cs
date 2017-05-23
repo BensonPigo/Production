@@ -52,9 +52,9 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.gridProductionKitsConfirm.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && (Convert.ToDateTime(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddDays(180) || Convert.ToDateTime(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-180)))
                 {
-                    MyUtility.Msg.WarningBox("< FTY MR Rcv date > is invalid, it exceeds +/-180 days!!");
                     dr["ReceiveDate"] = DBNull.Value;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("< FTY MR Rcv date > is invalid, it exceeds +/-180 days!!");
                     return;
                 }
             };

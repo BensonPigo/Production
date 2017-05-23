@@ -39,9 +39,9 @@ namespace Sci.Production.PPIC
                     {
                         if ((MyUtility.Convert.GetDate(e.FormattedValue) > Convert.ToDateTime(DateTime.Today).AddYears(1) || MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddYears(-1)))
                         {
-                            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                             dr["SDPDate"] = DBNull.Value;
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("< Cut-off Date > is invalid!!");
                             return;
                         }
                     }

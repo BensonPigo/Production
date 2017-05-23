@@ -39,8 +39,8 @@ namespace Sci.Production.PPIC
             {
                 if (txtSEQ.Text.IndexOf("'") != -1)
                 {
-                    MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     txtSEQ.Text = "";
+                    MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
                     return;
                 }
 
@@ -90,11 +90,11 @@ and mpd.Seq2 = psd.SEQ2
 and mpd.InQty > 0", MyUtility.Convert.GetString(masterData["POID"]), txtSEQ.Text.Length < 3 ? txtSEQ.Text : txtSEQ.Text.Substring(0, 3), txtSEQ.Text.Length < 5 ? txtSEQ.Text.Length < 4 ? "" : txtSEQ.Text.ToString().Substring(3, 1) : txtSEQ.Text.ToString().Substring(3, 2), Sci.Env.User.Keyword);
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
                     {
-                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", txtSEQ.Text));
                         CurrentData["Seq"] = "";
                         CurrentData["Seq1"] = "";
                         CurrentData["Seq2"] = "";
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > have no receive record!!!", txtSEQ.Text));
                         return;
                     }
                     if (MyUtility.Convert.GetString(poData["FabricType"]) != "A")

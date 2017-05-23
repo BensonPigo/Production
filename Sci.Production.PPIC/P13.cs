@@ -46,8 +46,8 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(dr["CuttingSP"]) != MyUtility.Convert.GetString(dr["ID"]))
                 {
+                    dr["CutReadyDate"] = DBNull.Value; 
                     MyUtility.Msg.WarningBox("This SP is not cutting sp, no need input Cutting Ready Date.");
-                    dr["CutReadyDate"] = DBNull.Value;
                     return;
                 }
 
@@ -55,9 +55,9 @@ namespace Sci.Production.PPIC
                 {
                     if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        MyUtility.Msg.WarningBox("Cutting Ready Date can't exceed 30 days before today!!");
                         dr["CutReadyDate"] = DBNull.Value;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Cutting Ready Date can't exceed 30 days before today!!");
                         return;
                     }
                 }
@@ -70,9 +70,9 @@ namespace Sci.Production.PPIC
                 {
                     if (MyUtility.Convert.GetDate(e.FormattedValue) < Convert.ToDateTime(DateTime.Today).AddDays(-30))
                     {
-                        MyUtility.Msg.WarningBox("Inline date can't exceed 30 days before today!!");
                         dr["SewInLine"] = DBNull.Value;
                         e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Inline date can't exceed 30 days before today!!");
                         return;
                     }
                 }
@@ -83,9 +83,9 @@ namespace Sci.Production.PPIC
                 DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && (MyUtility.Check.Empty(dr["SewInLine"]) || (MyUtility.Convert.GetDate(e.FormattedValue) < MyUtility.Convert.GetDate(dr["SewInLine"]))))
                 {
-                    MyUtility.Msg.WarningBox("Offline date can't less than Inline date!!");
                     dr["SewOffLine"] = DBNull.Value;
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox("Offline date can't less than Inline date!!");
                     return;
                 }
             };
@@ -211,10 +211,10 @@ namespace Sci.Production.PPIC
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox3Value));
                     txtSMR.Text = "";
                     displaySMR.Value = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox3Value));
                     return;
                 }
             }
@@ -645,10 +645,10 @@ DROP TABLE #updatetemp  ", sewdate, Sci.Env.User.Factory);
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox4Value));
                     txtMR.Text = "";
                     displayMR.Value = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textBox4Value));
                     return;
                 }
             }

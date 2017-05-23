@@ -393,8 +393,8 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineStart.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text)); 
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineStart.Text));
                     txtSewingLineStart.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineStart.Text));
                     return;
                 }
             }
@@ -408,8 +408,8 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 string sql = string.Format("Select ID From SewingLine WITH (NOLOCK) where id='{0}' {1} ", txtSewingLineEnd.Text, MyUtility.Check.Empty(comboFactory.Text) ? "" : string.Format(" and FactoryID = '{0}'", comboFactory.Text));
                 if (!MyUtility.Check.Seek(sql))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineEnd.Text));
                     txtSewingLineEnd.Text = "";
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line: {0} > not found!!!", txtSewingLineEnd.Text));
                     return;
                 }
             }
