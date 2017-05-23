@@ -16,7 +16,7 @@ namespace Sci.Production.Cutting
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         DataTable[] printData;
-        string MD, CutCell1, CutCell2;
+        string MD, Factory, CutCell1, CutCell2;
         string[] cuttings;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
@@ -29,9 +29,16 @@ namespace Sci.Production.Cutting
         {
             InitializeComponent();
             DataTable WorkOrder;
+            //Set ComboM
             DBProxy.Current.Select(null, "Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             comboM.Text = Sci.Env.User.Keyword;
+            
+            //Set ComboFactory
+            DataTable Factory;
+            DBProxy.Current.Select(null, "Select Distinct ID from Factory", out Factory);
+            MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
+            comboFactory.Text = Sci.Env.User.Factory;
         }
 
         private void radioByOneDayDetial_CheckedChanged(object sender, EventArgs e)
@@ -64,6 +71,7 @@ namespace Sci.Production.Cutting
                 return false;
             }
 
+            Factory = comboFactory.Text;
             MD = comboM.Text;
             dateR_CuttingDate1 = dateCuttingDate.Value1;
             dateR_CuttingDate2 = dateCuttingDate.Value2;
@@ -97,24 +105,27 @@ namespace Sci.Production.Cutting
             string scell;
             if (radioByDetail.Checked || radioBySummary.Checked)
             {
-                scell = string.Format(
-@"select distinct CutCellID 
+                scell = string.Format(@"
+select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
-where Cutplan.EstCutdate >= '{0}' and Cutplan.EstCutdate <= '{1}'
-and Cutplan.MDivisionID ='{2}' and Cutplan.CutCellID >= '{3}' 
-and Cutplan.CutCellID <='{4}' 
+where   Cutplan.EstCutdate >= '{0}' 
+        and Cutplan.EstCutdate <= '{1}'
+        and Cutplan.MDivisionID ='{2}' 
+        and Cutplan.CutCellID >= '{3}' 
+        and Cutplan.CutCellID <='{4}' 
 order by CutCellID"
-                ,Convert.ToDateTime(dateR_CuttingDate1).ToString("d"),Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
-                ,MD, CutCell1, CutCell2);
+,Convert.ToDateTime(dateR_CuttingDate1).ToString("d"),Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+,MD, CutCell1, CutCell2);
             }else{
-                scell = string.Format(
-@"select distinct CutCellID 
+                scell = string.Format(@"
+select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
-where Cutplan.EstCutdate = '{0}'
-and Cutplan.MDivisionID ='{1}' and Cutplan.CutCellID >= '{2}' 
-and Cutplan.CutCellID <='{3}' 
+where   Cutplan.EstCutdate = '{0}'
+        and Cutplan.MDivisionID ='{1}' 
+        and Cutplan.CutCellID >= '{2}' 
+        and Cutplan.CutCellID <='{3}' 
 order by CutCellID"
-                , Convert.ToDateTime(dateR_CuttingDate1).ToString("d"), MD, CutCell1, CutCell2);
+, Convert.ToDateTime(dateR_CuttingDate1).ToString("d"), MD, CutCell1, CutCell2);
             }
 
             DBProxy.Current.Select(null, scell, out Cutcelltb);
