@@ -879,6 +879,7 @@
               <TextRun>
                 <Value>=Parameters!Title2.Value</Value>
                 <Style>
+                  <FontFamily>Times New Roman</FontFamily>
                   <FontSize>12pt</FontSize>
                 </Style>
               </TextRun>
@@ -913,6 +914,7 @@
               <TextRun>
                 <Value>=Parameters!Title3.Value</Value>
                 <Style>
+                  <FontFamily>Times New Roman</FontFamily>
                   <FontSize>12pt</FontSize>
                 </Style>
               </TextRun>
