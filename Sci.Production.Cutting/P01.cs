@@ -31,6 +31,11 @@ namespace Sci.Production.Cutting
                 this.DefaultFilter = string.Format("MDivisionID = '{0}' AND Finished = 1", keyWord);
                 this.IsSupportEdit = false;
             }
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)
@@ -45,7 +50,6 @@ namespace Sci.Production.Cutting
                 this.ReloadDatas();
             };
         }
-                
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
