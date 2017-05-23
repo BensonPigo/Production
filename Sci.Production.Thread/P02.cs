@@ -461,7 +461,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return;
             }
             //確認orders.id + 工廠有沒有這筆,沒有則return
-            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FactoryID = '{1}'", id, factory)))
+            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}' and FtyGroup = '{1}'", id, factory)))
             {
                 MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not found!!!!", id));
                 e.Cancel = true;
@@ -484,7 +484,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
             CurrentMaintain["Seasonid"] = drOrder["Seasonid"].ToString();
             CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
-            CurrentMaintain["factoryid"] = drOrder["factoryid"].ToString();
+            CurrentMaintain["factoryid"] = drOrder["FtyGroup"].ToString();
             CurrentMaintain["OrderID"] = id;
             //事先整理資料
             sqlpre = string.Format(@"Select distinct   	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
