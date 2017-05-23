@@ -394,6 +394,12 @@
       <DependentUpon>R26.cs</DependentUpon>
     </Compile>
     <Compile Include="R26_PrintData.cs" />
+    <Compile Include="R33.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R33.Designer.cs">
+      <DependentUpon>R33.cs</DependentUpon>
+    </Compile>
     <Compile Include="R36.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -607,6 +613,9 @@
       <DependentUpon>R26.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R26.rdlc" />
+    <EmbeddedResource Include="R33.resx">
+      <DependentUpon>R33.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R36.resx">
       <DependentUpon>R36.cs</DependentUpon>
     </EmbeddedResource>
