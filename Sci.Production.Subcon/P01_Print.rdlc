@@ -911,7 +911,9 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Title3.Value</Value>
-                <Style />
+                <Style>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
