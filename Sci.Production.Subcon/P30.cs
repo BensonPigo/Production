@@ -826,7 +826,14 @@ namespace Sci.Production.Subcon
             //int deleteIndex = 0;
             foreach (DataGridViewRow dr in this.detailgrid.SelectedRows)
             {
-                dr.Cells["Delivery"].Value = dateDeliveryDate.Text;
+                DataRow row = ((DataRowView)dr.DataBoundItem).Row;
+                if (dateDeliveryDate.Value != null)
+                {
+                    row["Delivery"] = (DateTime)dateDeliveryDate.Value;
+                }
+                else {
+                    row["Delivery"] = DBNull.Value;
+                }
             }
         }
     }
