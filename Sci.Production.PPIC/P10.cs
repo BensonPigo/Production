@@ -24,19 +24,6 @@ namespace Sci.Production.PPIC
             txtuserApprove.TextBox1.IsSupportEditMode = false;
             InsertDetailGridOnDoubleClick = false;
             displayIssueLackDate.ReadOnly = true;
-            queryfors.SelectedIndexChanged += (s, e) =>
-            {
-                switch (queryfors.SelectedIndex)
-                {
-                    case 0:
-                        this.DefaultWhere = "";
-                        break;
-                    default:
-                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
-                        break;
-                }
-                this.ReloadDatas();
-            };
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -60,8 +47,19 @@ order by ld.Seq1,ld.Seq2", masterID);
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(comboType, 2, 1, "L,Lacking,R,Replacement");
             MyUtility.Tool.SetupCombox(comboShift, 2, 1, "D,Day,N,Night,O,Subcon-Out");
-
-           
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };           
         }
 
         protected override void OnDetailGridSetup()

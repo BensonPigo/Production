@@ -23,6 +23,11 @@ namespace Sci.Production.PPIC
             InitializeComponent();
             DefaultFilter = string.Format("Type = 'F' and MDivisionID = '{0}'",Sci.Env.User.Keyword);
             InsertDetailGridOnDoubleClick = false;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)

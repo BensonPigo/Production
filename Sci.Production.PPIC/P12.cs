@@ -16,6 +16,11 @@ namespace Sci.Production.PPIC
         {
             InitializeComponent();
             this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "'";
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)
