@@ -95,13 +95,12 @@ namespace Sci.Production.Packing
             Object printFile;
             Microsoft.Office.Interop.Word._Document document;
             Word.Table tables = null;
-
+            
             #region check Factory
-            switch (Sci.Env.User.Keyword)
-            {
-                case "SNP":
-                case "SPT":
-                case "ESP":
+            string CountryID = MyUtility.GetValue.Lookup(string.Format(@"Select CountryID from Factory where id = '{0}'", Sci.Env.User.Factory));
+            switch (CountryID)
+            {                
+                case "VN":
                     printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeVN.dotx";
                     document = winword.Documents.Add(ref printFile);
                     #region VN
@@ -170,6 +169,7 @@ namespace Sci.Production.Packing
                     }
                     #endregion  
                     break;
+                case "PH":
                 default:
                     printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode.dotx";
                     document = winword.Documents.Add(ref printFile);
