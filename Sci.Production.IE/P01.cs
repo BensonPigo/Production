@@ -327,9 +327,9 @@ namespace Sci.Production.IE
                     {
                         if (!MyUtility.Check.Seek(string.Format("select ID,Description from MachineType WITH (NOLOCK) where Junk = 0 and ID = '{0}'", e.FormattedValue.ToString())))
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["MachineTypeID"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< M/C: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else
@@ -388,10 +388,10 @@ namespace Sci.Production.IE
                         {
                             if (moldData.Rows.Count <= 0)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                                 dr["Mold"] = "";
                                 dr["DescEN"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Attachment: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
                                 return;
                             }
                             else
@@ -402,9 +402,9 @@ namespace Sci.Production.IE
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                             dr["Mold"] = "";
                             dr["DescEN"] = "";
+                            MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                         }
                     }
                 }
@@ -1014,8 +1014,8 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
                 displayCD.Value = "";
+                MyUtility.Msg.ErrorBox("Query CdCode data fail!\r\n" + result.ToString());
             }
             else
             {

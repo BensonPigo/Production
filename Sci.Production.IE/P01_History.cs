@@ -60,8 +60,8 @@ namespace Sci.Production.IE
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out cdCode);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
                 displayCD.Value = "";
+                MyUtility.Msg.ErrorBox("Query data fail!\r\n" + result.ToString());
             }
             else
             {

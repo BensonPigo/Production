@@ -215,8 +215,8 @@ inner join(
             }
             if (txtFactory.Text != fac)
             {
-                MyUtility.Msg.WarningBox("This Factory is wrong!");
                 txtFactory.Text = "";
+                MyUtility.Msg.WarningBox("This Factory is wrong!");
                 return;
             }
         }
@@ -238,8 +238,8 @@ inner join(
             }
             if (txtStyle.Text != sty)
             {
-                MyUtility.Msg.WarningBox("This Style# is wrong!");
                 txtStyle.Text = "";
+                MyUtility.Msg.WarningBox("This Style# is wrong!");
                 return;
             }
         }
@@ -261,8 +261,8 @@ inner join(
             }
             if (txtSeason.Text != season)
             {
-                MyUtility.Msg.WarningBox("This Season is wrong!");
                 txtSeason.Text = "";
+                MyUtility.Msg.WarningBox("This Season is wrong!");
                 return;
             }
         }

@@ -87,9 +87,9 @@ namespace Sci.Production.IE
             {
                 if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WITH (NOLOCK) WHERE Junk=0 AND id = '{0}'", textValue)))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
                     this.txtBrand.Text = "";
                     e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
                     return;
                 }
             }

@@ -109,15 +109,15 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                         {
                             if (MyUtility.Convert.GetDecimal(e.FormattedValue) < 0)
                             {
-                                MyUtility.Msg.WarningBox("Cycle time can't less than 0!!");
                                 dr["Cycle"] = 0;
+                                MyUtility.Msg.WarningBox("Cycle time can't less than 0!!");
                             }
                             else
                             {
                                 if (MyUtility.Convert.GetDecimal(e.FormattedValue) > MyUtility.Convert.GetDecimal(dr["GSD"]))
                                 {
-                                    MyUtility.Msg.WarningBox("Cycle time can't greater than GSD Time!!");
                                     dr["Cycle"] = dr["GSD"];
+                                    MyUtility.Msg.WarningBox("Cycle time can't greater than GSD Time!!");
                                 }
                                 else
                                 {
@@ -185,18 +185,18 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out MachineData);
                         if (!result)
                         {
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                             dr["MachineTypeID"] = "";
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n"+result.ToString());
                             return;
                         }
                         else
                         {
                             if (MachineData.Rows.Count <= 0)
                             {
-                                MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
                                 dr["MachineTypeID"] = "";
                                 e.Cancel = true;
+                                MyUtility.Msg.WarningBox(string.Format("< Machine Type: {0} > not found!!!", e.FormattedValue.ToString()));
                                 return;
                             }
                         }
@@ -246,9 +246,9 @@ where ld.ID = '{0}' order by ld.No,ld.GroupKey", masterID);
                         GetEmployee(e.FormattedValue.ToString());
                         if (EmployeeData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
                             ReviseEmployeeToEmpty(dr);
                             e.Cancel = true;
+                            MyUtility.Msg.WarningBox(string.Format("< Employee ID: {0} > not found!!!", e.FormattedValue.ToString()));
                             return;
                         }
                         else

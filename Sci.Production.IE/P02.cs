@@ -219,9 +219,9 @@ string ExcelDt = string.Format(@"SELECT C.OrderID,
                 string textValue = prodTextValue.Text.ToString().PadRight(4);
                 if ((!MyUtility.Check.Empty(textValue.Substring(0, 2)) && Convert.ToInt32(textValue.Substring(0, 2)) > 24) || ((!MyUtility.Check.Empty(textValue.Substring(0, 2)) && Convert.ToInt32(textValue.Substring(0, 2)) == 24) && (!MyUtility.Check.Empty(textValue.Substring(2, 2)) && Convert.ToInt32(textValue.Substring(2, 2)) != 0)) || (!MyUtility.Check.Empty(textValue.Substring(2, 2)) && Convert.ToInt32(textValue.Substring(2, 2)) >= 60))
                 {
-                    MyUtility.Msg.WarningBox("The time format is wrong, can't exceed '24:00'!");
                     prodTextValue.Text = "";
-                    e.Cancel = true;
+                    e.Cancel = true; 
+                    MyUtility.Msg.WarningBox("The time format is wrong, can't exceed '24:00'!");
                     return;
                 }
                 else
