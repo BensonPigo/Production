@@ -45,6 +45,8 @@
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
+            this.comboLocal = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -64,7 +66,6 @@
             // 
             // labelSewingOutputDate
             // 
-            this.labelSewingOutputDate.Lines = 0;
             this.labelSewingOutputDate.Location = new System.Drawing.Point(13, 12);
             this.labelSewingOutputDate.Name = "labelSewingOutputDate";
             this.labelSewingOutputDate.Size = new System.Drawing.Size(128, 23);
@@ -73,7 +74,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 48);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(128, 23);
@@ -82,7 +82,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 84);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(128, 23);
@@ -91,7 +90,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 120);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(128, 23);
@@ -100,7 +98,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 156);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(128, 23);
@@ -109,7 +106,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 192);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(128, 23);
@@ -118,7 +114,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 228);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(128, 23);
@@ -127,7 +122,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 264);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(128, 23);
@@ -138,12 +132,11 @@
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label9.Lines = 0;
-            this.label9.Location = new System.Drawing.Point(13, 302);
+            this.label9.Location = new System.Drawing.Point(13, 326);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(389, 23);
+            this.label9.Size = new System.Drawing.Size(286, 23);
             this.label9.TabIndex = 8;
-            this.label9.Text = "Hint: Local order and all subcon-out are excluded.";
+            this.label9.Text = "Hint:  All subcon-out are excluded.";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label9.TextStyle.Color = System.Drawing.Color.Red;
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
@@ -226,9 +219,30 @@
             this.txtdropdownlistCategory.TabIndex = 7;
             this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
             // 
+            // comboLocal
+            // 
+            this.comboLocal.BackColor = System.Drawing.Color.White;
+            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLocal.FormattingEnabled = true;
+            this.comboLocal.IsSupportUnselect = true;
+            this.comboLocal.Location = new System.Drawing.Point(145, 299);
+            this.comboLocal.Name = "comboLocal";
+            this.comboLocal.Size = new System.Drawing.Size(80, 24);
+            this.comboLocal.TabIndex = 102;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 299);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(128, 23);
+            this.label1.TabIndex = 103;
+            this.label1.Text = "Local Order";
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(517, 357);
+            this.ClientSize = new System.Drawing.Size(517, 381);
+            this.Controls.Add(this.comboLocal);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtdropdownlistCategory);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
@@ -271,6 +285,8 @@
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboLocal, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,5 +311,7 @@
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
         private Class.txtdropdownlist txtdropdownlistCategory;
+        private Win.UI.ComboBox comboLocal;
+        private Win.UI.Label label1;
     }
 }

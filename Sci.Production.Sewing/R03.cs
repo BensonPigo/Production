@@ -14,7 +14,7 @@ namespace Sci.Production.Sewing
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
         DateTime? output1, output2, buyerDel1, buyerDel2, sciDel1, sciDel2;
-        string season, brand, mDivision, factory;
+        string season, brand, mDivision, factory,chx;
         int category;
         DataTable Factory, Brand, BrandFactory, Style, CD, FactoryLine, BrandFactoryCD, POCombo, Program;
 
@@ -30,6 +30,9 @@ namespace Sci.Production.Sewing
             comboM.Text = Sci.Env.User.Keyword;
             comboFactory.Text = Sci.Env.User.Factory;
             txtdropdownlistCategory.SelectedIndex = 0;
+
+            MyUtility.Tool.SetupCombox(comboLocal, 1, 1, "Exclude,Include");
+            comboLocal.SelectedIndex = 0;
         }
 
         // 驗證輸入條件
@@ -51,6 +54,7 @@ namespace Sci.Production.Sewing
             mDivision = comboM.Text;
             factory = comboFactory.Text;
             category = txtdropdownlistCategory.SelectedIndex;
+            chx = comboLocal.Text;
             return base.ValidateInput();
         }
 
@@ -73,72 +77,48 @@ with tmp1stData as (
     inner join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
     inner join CDCode c WITH (NOLOCK) on c.ID = o.CdCodeID
     left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = s.Ukey and sl.Location = sod.ComboType
-    where o.LocalOrder = 0
+    where 1=1
     and so.Shift <> 'O'
 ");
-            
+            if (chx == "Exclude")
+                sqlCmd.Append(" and o.LocalOrder = 0");
+
             if (!MyUtility.Check.Empty(output1))
-            {
                 sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(output1).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(output2))
-            {
                 sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(output2).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(buyerDel1))
-            {
                 sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDel1).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(buyerDel2))
-            {
                 sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(sciDel1))
-            {
                 sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDel1).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(sciDel2))
-            {
                 sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(sciDel2).ToString("d")));
-            }
 
             if (!MyUtility.Check.Empty(season))
-            {
                 sqlCmd.Append(string.Format(" and o.SeasonID = '{0}'", season));
-            }
 
             if (!MyUtility.Check.Empty(brand))
-            {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", brand));
-            }
 
             if (!MyUtility.Check.Empty(mDivision))
-            {
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", mDivision));
-            }
 
             if (!MyUtility.Check.Empty(factory))
-            {
                 sqlCmd.Append(string.Format(" and o.FactoryID = '{0}'", factory));
-            }
 
             if (category == 0)
-            {
                 sqlCmd.Append(" and o.Category = 'B'");
-            }
             else if (category == 1)
-            {
                 sqlCmd.Append(" and o.Category = 'S'");
-            }
             else
-            {
                 sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
 
             sqlCmd.Append(@"
 ),tmp2ndData as (
