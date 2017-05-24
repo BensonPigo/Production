@@ -106,15 +106,13 @@ namespace Sci.Production.Packing
                     #region VN
                     try
                     {
-                        int Left = 1, Right = 2;
-
                         document.Activate();
                         Word.Tables table = document.Tables;
 
                         #region 計算頁數
                         winword.Selection.Tables[1].Select();
                         winword.Selection.Copy();
-                        int page = (printData.Rows.Count / 12) + ((printData.Rows.Count % 12 > 0) ? 1 : 0);
+                        int page = (printData.Rows.Count / 6) + ((printData.Rows.Count % 6 > 0) ? 1 : 0);
                         for (int i = 1; i < page; i++)
                         {
                             winword.Selection.MoveDown();
@@ -128,7 +126,7 @@ namespace Sci.Production.Packing
                         {
                             tables = table[i + 1];
 
-                            for (int p = i * 12; p < i * 12 + 12; p++)
+                            for (int p = i * 6; p < i * 6 + 6; p++)
                             {
                                 if (p >= printData.Rows.Count) break;
 
@@ -140,20 +138,18 @@ namespace Sci.Production.Packing
                                 string poNo = "　　　　PO No.: " + printData.Rows[p]["PONo"];
                                 #endregion
 
-                                int column = (p % 12 < 6) ? Left : Right;
-
-                                tables.Cell(p % 6 * 6 + 1, column).Range.Text = barcode;
-                                tables.Cell(p % 6 * 6 + 2, column).Range.Text = packingNo;
-                                tables.Cell(p % 6 * 6 + 3, column).Range.Text = spNo;
-                                tables.Cell(p % 6 * 6 + 4, column).Range.Text = cartonNo;
-                                tables.Cell(p % 6 * 6 + 5, column).Range.Text = poNo;
+                                tables.Cell(p % 6 * 6 + 1, 1).Range.Text = barcode;
+                                tables.Cell(p % 6 * 6 + 2, 1).Range.Text = packingNo;
+                                tables.Cell(p % 6 * 6 + 3, 1).Range.Text = spNo;
+                                tables.Cell(p % 6 * 6 + 4, 1).Range.Text = cartonNo;
+                                tables.Cell(p % 6 * 6 + 5, 1).Range.Text = poNo;
                             }
                         }
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
 
-                        winword.Visible = true;
+                        winword.Visible = true;                      
                         winword = null;
                     }
                     catch (Exception ex)
@@ -231,11 +227,7 @@ namespace Sci.Production.Packing
                     break;
             }
 
-            #endregion 
-
-            
-
-            
+            #endregion
             this.HideWaitMessage();
             return true;
         }
