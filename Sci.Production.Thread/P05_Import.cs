@@ -13,6 +13,7 @@ using Sci.Win;
 using Sci.Win.Tools;
 using Ict;
 using Ict.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Thread
 {
@@ -66,14 +67,28 @@ namespace Sci.Production.Thread
                 this.txtlocalitemStart.Focus();
                 return;
             }
-            string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
-                    isnull(a.newcone,0) as newconebook,0 as newCone,-(a.newCone) as NewconeVar,
-                    isnull(a.usedcone,0) as usedconebook,0 as usedCone,-(a.usedCone) as UsedconeVar,
-                    b.description,c.description as colordesc,
-                    b.category,b.Localsuppid,b.threadtypeid,b.ThreadTex,
-                    (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
-                    from Localitem b WITH (NOLOCK) 
-                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
+            string sql = string.Format(@"
+Select  1 as sel
+        , a.refno
+        , a.threadcolorid
+        , a.threadlocationid
+        , isnull(a.newcone,0) as newconebook
+        , 0 as newCone
+        , -(a.newCone) as NewconeVar
+        , isnull(a.usedcone,0) as usedconebook
+        , 0 as usedCone
+        , -(a.usedCone) as UsedconeVar
+        , b.description
+        , c.description as colordesc
+        , b.category
+        , b.Localsuppid
+        , b.threadtypeid
+        , b.ThreadTex
+        , supp = (b.Localsuppid + '-' + (Select name 
+                                         from LocalSupp d WITH (NOLOCK) 
+                                         where b.localsuppid = d.id))
+from Localitem b WITH (NOLOCK) 
+left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
 
             if (!MyUtility.Check.Empty(threadlocation1) || !MyUtility.Check.Empty(threadlocation2))
             {
@@ -93,73 +108,92 @@ namespace Sci.Production.Thread
             gridTable.Clear();
             try
             {
-                DualResult rst;
-                DataTable dt;
-                if (!(rst = DBProxy.Current.Select("Production", sql, out dt)))
+                DataTable dt = null;
+
+                this.ShowWaitMessage("Data Loading...");
+                using (var cn = new SqlConnection(Env.Cfg.GetConnection("").ConnectionString))
+                using (var cm = cn.CreateCommand())
                 {
-                    ShowErr(sql, rst);
+                    cm.CommandText = sql;
+                    var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
+                    var cnt = 0;
+                    var start = 0;
+                    using (var ds = new DataSet())
+                    {
+                        while ((cnt = adp.Fill(ds, start, 100000, "Production")) > 0)
+                        {
+                            start += 100000;
+
+                            if (dt == null)
+                            {
+                                dt = ((DataTable)ds.Tables[0]).Clone();
+                            }
+                            dt.Merge(((DataTable)ds.Tables[0]));
+
+                            ds.Tables[0].Dispose();
+                            ds.Tables.Clear();
+                        }
+                    }
+                }
+                this.HideWaitMessage();
+
+                if (dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found.");
                     return;
+                }
+                int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
+                if (rowcount <= rand) allpart = "True"; //Random多於找出來的就全部寫入 
+                int[] intlist = new int[rand];
+                int danom1;
+                Random dr = new Random();
+                bool zerorand = false;
+                if (allpart != "True" && rand != 0)
+                {
+                        
+                    for (int i = 0; i < rand; i++)
+                    {
+                        danom1 = dr.Next(rowcount);
+                        if (Array.IndexOf(intlist, danom1) == -1 || (danom1 == 0 && zerorand == false))
+                        {
+                            intlist[i] = danom1;
+                            if (danom1 == 0) zerorand = true;
+                            DataRow ndtdr = dt.Rows[danom1];
+                            DataRow ndr = gridTable.NewRow();
+                            ndr["sel"] = 1;
+                            ndr["refno"] = ndtdr["refno"];
+                            ndr["Description"] = ndtdr["Description"];
+                            ndr["threadtypeid"] = ndtdr["threadtypeid"];
+                            ndr["threadcolorid"] = ndtdr["threadcolorid"];
+                            ndr["threadlocationid"] = ndtdr["threadlocationid"];
+                            ndr["colordesc"] = ndtdr["colordesc"];
+                            ndr["category"] = ndtdr["category"];
+                            ndr["supp"] = ndtdr["supp"];
+                            ndr["LocalSuppid"] = ndtdr["LocalSuppid"];
+                            ndr["threadTex"] = ndtdr["threadTex"];
+                            ndr["NewConeBook"] = ndtdr["NewConeBook"];
+                            ndr["UsedConeBook"] = ndtdr["UsedConeBook"];
+                            ndr["NewConevar"] = ndtdr["NewConevar"];
+                            ndr["UsedConevar"] = ndtdr["UsedConevar"];
+                            ndr["NewCone"] = 0;
+                            ndr["UsedCone"] = 0;
+
+                            gridTable.Rows.Add(ndr);
+
+                        }
+                        else
+                        {
+                            i--;
+                        }
+                    }
+
+
                 }
                 else
                 {
-                    if (dt.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.WarningBox("Data not found.");
-                        return;
-                    }
-                    int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
-                    if (rowcount <= rand) allpart = "True"; //Random多於找出來的就全部寫入 
-                    int[] intlist = new int[rand];
-                    int danom1;
-                    Random dr = new Random();
-                    bool zerorand = false;
-                    if (allpart != "True" && rand != 0)
-                    {
-                        
-                        for (int i = 0; i < rand; i++)
-                        {
-                            danom1 = dr.Next(rowcount);
-                            if (Array.IndexOf(intlist, danom1) == -1 || (danom1 == 0 && zerorand == false))
-                            {
-                                intlist[i] = danom1;
-                                if (danom1 == 0) zerorand = true;
-                                DataRow ndtdr = dt.Rows[danom1];
-                                DataRow ndr = gridTable.NewRow();
-                                ndr["sel"] = 1;
-                                ndr["refno"] = ndtdr["refno"];
-                                ndr["Description"] = ndtdr["Description"];
-                                ndr["threadtypeid"] = ndtdr["threadtypeid"];
-                                ndr["threadcolorid"] = ndtdr["threadcolorid"];
-                                ndr["threadlocationid"] = ndtdr["threadlocationid"];
-                                ndr["colordesc"] = ndtdr["colordesc"];
-                                ndr["category"] = ndtdr["category"];
-                                ndr["supp"] = ndtdr["supp"];
-                                ndr["LocalSuppid"] = ndtdr["LocalSuppid"];
-                                ndr["threadTex"] = ndtdr["threadTex"];
-                                ndr["NewConeBook"] = ndtdr["NewConeBook"];
-                                ndr["UsedConeBook"] = ndtdr["UsedConeBook"];
-                                ndr["NewConevar"] = ndtdr["NewConevar"];
-                                ndr["UsedConevar"] = ndtdr["UsedConevar"];
-                                ndr["NewCone"] = 0;
-                                ndr["UsedCone"] = 0;
-
-                                gridTable.Rows.Add(ndr);
-
-                            }
-                            else
-                            {
-                                i--;
-                            }
-                        }
-
-
-                    }
-                    else
-                    {
-                        gridTable = dt;
-                    }
-                    this.gridDetail.DataSource = gridTable;
+                    gridTable = dt;
                 }
+                this.gridDetail.DataSource = gridTable;                
             }
             catch (Exception ex)
             {
