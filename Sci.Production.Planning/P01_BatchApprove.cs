@@ -51,131 +51,7 @@ namespace Sci.Production.Planning
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            String sp_b = this.txtSPNoStart.Text;
-            String sp_e = this.txtSPNoEnd.Text;
-            String factory = this.txtfactory.Text;
-            String artworktype = this.txtartworktype_ftyArtworkType.Text;
-            bool chkApprove = checkOnlyAprrovedData.Checked;
-
-            string inline_b, inline_e, sewinline_b, sewinline_e, delivery_b, delivery_e,approve_b,approve_e;
-            inline_b = null;
-            inline_e = null;
-            sewinline_b = null;
-            sewinline_e = null;
-            delivery_b = null;
-            delivery_e = null;
-            approve_b = null;
-            approve_e = null;
-
-            
-            if (dateSubprocessInline.Value1 != null) {inline_b = this.dateSubprocessInline.Text1;}
-            if (dateSubprocessInline.Value2 != null) { inline_e = this.dateSubprocessInline.Text2; }
-            if (dateRangeSewInLine.Value1 != null) {sewinline_b = this.dateRangeSewInLine.Text1;}
-            if (dateRangeSewInLine.Value2 != null) { sewinline_e = this.dateRangeSewInLine.Text2; }
-            if (dateSCIDelivery.Value1 != null) {delivery_b = this.dateSCIDelivery.Text1;}
-            if (dateSCIDelivery.Value2 != null) { delivery_e = this.dateSCIDelivery.Text2; }
-            if (dateApproveDate.Value1 != null) {approve_b = this.dateApproveDate.Text1;}
-            if (dateApproveDate.Value2 != null){ approve_e = this.dateApproveDate.Text2; }
-
-            if (chkApprove && (MyUtility.Check.Empty(approve_b) || MyUtility.Check.Empty(approve_e)))
-            {
-                MyUtility.Msg.WarningBox("Approve date can't be empty", "Warning");
-                return;
-            }
-
-            if ((MyUtility.Check.Empty(inline_b) && MyUtility.Check.Empty(inline_e)) &&
-                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e)) &&
-                (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e)) &&
-                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && 
-                MyUtility.Check.Empty(artworktype) )
-            {
-                txtSPNoStart.Focus();
-                MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
-                return;
-            }
-            else
-            {
-                // 建立可以符合回傳的Cursor
-
-                string strSQLCmd = string.Format(@"select 1 as Selected
-,ods.FactoryID
-,ot.ID
-,ot.ArtworkTypeID
-,ot.LocalSuppID
-,ls.Abb SupplierName
-,ot.ArtworkInLine
-,ods.SciDelivery
-,ot.ApvDate
-from Order_TmsCost ot WITH (NOLOCK)
-inner join orders ods WITH (NOLOCK) on ot.ID = ods.ID
-inner join LocalSupp ls WITH (NOLOCK) on ls.id = ot.LocalSuppID
-inner join dbo.factory WITH (NOLOCK) on factory.id = ods.factoryid
-where ods.finished=0 and ods.isforecast = 0 
-    and (ods.category = 'B' or ods.category = 'S')
-    and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)
-    and factory.mdivisionid='{0}'", Sci.Env.User.Keyword);
-                if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
-                if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
-                if (!MyUtility.Check.Empty(inline_b))
-                {strSQLCmd += string.Format(" and ot.artworkoffline >= '{0}'", Convert.ToDateTime(inline_b).ToString("d"));}
-                if (!MyUtility.Check.Empty(inline_e))
-                { strSQLCmd += string.Format(" and ot.artworkinline <= '{0}'", Convert.ToDateTime(inline_e).ToString("d"));}
-                if (!MyUtility.Check.Empty(sewinline_b))
-                { strSQLCmd += string.Format(" and ods.sewoffline >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
-                if (!MyUtility.Check.Empty(sewinline_e))
-                { strSQLCmd += string.Format(" and ods.sewinline <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
-                if (!MyUtility.Check.Empty(artworktype)) { strSQLCmd += " and ot.artworktypeid = @artworktypeid"; }
-                if (!MyUtility.Check.Empty(delivery_b))
-                { strSQLCmd += string.Format(" and ods.sciDelivery >= '{0}'", Convert.ToDateTime(delivery_b).ToString("d")); }
-                if (!MyUtility.Check.Empty(delivery_e))
-                { strSQLCmd += string.Format(" and ods.sciDelivery <= '{0}'", Convert.ToDateTime(delivery_e).ToString("d")); }
-                if (!MyUtility.Check.Empty(approve_b))
-                { strSQLCmd += string.Format(" and ot.apvdate >= '{0}'", Convert.ToDateTime(approve_b).ToString("d")); }
-                if (!MyUtility.Check.Empty(approve_e))
-                { strSQLCmd += string.Format(" and ot.apvdate <= '{0}'", Convert.ToDateTime(approve_e).ToString("d")); }
-                if (!MyUtility.Check.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
-                
-                strSQLCmd += @" order by ods.FactoryID
-,ot.ID
-,ot.ArtworkTypeID
-,ot.LocalSuppID,ot.ArtworkInLine,ods.SciDelivery";
-
-                #region 準備sql參數資料
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@sp1";
-                sp1.Value = sp_b.TrimEnd();
-
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                sp2.ParameterName = "@sp2";
-                sp2.Value = sp_e.TrimEnd();
-
-                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                sp3.ParameterName = "@artworktypeid";
-                sp3.Value = artworktype;
-
-                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                sp4.ParameterName = "@factoryid";
-                sp4.Value = factory;
-
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
-                cmds.Add(sp2);
-                cmds.Add(sp3);
-                cmds.Add(sp4);
-                #endregion
-
-                DataTable dtOT;
-           
-                Ict.DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
-                {
-                    if (dtOT.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtOT;
-                }
-                else { ShowErr(strSQLCmd, result); }
-            }
-            this.gridBatchApprove.AutoResizeColumns();
+            this.queryData(true);            
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -241,8 +117,7 @@ where ods.finished=0 and ods.isforecast = 0
             }
 
             MyUtility.Msg.InfoBox("Approve data successful.");
-
-
+            this.queryData(false);
         }
 
         //To Excel
@@ -289,6 +164,139 @@ where ods.finished=0 and ods.isforecast = 0
             }
 
             MyUtility.Msg.InfoBox("UnApprove data successful.");
+            this.queryData(false);
+        }
+
+        private void queryData(bool checkSelect)
+        {
+            String sp_b = this.txtSPNoStart.Text;
+            String sp_e = this.txtSPNoEnd.Text;
+            String factory = this.txtfactory.Text;
+            String artworktype = this.txtartworktype_ftyArtworkType.Text;
+            bool chkApprove = checkOnlyAprrovedData.Checked;
+
+            string inline_b, inline_e, sewinline_b, sewinline_e, delivery_b, delivery_e, approve_b, approve_e;
+            inline_b = null;
+            inline_e = null;
+            sewinline_b = null;
+            sewinline_e = null;
+            delivery_b = null;
+            delivery_e = null;
+            approve_b = null;
+            approve_e = null;
+
+
+            if (dateSubprocessInline.Value1 != null) { inline_b = this.dateSubprocessInline.Text1; }
+            if (dateSubprocessInline.Value2 != null) { inline_e = this.dateSubprocessInline.Text2; }
+            if (dateRangeSewInLine.Value1 != null) { sewinline_b = this.dateRangeSewInLine.Text1; }
+            if (dateRangeSewInLine.Value2 != null) { sewinline_e = this.dateRangeSewInLine.Text2; }
+            if (dateSCIDelivery.Value1 != null) { delivery_b = this.dateSCIDelivery.Text1; }
+            if (dateSCIDelivery.Value2 != null) { delivery_e = this.dateSCIDelivery.Text2; }
+            if (dateApproveDate.Value1 != null) { approve_b = this.dateApproveDate.Text1; }
+            if (dateApproveDate.Value2 != null) { approve_e = this.dateApproveDate.Text2; }
+
+            if (chkApprove && (MyUtility.Check.Empty(approve_b) || MyUtility.Check.Empty(approve_e)))
+            {
+                MyUtility.Msg.WarningBox("Approve date can't be empty", "Warning");
+                return;
+            }
+
+            if ((MyUtility.Check.Empty(inline_b) && MyUtility.Check.Empty(inline_e)) &&
+                (MyUtility.Check.Empty(sewinline_b) && MyUtility.Check.Empty(sewinline_e)) &&
+                (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e)) &&
+                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) &&
+                MyUtility.Check.Empty(artworktype))
+            {
+                txtSPNoStart.Focus();
+                MyUtility.Msg.WarningBox("< Inline Date > or < SewInline Date > or < SCI Delivery > or < SP# > or < Artwork Type > can't be empty!!");
+                return;
+            }
+            else
+            {
+                // 建立可以符合回傳的Cursor
+
+                string strSQLCmd = string.Format(@"
+select  {1} as Selected
+        ,ods.FactoryID
+        ,ot.ID
+        ,ot.ArtworkTypeID
+        ,ot.LocalSuppID
+        ,ls.Abb SupplierName
+        ,ot.ArtworkInLine
+        ,ods.SciDelivery
+        ,ot.ApvDate
+from Order_TmsCost ot WITH (NOLOCK)
+inner join orders ods WITH (NOLOCK) on ot.ID = ods.ID
+inner join LocalSupp ls WITH (NOLOCK) on ls.id = ot.LocalSuppID
+inner join dbo.factory WITH (NOLOCK) on factory.id = ods.factoryid
+where ods.finished=0 and ods.isforecast = 0 
+    and (ods.category = 'B' or ods.category = 'S')
+    and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0)
+    and factory.mdivisionid='{0}'"
+, Sci.Env.User.Keyword
+, (checkSelect ? 1 : 0));
+                if (!chkApprove) { strSQLCmd += " and  ot.apvdate is null"; }
+                if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and  ot.id  between @sp1 and  @sp2"; }
+                if (!MyUtility.Check.Empty(inline_b))
+                { strSQLCmd += string.Format(" and ot.artworkoffline >= '{0}'", Convert.ToDateTime(inline_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(inline_e))
+                { strSQLCmd += string.Format(" and ot.artworkinline <= '{0}'", Convert.ToDateTime(inline_e).ToString("d")); }
+                if (!MyUtility.Check.Empty(sewinline_b))
+                { strSQLCmd += string.Format(" and ods.sewoffline >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(sewinline_e))
+                { strSQLCmd += string.Format(" and ods.sewinline <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d")); }
+                if (!MyUtility.Check.Empty(artworktype)) { strSQLCmd += " and ot.artworktypeid = @artworktypeid"; }
+                if (!MyUtility.Check.Empty(delivery_b))
+                { strSQLCmd += string.Format(" and ods.sciDelivery >= '{0}'", Convert.ToDateTime(delivery_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(delivery_e))
+                { strSQLCmd += string.Format(" and ods.sciDelivery <= '{0}'", Convert.ToDateTime(delivery_e).ToString("d")); }
+                if (!MyUtility.Check.Empty(approve_b))
+                { strSQLCmd += string.Format(" and ot.apvdate >= '{0}'", Convert.ToDateTime(approve_b).ToString("d")); }
+                if (!MyUtility.Check.Empty(approve_e))
+                { strSQLCmd += string.Format(" and ot.apvdate <= '{0}'", Convert.ToDateTime(approve_e).ToString("d")); }
+                if (!MyUtility.Check.Empty(factory)) { strSQLCmd += " and ods.factoryid = @factoryid"; }
+
+                strSQLCmd += @" order by ods.FactoryID
+,ot.ID
+,ot.ArtworkTypeID
+,ot.LocalSuppID,ot.ArtworkInLine,ods.SciDelivery";
+
+                #region 準備sql參數資料
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+                sp1.ParameterName = "@sp1";
+                sp1.Value = sp_b.TrimEnd();
+
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
+                sp2.ParameterName = "@sp2";
+                sp2.Value = sp_e.TrimEnd();
+
+                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
+                sp3.ParameterName = "@artworktypeid";
+                sp3.Value = artworktype;
+
+                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
+                sp4.ParameterName = "@factoryid";
+                sp4.Value = factory;
+
+                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                cmds.Add(sp1);
+                cmds.Add(sp2);
+                cmds.Add(sp3);
+                cmds.Add(sp4);
+                #endregion
+
+                DataTable dtOT;
+
+                Ict.DualResult result;
+                if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
+                {
+                    if (dtOT.Rows.Count == 0)
+                    { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    listControlBindingSource1.DataSource = dtOT;
+                }
+                else { ShowErr(strSQLCmd, result); }
+            }
+            this.gridBatchApprove.AutoResizeColumns();
         }
     }
 
