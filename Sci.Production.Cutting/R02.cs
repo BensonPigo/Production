@@ -30,13 +30,17 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             DataTable WorkOrder;
             //Set ComboM
-            DBProxy.Current.Select(null, "Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
+            DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out WorkOrder);
             MyUtility.Tool.SetupCombox(comboM, 1, WorkOrder);
             comboM.Text = Sci.Env.User.Keyword;
             
             //Set ComboFactory
             DataTable Factory;
-            DBProxy.Current.Select(null, "Select Distinct ID from Factory", out Factory);
+            DBProxy.Current.Select(null, @"
+select '' ID
+union
+Select Distinct ID 
+from Factory", out Factory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
             comboFactory.Text = Sci.Env.User.Factory;
         }
@@ -114,11 +118,14 @@ where   Cutplan.EstCutdate >= '{0}'
         and Cutplan.MDivisionID ='{2}' 
         and Cutplan.CutCellID >= '{3}' 
         and Cutplan.CutCellID <='{4}' 
-        and orders.FactoryID = '{5}'
+        {5}
 order by CutCellID"
-,Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-,Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
-,MD, CutCell1, CutCell2, Factory);
+, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+, Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+, MD
+, CutCell1
+, CutCell2
+, (Factory.Empty() ? "" : string.Format("and orders.FactoryID = '{0}'", Factory)));
             }else{
                 scell = string.Format(@"
 select  distinct CutCellID 
@@ -128,9 +135,13 @@ where   Cutplan.EstCutdate = '{0}'
         and Cutplan.MDivisionID ='{1}' 
         and Cutplan.CutCellID >= '{2}' 
         and Cutplan.CutCellID <='{3}' 
-        and orders.FactoryID = '{4}'
+        {4}
 order by CutCellID"
-, Convert.ToDateTime(dateR_CuttingDate1).ToString("d"), MD, CutCell1, CutCell2, Factory);
+, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+, MD
+, CutCell1
+, CutCell2
+, (Factory.Empty() ? "" : string.Format("and orders.FactoryID = '{0}'", Factory)));
             }
 
             DBProxy.Current.Select(null, scell, out Cutcelltb);
