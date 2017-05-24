@@ -108,24 +108,29 @@ namespace Sci.Production.Cutting
                 scell = string.Format(@"
 select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
+left join orders on orders.POID = Cutplan.POID
 where   Cutplan.EstCutdate >= '{0}' 
         and Cutplan.EstCutdate <= '{1}'
         and Cutplan.MDivisionID ='{2}' 
         and Cutplan.CutCellID >= '{3}' 
         and Cutplan.CutCellID <='{4}' 
+        and orders.FactoryID = '{5}'
 order by CutCellID"
-,Convert.ToDateTime(dateR_CuttingDate1).ToString("d"),Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
-,MD, CutCell1, CutCell2);
+,Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+,Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+,MD, CutCell1, CutCell2, Factory);
             }else{
                 scell = string.Format(@"
 select  distinct CutCellID 
 from Cutplan WITH (NOLOCK) 
+left join orders on Cutplan.POID = orders.POID
 where   Cutplan.EstCutdate = '{0}'
         and Cutplan.MDivisionID ='{1}' 
         and Cutplan.CutCellID >= '{2}' 
         and Cutplan.CutCellID <='{3}' 
+        and orders.FactoryID = '{4}'
 order by CutCellID"
-, Convert.ToDateTime(dateR_CuttingDate1).ToString("d"), MD, CutCell1, CutCell2);
+, Convert.ToDateTime(dateR_CuttingDate1).ToString("d"), MD, CutCell1, CutCell2, Factory);
             }
 
             DBProxy.Current.Select(null, scell, out Cutcelltb);
@@ -231,6 +236,10 @@ where 1 = 1
                     if (!MyUtility.Check.Empty(MD))
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
+                    }
+                    if (!MyUtility.Check.Empty(Factory))
+                    {
+                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
@@ -392,6 +401,10 @@ where 1 = 1 --??? AND fe.ETA IS NOT NULL
                     if (!MyUtility.Check.Empty(MD))
                     {
                         sqlCmd.Append(string.Format(" and Cutplan.MDivisionID ='{0}' ", MD));
+                    }
+                    if (!MyUtility.Check.Empty(Factory))
+                    {
+                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
@@ -556,6 +569,10 @@ where 1 = 1
                     if (!MyUtility.Check.Empty(MD))
                     {
                         sqlCmd.Append(string.Format(" and c.MDivisionID ='{0}' ", MD));
+                    }
+                    if (!MyUtility.Check.Empty(Factory))
+                    {
+                        sqlCmd.Append(string.Format(" and o.FactoryID = '{0}' ", Factory));
                     }
                     if (!MyUtility.Check.Empty(CutCell1))
                     {
