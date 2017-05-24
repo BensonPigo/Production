@@ -127,17 +127,17 @@ left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
 where psd.FabricType = 'F'
 " + sqlWhere + @"
-------------Fabric Defect -----
+------------Fabric Defect ----- 
 select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno 
 into #tmpAllData
 from #tmp1 t
 inner join Receiving_Detail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
-------------Group by Supp
+------------Group by Supp 
 select PoId,Seq1,Seq2,SuppID,ActualQty = sum(ActualQty)  
 into #GroupBySupp
 from #tmpAllData
 group by PoId,Seq1,Seq2,SuppID
-------------Kinds of Fabric Defects (Defect Name)----
+------------Kinds of Fabric Defects (Defect Name)---- 
 select t.SuppID,fpd.DefectRecord,t.PoId,t.Seq1,t.Seq2 
 into #tmpsuppdefect
 from #GroupBySupp t
@@ -145,25 +145,42 @@ inner join FIR f on t.PoId = f.POID and t.Seq1 = f.SEQ1 and t.Seq2 = f.SEQ2
 inner join FIR_Physical fp on fp.ID = f.ID
 inner join FIR_Physical_Defect fpd on fpd.FIR_PhysicalDetailUKey = fp.DetailUkey
 where f.PhysicalEncode = 1
-------------Group by Dyelot-------------
+------------Group by Dyelot------------- 
 select PoId,Seq1,Seq2,SuppID,Refno,Dyelot,sum(ActualQty) as ActualQty 
 into #tmp2groupbyDyelot
 from #tmpAllData
 group by PoId,Seq1,Seq2,SuppID,Refno,Dyelot
 order by PoId,Seq1,Seq2,SuppID,Refno,Dyelot
-------------Group by Roll---------------
+------------Group by Roll--------------- 
 select PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll,sum(ActualQty) as ActualQty 
 into #tmp2groupByRoll
 from #tmpAllData
 group by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll
 order by PoId,Seq1,Seq2,SuppID,Refno,Dyelot,Roll
--------tmp
+-----#spr 
+select distinct a.SuppID,
+Defect = STUFF((
+			select concat('/',s.DefectRecord) 
+			from (
+				select distinct DefectRecord
+				from #tmpsuppdefect b
+				WHERE b.Suppid = a.SuppID
+			)s
+			for xml path('')
+		 ), 1, 1, '')
+into #spr
+from #tmpsuppdefect a
+-------tmp 
 select distinct gbs.SuppID
 	,ref.Refno
 	,s.AbbEN
 	,TotalInspYds = (select sum(TotalInspYds) from FIR a inner join #GroupBySupp b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 where a.Suppid = gbs.SuppID)
 	,stockqty = (select sum(ActualQty) from #tmpAllData where SuppID = gbs.SuppID) 
-	,Yard.yrds
+	,yrds = (
+		select [Yrds] = count(*) * 5 
+		from #tmpsuppdefect a inner join #GroupBySupp b on a.POID=b.PoId and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
+		where b.SuppID = gbs.SuppID
+	)
 	,Point.Defect
 	,Point.ID
 	,Point.Point	
@@ -171,44 +188,34 @@ into #tmp
 from (select SuppID from #GroupBySupp group by SuppID) as gbs
 inner join Supp s WITH (NOLOCK) on s.id = gbs.SuppID
 outer apply(
-select Refno = stuff((
-	Select concat(',',Refno) 
-	from (
-        SELECT distinct Refno
-		FROM #tmpAllData 
-		WHERE #tmpAllData.SuppID=gbs.SuppID
-	)t 
-	for xml path('')				
+	select Refno = stuff((
+		Select concat(',',Refno) 
+		from (
+			SELECT distinct Refno
+			FROM #tmpAllData 
+			WHERE #tmpAllData.SuppID = gbs.SuppID
+		)t 
+		for xml path('')				
 	),1,1,'')
 ) as ref
 outer apply(
 	select Defect = fd.DescriptionEN, fd.ID, Point = sum(a.point)  
 	from (
 		select substring(data,1,1) as Defect,CONVERT(int, substring(data,2,5)) as Point 
-		from dbo.SplitString((
-			select concat('/',DefectRecord) 
-			from #tmpsuppdefect					
-			WHERE Suppid=gbs.SuppID
-			for xml path('')
-		),'/') 
+		from dbo.SplitString((select Defect from #spr WHERE Suppid = gbs.SuppID),'/') 
 	)A 
 	left join FabricDefect fd on id = a.Defect
 	group by fd.DescriptionEN,fd.ID
 ) as Point
-outer apply (
-	select [Yrds] = count(*) * 5 
-	from #tmpsuppdefect a inner join #GroupBySupp b on a.POID=b.PoId and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-	where b.SuppID = gbs.SuppID
-) as Yard
 order by Refno
--------tmp2
+-------tmp2 
 select Suppid,defect,ID,
 point  = sum(point) over(partition by suppid,defect)
 ,ROW_NUMBER() over(partition by suppid order by suppid,point desc ,ID desc) RN 
 into #tmp2
 from #tmp
 order by Suppid,point desc,ID desc
------#SHtmp
+-----#SHtmp 
 select FL.POID, FL.SEQ1, FL.seq2, h.Dyelot
 into #SH1
 from FIR_Laboratory FL WITH (NOLOCK) 
@@ -225,7 +232,7 @@ from  #tmp2groupbyDyelot rd WITH (NOLOCK) inner join Receiving_Detail rd1 on rd.
 Where exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot)
 or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot)
 group by SuppID
------#mtmp
+-----#mtmp 
 select l.POID,l.SEQ1,l.seq2, F.Suppid
 INTO #ea
 from dbo.FIR_Laboratory l WITH (NOLOCK) 
@@ -253,7 +260,7 @@ Where exists(select * from #ea where POID = RD.poid and SEQ1 = RD.seq1 and seq2 
 or exists(select * from #eb where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND Suppid = Tmp.SuppID ) 
 or exists(select * from #ec where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND Suppid = Tmp.SuppID ) 
 group by tmp.Suppid
------#Stmp
+-----#Stmp 
 select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.suppid
 into #sa
 from fir f WITH (NOLOCK)
@@ -272,7 +279,7 @@ inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ
 Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid) 
 or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid) 
 group by tmp.Suppid
------#Ltmp
+-----#Ltmp 
 select ActualYds = sum(fp.TicketYds - fp.ActualYds), t.SuppID
 into #Ltmp
 from FIR f
@@ -280,16 +287,16 @@ inner join FIR_Physical fp on f.ID = fp.ID
 inner join #GroupBySupp t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2
 where f.PhysicalEncode = 1 and fp.ActualYds < fp.TicketYds
 group by t.Suppid
------#Sdtmp
+-----#Sdtmp 
 select SHORTWIDTH = sum(t.ActualQty), f.Suppid
 into #Sdtmp
 from  fir f WITH (NOLOCK) 
 inner join FIR_Physical fp on f.ID = fp.ID
-left join Fabric on Fabric.SCIRefno = f.SCIRefno
 inner join #tmp2groupByRoll t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 and fp.Dyelot = t.Dyelot and fp.Roll = t.Roll
+left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth <> Fabric.Width
 group by f.Suppid
-------#TmpFinal
+------#TmpFinal 
 select distinct Tmp.SuppID 
 	,Tmp.refno 
     ,Tmp.abben 
@@ -347,7 +354,7 @@ left join #Sdtmp SHORTyards on SHORTyards.Suppid = Tmp.SuppID
 outer apply(select SHORTWIDTH = iif(Tmp.stockqty=0, 0, round(SHORTyards.SHORTWIDTH/Tmp.TotalInspYds*100,2)))SHORTWIDTHLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) between range1 and range2)sl6
 order by Tmp.SuppID
---準備比重#table不然每筆資料都要重撈7次
+--準備比重#table不然每筆資料都要重撈7次  
 select DISTINCT
 	[Fabric Defect] = (select Weight from Inspweight WITH (NOLOCK) where id ='Fabric Defect')
 	,[Lacking Yardage] =  (select Weight from Inspweight WITH (NOLOCK) where id ='Lacking Yardage')
@@ -358,7 +365,7 @@ select DISTINCT
 	,sumWeight = SUM(Weight) OVER()
 into #Weight
 FROM Inspweight
---取加權平均數AVG & 取AVG值落在甚麼LEVEL區間
+--取加權平均數AVG & 取AVG值落在甚麼LEVEL區間 
 select a.*,[TOTALLEVEL] = s.id
 from(
 	select t.*
@@ -370,7 +377,7 @@ from(
 where s.type='F' and s.Junk=0 and [AVG] between s.range1 and s.range2 
 ORDER BY SUPPID
 
-drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll
+drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
 ");
            #endregion
