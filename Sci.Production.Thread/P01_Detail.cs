@@ -164,7 +164,7 @@ namespace Sci.Production.Thread
                 .Text("ThreadLocation", header: "Thread Location", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("UseRatioNumeric", header: "UseRatioNumeric", width: Widths.Auto(true), iseditingreadonly: true)
                 .Text("Allowance", header: "Allowance", width: Widths.Auto(true), iseditingreadonly: true)
-                .Text("Refno", header: "Refno", width: Widths.Auto(true), settings: refno_col);
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(16), settings: refno_col);
                 //前4個是MachineType_ThreadRatio,後一個Refno是ThreadColorComb_Detail
 
             gridDetail.Columns["Refno"].DefaultCellStyle.BackColor = Color.Pink;
@@ -172,7 +172,7 @@ namespace Sci.Production.Thread
             for(int i = 0;i < tbArticle.Rows.Count;i++)
             {
                 Helper.Controls.Grid.Generator(gridDetail)
-                    .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.Auto(true), settings: threadcolor_col);
+                    .Text(tbArticle.Rows[i]["article"].ToString().Trim(), header: tbArticle.Rows[i]["article"].ToString().Trim(), width: Widths.AnsiChars(10), settings: threadcolor_col);
 
                 gridDetail.Columns[tbArticle.Rows[i]["article"].ToString().Trim()].DefaultCellStyle.BackColor = Color.Pink;
             }

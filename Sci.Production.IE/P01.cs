@@ -803,11 +803,11 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
             #endregion
 
-            #region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
-            bool isComboType = true;
-            string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", txtBrand.Text, txtStyle.Text, txtseason.Text);
-            isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
-            #endregion
+            //#region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
+            //bool isComboType = true;
+            //string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", txtBrand.Text, txtStyle.Text, txtseason.Text);
+            //isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
+            //#endregion
 
             #region 設定sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -820,17 +820,19 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             sp2.Value = txtseason.Text;
             sp3.ParameterName = "@brandid";
             sp3.Value = txtBrand.Text;
-            if (isComboType)
-            {
-                sp4.ParameterName = "@location";
-                sp4.Value = comboStyle.Text;
-            } 
+            sp4.ParameterName = "@location";
+            sp4.Value = comboStyle.Text;
+            //if (isComboType)
+            //{
+            //    sp4.ParameterName = "@location";
+            //    sp4.Value = comboStyle.Text;
+            //} 
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
             cmds.Add(sp2);
             cmds.Add(sp3);
-            if (isComboType)  cmds.Add(sp4);
+            cmds.Add(sp4);
             #endregion
 
             DataTable ietmsData;
@@ -845,7 +847,8 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
                             left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
                             left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
                             where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
-            if (isComboType) sqlCmd += " and id.Location = @location ";
+            //if (isComboType) sqlCmd += " and id.Location = @location ";
+            sqlCmd += " and id.Location = @location ";
             sqlCmd += " order by id.SEQ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out ietmsData);

@@ -83,7 +83,6 @@
             // labelTotalLength
             // 
             this.labelTotalLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTotalLength.Lines = 0;
             this.labelTotalLength.Location = new System.Drawing.Point(253, 8);
             this.labelTotalLength.Name = "labelTotalLength";
             this.labelTotalLength.Size = new System.Drawing.Size(82, 23);
