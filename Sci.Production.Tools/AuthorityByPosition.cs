@@ -131,7 +131,14 @@ namespace Sci.Production.Tools
             {
                 if (this.EditMode)
                 {
-                    CurrentDetailData["Used"] = CurrentDetailData["Used"].ToString().ToUpper() == "Y" ? "" : "Y";
+                    if (CurrentDetailData["BarPrompt"].ToString().ToUpper() == "SWITCH FACTORY")
+                    {
+                        CurrentDetailData["Used"] = "Y";
+                    }
+                    else
+                    {
+                        CurrentDetailData["Used"] = CurrentDetailData["Used"].ToString().ToUpper() == "Y" ? "" : "Y";
+                    }
                 }
             };
 
@@ -174,7 +181,14 @@ namespace Sci.Production.Tools
                 newRow["MenuName"] = dr["MenuName"].ToString();
                 newRow["BarPrompt"] = dr["BarPrompt"].ToString();
                 newRow["FKMenu"] = (Int64) dr["PKey"];
-                newRow["Used"] = "";
+                if (dr["BarPrompt"].ToString().ToUpper() == "SWITCH FACTORY")
+                {
+                    newRow["Used"] = "Y";
+                }
+                else
+                {
+                    newRow["Used"] = "";
+                }
                 newRow["CanNew"] = (bool) dr["CanNew"];
                 newRow["CanEdit"] = (bool) dr["CanEdit"];
                 newRow["CanDelete"] = (bool) dr["CanDelete"];
