@@ -79,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(966, 52);
+            this.gridicon.Location = new System.Drawing.Point(992, 52);
             // 
             // refresh
             // 
@@ -161,7 +161,6 @@
             // 
             // labelMenuFilter
             // 
-            this.labelMenuFilter.Lines = 0;
             this.labelMenuFilter.Location = new System.Drawing.Point(422, 19);
             this.labelMenuFilter.Name = "labelMenuFilter";
             this.labelMenuFilter.Size = new System.Drawing.Size(81, 23);
@@ -181,7 +180,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(18, 50);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -214,7 +212,6 @@
             // 
             // labelPosition
             // 
-            this.labelPosition.Lines = 0;
             this.labelPosition.Location = new System.Drawing.Point(18, 20);
             this.labelPosition.Name = "labelPosition";
             this.labelPosition.Size = new System.Drawing.Size(75, 23);

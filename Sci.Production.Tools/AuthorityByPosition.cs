@@ -25,6 +25,7 @@ namespace Sci.Production.Tools
         private DataTable dtPassEdit = null;
         private DataRow newRow = null;
         private string strChangeMemo = "";
+        private string ID = "";
 
         Ict.Win.UI.DataGridViewCheckBoxColumn ckNew = null;
         Ict.Win.UI.DataGridViewCheckBoxColumn ckEdit = null;
@@ -277,16 +278,21 @@ namespace Sci.Production.Tools
             base.OnDetailEntered();
             this.comboMenuFilter.SelectedValue = "";
             this.comboMenuFilter.ReadOnly = false;
+            ID = CurrentMaintain["ID"].ToString();
         }
 
         // 檢查Position是否重複
         private void txtPosition_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Seek(string.Format("SELECT ID FROM Pass0 WHERE ID = '{0}'", this.txtPosition.Text)))
+            //先記錄原本的Position,排除自己後check輸入的是否存在DB
+            if (ID.ToString().ToUpper() != this.txtPosition.Text.ToUpper())
             {
-                MyUtility.Msg.WarningBox("Position has exist !");
-                e.Cancel = true;
-            }
+                if (MyUtility.Check.Seek(string.Format("SELECT ID FROM Pass0 WHERE ID = '{0}'", this.txtPosition.Text)))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<Position: {0}> has existed !", this.txtPosition.Text));
+                    e.Cancel = true;
+                }
+            }      
         }
 
         // Update Pass2
