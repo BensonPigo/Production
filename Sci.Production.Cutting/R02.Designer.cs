@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.labelFactory = new Sci.Win.UI.Label();
             this.radioBySummary = new Sci.Win.UI.RadioButton();
             this.radioByOneDayDetial = new Sci.Win.UI.RadioButton();
             this.radioByDetail = new Sci.Win.UI.RadioButton();
@@ -43,8 +45,6 @@
             this.labelM = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.btnSendMail = new Sci.Win.UI.Button();
-            this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,6 +87,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(413, 240);
             this.panel1.TabIndex = 0;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(123, 115);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.Size = new System.Drawing.Size(121, 24);
+            this.comboFactory.TabIndex = 111;
+            // 
+            // labelFactory
+            // 
+            this.labelFactory.Location = new System.Drawing.Point(12, 115);
+            this.labelFactory.Name = "labelFactory";
+            this.labelFactory.Size = new System.Drawing.Size(99, 23);
+            this.labelFactory.TabIndex = 110;
+            this.labelFactory.Text = "Factory";
             // 
             // radioBySummary
             // 
@@ -136,6 +155,7 @@
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 3;
+            this.comboM.TextChanged += new System.EventHandler(this.comboM_TextChanged);
             // 
             // txtCutCellEnd
             // 
@@ -230,25 +250,6 @@
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
             this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
-            // 
-            // labelFactory
-            // 
-            this.labelFactory.Location = new System.Drawing.Point(12, 115);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(99, 23);
-            this.labelFactory.TabIndex = 110;
-            this.labelFactory.Text = "Factory";
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(123, 115);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 111;
             // 
             // R02
             // 

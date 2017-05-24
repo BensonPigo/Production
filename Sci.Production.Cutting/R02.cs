@@ -35,13 +35,7 @@ namespace Sci.Production.Cutting
             comboM.Text = Sci.Env.User.Keyword;
             
             //Set ComboFactory
-            DataTable Factory;
-            DBProxy.Current.Select(null, @"
-select '' ID
-union
-Select Distinct ID 
-from Factory", out Factory);
-            MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
+            this.setComboFactory();
             comboFactory.Text = Sci.Env.User.Factory;
         }
 
@@ -958,6 +952,26 @@ where 1 = 1
             {
                 MyUtility.Msg.ErrorBox(e.Message);
             }
-        }        
+        }
+
+        private void setComboFactory()
+        {
+            string sqlCmd = string.Format(@"
+select '' ID
+union
+Select Distinct ID 
+from Factory
+where   junk = 0 
+        and MDivisionID = '{0}'", comboM.Text);
+            DataTable Factory;
+            DBProxy.Current.Select(null, sqlCmd, out Factory);
+            MyUtility.Tool.SetupCombox(comboFactory, 1, Factory);
+            comboFactory.Text = "";
+        }
+
+        private void comboM_TextChanged(object sender, EventArgs e)
+        {
+            this.setComboFactory();
+        }
     }
 }
