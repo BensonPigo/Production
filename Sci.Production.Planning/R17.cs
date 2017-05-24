@@ -379,12 +379,12 @@ namespace Sci.Production.Planning
                     worksheet.Range[String.Format("A{0}:F{0}", rownum + i)].Value2 = objArray;
                     row++;
                 }
-                worksheet.Cells[row + 1, 1] = "Total";
-                worksheet.Cells[row + 1, 2] = " ";
-                worksheet.Cells[row + 1, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row));
-                worksheet.Cells[row + 1, 6] = string.Format("=(D{0}/C{0})", MyUtility.Convert.GetString(row+1));
+                worksheet.Cells[row + 2, 1] = "Total";
+                worksheet.Cells[row + 2, 2] = " ";
+                worksheet.Cells[row + 2, 3] = string.Format("=SUM(C2:C{0})", MyUtility.Convert.GetString(row+1));
+                worksheet.Cells[row + 2, 4] = string.Format("=SUM(D2:D{0})", MyUtility.Convert.GetString(row+1));
+                worksheet.Cells[row + 2, 5] = string.Format("=SUM(E2:E{0})", MyUtility.Convert.GetString(row+1));
+                worksheet.Cells[row + 2, 6] = string.Format("=(D{0}/C{0})", MyUtility.Convert.GetString(row+1));
                 worksheet.Range[String.Format("A{0}:F{1}",2, row+1)].Borders.Color = Color.Black;
                 if ((gdtSP != null) && (gdtSP.Rows.Count > 0))
                 {
