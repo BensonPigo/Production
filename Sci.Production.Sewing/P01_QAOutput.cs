@@ -58,7 +58,7 @@ namespace Sci.Production.Sewing
             numTotalAccumQty.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(AccumQty)", ""));
             numTotalVariance.Value = MyUtility.Convert.GetInt(((DataTable)gridbs.DataSource).Compute("SUM(Variance)", ""));
             CalculateTotal();
-            this.grid.AutoResizeColumns();
+            //this.grid.AutoResizeColumns();
         }
 
         protected override bool OnGridSetup()

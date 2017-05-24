@@ -49,12 +49,12 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 61);
-            this.gridcont.Size = new System.Drawing.Size(534, 301);
+            this.gridcont.Size = new System.Drawing.Size(566, 301);
             // 
             // btmcont
             // 
             this.btmcont.Location = new System.Drawing.Point(0, 394);
-            this.btmcont.Size = new System.Drawing.Size(558, 40);
+            this.btmcont.Size = new System.Drawing.Size(590, 40);
             // 
             // append
             // 
@@ -63,11 +63,11 @@
             // save
             // 
             this.save.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.save.Location = new System.Drawing.Point(388, 5);
+            this.save.Location = new System.Drawing.Point(420, 5);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(468, 5);
+            this.undo.Location = new System.Drawing.Point(500, 5);
             // 
             // revise
             // 
@@ -79,15 +79,14 @@
             // 
             // next
             // 
-            this.next.Location = new System.Drawing.Point(333, 5);
+            this.next.Location = new System.Drawing.Point(365, 5);
             // 
             // prev
             // 
-            this.prev.Location = new System.Drawing.Point(278, 5);
+            this.prev.Location = new System.Drawing.Point(310, 5);
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(12, 5);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(45, 23);
@@ -96,7 +95,6 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Lines = 0;
             this.labelArticle.Location = new System.Drawing.Point(12, 32);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(45, 23);
@@ -132,7 +130,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(211, 32);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(39, 23);
@@ -150,8 +147,7 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Lines = 0;
-            this.labelTotal.Location = new System.Drawing.Point(39, 368);
+            this.labelTotal.Location = new System.Drawing.Point(61, 365);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(38, 23);
             this.labelTotal.TabIndex = 106;
@@ -162,7 +158,7 @@
             this.numTotalOrderQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalOrderQty.IsSupportEditMode = false;
-            this.numTotalOrderQty.Location = new System.Drawing.Point(96, 368);
+            this.numTotalOrderQty.Location = new System.Drawing.Point(109, 365);
             this.numTotalOrderQty.Name = "numTotalOrderQty";
             this.numTotalOrderQty.NullValue = new decimal(new int[] {
             0,
@@ -170,7 +166,7 @@
             0,
             0});
             this.numTotalOrderQty.ReadOnly = true;
-            this.numTotalOrderQty.Size = new System.Drawing.Size(70, 23);
+            this.numTotalOrderQty.Size = new System.Drawing.Size(86, 23);
             this.numTotalOrderQty.TabIndex = 107;
             this.numTotalOrderQty.Value = new decimal(new int[] {
             0,
@@ -183,7 +179,7 @@
             this.numTotalAccumQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalAccumQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalAccumQty.IsSupportEditMode = false;
-            this.numTotalAccumQty.Location = new System.Drawing.Point(188, 368);
+            this.numTotalAccumQty.Location = new System.Drawing.Point(201, 365);
             this.numTotalAccumQty.Name = "numTotalAccumQty";
             this.numTotalAccumQty.NullValue = new decimal(new int[] {
             0,
@@ -191,7 +187,7 @@
             0,
             0});
             this.numTotalAccumQty.ReadOnly = true;
-            this.numTotalAccumQty.Size = new System.Drawing.Size(70, 23);
+            this.numTotalAccumQty.Size = new System.Drawing.Size(86, 23);
             this.numTotalAccumQty.TabIndex = 108;
             this.numTotalAccumQty.Value = new decimal(new int[] {
             0,
@@ -204,7 +200,7 @@
             this.numTotalVariance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalVariance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalVariance.IsSupportEditMode = false;
-            this.numTotalVariance.Location = new System.Drawing.Point(281, 368);
+            this.numTotalVariance.Location = new System.Drawing.Point(294, 365);
             this.numTotalVariance.Name = "numTotalVariance";
             this.numTotalVariance.NullValue = new decimal(new int[] {
             0,
@@ -212,7 +208,7 @@
             0,
             0});
             this.numTotalVariance.ReadOnly = true;
-            this.numTotalVariance.Size = new System.Drawing.Size(70, 23);
+            this.numTotalVariance.Size = new System.Drawing.Size(86, 23);
             this.numTotalVariance.TabIndex = 109;
             this.numTotalVariance.Value = new decimal(new int[] {
             0,
@@ -225,7 +221,7 @@
             this.numTotalQAQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalQAQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalQAQty.IsSupportEditMode = false;
-            this.numTotalQAQty.Location = new System.Drawing.Point(372, 368);
+            this.numTotalQAQty.Location = new System.Drawing.Point(388, 365);
             this.numTotalQAQty.Name = "numTotalQAQty";
             this.numTotalQAQty.NullValue = new decimal(new int[] {
             0,
@@ -233,7 +229,7 @@
             0,
             0});
             this.numTotalQAQty.ReadOnly = true;
-            this.numTotalQAQty.Size = new System.Drawing.Size(70, 23);
+            this.numTotalQAQty.Size = new System.Drawing.Size(86, 23);
             this.numTotalQAQty.TabIndex = 110;
             this.numTotalQAQty.Value = new decimal(new int[] {
             0,
@@ -246,7 +242,7 @@
             this.numTotalBalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalBalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalBalQty.IsSupportEditMode = false;
-            this.numTotalBalQty.Location = new System.Drawing.Point(465, 368);
+            this.numTotalBalQty.Location = new System.Drawing.Point(480, 365);
             this.numTotalBalQty.Name = "numTotalBalQty";
             this.numTotalBalQty.NullValue = new decimal(new int[] {
             0,
@@ -254,7 +250,7 @@
             0,
             0});
             this.numTotalBalQty.ReadOnly = true;
-            this.numTotalBalQty.Size = new System.Drawing.Size(70, 23);
+            this.numTotalBalQty.Size = new System.Drawing.Size(86, 23);
             this.numTotalBalQty.TabIndex = 111;
             this.numTotalBalQty.Value = new decimal(new int[] {
             0,
@@ -264,7 +260,7 @@
             // 
             // P01_QAOutput
             // 
-            this.ClientSize = new System.Drawing.Size(558, 434);
+            this.ClientSize = new System.Drawing.Size(590, 434);
             this.Controls.Add(this.numTotalBalQty);
             this.Controls.Add(this.numTotalQAQty);
             this.Controls.Add(this.numTotalVariance);
