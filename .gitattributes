@@ -171,6 +171,7 @@ Database/dbo/Tables/ArtworkAP_Detail.sql -text
 Database/dbo/Tables/ArtworkPO.sql -text
 Database/dbo/Tables/ArtworkPO_Detail.sql -text
 Database/dbo/Tables/ArtworkType.sql -text
+Database/dbo/Tables/Artworktype_Detail.sql -text
 Database/dbo/Tables/BorrowBack.sql -text
 Database/dbo/Tables/BorrowBack_Detail.sql -text
 Database/dbo/Tables/Brand.sql -text
