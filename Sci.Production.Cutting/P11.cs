@@ -1012,6 +1012,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
         private void btnGarmentList_Click(object sender, EventArgs e)
         {
+            if (CutRefTb == null) return;
+            if (CutRefTb.Rows.Count == 0) return;
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, null);
@@ -1020,6 +1022,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
         private void btnColorComb_Click(object sender, EventArgs e)
         {
+            if (CutRefTb == null) return;
+            if (CutRefTb.Rows.Count == 0) return;
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.ColorCombination callNextForm =
@@ -1029,6 +1033,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
         private void btnCopy_to_same_Cutref_Click(object sender, EventArgs e)
         {
+            if (CutRefTb == null) return;
+            if (CutRefTb.Rows.Count == 0) return;
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string cutref = selectDr["Cutref"].ToString();
             int iden = Convert.ToInt16(selectDr["iden"]);
@@ -1147,6 +1153,8 @@ inner join tmp b on  b.sizecode = a.sizecode and b.Ukey = c.Ukey");
 
         private void btnBatchCreate_Click(object sender, EventArgs e)
         {
+            if (CutRefTb == null) return;
+            if (CutRefTb.Rows.Count == 0) return;
             DataRow[] CutrefAy = CutRefTb.Select("Sel=1");
             if (CutrefAy.Length == 0)
             {
