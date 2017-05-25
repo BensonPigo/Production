@@ -216,7 +216,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(14, 6);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(50, 23);
@@ -233,7 +232,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(14, 33);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(50, 23);
@@ -242,7 +240,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(14, 60);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(50, 23);
@@ -251,7 +248,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(14, 87);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(50, 23);
@@ -282,7 +278,6 @@
             // 
             // labelCell
             // 
-            this.labelCell.Lines = 0;
             this.labelCell.Location = new System.Drawing.Point(14, 114);
             this.labelCell.Name = "labelCell";
             this.labelCell.Size = new System.Drawing.Size(50, 23);
@@ -301,7 +296,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(14, 140);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(60, 23);
@@ -310,7 +304,6 @@
             // 
             // labelShift
             // 
-            this.labelShift.Lines = 0;
             this.labelShift.Location = new System.Drawing.Point(243, 6);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(50, 23);
@@ -319,7 +312,6 @@
             // 
             // labelQtyInspected
             // 
-            this.labelQtyInspected.Lines = 0;
             this.labelQtyInspected.Location = new System.Drawing.Point(243, 33);
             this.labelQtyInspected.Name = "labelQtyInspected";
             this.labelQtyInspected.Size = new System.Drawing.Size(100, 23);
@@ -328,7 +320,6 @@
             // 
             // labelQtyRejected
             // 
-            this.labelQtyRejected.Lines = 0;
             this.labelQtyRejected.Location = new System.Drawing.Point(243, 60);
             this.labelQtyRejected.Name = "labelQtyRejected";
             this.labelQtyRejected.Size = new System.Drawing.Size(100, 23);
@@ -337,7 +328,6 @@
             // 
             // labelTtlDefectQty
             // 
-            this.labelTtlDefectQty.Lines = 0;
             this.labelTtlDefectQty.Location = new System.Drawing.Point(243, 87);
             this.labelTtlDefectQty.Name = "labelTtlDefectQty";
             this.labelTtlDefectQty.Size = new System.Drawing.Size(100, 23);
@@ -346,7 +336,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(243, 114);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(100, 23);
@@ -417,7 +406,6 @@
             // 
             // labelTeam
             // 
-            this.labelTeam.Lines = 0;
             this.labelTeam.Location = new System.Drawing.Point(513, 7);
             this.labelTeam.Name = "labelTeam";
             this.labelTeam.Size = new System.Drawing.Size(60, 23);
@@ -426,7 +414,6 @@
             // 
             // labelCPU
             // 
-            this.labelCPU.Lines = 0;
             this.labelCPU.Location = new System.Drawing.Point(513, 33);
             this.labelCPU.Name = "labelCPU";
             this.labelCPU.Size = new System.Drawing.Size(60, 23);
@@ -435,7 +422,6 @@
             // 
             // labelRFT
             // 
-            this.labelRFT.Lines = 0;
             this.labelRFT.Location = new System.Drawing.Point(513, 60);
             this.labelRFT.Name = "labelRFT";
             this.labelRFT.Size = new System.Drawing.Size(60, 23);
@@ -444,7 +430,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(513, 87);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(60, 23);

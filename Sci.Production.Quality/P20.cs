@@ -54,24 +54,38 @@ namespace Sci.Production.Quality
                 DataTable dt; 
                 DualResult result;
                 string cmd = string.Format(@"select id,styleid,dest,cpu from Orders WITH (NOLOCK) where ID='{0}' and FactoryID='{1}'", textValue, Sci.Env.User.Factory);
-
-                // 修改and to or 原因如文件上所示：編輯狀態下判斷若RFT.OrderID <> Order.ID 或　Order.Factoryid <> 登入工廠
+                
                 if (result = DBProxy.Current.Select(null, cmd, out dt))
                 {                    
                     if (MyUtility.Check.Empty(dt) || dt.Rows.Count==0)
                     {
-                        this.txtSP.Text = "";
+                        CurrentMaintain["sewinglineid"] = "";
+                        CurrentMaintain["OrderID"] = "";
                         displayStyle.Text = "";
-                        displayDestination.Text = "";
+                        displayDestination.Text = "";                        
+                        this.displayCell.Text = "";
                         this.txtCPU.Text = "0";
                         this.txtSP.Focus(); 
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< SP#: {0}> does not exist OR Factory is not match !!", textValue));
+                        MyUtility.Msg.WarningBox(string.Format("< SP#: {0}> does not exist or Factory is not match !!", textValue));
                         return;
+                    }
+                    if (!MyUtility.Check.Empty(txtLine.Text) && !MyUtility.Check.Seek(string.Format("select 1 from Rft where orderID='{0}' and sewinglineid='{1}'",textValue,this.txtLine.Text)))
+                    {                       
+                        DialogResult buttonResult = MyUtility.Msg.WarningBox("This SP# doesn't belong to this line, please inform scheduler. Do you want to Continue?", "Warning", MessageBoxButtons.YesNo);
+                        if (buttonResult==System.Windows.Forms.DialogResult.No)
+                        {
+                            this.txtSP.Text = CurrentMaintain["OrderID"].ToString();
+                            return;
+                        }
+                        CurrentMaintain["sewinglineid"]="";
+                        CurrentMaintain["OrderID"] = textValue;
+                        this.displayCell.Text = "";
+                        this.txtLine.Focus();
                     }
                     else
                     {
-                        displayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                            displayStyle.Text = dt.Rows[0]["styleid"].ToString();
                         displayDestination.Text = MyUtility.Check.Empty(dt.Rows[0]["dest"].ToString()) ? "" : dt.Rows[0]["dest"].ToString() + " - " + MyUtility.GetValue.Lookup("NameEN", dt.Rows[0]["dest"].ToString(), "dbo.Country", "ID");
                         txtCPU.Text = dt.Rows[0]["cpu"].ToString();
                     }
@@ -81,7 +95,7 @@ namespace Sci.Production.Quality
                     MyUtility.Msg.WarningBox("Error:"+ result);
                 }
             }
-        }
+            }
 
         //refresh
         protected override void OnDetailEntered()
@@ -283,7 +297,9 @@ namespace Sci.Production.Quality
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            MyUtility.Msg.InfoBox("Are you sure you want to <Amend> this data !?");
+            DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to <Amend> this data !?", "Warning", MessageBoxButtons.YesNo);
+            if (buttonResult == System.Windows.Forms.DialogResult.No) return;
+
             sql = string.Format(@"update Rft set Status='New' , editName='{0}', editDate='{1}'
                                       where ID='{2}'"
                                 , Sci.Env.User.UserID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), CurrentMaintain["ID"].ToString().Trim());
@@ -395,7 +411,10 @@ namespace Sci.Production.Quality
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtLine.Text = item.GetSelectedString();
-            string sqlcmd = string.Format(@"select sewingcell from Sewingline WITH (NOLOCK) where id='{0}'", item.GetSelectedString());
+            string sqlcmd = string.Format(
+                    @"select a.id,b.ID,b.SewingCell from Rft a WITH (NOLOCK) 
+                    inner join SewingLine b on a.SewinglineID=b.ID
+                    where orderid = '{0}' and b.ID='{1}' and b.factoryID='{2}'", this.txtSP.Text, this.txtLine.Text, Sci.Env.User.Factory);
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
                 this.displayCell.Text = dr["sewingcell"].ToString();
