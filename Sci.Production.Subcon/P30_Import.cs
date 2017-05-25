@@ -94,7 +94,7 @@ from dbo.PackingList a WITH (NOLOCK)
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID 	
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
-inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
+--inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(select o1.POID
 	               ,isnull(sum(o1.qty),0) order_qty
 	               ,sum(o1.qty*ot.Price) order_amt 
@@ -163,7 +163,7 @@ from dbo.ThreadRequisition a WITH (NOLOCK)
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
-inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
+--inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(select o1.POID
 	              ,isnull(sum(o1.qty),0) order_qty
 	              ,sum(o1.qty*ot.Price) order_amt 
