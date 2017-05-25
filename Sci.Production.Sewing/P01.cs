@@ -21,6 +21,7 @@ namespace Sci.Production.Sewing
         Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();        
         private DateTime systemLockDate;
+        private decimal? oldttlqaqty;
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -44,6 +45,7 @@ namespace Sci.Production.Sewing
         {
             base.OnDetailEntered();
             btnRevisedHistory.Enabled = !EditMode && MyUtility.Convert.GetDate(CurrentMaintain["OutputDate"]) <= systemLockDate;
+            oldttlqaqty = numQAOutput.Value;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -822,7 +824,7 @@ and s.SewingLineID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["Sewing
                         NQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
                     }
                 }
-                if (NQ != (Decimal)(numQAOutput.Value))
+                if (NQ != oldttlqaqty)
                 {
                     MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
                     return false; 
