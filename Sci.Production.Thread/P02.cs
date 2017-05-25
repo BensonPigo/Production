@@ -488,7 +488,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //事先整理資料
             sqlpre = string.Format(@"Select distinct   	a.ThreadColorId,  	d.Allowance,	a.Article,	a.ThreadCombId,
 	                                b.OperationId,e.SeamLength,a.Seq, a.ThreadLocationId, a.Refno,d.UseRatioNumeric,
-	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,g.MeterToCone,
+	                                a.MachineTypeId,  isnull(f.OrderQty,0) as OrderQty ,isnull(g.MeterToCone,0.00) as MeterToCone,
 	                                g.Description as Threadcombdesc,h.Description as colordesc
 	                                from ThreadColorComb_Detail a WITH (NOLOCK) 
 	                                cross join ThreadColorComb_Operation b WITH (NOLOCK) 
@@ -511,18 +511,31 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             DualResult result;
             result = DBProxy.Current.Select(null, sqlpre, out pretb_cons);
             if (!result) { this.ShowErr(result); return; }
+
+            StringBuilder warningmsg = new StringBuilder();
+            foreach (DataRow temp in pretb_cons.Rows)
+            {
+                if (Convert.ToDecimal(temp["MeterToCone"].ToString()) == 0)
+                {
+                    warningmsg.Append(string.Format("Thread Refno:{0} <No. of Meters Per Cones> is 0 can't calculate <No. of Cones>", temp["Refno"].ToString()) + Environment.NewLine);
+                }
+            }
+            if (warningmsg.ToString() != "") MyUtility.Msg.InfoBox(warningmsg.ToString());
+           
+
             //做資料匯整select group 後填入ThreadRequisition_Detail
             sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
                         Threadcombdesc,colordesc,
                         #tmp.MeterToCone,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100) as ConsumptionQty,
-                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) as TotalQty,
-                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2) as AllowanceQty,
-                        CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)+
-                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2) as PurchaseQty,
+                        IIF(#tmp.MeterToCone > 0 ,CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone),0) as TotalQty,
+                        IIF(#tmp.MeterToCone > 0 ,CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2),0.00) as AllowanceQty,
+                        IIF(#tmp.MeterToCone > 0 ,CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone)+
+                        CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2),0.00) as PurchaseQty,
                         'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
                         from #tmp
-                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId", id);
+                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
+                        ", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
             else
