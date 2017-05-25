@@ -81,7 +81,7 @@ with tmp1stData as (
     and so.Shift <> 'O'
 ");
             if (chx == "Exclude")
-                sqlCmd.Append(" and o.LocalOrder = 0");
+                sqlCmd.Append(" and o.LocalOrder = 0 ");
 
             if (!MyUtility.Check.Empty(output1))
                 sqlCmd.Append(string.Format(" and so.OutputDate >= '{0}'", Convert.ToDateTime(output1).ToString("d")));
@@ -90,10 +90,10 @@ with tmp1stData as (
                 sqlCmd.Append(string.Format(" and so.OutputDate <= '{0}'", Convert.ToDateTime(output2).ToString("d")));
 
             if (!MyUtility.Check.Empty(buyerDel1))
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDel1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(buyerDel1).ToString("d")));
 
             if (!MyUtility.Check.Empty(buyerDel2))
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(buyerDel2).ToString("d")));
 
             if (!MyUtility.Check.Empty(sciDel1))
                 sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(sciDel1).ToString("d")));
