@@ -51,7 +51,7 @@ namespace Sci.Production.Planning
         //Query
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            this.queryData(true);            
+            this.queryData(true, true);            
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -117,7 +117,7 @@ namespace Sci.Production.Planning
             }
 
             MyUtility.Msg.InfoBox("Approve data successful.");
-            this.queryData(false);
+            this.queryData(false,false);
         }
 
         //To Excel
@@ -164,10 +164,10 @@ namespace Sci.Production.Planning
             }
 
             MyUtility.Msg.InfoBox("UnApprove data successful.");
-            this.queryData(false);
+            this.queryData(false, false);
         }
 
-        private void queryData(bool checkSelect)
+        private void queryData(bool checkSelect,bool ap)
         {
             String sp_b = this.txtSPNoStart.Text;
             String sp_e = this.txtSPNoEnd.Text;
@@ -290,8 +290,7 @@ where ods.finished=0 and ods.isforecast = 0
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, cmds, out dtOT))
                 {
-                    if (dtOT.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
+                    if (dtOT.Rows.Count == 0 && ap) MyUtility.Msg.WarningBox("Data not found!!"); 
                     listControlBindingSource1.DataSource = dtOT;
                 }
                 else { ShowErr(strSQLCmd, result); }
