@@ -25,7 +25,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!OrderID.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -33,9 +36,8 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.04727cm</Top>
-                          <Left>0.07441cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>3.04921cm</Width>
+                          <Width>3.30001cm</Width>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -54,7 +56,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!StyleID.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -62,9 +67,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.04727cm</Top>
-                          <Left>3.22945cm</Left>
+                          <Left>3.30001cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>3.00434cm</Width>
+                          <Width>3.19836cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
                             <Border>
@@ -84,7 +89,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ArtworkID.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -94,7 +102,7 @@
                           <Top>0.04727cm</Top>
                           <Left>8.08205cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>3.16057cm</Width>
+                          <Width>2.76217cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
                             <Border>
@@ -114,7 +122,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!PCS.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -122,9 +133,9 @@
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Top>0.04727cm</Top>
-                          <Left>11.34845cm</Left>
+                          <Left>11.03574cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>0.978cm</Width>
+                          <Width>1.73477cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
                             <Border>
@@ -144,7 +155,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Unitprice.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -176,7 +190,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!QtyGMT.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -208,7 +225,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Amount.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -240,7 +260,10 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!poQTY.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -250,9 +273,9 @@
                           </Paragraphs>
                           <rd:DefaultName>poQTY</rd:DefaultName>
                           <Top>0.04727cm</Top>
-                          <Left>6.38277cm</Left>
+                          <Left>6.67476cm</Left>
                           <Height>0.6cm</Height>
-                          <Width>1.52289cm</Width>
+                          <Width>1.2309cm</Width>
                           <ZIndex>7</ZIndex>
                           <Style>
                             <Border>
@@ -308,19 +331,29 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Remark: </Value>
+                <Value>Remark:</Value>
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve"> </Value>
                 <Style />
               </TextRun>
               <TextRun>
                 <Value>=Parameters!Remark.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox35</rd:DefaultName>
-        <Top>10.60249cm</Top>
+        <Top>10.6025cm</Top>
         <Left>1.46092cm</Left>
         <Height>2.14313cm</Height>
         <Width>10.66271cm</Width>
@@ -363,7 +396,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Total:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -375,7 +411,7 @@
         <Top>10.60249cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
-        <Width>2.12453cm</Width>
+        <Width>2.75954cm</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -415,7 +451,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Vat:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -427,7 +466,7 @@
         <Top>11.31687cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
-        <Width>2.12453cm</Width>
+        <Width>2.75954cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <Border>
@@ -467,7 +506,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Grand Total:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -479,7 +521,7 @@
         <Top>12.03125cm</Top>
         <Left>12.12362cm</Left>
         <Height>0.71438cm</Height>
-        <Width>2.12453cm</Width>
+        <Width>2.75954cm</Width>
         <ZIndex>4</ZIndex>
         <Style>
           <Border>
@@ -519,7 +561,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!TOTAL.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -529,9 +574,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
         <Top>10.6025cm</Top>
-        <Left>14.24816cm</Left>
+        <Left>14.88316cm</Left>
         <Height>0.71438cm</Height>
-        <Width>4.60785cm</Width>
+        <Width>3.97285cm</Width>
         <ZIndex>5</ZIndex>
         <Style>
           <Border>
@@ -571,7 +616,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!VAT.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -581,9 +629,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
         <Top>11.31687cm</Top>
-        <Left>14.24815cm</Left>
+        <Left>14.88316cm</Left>
         <Height>0.71438cm</Height>
-        <Width>4.60785cm</Width>
+        <Width>3.97284cm</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -623,7 +671,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!GRATOTAL.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -633,9 +684,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
         <Top>12.03125cm</Top>
-        <Left>14.24816cm</Left>
+        <Left>14.88316cm</Left>
         <Height>0.71438cm</Height>
-        <Width>4.60785cm</Width>
+        <Width>3.97285cm</Width>
         <ZIndex>7</ZIndex>
         <Style>
           <Border>
@@ -675,7 +726,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Approved by:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -725,7 +779,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Department manager:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -775,7 +832,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Prepared by:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -784,7 +844,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!handle.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -793,7 +856,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!name.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -949,7 +1015,7 @@
               <TextRun>
                 <Value>Purchase Order</Value>
                 <Style>
-                  <FontSize>12pt</FontSize>
+                  <FontSize>18pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
@@ -961,7 +1027,7 @@
         <Top>2.37065cm</Top>
         <Left>0.87884cm</Left>
         <Height>0.6cm</Height>
-        <Width>3.77cm</Width>
+        <Width>5.09292cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
@@ -981,7 +1047,10 @@
             <TextRuns>
               <TextRun>
                 <Value>To:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -989,7 +1058,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>3.11176cm</Top>
-        <Left>0.87884cm</Left>
+        <Left>0.85238cm</Left>
         <Height>0.6cm</Height>
         <Width>1.65333cm</Width>
         <ZIndex>15</ZIndex>
@@ -1011,17 +1080,20 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!TO.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>3.11176cm</Top>
+        <Top>3.07648cm</Top>
         <Left>2.63801cm</Left>
         <Height>0.6cm</Height>
-        <Width>8.01782cm</Width>
+        <Width>8.52053cm</Width>
         <ZIndex>16</ZIndex>
         <Style>
           <Border>
@@ -1041,7 +1113,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Address:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1071,7 +1146,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!ADDRESS.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1081,7 +1159,7 @@
         <Top>3.97289cm</Top>
         <Left>2.63801cm</Left>
         <Height>0.6cm</Height>
-        <Width>8.01782cm</Width>
+        <Width>8.52053cm</Width>
         <ZIndex>18</ZIndex>
         <Style>
           <Border>
@@ -1101,7 +1179,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Tel#:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1109,7 +1190,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>3.11176cm</Top>
-        <Left>12.59561cm</Left>
+        <Left>11.61665cm</Left>
         <Height>0.6cm</Height>
         <Width>1.1749cm</Width>
         <ZIndex>19</ZIndex>
@@ -1131,7 +1212,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!TEL.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1139,9 +1223,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>3.11176cm</Top>
-        <Left>13.87634cm</Left>
+        <Left>12.96794cm</Left>
         <Height>0.6cm</Height>
-        <Width>4.7025cm</Width>
+        <Width>6.77506cm</Width>
         <ZIndex>20</ZIndex>
         <Style>
           <Border>
@@ -1161,7 +1245,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Fax#:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1169,7 +1256,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>3.97289cm</Top>
-        <Left>12.59561cm</Left>
+        <Left>11.61665cm</Left>
         <Height>0.6cm</Height>
         <Width>1.1749cm</Width>
         <ZIndex>21</ZIndex>
@@ -1191,7 +1278,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!FAX.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1199,9 +1289,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>3.97289cm</Top>
-        <Left>13.87634cm</Left>
+        <Left>12.96794cm</Left>
         <Height>0.6cm</Height>
-        <Width>4.7025cm</Width>
+        <Width>6.77506cm</Width>
         <ZIndex>22</ZIndex>
         <Style>
           <Border>
@@ -1217,7 +1307,7 @@
         <Top>4.71399cm</Top>
         <Left>2.63801cm</Left>
         <Height>0cm</Height>
-        <Width>8.01782cm</Width>
+        <Width>8.52053cm</Width>
         <ZIndex>23</ZIndex>
         <Style>
           <Border>
@@ -1245,7 +1335,10 @@
             <TextRuns>
               <TextRun>
                 <Value>P/O#:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1275,7 +1368,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!ID.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1305,7 +1401,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Issue Date:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1335,7 +1434,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Issuedate.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1365,7 +1467,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Delivery Date:</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1395,7 +1500,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!Delivery.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1421,7 +1529,7 @@
         <Top>3.90234cm</Top>
         <Left>2.63801cm</Left>
         <Height>0cm</Height>
-        <Width>8.01782cm</Width>
+        <Width>8.52053cm</Width>
         <ZIndex>31</ZIndex>
         <Style>
           <Border>
@@ -1431,9 +1539,9 @@
       </Line>
       <Line Name="Line4">
         <Top>3.87588cm</Top>
-        <Left>13.87634cm</Left>
+        <Left>12.92384cm</Left>
         <Height>0cm</Height>
-        <Width>4.7025cm</Width>
+        <Width>6.81916cm</Width>
         <ZIndex>32</ZIndex>
         <Style>
           <Border>
@@ -1443,9 +1551,9 @@
       </Line>
       <Line Name="Line5">
         <Top>4.71399cm</Top>
-        <Left>13.87634cm</Left>
+        <Left>12.92384cm</Left>
         <Height>0cm</Height>
-        <Width>4.7025cm</Width>
+        <Width>6.81916cm</Width>
         <ZIndex>33</ZIndex>
         <Style>
           <Border>
@@ -1522,7 +1630,10 @@
             <TextRuns>
               <TextRun>
                 <Value>SP#</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1552,7 +1663,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Style#</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1582,7 +1696,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Q'ty</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -1614,7 +1731,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Pattern#</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1624,7 +1744,7 @@
         <Top>7.55386cm</Top>
         <Left>8.37468cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.53363cm</Width>
+        <Width>2.79899cm</Width>
         <ZIndex>42</ZIndex>
         <Style>
           <Border>
@@ -1644,7 +1764,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!artworkunit.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1652,9 +1775,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>7.55386cm</Top>
-        <Left>11.6411cm</Left>
+        <Left>11.35006cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.49261cm</Width>
+        <Width>1.78365cm</Width>
         <ZIndex>43</ZIndex>
         <Style>
           <Border>
@@ -1674,7 +1797,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Unit Price</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1684,7 +1810,7 @@
         <Top>7.51858cm</Top>
         <Left>13.23954cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.7453cm</Width>
+        <Width>2.50781cm</Width>
         <ZIndex>44</ZIndex>
         <Style>
           <Border>
@@ -1704,17 +1830,20 @@
             <TextRuns>
               <TextRun>
                 <Value>Q'ty/GMT</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>7.4833cm</Top>
-        <Left>15.47396cm</Left>
+        <Top>7.50976cm</Top>
+        <Left>15.81791cm</Left>
         <Height>0.6cm</Height>
-        <Width>1.69238cm</Width>
+        <Width>2.3803cm</Width>
         <ZIndex>45</ZIndex>
         <Style>
           <Border>
@@ -1734,7 +1863,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Amount</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1776,7 +1908,10 @@
             <TextRuns>
               <TextRun>
                 <Value>Total</Value>
-                <Style />
+                <Style>
+                  <FontFamily>times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
@@ -1805,7 +1940,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!TotalQty.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -1837,7 +1975,10 @@
             <TextRuns>
               <TextRun>
                 <Value>=Parameters!TotalAmount.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style>
@@ -1882,6 +2023,8 @@
                 <Value>=Parameters!CurrencyID.Value</Value>
                 <Style>
                   <FontStyle>Italic</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -1894,7 +2037,7 @@
         <Top>10.60249cm</Top>
         <Left>13.13926cm</Left>
         <Height>0.71438cm</Height>
-        <Width>1.10889cm</Width>
+        <Width>1.70862cm</Width>
         <ZIndex>52</ZIndex>
         <Style>
           <Border>
@@ -1917,7 +2060,10 @@
               </TextRun>
               <TextRun>
                 <Value>=Parameters!VatRate.Value</Value>
-                <Style />
+                <Style>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                </Style>
               </TextRun>
               <TextRun>
                 <Value>%)</Value>
@@ -1933,7 +2079,7 @@
         <Top>11.31687cm</Top>
         <Left>12.8648cm</Left>
         <Height>0.71438cm</Height>
-        <Width>1.38336cm</Width>
+        <Width>1.9478cm</Width>
         <ZIndex>53</ZIndex>
         <Style>
           <Border>
