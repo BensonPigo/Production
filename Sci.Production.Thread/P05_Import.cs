@@ -14,6 +14,7 @@ using Sci.Win.Tools;
 using Ict;
 using Ict.Data;
 using System.Data.SqlClient;
+using System.Threading;
 
 namespace Sci.Production.Thread
 {
@@ -22,6 +23,8 @@ namespace Sci.Production.Thread
         private DataTable detTable;
         private DataTable gridTable;
         private string keyword = Sci.Env.User.Keyword;
+        System.Threading.Thread thread = null;
+
         public P05_Import(DataTable detTable)
         {
             InitializeComponent();
@@ -137,7 +140,7 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
                 }
                 this.HideWaitMessage();
 
-                if (dt.Rows.Count == 0)
+                if (dt == null || dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("Data not found.");
                     return;
@@ -210,12 +213,28 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            ThreadStart importThread = new ThreadStart(RunImportThread);
+            thread = new System.Threading.Thread(importThread);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+
+        private const int CtrlUI = 0, ImportADD = 1, ImportModify = 2, CloseForm = 3;
+
+        private void RunImportThread()
+        {
             gridDetail.ValidateControl();
-            if (MyUtility.Check.Empty(gridTable)|| gridTable.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(gridTable) || gridTable.Rows.Count == 0)
+            {
+                return;
+            }
 
             DataRow[] dr2 = gridTable.Select("Sel= 1");
             if (dr2.Length > 0)
             {
+                UIThread(CtrlUI);
+                int index = 1;
                 foreach (DataRow dr in dr2)
                 {
                     DataRow[] findrow = this.detTable.Select(string.Format("refno = '{0}' and ThreadColorid = '{2}' and threadLocationid = '{1}' ", dr["refno"].ToString(), dr["ThreadLocationid"], dr["Threadcolorid"]));
@@ -239,25 +258,73 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
                         ndr["UsedConevar"] = dr["UsedConevar"];
                         ndr["NewCone"] = 0;
                         ndr["UsedCone"] = 0;
-                        this.detTable.Rows.Add(ndr);
+                        UIThread(ImportADD, index, dr2.Length, ndr);
                     }
-                    else 
+                    else
                     {
-                        findrow[0]["NewConeBook"] = dr["NewConeBook"];
-                        findrow[0]["UsedConeBook"] = dr["UsedConeBook"];
-                        findrow[0]["NewConevar"] = dr["NewConevar"];
-                        findrow[0]["UsedConevar"] = dr["UsedConevar"];
-                        findrow[0]["NewCone"] = 0;
-                        findrow[0]["UsedCone"] = 0;
+                        UIThread(ImportModify, index, dr2.Length, dr, findrow[0]);
                     }
+                    index++;
                 }
+                UIThread(CloseForm);
             }
             else
             {
                 MyUtility.Msg.WarningBox("Please select data first!", "Warnning");
+                this.thread.Abort();
+                this.thread.Join();
+                this.thread = null;
                 return;
             }
-            this.Close();
+        }
+
+        private delegate void importUI(int doWhat, int index, int total, DataRow newDR, DataRow P05DR);
+
+        private void UIThread(int doWhat, int index = 0, int total = 0, DataRow newDR = null, DataRow P05DR = null)
+        {
+            if (this.InvokeRequired)
+            {
+                importUI import = new importUI(UIThread);
+                this.Invoke(import, doWhat, index, total, newDR, P05DR);
+            }
+            else
+            {
+                switch (doWhat)
+                {
+                    case CtrlUI:
+                        this.EditMode = false;
+                        this.btnImport.Enabled = false;
+                        this.btnQuery.Enabled = false;
+                        break;
+                    case ImportADD:
+                        this.ShowWaitMessage(string.Format("Data Loading... ({0} / {1})", index, total));
+                        this.detTable.Rows.Add(newDR);
+                        break;
+                    case ImportModify:
+                        this.ShowWaitMessage(string.Format("Data Loading... ({0} / {1})", index, total));
+                        P05DR["NewConeBook"] = newDR["NewConeBook"];
+                        P05DR["UsedConeBook"] = newDR["UsedConeBook"];
+                        P05DR["NewConevar"] = newDR["NewConevar"];
+                        P05DR["UsedConevar"] = newDR["UsedConevar"];
+                        P05DR["NewCone"] = 0;
+                        P05DR["UsedCone"] = 0;
+                        break;
+                    case CloseForm:
+                        this.HideWaitMessage();
+                        this.Close();
+                        break;
+                }
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if (thread != null)
+            {
+                this.thread.Abort();
+                this.thread.Join();
+            }
+            base.OnClosed(e);
         }
     }
 }
