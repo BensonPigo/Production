@@ -136,7 +136,7 @@ namespace Sci.Production.Class
 
             if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
             {
-                this.displayBox1.Text = name + " #" + extNo;
+                this.displayBox1.Text = name + (MyUtility.Check.Empty(extNo)?"":" #" + extNo);
             }
             else
             {
@@ -165,7 +165,7 @@ namespace Sci.Production.Class
                    }
                    if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
                    {
-                       this.displayBox1.Text = name + " #" + extNo;
+                       this.displayBox1.Text = name + (MyUtility.Check.Empty(extNo) ? "" : " #" + extNo);
                    }
                    else
                    {
@@ -187,7 +187,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd()+" #"+ item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd();
+            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd()+(item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd()==""?"":" #"+ item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd());
         }
 
         private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
