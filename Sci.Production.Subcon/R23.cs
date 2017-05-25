@@ -254,7 +254,7 @@ outer apply(
 			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 	from LocalPO LP
 	inner join LocalPO_Detail LPD on LP.Id = LPD.Id
-	where LP.Category = s.Category and LPD.OrderId = O.POID and LP.Status = 'Approved' 
+	where LP.Category = s.Category and LPD.OrderId = O.POID
         {1}
 ) x
 outer apply(
