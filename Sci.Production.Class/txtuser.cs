@@ -70,7 +70,6 @@ namespace Sci.Production.Class
                 if (!MyUtility.Check.Seek(textValue, "Pass1", "ID"))
                 {
                     string alltrimData = textValue.Trim();
-                    //bool isUserName = MyUtility.Check.Seek(alltrimData, "Pass1", "Name");
                     bool isUserExtNo = MyUtility.Check.Seek(alltrimData, "Pass1", "ExtNo");
                     DataTable dtName;
                     string selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where Name like '%{0}%' order by ID", textValue.Trim());
@@ -115,6 +114,7 @@ namespace Sci.Production.Class
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< User Id: {0} > not found!!!", textValue));
                         this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                        this.DisplayBox1.Text = "";
                         return;
                     }
                 }
@@ -123,61 +123,10 @@ namespace Sci.Production.Class
             // 強制把binding的Text寫到DataRow
             this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
 
-            string selectSql = string.Format("Select Name,ExtNo from Pass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
-            DataTable data;
-            var result = DBProxy.Current.Select(null, selectSql, out data);
-            string name = "";
-            string extNo = "";
-            if (result && data.Rows.Count > 0)
-            {
-                name = data.Rows[0]["name"].ToString();
-                extNo = data.Rows[0]["extNo"].ToString();
-            }
-
-            if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
-            {
-                this.displayBox1.Text = name + (MyUtility.Check.Empty(extNo)?"":" #" + extNo);
-            }
-            else
-            {
-                this.displayBox1.Text = "";
-            }
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                this.textBox1.Text = "";
-            }
-
+            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            this.DisplayBox1.Text = myUsername;
         }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {            
-            
-               if (this.textBox1.ReadOnly || this.DataBindings.Count == 0)
-               {
-                   string selectSql = string.Format("Select Name,ExtNo from Pass1 WITH (NOLOCK) where id = '{0}'", this.textBox1.Text.ToString());
-                   DataTable data;
-                   var result = DBProxy.Current.Select(null, selectSql, out data);
-                   string name = "";
-                   string extNo = "";
-                   if (result && data.Rows.Count>0) {
-                       name = data.Rows[0]["name"].ToString();
-                       extNo = data.Rows[0]["extNo"].ToString();
-                   }
-                   if (!string.IsNullOrWhiteSpace(extNo) || !string.IsNullOrWhiteSpace(name))
-                   {
-                       this.displayBox1.Text = name + (MyUtility.Check.Empty(extNo) ? "" : " #" + extNo);
-                   }
-                   else
-                   {
-                       this.displayBox1.Text = "";
-                   }
-                   if (string.IsNullOrWhiteSpace(name))
-                   {
-                       this.textBox1.Text = "";
-                   }
-               }
-        }
-
+        
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
@@ -187,7 +136,9 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd()+(item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd()==""?"":" #"+ item.GetSelecteds()[0]["EXTNO"].ToString().TrimEnd());
+
+            Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+            this.DisplayBox1.Text = myUsername;            
         }
 
         private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)

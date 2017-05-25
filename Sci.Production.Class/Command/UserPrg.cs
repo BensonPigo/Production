@@ -93,7 +93,7 @@ Left Join Production.dbo.Factory WITH (NOLOCK)
                         name = theUser.name;
                         break;
                     case NameType.nameAndExt:
-                        name = theUser.name + (MyUtility.Check.Empty(theUser.ext_No)?"": " #" + theUser.ext_No);
+                        name = theUser.name + (MyUtility.Check.Empty(theUser.ext_No) ? "" : " #" + theUser.ext_No);
                         break;
                     case NameType.idAndNameAndExt:
                         name = theUser.id + "-" + theUser.name + (MyUtility.Check.Empty(theUser.ext_No) ? "" : " #" + theUser.ext_No);
