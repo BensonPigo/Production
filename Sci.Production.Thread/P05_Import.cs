@@ -13,8 +13,7 @@ using Sci.Win;
 using Sci.Win.Tools;
 using Ict;
 using Ict.Data;
-using System.Data.SqlClient;
-using System.Threading;
+using System.Linq;
 
 namespace Sci.Production.Thread
 {
@@ -23,8 +22,6 @@ namespace Sci.Production.Thread
         private DataTable detTable;
         private DataTable gridTable;
         private string keyword = Sci.Env.User.Keyword;
-        System.Threading.Thread thread = null;
-
         public P05_Import(DataTable detTable)
         {
             InitializeComponent();
@@ -70,28 +67,14 @@ namespace Sci.Production.Thread
                 this.txtlocalitemStart.Focus();
                 return;
             }
-            string sql = string.Format(@"
-Select  1 as sel
-        , a.refno
-        , a.threadcolorid
-        , a.threadlocationid
-        , isnull(a.newcone,0) as newconebook
-        , 0 as newCone
-        , -(a.newCone) as NewconeVar
-        , isnull(a.usedcone,0) as usedconebook
-        , 0 as usedCone
-        , -(a.usedCone) as UsedconeVar
-        , b.description
-        , c.description as colordesc
-        , b.category
-        , b.Localsuppid
-        , b.threadtypeid
-        , b.ThreadTex
-        , supp = (b.Localsuppid + '-' + (Select name 
-                                         from LocalSupp d WITH (NOLOCK) 
-                                         where b.localsuppid = d.id))
-from Localitem b WITH (NOLOCK) 
-left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
+            string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
+                    isnull(a.newcone,0) as newconebook,0 as newCone,-(a.newCone) as NewconeVar,
+                    isnull(a.usedcone,0) as usedconebook,0 as usedCone,-(a.usedCone) as UsedconeVar,
+                    b.description,c.description as colordesc,
+                    b.category,b.Localsuppid,b.threadtypeid,b.ThreadTex,
+                    (b.Localsuppid+'-'+(Select name from LocalSupp d WITH (NOLOCK) where b.localsuppid = d.id)) as supp
+                    from Localitem b WITH (NOLOCK) 
+                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'", keyword);
 
             if (!MyUtility.Check.Empty(threadlocation1) || !MyUtility.Check.Empty(threadlocation2))
             {
@@ -111,92 +94,73 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
             gridTable.Clear();
             try
             {
-                DataTable dt = null;
-
-                this.ShowWaitMessage("Data Loading...");
-                using (var cn = new SqlConnection(Env.Cfg.GetConnection("").ConnectionString))
-                using (var cm = cn.CreateCommand())
+                DualResult rst;
+                DataTable dt;
+                if (!(rst = DBProxy.Current.Select("Production", sql, out dt)))
                 {
-                    cm.CommandText = sql;
-                    var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
-                    var cnt = 0;
-                    var start = 0;
-                    using (var ds = new DataSet())
-                    {
-                        while ((cnt = adp.Fill(ds, start, 100000, "Production")) > 0)
-                        {
-                            start += 100000;
-
-                            if (dt == null)
-                            {
-                                dt = ((DataTable)ds.Tables[0]).Clone();
-                            }
-                            dt.Merge(((DataTable)ds.Tables[0]));
-
-                            ds.Tables[0].Dispose();
-                            ds.Tables.Clear();
-                        }
-                    }
-                }
-                this.HideWaitMessage();
-
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found.");
+                    ShowErr(sql, rst);
                     return;
-                }
-                int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
-                if (rowcount <= rand) allpart = "True"; //Random多於找出來的就全部寫入 
-                int[] intlist = new int[rand];
-                int danom1;
-                Random dr = new Random();
-                bool zerorand = false;
-                if (allpart != "True" && rand != 0)
-                {
-                        
-                    for (int i = 0; i < rand; i++)
-                    {
-                        danom1 = dr.Next(rowcount);
-                        if (Array.IndexOf(intlist, danom1) == -1 || (danom1 == 0 && zerorand == false))
-                        {
-                            intlist[i] = danom1;
-                            if (danom1 == 0) zerorand = true;
-                            DataRow ndtdr = dt.Rows[danom1];
-                            DataRow ndr = gridTable.NewRow();
-                            ndr["sel"] = 1;
-                            ndr["refno"] = ndtdr["refno"];
-                            ndr["Description"] = ndtdr["Description"];
-                            ndr["threadtypeid"] = ndtdr["threadtypeid"];
-                            ndr["threadcolorid"] = ndtdr["threadcolorid"];
-                            ndr["threadlocationid"] = ndtdr["threadlocationid"];
-                            ndr["colordesc"] = ndtdr["colordesc"];
-                            ndr["category"] = ndtdr["category"];
-                            ndr["supp"] = ndtdr["supp"];
-                            ndr["LocalSuppid"] = ndtdr["LocalSuppid"];
-                            ndr["threadTex"] = ndtdr["threadTex"];
-                            ndr["NewConeBook"] = ndtdr["NewConeBook"];
-                            ndr["UsedConeBook"] = ndtdr["UsedConeBook"];
-                            ndr["NewConevar"] = ndtdr["NewConevar"];
-                            ndr["UsedConevar"] = ndtdr["UsedConevar"];
-                            ndr["NewCone"] = 0;
-                            ndr["UsedCone"] = 0;
-
-                            gridTable.Rows.Add(ndr);
-
-                        }
-                        else
-                        {
-                            i--;
-                        }
-                    }
-
-
                 }
                 else
                 {
-                    gridTable = dt;
+                    if (dt.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found.");
+                        return;
+                    }
+                    int rowcount = dt.Rows.Count; //因Random是小於此數字，因此要+1
+                    if (rowcount <= rand) allpart = "True"; //Random多於找出來的就全部寫入 
+                    int[] intlist = new int[rand];
+                    int danom1;
+                    Random dr = new Random();
+                    bool zerorand = false;
+                    if (allpart != "True" && rand != 0)
+                    {
+                        
+                        for (int i = 0; i < rand; i++)
+                        {
+                            danom1 = dr.Next(rowcount);
+                            if (Array.IndexOf(intlist, danom1) == -1 || (danom1 == 0 && zerorand == false))
+                            {
+                                intlist[i] = danom1;
+                                if (danom1 == 0) zerorand = true;
+                                DataRow ndtdr = dt.Rows[danom1];
+                                DataRow ndr = gridTable.NewRow();
+                                ndr["sel"] = 1;
+                                ndr["refno"] = ndtdr["refno"];
+                                ndr["Description"] = ndtdr["Description"];
+                                ndr["threadtypeid"] = ndtdr["threadtypeid"];
+                                ndr["threadcolorid"] = ndtdr["threadcolorid"];
+                                ndr["threadlocationid"] = ndtdr["threadlocationid"];
+                                ndr["colordesc"] = ndtdr["colordesc"];
+                                ndr["category"] = ndtdr["category"];
+                                ndr["supp"] = ndtdr["supp"];
+                                ndr["LocalSuppid"] = ndtdr["LocalSuppid"];
+                                ndr["threadTex"] = ndtdr["threadTex"];
+                                ndr["NewConeBook"] = ndtdr["NewConeBook"];
+                                ndr["UsedConeBook"] = ndtdr["UsedConeBook"];
+                                ndr["NewConevar"] = ndtdr["NewConevar"];
+                                ndr["UsedConevar"] = ndtdr["UsedConevar"];
+                                ndr["NewCone"] = 0;
+                                ndr["UsedCone"] = 0;
+
+                                gridTable.Rows.Add(ndr);
+
+                            }
+                            else
+                            {
+                                i--;
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        gridTable = dt;
+                    }
+                    this.gridDetail.DataSource = gridTable;
                 }
-                this.gridDetail.DataSource = gridTable;                
             }
             catch (Exception ex)
             {
@@ -213,31 +177,23 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            ThreadStart importThread = new ThreadStart(RunImportThread);
-            thread = new System.Threading.Thread(importThread);
-            thread.IsBackground = true;
-            thread.Start();
-        }
-
-
-        private const int CtrlUI = 0, ImportADD = 1, ImportModify = 2, CloseForm = 3;
-
-        private void RunImportThread()
-        {
             gridDetail.ValidateControl();
-            if (MyUtility.Check.Empty(gridTable) || gridTable.Rows.Count == 0)
-            {
-                return;
-            }
+            if (MyUtility.Check.Empty(gridTable)|| gridTable.Rows.Count == 0) return;
 
             DataRow[] dr2 = gridTable.Select("Sel= 1");
             if (dr2.Length > 0)
             {
-                UIThread(CtrlUI);
                 int index = 1;
+                var lookupData = this.detTable.AsEnumerable().ToLookup(row => row["refno"].ToString().ToUpper().TrimEnd() + "@" +
+                    row["ThreadLocationid"].ToString().ToUpper().TrimEnd() + "@" +
+                    row["Threadcolorid"].ToString().ToUpper().TrimEnd());
                 foreach (DataRow dr in dr2)
                 {
-                    DataRow[] findrow = this.detTable.Select(string.Format("refno = '{0}' and ThreadColorid = '{2}' and threadLocationid = '{1}' ", dr["refno"].ToString(), dr["ThreadLocationid"], dr["Threadcolorid"]));
+                    this.ShowWaitMessage(string.Format("Data Loading... ({0} / {1})", index++, dr2.Length), 500);
+                    var refno = dr["refno"].ToString().ToUpper().TrimEnd();
+                    var threadLocation = dr["ThreadLocationid"].ToString().ToUpper().TrimEnd();
+                    var threadColor = dr["Threadcolorid"].ToString().ToUpper().TrimEnd();
+                    DataRow[] findrow = lookupData[refno + "@" + threadLocation + "@" + threadColor].ToArray();
                     if (findrow.Length == 0)
                     {
                         DataRow ndr = this.detTable.NewRow();
@@ -258,73 +214,26 @@ left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '
                         ndr["UsedConevar"] = dr["UsedConevar"];
                         ndr["NewCone"] = 0;
                         ndr["UsedCone"] = 0;
-                        UIThread(ImportADD, index, dr2.Length, ndr);
+                        this.detTable.Rows.Add(ndr);
                     }
-                    else
+                    else 
                     {
-                        UIThread(ImportModify, index, dr2.Length, dr, findrow[0]);
+                        findrow[0]["NewConeBook"] = dr["NewConeBook"];
+                        findrow[0]["UsedConeBook"] = dr["UsedConeBook"];
+                        findrow[0]["NewConevar"] = dr["NewConevar"];
+                        findrow[0]["UsedConevar"] = dr["UsedConevar"];
+                        findrow[0]["NewCone"] = 0;
+                        findrow[0]["UsedCone"] = 0;
                     }
-                    index++;
                 }
-                UIThread(CloseForm);
             }
             else
             {
                 MyUtility.Msg.WarningBox("Please select data first!", "Warnning");
-                this.thread.Abort();
-                this.thread.Join();
-                this.thread = null;
                 return;
             }
-        }
-
-        private delegate void importUI(int doWhat, int index, int total, DataRow newDR, DataRow P05DR);
-
-        private void UIThread(int doWhat, int index = 0, int total = 0, DataRow newDR = null, DataRow P05DR = null)
-        {
-            if (this.InvokeRequired)
-            {
-                importUI import = new importUI(UIThread);
-                this.Invoke(import, doWhat, index, total, newDR, P05DR);
-            }
-            else
-            {
-                switch (doWhat)
-                {
-                    case CtrlUI:
-                        this.EditMode = false;
-                        this.btnImport.Enabled = false;
-                        this.btnQuery.Enabled = false;
-                        break;
-                    case ImportADD:
-                        this.ShowWaitMessage(string.Format("Data Loading... ({0} / {1})", index, total));
-                        this.detTable.Rows.Add(newDR);
-                        break;
-                    case ImportModify:
-                        this.ShowWaitMessage(string.Format("Data Loading... ({0} / {1})", index, total));
-                        P05DR["NewConeBook"] = newDR["NewConeBook"];
-                        P05DR["UsedConeBook"] = newDR["UsedConeBook"];
-                        P05DR["NewConevar"] = newDR["NewConevar"];
-                        P05DR["UsedConevar"] = newDR["UsedConevar"];
-                        P05DR["NewCone"] = 0;
-                        P05DR["UsedCone"] = 0;
-                        break;
-                    case CloseForm:
-                        this.HideWaitMessage();
-                        this.Close();
-                        break;
-                }
-            }
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            if (thread != null)
-            {
-                this.thread.Abort();
-                this.thread.Join();
-            }
-            base.OnClosed(e);
+            this.HideWaitMessage();
+            this.Close();
         }
     }
 }
