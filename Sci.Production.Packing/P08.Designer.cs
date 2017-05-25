@@ -135,7 +135,6 @@
             // 
             // labelCartonEstArrived
             // 
-            this.labelCartonEstArrived.Lines = 0;
             this.labelCartonEstArrived.Location = new System.Drawing.Point(391, 58);
             this.labelCartonEstArrived.Name = "labelCartonEstArrived";
             this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 23);
@@ -144,7 +143,6 @@
             // 
             // labelSewingInlineDate
             // 
-            this.labelSewingInlineDate.Lines = 0;
             this.labelSewingInlineDate.Location = new System.Drawing.Point(391, 5);
             this.labelSewingInlineDate.Name = "labelSewingInlineDate";
             this.labelSewingInlineDate.Size = new System.Drawing.Size(127, 23);
@@ -163,7 +161,6 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(212, 5);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(22, 23);
@@ -201,7 +198,6 @@
             // 
             // labelCartonEstBooking
             // 
-            this.labelCartonEstBooking.Lines = 0;
             this.labelCartonEstBooking.Location = new System.Drawing.Point(391, 32);
             this.labelCartonEstBooking.Name = "labelCartonEstBooking";
             this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 23);
@@ -210,7 +206,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(2, 32);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(82, 23);
@@ -219,7 +214,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(2, 5);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(82, 23);

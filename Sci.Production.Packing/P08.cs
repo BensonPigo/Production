@@ -202,9 +202,11 @@ and o.Junk = 0");
         //Approve
         private void btnApprove_Click(object sender, EventArgs e)
         {
+
             this.gridDetail.ValidateControl();
             this.gridDetail.EndEdit();
             listControlBindingSource1.EndEdit();
+            if (gridData == null) return; if (gridData.Rows.Count == 0) return;
             DataTable detailData = (DataTable)listControlBindingSource1.DataSource;
             DataRow[] dr = detailData.Select("Selected = 1");
             if (dr.Length <= 0)
