@@ -76,7 +76,12 @@ namespace Sci.Production.Planning
                     strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                 if (dateFactoryKPIDate.Value2 != null)
                     strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                //補上判斷　Category
+                if (radioBulk.Checked)
+                    strSQL += " AND A1.Category='B'";
+                if (radioSample.Checked)
+                    strSQL += " AND A1.Category='S'";
+                //
                 if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                 else  //factory有值
@@ -129,7 +134,12 @@ namespace Sci.Production.Planning
                     strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                 if (dateFactoryKPIDate.Value2 != null)
                     strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                //補上判斷　Category
+                if (radioBulk.Checked)
+                    strSQL += " AND A1.Category='B'";
+                if (radioSample.Checked)
+                    strSQL += " AND A1.Category='S'";
+                //
                 if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                     strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                 else  //factory有值
@@ -185,7 +195,12 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                    //補上判斷　Category
+                    if (radioBulk.Checked)
+                        strSQL += " AND A1.Category='B'";
+                    if (radioSample.Checked)
+                        strSQL += " AND A1.Category='S'";
+                    //
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
@@ -220,7 +235,12 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                    //補上判斷　Category
+                    if (radioBulk.Checked)
+                        strSQL += " AND A1.Category='B'";
+                    if (radioSample.Checked)
+                        strSQL += " AND A1.Category='S'";
+                    //
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
@@ -255,7 +275,12 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                    //補上判斷　Category
+                    if (radioBulk.Checked)
+                        strSQL += " AND A1.Category='B'";
+                    if (radioSample.Checked)
+                        strSQL += " AND A1.Category='S'";
+                    //
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
@@ -303,7 +328,12 @@ namespace Sci.Production.Planning
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
                         strSQL += string.Format(" AND A1.FtyKPI <= '{0}' ", dateFactoryKPIDate.Value2.Value.ToString("yyyy-MM-dd"));
-
+                    //補上判斷　Category
+                    if (radioBulk.Checked)
+                        strSQL += " AND A1.Category='B'";
+                    if (radioSample.Checked)
+                        strSQL += " AND A1.Category='S'";
+                    //
                     if (MyUtility.Check.Empty(txtFactory.Text)) //factory沒值
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
