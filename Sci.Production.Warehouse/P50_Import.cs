@@ -52,7 +52,7 @@ namespace Sci.Production.Warehouse
             String price1 = this.numPrice1.Text;
             String price2 = this.numPrice2.Text;
 
-            String randomCount = this.numRandom.Text;
+            String randomCount = this.numRandom.Value.ToString();
 
             if (MyUtility.Check.Empty(sp1) && MyUtility.Check.Empty(sp2) && MyUtility.Check.Empty(category) && MyUtility.Check.Empty(fabrictype))
             {
