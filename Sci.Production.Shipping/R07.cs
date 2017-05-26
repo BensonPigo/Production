@@ -68,12 +68,12 @@ where 1=1"));
             }
             if (!MyUtility.Check.Empty(apvDate1))
             {
-                sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(apvDate2))
             {
-                sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
             }
             
             if (!MyUtility.Check.Empty(mDivision))

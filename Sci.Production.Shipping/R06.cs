@@ -60,7 +60,7 @@ namespace Sci.Production.Shipping
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
-s.CDate,s.ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
+s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
 isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
@@ -78,12 +78,12 @@ where s.Status = 'Approved'");
 
             if (!MyUtility.Check.Empty(apvDate1))
             {
-                sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apvDate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(apvDate2))
             {
-                sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apvDate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(blno1))
