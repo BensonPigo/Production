@@ -315,6 +315,7 @@ namespace Sci.Production.Subcon
         }
         private void btnToExcel_Click(object sender, EventArgs e)
         {
+            if (dataSet == null) return;
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             Sci.Utility.Excel.SaveXltReportCls.xltRptTable dt1 = new SaveXltReportCls.xltRptTable(dtGrid1);
             DataView dataView = dtGrid2.DefaultView;
