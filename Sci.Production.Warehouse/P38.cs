@@ -212,6 +212,7 @@ where   f.MDivisionID = '{0}'
 
         private void btnLock_Click(object sender, EventArgs e)
         {
+            if (listControlBindingSource1.DataSource == null) return;
             if (checkStatus(Lock))
             {
                 LockUnlock(Lock);
@@ -224,6 +225,7 @@ where   f.MDivisionID = '{0}'
 
         private void btnUnlock_Click(object sender, EventArgs e)
         {
+            if (listControlBindingSource1.DataSource == null) return;
             if (checkStatus(UnLock))
             {
                 LockUnlock(UnLock);
@@ -236,6 +238,7 @@ where   f.MDivisionID = '{0}'
 
         private bool checkStatus(Byte flag)
         {
+
             bool check = true;
             string strCheckStatus = "";
             #region 確認 Lock Or UnLock
@@ -256,6 +259,7 @@ where   f.MDivisionID = '{0}'
 
         private void LockUnlock(Byte flag)
         {
+
             bool x;
             if (!(x = gridMaterialLock.ValidateControl())) MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
             gridMaterialLock.EndEdit();
@@ -306,6 +310,7 @@ where   f.MDivisionID = '{0}'
 
         private void btnExcel_Click(object sender, EventArgs e)
         {
+            if (listControlBindingSource1.DataSource == null) return;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             //MyUtility.Excel.CopyToXls(dt, "");
             string sql = @"
@@ -336,7 +341,7 @@ t.LockName
 
             DataTable k;
             MyUtility.Tool.ProcessWithDatatable(dt, "", sql, out k, "#Tmp");
-
+            if (k.Rows.Count == 0) return;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P38.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(k, "", "Warehouse_P38.xltx", 1, true, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
