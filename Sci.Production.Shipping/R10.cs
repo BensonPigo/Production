@@ -687,6 +687,7 @@ where s.Type = 'EXPORT'");
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            excel.Visible = true;
             if (reportContent == 2)
             {
                 worksheet.Cells[1, 2] = "FTY WK#";
@@ -770,13 +771,13 @@ where s.Type = 'EXPORT'");
                         objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
                         objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
-                        if (counts > 0)
-                        {
-                            for (int t = 1; t <= counts; t++)
-                            {
-                                objArray[0, 27 + t] = MyUtility.Check.Empty(dr[27 + t]) ? 0 : dr[27 + t];
-                            }
-                        }
+                        //if (counts > 0)
+                        //{
+                        //    for (int t = 1; t <= counts; t++)
+                        //    {
+                        //        objArray[0, 27 + t] = MyUtility.Check.Empty(dr[27 + t]) ? 0 : dr[27 + t];
+                        //    }
+                        //}
 
                     }
                     i = 0;
