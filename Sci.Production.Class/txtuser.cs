@@ -41,10 +41,10 @@ namespace Sci.Production.Class
                 this.textBox1.Text = value;
                 if (!Env.DesignTime)
                 {
-                    if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
-                    {
-                        return;
-                    }
+                    //if (this.textBox1.Text == "" || MyUtility.Check.Empty(this.textBox1.Text))
+                    //{
+                    //    return;
+                    //}
                     
                     Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
                     this.DisplayBox1.Text = myUsername;
