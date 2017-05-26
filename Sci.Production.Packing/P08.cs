@@ -36,7 +36,7 @@ namespace Sci.Production.Packing
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Type", header: "Packing Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Date("SewInLine", header: "Sewing Inline Date", iseditingreadonly: true)
                 .Date("EstCTNBooking", header: "Carton Est. Booking", iseditingreadonly: true)
