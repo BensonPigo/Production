@@ -80,11 +80,11 @@ where s.Type = 'IMPORT'");
                 }
                 if (!MyUtility.Check.Empty(apApvDate1))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(apApvDate2))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(shipMode))
                 {
@@ -124,11 +124,11 @@ where fe.Type <> 3");
                 }
                 if (!MyUtility.Check.Empty(apApvDate1))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(apApvDate2))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(shipMode))
                 {
@@ -183,7 +183,7 @@ as (
 select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
 e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
 e.PortArrival,e.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,s.ApvDate,s.VoucherID,s.SubType
+s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
@@ -208,11 +208,11 @@ where s.Type = 'IMPORT'");
                 }
                 if (!MyUtility.Check.Empty(apApvDate1))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(apApvDate2))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(shipMode))
                 {
@@ -229,7 +229,7 @@ as (
 select fe.InvNo,IIF(fe.Type = 1,'3rd Country',IIF(fe.Type = 2,'Transfer In','Local Purchase')) as Type,s.MDivisionID,fe.Consignee,'' as WKNo,fe.ID as FtyWKNo,fe.ShipModeID,
 fe.CYCFS,fe.Packages,fe.Blno,fe.WeightKg,fe.Cbm,fe.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 fe.PortArrival,fe.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
-s.CDate,s.ApvDate,s.VoucherID,s.SubType
+s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 left join FtyExport fe WITH (NOLOCK) on se.InvNo = fe.ID
@@ -254,11 +254,11 @@ where fe.Type <> 3");
                 }
                 if (!MyUtility.Check.Empty(apApvDate1))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(apApvDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(apApvDate2))
                 {
-                    sqlCmd.Append(string.Format(" and s.ApvDate <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(apApvDate2).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(shipMode))
                 {
