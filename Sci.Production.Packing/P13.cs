@@ -39,7 +39,7 @@ namespace Sci.Production.Packing
 
             Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8))
-                .Text("ID", header: "SP#", width: Widths.AnsiChars(13))
+                .Text("ID", header: "SP#", width: Widths.AnsiChars(16))
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(13))
                 .Date("SciDelivery", header: "SCI Delivery")
                 .Date("SewInline", header: "Sewing Inline Date")
