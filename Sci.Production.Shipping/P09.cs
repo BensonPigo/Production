@@ -141,6 +141,11 @@ and iif(PulloutDate is null,EstPulloutDate,PulloutDate) is not null ");
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             DataTable GridData = (DataTable)listControlBindingSource1.DataSource;
+            if (GridData == null)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
             int dataRowCount = GridData.Rows.Count;
             if (dataRowCount <= 0)
             {
