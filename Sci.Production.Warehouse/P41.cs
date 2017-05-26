@@ -181,6 +181,7 @@ AND (B.Special LIKE ('%EMB-APPLIQUE%') or B.Special LIKE ('%EMB APPLIQUE%'))", S
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
+            if (listControlBindingSource1.DataSource == null) return;
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             dt.DefaultView.RowFilter = listControlBindingSource1.Filter;
             dt = dt.DefaultView.ToTable();
