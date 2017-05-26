@@ -90,90 +90,19 @@ namespace Sci.Production.Packing
             }
             StringBuilder sqlCmd = new StringBuilder();
             # region 組SQL
-            sqlCmd.Append(string.Format(@"select DISTINCT
-            o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine,
-            isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate))) as InspDate,
-            oq.SDPDate,oq.EstPulloutDate,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery,
-            iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null) as CRDDate,
-            o.BuyMonth,o.Customize1,
-            iif(o.ScanAndPack = 1,'Y','') as ScanAndPack,
-            iif(o.RainwearTestPassed = 1,'Y','') as RainwearTestPassed,
-            stuff(Dimension.Dimension,1,2,'') as Dimension,
-            oq.ProdRemark,oq.ShipRemark,
-            stuff(MtlFormA.MtlFormA,1,2,'') as MtlFormA,
-            isnull(CTNQty.CTNQty,0) as CTNQty,
-            iif(CTNQty.CTNQty=0,0,Round((cast(ClogQty.ClogQty as float)/cast(CTNQty.CTNQty as float)) * 100,0)) as InClogCTN,
-            CBM.CBM,
-            isnull(stuff(ClogLocationId.ClogLocationId,1,1,''),'') as ClogLocationId
-
-            from Orders o WITH (NOLOCK) 
-            left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
-            left join country c WITH (NOLOCK) on c.ID = o.Dest
-            left join PackingList_Detail pd WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
-            outer apply(
-	            select isnull(sum(pd.CTNQty),0) as CTNQty
-	            from PackingList_Detail pd WITH (NOLOCK) 
-	            where pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
-            )CTNQty
-            outer apply(
-	            select isnull(sum(pd.CTNQty),0) as ClogQty
-	            from PackingList_Detail pd WITH (NOLOCK) 
-	            where pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq 
-	            and pd.ReceiveDate is not null
-            )ClogQty
-            outer apply(
-	            select ClogLocationId = (
-		            select distinct concat('; ',pd.ClogLocationId)
-		            from PackingList_Detail pd WITH (NOLOCK) 
-		            where pd.OrderID = oq.ID and pd.OrderShipmodeSeq = oq.seq
-		            for xml path('')
-	            )
-            )ClogLocationId
-            outer apply(
-	            select Dimension = (
-		            select distinct concat('; ',L.CtnLength,'*',L.CtnWidth,'*',L.CtnHeight)
-		            from PackingList_Detail pd WITH (NOLOCK) 
-		            inner join LocalItem L WITH (NOLOCK) on  pd.RefNo = L.RefNo 
-		            where pd.OrderID = oq.id and pd.OrderShipmodeSeq = oq.seq
-		            and pd.RefNo is not null and pd.RefNo <> ''
-		            for xml path('')
-	            )
-            )Dimension
-            outer apply(
-	             select CBM=(
-		            Select top 1 isnull(p.CBM,0)
-		            from PackingList p WITH (NOLOCK) 
-					inner join PackingList_Detail pd WITH (NOLOCK) on p.id=pd.id
-		            where p.OrderID = oq.ID and pd.OrderShipmodeSeq = oq.Seq
-	            )
-            )CBM
-            outer apply(
-	            select MtlFormA =(
-		            select concat('; ',s.Seq1,'-',iif( maxR is null ,  '  /  /    ' , format(s2.FormXRev,  'yyyy/MM/dd')))
-		            from (
-			            select ed.Seq1,
-				            max(ed.FormXReceived) as maxR,	
-				            min(ed.FormXReceived) as minR,
-				            count(*) as count_All,
-				            count(ed.FormXReceived) as count_NoNull
-			            from Export_Detail ed WITH (NOLOCK) 
-			            where ed.PoID = oq.Id
-			            GROUP BY Seq1
-		            ) as s
-		            outer apply(
-			            select iif(s.count_All = s.count_NoNull, s.minR, s.maxR) as FormXRev
-		            ) as s2
-		            order by Seq1
-		            for xml path('')
-	            )
-            )MtlFormA
-
-            where 1=1            
-            and o.MDivisionID = '{0}'
-            and o.PulloutComplete = 0
-            and o.Finished = 0
-            and o.Qty > 0
-            and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')",
+            sqlCmd.Append(string.Format(@"
+select distinct oq.Id, oq.Seq , pd.ClogLocationId
+into #tmpClocationids
+from Orders o WITH (NOLOCK) 
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
+left join country c WITH (NOLOCK) on c.ID = o.Dest
+left join PackingList_Detail pd WITH (NOLOCK) on pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
+where 1=1            
+and o.MDivisionID = '{0}'
+and o.PulloutComplete = 0
+and o.Finished = 0
+and o.Qty > 0
+and (oq.EstPulloutDate <= '{1}' or dateadd(day,4,o.SewOffLine) <= '{1}')",
             Sci.Env.User.Keyword, Convert.ToDateTime(dateExpPoutDate.Value).ToString("d")));
             if (txtdropdownlistCategory.SelectedValue.ToString() == "BS")
             {
@@ -183,6 +112,93 @@ namespace Sci.Production.Packing
             {
                 sqlCmd.Append(string.Format(" and o.Category = '{0}'", txtdropdownlistCategory.SelectedValue));
             }
+            sqlCmd.Append(@"
+select distinct id,seq into #tmpIDSeq from  #tmpClocationids
+
+select *
+into #tmp1
+from #tmpIDSeq t
+outer apply(
+	select ClogLocationId = stuff(
+	(
+		select concat('; ',a.ClogLocationId)
+		from(
+			select distinct pd2.ClogLocationId
+			from #tmpClocationids pd2 WITH (NOLOCK) 
+			where pd2.id = t.ID and pd2.seq = t.seq
+		)a
+		for xml path('')
+	),1,2,'')
+)ClogLocationId
+
+select distinct
+    o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine
+	,InspDate = isnull(o.InspDate,iif(oq.EstPulloutDate is null,dateadd(day,2,o.SewOffLine),dateadd(day,-2,oq.EstPulloutDate)))
+	,oq.SDPDate
+    ,EstPulloutDate = iif(oq.EstPulloutDate is null , o.BuyerDelivery , oq.EstPulloutDate)
+    ,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.SciDelivery
+	,CRDDate = iif(oq.BuyerDelivery > o.CRDDate, o.CRDDate, null)
+	,o.BuyMonth,o.Customize1
+	,ScanAndPack = iif(o.ScanAndPack = 1,'Y','')
+	,RainwearTestPassed = iif(o.RainwearTestPassed = 1,'Y','')
+	,Dimension = Dimension.Dimension
+	,oq.ProdRemark,oq.ShipRemark
+	,MtlFormA = MtlFormA.MtlFormA
+	,C3.CTNQty
+    ,InClogCTN = iif(isnull(C3.CTNQty,0) = 0,0,Round((cast(isnull(C3.ClogQty,0) as float)/cast(isnull(C3.CTNQty,0) as float)) * 100,0)) 
+    ,C3.CBM
+into #tmp2
+from #tmpIDSeq a 
+inner join Orders o WITH (NOLOCK) on o.id = a.Id
+left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
+left join country c WITH (NOLOCK) on c.ID = o.Dest
+outer apply(
+	Select top 1 
+		CBM = first_value(p.CBM) over (order by (select 1))
+		,CTNQty = isnull(sum(pd2.CTNQty) over (partition by (select 1)),0)
+		,ClogQty = isnull(sum(iif(pd2.ReceiveDate is not null ,pd2.CTNQty,0)) over (partition by (select 1)),0)
+	from PackingList_Detail pd2 WITH (NOLOCK) 
+	inner join PackingList p WITH (NOLOCK) on pd2.id = p.id
+	where pd2.OrderID = oq.ID and pd2.OrderShipmodeSeq = oq.Seq
+)C3
+outer apply(
+	select Dimension = stuff((
+		select CONCAT( '; ',d.d)
+		from(
+			select distinct d = concat(L.CtnLength,'*',L.CtnWidth,'*',L.CtnHeight)
+			from PackingList_Detail pd2 WITH (NOLOCK) 
+			inner join LocalItem L WITH (NOLOCK) on L.RefNo = pd2.RefNo
+			where pd2.OrderID = oq.id and pd2.OrderShipmodeSeq = oq.seq and pd2.RefNo is not null and pd2.RefNo <> ''
+		)d
+		for xml path('')
+	),1,2,'')
+)Dimension
+outer apply(
+	select MtlFormA = stuff((
+		select concat('; ',s.Seq1,'-',iif( maxR is null ,  '  /  /    ' , format(iif(s.count_All = s.count_NoNull, s.minR, s.maxR),  'yyyy/MM/dd')))
+		from (
+			select ed.Seq1,
+				max(ed.FormXReceived) as maxR,	
+				min(ed.FormXReceived) as minR,
+				count(*) as count_All,
+				count(ed.FormXReceived) as count_NoNull
+			from Export_Detail ed WITH (NOLOCK) 
+			where ed.PoID = oq.Id
+			GROUP BY Seq1
+		) as s
+		order by Seq1
+		for xml path('')
+	),1,2,'')
+)MtlFormA
+
+select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
+	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
+	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,CTNQty,InClogCTN,CBM,ClogLocationId
+from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
+order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
+
+drop table #tmpClocationids,#tmpIDSeq,#tmp1,#tmp2
+");
             # endregion
             # region 組SQL BackUP 20161205
 //            sqlCmd.Append(string.Format(@"with OrderData
