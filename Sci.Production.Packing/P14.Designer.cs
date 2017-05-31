@@ -39,13 +39,15 @@
             this.labelSP = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.labelPackID = new Sci.Win.UI.Label();
-            this.dateTransferDate = new Sci.Win.UI.DateRange();
             this.labelTransferDate = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.dateTransferDate2 = new Sci.Win.UI.TextBox();
+            this.dateTransferDate1 = new Sci.Win.UI.TextBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -71,13 +73,15 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.dateTransferDate2);
+            this.panel3.Controls.Add(this.dateTransferDate1);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSP);
             this.panel3.Controls.Add(this.labelSP);
             this.panel3.Controls.Add(this.txtPackID);
             this.panel3.Controls.Add(this.labelPackID);
-            this.panel3.Controls.Add(this.dateTransferDate);
             this.panel3.Controls.Add(this.labelTransferDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
@@ -116,7 +120,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(240, 49);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(35, 23);
@@ -134,24 +137,14 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Lines = 0;
             this.labelPackID.Location = new System.Drawing.Point(7, 49);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(56, 23);
             this.labelPackID.TabIndex = 2;
             this.labelPackID.Text = "Pack ID";
             // 
-            // dateTransferDate
-            // 
-            this.dateTransferDate.IsRequired = false;
-            this.dateTransferDate.Location = new System.Drawing.Point(100, 13);
-            this.dateTransferDate.Name = "dateTransferDate";
-            this.dateTransferDate.Size = new System.Drawing.Size(280, 23);
-            this.dateTransferDate.TabIndex = 1;
-            // 
             // labelTransferDate
             // 
-            this.labelTransferDate.Lines = 0;
             this.labelTransferDate.Location = new System.Drawing.Point(7, 13);
             this.labelTransferDate.Name = "labelTransferDate";
             this.labelTransferDate.Size = new System.Drawing.Size(89, 23);
@@ -219,6 +212,35 @@
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(213, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "～";
+            // 
+            // dateTransferDate2
+            // 
+            this.dateTransferDate2.BackColor = System.Drawing.Color.White;
+            this.dateTransferDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dateTransferDate2.Location = new System.Drawing.Point(236, 14);
+            this.dateTransferDate2.Mask = "0000/00/00 00:00";
+            this.dateTransferDate2.Name = "dateTransferDate2";
+            this.dateTransferDate2.Size = new System.Drawing.Size(124, 23);
+            this.dateTransferDate2.TabIndex = 23;
+            // 
+            // dateTransferDate1
+            // 
+            this.dateTransferDate1.BackColor = System.Drawing.Color.White;
+            this.dateTransferDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.dateTransferDate1.Location = new System.Drawing.Point(99, 14);
+            this.dateTransferDate1.Mask = "0000/00/00 00:00";
+            this.dateTransferDate1.Name = "dateTransferDate1";
+            this.dateTransferDate1.Size = new System.Drawing.Size(113, 23);
+            this.dateTransferDate1.TabIndex = 22;
+            // 
             // P14
             // 
             this.ClientSize = new System.Drawing.Size(739, 454);
@@ -251,7 +273,6 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Label labelPackID;
-        private Win.UI.DateRange dateTransferDate;
         private Win.UI.Label labelTransferDate;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
@@ -263,5 +284,8 @@
         private Win.UI.TextBox txtSP;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnToExcel;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox dateTransferDate2;
+        private Win.UI.TextBox dateTransferDate1;
     }
 }
