@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(1315, 128);
+            this.gridicon.Location = new System.Drawing.Point(1368, 128);
             // 
             // refresh
             // 
@@ -200,7 +200,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(9, 9);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -219,7 +218,6 @@
             // 
             // labelRequest
             // 
-            this.labelRequest.Lines = 0;
             this.labelRequest.Location = new System.Drawing.Point(9, 40);
             this.labelRequest.Name = "labelRequest";
             this.labelRequest.Size = new System.Drawing.Size(75, 23);
@@ -239,7 +237,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(224, 9);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
@@ -265,7 +262,6 @@
             // 
             // labelLineNo
             // 
-            this.labelLineNo.Lines = 0;
             this.labelLineNo.Location = new System.Drawing.Point(9, 102);
             this.labelLineNo.Name = "labelLineNo";
             this.labelLineNo.Size = new System.Drawing.Size(75, 23);
@@ -283,7 +279,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(302, 102);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(75, 23);
@@ -302,7 +297,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(9, 133);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -311,7 +305,6 @@
             // 
             // labelCutNo
             // 
-            this.labelCutNo.Lines = 0;
             this.labelCutNo.Location = new System.Drawing.Point(441, 9);
             this.labelCutNo.Name = "labelCutNo";
             this.labelCutNo.Size = new System.Drawing.Size(75, 23);
@@ -349,7 +342,6 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Lines = 0;
             this.label25.Location = new System.Drawing.Point(879, 8);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
@@ -386,7 +378,6 @@
             // 
             // labelArticle
             // 
-            this.labelArticle.Lines = 0;
             this.labelArticle.Location = new System.Drawing.Point(441, 71);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(75, 23);
@@ -404,7 +395,6 @@
             // 
             // labelPOID
             // 
-            this.labelPOID.Lines = 0;
             this.labelPOID.Location = new System.Drawing.Point(224, 71);
             this.labelPOID.Name = "labelPOID";
             this.labelPOID.Size = new System.Drawing.Size(75, 23);
@@ -449,7 +439,6 @@
             // 
             // labelOrderID
             // 
-            this.labelOrderID.Lines = 0;
             this.labelOrderID.Location = new System.Drawing.Point(9, 70);
             this.labelOrderID.Name = "labelOrderID";
             this.labelOrderID.Size = new System.Drawing.Size(75, 23);
@@ -485,6 +474,7 @@
             this.checkByCombo.AutoSize = true;
             this.checkByCombo.Checked = true;
             this.checkByCombo.CheckState = System.Windows.Forms.CheckState.Checked;
+            //leo this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "combo", true));
             this.checkByCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkByCombo.Location = new System.Drawing.Point(224, 40);
             this.checkByCombo.Name = "checkByCombo";
