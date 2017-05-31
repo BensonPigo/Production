@@ -312,7 +312,13 @@ delete from #tmp2 where qty = 0;
                         tmp.ColumnsStringAdd("sizecode");
                         tmp.ColumnsDecimalAdd("qty");
                         tmp.ColumnsDecimalAdd("ori_qty");
+                        //
+                        if (Convert.ToInt32(dr["qty"]) != 0)
+                        {
+                            dr["Selected"] = 1;
+                        }
 
+                        //
                         var drs = dr.GetChildRows(relation);
                         if (drs.Count() > 0)
                         {
