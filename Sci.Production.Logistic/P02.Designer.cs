@@ -56,6 +56,10 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtReceiveDate1 = new Sci.Win.UI.TextBox();
+            this.txtReceiveDate2 = new Sci.Win.UI.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -66,9 +70,9 @@
             // 
             this.panel5.Controls.Add(this.gridImport);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 123);
+            this.panel5.Location = new System.Drawing.Point(10, 152);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(692, 345);
+            this.panel5.Size = new System.Drawing.Size(692, 350);
             this.panel5.TabIndex = 21;
             // 
             // gridImport
@@ -91,7 +95,7 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.Size = new System.Drawing.Size(692, 345);
+            this.gridImport.Size = new System.Drawing.Size(692, 350);
             this.gridImport.TabIndex = 10;
             this.gridImport.TabStop = false;
             // 
@@ -160,15 +164,15 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(702, 123);
+            this.panel2.Location = new System.Drawing.Point(702, 152);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 345);
+            this.panel2.Size = new System.Drawing.Size(10, 350);
             this.panel2.TabIndex = 18;
             // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSave.Location = new System.Drawing.Point(539, 88);
+            this.btnSave.Location = new System.Drawing.Point(539, 117);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -180,7 +184,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(625, 88);
+            this.btnClose.Location = new System.Drawing.Point(625, 117);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -191,15 +195,15 @@
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 123);
+            this.panel1.Location = new System.Drawing.Point(0, 152);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 345);
+            this.panel1.Size = new System.Drawing.Size(10, 350);
             this.panel1.TabIndex = 17;
             // 
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 51);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 78);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
             this.btnImportFromBarcode.TabIndex = 7;
@@ -210,7 +214,7 @@
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 468);
+            this.panel4.Location = new System.Drawing.Point(0, 502);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(712, 10);
             this.panel4.TabIndex = 20;
@@ -221,6 +225,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.txtReceiveDate2);
+            this.panel3.Controls.Add(this.txtReceiveDate1);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.txtcloglocationLocationNo);
             this.panel3.Controls.Add(this.btnUpdateAllLocation);
             this.panel3.Controls.Add(this.labelLocationNo);
@@ -238,7 +246,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(712, 123);
+            this.panel3.Size = new System.Drawing.Size(712, 152);
             this.panel3.TabIndex = 19;
             // 
             // txtcloglocationLocationNo
@@ -246,7 +254,7 @@
             this.txtcloglocationLocationNo.BackColor = System.Drawing.Color.White;
             this.txtcloglocationLocationNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcloglocationLocationNo.IsSupportSytsemContextMenu = false;
-            this.txtcloglocationLocationNo.Location = new System.Drawing.Point(97, 92);
+            this.txtcloglocationLocationNo.Location = new System.Drawing.Point(97, 121);
             this.txtcloglocationLocationNo.MDivisionObjectName = null;
             this.txtcloglocationLocationNo.Name = "txtcloglocationLocationNo";
             this.txtcloglocationLocationNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
@@ -256,7 +264,7 @@
             // btnUpdateAllLocation
             // 
             this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdateAllLocation.Location = new System.Drawing.Point(193, 88);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(193, 117);
             this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
             this.btnUpdateAllLocation.Size = new System.Drawing.Size(163, 30);
             this.btnUpdateAllLocation.TabIndex = 15;
@@ -266,7 +274,7 @@
             // 
             // labelLocationNo
             // 
-            this.labelLocationNo.Location = new System.Drawing.Point(12, 92);
+            this.labelLocationNo.Location = new System.Drawing.Point(12, 121);
             this.labelLocationNo.Name = "labelLocationNo";
             this.labelLocationNo.Size = new System.Drawing.Size(81, 23);
             this.labelLocationNo.TabIndex = 13;
@@ -283,7 +291,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(712, 123);
+            this.shapeContainer2.Size = new System.Drawing.Size(712, 152);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -292,16 +300,16 @@
             this.lineShape5.Name = "lineShape5";
             this.lineShape5.X1 = 7;
             this.lineShape5.X2 = 706;
-            this.lineShape5.Y1 = 84;
-            this.lineShape5.Y2 = 84;
+            this.lineShape5.Y1 = 72;
+            this.lineShape5.Y2 = 72;
             // 
             // lineShape4
             // 
             this.lineShape4.Name = "lineShape4";
             this.lineShape4.X1 = 7;
             this.lineShape4.X2 = 706;
-            this.lineShape4.Y1 = 46;
-            this.lineShape4.Y2 = 46;
+            this.lineShape4.Y1 = 112;
+            this.lineShape4.Y2 = 112;
             // 
             // lineShape3
             // 
@@ -309,7 +317,7 @@
             this.lineShape3.X1 = 706;
             this.lineShape3.X2 = 706;
             this.lineShape3.Y1 = 7;
-            this.lineShape3.Y2 = 84;
+            this.lineShape3.Y2 = 112;
             // 
             // lineShape2
             // 
@@ -317,7 +325,7 @@
             this.lineShape2.X1 = 6;
             this.lineShape2.X2 = 6;
             this.lineShape2.Y1 = 7;
-            this.lineShape2.Y2 = 84;
+            this.lineShape2.Y2 = 112;
             // 
             // lineShape1
             // 
@@ -327,9 +335,46 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Receive Date";
+            // 
+            // txtReceiveDate1
+            // 
+            this.txtReceiveDate1.BackColor = System.Drawing.Color.White;
+            this.txtReceiveDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceiveDate1.Location = new System.Drawing.Point(107, 44);
+            this.txtReceiveDate1.Mask = "0000/00/00 00:00";
+            this.txtReceiveDate1.Name = "txtReceiveDate1";
+            this.txtReceiveDate1.Size = new System.Drawing.Size(113, 23);
+            this.txtReceiveDate1.TabIndex = 19;
+            // 
+            // txtReceiveDate2
+            // 
+            this.txtReceiveDate2.BackColor = System.Drawing.Color.White;
+            this.txtReceiveDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceiveDate2.Location = new System.Drawing.Point(244, 44);
+            this.txtReceiveDate2.Mask = "0000/00/00 00:00";
+            this.txtReceiveDate2.Name = "txtReceiveDate2";
+            this.txtReceiveDate2.Size = new System.Drawing.Size(124, 23);
+            this.txtReceiveDate2.TabIndex = 20;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(221, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "～";
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(712, 478);
+            this.ClientSize = new System.Drawing.Size(712, 512);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -381,5 +426,9 @@
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.Label labelLocationNo;
         private Class.txtcloglocation txtcloglocationLocationNo;
+        private Win.UI.Label label1;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtReceiveDate2;
+        private Win.UI.TextBox txtReceiveDate1;
     }
 }
