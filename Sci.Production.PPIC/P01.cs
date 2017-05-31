@@ -465,8 +465,15 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 DualResult result;
                 if (!MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))))
                 {
-                    insertCmd = string.Format(@"insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,AddName,AddDate,Ukey)
-select '{0}',ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,'{1}',GETDATE(),(select min(Ukey)-1 from Order_Artwork) from Style_Artwork where StyleUkey = {2}",
+                    insertCmd = string.Format(@"
+insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,AddName,AddDate,Ukey)
+select ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,loginID,today,rownumber-row
+from (
+select '{0}'as ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,'{1}' as 'loginID',GETDATE() as 'today'
+,(select min(Ukey) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
+from Style_Artwork where StyleUkey = {2}
+) x
+",
     MyUtility.Convert.GetString(CurrentMaintain["ID"]), Sci.Env.User.UserID, MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
 
                     result = DBProxy.Current.Execute(null, insertCmd);
