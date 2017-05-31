@@ -285,6 +285,7 @@ where sd.ID = '{0}'", masterID);
             CurrentMaintain["VATRate"] = 0;
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "IMPORT";
+            comboType2.DataSource = subType_1;
             CurrentMaintain["SubType"] = "MATERIAL";
             numTotal.Value = 0;
             gridicon.Append.Enabled = true;
