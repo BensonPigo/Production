@@ -613,6 +613,20 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             string sqlupd2_FIO = "";
             StringBuilder sqlupd2_B = new StringBuilder();
 
+            #region Check Issue_Detail isn't Empty
+            string checkSQL = string.Format(@"
+select  isnull(sum(Qty), 0)
+from issue_detail WITH (NOLOCK) 
+where id = '{0}'", CurrentMaintain["ID"]);
+
+            string checkQty = MyUtility.GetValue.Lookup(checkSQL);
+            if (Convert.ToDecimal(checkQty) == 0)
+            {
+                MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
+                return;
+            }
+            #endregion 
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
