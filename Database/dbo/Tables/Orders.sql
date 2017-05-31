@@ -143,7 +143,7 @@
     [KPIEachConsApprove]   DATE           NULL,
     [KPICmpq]              DATE           NULL,
     [KPIMNotice]           DATE           NULL,
-    [GMTComplete ]         VARCHAR (1)    DEFAULT ('') NULL,
+    [GMTComplete]         VARCHAR (1)    DEFAULT ('') NULL,
     [GFR]                  BIT            DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
@@ -755,7 +755,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
-    @level2name = N'GMTComplete '
+    @level2name = 'GMTComplete'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'Global Foundation Range',
