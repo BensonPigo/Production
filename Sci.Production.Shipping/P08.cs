@@ -72,45 +72,34 @@ namespace Sci.Production.Shipping
                     }
                 };
             #endregion  
+        }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             //設定ComboBox的內容值
             subType_1.ColumnsStringAdd("Key");
             subType_1.ColumnsStringAdd("Value");
             subType_1.Rows.Add("MATERIAL", "MATERIAL");
             subType_1.Rows.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
             subType_1.Rows.Add("OTHER", "OTHER");
-            //comboBox2_RowSource1.Add("MATERIAL", "MATERIAL");
-            //comboBox2_RowSource1.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
-            //comboBox2_RowSource1.Add("OTHER", "OTHER");
 
             subType_2.ColumnsStringAdd("Key");
             subType_2.ColumnsStringAdd("Value");
             subType_2.Rows.Add("GARMENT", "GARMENT");
             subType_2.Rows.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
             subType_2.Rows.Add("OTHER", "OTHER");
-            //comboBox2_RowSource2.Add("GARMENT", "GARMENT");
-            //comboBox2_RowSource2.Add("SISTER FACTORY TRANSFER", "SISTER FACTORY TRANSFER");
-            //comboBox2_RowSource2.Add("OTHER", "OTHER");
-
-            //comboxbs2_1 = new BindingSource(comboBox2_RowSource1, null);
-            //comboxbs2_2 = new BindingSource(comboBox2_RowSource2, null);
 
             comboType2.ValueMember = "Key";
             comboType2.DisplayMember = "Value";
 
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            comboBox1_RowSource.Add("IMPORT","IMPORT");
-            comboBox1_RowSource.Add("EXPORT","EXPORT");
+            comboBox1_RowSource.Add("IMPORT", "IMPORT");
+            comboBox1_RowSource.Add("EXPORT", "EXPORT");
             comboxbs1 = new BindingSource(comboBox1_RowSource, null);
             comboType.DataSource = comboxbs1;
             comboType.ValueMember = "Key";
             comboType.DisplayMember = "Value";
-
-            //((Binding)this.comboBox1.DataBindings[0]).BindingComplete += (a, b) =>
-            //{
-            //if (this.CurrentMaintain != null)
-            //    this.comboBox2.SelectedValue = base.CurrentMaintain["SubType"];
-            //};
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
