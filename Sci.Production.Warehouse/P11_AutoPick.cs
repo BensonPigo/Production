@@ -441,7 +441,7 @@ delete from #tmp2 where qty = 0;
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("scirefno", header: "SCI Refno", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .Text("scirefno", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
