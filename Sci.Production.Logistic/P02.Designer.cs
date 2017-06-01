@@ -47,6 +47,10 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtReceiveDate2 = new Sci.Win.UI.TextBox();
+            this.txtReceiveDate1 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
             this.btnUpdateAllLocation = new Sci.Win.UI.Button();
             this.labelLocationNo = new Sci.Win.UI.Label();
@@ -56,10 +60,6 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtReceiveDate1 = new Sci.Win.UI.TextBox();
-            this.txtReceiveDate2 = new Sci.Win.UI.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -249,6 +249,43 @@
             this.panel3.Size = new System.Drawing.Size(712, 152);
             this.panel3.TabIndex = 19;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(221, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "～";
+            // 
+            // txtReceiveDate2
+            // 
+            this.txtReceiveDate2.BackColor = System.Drawing.Color.White;
+            this.txtReceiveDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceiveDate2.Location = new System.Drawing.Point(244, 44);
+            this.txtReceiveDate2.Mask = "0000/00/00 00:00";
+            this.txtReceiveDate2.Name = "txtReceiveDate2";
+            this.txtReceiveDate2.Size = new System.Drawing.Size(124, 23);
+            this.txtReceiveDate2.TabIndex = 20;
+            // 
+            // txtReceiveDate1
+            // 
+            this.txtReceiveDate1.BackColor = System.Drawing.Color.White;
+            this.txtReceiveDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceiveDate1.Location = new System.Drawing.Point(107, 44);
+            this.txtReceiveDate1.Mask = "0000/00/00 00:00";
+            this.txtReceiveDate1.Name = "txtReceiveDate1";
+            this.txtReceiveDate1.Size = new System.Drawing.Size(113, 23);
+            this.txtReceiveDate1.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Receive Date";
+            // 
             // txtcloglocationLocationNo
             // 
             this.txtcloglocationLocationNo.BackColor = System.Drawing.Color.White;
@@ -334,43 +371,6 @@
             this.lineShape1.X2 = 706;
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(12, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 23);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Receive Date";
-            // 
-            // txtReceiveDate1
-            // 
-            this.txtReceiveDate1.BackColor = System.Drawing.Color.White;
-            this.txtReceiveDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiveDate1.Location = new System.Drawing.Point(107, 44);
-            this.txtReceiveDate1.Mask = "0000/00/00 00:00";
-            this.txtReceiveDate1.Name = "txtReceiveDate1";
-            this.txtReceiveDate1.Size = new System.Drawing.Size(113, 23);
-            this.txtReceiveDate1.TabIndex = 19;
-            // 
-            // txtReceiveDate2
-            // 
-            this.txtReceiveDate2.BackColor = System.Drawing.Color.White;
-            this.txtReceiveDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiveDate2.Location = new System.Drawing.Point(244, 44);
-            this.txtReceiveDate2.Mask = "0000/00/00 00:00";
-            this.txtReceiveDate2.Name = "txtReceiveDate2";
-            this.txtReceiveDate2.Size = new System.Drawing.Size(124, 23);
-            this.txtReceiveDate2.TabIndex = 20;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(221, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(22, 17);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "～";
             // 
             // P02
             // 

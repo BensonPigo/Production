@@ -21,6 +21,8 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             InitializeComponent();
+            txtReceiveDate1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            txtReceiveDate2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
         }
 
         protected override void OnFormLoaded()
@@ -53,9 +55,9 @@ namespace Sci.Production.Logistic
         //Find
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.txtReceiveDate1.Text) && MyUtility.Check.Empty(this.txtReceiveDate2.Text))
             {
-                MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > can not be empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Order# > or < PackID > or <Receive Date> can not be empty!");
                 return;
             }
             StringBuilder sqlCmd = new StringBuilder();
@@ -88,7 +90,7 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             }
             if (!MyUtility.Check.Empty(this.txtReceiveDate2.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.txtReceiveDate1.Text.ToString().Trim()));
+                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", this.txtReceiveDate2.Text.ToString().Trim()));
             }
             DataTable selectDataTable;
             DualResult selectResult;
