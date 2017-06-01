@@ -47,9 +47,6 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtReceiveDate2 = new Sci.Win.UI.TextBox();
-            this.txtReceiveDate1 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtcloglocationLocationNo = new Sci.Production.Class.txtcloglocation();
             this.btnUpdateAllLocation = new Sci.Win.UI.Button();
@@ -60,6 +57,9 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -225,9 +225,9 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateTimePicker2);
+            this.panel3.Controls.Add(this.dateTimePicker1);
             this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.txtReceiveDate2);
-            this.panel3.Controls.Add(this.txtReceiveDate1);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.txtcloglocationLocationNo);
             this.panel3.Controls.Add(this.btnUpdateAllLocation);
@@ -248,35 +248,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(712, 152);
             this.panel3.TabIndex = 19;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(221, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(22, 17);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "～";
-            // 
-            // txtReceiveDate2
-            // 
-            this.txtReceiveDate2.BackColor = System.Drawing.Color.White;
-            this.txtReceiveDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiveDate2.Location = new System.Drawing.Point(244, 44);
-            this.txtReceiveDate2.Mask = "0000/00/00 00:00";
-            this.txtReceiveDate2.Name = "txtReceiveDate2";
-            this.txtReceiveDate2.Size = new System.Drawing.Size(124, 23);
-            this.txtReceiveDate2.TabIndex = 20;
-            // 
-            // txtReceiveDate1
-            // 
-            this.txtReceiveDate1.BackColor = System.Drawing.Color.White;
-            this.txtReceiveDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceiveDate1.Location = new System.Drawing.Point(107, 44);
-            this.txtReceiveDate1.Mask = "0000/00/00 00:00";
-            this.txtReceiveDate1.Name = "txtReceiveDate1";
-            this.txtReceiveDate1.Size = new System.Drawing.Size(113, 23);
-            this.txtReceiveDate1.TabIndex = 19;
             // 
             // label1
             // 
@@ -372,6 +343,33 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // dateTimePicker2
+            // 
+            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Location = new System.Drawing.Point(279, 45);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker2.TabIndex = 29;
+            this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(107, 44);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker1.TabIndex = 28;
+            this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(255, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 27;
+            this.label2.Text = "～";
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(712, 512);
@@ -427,8 +425,8 @@
         private Win.UI.Label labelLocationNo;
         private Class.txtcloglocation txtcloglocationLocationNo;
         private Win.UI.Label label1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Label label2;
-        private Win.UI.TextBox txtReceiveDate2;
-        private Win.UI.TextBox txtReceiveDate1;
     }
 }
