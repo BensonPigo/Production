@@ -3817,6 +3817,8 @@ Sci.Production/XLT/Subcon_R25.xltx -text
 Sci.Production/XLT/Subcon_R26_Local_PO_List.xltx -text
 Sci.Production/XLT/Subcon_R26_Local_PO_Order.xltx -text
 Sci.Production/XLT/Subcon_R26_Shipping_Mark.xltx -text
+Sci.Production/XLT/Subcon_R33_ByFactory.xltx -text
+Sci.Production/XLT/Subcon_R33_BySPNO.xltx -text
 Sci.Production/XLT/Subcon_R36_DebitNote&ScheduleSummary(LocalSupplier).xltx -text
 Sci.Production/XLT/Subcon_R36_DebitNote(LocalSupplier).xltx -text
 Sci.Production/XLT/Subcon_R36_DebitNoteDetail(LocalSupplier).xltx -text
