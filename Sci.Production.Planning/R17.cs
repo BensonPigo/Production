@@ -275,13 +275,13 @@ SELECT distinct A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID A
 		from Order_QtyShip oq WITH (NOLOCK) 
 		where oq.id=a1.id 
 		for xml path(''))as J   
-    , A1.KPIChangeReason AS K
+    , concat(A1.KPIChangeReason,'') AS K
     , (Select TOP 1 A2.Name  from Reason A2 where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason)  AS L                                              
 FROM ORDERS A1 WITH (NOLOCK) 
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate > A1.FtyKPI 
-WHERE 1= 1 ";
+LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID 
+WHERE 1= 1 AND A4.PullOutDate > A1.FtyKPI ";
                     if (dateFactoryKPIDate.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
@@ -577,6 +577,7 @@ ORDER BY A1.ID";
                         {
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
+                        worksheet.get_Range("K:K", Type.Missing).NumberFormatLocal = "@";
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); //篩選
                         worksheet.Range[String.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(255)))), ((int)(((byte)(204)))));
