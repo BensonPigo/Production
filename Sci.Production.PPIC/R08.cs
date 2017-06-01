@@ -133,6 +133,14 @@ where 1=1");
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             //表頭
+            string strfactory="";
+            if (!MyUtility.Check.Empty(comboFactory.Text)){
+            strfactory  = comboFactory.Text;
+            }else{
+            strfactory= Sci.Env.User.Factory;
+            }
+            
+            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN",strfactory , "Factory", "ID", "Production"); ;
             worksheet.Cells[3, 2] = string.Format("{0}~{1}", MyUtility.Check.Empty(_cdate1) ? "" : Convert.ToDateTime(_cdate1).ToString("d"),MyUtility.Check.Empty(_cdate2) ? "" : Convert.ToDateTime(_cdate2).ToString("d"));
             worksheet.Cells[3, 5] = string.Format("{0}~{1}", MyUtility.Check.Empty(_apvdate1) ? "" : Convert.ToDateTime(_apvdate1).ToString("d"), MyUtility.Check.Empty(_apvdate2) ? "" : Convert.ToDateTime(_apvdate2).ToString("d"));
             worksheet.Cells[3, 7] = "M: " + _mDivision;
