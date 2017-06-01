@@ -200,7 +200,9 @@ where   ID = '{0}'
         and Category = 'B' 
         and BrandID = '{1}' 
         and Dest = '{2}' 
-        and CustCDID = '{3}'", e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString()), out orderData))
+        and CustCDID = '{3}'
+        and factoryid = '{4}'"
+                            , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Factory), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = "";
@@ -227,7 +229,11 @@ where   ID = '{0}'
                             dr["Color"] = "";
                             dr["SizeCode"] = "";
                             #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
-                            string sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and ShipmodeID = '{1}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString());
+                            string sqlCmd = string.Format(@"
+select count(ID) as CountID 
+from Order_QtyShip WITH (NOLOCK) inner join orders o WITH (NOLOCK) on Order_QtyShip.id = o.id 
+where ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+                                , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(),Sci.Env.User.Factory);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
                                 if (orderData["CountID"].ToString() == "1")
@@ -236,7 +242,11 @@ where   ID = '{0}'
                                 }
                                 else
                                 {
-                                    sqlCmd = string.Format("select Seq,BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and ShipmodeID = '{1}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString());
+                                    sqlCmd = string.Format(@"
+select Seq,BuyerDelivery,ShipmodeID,Qty 
+from Order_QtyShip WITH (NOLOCK) inner join orders o WITH (NOLOCK) on Order_QtyShip.id = o.id 
+where ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+                                        , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Factory);
                                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                     DialogResult returnResult = item.ShowDialog();
                                     if (returnResult == DialogResult.Cancel)
