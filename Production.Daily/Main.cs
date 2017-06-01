@@ -298,11 +298,11 @@ namespace Production.Daily
             }
             #endregion
             #region 執行前發送通知mail
-            /*
+            
             subject = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             desc = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             SendMail(subject, desc);
-            */
+           
             #endregion
             #region CHECK THE FIRST NEED MAPPING A DISK,CAN'T USING \\ UNC
             if (importDataPath.Substring(0, 2) == "////" || exportDataPath.Substring(0, 2) == "////")
