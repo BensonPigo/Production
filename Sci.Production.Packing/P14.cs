@@ -25,8 +25,8 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
 
-            dateTransferDate1.Text = DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd hh:mm");
-            dateTransferDate2.Text = DateTime.Now.ToString("yyyy/MM/dd hh:mm");
+            dateTransferDate1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            dateTransferDate2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
 
             //Grid設定
             this.gridDetail.IsEditingReadOnly = false;
@@ -130,7 +130,7 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             ////frm.ShowDialog();
             string date1, date2, packID, SPNo;
             date1 = (!MyUtility.Check.Empty(dateTransferDate1.Text)) ? dateTransferDate1.Text : null;
-            date2 = (!MyUtility.Check.Empty(dateTransferDate2.Text)) ? dateTransferDate1.Text : null;
+            date2 = (!MyUtility.Check.Empty(dateTransferDate2.Text)) ? dateTransferDate2.Text : null;
             packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
             SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
             P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo);
