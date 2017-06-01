@@ -28,6 +28,9 @@ namespace Sci.Production.Subcon
             //set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
+select ID = ''
+
+union all
 Select ID 
 from Factory
 where Junk != 1", out dtFactory);
@@ -87,7 +90,7 @@ where	o.Junk != 1
 		and not ((o.SewOffLine < @StartDate and o.SewInLine < @EndDate) or (o.SewInLine > @StartDate and o.SewInLine > @EndDate))
 		and (o.SewInLine is not null or o.SewInLine != '')
 		and (o.SewOffLine is not null or o.SewOffLine != '')		
-        and f.ID = @FactoryID
+        {1}
 --order by o.POID, o.ID, o.SewLine
 
 --取出的訂單，執行以下判斷流程 (#CutComb 儲存 整件衣服 應該裁剪的部位)
@@ -172,7 +175,7 @@ outer apply(
 where	bio.SubProcessId = 'loading'
 		and ob.Kind not in ('0','3')
 	    and oec.CuttingPiece = 0	
-		{1}
+		{2}
 group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricCombo, ArtWork.value
 
 ----Step4 已收的bundle資料中找出各article/size/部位/artwork/加總數量
@@ -215,7 +218,7 @@ from (
 			, AccuStd = isnull(std.value, 0)
 			, AccuLoading = sum (isnull(MinLoadingQty, 0))
 	from (
-	----依照【日期, SP#, Article, Size, CDomb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
+	----依照【日期, SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
 		select	FactoryID
 				, orderID
 				, cdate2
@@ -262,6 +265,7 @@ drop table #cur_bdltrack2
 drop table #Min_cut
 drop table #print"
                 , (SP.Empty()) ? "" : "and o.id = @SP"
+                , (Factory.Empty()) ? "" : "and f.ID = @FactoryID"
                 , (SP.Empty()) ? "" : "and b.OrderID = @SP");
             #endregion 
 
