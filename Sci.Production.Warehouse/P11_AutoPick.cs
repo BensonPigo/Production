@@ -364,27 +364,6 @@ delete from #tmp2 where qty = 0;
             this.gridAutoPick.DataSource = listControlBindingSource1;
 
             this.gridAutoPick.AutoResizeColumns();
-            //this.gridBOA.DataSource = BOA;
-            //Helper.Controls.Grid.Generator(this.gridBOA)
-
-            //   .Text("ID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
-            //   .Text("RefNo", header: "RefNo", iseditingreadonly: true, width: Widths.AnsiChars(13)) //2
-            //   .Text("SCIRefNo", header: "SCIRefNo", iseditingreadonly: true, width: Widths.AnsiChars(17)) //2
-            //    .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //     .Text("ColorID", header: "ColorID", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //      .Text("SizeCode", header: "SizeCode", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //        .Text("SizeSpec", header: "SizeSpec", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //           .Text("OrderQty", header: "OrderQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //           .Text("UsageQty", header: "UsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //           .Text("UsageUnit", header: "UsageUnit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-            //           .Text("SysUsageQty", header: "SysUsageQty", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
-
-              // .Numeric("", header: "SizeSpec", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //3
-
-               ;
-            // this.gridBOA.AutoGenerateColumns = true;
-            // this.gridBOA.AutoResizeColumns();
-
 
             #region --Pick Qty 開窗--
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
@@ -441,7 +420,7 @@ delete from #tmp2 where qty = 0;
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                  .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("scirefno", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
+                 .Text("Description", header: "Description", width: Widths.AnsiChars(23), iseditingreadonly: true)
                  .Text("colorid", header: "Color ID", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Text("sizespec", header: "SizeSpec", width: Widths.AnsiChars(6), iseditingreadonly: true)
                  .Numeric("usedqty", header: "@Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
