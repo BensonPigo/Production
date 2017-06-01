@@ -27,7 +27,10 @@ namespace Sci.Production.Subcon
             
             //set ComboFactory
             DataTable dtFactory;
-            DBProxy.Current.Select(null, "Select ID from Factory", out dtFactory);
+            DBProxy.Current.Select(null, @"
+Select ID 
+from Factory
+where Junk != 1", out dtFactory);
             MyUtility.Tool.SetupCombox(comboFactory, 1, dtFactory);
             comboFactory.Text = Sci.Env.User.Factory;
         }
