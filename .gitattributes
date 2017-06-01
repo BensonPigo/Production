@@ -86,6 +86,7 @@ Database/dbo/Functions/dbo.getStockUnit.sql -text
 Database/dbo/Functions/dbo.getTPEPass1.sql -text
 Database/dbo/Functions/getBOFMtlDesc.sql -text
 Database/dbo/Functions/getCuttingComboList.sql -text
+Database/dbo/Functions/getDailystdq.sql -text
 Database/dbo/Functions/getGarmentLT.sql -text
 Database/dbo/Functions/getInvAdjQty.sql -text
 Database/dbo/Functions/getItemDesc.sql -text

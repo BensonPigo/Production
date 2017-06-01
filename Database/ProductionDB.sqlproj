@@ -2212,6 +2212,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\Artworktype_Detail.sql" />
+    <Build Include="dbo\Functions\getDailystdq.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
