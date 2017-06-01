@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            if (!checkLiquidationDataOnly.Checked)
+            if (checkLiquidationDataOnly.Checked)
             {
                 if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
                 {
@@ -263,8 +263,8 @@ from (
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     inner join FtyInventory ft on mdp.Ukey=MDivisionPoDetailUkey
 	where 1=1 and ft.StockType='O'
-    and t.POID >= '{0}'
-
+    '{0}'", sp == "" ? "" : string.Format("and t.POID >= '{0}'", sp)));
+                sqlCmd.Append(string.Format(@"
 	union all
 	select 	isnull(li.HSCode,'') as HSCode
 			,isnull(li.NLCode,'') as NLCode
@@ -293,8 +293,9 @@ from (
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where 1=1    
-    and o.ID >= '{0}' and o.WhseClose is not null
+	where 1=1 and o.WhseClose is not null
+    '{0}'", sp == "" ? "" : string.Format("and o.ID >= '{0}'", sp)));
+                sqlCmd.Append(string.Format(@"
 ) a
 
 --撈已發料數量
