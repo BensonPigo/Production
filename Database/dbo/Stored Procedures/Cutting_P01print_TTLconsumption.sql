@@ -40,7 +40,7 @@ BEGIN
 	inner join Program WITH (NOLOCK) on Orders.BrandID = Program.BrandID and Orders.ProgramID = Program.ID
 	outer apply (select * from dbo.GetUnitRound(Orders.BrandID, Orders.ProgramID, Orders.Category, Fabric.UsageUnit)) Unit
 	inner join Color WITH (NOLOCK) on Color.ID = Order_EachCons_Color.ColorID and Color.BrandId = Orders.BrandID
-	inner join Style_BOF WITH (NOLOCK) on Orders.StyleUkey = Style_BOF.StyleUkey and Fabric.SCIRefno = Style_BOF.SCIRefno and Order_BOF.FabricCode = Style_BOF.FabricCode
+	left join Style_BOF WITH (NOLOCK) on Orders.StyleUkey = Style_BOF.StyleUkey and Fabric.SCIRefno = Style_BOF.SCIRefno and Order_BOF.FabricCode = Style_BOF.FabricCode
 	left join DBO.GetLossFabric(@OrderID, '') lf on lf.FabricCode = ORDER_BOF.FabricCode and lf.ColorID = Order_EachCons_Color.ColorID
 	where Order_EachCons.Id = @OrderID
 	--where Orders.POID = @OrderID
