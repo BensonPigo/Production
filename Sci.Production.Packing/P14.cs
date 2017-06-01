@@ -25,8 +25,8 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
 
-            dateTransferDate1.Text = DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd tt hh:mm");
-            dateTransferDate2.Text = DateTime.Now.ToString("yyyy/MM/dd tt hh:mm");
+            dateTransferDate1.Text = DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd hh:mm");
+            dateTransferDate2.Text = DateTime.Now.ToString("yyyy/MM/dd hh:mm");
 
             //Grid設定
             this.gridDetail.IsEditingReadOnly = false;
