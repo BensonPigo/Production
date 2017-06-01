@@ -2869,8 +2869,12 @@ Sci.Production.Subcon/P01_Import.resx -text
 Sci.Production.Subcon/P01_ModifyPoQty.Designer.cs -text
 Sci.Production.Subcon/P01_ModifyPoQty.cs -text
 Sci.Production.Subcon/P01_ModifyPoQty.resx -text
+Sci.Production.Subcon/P01_Print.Designer.cs -text
+Sci.Production.Subcon/P01_Print.cs -text
 Sci.Production.Subcon/P01_Print.rdlc -text
+Sci.Production.Subcon/P01_Print.resx -text
 Sci.Production.Subcon/P01_PrintData.cs -text
+Sci.Production.Subcon/P01_Print_Comb.rdlc -text
 Sci.Production.Subcon/P01_SpecialRecord.Designer.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.cs -text
 Sci.Production.Subcon/P01_SpecialRecord.resx -text
