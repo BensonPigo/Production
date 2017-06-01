@@ -181,7 +181,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1063, 494);
+            this.browse.Size = new System.Drawing.Size(1000, 494);
             // 
             // tabs
             // 
@@ -230,7 +230,7 @@
             this.labelMDivisionID.Name = "labelMDivisionID";
             this.labelMDivisionID.Size = new System.Drawing.Size(104, 23);
             this.labelMDivisionID.TabIndex = 4;
-            this.labelMDivisionID.Text = "MDivisionID";
+            this.labelMDivisionID.Text = "M";
             // 
             // labelLastResult
             // 
