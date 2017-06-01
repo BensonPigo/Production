@@ -42,6 +42,8 @@ in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.
 in (select id from dbo.factory WITH (NOLOCK) where mdivisionid='{0}')", Sci.Env.User.Keyword);
             }
             this.Text = "P01 Sub-process master list (History)";
+            this.IsSupportEdit = false;
+            this.btnBatchApprove.Enabled = false;
         }
 
         private void ComboxChange(object o, DataGridViewCellEventArgs e)
