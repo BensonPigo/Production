@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSP = new Sci.Win.UI.TextBox();
@@ -45,9 +46,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label2 = new System.Windows.Forms.Label();
-            this.dateTransferDate2 = new Sci.Win.UI.TextBox();
-            this.dateTransferDate1 = new Sci.Win.UI.TextBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -73,9 +73,9 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.dateTimePicker2);
+            this.panel3.Controls.Add(this.dateTimePicker1);
             this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.dateTransferDate2);
-            this.panel3.Controls.Add(this.dateTransferDate1);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSP);
@@ -88,6 +88,15 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(719, 80);
             this.panel3.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(247, 15);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(22, 17);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "～";
             // 
             // btnToExcel
             // 
@@ -196,14 +205,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -212,34 +221,23 @@
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
-            // label2
+            // dateTimePicker1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(213, 17);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(22, 17);
-            this.label2.TabIndex = 24;
-            this.label2.Text = "～";
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(99, 12);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker1.TabIndex = 25;
+            this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
-            // dateTransferDate2
+            // dateTimePicker2
             // 
-            this.dateTransferDate2.BackColor = System.Drawing.Color.White;
-            this.dateTransferDate2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.dateTransferDate2.Location = new System.Drawing.Point(236, 14);
-            this.dateTransferDate2.Mask = "0000/00/00 00:00";
-            this.dateTransferDate2.Name = "dateTransferDate2";
-            this.dateTransferDate2.Size = new System.Drawing.Size(124, 23);
-            this.dateTransferDate2.TabIndex = 23;
-            // 
-            // dateTransferDate1
-            // 
-            this.dateTransferDate1.BackColor = System.Drawing.Color.White;
-            this.dateTransferDate1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.dateTransferDate1.Location = new System.Drawing.Point(99, 14);
-            this.dateTransferDate1.Mask = "0000/00/00 00:00";
-            this.dateTransferDate1.Name = "dateTransferDate1";
-            this.dateTransferDate1.Size = new System.Drawing.Size(113, 23);
-            this.dateTransferDate1.TabIndex = 22;
+            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker2.Location = new System.Drawing.Point(271, 13);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.Size = new System.Drawing.Size(146, 23);
+            this.dateTimePicker2.TabIndex = 26;
+            this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // P14
             // 
@@ -285,7 +283,7 @@
         private Win.UI.Button btnClose;
         private Win.UI.Button btnToExcel;
         private System.Windows.Forms.Label label2;
-        private Win.UI.TextBox dateTransferDate2;
-        private Win.UI.TextBox dateTransferDate1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
     }
 }

@@ -25,8 +25,10 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
 
-            dateTransferDate1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
-            dateTransferDate2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
+            dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm";
+            dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
+            dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
 
             //Grid設定
             this.gridDetail.IsEditingReadOnly = false;
@@ -62,13 +64,13 @@ left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(dateTransferDate1.Text))
+            if (!MyUtility.Check.Empty(dateTimePicker1.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", dateTransferDate1.Text));
+                sqlCmd.Append(string.Format(" and t.AddDate >= '{0}'", dateTimePicker1.Text));
             }
-            if (!MyUtility.Check.Empty(dateTransferDate2.Text))
+            if (!MyUtility.Check.Empty(dateTimePicker2.Text))
             {
-                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", dateTransferDate2.Text));
+                sqlCmd.Append(string.Format(" and t.AddDate <= '{0}'", dateTimePicker2.Text));
             }
             if (!MyUtility.Check.Empty(txtPackID.Text))
             {
@@ -129,8 +131,8 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             ////P14_Print_OrderList frm = new P14_Print_OrderList();
             ////frm.ShowDialog();
             string date1, date2, packID, SPNo;
-            date1 = (!MyUtility.Check.Empty(dateTransferDate1.Text)) ? dateTransferDate1.Text : null;
-            date2 = (!MyUtility.Check.Empty(dateTransferDate2.Text)) ? dateTransferDate2.Text : null;
+            date1 = (!MyUtility.Check.Empty(dateTimePicker1.Text)) ? dateTimePicker1.Text : null;
+            date2 = (!MyUtility.Check.Empty(dateTimePicker2.Text)) ? dateTimePicker2.Text : null;
             packID = (!MyUtility.Check.Empty(txtPackID.Text)) ? txtPackID.Text : null;
             SPNo = (!MyUtility.Check.Empty(txtSP.Text)) ? txtSP.Text : null;
             P14_Print_OrderList frm = new P14_Print_OrderList(selectData, date1, date2, packID, SPNo);
