@@ -29,7 +29,6 @@ namespace Sci.Production.Packing
             dateTimePicker2.CustomFormat = "yyyy/MM/dd HH:mm";
             dateTimePicker1.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             dateTimePicker2.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
-
             //Grid設定
             this.gridDetail.IsEditingReadOnly = false;
             this.gridDetail.DataSource = listControlBindingSource1;
@@ -89,6 +88,11 @@ where t.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail.\r\n"+result.ToString());
+            }
+            if (gridData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
             }
             listControlBindingSource1.DataSource = gridData;
         }
