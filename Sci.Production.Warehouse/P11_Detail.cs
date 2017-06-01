@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         String Orderid;
         Decimal Rate;
         public bool combo;
-
+        bool openFromAutoPick = false;
         public DataRow master
         {
             get;
@@ -27,12 +27,22 @@ namespace Sci.Production.Warehouse
         }
         public DataRow parentData;
 
-        public P11_Detail()
+        public P11_Detail(bool openFromAutoPick = false)
         {
             InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_DetailUkey";
+            this.openFromAutoPick = openFromAutoPick;
             
+        }
+        protected override bool OnSave()
+        {
+            if (!openFromAutoPick)
+                return base.OnSave();
+            else 
+            {
+                return true;  
+            }
         }
         protected override void OnSaveAfter()
         {

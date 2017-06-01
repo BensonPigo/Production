@@ -84,7 +84,6 @@
             // 
             // labelSeqNo
             // 
-            this.labelSeqNo.Lines = 0;
             this.labelSeqNo.Location = new System.Drawing.Point(9, 22);
             this.labelSeqNo.Name = "labelSeqNo";
             this.labelSeqNo.Size = new System.Drawing.Size(75, 23);
@@ -93,7 +92,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(252, 22);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(75, 23);
@@ -129,7 +127,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(9, 92);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -147,7 +144,6 @@
             // 
             // labelSpecial
             // 
-            this.labelSpecial.Lines = 0;
             this.labelSpecial.Location = new System.Drawing.Point(9, 127);
             this.labelSpecial.Name = "labelSpecial";
             this.labelSpecial.Size = new System.Drawing.Size(75, 23);
@@ -156,7 +152,6 @@
             // 
             // label5
             // 
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(9, 220);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 23);
@@ -214,7 +209,6 @@
             // 
             // labelQty
             // 
-            this.labelQty.Lines = 0;
             this.labelQty.Location = new System.Drawing.Point(9, 57);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(75, 23);
@@ -223,7 +217,6 @@
             // 
             // labelSize
             // 
-            this.labelSize.Lines = 0;
             this.labelSize.Location = new System.Drawing.Point(252, 57);
             this.labelSize.Name = "labelSize";
             this.labelSize.Size = new System.Drawing.Size(75, 23);
@@ -250,7 +243,6 @@
             // 
             // labelOrderList
             // 
-            this.labelOrderList.Lines = 0;
             this.labelOrderList.Location = new System.Drawing.Point(9, 162);
             this.labelOrderList.Name = "labelOrderList";
             this.labelOrderList.Size = new System.Drawing.Size(75, 23);
