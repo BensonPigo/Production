@@ -344,7 +344,7 @@ namespace Sci.Production.Cutting
 
                 //合併儲存格
                 //配合Procedure Total Column 移到最後面
-                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 8, dt.Columns.Count-1) } });
+                dt.lisTitleMerge.Add(new Dictionary<string, string> { { "SIZE", string.Format("{0},{1}", 9, dt.Columns.Count) } });
 
                 //凍結窗格
                 dt.boFreezePanes = true;
