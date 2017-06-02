@@ -19,9 +19,10 @@ namespace Sci.Production.Warehouse
         StringBuilder sbSizecode;
         string poid, issueid, cutplanid,orderid;
         public DataTable BOA, BOA_Orderlist, BOA_PO, BOA_PO_Size,dtIssueBreakDown;
+        bool combo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
-        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode)
+        public P11_AutoPick(string _issueid, string _poid, string _cutplanid, string _orderid, DataTable _dtIssueBreakDown, StringBuilder _sbSizecode,bool _combo)
         {            
             InitializeComponent();
             poid = _poid;
@@ -30,6 +31,7 @@ namespace Sci.Production.Warehouse
             orderid = _orderid;
             dtIssueBreakDown = _dtIssueBreakDown;
             sbSizecode=_sbSizecode;
+            combo = _combo;
             this.Text += string.Format(" ({0})", poid);
             //gridBOA.RowPostPaint += (s, e) =>
             //{
@@ -371,9 +373,10 @@ delete from #tmp2 where qty = 0;
             {
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail();
+                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex,e.ColumnIndex);
                 DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
-                frm.SetGrid(tmpDt);
+                frm.SetRightGrid(tmpDt);
+                frm.SetDisplayBox(dr["Poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
                 DialogResult DResult = frm.ShowDialog(this);
 
                 if (DResult == DialogResult.OK)

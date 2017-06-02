@@ -530,7 +530,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 }
             }
 
-            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(), txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode);
+            var frm = new Sci.Production.Warehouse.P11_AutoPick(CurrentMaintain["id"].ToString(), this.poid, CurrentMaintain["cutplanid"].ToString(), txtOrderID.Text.ToString(), dtIssueBreakDown, sbSizecode, checkByCombo.Checked);
             DialogResult result = frm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
