@@ -45,9 +45,8 @@ BEGIN
 		
 	DECLARE @sql NVARCHAR(MAX)
 	SET @sql = N'
-	WITH tmpdata 
-     AS (SELECT 
-				[SP#]=o.id,
+	WITH tmpdata AS (
+		SELECT	[SP#]=o.id,
 				[Style]=o.StyleID, 
                 oa.article, 
 				oc.colorid, 
@@ -66,9 +65,10 @@ BEGIN
 				 ON oa.article = oc.article 
                  AND oc.patternpanel = ''FA'' 
                  AND oc.id = o.poid 
-         WHERE  o.poid = '''+@OrderID+N'''), 
-     subtotal 
-     AS (SELECT ''Total''       AS ID, 
+         WHERE  o.poid = '''+@OrderID+N'''
+	), 
+    subtotal AS (
+		SELECT	''Total''       AS ID, 
 				''''       as StyleID,
                 ''''    AS Article, 
 				''''       as colorid,
@@ -78,25 +78,27 @@ BEGIN
 				''''		 as CustCD,
 				Sum(qty) AS Qty
          FROM   tmpdata 
-         GROUP  BY sizecode), 
-     uniondata 
-     AS (SELECT * 
-         FROM   tmpdata 
-         UNION ALL 
-         SELECT * 
-         FROM   subtotal), 
-     pivotdata 
-     AS (SELECT * 
-         FROM   uniondata 
-                PIVOT( Sum(qty) 
-                     FOR sizecode IN ('+@cols+N' )) a) 			
-SELECT *, 
-
-       [TTL]=(SELECT Sum(qty) 
+         GROUP  BY sizecode
+	), 
+    uniondata AS (
+		SELECT * 
+        FROM   tmpdata 
+        
+		UNION ALL 
+        SELECT * 
+        FROM   subtotal
+	), 
+	pivotdata AS (
+		SELECT * 
         FROM   uniondata 
-        WHERE  SP# = p.SP#
-               AND article = p.article) 	
-FROM   pivotdata p 
+        PIVOT( Sum(qty) FOR sizecode IN ('+@cols+N' )) a
+	) 			
+	SELECT *, 
+		   [TTL]=(SELECT Sum(qty) 
+				  FROM   uniondata 
+				  WHERE  SP# = p.SP#
+						 AND article = p.article) 	
+	FROM   pivotdata p 
 	'
 	EXEC sp_executesql @sql
 END
