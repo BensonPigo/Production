@@ -23,7 +23,13 @@ namespace Sci.Production.IE
             masterData = MasterData;
             labelLanguage.Text = "Language\r\n(For description)";
             DataTable artworkType;
-            string sqlCmd = string.Format("Select distinct ArtworkTypeID from MachineType WITH (NOLOCK) , TimeStudy_Detail WITH (NOLOCK) where MachineType.ID = TimeStudy_Detail.MachineTypeID and TimeStudy_Detail.ID = {0}", MyUtility.Convert.GetString(masterData["ID"]));
+            string sqlCmd = string.Format(@"
+Select distinct ATD.ArtworkTypeID 
+from MachineType MT WITH (NOLOCK) , TimeStudy_Detail WITH (NOLOCK) ,Artworktype_Detail ATD WITH (NOLOCK)
+where MT.ID = TimeStudy_Detail.MachineTypeID 
+and MT.ID=ATD.MachineTypeID
+and TimeStudy_Detail.ID = {0}"
+                , MyUtility.Convert.GetString(masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             MyUtility.Tool.SetupCombox(comboArtworkType, 1,artworkType);
             MyUtility.Tool.SetupCombox(comboLanguage, 1, 1, "English,Chinese,Cambodia,Vietnam");
@@ -61,7 +67,8 @@ from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od WITH (NOLOCK) on o.ID = od.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and m.ArtworkTypeID = '{0}'", artworktype));
+LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
+where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and ATD.ArtworkTypeID = '{0}'", artworktype));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out printData);
             if (!result)
             {
@@ -72,8 +79,9 @@ where td.ID = {0}{1}", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.
             sqlCmd = string.Format(@"select isnull(m.ArtworkTypeID,'') as ArtworkTypeID,sum(td.SMV) as ttlSMV
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
+LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}{1}
-group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and m.ArtworkTypeID = '{0}'", artworktype));
+group by isnull(ATD.ArtworkTypeID,'')", MyUtility.Convert.GetString(masterData["ID"]), MyUtility.Check.Empty(artworktype) ? "" : string.Format(" and ATD.ArtworkTypeID = '{0}'", artworktype));
             result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             if (!result)
             {

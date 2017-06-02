@@ -37,11 +37,13 @@ namespace Sci.Production.IE
                 .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("TMS", header: "TMS", decimal_places: 4, iseditingreadonly: true, settings: tms);
 
-            string sqlCmd = string.Format(@"select isnull(mt.ArtworkTypeID,'') as ArtworkTypeID, sum(td.SMV) as TMS
+            string sqlCmd = string.Format(@"
+select isnull(mt.ArtworkTypeID,'') as ArtworkTypeID, sum(td.SMV) as TMS
 from {0} td WITH (NOLOCK) 
 left join MachineType mt WITH (NOLOCK) on td.MachineTypeID = mt.ID
-where td.ID = {1} and mt.ArtworkTypeID !=''
-group by mt.ArtworkTypeID", tableName, id.ToString());
+LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
+where td.ID = {1} and ATD.ArtworkTypeID !=''
+group by ATD.ArtworkTypeID", tableName, id.ToString());
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
