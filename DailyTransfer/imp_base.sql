@@ -540,14 +540,10 @@ select
 from Trade_To_Pms.dbo.ArtworkType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ArtworkType as a WITH (NOLOCK) where a.id = b.id)
 -------------------------------Artworktype_Detail
-Merge Production.dbo.Artworktype_Detail as t
-Using Trade_TO_Pms.dbo.Artworktype_Detail as s
-	on t.ArtworktypeID =s.ArtworktypeID and t.MachineTypeID = s.MachineTypeID
-	when not matched by target then
-	insert(t.ArtworktypeID,t.MachineTypeID)
-	values(s.ArtworktypeID,s.MachineTypeID)
-	when not matched by source then
-	delete;
+delete Production.dbo.Artworktype_Detail
+insert into Production.dbo.Artworktype_Detail
+select s.ArtworktypeID,s.MachineTypeID 
+from tradedb.trade.dbo.Artworktype_Detail s
 
 --Artworktype1 MachineType 無多的欄位
 --AArtworkType1
