@@ -4,7 +4,6 @@
     [DescCH]            NVARCHAR (60)  CONSTRAINT [DF_MachineType_DescCH] DEFAULT ('') NULL,
     [ISO]               VARCHAR (10)   CONSTRAINT [DF_MachineType_ISO] DEFAULT ('') NULL,
     [ArtworkTypeID]     VARCHAR (20)   CONSTRAINT [DF_MachineType_ArtworkTypeID] DEFAULT ('') NULL,
-    [ArtworkTypeDetail] VARCHAR (20)   CONSTRAINT [DF_MachineType_ArtworkTypeDetail] DEFAULT ('') NULL,
     [Mold]              BIT            CONSTRAINT [DF_MachineType_Mold] DEFAULT ((0)) NULL,
     [RPM]               INT            CONSTRAINT [DF_MachineType_RPM] DEFAULT ((0)) NULL,
     [Stitches]          NUMERIC (6, 1) CONSTRAINT [DF_MachineType_Stitches] DEFAULT ((0)) NULL,
@@ -47,7 +46,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機台作�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機台作工種類細項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MachineType', @level2type = N'COLUMN', @level2name = N'ArtworkTypeDetail';
+
 
 
 GO
