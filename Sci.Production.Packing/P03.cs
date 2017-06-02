@@ -230,9 +230,9 @@ where   ID = '{0}'
                             dr["SizeCode"] = "";
                             #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                             string sqlCmd = string.Format(@"
-select count(ID) as CountID 
-from Order_QtyShip WITH (NOLOCK) inner join orders o WITH (NOLOCK) on Order_QtyShip.id = o.id 
-where ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+select count(oq.ID) as CountID 
+from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
+where oq.ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
                                 , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(),Sci.Env.User.Factory);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
@@ -243,9 +243,9 @@ where ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
                                 else
                                 {
                                     sqlCmd = string.Format(@"
-select Seq,BuyerDelivery,ShipmodeID,Qty 
-from Order_QtyShip WITH (NOLOCK) inner join orders o WITH (NOLOCK) on Order_QtyShip.id = o.id 
-where ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+select Seq,oq.BuyerDelivery,ShipmodeID,oq.Qty 
+from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
+where oq.ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
                                         , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Factory);
                                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                     DialogResult returnResult = item.ShowDialog();
