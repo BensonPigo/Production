@@ -331,7 +331,7 @@ order by os.Seq", CurrentMaintain["OrderID"].ToString(), CurrentMaintain["OrderS
         {
             base.ClickNewAfter();
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
-            CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            //CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["Type"] = "L";
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Dest"] = "ZZ";
@@ -651,14 +651,27 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 CurrentMaintain["ShipModeID"] = "";
                 CurrentMaintain["BrandID"] = "";
                 CurrentMaintain["CustCDID"] = "";
+                CurrentMaintain["FactoryID"] = "";
                 displayStyle.Value = "";
                 displaySeason.Value = "";
                 displayPONo.Value = "";
+                
             }
             else
             {
                 DataRow dr;
-                string sqlCmd = string.Format("select StyleID,SeasonID,CustPONo,Customize1,ReadyDate,BrandID,CustCDID,Dest from Orders WITH (NOLOCK) where ID = '{0}'", orderID);
+                string sqlCmd = string.Format(@"
+select  StyleID
+        , SeasonID
+        , CustPONo
+        , Customize1
+        , ReadyDate
+        , BrandID
+        , CustCDID
+        , Dest 
+        , FtyGroup
+from Orders WITH (NOLOCK) 
+where ID = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out dr))
                 {
                     //帶出相關欄位的資料
@@ -667,6 +680,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     displayPONo.Value = dr["CustPONo"].ToString();
                     CurrentMaintain["BrandID"] = dr["BrandID"].ToString();
                     CurrentMaintain["CustCDID"] = dr["CustCDID"].ToString();
+                    CurrentMaintain["FactoryID"] = dr["FtyGroup"].ToString();
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);

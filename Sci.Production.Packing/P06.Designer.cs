@@ -57,7 +57,7 @@
             this.numTtlCtns = new Sci.Win.UI.NumericBox();
             this.txtShipMode = new Sci.Win.UI.TextBox();
             this.labelConfirmed = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtFactory = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -75,7 +75,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtfactory);
+            this.masterpanel.Controls.Add(this.txtFactory);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
             this.masterpanel.Controls.Add(this.txtShipMode);
@@ -138,7 +138,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtShipMode, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
             // 
             // detailpanel
             // 
@@ -521,13 +521,15 @@
             // 
             // txtfactory
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.Location = new System.Drawing.Point(604, 4);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 1;
+            this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.Location = new System.Drawing.Point(604, 4);
+            this.txtFactory.Name = "txtfactory";
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory.TabIndex = 1;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFactory.IsSupportEditMode = false;
+            this.txtFactory.ReadOnly = true;
             // 
             // label1
             // 
@@ -608,7 +610,7 @@
         private Win.UI.NumericBox numTtlCBM;
         private Win.UI.TextBox txtShipMode;
         private Win.UI.Label labelConfirmed;
-        private Class.txtfactory txtfactory;
+        private Win.UI.TextBox txtFactory;
         private Win.UI.Label label1;
     }
 }
