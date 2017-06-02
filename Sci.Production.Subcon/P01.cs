@@ -583,7 +583,7 @@ where a.id = '{0}'", masterID);
         {
             //跳轉至PrintForm
             Sci.Production.Subcon.P01_Print callPrintForm = new Sci.Production.Subcon.P01_Print(this.CurrentMaintain, numTotal.Text, numTotalPOQty.Text);
-            callPrintForm.Show(this);
+            callPrintForm.ShowDialog(this);
             return true;
         }
 

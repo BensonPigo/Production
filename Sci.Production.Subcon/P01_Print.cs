@@ -77,7 +77,7 @@ where a.id='{0}' ", masterData["ID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("artworkunit", artworkunit));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("handle", handle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", name));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("orderID", orderID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("orderID", orderID.Substring(0, 10)));
             #endregion
 
             this.ShowWaitMessage("Data is Printing...");
@@ -111,14 +111,14 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                     this.HideWaitMessage();
                     return; 
                 }
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString();
-                string FAX = dtDetail.Rows[0]["fax"].ToString();
-                string style = dtDetail.Rows[0]["styleID"].ToString();
+                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim().Trim();
+                string style = dtDetail.Rows[0]["styleID"].ToString().Trim();
                 decimal totalQty = MyUtility.Convert.GetDecimal( MyUtility.GetValue.Lookup(
                     string.Format(@"
                     select sum(poqty) as TotalQty from(
@@ -139,7 +139,7 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TotalAmount.ToString()));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GrandTotal", GrandTotal.ToString()));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("GrandTotal", GrandTotal.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));
                 
 
@@ -205,13 +205,13 @@ where a.id='{0}' ", masterData["ID"].ToString()));
                     MyUtility.Msg.WarningBox("Data not found");
                     return;
                 }
-                string Title1 = dtDetail.Rows[0]["nameEn"].ToString();
-                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString();
-                string Title3 = dtDetail.Rows[0]["Tel"].ToString();
-                string TO = dtDetail.Rows[0]["TITLETO"].ToString();
-                string TEL = dtDetail.Rows[0]["Tel"].ToString();
-                string ADDRESS = dtDetail.Rows[0]["Address"].ToString();
-                string FAX = dtDetail.Rows[0]["fax"].ToString();
+                string Title1 = dtDetail.Rows[0]["nameEn"].ToString().Trim();
+                string Title2 = dtDetail.Rows[0]["AddressEN"].ToString().Trim();
+                string Title3 = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string TO = dtDetail.Rows[0]["TITLETO"].ToString().Trim();
+                string TEL = dtDetail.Rows[0]["Tel"].ToString().Trim();
+                string ADDRESS = dtDetail.Rows[0]["Address"].ToString().Trim();
+                string FAX = dtDetail.Rows[0]["fax"].ToString().Trim();
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title1", Title1));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title2", Title2));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title3", Title3));
