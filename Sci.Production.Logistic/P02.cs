@@ -147,11 +147,20 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
                         else
                         {
                             DataRow dr = selectDataTable.NewRow();
-                            dr["ID"] = "";
-                            dr["selected"] = 0;
-                            dr["PackingListID"] = sl[2].Substring(0, 13);
-                            dr["CTNStartNo"] = sl[2].Substring(13);
-                            dr["ClogLocationId"] = sl[1];
+                            try
+                            {
+                                dr["ID"] = "";
+                                dr["selected"] = 0;
+                                dr["PackingListID"] = sl[2].Substring(0, 13);
+                                dr["CTNStartNo"] = sl[2].Substring(13);
+                                dr["ClogLocationId"] = sl[1];
+                            }
+                            catch (Exception)
+                            {
+                                MyUtility.Msg.WarningBox("Format is not correct!");
+                                return;
+                            }
+                            
                             string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq,TransferDate,ReceiveDate
                                                                                   from PackingList_Detail WITH (NOLOCK) 
                                                                                   where ID = '{0}' and CTNStartNo = '{1}' and CTNQty > 0
