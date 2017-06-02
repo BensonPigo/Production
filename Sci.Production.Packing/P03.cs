@@ -201,7 +201,7 @@ where   ID = '{0}'
         and BrandID = '{1}' 
         and Dest = '{2}' 
         and CustCDID = '{3}'
-        and factoryid = '{4}'"
+        and MDivisionID = '{4}'"
                             , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Factory), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
@@ -232,7 +232,7 @@ where   ID = '{0}'
                             string sqlCmd = string.Format(@"
 select count(oq.ID) as CountID 
 from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
-where oq.ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                                 , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(),Sci.Env.User.Factory);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
@@ -245,7 +245,7 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
                                     sqlCmd = string.Format(@"
 select Seq,oq.BuyerDelivery,ShipmodeID,oq.Qty 
 from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
-where oq.ID = '{0}' and ShipmodeID = '{1}' and o.FactoryID = '{0}'"
+where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                                         , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Factory);
                                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                     DialogResult returnResult = item.ShowDialog();
