@@ -533,7 +533,7 @@ drop table #tmp");
                 return;
             }
 
-            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Factory + "PI", "SubTransfer", System.DateTime.Now);
+            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "PI", "SubTransfer", System.DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
