@@ -202,7 +202,7 @@ where   ID = '{0}'
         and Dest = '{2}' 
         and CustCDID = '{3}'
         and MDivisionID = '{4}'"
-                            , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Factory), out orderData))
+                            , e.FormattedValue.ToString(), CurrentMaintain["BrandID"].ToString(), CurrentMaintain["Dest"].ToString(), CurrentMaintain["CustCDID"].ToString(), Sci.Env.User.Keyword), out orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = "";
@@ -233,7 +233,7 @@ where   ID = '{0}'
 select count(oq.ID) as CountID 
 from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
 where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
-                                , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(),Sci.Env.User.Factory);
+                                , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
                             if (MyUtility.Check.Seek(sqlCmd, out orderData))
                             {
                                 if (orderData["CountID"].ToString() == "1")
@@ -246,7 +246,7 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
 select Seq,oq.BuyerDelivery,ShipmodeID,oq.Qty 
 from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
 where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
-                                        , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Factory);
+                                        , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
                                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                                     DialogResult returnResult = item.ShowDialog();
                                     if (returnResult == DialogResult.Cancel)
@@ -276,7 +276,7 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            string sqlCmd = string.Format("select Seq, BuyerDelivery,ShipmodeID,Qty from Order_QtyShip WITH (NOLOCK) where ID = '{0}' and ShipmodeID = '{1}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString());
+                            string sqlCmd = string.Format("select oq.Seq, oq.BuyerDelivery,oq.ShipmodeID,oq.Qty from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id  where oq.ID = '{0}' and oq.ShipmodeID = '{1}' and o.MDivisionID = '{2}'", dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "4,20,20,10", "", "Seq,Buyer Delivery,ShipMode,Qty");
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
