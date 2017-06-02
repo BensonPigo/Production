@@ -23,7 +23,11 @@ namespace Sci.Production.Basic
         protected override void OnFormLoaded()
         {
             //撈Grid資料
-            string selectCommand = string.Format("select ID,Description from MachineType WITH (NOLOCK) where ArtworkTypeID = '{0}' or ArtworkTypeDetail = '{0}'", this.motherData["ID"].ToString());
+            string selectCommand = string.Format(@"
+select ID,Description 
+from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
+where ATD.ArtworkTypeID = '{0}' or ArtworkTypeDetail = '{0}'"
+                , this.motherData["ID"].ToString());
             
             DataTable selectDataTable;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
