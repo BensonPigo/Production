@@ -32,7 +32,14 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             this.KeyField1 = "id";
             this.KeyField2 = "Issue_DetailUkey";
+            
             this.openFromAutoPick = openFromAutoPick;
+
+            //if (this.openFromAutoPick) {
+                this.btmcont.Controls.Remove(append);
+                this.btmcont.Controls.Remove(revise);
+                this.btmcont.Controls.Remove(delete);
+            //}
             
         }
         protected override bool OnSave()
@@ -99,35 +106,18 @@ namespace Sci.Production.Warehouse
             #region -- matrix breakdown setting
             gridBreakDown.DataSource = listControlBindingSource1;
             _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
-            //_matrix.XTableName = "issue_breakdown";  // X 軸表格名稱
-            //_matrix.YTableName = "issue_breakdown";  // Y 軸表格名稱
-            //_matrix.TableName = "issue_breakdown";   // 第三表格名稱
-
             _matrix.XMap.Name = "sizecode";  // 對應到第三表格的 X 欄位名稱
             _matrix.XOrder = "seq";
-            //_matrix.XMap.MapName = "SIZECODE";//ignore
             _matrix.YMap.Name = "ID";  // 對應到第三表格的 Y 欄位名稱
-            //_matrix.YMap.MapName = "SIZEITEM";//ignore
-
-            //_matrix.XUniqueKey = "sizecode"; // X 軸不可重複的欄位名稱, 可多重欄位, 用","區隔.
-            //_matrix.YUniqueKey = "orderid,article"; // Y 軸不可重複的欄位名稱, 可多重欄位, 用","區隔.
-
             _matrix
                 .SetColDef("qty2", width: Widths.AnsiChars(4))  // 第三表格對應的欄位名稱
                 .AddXColDef("sizecode")                             // X 要顯示的欄位名稱, 可設定多個.
                 .AddYColDef("ID", header: "OrderID", width: Widths.AnsiChars(16))
                 .AddYColDef("total", header: "Total", width: Widths.AnsiChars(8))               
                 .AddYColDef("article", header: "Article", width: Widths.AnsiChars(8))  // Y 要顯示的欄位名稱, 可設定多個.
-                //.AddYColDef("DESCRIPTION", header: "Description", width: Widths.UnicodeChars(15))
                 ;
             _matrix.IsXColEditable = false;  // X 顯示的欄位可否編輯?
             _matrix.IsYColEditable = false;  // Y 顯示的欄位可否編輯?
-
-            //_matrix.AutoField = "ID";   //映對到第三表格的欄位名稱
-            //_matrix.AutoXField = "ID";  //映對到 X 表格的欄位名稱
-            //_matrix.AutoYField = "ID";  //映對到 Y 表格的欄位名稱
-
-
             #endregion
             if (combo)
             {
@@ -156,14 +146,6 @@ namespace Sci.Production.Warehouse
             ((DataTable)this.listControlBindingSource1.DataSource).Rows[0].Delete();  
             return Result.True;
         }
-
-        //protected override void OnSubDetailInsert(int index = -1)
-        //{
-        //    var frm = new Sci.Production.Warehouse.P10_Detail_Detail(CurrentDetailData, (DataTable)gridbs.DataSource);
-        //    frm.ShowDialog(this);
-        //    //base.OnSubDetailInsert(index);
-        //    //CurrentSubDetailData["Issue_SummaryUkey"] = 0;
-        //}
 
         protected override void OnAttached()
         {

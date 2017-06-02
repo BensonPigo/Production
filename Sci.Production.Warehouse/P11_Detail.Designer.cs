@@ -66,6 +66,11 @@
             this.btmcont.Location = new System.Drawing.Point(0, 517);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
             // 
+            // append
+            // 
+            this.append.Enabled = false;
+            this.append.Visible = false;
+            // 
             // save
             // 
             this.save.Location = new System.Drawing.Point(838, 5);
@@ -73,6 +78,16 @@
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(918, 5);
+            // 
+            // revise
+            // 
+            this.revise.Enabled = false;
+            this.revise.Visible = false;
+            // 
+            // delete
+            // 
+            this.delete.Enabled = false;
+            this.delete.Visible = false;
             // 
             // next
             // 
