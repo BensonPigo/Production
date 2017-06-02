@@ -140,4 +140,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Contents" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="70586b32-e5e4-4b64-9c0b-d989dc3bfb0e" ChangeDateTime="05/31/2017 03:31:33">
+    <Property Name="ElementName" Value="[dbo].[Orders].[GMTComplete ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Orders]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="GMTComplete" />
+  </Operation>
 </Operations>
