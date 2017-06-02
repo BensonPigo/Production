@@ -373,7 +373,6 @@ delete from #tmp2 where qty = 0;
                 if (null == dr) return;
                 var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail();
                 DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
-                //DataTable _clone = tmpDt.Copy();
                 frm.SetGrid(tmpDt);
                 DialogResult DResult = frm.ShowDialog(this);
 
