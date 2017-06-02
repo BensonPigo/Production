@@ -57,13 +57,14 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,b.ClogLocationId,'' as Remark 
-                                                         from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
-                                                         where b.OrderId = c.Id 
-                                                         and a.Id = b.Id 
-                                                         and b.CTNStartNo != '' 
-                                                         and b.ReceiveDate is not null
-                                                         and c.Dest = d.ID 
-                                                         and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
+where b.OrderId = c.Id 
+and a.Id = b.Id 
+and b.CTNStartNo != '' 
+and b.ReceiveDate is not null
+and c.Dest = d.ID 
+and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
+order by b.Id,b.OrderID,b.CTNStartNo", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));

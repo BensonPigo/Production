@@ -53,14 +53,16 @@ namespace Sci.Production.Packing
             }
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, convert(int,b.CTNStartNo) as OrderbyCTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
-                                                         from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
-                                                         where b.OrderId = c.Id 
-                                                         and a.Id = b.Id 
-                                                         and b.CTNStartNo != '' 
-                                                         and ((b.ReturnDate is null and TransferDate is null) or b.ReturnDate is not null) 
-                                                         and c.Dest = d.ID 
-                                                         and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+            sqlCmd.Append(string.Format(@"
+Select Distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, convert(int,b.CTNStartNo) as OrderbyCTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
+where b.OrderId = c.Id 
+and a.Id = b.Id 
+and b.CTNStartNo != '' 
+and ((b.ReturnDate is null and TransferDate is null) or b.ReturnDate is not null) 
+and c.Dest = d.ID 
+and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
+order by b.Id,b.OrderID, b.CTNStartNo", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSP.Text.ToString().Trim()));
