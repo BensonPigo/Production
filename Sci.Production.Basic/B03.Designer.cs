@@ -122,8 +122,6 @@
             this.DefaultControlForEdit = "txtUserManager";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B03. M";
