@@ -91,11 +91,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         {
             string masterID = (e.Master == null) ? "" : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(@"
-SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone,d.Article,d.ThreadCombID
+SELECT a.*, b.description, b.MetertoCone ,c.description as colordesc,X.newCone,X.usedcone
 FROM ThreadRequisition_Detail a WITH (NOLOCK) 
 Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
 Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
-Left join ThreadRequisition_Detail_Cons d on d.ThreadRequisition_DetailUkey=a.ukey
 OUTER APPLY
 (
 	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
@@ -303,14 +302,11 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             #endregion
             
             #region set grid
-            Helper.Controls.Grid.Generator(this.detailgrid)
-           
-           .Text("ThreadCombid", header: "Thread Comb.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            Helper.Controls.Grid.Generator(this.detailgrid)         
            .Text("Refno", header: "Thread Refno", width: Widths.AnsiChars(10), settings: refno).Get(out col_refno)
            .Text("description", header: "Thread Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
            .Text("ThreadColorid", header: "Thread\r\nColor", width: Widths.AnsiChars(4), settings: thcolor).Get(out col_color)
            .Text("Colordesc", header: "Thread Color Desc", width: Widths.AnsiChars(18), iseditingreadonly: true)
-           .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out col_cons)
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
@@ -529,7 +525,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             //做資料匯整select group 後填入ThreadRequisition_Detail
             sqltr_duk = string.Format(@"select '{0}' as Orderid, #tmp.Refno,  ThreadColorId, 
-                        Threadcombdesc,colordesc,ThreadCombId,Article,
+                        Threadcombdesc,colordesc,
                         #tmp.MeterToCone,
                         CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100) as ConsumptionQty,
                         IIF(#tmp.MeterToCone > 0 ,CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone),0) as TotalQty,
@@ -538,7 +534,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                         CEILING(CEILING(Sum(OrderQty * (Seamlength * UseRatioNumeric + Allowance)) / 100 / #tmp.MeterToCone) * 0.2),0.00) as PurchaseQty,
                         'true' as AutoCreate , 0 as UseStockQty, '' as POID, '' as Remark
                         from #tmp
-                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId,ThreadCombId,Article
+                        group by Threadcombdesc,colordesc,#tmp.Refno,#tmp.MeterToCone,ThreadColorId
                         ", id);
             
             if (pretb_cons.Rows.Count <= 0) TR_DUK = pretb_cons.Clone();
@@ -560,8 +556,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 newdr["AllowanceQty"] = dr["AllowanceQty"];
                 newdr["TotalQty"] = dr["TotalQty"];
                 newdr["PurchaseQty"] = dr["PurchaseQty"];
-                newdr["ThreadCombId"] = dr["ThreadCombId"];
-                newdr["Article"] = dr["Article"];
                 newdr["AutoCreate"] = 1;
                 newdr["UseStockQty"] = 0;
                 newdr["POID"] = dr["POID"];
