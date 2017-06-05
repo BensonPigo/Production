@@ -149,6 +149,11 @@
             Property of DateTimeStringFormat.
             </summary>
         </member>
+        <member name="P:Sci.Cfg.Datebox_Minimum">
+            <summary>
+            Property of DateBox for minimum.
+            </summary>
+        </member>
         <member name="F:Sci.Cfg._mailfrom">
             <summary>
             Field of mailfrom.
@@ -1930,6 +1935,16 @@
             <param name="sender">sender object.</param>
             <param name="e">LanguageEventArgs</param>
         </member>
+        <member name="F:Sci.Env.CurrentControl">
+            <summary>
+            為觸發 Grid Cell Validating 而存的物件
+            </summary>
+        </member>
+        <member name="M:Sci.Env.GetControlForm(System.Object)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:Sci.ILanguageHelper">
             <summary>
             Interface of LanguageHelper
@@ -2035,6 +2050,11 @@
             </summary>
         </member>
         <member name="P:Sci.Properties.Resources.LABELS">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Sci.Properties.Resources.preloader">
             <summary>
               Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
@@ -13734,6 +13754,16 @@
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
         </member>
+        <member name="P:Sci.Win.Tools.BaseSelectItem.DefaultValueColumn">
+            <summary>
+            the column name of DataTable which DefaultValue should be mapping with
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.BaseSelectItem.DefaultKeyword">
+            <summary>
+            每當Select 畫面顯示的時候, 將此屬性帶入[Display keyword]欄位 ,並將Grid內資料依照 keyword 篩選
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tools.BaseSelectItem.ResetFormSize_byGrid">
             <summary>
             如果 Form size沒有被外層直接指定的話, 就依照grid 各columns的 width 浮動計算form width
@@ -13867,10 +13897,10 @@
             Constructor of SelectItem.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem.OnFormLoaded">
             <summary>
             On form loaded method.
@@ -13936,9 +13966,9 @@
             Property of multi selection.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.Set(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter})" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.Set(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem._Set(System.String,System.String,System.String,System.String,System.Boolean,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.Set(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String,System.Collections.Generic.IList{System.Data.SqlClient.SqlParameter},System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem.Set(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem._Set(System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem.Load">
             <summary>
             Load data from database and binding to grid.
@@ -14009,7 +14039,7 @@
             Constructor of SelectItem2.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String)">
+        <member name="M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Constructor of SelectItem2 with parameters.
             </summary>
@@ -14017,8 +14047,8 @@
             <param name="headercaptions">column's header information.</param>
             /// <param name="defaults">original selected string.</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.#ctor(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem2.OnFormLoaded">
             <summary>
             On form loaded method.
@@ -14084,9 +14114,9 @@
             Property of source string list.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.Set(System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.Set(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2._Set(System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.Set(System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2.Set(System.Data.DataTable,System.String,System.String,System.String,System.String,System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.Win.Tools.SelectItem2._Set(System.String,System.String,System.String,System.String,System.String,System.String)" -->
         <member name="M:Sci.Win.Tools.SelectItem2.Load">
             <summary>
             Load data from database and binding to grid.
@@ -14666,6 +14696,13 @@
             On cell mouse down method.
             </summary>
             <param name="e"></param>
+        </member>
+        <member name="M:Sci.Win.UI.Grid.ColumnsAutoSize(System.Int32,System.Windows.Forms.DataGridViewAutoSizeColumnsMode)">
+            <summary>
+            呼叫 AutoResizeColumns之後, 每個Column再加上addWidth的寬度改善顯示...的問題
+            </summary>
+            <param name="addWidth">每個Column再加上addWidth的寬度</param>
+            <param name="mode"></param>
         </member>
         <member name="P:Sci.Win.UI.Grid.Sci#Win#UI#IControl#Form">
             <summary>
@@ -15528,6 +15565,13 @@
             <summary>
             Store old value.
             </summary>
+        </member>
+        <member name="M:Sci.Win.UI.TabControl.OnDeselecting(System.Windows.Forms.TabControlCancelEventArgs)">
+            <summary>
+            Raises the System.Windows.Forms.TabControl.Deselecting event.
+            <para>另外在tab 切換前, 會先檢查前一個元件是否為grid cell , 是的話要做ValidateControl後才切換</para>
+            </summary>
+            <param name="e">A System.Windows.Forms.TabControlCancelEventArgs that contains the event data.</param>
         </member>
         <member name="T:Sci.Win.UI.TextBoxPopUpMode">
             <summary>
