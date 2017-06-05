@@ -90,7 +90,10 @@ select  0 as selected
         , c.inqty-c.outqty + c.adjustqty as stockqty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+inner join dbo.Orders on c.POID = orders.id
+inner join dbo.Factory on orders.FactoryID = factory.ID
 Where   c.lock = 0 
+and factory.MDivisionID = '{0}' 
         and c.inqty-c.outqty + c.adjustqty > 0 
         and a.id = @sp 
         and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
