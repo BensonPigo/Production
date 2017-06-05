@@ -16,16 +16,18 @@ namespace Sci.Production.Shipping
     public partial class B03_CanvassRecord : Sci.Win.Tems.Input1
     {
         protected DataRow motherData;
+        bool CanEdit= false;
         public B03_CanvassRecord(bool canedit, DataRow data)
         {
             InitializeComponent();
+            CanEdit = canedit;
             motherData = data;
             this.DefaultFilter = "ID = '" + MyUtility.Convert.GetString(motherData["ID"]).Trim() + "'";
             if (CurrentMaintain == null)
             {
                 label1.Text = "";
             }
-            this.IsSupportEdit = canedit;
+            //this.IsSupportEdit = canedit;
             //選完Supp後要將回寫CurrencyID
             this.txtsubconSupplier1.TextBox1.Validating += (s, e) =>
                 {
@@ -55,6 +57,12 @@ namespace Sci.Production.Shipping
                     CurrentMaintain["CurrencyID4"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier4.TextBox1.Text, "LocalSupp", "ID");
                 }
             };
+        }
+
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            this.toolbar.cmdEdit.Enabled = CanEdit && !EditMode;
         }
 
         protected override void OnDetailEntered()
