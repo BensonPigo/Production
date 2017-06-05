@@ -685,6 +685,7 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1008, 650);
+            this.ExpressQuery = true;
             this.GridAlias = "CFA_Detail";
             this.IsSupportConfirm = true;
             this.IsSupportUnconfirm = true;
