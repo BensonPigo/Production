@@ -163,7 +163,7 @@ where 1=1 ");
                 {
                     MyUtility.Msg.WarningBox("Po Qty can't be more than [Order Qty]-[Issue Qty]");
                     //e.Cancel = true;
-                    return;
+                    //return;
                 }                
                 ddr["Amount"] = Convert.ToDecimal(e.FormattedValue) * Convert.ToInt32(ddr["qtygarment"]) * Convert.ToDecimal(ddr["UnitPrice"]);
                 ddr["poqty"] = Convert.ToDecimal(e.FormattedValue);
@@ -208,9 +208,7 @@ where 1=1 ");
         {
             this.Close();
         }
-
-
-
+        
         private void btnImport_Click(object sender, EventArgs e)
         {
             listControlBindingSource1.EndEdit();
