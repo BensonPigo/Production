@@ -27,6 +27,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword); //
             InsertDetailGridOnDoubleClick = false;
             viewer = new ReportViewer();
             viewer.Dock = DockStyle.Fill;
