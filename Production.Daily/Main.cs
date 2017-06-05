@@ -298,11 +298,9 @@ namespace Production.Daily
             }
             #endregion
             #region 執行前發送通知mail
-            
             subject = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             desc = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
-            SendMail(subject, desc);
-           
+            SendMail(subject, desc);           
             #endregion
             #region CHECK THE FIRST NEED MAPPING A DISK,CAN'T USING \\ UNC
             if (importDataPath.Substring(0, 2) == "////" || exportDataPath.Substring(0, 2) == "////")
@@ -341,7 +339,6 @@ namespace Production.Daily
             result = GetTransRegion("I", importRgCode, importDataPath, importFileName, out importRegion);
             if (!result) { return result; }
             #endregion
-
             #region 先把Trade_To_Pms的DB drop掉
             transferPMS.DeleteDatabase(importRegion);
             #endregion
@@ -354,7 +351,10 @@ namespace Production.Daily
          
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
             if (!File.Exists(rarFile))
-            {                
+            {
+                subject = "PMS transfer data (New) ERROR";
+                desc = "not found Winrar in your PC ,pls check and re-download.";
+                SendMail(subject, desc);
                 return new DualResult(false, "Win_RAR File does not exist !");
             }
            
@@ -369,9 +369,14 @@ namespace Production.Daily
                 return result;
             }
             #endregion
-
+            #region check Export File
+            if (!File.Exists(exportRegion.DirName + exportRegion.RarName)){
+                subject = "PMS transfer data (New) ERROR";
+                desc = "Not found the ZIP(rar) file,pls advice Taipei's Programer";
+                SendMail(subject, desc);
+            }
+            #endregion 
             
-
             #region 開始執行轉入
             result = DailyImport(importRegion);
 
@@ -382,6 +387,9 @@ namespace Production.Daily
                 return result;             
             }
             #endregion
+            #region check lock date
+            checkLockDailyOutput();
+            #endregion 
 
             #region 完成後發送Mail
             DataTable orderComparisonList;
@@ -640,11 +648,10 @@ Region      Succeeded       Message
 
            
            
-                if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
-                {
-                    return new DualResult(false, "Export failed!");
-                }               
-            
+            if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
+            {
+                return new DualResult(false, "Export failed!");
+            }
             return Ict.Result.True;
         }
         #endregion
@@ -995,7 +1002,71 @@ Region      Succeeded       Message
             fi.CopyTo(ToDirPath + fi.Name);
         }
 
+        private void checkLockDailyOutput()
+        {
+            string checkLockSQL = @"
+use Production
+declare @Lockdate date = (select sewlock from Trade_To_Pms.dbo.TradeSystem WITH (NOLOCK))
+declare @PullOutLock date = (select PullOutLock from Trade_To_Pms.dbo.TradeSystem WITH (NOLOCK))
 
+select distinct p.*
+from Pullout p
+inner join Pullout_Detail pd on p.id = pd.ID
+where AddDate <= @Lockdate
+	  and LockDate is null";
+            DataTable tableCheckLock;
 
+            DBProxy.Current.Select("", checkLockSQL, out tableCheckLock);
+
+            if (tableCheckLock != null && tableCheckLock.Rows.Count > 0)
+            {
+                #region Save Excel
+                // 儲存路徑
+                string path = Sci.Env.Cfg.ReportTempDir;
+                string fileName = this.CurrentData["RgCode"].ToString().Trim() + " Pullout Report " + DateTime.Now.ToString("yyyyMMdd");
+                int lastIndex = 1;
+                
+                //判斷 流水號 = ReCode + " Pullout Report " + Date + 流水號 ( 4 碼 )
+                while (System.IO.File.Exists(path + fileName + lastIndex.ToString().PadLeft(4, '0') + ".xlsx"))
+                {
+                    lastIndex++;
+                }
+
+                fileName += lastIndex.ToString().PadLeft(4, '0') + ".xlsx";
+                // 新增Excel物件
+                Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+                // 新增workbook
+                Microsoft.Office.Interop.Excel.Workbook workbook = excel.Application.Workbooks.Add(true);
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.Worksheets[1];
+                for (int i = 0; i < tableCheckLock.Columns.Count; i++)
+                {
+                    worksheet.Cells[1, i + 1] = tableCheckLock.Columns[i].ColumnName;
+                }
+                int index = 0;
+                foreach (DataRow dr in tableCheckLock.Rows)
+                {
+                    for (int i = 0; i < dr.Table.Columns.Count; i++)
+                    {
+                        worksheet.Cells[2 + index, i + 1] = dr[i];
+                    }
+                    index++;
+                }
+
+                if (path.EndsWith("\\"))
+                {
+                    workbook.SaveCopyAs(path + fileName);
+                }
+                else
+                {
+                    workbook.SaveCopyAs(path + "\\" + fileName);
+                }
+
+                #endregion
+                string subject = this.CurrentData["RgCode"].ToString().Trim() + " - Pullout should be lock data.";
+                string desc = "Attached is the data should be Lock but Pullout Report not yet encode.";
+                Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, ".\\TMP\\" + fileName, desc, true, true);
+                mail.ShowDialog();
+            }
+        }
     }
 }
