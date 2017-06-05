@@ -11,6 +11,11 @@ using Sci.Data;
 using Sci.Production.Class.Commons;
 using System.IO;
 using System.Configuration;
+using System.Transactions;
+using System.Data.SqlClient;
+using Microsoft.SqlServer.Server;
+using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.Common;
 
 namespace Sci.Production.Win
 {
@@ -23,7 +28,6 @@ namespace Sci.Production.Win
         {
             this.app = app;
             InitializeComponent();
-
             ok.Click += ok_Click;
             exit.Click += exit_Click;
 
@@ -89,7 +93,13 @@ namespace Sci.Production.Win
             Sci.Env.App.Text = ConfigurationManager.AppSettings["formTextSufix"] + userData;
 
             DialogResult = DialogResult.OK;
-            
+
+            //SQL UPDATE
+            if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
+            {
+                this.checkUpdateSQL();
+            }            
+
             Close();
         }
 
@@ -197,5 +207,61 @@ namespace Sci.Production.Win
             return result;
         }
 
+        private void checkUpdateSQL()
+        {
+            string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
+            System.Configuration.Configuration config;
+            if (dirs.Length == 0)
+            {
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                config.AppSettings.Settings["sql_update"].Value = "Y";
+                config.Save(ConfigurationSaveMode.Modified);
+                return;
+            }
+
+            foreach (string dir in dirs)
+            {
+                string script = File.ReadAllText(dir);
+
+                //DualResult upResult;
+                TransactionScope _transactionscope = new TransactionScope();
+                using (_transactionscope)
+                {
+                    try
+                    {
+                        SqlConnection connection;
+                        DBProxy.Current.OpenConnection("Production", out connection);
+
+                        using (connection)
+                        {
+                            Server db = new Server(new ServerConnection(connection));
+                            db.ConnectionContext.ExecuteNonQuery(script);
+                        }
+
+                        _transactionscope.Complete();
+                        _transactionscope.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        _transactionscope.Dispose();
+                        string subject = string.Format(@"Factory = {0}, Account = {1} SQL UPDATE FAIL {2}", Sci.Env.User.Factory, Sci.Env.User.UserName, DateTime.Today.ToString("yyyyMMdd"));
+                        string desc = string.Format(@"
+Hi all,
+    Factory = {0}, Account = {1}, SQL UPDATE FAIL, Please check it.
+-------------------------------------------------------------------
+{2}
+-------------------------------------------------------------------", Sci.Env.User.Factory, Sci.Env.User.UserName, ex.ToString());
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.User.MailAddress, "pmshelp@sportscity.com.tw", "", subject, "", desc, true, true);
+                        mail.ShowDialog();
+                        return;
+                    }
+                }
+                _transactionscope.Dispose();
+                _transactionscope = null;
+            }
+            config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.AppSettings.Settings["sql_update"].Value = "Y";
+            config.Save(ConfigurationSaveMode.Modified);
+        }
     }
 }
