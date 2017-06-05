@@ -232,7 +232,13 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                             {
                                 if (orderData["CountID"].ToString() == "1")
                                 {
-                                    dr["OrderShipmodeSeq"] = MyUtility.GetValue.Lookup("Seq", dr["OrderID"].ToString(), "Order_QtyShip", "ID");
+                                    string sqlCmd2 = string.Format(@"
+select seq
+from Order_QtyShip oq WITH (NOLOCK) inner join orders o WITH (NOLOCK) on oq.id = o.id 
+where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
+                                , dr["OrderID"].ToString(), CurrentMaintain["ShipModeID"].ToString(), Sci.Env.User.Keyword);
+                                    if (MyUtility.Check.Seek(sqlCmd2, out orderData))
+                                        dr["OrderShipmodeSeq"] = orderData["seq"].ToString();
                                 }
                                 else
                                 {
@@ -275,6 +281,7 @@ where oq.ID = '{0}' and ShipmodeID = '{1}' and o.MDivisionID = '{2}'"
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel) { return; }
                             e.EditingControl.Text = item.GetSelectedString();
+                            dr["OrderShipmodeSeq"] = e.EditingControl.Text;
                             if (e.EditingControl.Text != dr["OrderShipmodeSeq"].ToString())
                             {
                                 if (!CheckCanCahngeCol(MyUtility.Convert.GetDate(dr["TransferDate"])))
