@@ -184,7 +184,9 @@ namespace Sci.Production.Thread
             if (dr2.Length > 0)
             {
                 int index = 1;
-                var lookupData = this.detTable.AsEnumerable().ToLookup(row => row["refno"].ToString().ToUpper().TrimEnd() + "@" +
+                var lookupData = this.detTable.AsEnumerable()
+                    .Where(row => row.RowState != DataRowState.Deleted)
+                    .ToLookup(row => row["refno"].ToString().ToUpper().TrimEnd() + "@" +
                     row["ThreadLocationid"].ToString().ToUpper().TrimEnd() + "@" +
                     row["Threadcolorid"].ToString().ToUpper().TrimEnd());
                 foreach (DataRow dr in dr2)

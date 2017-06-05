@@ -36,7 +36,7 @@ namespace Sci.Production.Thread
             #region set grid
             //this.grid.ReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid)
-           .Text("Article", header: "Article", width: Widths.AnsiChars(10))
+           .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("ThreadCombid", header: "Thread Comb.", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("Threadcombdesc", header: "Thread Comb Desc", width: Widths.AnsiChars(15), iseditingreadonly: true)
            .Text("Operationid", header: "Operationid", width: Widths.AnsiChars(20), iseditingreadonly: true)
