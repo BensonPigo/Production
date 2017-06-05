@@ -46,6 +46,8 @@
             this.label9 = new Sci.Win.UI.Label();
             this.btnImportfromWorkOrder = new Sci.Win.UI.Button();
             this.btnImportfromRealtimeBundleTracking = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtfactoryByM1 = new Sci.Production.Class.txtfactoryByM();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +64,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtfactoryByM1);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImportfromRealtimeBundleTracking);
             this.masterpanel.Controls.Add(this.btnImportfromWorkOrder);
             this.masterpanel.Controls.Add(this.label9);
@@ -80,7 +84,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.labelDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 135);
+            this.masterpanel.Size = new System.Drawing.Size(918, 135);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
@@ -100,6 +104,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfromWorkOrder, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfromRealtimeBundleTracking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtfactoryByM1, 0);
             // 
             // detailpanel
             // 
@@ -156,7 +162,7 @@
             // dateDate
             // 
             this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cdate", true));
-            this.dateDate.Location = new System.Drawing.Point(99, 49);
+            this.dateDate.Location = new System.Drawing.Point(99, 42);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
             this.dateDate.TabIndex = 3;
@@ -173,8 +179,7 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
-            this.labelDate.Location = new System.Drawing.Point(14, 49);
+            this.labelDate.Location = new System.Drawing.Point(14, 42);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(82, 23);
             this.labelDate.TabIndex = 17;
@@ -182,7 +187,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(14, 11);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(82, 23);
@@ -191,8 +195,7 @@
             // 
             // labelManPower
             // 
-            this.labelManPower.Lines = 0;
-            this.labelManPower.Location = new System.Drawing.Point(242, 88);
+            this.labelManPower.Location = new System.Drawing.Point(242, 74);
             this.labelManPower.Name = "labelManPower";
             this.labelManPower.Size = new System.Drawing.Size(82, 23);
             this.labelManPower.TabIndex = 20;
@@ -200,7 +203,6 @@
             // 
             // labelWorkingHourPerDay
             // 
-            this.labelWorkingHourPerDay.Lines = 0;
             this.labelWorkingHourPerDay.Location = new System.Drawing.Point(242, 10);
             this.labelWorkingHourPerDay.Name = "labelWorkingHourPerDay";
             this.labelWorkingHourPerDay.Size = new System.Drawing.Size(142, 23);
@@ -209,7 +211,6 @@
             // 
             // labelActoutputYDS
             // 
-            this.labelActoutputYDS.Lines = 0;
             this.labelActoutputYDS.Location = new System.Drawing.Point(454, 11);
             this.labelActoutputYDS.Name = "labelActoutputYDS";
             this.labelActoutputYDS.Size = new System.Drawing.Size(142, 23);
@@ -218,8 +219,7 @@
             // 
             // labelActoutputGMTPCS
             // 
-            this.labelActoutputGMTPCS.Lines = 0;
-            this.labelActoutputGMTPCS.Location = new System.Drawing.Point(454, 49);
+            this.labelActoutputGMTPCS.Location = new System.Drawing.Point(454, 42);
             this.labelActoutputGMTPCS.Name = "labelActoutputGMTPCS";
             this.labelActoutputGMTPCS.Size = new System.Drawing.Size(142, 23);
             this.labelActoutputGMTPCS.TabIndex = 23;
@@ -227,8 +227,7 @@
             // 
             // labelPPH
             // 
-            this.labelPPH.Lines = 0;
-            this.labelPPH.Location = new System.Drawing.Point(242, 49);
+            this.labelPPH.Location = new System.Drawing.Point(242, 42);
             this.labelPPH.Name = "labelPPH";
             this.labelPPH.Size = new System.Drawing.Size(82, 23);
             this.labelPPH.TabIndex = 24;
@@ -239,7 +238,7 @@
             this.numManPower.BackColor = System.Drawing.Color.White;
             this.numManPower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manpower", true));
             this.numManPower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numManPower.Location = new System.Drawing.Point(327, 88);
+            this.numManPower.Location = new System.Drawing.Point(327, 74);
             this.numManPower.Maximum = new decimal(new int[] {
             100,
             0,
@@ -299,7 +298,7 @@
             this.displayPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "pph", true));
             this.displayPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPPH.Location = new System.Drawing.Point(327, 49);
+            this.displayPPH.Location = new System.Drawing.Point(327, 42);
             this.displayPPH.Name = "displayPPH";
             this.displayPPH.Size = new System.Drawing.Size(70, 23);
             this.displayPPH.TabIndex = 4;
@@ -319,7 +318,7 @@
             this.displayActoutputGMTPCS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayActoutputGMTPCS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "actgarment", true));
             this.displayActoutputGMTPCS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayActoutputGMTPCS.Location = new System.Drawing.Point(599, 49);
+            this.displayActoutputGMTPCS.Location = new System.Drawing.Point(599, 42);
             this.displayActoutputGMTPCS.Name = "displayActoutputGMTPCS";
             this.displayActoutputGMTPCS.Size = new System.Drawing.Size(70, 23);
             this.displayActoutputGMTPCS.TabIndex = 5;
@@ -328,7 +327,6 @@
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(376, 79);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(278, 23);
@@ -340,7 +338,6 @@
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(690, 11);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(106, 23);
@@ -368,6 +365,25 @@
             this.btnImportfromRealtimeBundleTracking.Text = "Import from Realtime Bundle Tracking";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(14, 74);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 23);
+            this.label1.TabIndex = 42;
+            this.label1.Text = "Factory";
+            // 
+            // txtfactoryByM1
+            // 
+            this.txtfactoryByM1.BackColor = System.Drawing.Color.White;
+            this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
+            this.txtfactoryByM1.mDivisionID = null;
+            this.txtfactoryByM1.Name = "txtfactoryByM1";
+            this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactoryByM1.TabIndex = 43;
+            // 
             // P20
             // 
             this.ApvChkValue = "New";
@@ -376,6 +392,7 @@
             this.DefaultControlForEdit = "numWorkingHourPerDay";
             this.DefaultDetailOrder = "Cutref,OrderID";
             this.DefaultOrder = "cDate";
+            this.ExpressQuery = true;
             this.GridAlias = "CuttingOutput_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "cutref,workorderUkey";
@@ -433,5 +450,7 @@
         private Win.UI.Label label9;
         private Win.UI.Button btnImportfromRealtimeBundleTracking;
         private Win.UI.Button btnImportfromWorkOrder;
+        private Class.txtfactoryByM txtfactoryByM1;
+        private Win.UI.Label label1;
     }
 }

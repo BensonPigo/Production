@@ -27,6 +27,31 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", keyWord);
             DoSubForm = new P20_Detail();
+            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
+            DataTable queryDT;
+            string querySql = string.Format(@"
+select '' FTYGroup
+
+union 
+select distinct FTYGroup 
+from Factory 
+where MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.Text)
+                {
+                    case "":
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.Text);
+                        break;
+                }
+                this.ReloadDatas();
+            };
+            queryfors.Text = Sci.Env.User.Factory;
         }
         protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -244,6 +269,11 @@ namespace Sci.Production.Cutting
             if (MyUtility.Check.Empty(numManPower.Text))
             {
                 MyUtility.Msg.WarningBox("<Man Power> can not be empty.");
+                return false;
+            }
+            if (MyUtility.Check.Empty(txtfactoryByM1.Text))
+            {
+                MyUtility.Msg.WarningBox("<Factory> can not be empty.");
                 return false;
             }
             if (this.IsDetailInserting)
@@ -589,7 +619,11 @@ namespace Sci.Production.Cutting
             var frm = new Sci.Production.Cutting.P20_Import_Workorder(CurrentMaintain, dt);
             frm.ShowDialog(this);
         }
-
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            
+        }
 //        private void Gmtrequery()
 //        {
 //            #region 找出有哪些部位
