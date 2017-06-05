@@ -239,7 +239,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             CurrentMaintain["cDate"] = DateTime.Today.AddDays(-1);
             CurrentMaintain["mDivisionid"] = keyWord;
             CurrentMaintain["Status"] = "New";
-
+            txtfactoryByM1.Text = Sci.Env.User.Factory;
         }
         protected override bool ClickEditBefore()
         {
