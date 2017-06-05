@@ -316,17 +316,38 @@ select * from FtyExportData ", e.FormattedValue.ToString());
         private void QueryData()
         {
             DataRow queryData;
-            string sqlCmd = string.Format("select isnull(sum(GW),0) as GW,isnull(sum(CBM),0) as CBM,isnull(Count(BLNo),0) as RecCount from (select distinct BLNo,WKNo,InvNo,GW,CBM from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}') a", MyUtility.Convert.GetString(apData["ID"]));
+            string sqlCmd = string.Format(@"
+select  isnull(sum(GW),0) as GW
+        , isnull(sum(CBM),0) as CBM
+        , isnull(Count(BLNo),0) as RecCount 
+from (
+    select  distinct BLNo
+            , WKNo
+            , InvNo
+            , GW
+            , CBM 
+    from ShareExpense WITH (NOLOCK) 
+    where   ShippingAPID = '{0}'
+            and Junk != 1
+) a", MyUtility.Convert.GetString(apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             numTtlGW.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
             numTtlCBM.Value = MyUtility.Convert.GetDecimal(queryData["CBM"]);
             numTtlNumberofDeliverySheets.Value = MyUtility.Convert.GetInt(queryData["RecCount"]);
 
-            sqlCmd = string.Format(@"select sh.*,an.Name as AccountName,
-case when sh.ShareBase = 'G' then 'G.W.' when sh.ShareBase = 'C' then 'CBM' else ' Number of Deliver Sheets' end as ShareRule 
+            sqlCmd = string.Format(@"
+select  sh.*
+        , an.Name as AccountName
+        , case 
+            when sh.ShareBase = 'G' then 'G.W.' 
+            when sh.ShareBase = 'C' then 'CBM' 
+            else ' Number of Deliver Sheets' 
+          end as ShareRule 
 from ShareExpense sh WITH (NOLOCK) 
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
-where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
+where   sh.ShippingAPID = '{0}' 
+        and sh.Junk != 1
+order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
             {
@@ -335,8 +356,24 @@ where sh.ShippingAPID = '{0}' order by sh.AccountID", MyUtility.Convert.GetStrin
             }
             listControlBindingSource2.DataSource = SEData;
 
-            sqlCmd = string.Format(@"select ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,isnull(sum(Amount),0) as Amount ,'' as SubTypeRule
-from ShareExpense WITH (NOLOCK) where ShippingAPID = '{0}' group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
+            sqlCmd = string.Format(@"
+select  ShippingAPID
+        , BLNo
+        , WKNo
+        , InvNo
+        , Type
+        , ShipModeID
+        , GW
+        , CBM
+        , CurrencyID
+        , ShipModeID
+        , FtyWK
+        , isnull(sum(Amount),0) as Amount 
+        , '' as SubTypeRule
+from ShareExpense WITH (NOLOCK) 
+where   ShippingAPID = '{0}' 
+        and Junk != 1
+group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out SEGroupData);
             if (!result)
             {
@@ -555,12 +592,19 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
                 IList<string> addCmds = new List<string>();
 
                 string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(apData["ID"])));
-                //刪除實體資料
+                //Junk實體資料
                 foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
                     {
-                        deleteCmds.Add(string.Format("delete ShareExpense where ShippingAPID = '{0}' and BLNo = '{1}' and WKNo = '{2}' and InvNo = '{3}';", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["WKNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["InvNo", DataRowVersion.Original]).Trim()));
+                        deleteCmds.Add(string.Format(@"
+update s 
+set s.Junk = 1
+from  ShareExpense s
+where   s.ShippingAPID = '{0}' 
+        and s.BLNo = '{1}' 
+        and s.WKNo = '{2}' 
+        and s.InvNo = '{3}';", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["WKNo", DataRowVersion.Original]).Trim(), MyUtility.Convert.GetString(dr["InvNo", DataRowVersion.Original]).Trim()));
                         
                     }
                 }
@@ -569,15 +613,33 @@ MyUtility.Check.Empty(dr["InvNo"].ToString()) ? "Empty" : dr["InvNo"].ToString()
                 {
                     if (dr.RowState == DataRowState.Added)
                     {
-                        addCmds.Add(string.Format(@"insert into ShareExpense (ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,ShipModeID,FtyWK,AccountID)
- values ('{0}','{1}','{2}','{3}','{4}',{5},{6},'{7}','{8}',{9},'{10}');", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]),
+                        addCmds.Add(string.Format(@"
+merge ShareExpense t
+using (select '{0}', '{1}', '{2}', '{3}') as s (ShippingAPID, BLNO, WKNO, InvNo)
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.BLNO = s.BLNO
+	and t.WKNO = s.WKNO
+	and t.InvNo = s.InvNo
+when matched then
+	update set t.Junk = 0
+when not matched then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
+	values ('{0}', '{1}', '{2}', '{3}', '{4}', {5}, {6}, '{7}', '{8}', {9}, '{10}', 0);", MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"]),
                                                                  MyUtility.Convert.GetString(apData["SubType"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["CurrencyID"]), MyUtility.Convert.GetString(dr["ShipModeID"]),
                                                                  MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0", accNo));
                     }
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        addCmds.Add(string.Format(@"update ShareExpense set ShipModeID = '{0}', GW = {1}, CBM = {2} where ShippingAPID = '{3}' and BLNo = '{4}' and WKNo = '{5}' and InvNo = '{6}';",
-                                                                 MyUtility.Convert.GetString(dr["ShipModeID"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
+                        addCmds.Add(string.Format(@"
+update ShareExpense 
+set ShipModeID = '{0}'
+    , GW = {1}
+    , CBM = {2} 
+where   ShippingAPID = '{3}' 
+        and BLNo = '{4}' 
+        and WKNo = '{5}' 
+        and InvNo = '{6}';",
+MyUtility.Convert.GetString(dr["ShipModeID"]), MyUtility.Convert.GetString(dr["GW"]), MyUtility.Convert.GetString(dr["CBM"]), MyUtility.Convert.GetString(apData["ID"]), MyUtility.Convert.GetString(dr["BLNo"]), MyUtility.Convert.GetString(dr["WKNo"]), MyUtility.Convert.GetString(dr["InvNo"])));
                     }
                 }
                 if (deleteCmds.Count != 0 || addCmds.Count != 0)
