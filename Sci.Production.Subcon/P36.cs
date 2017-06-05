@@ -212,7 +212,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "LD", "localdebit", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(CurrentMaintain["factoryid"].ToString() + "LD", "localdebit", (DateTime)CurrentMaintain["issuedate"]);
             }
 
 
