@@ -64,7 +64,7 @@ and b.CTNStartNo != ''
 and b.ReceiveDate is not null
 and c.Dest = d.ID 
 and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
-order by b.Id,b.OrderID,b.CTNStartNo", Sci.Env.User.Keyword));
+", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSPNo.Text.ToString().Trim()));
@@ -77,7 +77,7 @@ order by b.Id,b.OrderID,b.CTNStartNo", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
-
+            sqlCmd.Append("order by b.Id,b.OrderID,b.CTNStartNo ");
             DataTable selectDataTable;
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectDataTable))
