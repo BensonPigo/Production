@@ -1,4 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShareExpense] (
+    [Junk]         BIT             NULL,
     [ShippingAPID] VARCHAR (13)    CONSTRAINT [DF_ShareExpense_ShippingAPID] DEFAULT ('') NOT NULL,
     [BLNo]         VARCHAR (20)    CONSTRAINT [DF_ShareExpense_BLNo] DEFAULT ('') NOT NULL,
     [WKNo]         VARCHAR (13)    CONSTRAINT [DF_ShareExpense_WKNo] DEFAULT ('') NOT NULL,
@@ -16,6 +17,8 @@
     [AccountID]    VARCHAR (8)     CONSTRAINT [DF_ShareExpense_AccountID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_ShareExpense_1] PRIMARY KEY CLUSTERED ([ShippingAPID] ASC, [BLNo] ASC, [WKNo] ASC, [InvNo] ASC, [AccountID] ASC)
 );
+
+
 
 
 
