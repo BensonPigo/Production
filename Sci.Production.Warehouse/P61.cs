@@ -23,6 +23,7 @@ namespace Sci.Production.Warehouse
             :base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword); //
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
