@@ -87,7 +87,10 @@ from (
 			, [Desc] = LItem.Description
 	from LocalInventory Linv
 	left join LocalItem LItem on Linv.Refno = LItem.RefNo
+    inner join dbo.Orders on Linv.OrderID = orders.id
+    inner join dbo.Factory on orders.FactoryID = factory.ID
     Where Linv.OrderID = @SP
+    and factory.MDivisionID = @M
 ) as s
 where s.StockQty >= 0
 order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
@@ -95,6 +98,7 @@ order by s.Refno, s.ThreadColorID, s.StockQty, s.[Desc]
 
             List<SqlParameter> listPar = new List<SqlParameter>();
             listPar.Add(new SqlParameter("@SP", txtSPNo.Text.Trim()));
+            listPar.Add(new SqlParameter("@M", Sci.Env.User.Keyword));
             #endregion 
             #region SQL Data Loading...
             Ict.DualResult result;
