@@ -185,7 +185,7 @@ namespace Sci.Production.Quality
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
-                SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description","10,30", null);
+                SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description","10,30", null, null, null, null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel) { return; }
                 this.editDefect.Text = item.GetSelectedString().Replace(",", "+");

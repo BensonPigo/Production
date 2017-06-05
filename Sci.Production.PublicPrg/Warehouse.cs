@@ -568,7 +568,7 @@ WHERE   StockType='{0}'
         and junk != '1'", stocktype);
 
             Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd,
-                            "Location ID,Description,Stock Type", "13,60,10", defaultseq);
+                            "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null);
             selectlocation.Width = 1024;
 
             return selectlocation;

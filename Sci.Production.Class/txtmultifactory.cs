@@ -22,7 +22,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
             string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
-            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text);
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }

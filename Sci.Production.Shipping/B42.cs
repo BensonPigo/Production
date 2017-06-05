@@ -452,7 +452,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editColorway.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select Article from Style_Article WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editColorway.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 editColorway.Text = item.GetSelectedString();
@@ -464,7 +464,7 @@ select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between Star
         {
             if (EditMode)
             {
-                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editSizeGroup.Text);
+                Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(string.Format("select SizeCode from Style_SizeCode WITH (NOLOCK) where {0} order by Seq", MyUtility.Check.Empty(CurrentMaintain["StyleUKey"]) ? "1=0" : "StyleUkey = " + MyUtility.Convert.GetString(CurrentMaintain["StyleUKey"])), "Color Way", "8", editSizeGroup.Text, null, null, null);
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel) { return; }
                 editSizeGroup.Text = item.GetSelectedString();
