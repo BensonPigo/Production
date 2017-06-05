@@ -25,7 +25,7 @@ namespace Sci.Production.Shipping
             {
                 label1.Text = "";
             }
-
+            this.IsSupportEdit = canedit;
             //選完Supp後要將回寫CurrencyID
             this.txtsubconSupplier1.TextBox1.Validating += (s, e) =>
                 {

@@ -116,7 +116,6 @@
             // 
             // labelPrice4
             // 
-            this.labelPrice4.Lines = 0;
             this.labelPrice4.Location = new System.Drawing.Point(332, 137);
             this.labelPrice4.Name = "labelPrice4";
             this.labelPrice4.Size = new System.Drawing.Size(44, 23);
@@ -253,7 +252,6 @@
             // 
             // labelPrice3
             // 
-            this.labelPrice3.Lines = 0;
             this.labelPrice3.Location = new System.Drawing.Point(332, 108);
             this.labelPrice3.Name = "labelPrice3";
             this.labelPrice3.Size = new System.Drawing.Size(44, 23);
@@ -262,7 +260,6 @@
             // 
             // labelPrice2
             // 
-            this.labelPrice2.Lines = 0;
             this.labelPrice2.Location = new System.Drawing.Point(332, 79);
             this.labelPrice2.Name = "labelPrice2";
             this.labelPrice2.Size = new System.Drawing.Size(44, 23);
@@ -271,7 +268,6 @@
             // 
             // labelPrice1
             // 
-            this.labelPrice1.Lines = 0;
             this.labelPrice1.Location = new System.Drawing.Point(332, 48);
             this.labelPrice1.Name = "labelPrice1";
             this.labelPrice1.Size = new System.Drawing.Size(44, 23);
@@ -354,7 +350,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(32, 18);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(42, 23);
@@ -365,12 +360,10 @@
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(557, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(112, 23);
             this.label1.TabIndex = 42;
-            this.label1.Text = "";
             this.label1.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label1.TextStyle.Color = System.Drawing.Color.Red;
             // 
