@@ -738,10 +738,12 @@ MyUtility.Convert.GetString(dr["ShipModeID"]), MyUtility.Convert.GetString(dr["G
             if (MyUtility.Convert.GetString(apData["Type"]) == "IMPORT")
             {
                 string deleteCmd = string.Format(@"
-delete ShareExpense
-where ShippingAPID = '{0}' and WKNo != '' 
-and WKNo not in (select ID from Export where ID = ShareExpense.WKNo and ID is not null)
-and WKNo not in (select ID from FtyExport where ID =ShareExpense.WKNo and ID is not null)", MyUtility.Convert.GetString(apData["ID"]));
+update s
+set s.Junk = 1
+from ShareExpense s
+where s.ShippingAPID = '{0}' and s.WKNo != '' 
+and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
+and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
                 {
@@ -749,7 +751,8 @@ and WKNo not in (select ID from FtyExport where ID =ShareExpense.WKNo and ID is 
                     return;
                 }
                 #region 組Update Sql
-                string updateCmd = string.Format(@"DECLARE @apid VARCHAR(13),
+                string updateCmd = string.Format(@"
+DECLARE @apid VARCHAR(13),
 		@id VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
@@ -760,7 +763,13 @@ and WKNo not in (select ID from FtyExport where ID =ShareExpense.WKNo and ID is 
 
 SET @apid = '{0}'
 DECLARE cursor_allExport CURSOR FOR
-	select e.ID,e.ShipModeID,e.Blno,e.WeightKg,e.Cbm,s.CurrencyID,s.SubType
+	select  e.ID
+            , e.ShipModeID
+            , e.Blno
+            , e.WeightKg
+            , e.Cbm
+            , s.CurrencyID
+            , s.SubType
 	from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
 	where e.ID = se.WKNo
 	and s.ID = se.ShippingAPID
@@ -788,13 +797,15 @@ CLOSE cursor_allExport", MyUtility.Convert.GetString(apData["ID"]));
             else
             {
                 string deleteCmd = string.Format(@"
-delete ShareExpense 
-where ShippingAPID = '{0}' and InvNo != '' 
+update s
+set s.Junk = 1
+from ShareExpense s
+where s.ShippingAPID = '{0}' and s.InvNo != '' 
 and (
-	InvNo not in (select ID from GMTBooking where ID = ShareExpense.InvNo and ID is not null) 
-	and InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) 
-	and InvNo not in (select ID from FtyExport  where ID = ShareExpense.InvNo and ID is not null)
-	and invno not in (select id from Export where id=ShareExpense.InvNo and id is not null)
+	s.InvNo not in (select ID from GMTBooking where ID = ShareExpense.InvNo and ID is not null) 
+	and s.InvNo not in (select INVNo from PackingList where INVNo = ShareExpense.InvNo and INVNo is not null) 
+	and s.InvNo not in (select ID from FtyExport  where ID = ShareExpense.InvNo and ID is not null)
+	and s.invno not in (select id from Export where id=ShareExpense.InvNo and id is not null)
 )", MyUtility.Convert.GetString(apData["ID"]));
                 DualResult result = DBProxy.Current.Execute(null, deleteCmd);
                 if (!result)
@@ -803,7 +814,8 @@ and (
                     return;
                 }
                 #region 組Update Sql
-                string updateCmd = string.Format(@"DECLARE @apid VARCHAR(13),
+                string updateCmd = string.Format(@"
+DECLARE @apid VARCHAR(13),
 		@id VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
