@@ -90,13 +90,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                         this.DefaultWhere = "";
                         break;
                     default:
-                        this.DefaultWhere = string.Format(@"
-'{0}' in (select distinct FtyGroup 
-          from orders o 
-          where o.id in (select distinct PackingList_Detail.OrderID 
-                         from PackingList_Detail 
-                         where PackingList_Detail.id = PackingList.id)
-         )", queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
                         break;
                 }
                 this.ReloadDatas();
