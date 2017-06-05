@@ -223,7 +223,7 @@ order by rd.Seq1,rd.Seq2", masterID);
             //GetID
             if (IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("KeyWord",MyUtility.GetValue.Lookup("FtyGroup", CurrentMaintain["POID"].ToString(), "Orders", "ID"),"Factory","ID") + MyUtility.Convert.GetString(CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
+                string id = MyUtility.GetValue.GetID(Sci.Env.User.Factory + MyUtility.Convert.GetString(CurrentMaintain["POID"]).Substring(0, 8), "ReplacementReport", DateTime.Today, 6, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
