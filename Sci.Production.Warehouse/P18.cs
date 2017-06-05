@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword); //
             viewer = new ReportViewer();
             viewer.Dock = DockStyle.Fill;
             di_stocktype.Add("B", "Bulk");
@@ -549,7 +550,13 @@ WHERE   StockType='{0}'
             {
                 if (this.EditMode == true && String.Compare(e.FormattedValue.ToString(), CurrentDetailData["poid"].ToString()) != 0)
                 {
-                    if (!MyUtility.Check.Seek(string.Format(@"select POID from Inventory WITH (NOLOCK) where POID = '{0}'", e.FormattedValue)))
+                    if (!MyUtility.Check.Seek(string.Format(@"
+select c.POID from Inventory c WITH (NOLOCK) 
+inner join dbo.Orders on c.POID = orders.id
+inner join dbo.Factory on orders.FactoryID = factory.ID
+where c.POID = '{0}'
+and factory.MDivisionID = '{1}' 
+", e.FormattedValue, Sci.Env.User.Keyword)))
                     {
                         this.CurrentDetailData["poid"] = CurrentDetailData["poid"];
                         MyUtility.Msg.WarningBox("Data not found!", e.FormattedValue.ToString());
