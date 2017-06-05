@@ -110,7 +110,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Next";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -122,7 +122,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Prev";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel1
             // 
@@ -358,6 +358,7 @@
             this.Controls.Add(this.groupBox2);
             this.Name = "P11_AutoPick_Detail";
             this.Text = "P11. Auto Pick Detail";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P11_AutoPick_Detail_FormClosing);
             this.Load += new System.EventHandler(this.P11_AutoPick_Detail_Load);
             this.groupBox2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);

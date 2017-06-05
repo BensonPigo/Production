@@ -33,26 +33,7 @@ namespace Sci.Production.Warehouse
             sbSizecode=_sbSizecode;
             combo = _combo;
             this.Text += string.Format(" ({0})", poid);
-            //gridBOA.RowPostPaint += (s, e) =>
-            //{
-            //    DataTable dtSource = (DataTable)listControlBindingSource1.DataSource;
-
-            //    DataRow dr = gridBOA.GetDataRow(e.RowIndex);
-            //    bool exists = dtSource
-            //        .AsEnumerable()
-            //        .Any(dataRow =>
-            //        {
-            //            return string.Compare(dataRow.Field<string>("scirefno"), dr.Field<string>("scirefno"), true) == 0 &&
-            //                   string.Compare(dataRow.Field<string>("colorid"), dr.Field<string>("colorid"), true) == 0 &&
-            //                   string.Compare(dataRow.Field<string>("sizespec"), dr.Field<string>("sizespec"), true) == 0;
-            //        });
-
-            //    if (exists)
-            //    {
-            //        gridBOA.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Blue;
-            //    }
-
-            //};
+           
         }
 
         protected override void OnFormLoaded()
@@ -264,27 +245,10 @@ delete from #tmp2 where qty = 0;
                 //DataTable source = null, a = null; ;
                 string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
                 var RESULT = MyUtility.Tool.ProcessWithDatatable(dtIssueBreakDown, "OrderID,Article," + aaa, sqlcmd, out result, "#tmp", conn: sqlConnection);
-                //ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
-                //    , sqlcmd, out result, "#tmp");
+
                 if (!RESULT) ShowErr(RESULT);
                 if (!RESULT) return;
-                //var x = 0;
-                //sqlCmd = new SqlCommand(sqlcmd, sqlConnection);
-                //sqlCmd.CommandType = CommandType.Text;
 
-                ////sqlCmd.CommandType = CommandType.StoredProcedure;
-                ////sqlCmd.Parameters.Add(new SqlParameter("@IssueID", issueid));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@OrderID", issueid));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@POID", poid));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@Order_BOAUkey", "0"));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@TestType", "1"));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@UserID", Env.User.UserID));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@IssueType", "Sewing"));
-                ////sqlCmd.Parameters.Add(new SqlParameter("@MDivisionId", Env.User.Keyword));
-                //sqlCmd.CommandTimeout = 300;
-                //sqlDataAdapter = new SqlDataAdapter(sqlCmd);
-
-               // sqlDataAdapter.Fill(dataSet);
 
                 if (result.Length > 0)
                 {
@@ -334,7 +298,7 @@ delete from #tmp2 where qty = 0;
                             dr["Output"] = Output;
                         }
 
-                        tmp.AcceptChanges();
+                       // tmp.AcceptChanges();
 
                         if (tmp.Rows.Count > 0)
                         {
@@ -345,6 +309,17 @@ delete from #tmp2 where qty = 0;
                             dictionaryDatas.Add(dr, new DataTable());
                         }
                     }
+                    //
+                    //foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+                    //{
+                    //    DataRow tmp;
+                    //    tmp = item.Key;
+                    //    tmp.AcceptChanges();
+
+                    //}
+                    //
+
+
                     var tmp2 = dictionaryDatas.Count;
                 }
 
@@ -364,40 +339,27 @@ delete from #tmp2 where qty = 0;
 
             this.listControlBindingSource1.DataSource = BOA_PO;
             this.gridAutoPick.DataSource = listControlBindingSource1;
-
+            
             this.gridAutoPick.AutoResizeColumns();
 
             #region --Pick Qty 開窗--
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             ns.CellMouseDoubleClick += (s, e) =>
             {
+                BOA_PO.AcceptChanges();//先做初始設定，再透過Detail來控制UNDO OR SAVE
                 var dr = this.gridAutoPick.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex,e.ColumnIndex);
-                DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
-                frm.SetRightGrid(tmpDt);
-                frm.SetDisplayBox(dr["Poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+                var frm = new Sci.Production.Warehouse.P11_AutoPick_Detail(combo, poid, orderid, BOA_PO, e.RowIndex,e.ColumnIndex,this);
+                
+                //DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(e.RowIndex)];
+                //dictionaryDatasAcceptChanges();
+                //tmpDt.AcceptChanges();
+                dictionaryDatasAcceptChanges();
+               
                 DialogResult DResult = frm.ShowDialog(this);
 
-                if (DResult == DialogResult.OK)
-                    sum_subDetail(dr, tmpDt);
-                if (tmpDt != null)
-                {
-                    var Output = "";
-                    Decimal SumQTY=0;
-                    foreach (DataRow dr2 in tmpDt.ToList())
-                    {
-                        if (Convert.ToInt32(dr2["qty"]) != 0)
-                        {
-                            Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-                            SumQTY += Convert.ToDecimal(dr2["qty"]) * Convert.ToDecimal(dr["UsedQty"]) * Convert.ToDecimal(dr["RATE"]);
-                        }
-                    }
-                    dr["Output"] = Output;
-                    dr["qty"] = Math.Round(SumQTY, 2);
-                }
-                if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
-                else dr["Selected"] = 0;
+                //dictionaryDatasRejectChanges();
+
                 
             };
             #endregion
@@ -443,16 +405,39 @@ delete from #tmp2 where qty = 0;
 
         }
 
-        static void sum_subDetail(DataRow target, DataTable source)
+        public void sum_subDetail(DataRow target, DataTable source)
         {
-            target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
-                .Sum(r => r.Field<decimal>("qty"));
+            //target["qty"] = (source.Rows.Count == 0) ? 0m : source.AsEnumerable().Where(r => r.RowState != DataRowState.Deleted)
+            //    .Sum(r => r.Field<decimal>("qty"));
+            DataTable tmpDt = source;
+            DataRow dr=target;
+            if (tmpDt != null)
+            {
+                var Output = "";
+                Decimal SumQTY = 0;
+                foreach (DataRow dr2 in tmpDt.ToList())
+                {
+                    if (Convert.ToInt32(dr2["qty"]) != 0)
+                    {
+                        Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
+                        SumQTY += Convert.ToDecimal(dr2["qty"]) * Convert.ToDecimal(dr["UsedQty"]) * Convert.ToDecimal(dr["RATE"]);
+                    }
+                }
+                dr["Output"] = Output;
+                dr["qty"] = Math.Round(SumQTY, 2);
+            }
+            if (Convert.ToDecimal(dr["qty"]) > 0) dr["Selected"] = 1;
+            else dr["Selected"] = 0;
+
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+          //  dictionaryDatasRejectChanges();
             this.Close();
         }
+
+      
 
         private void btnPick_Click(object sender, EventArgs e)
         {
@@ -577,5 +562,58 @@ delete from #tmp2 where qty = 0;
                 conn.Close();
             }
         }
+
+        public DataTable getAutoDetailDataTable(int RowIndex)
+        {
+            DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
+           // tmpDt.AcceptChanges();
+            return tmpDt;
+        }
+
+        public DataRow getAutoDetailDataRow(int RowIndex)
+        {
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            return tmpDt;
+        }
+        public DataRow getNeedChangeDataRow(int RowIndex)
+        {
+            DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(RowIndex);
+            return tmpDt;
+        }
+        public void dictionaryDatasRejectChanges()
+        {
+            var d = dictionaryDatas.AsEnumerable().ToList();
+            for (int i = 0; i < d.Count; i++)
+            {
+                d[i].Value.RejectChanges();
+            }
+            return;
+            //批次RejectChanges
+            foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            {
+                //if (item.Value != null)
+                //{
+                    item.Value.RejectChanges();
+                //}
+            }
+        }
+        public void dictionaryDatasAcceptChanges()
+        {
+            //批次RejectChanges
+            var d=dictionaryDatas.AsEnumerable().ToList();
+            for (int i = 0; i < d.Count; i++)             
+            {
+                d[i].Value.AcceptChanges();
+            }
+            return;
+            foreach (KeyValuePair<DataRow, DataTable> item in dictionaryDatas)
+            {
+                //if (item.Value != null) { 
+                item.Value.AcceptChanges();
+               // }
+            }
+        }
+      
+       
     }
 }

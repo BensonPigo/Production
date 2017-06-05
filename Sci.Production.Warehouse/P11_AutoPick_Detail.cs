@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         
         //
+        Sci.Production.Warehouse.P11_AutoPick P11Autopick = null;
         Sci.Win.MatrixHelper _matrix;
         bool combo;
         string poid;
@@ -32,22 +33,27 @@ namespace Sci.Production.Warehouse
 
         protected DataTable dtArtwork;
 
-        public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex)
+        public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, Sci.Production.Warehouse.P11_AutoPick _P11Autopick)
         {
 
             combo = _combo;//上面GRID使用
             poid = _poid;//上面GRID使用
             orderid = _orderid;//上面GRID使用
             dt = _dt;
-            DataRowIndex = _DataRowIndex +1 ;
+            DataRowIndex = _DataRowIndex;
             DataColumIndex = _DataColumIndex;
+            P11Autopick = _P11Autopick;
             InitializeComponent();
 
         }
 
         public void SetRightGrid(DataTable datas)
         {
-            if (null != datas) gridbs.DataSource = null;
+            if (null != datas)
+            { 
+                gridbs.DataSource = null;
+            }
+            //datas.AcceptChanges();
             dt_detail = datas;
             gridbs.DataSource = datas;
             gridbs.MoveFirst();
@@ -140,83 +146,100 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
 
             this.gridAutoPickDetail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink; 
         }
-
+        bool isSaved = false;
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!this.gridAutoPickDetail.ValidateControl()) { return; }
-            foreach (DataRow dr in dt_detail.Rows)
-            {
-                dr["ori_qty"] = decimal.Parse(dr["qty"].ToString());
-            }
-            dt_detail.AcceptChanges();
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            //if (!this.gridAutoPickDetail.ValidateControl()) { return; }
+            //foreach (DataRow dr in dt_detail.Rows)
+            //{
+            //    dr["ori_qty"] = decimal.Parse(dr["qty"].ToString());
+            //}
+            //dt_detail.AcceptChanges();
+            //DialogResult = System.Windows.Forms.DialogResult.OK;
+            P11Autopick.BOA_PO.AcceptChanges();
+            isSaved = true;
+            this.Close();
+               
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in dt_detail.Rows)
-            {
-                dr["qty"] = decimal.Parse(dr["ori_qty"].ToString());
-            }
-            dt_detail.AcceptChanges();
+            //foreach (DataRow dr in dt_detail.Rows)
+            //{
+            //    dr["qty"] = decimal.Parse(dr["ori_qty"].ToString());
+            //}
+            //dt_detail.AcceptChanges();
+            //this.Close();
+            //dt_detail.RejectChanges
+            P11Autopick.BOA_PO.RejectChanges();
             this.Close();
         }
 
         private void P11_AutoPick_Detail_Load(object sender, EventArgs e)
         {
-            //DataRelation relation = new DataRelation("rel1"
-            //        , new DataColumn[] { BOA_PO.Columns["Poid"], BOA_PO.Columns["seq1"], BOA_PO.Columns["seq2"] }
-            //        , new DataColumn[] { BOA_PO_Size.Columns["Poid"], BOA_PO_Size.Columns["seq1"], BOA_PO_Size.Columns["seq2"] }
-            //        );
-            //dataSet.Relations.Add(relation);
-            //foreach (DataRow dr in dt.Rows)
-            //{
-
-            //    DataTable tmp = new DataTable();
-            //    tmp.ColumnsStringAdd("Poid");
-            //    tmp.ColumnsStringAdd("seq1");
-            //    tmp.ColumnsStringAdd("seq2");
-            //    tmp.ColumnsStringAdd("seq");
-            //    tmp.ColumnsStringAdd("sizecode");
-            //    tmp.ColumnsDecimalAdd("qty");
-            //    tmp.ColumnsDecimalAdd("ori_qty");
-            //    //
-            //    if (Convert.ToInt32(dr["qty"]) != 0)
-            //    {
-            //        dr["Selected"] = 1;
-            //    }
-
-            //    //
-            //    var drs = dr.GetChildRows(relation);
-            //    if (drs.Count() > 0)
-            //    {
-            //        var Output = "";
-            //        foreach (DataRow dr2 in drs)
-            //        {
-            //            if (Convert.ToInt32(dr2["qty"]) != 0)
-            //                Output += dr2["sizecode"].ToString() + "*" + Convert.ToDecimal(dr2["qty"]).ToString("0.00") + ", ";
-            //            tmp.ImportRow(dr2);
-            //        }
-            //        dr["Output"] = Output;
-            //    }
-
-            //    tmp.AcceptChanges();
-
-            //    if (tmp.Rows.Count > 0)
-            //    {
-            //        dictionaryDatas.Add(dr, tmp);
-            //    }
-            //    else
-            //    {
-            //        dictionaryDatas.Add(dr, new DataTable());
-            //    }
-            //}
-
-            //DataTable tmpDt = dictionaryDatas[dt.Rows[DataRowIndex]];
-            //SetRightGrid(tmpDt);
-
             SetTopGrid();
+
+            SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
+
+            DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
+            SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
+           
         }
+        //下一筆
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataRowIndex = DataRowIndex + 1;
+            if (DataRowIndex > dt.Rows.Count - 1)
+            {
+                DataRowIndex = dt.Rows.Count - 1;
+                MyUtility.Msg.WarningBox("Last data already.");
+
+            }
+            else {
+                SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
+                DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
+                SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
+
+                //DataRowIndex = DataRowIndex - 1;//要改變原本表單的資料 要退回上一筆索引
+                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex -1), P11Autopick.getAutoDetailDataTable(DataRowIndex-1));
+            }
+            
+        }
+        //上一筆
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DataRowIndex = DataRowIndex - 1; //上一筆索引-1
+
+            if (DataRowIndex == -1)
+            {
+                DataRowIndex = 0;
+                MyUtility.Msg.WarningBox("First data already.");
+
+            }
+            else {
+                SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
+                DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
+                SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
+                
+                //DataRowIndex = DataRowIndex +1;//要改變原本表單的資料 要退回上一筆索引
+                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex +1), P11Autopick.getAutoDetailDataTable(DataRowIndex +1));
+                
+            }
+            
+        }
+
+        private void P11_AutoPick_Detail_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!isSaved) {
+                P11Autopick.BOA_PO.RejectChanges();
+                P11Autopick.dictionaryDatasRejectChanges();
+            }
+            
+            this.listControlBindingSource1.DataSource = null;
+            this.gridbs.DataSource = null;
+        }
+
+
 
         
     }
