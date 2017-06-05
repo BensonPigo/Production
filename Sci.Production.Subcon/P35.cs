@@ -188,7 +188,7 @@ where lapd.id = '{0}'"
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LA", "LocalAP", (DateTime)CurrentMaintain["issuedate"]);
                 if (MyUtility.Check.Empty(CurrentMaintain["id"]))
                 {
                     MyUtility.Msg.WarningBox("Server is busy, Please re-try it again", "GetID() Failed");

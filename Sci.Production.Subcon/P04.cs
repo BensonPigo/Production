@@ -157,7 +157,7 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FI", "FarmIn", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FI", "FarmIn", (DateTime)CurrentMaintain["issuedate"]);
             }
 
             return base.ClickSaveBefore();

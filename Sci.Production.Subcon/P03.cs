@@ -150,7 +150,7 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("Factory Keyword is empty, Please contact to MIS!!");
                     return false;
                 }
-                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(factorykeyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
+                CurrentMaintain["id"] = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "FO", "FarmOut", (DateTime)CurrentMaintain["issuedate"]);
             }
             #region 加總明細Qty是否=0
 
