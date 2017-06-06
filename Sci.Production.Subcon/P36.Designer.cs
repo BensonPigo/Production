@@ -580,7 +580,7 @@
             this.labelAmtReceived.Name = "labelAmtReceived";
             this.labelAmtReceived.Size = new System.Drawing.Size(102, 23);
             this.labelAmtReceived.TabIndex = 74;
-            this.labelAmtReceived.Text = "Amt. Received";
+            this.labelAmtReceived.Text = "Amt Revised";
             // 
             // labelReceived
             // 
