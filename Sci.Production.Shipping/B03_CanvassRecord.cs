@@ -63,6 +63,9 @@ namespace Sci.Production.Shipping
         {
             base.EnsureToolbarExt();
             this.toolbar.cmdEdit.Enabled = CanEdit && !EditMode;
+            this.toolbar.cmdNew.Enabled = CanEdit && !EditMode;
+            this.toolbar.cmdSave.Enabled = CanEdit && !EditMode;
+            this.toolbar.cmdConfirm.Enabled = CanEdit && !EditMode;
         }
 
         protected override void OnDetailEntered()
