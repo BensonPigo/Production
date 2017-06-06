@@ -65,6 +65,7 @@ namespace Sci.Production.Shipping
             this.toolbar.cmdEdit.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdNew.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdSave.Enabled = CanEdit && !EditMode;
+            this.toolbar.cmdConfirm.Visible = CanEdit && !EditMode;
             this.toolbar.cmdConfirm.Enabled = CanEdit && !EditMode;
         }
 
