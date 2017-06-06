@@ -12,7 +12,7 @@ BEGIN
 	Using (select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno <>'EM-DBXK5 #8'
 union all
 select top 1 * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' and refno ='EM-DBXK5 #8')as s
-	on t.id=s.Refno --and t.purchasefrom='T'
+	on t.id=s.Refno 
 	when matched then 
 	update set 
 t.Description= s.Description,
@@ -28,8 +28,6 @@ t.Formula= s.Formula,
 t.Fix= s.Fix,
 t.AddName= s.AddName,
 t.AddDate= s.AddDate
---t.EditName= s.EditName,
---t.EditDate= s.EditDate
 
 	when not matched by target and s.type='P' then 
 		insert ( 
@@ -140,52 +138,13 @@ s.EditName,
 s.EditDate
  );
 
- 	
-
-	------------------Machine type=M ------------------------
-	Merge Machine.dbo.Machine as t
-	Using (select * from Trade_TO_Pms.dbo.Part WITH (NOLOCK) where type='M') as s
-	on t.id=s.refno
-		when matched then
-		update set	
-			t.MachineBrandID= s.MachineBrandID,
-			t.Model= s.Model,
-			t.MachineGroupID= s.MachineGroupID,
-			--t.SerialNo= s.SerialNo,
-			--t.MDivisionID= s.MDivisionID,
-			--t.OwnedFactory= s.OwnedFactory,
-			--t.ArriveDate= s.ArriveDate,
-			t.SuppID= s.SuppID,
-			t.CurrencyID= s.CurrencyID,
-			t.Price= s.Price, 
-			--t.Remark= s.Remark, --MMS可以編輯,所以不需update
-			--t.Status= s.Status,
-			--t.FAID= s.FAID,
-			--t.LocationM= s.LocationM,
-			--t.MachineLocationID= s.MachineLocationID,
-			--t.LastTransferDate= s.LastTransferDate,
-			--t.LastInventoryDate= s.LastInventoryDate,
-			--t.LendTo= s.LendTo,
-			--t.MachineLendID= s.MachineLendID,
-			--t.LendDate= s.LendDate,
-			--t.LastEstReturnDate= s.LastEstReturnDate,
-			--t.Junk= s.Junk,--MMS可以編輯,所以不需update
-			t.AddName= s.AddName,
-			t.AddDate= s.AddDate,
-			t.EditName= s.EditName,
-			t.EditDate= s.EditDate
-		when not matched by target and s.type='M' then 
-			insert(ID,       MachineBrandID,  Model,  MachineGroupID,/*SerialNo,MDivisionID,OwnedFactory,ArriveDate,*/                SuppID,  CurrencyID,  Price,  Remark,/*Status,FAID,LocationM,MachineLocationID,LastTransferDate,LastInventoryDate,LendTo,MachineLendID,LendDate,LastEstReturnDate,*/                                          Junk,  AddName,  AddDate,  EditName  ,EditDate)
-			values(s.refno,s.MachineBrandID,s.Model,s.MachineGroupID,/*s.SerialNo,--s.MDivisionID,--s.OwnedFactory,--s.ArriveDate,*/s.SuppID,s.CurrencyID,s.Price,s.Remark,/*--s.Status,--s.FAID,--s.LocationM,--s.MachineLocationID,--s.LastTransferDate,--s.LastInventoryDate,--s.LendTo,--s.MachineLendID,--s.LendDate,--s.LastEstReturnDate,*/s.Junk,s.AddName,s.AddDate,s.EditName,s.EditDate);
-
-
  
 	-----------------PartQuot , type='P'-----------------------------
 
 	Merge [Machine].[dbo].[PartQuot] as t
 	Using (select distinct a.* from [Trade_To_Pms].[dbo].[MmsQuot] a WITH (NOLOCK) inner join  [Trade_To_Pms].[dbo].Part b WITH (NOLOCK)
 	on a.PartUkey=b.Ukey where a.type='P')	 as s
-	on t.id=s.refno and  t.ukey=s.id --and t.purchaseFrom='T' 
+	on t.id=s.refno and  t.ukey=s.id 
 	when matched then
 		update set 
 		t.purchaseFrom='T',
