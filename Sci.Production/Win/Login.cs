@@ -251,7 +251,7 @@ Hi all,
 -------------------------------------------------------------------
 {2}
 -------------------------------------------------------------------", Sci.Env.User.Factory, Sci.Env.User.UserName, ex.ToString());
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.User.MailAddress, "pmshelp@sportscity.com.tw", "", subject, "", desc, true, true);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "pmshelp@sportscity.com.tw", "", subject, "", desc, true, true);
                         mail.ShowDialog();
                         return;
                     }
