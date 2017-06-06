@@ -38,20 +38,20 @@ from Factory
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
             queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (queryfors.Text)
+                switch (queryfors.SelectedIndex)
                 {
-                    case "":
+                    case 0:
                         this.DefaultWhere = "";
                         break;
                     default:
-                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.Text);
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
                         break;
                 }
                 this.ReloadDatas();
             };
-            queryfors.Text = Sci.Env.User.Factory;
         }
         protected override Ict.DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
