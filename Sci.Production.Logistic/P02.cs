@@ -161,10 +161,11 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
                                 return;
                             }
                             
-                            string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq,TransferDate,ReceiveDate
-                                                                                  from PackingList_Detail WITH (NOLOCK) 
-                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and CTNQty > 0
-                                                                                   ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+                            string sqlCmd = string.Format(@"
+select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
+from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0"
+                                , dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
@@ -184,7 +185,13 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
                                 }
                                 dr["OrderID"] = seekData["OrderID"];
                                 dr["TransferDate"] = seekData["TransferDate"];
+
                                 string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                {
+                                     dr["Remark"] = "The order's M is not equal to login M.";
+                                }
+
                                 sqlCmd = string.Format(@"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
@@ -204,6 +211,10 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
                             else
                             {
                                 dr["Remark"] = "This carton is not in packing list.";
+                            }
+                            if ( dr["Remark"].ToString().Trim() != "")
+                            {
+                                dr["selected"] = 0;                                
                             }
                             selectDataTable.Rows.Add(dr);
                         }
@@ -230,6 +241,14 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
+            }
+            foreach (DataRow dr in selectedData)
+            {
+                if (dr["Remark"].ToString().Trim() != "")
+                {
+                    MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
+                    return;                    
+                }
             }
 
             IList<string> insertCmds = new List<string>();

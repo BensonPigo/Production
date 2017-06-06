@@ -135,10 +135,11 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
                             dr["selected"] = 0;
                             dr["PackingListID"] = sl[1].Substring(0, 13);
                             dr["CTNStartNo"] = sl[1].Substring(13);
-                            string sqlCmd = string.Format(@"select OrderID,OrderShipmodeSeq,ReceiveDate,ReturnDate,ClogLocationId
-                                                                                  from PackingList_Detail WITH (NOLOCK) 
-                                                                                  where ID = '{0}' and CTNStartNo = '{1}' and CTNQty > 0
-                                                                                   ", dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
+                            string sqlCmd = string.Format(@"
+select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
+from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0"
+                                , dr["PackingListID"].ToString(), dr["CTNStartNo"].ToString());
                             if (MyUtility.Check.Seek(sqlCmd, out seekData))
                             {
                                 if (MyUtility.Check.Empty(seekData["ReturnDate"]))
@@ -155,6 +156,10 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
                                 else
                                 {
                                     dr["Remark"] = "This carton has been return.";
+                                }
+                                if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                {
+                                    dr["Remark"] = "The order's M is not equal to login M.";
                                 }
                                 dr["OrderID"] = seekData["OrderID"];
                                 dr["ClogLocationId"] = seekData["ClogLocationId"];
@@ -179,6 +184,10 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
                             else
                             {
                                 dr["Remark"] = "This carton is not in packing list.";
+                            }
+                            if (dr["Remark"].ToString().Trim() != "")
+                            {
+                                dr["selected"] = 0;
                             }
                             selectDataTable.Rows.Add(dr);
                         }
@@ -208,7 +217,14 @@ and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID =
                 MyUtility.Msg.WarningBox("No data need to import!");
                 return;
             }
-
+            foreach (DataRow dr in selectedData)
+            {
+                if (dr["Remark"].ToString().Trim() != "")
+                {
+                    MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
+                    return;
+                }
+            }
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
             //組要Insert進TransferToClog的資料
