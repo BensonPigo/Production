@@ -66,6 +66,16 @@ namespace Sci.Production.Shipping
             this.toolbar.cmdNew.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdSave.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdConfirm.Visible = CanEdit && !EditMode;
+
+            if (CurrentMaintain != null)
+            {
+                if (tabs.SelectedIndex == 0)
+                    this.toolbar.cmdConfirm.Enabled = false;
+                else
+                    this.toolbar.cmdConfirm.Enabled = CanEdit && !EditMode && CurrentMaintain["Status"].ToString().ToUpper() == "NEW";
+            }
+            else
+                this.toolbar.cmdConfirm.Enabled = false;
         }
 
         protected override void OnDetailEntered()
