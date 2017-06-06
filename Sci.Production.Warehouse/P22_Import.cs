@@ -303,6 +303,7 @@ WHERE   StockType='{0}'
         {
             FtyDetailBS.EndEdit();
             DataRow dr = grid_TaipeiInput.GetDataRow(grid_TaipeiInput.GetSelectedRowIndex());
+            if (dr == null) return;
             var drs = dr.GetChildRows(relation);
 
             foreach (DataRow dr2 in drs)
