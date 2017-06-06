@@ -126,9 +126,9 @@ where {0} order by g.ID", masterID);
                             {
                                 if (MyUtility.Convert.GetDate(e.FormattedValue) > DateTime.Today.AddMonths(1) || MyUtility.Convert.GetDate(e.FormattedValue) < DateTime.Today.AddMonths(-1))
                                 {
+                                    MyUtility.Msg.WarningBox("< Est. Inspection Date > is invalid!!");
                                     dr["InspDate"] = null;
                                     e.Cancel = true;
-                                    MyUtility.Msg.WarningBox("< Est. Inspection Date > is invalid!!");
                                     return;
                                 }
                             }
