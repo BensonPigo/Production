@@ -328,7 +328,7 @@ from (
             , CBM 
     from ShareExpense WITH (NOLOCK) 
     where   ShippingAPID = '{0}'
-            and Junk != 1
+            and (Junk = 0 or Junk is null)
 ) a", MyUtility.Convert.GetString(apData["ID"]));
             MyUtility.Check.Seek(sqlCmd, out queryData);
             numTtlGW.Value = MyUtility.Convert.GetDecimal(queryData["GW"]);
@@ -346,7 +346,7 @@ select  sh.*
 from ShareExpense sh WITH (NOLOCK) 
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
 where   sh.ShippingAPID = '{0}' 
-        and sh.Junk != 1
+        and (sh.Junk = 0 or sh.Junk is null)
 order by sh.AccountID", MyUtility.Convert.GetString(apData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out SEData);
             if (!result)
@@ -372,7 +372,7 @@ select  ShippingAPID
         , '' as SubTypeRule
 from ShareExpense WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
-        and Junk != 1
+        and (Junk = 0 or Junk is null)
 group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out SEGroupData);
             if (!result)
