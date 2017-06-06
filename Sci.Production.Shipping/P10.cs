@@ -27,6 +27,7 @@ namespace Sci.Production.Shipping
             gridicon.Insert.Visible = false;
             detailgrid.AllowUserToOrderColumns = true;
             InsertDetailGridOnDoubleClick = false;
+            this.DefaultFilter = string.Format("MDivisionID = '{0}'",Sci.Env.User.Keyword);
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
