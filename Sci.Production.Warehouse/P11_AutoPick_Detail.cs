@@ -149,13 +149,16 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
         bool isSaved = false;
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //if (!this.gridAutoPickDetail.ValidateControl()) { return; }
-            //foreach (DataRow dr in dt_detail.Rows)
-            //{
-            //    dr["ori_qty"] = decimal.Parse(dr["qty"].ToString());
-            //}
-            //dt_detail.AcceptChanges();
-            //DialogResult = System.Windows.Forms.DialogResult.OK;
+            
+                SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
+                DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
+                SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
+
+                //DataRowIndex//要改變原本表單的資料 要現在的索引
+                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex), P11Autopick.getAutoDetailDataTable(DataRowIndex));
+            
+
+            //
             P11Autopick.BOA_PO.AcceptChanges();
             isSaved = true;
             this.Close();
