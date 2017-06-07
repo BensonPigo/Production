@@ -140,7 +140,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(1368, 128);
+            this.gridicon.Location = new System.Drawing.Point(1421, 128);
             // 
             // refresh
             // 
@@ -474,8 +474,7 @@
             this.checkByCombo.AutoSize = true;
             this.checkByCombo.Checked = true;
             this.checkByCombo.CheckState = System.Windows.Forms.CheckState.Checked;
-            //leo 
-            this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "combo", true));
+            this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "combo", true));
             this.checkByCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkByCombo.Location = new System.Drawing.Point(224, 40);
             this.checkByCombo.Name = "checkByCombo";
