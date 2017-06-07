@@ -33,15 +33,15 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            if (checkLiquidationDataOnly.Checked)
-            {
-                if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
-                {
-                    txtSPNoStartFrom.Focus();
-                    MyUtility.Msg.WarningBox("SP# start from can't empty!!");
-                    return false;
-                }
-            }
+            //if (checkLiquidationDataOnly.Checked)
+            //{
+            //    if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
+            //    {
+            //        txtSPNoStartFrom.Focus();
+            //        MyUtility.Msg.WarningBox("SP# start from can't empty!!");
+            //        return false;
+            //    }
+            //}
             contract = txtContractNo.Text;
             hscode = txtHSCode.Text;
             nlcode = txtNLCode.Text;
@@ -263,7 +263,7 @@ from (
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     inner join FtyInventory ft on mdp.Ukey=MDivisionPoDetailUkey
 	where 1=1 and ft.StockType='O'
-    '{0}'", sp == "" ? "" : string.Format("and t.POID >= '{0}'", sp)));
+    {0}", sp == "" ? "" : string.Format("and t.POID >= '{0}'", sp)));
                 sqlCmd.Append(string.Format(@"
 	union all
 	select 	isnull(li.HSCode,'') as HSCode
@@ -294,7 +294,7 @@ from (
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where 1=1 and o.WhseClose is not null
-    '{0}'", sp == "" ? "" : string.Format("and o.ID >= '{0}'", sp)));
+    {0}", sp == "" ? "" : string.Format("and o.ID >= '{0}'", sp)));
                 sqlCmd.Append(string.Format(@"
 ) a
 
