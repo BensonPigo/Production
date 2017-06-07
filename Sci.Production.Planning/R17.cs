@@ -75,12 +75,33 @@ WHERE 1= 1  ");
                 else  //factory有值
                     sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select ID from Factory where KPICode='{0}')", txtFactory.Text));
                 sqlcmd.Append(@" 
-select A,B,C,sum(D.ShipQty)D, sum(E.ShipQty)E,F=concat(ROUND(convert(float,sum(D.ShipQty))/convert(float,C)*100,2),'%')
-from #tmp A1
-LEFT JOIN PullOut_Detail D WITH (NOLOCK) ON A1.ID = D.ORDERID AND D.PullOutDate <= A1.FtyKPI 
-LEFT JOIN PullOut_Detail E WITH (NOLOCK) ON A1.ID = E.ORDERID AND E.PullOutDate > A1.FtyKPI
-group by A,B,C
-DROP TABLE #TMP ");
+SELECT a, 
+       b, 
+       c, 
+       Sum(d + variance)d, 
+       Sum(e)           e, 
+       F=Concat(Round(CONVERT(FLOAT, Sum(d + variance)) / CONVERT(FLOAT, c) * 
+                      100, 2), 
+           '%') 
+FROM   (SELECT distinct a, 
+               b, 
+               c, 
+			   a1.id,			   
+               isnull(pass.qty,0)                                            AS d, 
+			   (ISNULL(f.OrderQty,0)- ISNULL(Variance.qty,0) )as Variance,
+               isnull(delay.qty,0)                                                  AS e 
+        FROM   #tmp A1 
+				LEFT JOIN pullout_detail F WITH (nolock) 
+            ON A1.id = F.orderid 	
+			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id) 	Variance
+			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id AND pulloutdate <= A1.ftykpi ) 	pass
+			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id AND pulloutdate > A1.ftykpi ) delay
+						 ) aa 
+GROUP  BY a, 
+          b, 
+          c 
+
+		  drop table #tmp");
                 result = DBProxy.Current.Select(null, sqlcmd.ToString(), null, out gdtDatas);
                 if (!result) return result;
                 if ((gdtDatas == null) || (gdtDatas.Rows.Count == 0))
