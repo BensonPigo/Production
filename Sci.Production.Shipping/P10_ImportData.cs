@@ -219,5 +219,10 @@ where p.InvNo in ({0})", allID.ToString().Substring(0, allID.Length - 1));
             }
             DialogResult = System.Windows.Forms.DialogResult.OK;
         }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
