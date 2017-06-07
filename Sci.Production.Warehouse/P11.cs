@@ -315,7 +315,8 @@ Where a.id = '{0}'", masterID);
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["Type"] = "B";
             CurrentMaintain["issuedate"] = DateTime.Now;
-           //leo等確認完工廠有此欄位後開啟 CurrentMaintain["combo"] = 0;
+           //leo等確認完工廠有此欄位後開啟 
+            CurrentMaintain["combo"] = 0;
             dtIssueBreakDown = null;
             gridIssueBreakDown.DataSource = null;
             txtOrderID.IsSupportEditMode = true;

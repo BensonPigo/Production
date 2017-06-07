@@ -474,7 +474,8 @@
             this.checkByCombo.AutoSize = true;
             this.checkByCombo.Checked = true;
             this.checkByCombo.CheckState = System.Windows.Forms.CheckState.Checked;
-            //leo this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "combo", true));
+            //leo 
+            this.checkByCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "combo", true));
             this.checkByCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkByCombo.Location = new System.Drawing.Point(224, 40);
             this.checkByCombo.Name = "checkByCombo";
