@@ -214,8 +214,14 @@ namespace Sci.Production.Win
             if (dirs.Length == 0)
             {
                 config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                config.AppSettings.Settings["sql_update"].Value = "Y";
-                config.Save(ConfigurationSaveMode.Modified);
+                try {
+                    config.AppSettings.Settings["sql_update"].Value = "Y";
+                    config.Save(ConfigurationSaveMode.Modified);
+                }
+                catch (Exception e)
+                {
+                    sendmail(e.ToString());
+                }
                 return;
             }
 
@@ -279,8 +285,23 @@ Script
                 _transactionscope = null;
             }
             config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings["sql_update"].Value = "Y";
-            config.Save(ConfigurationSaveMode.Modified);
+
+            try
+            {
+                config.AppSettings.Settings["sql_update"].Value = "Y";
+                config.Save(ConfigurationSaveMode.Modified);
+            }
+            catch (Exception e)
+            {
+                sendmail(e.ToString());
+            }
+        }
+
+        private void sendmail(string desc)
+        {
+            string subject = "Auto Update SQL ERROR";
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "jimmy.liao@sportscity.com.tw", "", subject, "", desc, true, true);
+            mail.ShowDialog();
         }
     }
 }
