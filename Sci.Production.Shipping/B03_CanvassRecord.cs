@@ -64,18 +64,26 @@ namespace Sci.Production.Shipping
             base.EnsureToolbarExt();
             this.toolbar.cmdEdit.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdNew.Enabled = CanEdit && !EditMode;
-            this.toolbar.cmdSave.Enabled = CanEdit && !EditMode;
             this.toolbar.cmdConfirm.Visible = CanEdit && !EditMode;
 
             if (CurrentMaintain != null)
             {
                 if (tabs.SelectedIndex == 0)
+                {
                     this.toolbar.cmdConfirm.Enabled = false;
+                    this.toolbar.cmdSave.Enabled = false;
+                }
                 else
+                {
                     this.toolbar.cmdConfirm.Enabled = CanEdit && !EditMode && CurrentMaintain["Status"].ToString().ToUpper() == "NEW";
+                    this.toolbar.cmdSave.Enabled = CanEdit && EditMode;
+                }
             }
             else
+            {
                 this.toolbar.cmdConfirm.Enabled = false;
+                this.toolbar.cmdSave.Enabled = false;
+            }
         }
 
         protected override void OnDetailEntered()
