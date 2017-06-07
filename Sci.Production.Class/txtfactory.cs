@@ -43,11 +43,11 @@ namespace Sci.Production.Class
             string sqlcmd;
             if (IssupportJunk)
             {
-                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where ID='{0}'", str);
+                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where FtyGroup='{0}'", str);
             }
             else
             {
-                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where ID='{0}' and Junk = 0", str);
+                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where FtyGroup='{0}' and Junk = 0", str);
             }
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
