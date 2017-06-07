@@ -169,6 +169,7 @@
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 132;
+            this.txtfactory.IssupportJunk = true;
             // 
             // R06
             // 

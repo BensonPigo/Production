@@ -14,11 +14,21 @@ namespace Sci.Production.Class
 {
     public partial class txtfactory : Sci.Win.UI.TextBox
     {
+        public bool IssupportJunk = false;
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,NameEN from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8,40", this.Text, false, ",");
+            string sqlcmd;
+            if (IssupportJunk)
+            {
+                sqlcmd = "Select DISTINCT FtyGroup as Factory from Factory WITH (NOLOCK) order by FtyGroup";
+            }
+            else
+            {
+                sqlcmd = "Select DISTINCT FtyGroup as Factory from Factory WITH (NOLOCK) where Junk = 0 order by FtyGroup";
+            }
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
@@ -30,9 +40,18 @@ namespace Sci.Production.Class
             base.OnValidating(e);
 
             string str = this.Text;
+            string sqlcmd;
+            if (IssupportJunk)
+            {
+                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where ID='{0}'", str);
+            }
+            else
+            {
+                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where ID='{0}' and Junk = 0", str);
+            }
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(str, "factory", "id") == false)
+                if (MyUtility.Check.Seek(sqlcmd) == false)
                 {
                     this.Text = "";
                     e.Cancel = true;

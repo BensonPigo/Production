@@ -291,6 +291,7 @@
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 7;
+            this.txtfactory.IssupportJunk = true;
             // 
             // txtartworktype_ftySubProcess
             // 

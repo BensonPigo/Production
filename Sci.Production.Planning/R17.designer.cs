@@ -172,6 +172,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 4;
+            this.txtFactory.IssupportJunk = true;
             // 
             // txtCountry
             // 

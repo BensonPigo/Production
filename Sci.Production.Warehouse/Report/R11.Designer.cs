@@ -293,6 +293,7 @@
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 124;
+            this.txtfactory.IssupportJunk = true;
             // 
             // labelFactory
             // 

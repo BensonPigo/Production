@@ -121,6 +121,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(94, 23);
             this.txtFactory.TabIndex = 6;
+            this.txtFactory.IssupportJunk = true;
             // 
             // txtM
             // 
