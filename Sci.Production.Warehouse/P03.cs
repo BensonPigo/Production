@@ -80,9 +80,12 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings OrderList = new DataGridViewGeneratorTextColumnSettings();
             OrderList.CellMouseDoubleClick += (s, e) =>
             {
-                DataRow dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
-                var frm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
-                frm.ShowDialog(this);
+                if (e.RowIndex >= 0)
+                {
+                    DataRow dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                    var frm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(dr["OrderIdList"]), "Order List", false, null);
+                    frm.ShowDialog(this);
+                }
             };
             #endregion
 
