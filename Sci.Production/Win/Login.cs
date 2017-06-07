@@ -65,7 +65,7 @@ namespace Sci.Production.Win
             UserInfo u = new UserInfo();
             result = UserLogin(act, pwd, loginFactory, u);
 
-            if (!result )
+            if (!result)
             {
                 ShowErr(result);
                 return;
@@ -95,10 +95,10 @@ namespace Sci.Production.Win
             DialogResult = DialogResult.OK;
 
             //SQL UPDATE
-            if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
+            // if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
             {
                 this.checkUpdateSQL();
-            }            
+            }
 
             Close();
         }
@@ -149,7 +149,7 @@ namespace Sci.Production.Win
                 comboBox1.DataSource = new BindingSource(factoryOption, null);
                 comboBox1.ValueMember = "Key";
                 comboBox1.DisplayMember = "Value";
-            }           
+            }
         }
 
         public static DualResult UserLogin(string userid, string pwd, string factoryID, UserInfo u)
@@ -222,6 +222,8 @@ namespace Sci.Production.Win
             foreach (string dir in dirs)
             {
                 string script = File.ReadAllText(dir);
+                string strConnection = "";
+                string strServer = "";
 
                 //DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
@@ -231,10 +233,13 @@ namespace Sci.Production.Win
                     {
                         SqlConnection connection;
                         DBProxy.Current.OpenConnection("Production", out connection);
-
+                        /***/
+                        strConnection = connection.ConnectionString.ToString();
                         using (connection)
                         {
                             Server db = new Server(new ServerConnection(connection));
+                            /**/
+                            strServer = db.Urn.ToString();
                             db.ConnectionContext.ExecuteNonQuery(script);
                         }
 
@@ -244,14 +249,28 @@ namespace Sci.Production.Win
                     catch (Exception ex)
                     {
                         _transactionscope.Dispose();
-                        string subject = string.Format(@"Factory = {0}, Account = {1} SQL UPDATE FAIL {2}", Sci.Env.User.Factory, Sci.Env.User.UserName, DateTime.Today.ToString("yyyyMMdd"));
+                        //string subject = string.Format(@"Factory = {0}, Account = {1} SQL UPDATE FAIL {2}", Sci.Env.User.Factory, Sci.Env.User.UserName, DateTime.Today.ToString("yyyyMMdd"));
+                        string subject = string.Format("Auto Update SQL ERROR");
                         string desc = string.Format(@"
 Hi all,
-    Factory = {0}, Account = {1}, SQL UPDATE FAIL, Please check it.
+    Factory = {0}, Account = {1},
+    SQL UPDATE FAIL, Please check it.
 -------------------------------------------------------------------
 {2}
--------------------------------------------------------------------", Sci.Env.User.Factory, Sci.Env.User.UserName, ex.ToString());
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "pmshelp@sportscity.com.tw", "", subject, "", desc, true, true);
+-------------------------------------------------------------------
+connection
+{3}
+-------------------------------------------------------------------
+db.Urn.ToString()
+{4}
+-------------------------------------------------------------------
+Script
+{5}
+", Sci.Env.User.Factory, Sci.Env.User.UserName, ex.ToString()
+ , strConnection
+ , strServer
+ , script);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "jimmy.liao@sportscity.com.tw", "", subject, "", desc, true, true);
                         mail.ShowDialog();
                         return;
                     }
