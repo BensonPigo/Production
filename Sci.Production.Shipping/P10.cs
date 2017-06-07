@@ -23,6 +23,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultOrder = "AddDate";
             gridicon.Append.Visible = false;
             gridicon.Insert.Visible = false;
             detailgrid.AllowUserToOrderColumns = true;
