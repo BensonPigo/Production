@@ -16,8 +16,8 @@
     [MachineTMU]              NUMERIC (8, 2) CONSTRAINT [DF_Operation_MachineTMU] DEFAULT ((0)) NULL,
     [ManualTMU]               NUMERIC (8, 2) CONSTRAINT [DF_Operation_ManualTMU] DEFAULT ((0)) NULL,
     [TotalTMU]                NUMERIC (8, 2) CONSTRAINT [DF_Operation_TotalTMU] DEFAULT ((0)) NULL,
-    [MachineSMVWithAllowance] NUMERIC (8, 4) CONSTRAINT [DF_Operation_MachineSMVWithAllowance] DEFAULT ((0)) NULL,
-    [TotalSMVWithAllowance]   NUMERIC (8, 4) CONSTRAINT [DF_Operation_TotalSMVWithAllowance] DEFAULT ((0)) NULL,
+    [MachineAllowanceSMV]	  NUMERIC (8, 4) CONSTRAINT [DF_Operation_MachineAllowanceSMV] DEFAULT ((0)) NULL,
+    [ManualAllowanceSMV]      NUMERIC (8, 4) CONSTRAINT [DF_Operation_ManualAllowanceSMV] DEFAULT ((0)) NULL,
     [StitchCM]                NUMERIC (5, 2) CONSTRAINT [DF_Operation_StitchCM] DEFAULT ((0)) NULL,
     [SeamLength]              NUMERIC (9, 2) CONSTRAINT [DF_Operation_SeamLength] DEFAULT ((0)) NULL,
     [Picture1]                NVARCHAR (60)  CONSTRAINT [DF_Operation_Picture1] DEFAULT ('') NULL,
@@ -111,11 +111,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'TMU總合 (
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機器 SMV (含Allowance)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Operation', @level2type = N'COLUMN', @level2name = N'MachineSMVWithAllowance';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'機器 SMV (含Allowance)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Operation', @level2type = N'COLUMN', @level2name = N'MachineAllowanceSMV';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'人工+機器 SMV (含Allowance)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Operation', @level2type = N'COLUMN', @level2name = N'TotalSMVWithAllowance';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'人工+機器 SMV (含Allowance)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Operation', @level2type = N'COLUMN', @level2name = N'ManualAllowanceSMV';
 
 
 GO

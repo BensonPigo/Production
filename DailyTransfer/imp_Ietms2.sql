@@ -41,8 +41,8 @@ a.FromGSD	= b.FromGSD
 ,a.MachineTMU	= b.MachineTMU
 ,a.ManualTMU	= b.ManualTMU
 ,a.TotalTMU	= b.TotalTMU
-,a.MachineSMVWithAllowance	= b.MachineSMVWithAllowance
-,a.TotalSMVWithAllowance	= b.TotalSMVWithAllowance
+,a.MachineAllowanceSMV	= b.MachineAllowanceSMV
+,a.ManualAllowanceSMV	= b.ManualAllowanceSMV
 ,a.StitchCM	= b.StitchCM
 ,a.SeamLength	= b.SeamLength
 --,a.Picture1	= b.Picture1
@@ -79,8 +79,8 @@ ID
 ,MachineTMU
 ,ManualTMU
 ,TotalTMU
-,MachineSMVWithAllowance
-,TotalSMVWithAllowance
+,MachineAllowanceSMV
+,ManualAllowanceSMV
 ,StitchCM
 ,SeamLength
 --,Picture1
@@ -116,8 +116,8 @@ ID
 ,MachineTMU
 ,ManualTMU
 ,TotalTMU
-,MachineSMVWithAllowance
-,TotalSMVWithAllowance
+,MachineAllowanceSMV
+,ManualAllowanceSMV
 ,StitchCM
 ,SeamLength
 --,Picture1
