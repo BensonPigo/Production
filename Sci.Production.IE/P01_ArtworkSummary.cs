@@ -43,7 +43,7 @@ from {0} td WITH (NOLOCK)
 left join MachineType mt WITH (NOLOCK) on td.MachineTypeID = mt.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
 where td.ID = {1} and ATD.ArtworkTypeID !=''
-group by ATD.ArtworkTypeID", tableName, id.ToString());
+group by mt.ArtworkTypeID", tableName, id.ToString());
             DataTable gridData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
             if (!result)
