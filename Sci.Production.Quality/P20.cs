@@ -53,7 +53,7 @@ namespace Sci.Production.Quality
             {
                 DataTable dt; 
                 DualResult result;
-                string cmd = string.Format(@"select id,styleid,dest,cpu from Orders WITH (NOLOCK) where ID='{0}' and FactoryID='{1}'", textValue, Sci.Env.User.Factory);
+                string cmd = string.Format(@"select id,styleid,dest,cpu from Orders WITH (NOLOCK) where ID='{0}' and FtyGroup='{1}'", textValue, Sci.Env.User.Factory);
                 
                 if (result = DBProxy.Current.Select(null, cmd, out dt))
                 {                    
