@@ -61,12 +61,12 @@ namespace Sci.Production.Thread
             string color1 = txtthreadcolorStart.Text, color2 = txtthreadcolorEnd.Text;
             string allpart = checkAllThread.Value;
             int rand = (int)numCountOfRadom.Value;
-            if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2) && allpart == "False")
-            {
-                MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
-                this.txtlocalitemStart.Focus();
-                return;
-            }
+            //if (MyUtility.Check.Empty(threadlocation1) && MyUtility.Check.Empty(threadlocation2) && MyUtility.Check.Empty(thradrefno1) && MyUtility.Check.Empty(thradrefno2) && allpart == "False")
+            //{
+            //    MyUtility.Msg.WarningBox("At least one condition <Refno> <Location> must be entried.");
+            //    this.txtlocalitemStart.Focus();
+            //    return;
+            //}
             string sql = string.Format(@"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
                     isnull(a.newcone,0) as newconebook,0 as newCone,-(a.newCone) as NewconeVar,
                     isnull(a.usedcone,0) as usedconebook,0 as usedCone,-(a.usedCone) as UsedconeVar,

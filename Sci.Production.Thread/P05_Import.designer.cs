@@ -159,7 +159,6 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(70, 84);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
@@ -180,7 +179,6 @@
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(183, 55);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(14, 15);
@@ -201,7 +199,6 @@
             // labelColor
             // 
             this.labelColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(13, 49);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -243,7 +240,7 @@
             // 
             this.checkAllThread.AutoSize = true;
             this.checkAllThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkAllThread.Location = new System.Drawing.Point(612, 49);
+            this.checkAllThread.Location = new System.Drawing.Point(622, 49);
             this.checkAllThread.Name = "checkAllThread";
             this.checkAllThread.Size = new System.Drawing.Size(92, 21);
             this.checkAllThread.TabIndex = 8;
@@ -254,7 +251,7 @@
             // 
             this.numCountOfRadom.BackColor = System.Drawing.Color.White;
             this.numCountOfRadom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCountOfRadom.Location = new System.Drawing.Point(548, 49);
+            this.numCountOfRadom.Location = new System.Drawing.Point(558, 49);
             this.numCountOfRadom.Name = "numCountOfRadom";
             this.numCountOfRadom.NullValue = new decimal(new int[] {
             0,
@@ -272,17 +269,15 @@
             // labelCountOfRadom
             // 
             this.labelCountOfRadom.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelCountOfRadom.Lines = 0;
             this.labelCountOfRadom.Location = new System.Drawing.Point(437, 49);
             this.labelCountOfRadom.Name = "labelCountOfRadom";
-            this.labelCountOfRadom.Size = new System.Drawing.Size(108, 23);
+            this.labelCountOfRadom.Size = new System.Drawing.Size(118, 23);
             this.labelCountOfRadom.TabIndex = 18;
-            this.labelCountOfRadom.Text = "Count of Radom";
+            this.labelCountOfRadom.Text = "Count of Random";
             // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(612, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(14, 15);
@@ -293,7 +288,6 @@
             // labelLocation
             // 
             this.labelLocation.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelLocation.Lines = 0;
             this.labelLocation.Location = new System.Drawing.Point(436, 17);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(75, 23);
@@ -303,7 +297,6 @@
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(248, 25);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(14, 15);
@@ -314,7 +307,6 @@
             // labelRefno
             // 
             this.labelRefno.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(12, 17);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
