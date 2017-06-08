@@ -54,6 +54,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -121,7 +122,6 @@
             // 
             // labelSortby
             // 
-            this.labelSortby.Lines = 0;
             this.labelSortby.Location = new System.Drawing.Point(9, 19);
             this.labelSortby.Name = "labelSortby";
             this.labelSortby.Size = new System.Drawing.Size(75, 23);
@@ -146,6 +146,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.labelFabricType);
             this.groupBox1.Controls.Add(this.labelCategory);
@@ -172,7 +173,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(530, 60);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(19, 23);
@@ -182,7 +182,6 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Lines = 0;
             this.labelFabricType.Location = new System.Drawing.Point(9, 57);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -193,7 +192,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(9, 23);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -204,7 +202,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(282, 57);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -235,7 +232,6 @@
             // 
             // labelCountOfRandom
             // 
-            this.labelCountOfRandom.Lines = 0;
             this.labelCountOfRandom.Location = new System.Drawing.Point(681, 57);
             this.labelCountOfRandom.Name = "labelCountOfRandom";
             this.labelCountOfRandom.Size = new System.Drawing.Size(120, 23);
@@ -254,7 +250,6 @@
             // 
             // labelLocation
             // 
-            this.labelLocation.Lines = 0;
             this.labelLocation.Location = new System.Drawing.Point(681, 23);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(95, 23);
@@ -280,14 +275,14 @@
             // 
             this.numPrice2.BackColor = System.Drawing.Color.White;
             this.numPrice2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numPrice2.Location = new System.Drawing.Point(508, 23);
+            this.numPrice2.Location = new System.Drawing.Point(551, 23);
             this.numPrice2.Name = "numPrice2";
             this.numPrice2.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numPrice2.Size = new System.Drawing.Size(100, 23);
+            this.numPrice2.Size = new System.Drawing.Size(116, 23);
             this.numPrice2.TabIndex = 2;
             this.numPrice2.Value = new decimal(new int[] {
             0,
@@ -306,7 +301,7 @@
             0,
             0,
             0});
-            this.numPrice1.Size = new System.Drawing.Size(100, 23);
+            this.numPrice1.Size = new System.Drawing.Size(122, 23);
             this.numPrice1.TabIndex = 1;
             this.numPrice1.Value = new decimal(new int[] {
             0,
@@ -316,7 +311,6 @@
             // 
             // labelUnitPrice
             // 
-            this.labelUnitPrice.Lines = 0;
             this.labelUnitPrice.Location = new System.Drawing.Point(282, 21);
             this.labelUnitPrice.Name = "labelUnitPrice";
             this.labelUnitPrice.Size = new System.Drawing.Size(117, 23);
@@ -381,6 +375,16 @@
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.SystemColors.Control;
+            this.label1.Location = new System.Drawing.Point(529, 23);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(19, 23);
+            this.label1.TabIndex = 108;
+            this.label1.Text = "~";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P50_Import
             // 
             this.ClientSize = new System.Drawing.Size(1008, 530);
@@ -426,5 +430,6 @@
         private Win.UI.Label labelSortby;
         private Win.UI.ComboBox comboSortby;
         private Win.UI.Label label9;
+        private Win.UI.Label label1;
     }
 }

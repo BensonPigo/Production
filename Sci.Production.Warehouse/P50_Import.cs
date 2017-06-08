@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci;
 using Sci.Data;
+using System.Globalization;
 
 namespace Sci.Production.Warehouse
 {
@@ -49,8 +50,9 @@ namespace Sci.Production.Warehouse
             String fabrictype = this.comboFabricType.SelectedValue.ToString();
 
             String location = this.txtLocation.Text;
-            String price1 = this.numPrice1.Text;
-            String price2 = this.numPrice2.Text;
+            //format 千分位符號
+            int price1 = int.Parse(this.numPrice1.Text, NumberStyles.AllowThousands);
+            int price2 = int.Parse(this.numPrice2.Text, NumberStyles.AllowThousands);
 
             String randomCount = this.numRandom.Value.ToString();
 
