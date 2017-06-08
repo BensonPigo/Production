@@ -95,7 +95,7 @@ namespace Sci.Production.Win
             DialogResult = DialogResult.OK;
 
             //SQL UPDATE
-            // if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
+            if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
             {
                 this.checkUpdateSQL();
             }
@@ -209,18 +209,20 @@ namespace Sci.Production.Win
 
         private void checkUpdateSQL()
         {
+            string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
             string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
             System.Configuration.Configuration config;
             if (dirs.Length == 0)
             {
                 config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                try {
+                try 
+                {
                     config.AppSettings.Settings["sql_update"].Value = "Y";
                     config.Save(ConfigurationSaveMode.Modified);
                 }
                 catch (Exception e)
                 {
-                    sendmail(e.ToString());
+                    sendmail(e.ToString(), sql_update_receiver);
                 }
                 return;
             }
@@ -231,7 +233,6 @@ namespace Sci.Production.Win
                 string strConnection = "";
                 string strServer = "";
 
-                //DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
                 {
@@ -239,12 +240,10 @@ namespace Sci.Production.Win
                     {
                         SqlConnection connection;
                         DBProxy.Current.OpenConnection("Production", out connection);
-                        /***/
                         strConnection = connection.ConnectionString.ToString();
                         using (connection)
                         {
                             Server db = new Server(new ServerConnection(connection));
-                            /**/
                             strServer = db.Urn.ToString();
                             db.ConnectionContext.ExecuteNonQuery(script);
                         }
@@ -255,7 +254,7 @@ namespace Sci.Production.Win
                     catch (Exception ex)
                     {
                         _transactionscope.Dispose();
-                        //string subject = string.Format(@"Factory = {0}, Account = {1} SQL UPDATE FAIL {2}", Sci.Env.User.Factory, Sci.Env.User.UserName, DateTime.Today.ToString("yyyyMMdd"));
+
                         string subject = string.Format("Auto Update SQL ERROR");
                         string desc = string.Format(@"
 Hi all,
@@ -276,7 +275,7 @@ Script
  , strConnection
  , strServer
  , script);
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "jimmy.liao@sportscity.com.tw", "", subject, "", desc, true, true);
+                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, "", subject, "", desc, true, true);
                         mail.ShowDialog();
                         return;
                     }
@@ -293,15 +292,17 @@ Script
             }
             catch (Exception e)
             {
-                sendmail(e.ToString());
+                sendmail(e.ToString(), sql_update_receiver);
             }
         }
 
-        private void sendmail(string desc)
+        private void sendmail(string desc, string receiver)
         {
             string subject = "Auto Update SQL ERROR";
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, "jimmy.liao@sportscity.com.tw", "", subject, "", desc, true, true);
+            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, receiver, "", subject, "", desc, true, true);
             mail.ShowDialog();
         }
+
+
     }
 }
