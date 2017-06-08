@@ -2895,6 +2895,12 @@ Sci.Production.Subcon/P10_ImportFromPO.cs -text
 Sci.Production.Subcon/P10_ImportFromPO.resx -text
 Sci.Production.Subcon/P10_Print.rdlc -text
 Sci.Production.Subcon/P10_PrintData.cs -text
+Sci.Production.Subcon/P26.Designer.cs -text
+Sci.Production.Subcon/P26.cs -text
+Sci.Production.Subcon/P26.resx -text
+Sci.Production.Subcon/P26_ImportBarcode.Designer.cs -text
+Sci.Production.Subcon/P26_ImportBarcode.cs -text
+Sci.Production.Subcon/P26_ImportBarcode.resx -text
 Sci.Production.Subcon/P30.Designer.cs -text
 Sci.Production.Subcon/P30.cs -text
 Sci.Production.Subcon/P30.resx -text
