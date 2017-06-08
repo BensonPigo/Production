@@ -313,15 +313,16 @@ where t.id= @ID";
         {
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
-            .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
-            .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
-            .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
-            .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
+                .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly : true)
+                .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) //0
+                .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //1
+                .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
+                .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //3
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
+                .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+                .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)    //6
+                .Text("Location", header: "Bulk Location", iseditingreadonly: true)    //7
+                .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
             ;     //
             #endregion 欄位設定
         }
@@ -656,18 +657,25 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-,a.Roll
-,a.Dyelot
-,a.Qty
-,a.StockType
-,Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
-,dbo.Getlocation(c.ukey) location
-,a.ukey
+            this.DetailSelectCommand = string.Format(@"
+select  o.FtyGroup
+        , a.id
+        , a.PoId
+        , a.Seq1
+        , a.Seq2
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+        , p1.FabricType
+        , p1.stockunit
+        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+        , a.Roll
+        , a.Dyelot
+        , a.Qty
+        , a.StockType
+        , Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
+        , dbo.Getlocation(c.ukey) location
+        , a.ukey
 from dbo.issue_detail as a WITH (NOLOCK) 
+left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll

@@ -48,21 +48,22 @@ namespace Sci.Production.Warehouse
 
                 strSQLCmd.Append(string.Format(@"
 select  selected = 0  
-        ,id = '' 
-        ,PoId = a.id 
-        ,a.Seq1
-        ,a.Seq2
-        ,seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
-        ,a.FabricType
-        ,a.stockunit
-        ,[Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
-        ,c.Roll
-        ,c.Dyelot
-        ,Qty = 0.00 
-        ,StockType = 'B' 
-        ,ftyinventoryukey = c.ukey  
-        ,location = dbo.Getlocation(c.ukey)
-        ,balance = c.inqty-c.outqty + c.adjustqty 
+        , Orders.FtyGroup
+        , id = '' 
+        , PoId = a.id 
+        , a.Seq1
+        , a.Seq2
+        , seq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) 
+        , a.FabricType
+        , a.stockunit
+        , [Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
+        , c.Roll
+        , c.Dyelot
+        , Qty = 0.00 
+        , StockType = 'B' 
+        , ftyinventoryukey = c.ukey  
+        , location = dbo.Getlocation(c.ukey)
+        , balance = c.inqty-c.outqty + c.adjustqty 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join dbo.Orders on c.poid = orders.id
