@@ -118,7 +118,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(240, 49);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(35, 23);
@@ -136,7 +135,6 @@
             // 
             // labelPackID
             // 
-            this.labelPackID.Lines = 0;
             this.labelPackID.Location = new System.Drawing.Point(7, 49);
             this.labelPackID.Name = "labelPackID";
             this.labelPackID.Size = new System.Drawing.Size(56, 23);
@@ -153,7 +151,6 @@
             // 
             // labelReceiveDate
             // 
-            this.labelReceiveDate.Lines = 0;
             this.labelReceiveDate.Location = new System.Drawing.Point(7, 13);
             this.labelReceiveDate.Name = "labelReceiveDate";
             this.labelReceiveDate.Size = new System.Drawing.Size(89, 23);

@@ -90,8 +90,33 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
         //To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", xltfile: "Logistic_P06.xltx", headerRow: 1);
-            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P06.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", "Logistic_P06.xltx", 3, true, null, objApp);// 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
+
+            DataRow dr;
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);
+            objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RETURN REPORT";
+
+            string d1 = "", d2 = "";
+            if (!MyUtility.Check.Empty(dateReturnDate.Value1))
+            {
+                d1 = Convert.ToDateTime(dateReturnDate.Value1).ToString("d");
+            }
+            if (!MyUtility.Check.Empty(dateReturnDate.Value2))
+            {
+                d2 = Convert.ToDateTime(dateReturnDate.Value2).ToString("d");
+            }
+            string drange = d1 + "~" + d2;
+
+            objSheets.Cells[2, 4] = drange;
+            objSheets.get_Range("A1").RowHeight = 33;
+
+            ////
+
+            //bool result = MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", xltfile: "Logistic_P06.xltx", headerRow: 1);
+            //if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
         }
 
     }
