@@ -37,7 +37,7 @@ namespace Sci.Production.Packing
             if (radioTransferList.Checked)
             {
                 #region ListCheck
-                toExcel("Packing_P14.xltx", 1, dt);
+                toExcel("Packing_P14.xltx", 4, dt);
                 #endregion
             }
             if (radioTransferSlip.Checked)
@@ -75,7 +75,7 @@ namespace Sci.Production.Packing
 
                 DataTable k;
                 MyUtility.Tool.ProcessWithObject(Slip, "", sql, out k, "#Tmp");
-                toExcel("Packing_P14_TransferSlip.xltx", 3, k);
+                toExcel("Packing_P14_TransferSlip.xltx", 4, k);
                 #endregion
             }
             return true;
@@ -96,12 +96,22 @@ namespace Sci.Production.Packing
 
             if (!result) { 
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                return;
             }
-            else if (xltFile.EqualString("Packing_P14_TransferSlip.xltx"))
-            {
-                if (date1 != null && date2 != null)
-                    objSheets.Cells[2, 2] = date1 + " ~ " + date2;
 
+            #region Set Login M & Transfer Date
+            if (date1 != null && date2 != null)
+                objSheets.Cells[3, 2] = date1 + " ~ " + date2;
+
+            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Factory));
+            if (!strLoginM.Empty())
+            {
+                objSheets.Cells[1, 1] = strLoginM;
+            }
+            #endregion
+
+            if (xltFile.EqualString("Packing_P14_TransferSlip.xltx"))
+            {
                 decimal sumTTL = 0;
                 for (int i = 1; i <= ExcelTable.Rows.Count; i++)
                 {
@@ -111,8 +121,8 @@ namespace Sci.Production.Packing
                         objSheets.Cells[i + headerRow, 8] = str.Trim();
                 }
 
-                objSheets.Cells[ExcelTable.Rows.Count + 4, 1] = "Sub. TTL CTN:";
-                objSheets.Cells[ExcelTable.Rows.Count + 4, 2] = sumTTL;
+                objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 1] = "Sub. TTL CTN:";
+                objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 2] = sumTTL;
             }
 
             objSheets.Columns.AutoFit();
