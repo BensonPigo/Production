@@ -46,6 +46,7 @@
             this.textStartRefno = new Sci.Win.UI.TextBox();
             this.textEndRefno = new Sci.Win.UI.TextBox();
             this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.checkQty = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -231,11 +232,23 @@
             this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory1.TabIndex = 104;
             // 
+            // checkQty
+            // 
+            this.checkQty.AutoSize = true;
+            this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkQty.Location = new System.Drawing.Point(9, 208);
+            this.checkQty.Name = "checkQty";
+            this.checkQty.Size = new System.Drawing.Size(73, 21);
+            this.checkQty.TabIndex = 105;
+            this.checkQty.Text = "Qty > 0";
+            this.checkQty.UseVisualStyleBackColor = true;
+            // 
             // R20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(508, 262);
+            this.Controls.Add(this.checkQty);
             this.Controls.Add(this.txtmfactory1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textEndRefno);
@@ -277,6 +290,7 @@
             this.Controls.SetChildIndex(this.textEndRefno, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtmfactory1, 0);
+            this.Controls.SetChildIndex(this.checkQty, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -302,5 +316,6 @@
         private Win.UI.TextBox textStartRefno;
         private Win.UI.TextBox textEndRefno;
         private Class.txtmfactory txtmfactory1;
+        private Win.UI.CheckBox checkQty;
     }
 }
