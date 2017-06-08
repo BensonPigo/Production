@@ -112,15 +112,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(960, 445);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(954, 399);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(954, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -158,7 +158,6 @@
             // 
             // labelNo
             // 
-            this.labelNo.Lines = 0;
             this.labelNo.Location = new System.Drawing.Point(38, 18);
             this.labelNo.Name = "labelNo";
             this.labelNo.Size = new System.Drawing.Size(75, 23);
@@ -167,7 +166,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(353, 18);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(81, 23);
@@ -176,7 +174,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(38, 62);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(75, 23);
@@ -185,7 +182,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(353, 110);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(81, 23);
@@ -234,7 +230,6 @@
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(810, 24);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(130, 23);
@@ -253,7 +248,6 @@
             // 
             // labelRefnoLocation
             // 
-            this.labelRefnoLocation.Lines = 0;
             this.labelRefnoLocation.Location = new System.Drawing.Point(38, 106);
             this.labelRefnoLocation.Name = "labelRefnoLocation";
             this.labelRefnoLocation.Size = new System.Drawing.Size(107, 23);
@@ -273,9 +267,9 @@
             // btnImportFromStock
             // 
             this.btnImportFromStock.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportFromStock.Location = new System.Drawing.Point(707, 107);
+            this.btnImportFromStock.Location = new System.Drawing.Point(695, 107);
             this.btnImportFromStock.Name = "btnImportFromStock";
-            this.btnImportFromStock.Size = new System.Drawing.Size(137, 32);
+            this.btnImportFromStock.Size = new System.Drawing.Size(149, 32);
             this.btnImportFromStock.TabIndex = 46;
             this.btnImportFromStock.Text = "Import from stock";
             this.btnImportFromStock.UseVisualStyleBackColor = true;
@@ -293,7 +287,6 @@
             // 
             // labelInventoryID
             // 
-            this.labelInventoryID.Lines = 0;
             this.labelInventoryID.Location = new System.Drawing.Point(353, 62);
             this.labelInventoryID.Name = "labelInventoryID";
             this.labelInventoryID.Size = new System.Drawing.Size(81, 23);
