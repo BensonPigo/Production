@@ -352,8 +352,6 @@ from(
                     , [useqty] = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , shipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
---,a.ApQty
---,a.InputQty
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
                                             SELECT  dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.00))  as invtQty
@@ -378,7 +376,6 @@ from(
                     , s.ThirdCountry
                     , a.junk
                     , fabric.BomTypeCalculate
---,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
                     , stuff((select Concat('/',t.Result) from ( SELECT Result 
@@ -399,7 +396,7 @@ from(
 	                       ) tmp 
                       for XML PATH('')
                      ) as  Remark
-                    , [OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+                    , [OrderIdList] = stuff((select concat('/', SubString(tmp.OrderID, 9, 5)) 
 		                                    from (
 			                                    select orderID from po_supp_Detail_orderList e
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
@@ -412,8 +409,6 @@ from(
 	        left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
             left join supp s WITH (NOLOCK) on s.id = b.suppid
             LEFT JOIN dbo.Factory f on orders.FtyGroup=f.ID
---left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
---where orders.poid like @sp1 and orders.mdivisionid= '{0}' and a.junk <> 'true'
             where orders.id like @sp1 and a.junk <> 'true'
 
 --很重要要看到,修正欄位要上下一起改
@@ -440,8 +435,6 @@ from(
                     , useqty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2)
                     , ShipQty = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipQty, 0)), 2)
                     , ShipFOC = Round(dbo.getUnitQty(a.POUnit, a.StockUnit, isnull(a.ShipFOC, 0)), 2)
---,a.ApQty
---,a.InputQty
                     , InputQty = isnull((select Round(sum(invtQty), 2)
                                          from (
 	                                        SELECT dbo.getUnitQty(inv.UnitID, a.StockUnit, isnull(Qty, 0.0)) as invtQty
@@ -466,7 +459,6 @@ from(
                     , s.ThirdCountry
                     , a.junk
                     , fabric.BomTypeCalculate
---,dbo.getmtldesc(a.id,a.seq1,a.seq2,2,iif(a.scirefno = lag(a.scirefno,1,'') over (order by a.id,a.seq1,a.seq2),1,0)) AS description
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
                     , stuff((select Concat('/',t.Result) from (SELECT Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t for xml path('')),1,1,'') FIR
@@ -482,7 +474,7 @@ from(
 		                    ) tmp 
                        for XML PATH('')
                      ) as  Remark
-                    , [OrderIdList] = stuff((select concat(',', tmp.OrderID) 
+                    , [OrderIdList] = stuff((select concat('/', SubString(tmp.OrderID, 9, 5))
 		                                     from (
 			                                    select orderID from po_supp_Detail_orderList e
 			                                    where e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
@@ -495,7 +487,6 @@ from(
         left join po_supp b WITH (NOLOCK) on a.id = b.id and a.SEQ1 = b.SEQ1
         left join supp s WITH (NOLOCK) on s.id = b.suppid
         LEFT JOIN dbo.Factory f on o.FtyGroup=f.ID
---left join PO_Supp_Detail_OrderList e WITH (NOLOCK) on e.ID = a.ID and e.SEQ1 =a.SEQ1 and e.SEQ2 = a.SEQ2
         where   1=1 
                 AND a.id IS NOT NULL 
                 and a.junk <> 'true'--0000576: WAREHOUSE_P03_Material Status，避免出現空資料加此條件
