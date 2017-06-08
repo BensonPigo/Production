@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R32 : Sci.Win.Tems.PrintForm
     {
-        string StartDate, EndDate, SubPress, Factory;
+        string StartDate, EndDate, SubProcess, Factory;
         DataTable printData;
 
         public R32(ToolStripMenuItem menuitem)
@@ -27,9 +27,6 @@ namespace Sci.Production.Subcon
             #region set ComboSubPress
             DataTable dtSubPress;
             DBProxy.Current.Select(null, @"
-select Id = ''
-
-union all
 select Id 
 from SubProcess 
 where IsRFIDProcess=1
@@ -52,19 +49,19 @@ where Junk != 1", out dtFactory);
 
         protected override bool ValidateInput()
         {
-            #region Set Value
-            StartDate = ((DateTime)dateFarmOutDate.Value1).ToString("yyyy-MM-dd");
-            EndDate = ((DateTime)dateFarmOutDate.Value2).ToString("yyyy-MM-dd");
-            SubPress = comboSubProcess.Text;
-            Factory = comboFactory.Text;
-            #endregion 
             #region 判斷必輸條件
-            if (StartDate.Empty() || EndDate.Empty())
+            if (dateFarmOutDate.Value1.Empty() || dateFarmOutDate.Value2.Empty())
             {
                 MyUtility.Msg.InfoBox("Farm Out Date Can't be empty.");
                 return false;
             }
             #endregion
+            #region Set Value
+            StartDate = ((DateTime)dateFarmOutDate.Value1).ToString("yyyy-MM-dd");
+            EndDate = ((DateTime)dateFarmOutDate.Value2).ToString("yyyy-MM-dd");
+            SubProcess = comboSubProcess.Text;
+            Factory = comboFactory.Text;
+            #endregion 
             return true;
         }
 
@@ -74,13 +71,11 @@ where Junk != 1", out dtFactory);
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             listSqlPar.Add(new SqlParameter("@StartDate", StartDate));
             listSqlPar.Add(new SqlParameter("@EndDate", EndDate));
-            listSqlPar.Add(new SqlParameter("@SubPress", SubPress));
+            listSqlPar.Add(new SqlParameter("@SubProcess", SubProcess));
             listSqlPar.Add(new SqlParameter("@Factory", Factory));
             #endregion 
             #region SQL Filte
             List<string> filte = new List<string>();
-            if (!SubPress.Empty())
-                filte.Add("and BT.StartProcess = @SubProcess  --Sub Process");
             if (!Factory.Empty())
                 filte.Add("and O.FactoryID = @Factory  --Factory"); 
             #endregion
@@ -91,7 +86,7 @@ SELECT  O.FactoryID
 		, O.StyleID
 		, BD.SizeCode
 		, BD.BundleGroup
-		, BD.BundleNo
+		, BTD.BundleNo
 		, BodyCutNo = Concat(B.FabricPanelCode, '', B.Cutno)
 		, BD.Qty
 		, Color = Concat(B.Article, '', B.Colorid)
@@ -107,6 +102,7 @@ left join BundleTrack_detail BTD_IN on BTD_IN.Id like 'TC%' and BD.BundleNo=BTD_
 WHERE	BT.Id LIKE 'TB%'  --Farm out
 		and BT.IssueDate >= @StartDate  --Farm Out Date start
 		and BT.IssueDate <= @EndDate  --Farm Out Date End
+        and BT.StartProcess = @SubProcess  --Sub Process
         {0}
 ORDER BY  BD.BundleNo", filte.JoinToString("\r\n"));
             #endregion

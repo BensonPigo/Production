@@ -115,7 +115,7 @@
             this.Controls.Add(this.dateFarmOutDate);
             this.Controls.Add(this.labelFarmOutDate);
             this.Name = "R32";
-            this.Text = "R32";
+            this.Text = "R32. Farm out Bundle Tracking List";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
