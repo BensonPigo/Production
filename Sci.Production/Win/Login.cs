@@ -23,6 +23,7 @@ namespace Sci.Production.Win
     {
         Sci.Production.Main app;
         DualResult result;
+        string flagPathFile = Path.Combine(Application.StartupPath, "sql_update.txt");
 
         public Login(Sci.Production.Main app)
         {
@@ -94,11 +95,8 @@ namespace Sci.Production.Win
 
             DialogResult = DialogResult.OK;
 
-            //SQL UPDATE
-            if (ConfigurationManager.AppSettings["sql_update"].EqualString("N"))
-            {
-                this.checkUpdateSQL();
-            }
+            //若sql_update.txt不存在，則執行SQL UPDATE
+            if (!File.Exists(flagPathFile)) this.checkUpdateSQL();
 
             Close();
         }
@@ -211,14 +209,11 @@ namespace Sci.Production.Win
         {
             string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
             string[] dirs = Directory.GetFiles(Sci.Env.Cfg.ReportTempDir, "*.sql");
-            System.Configuration.Configuration config;
             if (dirs.Length == 0)
             {
-                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 try 
                 {
-                    config.AppSettings.Settings["sql_update"].Value = "Y";
-                    config.Save(ConfigurationSaveMode.Modified);
+                    System.IO.File.WriteAllText(flagPathFile, "");  //新增sql_update.txt以註記SQL更新成功
                 }
                 catch (Exception e)
                 {
@@ -283,12 +278,10 @@ Script
                 _transactionscope.Dispose();
                 _transactionscope = null;
             }
-            config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             try
             {
-                config.AppSettings.Settings["sql_update"].Value = "Y";
-                config.Save(ConfigurationSaveMode.Modified);
+                System.IO.File.WriteAllText(flagPathFile, "");  //新增sql_update.txt以註記SQL更新成功
             }
             catch (Exception e)
             {
