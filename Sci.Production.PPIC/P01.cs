@@ -513,6 +513,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
         }
 
         //Style
+        bool chkpopup = false;
         private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             IList<DataRow> StyleData;
@@ -523,6 +524,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             if (returnResult == DialogResult.Cancel)
             {
                 setStyleEmptyColumn();
+                chkpopup = false;
             }
             else
             {
@@ -535,6 +537,7 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 CurrentMaintain["StyleUnit"] = StyleData[0]["StyleUnit"];
                 CurrentMaintain["StyleUkey"] = StyleData[0]["Ukey"];
                 displayDescription.Value = MyUtility.Convert.GetString(StyleData[0]["Description"]);
+                chkpopup = true;
             }
         }
 
@@ -549,43 +552,47 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
                 }
                 else
                 {
-                    //檢查資料是否存在
-                    //sql參數
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleid", txtStyle.Text);
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-
-                    System.Data.DataTable StyleData;
-                    string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
-                    if (!result || StyleData.Rows.Count <= 0)
+                    if (!chkpopup)
                     {
-                        if (!result)
+                        //檢查資料是否存在
+                        //sql參數
+                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@styleid", txtStyle.Text);
+
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+                        cmds.Add(sp1);
+
+                        System.Data.DataTable StyleData;
+                        string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out StyleData);
+                        if (!result || StyleData.Rows.Count <= 0)
                         {
-                            MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                            if (!result)
+                            {
+                                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                            }
+                            else
+                            {
+                                MyUtility.Msg.WarningBox("Style not found!!");
+                            }
+                            setStyleEmptyColumn();
+                            e.Cancel = true;
+                            return;
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox("Style not found!!");
+                            CurrentMaintain["StyleID"] = StyleData.Rows[0]["ID"];
+                            CurrentMaintain["BrandID"] = StyleData.Rows[0]["BrandID"];
+                            CurrentMaintain["SeasonID"] = StyleData.Rows[0]["SeasonID"];
+                            CurrentMaintain["CdCodeID"] = StyleData.Rows[0]["CdCodeID"];
+                            CurrentMaintain["CPU"] = StyleData.Rows[0]["CPU"];
+                            CurrentMaintain["StyleUnit"] = StyleData.Rows[0]["StyleUnit"];
+                            CurrentMaintain["StyleUkey"] = StyleData.Rows[0]["Ukey"];
+                            displayDescription.Value = MyUtility.Convert.GetString(StyleData.Rows[0]["Description"]);
                         }
-                        setStyleEmptyColumn();
-                        e.Cancel = true;
-                        return;
-                    }
-                    else
-                    {
-                        CurrentMaintain["StyleID"] = StyleData.Rows[0]["ID"];
-                        CurrentMaintain["BrandID"] = StyleData.Rows[0]["BrandID"];
-                        CurrentMaintain["SeasonID"] = StyleData.Rows[0]["SeasonID"];
-                        CurrentMaintain["CdCodeID"] = StyleData.Rows[0]["CdCodeID"];
-                        CurrentMaintain["CPU"] = StyleData.Rows[0]["CPU"];
-                        CurrentMaintain["StyleUnit"] = StyleData.Rows[0]["StyleUnit"];
-                        CurrentMaintain["StyleUkey"] = StyleData.Rows[0]["Ukey"];
-                        displayDescription.Value = MyUtility.Convert.GetString(StyleData.Rows[0]["Description"]);
-                    }
+                    }                   
                 }
             }
+            chkpopup = false;
         }
 
         private void setStyleEmptyColumn()
