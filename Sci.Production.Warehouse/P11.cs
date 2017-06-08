@@ -35,7 +35,8 @@ namespace Sci.Production.Warehouse
             this.gridicon.Location = new System.Drawing.Point(891, 128); //此gridcon位置會跑掉，需強制設定gridcon位置        
             this.gridicon.Anchor = AnchorStyles.Right;
 
-            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);//Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
+            this.DefaultFilter = string.Format("Type='B' and MDivisionID = '{0}'", Sci.Env.User.Keyword);
+            //Issue此為PMS自行建立的資料，MDivisionID皆會有寫入值
 
             WorkAlias = "Issue";                        // PK: ID
             GridAlias = "Issue_detail";           // PK: ID+UKey
@@ -1288,6 +1289,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
            );
             xlTable.Borders.OnlyHeaderBorders = true;
+            xlTable.Borders.AllCellsBorders = true;
             xl.dicDatas.Add("##SEQ", xlTable);
 
 
