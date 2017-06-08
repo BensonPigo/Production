@@ -114,9 +114,10 @@ namespace Sci.Production.Cutting
                 return;
             }
         }
-
+        public List<String> importedIDs = new List<string>();
         private void btnImport_Click(object sender, EventArgs e)
         {
+            importedIDs.Clear();
             DataRow[] importay;
             string insertheader = "";
 
@@ -142,6 +143,7 @@ namespace Sci.Production.Cutting
                             {
                                 insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"]);
                                 importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
+                                importedIDs.Add(id);
                                 if (importay.Length > 0)
                                 {
                                     foreach (DataRow ddr in importay)
@@ -160,17 +162,20 @@ namespace Sci.Production.Cutting
                                     }
 
                                     //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
-                                    string UpdateWorkorder = string.Format(@"update Workorder set CutplanID = '{0}' 
-                                                                            where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'"
-                                                                            , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateEstCutDate.Text);
+                                    string UpdateWorkorder = string.Format(@"
+update Workorder set CutplanID = '{0}' 
+where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'"
+                                        , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateEstCutDate.Text);
 
                                     if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
                                     {
+                                        importedIDs.Clear();
                                         _transactionscope.Dispose();
                                         return;
                                     }
                                     if (!(upResult = DBProxy.Current.Execute(null, UpdateWorkorder)))
                                     {
+                                        importedIDs.Clear();
                                         _transactionscope.Dispose();
                                         return;
                                     }
@@ -187,13 +192,14 @@ namespace Sci.Production.Cutting
                 {
                     _transactionscope.Dispose();
                     ShowErr("Commit transaction error.", ex);
+                    importedIDs.Clear();
                     return;
                 }
             }
             _transactionscope.Dispose();
             _transactionscope = null;
             #endregion
-
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
 

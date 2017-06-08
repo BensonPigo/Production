@@ -328,12 +328,20 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
 
            
         }
+
         protected override bool ClickNew()
         {
             detailgrid.ValidateControl();
             var frm = new Sci.Production.Cutting.P04_Import();
-            frm.ShowDialog(this);
+            DialogResult dr = frm.ShowDialog(this);
+            //dr == System.Windows.Forms.DialogResult.
             this.ReloadDatas();
+            if (dr == System.Windows.Forms.DialogResult.OK)
+            {
+                var topID = frm.importedIDs[0];
+                int newDataIdx = gridbs.Find("ID", topID);
+                gridbs.Position = newDataIdx;
+            }
             return true;
         }
         
