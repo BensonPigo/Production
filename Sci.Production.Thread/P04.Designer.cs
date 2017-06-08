@@ -62,7 +62,7 @@
             this.masterpanel.Controls.Add(this.labelM);
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(918, 104);
+            this.masterpanel.Size = new System.Drawing.Size(892, 104);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -77,7 +77,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 104);
-            this.detailpanel.Size = new System.Drawing.Size(918, 210);
+            this.detailpanel.Size = new System.Drawing.Size(892, 245);
             // 
             // gridicon
             // 
@@ -90,32 +90,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 210);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 245);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(918, 352);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(912, 306);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(912, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(918, 352);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(918, 314);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 314);
-            this.detailbtm.Size = new System.Drawing.Size(918, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -140,7 +140,6 @@
             // 
             // labelNo
             // 
-            this.labelNo.Lines = 0;
             this.labelNo.Location = new System.Drawing.Point(37, 22);
             this.labelNo.Name = "labelNo";
             this.labelNo.Size = new System.Drawing.Size(75, 23);
@@ -149,7 +148,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(274, 22);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(75, 23);
@@ -158,7 +156,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(37, 71);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(75, 23);
@@ -167,7 +164,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(274, 71);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
@@ -216,7 +212,6 @@
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(620, 22);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(130, 23);
@@ -234,6 +229,7 @@
             this.GridNew = 0;
             this.GridUniqueKey = "Refno,Threadcolorid,threadlocationid";
             this.IsSupportConfirm = true;
+            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P04";

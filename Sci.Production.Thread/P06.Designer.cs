@@ -305,6 +305,7 @@
             this.GridUniqueKey = "Refno,Threadcolorid,threadlocationid";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P06";
             this.Text = "P06.Thread Stock Adjust";

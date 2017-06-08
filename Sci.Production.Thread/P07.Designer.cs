@@ -243,6 +243,7 @@
             this.GridUniqueKey = "Refno,Threadcolorid,locationfrom,locationto";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P07";
