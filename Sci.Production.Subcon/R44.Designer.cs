@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Subcon
 {
-    partial class R33
+    partial class R44
     {
         /// <summary>
         /// Required designer variable.
@@ -160,14 +160,14 @@
             this.radioByFactory.UseVisualStyleBackColor = true;
             this.radioByFactory.Value = "P/L Rcv Report";
             // 
-            // R33
+            // R44
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(511, 218);
             this.Controls.Add(this.radioPanel1);
-            this.Name = "R33";
-            this.Text = "R33. Loading BCS Base on Std.Q";
+            this.Name = "R44";
+            this.Text = "R44. Loading BCS Base on Std.Q(RFID)";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

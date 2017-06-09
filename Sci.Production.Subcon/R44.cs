@@ -15,11 +15,11 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R33 : Sci.Win.Tems.PrintForm
+    public partial class R44 : Sci.Win.Tems.PrintForm
     {
         string Factory, SewingStart, SewingEnd, SP;
         DataTable printData;
-        public R33(ToolStripMenuItem menuitem)
+        public R44(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
@@ -292,8 +292,8 @@ drop table #print"
             if (radioByFactory.Checked)
             {
                 #region By Factory
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R33_ByFactory.xltx");
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R33_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_ByFactory.xltx");
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_ByFactory.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
                 #endregion 
@@ -305,8 +305,8 @@ drop table #print"
             else
             {
                 #region By SPNO
-                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R33_BySPNO.xltx");
-                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R33_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R44_BySPNO.xltx");
+                MyUtility.Excel.CopyToXls(printData, "", "Subcon_R44_BySPNO.xltx", 3, showExcel: true, excelApp: objApp);
                 worksheet = objApp.Sheets[1];
                 worksheet.Name = "cutting bcs base on std" + (DateTime.Now).ToString("yyyyMMdd");
                 #endregion 
