@@ -96,9 +96,13 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls((DataTable)listControlBindingSource1.DataSource, "", "Logistic_P05.xltx", 4, true, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
+            objSheets.get_Range(string.Format("A5:N{0}",r+4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'",Sci.Env.User.Factory), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'",Sci.Env.User.Keyword), out dr, null);
             objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RECEIVING REPORT";
             string d1 = "", d2 = "";
             if (!MyUtility.Check.Empty(dateReceiveDate.Value1))
@@ -111,7 +115,7 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             }
             string drange = d1 + "~" + d2;
             objSheets.Cells[3, 13] = drange;
-            objSheets.get_Range("A1").RowHeight = 33;
+            objSheets.get_Range("A1").RowHeight = 45;            
         }
     }
 }

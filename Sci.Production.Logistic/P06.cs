@@ -95,8 +95,11 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 
+            int r = ((DataTable)listControlBindingSource1.DataSource).Rows.Count;
+            objSheets.get_Range(string.Format("A4:L{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
             DataRow dr;
-            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);
+            MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword), out dr, null);
             objSheets.Cells[1, 1] = dr["NameEN"].ToString() + "\r\n" + "CARTON RETURN REPORT";
 
             string d1 = "", d2 = "";
@@ -111,7 +114,7 @@ where cr.MDivisionID = '{0}'", Sci.Env.User.Keyword));
             string drange = d1 + "~" + d2;
 
             objSheets.Cells[2, 4] = drange;
-            objSheets.get_Range("A1").RowHeight = 33;
+            objSheets.get_Range("A1").RowHeight = 45;
 
             ////
 
