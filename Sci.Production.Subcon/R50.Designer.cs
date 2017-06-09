@@ -78,9 +78,9 @@
             this.txtBundleNo.BackColor = System.Drawing.Color.White;
             this.txtBundleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBundleNo.Location = new System.Drawing.Point(123, 43);
-            this.txtBundleNo.MaxLength = 2;
+            this.txtBundleNo.MaxLength = 20;
             this.txtBundleNo.Name = "txtBundleNo";
-            this.txtBundleNo.Size = new System.Drawing.Size(106, 23);
+            this.txtBundleNo.Size = new System.Drawing.Size(132, 23);
             this.txtBundleNo.TabIndex = 1;
             // 
             // Date
