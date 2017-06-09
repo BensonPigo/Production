@@ -103,7 +103,7 @@ namespace Sci.Production.Packing
             if (date1 != null && date2 != null)
                 objSheets.Cells[3, 2] = date1 + " ~ " + date2;
 
-            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Factory));
+            string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where ID = '{0}'", Sci.Env.User.Keyword));
             if (!strLoginM.Empty())
             {
                 objSheets.Cells[1, 1] = strLoginM;
