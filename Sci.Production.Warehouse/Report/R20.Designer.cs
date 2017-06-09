@@ -31,7 +31,7 @@
             this.labelDeadLine = new Sci.Win.UI.Label();
             this.dateDeadLine = new Sci.Win.UI.DateRange();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
-            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelInventoryETA = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
@@ -45,7 +45,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.textStartRefno = new Sci.Win.UI.TextBox();
             this.textEndRefno = new Sci.Win.UI.TextBox();
-            this.txtmfactory1 = new Sci.Production.Class.txtmfactory();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.checkQty = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
@@ -90,12 +90,12 @@
             this.labelBuyerDelivery.Text = "Buyer Delivery";
             this.labelBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // dateRange1
+            // dateBuyerDelivery
             // 
-            this.dateRange1.Location = new System.Drawing.Point(109, 38);
-            this.dateRange1.Name = "dateRange1";
-            this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 95;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(109, 38);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 95;
             // 
             // labelSPNo
             // 
@@ -223,14 +223,14 @@
             this.textEndRefno.Size = new System.Drawing.Size(146, 23);
             this.textEndRefno.TabIndex = 102;
             // 
-            // txtmfactory1
+            // txtfactory1
             // 
-            this.txtmfactory1.BackColor = System.Drawing.Color.White;
-            this.txtmfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtmfactory1.Location = new System.Drawing.Point(110, 151);
-            this.txtmfactory1.Name = "txtmfactory1";
-            this.txtmfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtmfactory1.TabIndex = 104;
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.Location = new System.Drawing.Point(110, 151);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 104;
             // 
             // checkQty
             // 
@@ -249,7 +249,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(508, 262);
             this.Controls.Add(this.checkQty);
-            this.Controls.Add(this.txtmfactory1);
+            this.Controls.Add(this.txtfactory1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textEndRefno);
             this.Controls.Add(this.textStartRefno);
@@ -263,7 +263,7 @@
             this.Controls.Add(this.labelInventoryETA);
             this.Controls.Add(this.labelSPNo);
             this.Controls.Add(this.dateInventoryETA);
-            this.Controls.Add(this.dateRange1);
+            this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.dateDeadLine);
             this.Controls.Add(this.labelBuyerDelivery);
             this.Controls.Add(this.labelDeadLine);
@@ -275,7 +275,7 @@
             this.Controls.SetChildIndex(this.labelDeadLine, 0);
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateDeadLine, 0);
-            this.Controls.SetChildIndex(this.dateRange1, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateInventoryETA, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelInventoryETA, 0);
@@ -289,7 +289,7 @@
             this.Controls.SetChildIndex(this.textStartRefno, 0);
             this.Controls.SetChildIndex(this.textEndRefno, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.txtmfactory1, 0);
+            this.Controls.SetChildIndex(this.txtfactory1, 0);
             this.Controls.SetChildIndex(this.checkQty, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -301,7 +301,7 @@
         private Win.UI.Label labelDeadLine;
         private Win.UI.DateRange dateDeadLine;
         private Win.UI.Label labelBuyerDelivery;
-        private Win.UI.DateRange dateRange1;
+        private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.Label labelSPNo;
         private Win.UI.Label labelInventoryETA;
         private Win.UI.Label labelM;
@@ -315,7 +315,7 @@
         private Win.UI.Label label2;
         private Win.UI.TextBox textStartRefno;
         private Win.UI.TextBox textEndRefno;
-        private Class.txtmfactory txtmfactory1;
+        private Class.txtfactory txtfactory1;
         private Win.UI.CheckBox checkQty;
     }
 }
