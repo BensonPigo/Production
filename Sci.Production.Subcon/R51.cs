@@ -17,7 +17,10 @@ namespace Sci.Production.Subcon
 {
     public partial class R51 : Sci.Win.Tems.PrintForm
     {
+        string DateFormate = "yyyy-MM-dd";
+        string StartDate, EndDate, ID, Factory, LocalSupplier;
         DataTable printData;
+
         public R51(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
@@ -27,9 +30,12 @@ namespace Sci.Production.Subcon
         protected override bool ValidateInput()
         {
             #region Set Value
+            StartDate = (dateDate.Value1.ToString().Empty()) ? "" : ((DateTime)dateDate.Value1).ToString(DateFormate);
+            EndDate = (dateDate.Value2.ToString().Empty()) ? "" : ((DateTime)dateDate.Value2).ToString(DateFormate);
+            ID = textID.Text;
+            Factory = txtfactory1.Text;
+            LocalSupplier = txtLocalSupp1.TextBox1.Text;
             #endregion 
-            #region 判斷必輸條件
-            #endregion
             return true;
         }
 
@@ -37,13 +43,78 @@ namespace Sci.Production.Subcon
         {
             #region SQl Parameters
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@StartDate", StartDate));
+            listSqlPar.Add(new SqlParameter("@EndDate", EndDate));
+            listSqlPar.Add(new SqlParameter("@ID", ID));
+            listSqlPar.Add(new SqlParameter("@Factory", Factory));
+            listSqlPar.Add(new SqlParameter("@LocalSupplier", LocalSupplier));
             #endregion
             #region SQL Filte
             List<string> filte = new List<string>();
+            if (!StartDate.Empty() && !EndDate.Empty())
+            {
+                filte.Add(@"
+            (Convert (date, AP.AddDate)  >= @StartDate
+			Or Convert (date, AP.EditDate) >= @StartDate)
+		And (Convert (date, AP.AddDate)  <= @EndDate
+			Or Convert (date, AP.EditDate)  <= @EndDate)");
+            }
+            if (!ID.Empty())
+            {
+                filte.Add("AP.ID = @ID");
+            }
+            if (!Factory.Empty())
+            {
+                filte.Add("AP.FactoryId = @Factory");
+            }
+            if (!LocalSupplier.Empty())
+            {
+                filte.Add("AP.LocalSuppID = @LocalSupplier");
+            }
             #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
-", (filte.Count > 0) ? "Where " + filte.JoinToString("\n\r and ") : "");
+select	AP.ID
+		, AP.FactoryId
+		, AP.Remark
+		, AP.Handle
+		, AP.CurrencyId
+		, Amount = Sum(sum(OQ.Qty)*OA.Cost) over(partition by AP.ID)
+		, AP.VatRate
+		, AP.Vat
+		, AP.AddName
+		, AP.AddDate
+		, AP.EditName
+		, AP.EditDate 
+		, APD.OrderID
+		, O.StyleID
+		, O.BrandID
+		, O.SeasonID
+		, APD.PatternCode
+		, APD.PatternDesc
+		, APD.Farmout
+		, APD.Farmin
+		, APD.PoQty
+		, APD.ArtworkTypeID
+		, FirstCutDate = isnull(C.FirstCutDate,O.CutInLine)
+		, AP.Delivery
+		, OA.Article,QTY = sum(OQ.Qty) 
+		, UnitPrice = OA.Cost 
+		, Detail_Amount = sum(OQ.Qty)*OA.Cost		
+From ArtworkPO AP
+Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
+Inner join Orders O on APD.OrderID=O.ID
+left join Cutting C on O.ID=C.ID    
+Inner join dbo.View_Order_Artworks OA on  OA.ID=APD.OrderID and OA.PatternCode=APD.PatternCode and OA.ArtworkID=APD.ArtworkId and OA.ArtworkTypeID=APD.ArtworkTypeID
+Inner join Order_Qty OQ on OQ.ID=OA.ID and OQ.SizeCode=OA.SizeCode
+Where	AP.POType='O' 
+		and APD.ArtworkTypeID='PRINTING' 
+		and AP.Status <> 'New' 
+		{0}
+group by AP.ID, AP.FactoryId, AP.Remark, AP.Handle, AP.CurrencyId, AP.VatRate, AP.Vat, AP.AddName, AP.AddDate, AP.EditName, AP.EditDate 
+		 , APD.OrderID, O.StyleID, O.BrandID, O.SeasonID, APD.PatternCode, APD.PatternDesc, APD.Farmout, APD.Farmin, APD.PoQty, APD.ArtworkTypeID
+		 , isnull(C.FirstCutDate,O.CutInLine), AP.Delivery, OA.Article,OA.Cost"
+                , (filte.Count > 0) ? "and " + filte.JoinToString("\n\r and ") : "");
             #endregion
             #region Get Data
             DualResult result;
