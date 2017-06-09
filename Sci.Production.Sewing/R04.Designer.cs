@@ -64,7 +64,7 @@
             this.labelOoutputDate.Name = "labelOoutputDate";
             this.labelOoutputDate.Size = new System.Drawing.Size(88, 23);
             this.labelOoutputDate.TabIndex = 94;
-            this.labelOoutputDate.Text = "Ooutput Date";
+            this.labelOoutputDate.Text = "Output Date";
             // 
             // labelCategory
             // 
