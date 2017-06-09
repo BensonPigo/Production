@@ -121,10 +121,17 @@ namespace Sci.Production.Packing
                         objSheets.Cells[i + headerRow, 8] = str.Trim();
                 }
 
+                int r = ExcelTable.Rows.Count;
+                objSheets.get_Range(string.Format("A5:H{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+
                 objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 1] = "Sub. TTL CTN:";
                 objSheets.Cells[ExcelTable.Rows.Count + headerRow + 1, 2] = sumTTL;
             }
-
+            if (xltFile.EqualString("Packing_P14.xltx"))
+            {                
+                int r = ExcelTable.Rows.Count;
+                objSheets.get_Range(string.Format("A5:L{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            }
             objSheets.Columns.AutoFit();
             objSheets.Rows.AutoFit();
             objApp.Visible = true;
