@@ -57,7 +57,8 @@ namespace Sci.Production.Logistic
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-select ID, selected,ReceiveDate,PackingListID, OrderID, CTNStartNo
+select ID, selected,ReceiveDate,PackingListID, OrderID, 
+convert(int,CTNStartNo) as 'CTNStartNo'
 	, CustPONo, StyleID, SeasonID, BrandID, Customize1, Alias, BuyerDelivery,ClogLocationId, Remark 
 from
 (
@@ -112,7 +113,9 @@ order by rn ");
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+                string selectCommand = @"Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, 
+convert(int,b.CTNStartNo) as 'CTNStartNo'
+, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
                                                              from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;

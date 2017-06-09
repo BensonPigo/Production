@@ -43,6 +43,7 @@ namespace Sci.Production.Logistic
                  .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                 //.Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) 
                  .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -64,7 +65,10 @@ namespace Sci.Production.Logistic
             }
             StringBuilder sqlCmd = new StringBuilder();
 
-            sqlCmd.Append(string.Format(@"Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
+            sqlCmd.Append(string.Format(@"
+Select Distinct '' as ID, 0 as selected,b.TransferDate, b.Id as PackingListID, b.OrderID, 
+convert(int,b.CTNStartNo) as 'CTNStartNo', 
+c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery,'' as ClogLocationId,'' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK), TransferToClog t WITH (NOLOCK)
 where b.OrderId = c.Id 
 and a.Id = b.Id 
@@ -119,8 +123,15 @@ and a.id = t.PackingListID", Sci.Env.User.Keyword));
             if (openFileDialog1.ShowDialog() == DialogResult.OK) //開窗且有選擇檔案
             {
                 //先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
-                                                             from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
+                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
+convert(int,b.CTNStartNo) as 'CTNStartNo', 
+
+c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+from PackingList a WITH (NOLOCK) , 
+PackingList_Detail b WITH (NOLOCK) , 
+Orders c WITH (NOLOCK) , 
+Country d WITH (NOLOCK) 
+where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out selectDataTable)))
