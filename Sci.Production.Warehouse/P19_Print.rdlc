@@ -531,7 +531,9 @@
               <TextRuns>
                 <TextRun>
                   <Value>=Parameters!RptTitle.Value</Value>
-                  <Style />
+                  <Style>
+                    <FontSize>22pt</FontSize>
+                  </Style>
                 </TextRun>
               </TextRuns>
               <Style>
@@ -541,9 +543,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>0.3175cm</Top>
-          <Left>5.88964cm</Left>
-          <Height>0.61172cm</Height>
-          <Width>9.36625cm</Width>
+          <Left>0.20109cm</Left>
+          <Height>1.08797cm</Height>
+          <Width>20.30059cm</Width>
           <Style>
             <Border>
               <Style>None</Style>
@@ -571,10 +573,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox2</rd:DefaultName>
-          <Top>1.23789cm</Top>
-          <Left>8.24442cm</Left>
+          <Top>1.55539cm</Top>
+          <Left>0.20109cm</Left>
           <Height>0.635cm</Height>
-          <Width>5.05353cm</Width>
+          <Width>20.30059cm</Width>
           <ZIndex>1</ZIndex>
           <Style>
             <Border>
