@@ -111,7 +111,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(19, 226);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(90, 23);
@@ -121,7 +120,6 @@
             // label8
             // 
             this.label8.BackColor = System.Drawing.SystemColors.Control;
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(219, 53);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(20, 30);
@@ -132,7 +130,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(236, 200);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
@@ -148,7 +145,7 @@
             this.txtLocationEnd.Name = "txtLocationEnd";
             this.txtLocationEnd.Size = new System.Drawing.Size(113, 23);
             this.txtLocationEnd.TabIndex = 7;
-            this.txtLocationEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocationStart_MouseDown);
+            this.txtLocationEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtLocationEnd_MouseDown);
             // 
             // txtLocationStart
             // 
@@ -231,7 +228,7 @@
             this.txtRefNoEnd.Name = "txtRefNoEnd";
             this.txtRefNoEnd.Size = new System.Drawing.Size(100, 23);
             this.txtRefNoEnd.TabIndex = 2;
-            this.txtRefNoEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtRefNoStart_MouseDown);
+            this.txtRefNoEnd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtRefNoEnd_MouseDown);
             // 
             // txtRefNoStart
             // 
@@ -253,7 +250,6 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
             this.labelReportType.Location = new System.Drawing.Point(19, 259);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(90, 23);
@@ -262,7 +258,6 @@
             // 
             // labelLocation
             // 
-            this.labelLocation.Lines = 0;
             this.labelLocation.Location = new System.Drawing.Point(19, 193);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(90, 23);
@@ -271,7 +266,6 @@
             // 
             // labelThreadItem
             // 
-            this.labelThreadItem.Lines = 0;
             this.labelThreadItem.Location = new System.Drawing.Point(19, 159);
             this.labelThreadItem.Name = "labelThreadItem";
             this.labelThreadItem.Size = new System.Drawing.Size(90, 23);
@@ -280,7 +274,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(19, 123);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(90, 23);
@@ -289,7 +282,6 @@
             // 
             // labelShade
             // 
-            this.labelShade.Lines = 0;
             this.labelShade.Location = new System.Drawing.Point(19, 86);
             this.labelShade.Name = "labelShade";
             this.labelShade.Size = new System.Drawing.Size(90, 23);
@@ -298,7 +290,6 @@
             // 
             // labelRefNo
             // 
-            this.labelRefNo.Lines = 0;
             this.labelRefNo.Location = new System.Drawing.Point(19, 52);
             this.labelRefNo.Name = "labelRefNo";
             this.labelRefNo.Size = new System.Drawing.Size(90, 23);
@@ -307,7 +298,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(19, 17);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(90, 23);

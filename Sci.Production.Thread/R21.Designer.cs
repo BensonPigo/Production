@@ -101,7 +101,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(16, 154);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(80, 23);
@@ -111,7 +110,6 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.SystemColors.Control;
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(220, 129);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(20, 23);
@@ -122,10 +120,9 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.SystemColors.Control;
-            this.label6.Lines = 0;
-            this.label6.Location = new System.Drawing.Point(251, 7);
+            this.label6.Location = new System.Drawing.Point(251, 8);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(22, 23);
+            this.label6.Size = new System.Drawing.Size(12, 23);
             this.label6.TabIndex = 12;
             this.label6.Text = "~";
             this.label6.TextStyle.Color = System.Drawing.Color.Black;
@@ -189,7 +186,7 @@
             // 
             this.txtRefnoEnd.BackColor = System.Drawing.Color.White;
             this.txtRefnoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefnoEnd.Location = new System.Drawing.Point(267, 8);
+            this.txtRefnoEnd.Location = new System.Drawing.Point(266, 7);
             this.txtRefnoEnd.Name = "txtRefnoEnd";
             this.txtRefnoEnd.Size = new System.Drawing.Size(148, 23);
             this.txtRefnoEnd.TabIndex = 1;
@@ -209,7 +206,6 @@
             // 
             // labelLocation
             // 
-            this.labelLocation.Lines = 0;
             this.labelLocation.Location = new System.Drawing.Point(16, 125);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(80, 23);
@@ -218,7 +214,6 @@
             // 
             // labelThreadItem
             // 
-            this.labelThreadItem.Lines = 0;
             this.labelThreadItem.Location = new System.Drawing.Point(16, 96);
             this.labelThreadItem.Name = "labelThreadItem";
             this.labelThreadItem.Size = new System.Drawing.Size(80, 23);
@@ -227,7 +222,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(16, 65);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(80, 23);
@@ -236,7 +230,6 @@
             // 
             // labelShade
             // 
-            this.labelShade.Lines = 0;
             this.labelShade.Location = new System.Drawing.Point(16, 36);
             this.labelShade.Name = "labelShade";
             this.labelShade.Size = new System.Drawing.Size(80, 23);
@@ -245,7 +238,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(16, 8);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(80, 23);

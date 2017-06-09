@@ -36,12 +36,12 @@
             this.dateEstBooking = new Sci.Win.UI.DateRange();
             this.label6 = new Sci.Win.UI.Label();
             this.txtSPNoEnd = new Sci.Win.UI.TextBox();
-            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.labelM = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelEstArrived = new Sci.Win.UI.Label();
             this.labelEstBooking = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,13 +59,13 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtSPNoStart);
             this.panel1.Controls.Add(this.comboMDivision);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.dateEstArrived);
             this.panel1.Controls.Add(this.dateEstBooking);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.txtSPNoEnd);
-            this.panel1.Controls.Add(this.txtSPNoStart);
             this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.labelFactory);
             this.panel1.Controls.Add(this.labelEstArrived);
@@ -117,7 +117,6 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.SystemColors.Control;
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(260, 30);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(24, 16);
@@ -134,18 +133,8 @@
             this.txtSPNoEnd.Size = new System.Drawing.Size(149, 23);
             this.txtSPNoEnd.TabIndex = 1;
             // 
-            // txtSPNoStart
-            // 
-            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
-            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(100, 23);
-            this.txtSPNoStart.Name = "txtSPNoStart";
-            this.txtSPNoStart.Size = new System.Drawing.Size(149, 23);
-            this.txtSPNoStart.TabIndex = 0;
-            // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(11, 189);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(86, 23);
@@ -154,7 +143,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(11, 147);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(86, 23);
@@ -163,7 +151,6 @@
             // 
             // labelEstArrived
             // 
-            this.labelEstArrived.Lines = 0;
             this.labelEstArrived.Location = new System.Drawing.Point(11, 104);
             this.labelEstArrived.Name = "labelEstArrived";
             this.labelEstArrived.Size = new System.Drawing.Size(86, 23);
@@ -172,7 +159,6 @@
             // 
             // labelEstBooking
             // 
-            this.labelEstBooking.Lines = 0;
             this.labelEstBooking.Location = new System.Drawing.Point(11, 64);
             this.labelEstBooking.Name = "labelEstBooking";
             this.labelEstBooking.Size = new System.Drawing.Size(86, 23);
@@ -181,12 +167,20 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(11, 23);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(86, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP No";
+            // 
+            // txtSPNoStart
+            // 
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(100, 23);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(149, 23);
+            this.txtSPNoStart.TabIndex = 8;
             // 
             // R20
             // 
@@ -213,12 +207,12 @@
         private Win.UI.DateRange dateEstBooking;
         private Win.UI.Label label6;
         private Win.UI.TextBox txtSPNoEnd;
-        private Win.UI.TextBox txtSPNoStart;
         private Win.UI.Label labelM;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelEstArrived;
         private Win.UI.Label labelEstBooking;
         private Win.UI.Label labelSPNo;
         private Class.comboMDivision comboMDivision;
+        private Win.UI.TextBox txtSPNoStart;
     }
 }

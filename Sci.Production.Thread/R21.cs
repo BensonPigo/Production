@@ -40,11 +40,18 @@ namespace Sci.Production.Thread
             string sqlWhere = "";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.txtRefnoStart.Text.Empty())
+            if (!MyUtility.Check.Empty(txtRefnoStart.Text.ToString()) || !MyUtility.Check.Empty(this.txtRefnoEnd.Text.ToString()))
             {
-                sqlWheres.Add("ThreadStock.refno between @RefN1 and @RefN2");
-                lis.Add(new SqlParameter("@RefN1", RefN1));
-                lis.Add(new SqlParameter("@RefN2", RefN2));
+                if (!MyUtility.Check.Empty(txtRefnoStart.Text.ToString()))
+                {
+                    sqlWheres.Add("ThreadStock.refno >= @RefN1");
+                    lis.Add(new SqlParameter("@RefN1", RefN1));
+                }
+                if (!MyUtility.Check.Empty(this.txtRefnoEnd.Text.ToString()))
+                {
+                    sqlWheres.Add("ThreadStock.refno <= @RefN2");
+                    lis.Add(new SqlParameter("@RefN2", RefN2));
+                }             
             }
             if (!this.txtShade.Text.Empty())
             {
@@ -61,11 +68,18 @@ namespace Sci.Production.Thread
                 sqlWheres.Add("ThreadStock.refno = @Thread");
                 lis.Add(new SqlParameter("@Thread", Thread));
             }
-            if (!this.txtLocationStart.Text.Empty())
+            if (!this.txtLocationStart.Text.Empty() || !this.txtLocationEnd.Text.Empty())
             {
-                sqlWheres.Add("ThreadStock.threadlocationid between @LOC1 and @LOC2");
-                lis.Add(new SqlParameter("@LOC1", LOC1));
-                lis.Add(new SqlParameter("@LOC2", LOC2));
+                if (!this.txtLocationStart.Text.Empty())
+                {
+                    sqlWheres.Add("ThreadStock.threadlocationid >= @LOC1");
+                    lis.Add(new SqlParameter("@LOC1", LOC1));
+                }
+                if (!this.txtLocationEnd.Text.Empty())
+                {
+                    sqlWheres.Add("ThreadStock.threadlocationid <= @LOC2");
+                    lis.Add(new SqlParameter("@LOC2", LOC2));
+                }                                
             }
             if (!this.M.Empty())
             {

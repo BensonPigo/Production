@@ -82,11 +82,18 @@ namespace Sci.Production.Thread
                 excelHead.Add("Date", date1 + " ~ " + date2);
             }
 
-            if (!MyUtility.Check.Empty(txtRefNoStart.Text.ToString()) && !MyUtility.Check.Empty(txtRefNoEnd.Text.ToString()))
+            if (!MyUtility.Check.Empty(txtRefNoStart.Text.ToString()) || !MyUtility.Check.Empty(txtRefNoEnd.Text.ToString()))
             {
-                sqlWhere.Add("(tid.Refno between @refno1 and @refno2)");
-                sqlPar.Add(new SqlParameter("@refno1", txtRefNoStart.Text.ToString()));
-                sqlPar.Add(new SqlParameter("@refno2", txtRefNoEnd.Text.ToString()));
+                if (!MyUtility.Check.Empty(txtRefNoStart.Text.ToString()))
+                {
+                    sqlWhere.Add("tid.Refno >= @refno1");
+                    sqlPar.Add(new SqlParameter("@refno1", txtRefNoStart.Text.ToString()));
+                }
+                if (!MyUtility.Check.Empty(txtRefNoEnd.Text.ToString()))
+                {
+                    sqlWhere.Add("tid.Refno <= @refno2");
+                    sqlPar.Add(new SqlParameter("@refno2", txtRefNoEnd.Text.ToString()));
+                }                
                 excelHead.Add("Refno", txtRefNoStart.Text.ToString() + " ~ " + txtRefNoEnd.Text.ToString());
             }
 
@@ -111,11 +118,18 @@ namespace Sci.Production.Thread
                 excelHead.Add("Item", txtThreadItem.Text.ToString());
             }
 
-            if (!MyUtility.Check.Empty(txtLocationStart.Text.ToString()) && !MyUtility.Check.Empty(txtLocationEnd.Text.ToString()))
+            if (!MyUtility.Check.Empty(txtLocationStart.Text.ToString()) || !MyUtility.Check.Empty(txtLocationEnd.Text.ToString()))
             {
-                sqlWhere.Add("(tid.ThreadLocationid between @loc1 and @loc2)");
-                sqlPar.Add(new SqlParameter("@loc1", txtLocationStart.Text.ToString()));
-                sqlPar.Add(new SqlParameter("@loc2", txtLocationEnd.Text.ToString()));
+                if (!MyUtility.Check.Empty(txtLocationStart.Text.ToString()) )
+                {
+                    sqlWhere.Add(" tid.ThreadLocationid >= @loc1 ");
+                    sqlPar.Add(new SqlParameter("@loc1", txtLocationStart.Text.ToString()));
+                }
+                if (!MyUtility.Check.Empty(txtLocationEnd.Text.ToString()))
+                {
+                    sqlWhere.Add(" tid.ThreadLocationid <= @loc2 ");
+                    sqlPar.Add(new SqlParameter("@loc2", txtLocationEnd.Text.ToString()));
+                }                                
                 excelHead.Add("Location", txtLocationStart.Text.ToString() + " ~ " + txtLocationEnd.Text.ToString());
             }
 
@@ -294,6 +308,22 @@ namespace Sci.Production.Thread
             }
         }
 
+        private void txtRefNoEnd_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    Refno,
+                                    (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) [Description]
+                               from dbo.ThreadStock WITH (NOLOCK) 
+                               order by Refno";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "20, 40", null, "Refno, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                txtRefNoEnd.Text = item.GetSelectedString();
+            }
+        }
+
         private void txtLocationStart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -309,5 +339,23 @@ namespace Sci.Production.Thread
                 txtLocationStart.Text = item.GetSelectedString();
             }
         }
+
+        private void txtLocationEnd_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                string sql = @"select distinct 
+                                    ThreadlocationID,
+                                    (select distinct Description from dbo.ThreadLocation WITH (NOLOCK) where ThreadLocation.ID = Threadincoming_Detail.ThreadLocationID) [Description]
+                               from dbo.Threadincoming_Detail WITH (NOLOCK) 
+                               order by ThreadlocationID";
+                Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15, 15", null, "Location, Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel) { return; }
+                txtLocationEnd.Text = item.GetSelectedString();
+            }
+        }
+
+       
     }
 }

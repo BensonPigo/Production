@@ -39,8 +39,8 @@ namespace Sci.Production.Thread
 
         protected override bool ValidateInput()
         {
-            bool sp_Empty1 = !this.txtSPNoStart.Text.Empty(), sp_Empty2 = !this.txtSPNoEnd.Text.Empty(), dateRange1_Empty = !this.dateEstBooking.HasValue, dateRange2_Empty = !this.dateEstArrived.HasValue;
-            if (sp_Empty1 && sp_Empty2 && dateRange1_Empty && dateRange2_Empty)
+            bool sp_Empty1 = this.txtSPNoStart.Text.Empty(), sp_Empty2 = this.txtSPNoEnd.Text.Empty(), dateRange1_Empty = !this.dateEstBooking.HasValue, dateRange2_Empty = !this.dateEstArrived.HasValue;
+            if (sp_Empty1 || sp_Empty2 || dateRange1_Empty || dateRange2_Empty)
             {
                 MyUtility.Msg.ErrorBox("You must enter the SP No,Est.booking,Est.Arrived");
 
@@ -60,11 +60,18 @@ namespace Sci.Production.Thread
             string sqlWhere = ""; string order = "order by ThreadTypeID,td.ThreadColorID,t.StyleID,t.OrderID";
             List<string> sqlWheres = new List<string>();
             #region --組WHERE--
-            if (!this.txtSPNoStart.Text.Empty())
+            if (!MyUtility.Check.Empty(this.txtSPNoStart.Text.ToString()) || !MyUtility.Check.Empty(this.txtSPNoEnd.Text.ToString()))
             {
-                sqlWheres.Add("t.OrderID between @spNo1 and @spNo2");
-                lis.Add(new SqlParameter("@spNo1", sp1));
-                lis.Add(new SqlParameter("@spNo2", sp2));
+                if (!MyUtility.Check.Empty(this.txtSPNoStart.Text.ToString()))
+                {
+                    sqlWheres.Add("t.OrderID >= @spNo1 ");
+                    lis.Add(new SqlParameter("@spNo1", sp1));
+                }
+                if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text.ToString()))
+                {
+                    sqlWheres.Add("t.OrderID <= @spNo2 ");
+                    lis.Add(new SqlParameter("@spNo2", sp2));
+                }                         
             }
             if (!MyUtility.Check.Empty(EstBook1) || !MyUtility.Check.Empty(EstBook2))
             {
