@@ -227,6 +227,8 @@ namespace Sci.Production.Warehouse
             #endregion
 
             gridMaterialStatus.Columns[7].Frozen = true;  //Fabric Type
+            gridMaterialStatus.Columns[1].Width = 40;
+            gridMaterialStatus.Columns[2].Width = 40;
         }
 
         private void ChangeDetailColor()

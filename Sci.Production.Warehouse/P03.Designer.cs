@@ -61,10 +61,10 @@
             this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 2;
             // 
-            // button1
+            // btnNewSearch
             // 
             this.btnNewSearch.Location = new System.Drawing.Point(272, 8);
-            this.btnNewSearch.Name = "button1";
+            this.btnNewSearch.Name = "btnNewSearch";
             this.btnNewSearch.Size = new System.Drawing.Size(104, 30);
             this.btnNewSearch.TabIndex = 5;
             this.btnNewSearch.Text = "New Search";
