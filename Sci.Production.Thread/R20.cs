@@ -79,7 +79,7 @@ namespace Sci.Production.Thread
                     lis.Add(new SqlParameter("@EstBook2", EstBook2));
                 }
             } 
-            if (!MyUtility.Check.Empty(EstArr1) && !MyUtility.Check.Empty(EstArr2))
+            if (!MyUtility.Check.Empty(EstArr1) || !MyUtility.Check.Empty(EstArr2))
             {
                 if (!MyUtility.Check.Empty(EstArr1))
                 {
@@ -105,7 +105,7 @@ namespace Sci.Production.Thread
             }
 
             if(sqlWheres.Count > 0)
-                sqlWhere = " where " + sqlWheres.JoinToString(" and ");
+                sqlWhere = " where t.Status = 'Approved' and " + sqlWheres.JoinToString(" and ");
             #endregion
 
             cmd = string.Format(@"
@@ -158,18 +158,6 @@ namespace Sci.Production.Thread
 
             this.HideWaitMessage();
             return true;
-            //var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
-
-            //Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls("Thread_R20.xltx");
-            //xl.dicDatas.Add("##FAC", dt);
-            //xl.Save(outpath, false);
-            //return true;
         }
     }
     

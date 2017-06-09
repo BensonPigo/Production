@@ -126,7 +126,7 @@ namespace Sci.Production.Thread
             if (radioDetail.Checked == true)
             {
                 if (sqlWhere.Count > 0)
-                    sql += " where " + sqlWhere.JoinToString(" and ");
+                    sql += " where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
                 sql += " Order by ti.AddDate, ti.ID, tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description, tid.ThreadLocationid, ti.Remark";
             }
             else if (radioSummary.Checked == true)
@@ -144,7 +144,7 @@ namespace Sci.Production.Thread
                         inner join ThreadIssue_Detail tid WITH (NOLOCK) on ti.ID = tid.ID
                         left join LocalItem li WITH (NOLOCK) on tid.Refno = li.RefNo
                         left join ThreadColor tc WITH (NOLOCK) on tid.ThreadColorid = tc.id
-                        where " + sqlWhere.JoinToString(" and ");
+                        where ti.Status='Confirmed' and " + sqlWhere.JoinToString(" and ");
                 sql += @" Group by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description
                           order by tid.Refno, li.Description, li.Category, li.ThreadTypeID, tid.ThreadColorid, tc.Description";
             }        
