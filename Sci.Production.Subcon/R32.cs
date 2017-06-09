@@ -87,9 +87,9 @@ SELECT  O.FactoryID
 		, BD.SizeCode
 		, BD.BundleGroup
 		, BTD.BundleNo
-		, BodyCutNo = Concat(B.FabricPanelCode, '', B.Cutno)
+		, BodyCutNo = Concat(B.FabricPanelCode, ' ', B.Cutno)
 		, BD.Qty
-		, Color = Concat(B.Article, '', B.Colorid)
+		, Color = Concat(B.Article, ' ', B.Colorid)
 		, BT.IssueDate
 		, BTD_IN.ReceiveDate
 		, '' remark
