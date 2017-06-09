@@ -9,30 +9,51 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sci.Data;
 using Sci.Win.UI;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Class
 {
     public partial class txtfactory : Sci.Win.UI.TextBox
     {
-        public bool _IssupportJunk = false;
-
+        private bool _IssupportJunk = false;
         public bool IssupportJunk
         {
             get { return _IssupportJunk; }
-            set { _IssupportJunk = value;}
+            set { _IssupportJunk = value; }
         }
+
+        private bool _FilteMDivision = false;
+        public bool FilteMDivision
+        {
+            get { return _FilteMDivision; }
+            set { _FilteMDivision = value; }
+        }
+
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            string sqlcmd;
-            if (IssupportJunk)
+            #region SQL Parameter
+            List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            #endregion
+            #region SQL Filte
+            List<string> listFilte = new List<string>();
+            if (!IssupportJunk)
             {
-                sqlcmd = "Select DISTINCT FtyGroup as Factory from Factory WITH (NOLOCK) order by FtyGroup";
+                listFilte.Add("Junk = 0");
             }
-            else
+            if (FilteMDivision)
             {
-                sqlcmd = "Select DISTINCT FtyGroup as Factory from Factory WITH (NOLOCK) where Junk = 0 order by FtyGroup";
+                listFilte.Add("MDivisionID = @MDivision");
             }
+            #endregion
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT FtyGroup as Factory 
+from Factory WITH (NOLOCK) 
+{0}
+order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+            #endregion
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -43,20 +64,33 @@ namespace Sci.Production.Class
         protected override void OnValidating(CancelEventArgs e)
         {
             base.OnValidating(e);
-
             string str = this.Text;
-            string sqlcmd;
-            if (IssupportJunk)
+            #region SQL Parameter
+            List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
+            listSqlPar.Add(new SqlParameter("@str", this.Text));
+            #endregion
+            #region SQL Filte
+            List<string> listFilte = new List<string>();
+            listFilte.Add("FtyGroup = @str");
+            if (!IssupportJunk)
             {
-                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where FtyGroup='{0}'", str);
+                listFilte.Add("Junk = 0");
             }
-            else
+            if (FilteMDivision)
             {
-                sqlcmd = string.Format("Select DISTINCT FtyGroup from Factory WITH (NOLOCK) where FtyGroup='{0}' and Junk = 0", str);
+                listFilte.Add("MDivisionID = @MDivision");
             }
+            #endregion
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT FtyGroup
+from Factory WITH (NOLOCK) 
+{0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
+            #endregion
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(sqlcmd) == false)
+                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
                 {
                     this.Text = "";
                     e.Cancel = true;
@@ -72,3 +106,4 @@ namespace Sci.Production.Class
         }
     }
 }
+
