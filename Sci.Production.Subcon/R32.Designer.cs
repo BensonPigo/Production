@@ -39,15 +39,18 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(431, 12);
+            this.print.TabIndex = 3;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(431, 48);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(431, 84);
+            this.close.TabIndex = 5;
             // 
             // dateFarmOutDate
             // 
@@ -55,7 +58,7 @@
             this.dateFarmOutDate.Location = new System.Drawing.Point(119, 9);
             this.dateFarmOutDate.Name = "dateFarmOutDate";
             this.dateFarmOutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateFarmOutDate.TabIndex = 94;
+            this.dateFarmOutDate.TabIndex = 0;
             // 
             // labelFarmOutDate
             // 
@@ -74,7 +77,7 @@
             this.comboSubProcess.Location = new System.Drawing.Point(119, 38);
             this.comboSubProcess.Name = "comboSubProcess";
             this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubProcess.TabIndex = 96;
+            this.comboSubProcess.TabIndex = 1;
             // 
             // labelSubProcess
             // 
@@ -93,7 +96,7 @@
             this.comboFactory.Location = new System.Drawing.Point(119, 68);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
-            this.comboFactory.TabIndex = 98;
+            this.comboFactory.TabIndex = 2;
             // 
             // labelFactory
             // 
