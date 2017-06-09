@@ -17,6 +17,8 @@ namespace Sci.Production.Warehouse
     {
         DataRow dr_master;
         DataTable dt_detail;
+        int price1 = 0;
+        int price2=0;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
       //  bool flag;
@@ -36,6 +38,8 @@ namespace Sci.Production.Warehouse
             comboFabricType.SelectedIndex = 0;
             MyUtility.Tool.SetupCombox(comboSortby, 1, 1, "Material Type,SP#");
             comboSortby.SelectedIndex = 0;
+            this.numPrice1.Text = "";
+            this.numPrice2.Text = "";
         }
 
         //Find Now Button
@@ -51,8 +55,16 @@ namespace Sci.Production.Warehouse
 
             String location = this.txtLocation.Text;
             //format 千分位符號
-            int price1 = int.Parse(this.numPrice1.Text, NumberStyles.AllowThousands);
-            int price2 = int.Parse(this.numPrice2.Text, NumberStyles.AllowThousands);
+            if (!MyUtility.Check.Empty( this.numPrice1.Text))
+            {
+                 price1 = int.Parse(this.numPrice1.Text, NumberStyles.AllowThousands);    
+            }
+            if (!MyUtility.Check.Empty(this.numPrice2.Text))
+            {
+                 price2 = int.Parse(this.numPrice2.Text, NumberStyles.AllowThousands);    
+            }
+            
+            
 
             String randomCount = this.numRandom.Value.ToString();
 
@@ -112,12 +124,22 @@ and f.MDivisionID='{0}' ", Sci.Env.User.Keyword, dr_master["stocktype"])); //
             if (!MyUtility.Check.Empty(location))
             {
                 strSQLCmd.Append(string.Format(@" and d.mtllocationid = '{0}' ", location));
-            }
-            if (!MyUtility.Check.Empty(numPrice1.Value) || !MyUtility.Check.Empty(numPrice2.Value))
+            }            
+            if (!MyUtility.Check.Empty(numPrice1.Value) && !MyUtility.Check.Empty(numPrice2.Value))
             {
                 strSQLCmd.Append(string.Format(@" and usd_price between {0} and {1} ", price1, price2));
+            }      
+            else
+	        {
+                if (!MyUtility.Check.Empty(numPrice1.Value))
+                {
+                    strSQLCmd.Append(string.Format(@" and usd_price > {0}  ", price1));
+                }
+                if (!MyUtility.Check.Empty(numPrice2.Value))
+                {
+                    strSQLCmd.Append(string.Format(@" and usd_price < {0}  ", price2));
+                }
             }
-
             if (!MyUtility.Check.Empty(randomCount))
             {
                 strSQLCmd.Append(string.Format(@" order by newid()"));
