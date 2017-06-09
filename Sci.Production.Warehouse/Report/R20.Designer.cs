@@ -56,10 +56,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(407, 12);
+            this.toexcel.TabIndex = 10;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(407, 48);
+            this.close.TabIndex = 11;
             // 
             // labelDeadLine
             // 
@@ -77,7 +79,7 @@
             this.dateDeadLine.Location = new System.Drawing.Point(109, 9);
             this.dateDeadLine.Name = "dateDeadLine";
             this.dateDeadLine.Size = new System.Drawing.Size(280, 23);
-            this.dateDeadLine.TabIndex = 95;
+            this.dateDeadLine.TabIndex = 0;
             // 
             // labelBuyerDelivery
             // 
@@ -95,7 +97,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(109, 38);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 95;
+            this.dateBuyerDelivery.TabIndex = 1;
             // 
             // labelSPNo
             // 
@@ -150,7 +152,7 @@
             this.textStartSP.Location = new System.Drawing.Point(110, 67);
             this.textStartSP.Name = "textStartSP";
             this.textStartSP.Size = new System.Drawing.Size(121, 23);
-            this.textStartSP.TabIndex = 97;
+            this.textStartSP.TabIndex = 2;
             // 
             // textEndSP
             // 
@@ -159,14 +161,14 @@
             this.textEndSP.Location = new System.Drawing.Point(259, 67);
             this.textEndSP.Name = "textEndSP";
             this.textEndSP.Size = new System.Drawing.Size(121, 23);
-            this.textEndSP.TabIndex = 97;
+            this.textEndSP.TabIndex = 3;
             // 
             // dateInventoryETA
             // 
             this.dateInventoryETA.Location = new System.Drawing.Point(109, 95);
             this.dateInventoryETA.Name = "dateInventoryETA";
             this.dateInventoryETA.Size = new System.Drawing.Size(280, 23);
-            this.dateInventoryETA.TabIndex = 95;
+            this.dateInventoryETA.TabIndex = 4;
             // 
             // txtMdivision1
             // 
@@ -175,7 +177,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(110, 124);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 99;
+            this.txtMdivision1.TabIndex = 5;
             // 
             // label1
             // 
@@ -212,7 +214,7 @@
             this.textStartRefno.Location = new System.Drawing.Point(110, 180);
             this.textStartRefno.Name = "textStartRefno";
             this.textStartRefno.Size = new System.Drawing.Size(146, 23);
-            this.textStartRefno.TabIndex = 102;
+            this.textStartRefno.TabIndex = 7;
             // 
             // textEndRefno
             // 
@@ -221,16 +223,17 @@
             this.textEndRefno.Location = new System.Drawing.Point(284, 181);
             this.textEndRefno.Name = "textEndRefno";
             this.textEndRefno.Size = new System.Drawing.Size(146, 23);
-            this.textEndRefno.TabIndex = 102;
+            this.textEndRefno.TabIndex = 8;
             // 
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(110, 151);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 104;
+            this.txtfactory1.TabIndex = 6;
             // 
             // checkQty
             // 
@@ -239,7 +242,7 @@
             this.checkQty.Location = new System.Drawing.Point(9, 208);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
-            this.checkQty.TabIndex = 105;
+            this.checkQty.TabIndex = 9;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
             // 

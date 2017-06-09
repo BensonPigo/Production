@@ -63,16 +63,18 @@ namespace Sci.Production.Warehouse
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region SQl Parameters
+            #region SQl Parameters --- _ADD10 -> SPNo 補足 10 碼
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             listSqlPar.Add(new SqlParameter("@StartBuyerDelivery", StartBuyerDelivery));
             listSqlPar.Add(new SqlParameter("@EndBuyerDelivery", EndBuyerDelivery));
             listSqlPar.Add(new SqlParameter("@StartDeadLine", StartDeadLine));
             listSqlPar.Add(new SqlParameter("@EndDeadLine", EndDeadLine));
-            listSqlPar.Add(new SqlParameter("@StartETA", StartETA));
+            listSqlPar.Add(new SqlParameter("@StartETA", StartETA));            
             listSqlPar.Add(new SqlParameter("@EndETA", EndETA));
-            listSqlPar.Add(new SqlParameter("@StartSPNo", StartSPNo));
-            listSqlPar.Add(new SqlParameter("@EndSPNo", EndSPNo));
+            listSqlPar.Add(new SqlParameter("@StartSPNo", StartSPNo + "%"));
+            listSqlPar.Add(new SqlParameter("@StartSPNo_Add10", StartSPNo.PadRight(10, '0')));
+            listSqlPar.Add(new SqlParameter("@EndSPNo", EndSPNo + "%"));
+            listSqlPar.Add(new SqlParameter("@EndSPNo_Add10", EndSPNo.PadRight(10, 'Z')));
             listSqlPar.Add(new SqlParameter("@MDivision", MDivision));
             listSqlPar.Add(new SqlParameter("@Factory", Factory));
             listSqlPar.Add(new SqlParameter("@StartRefno", StartRefno));
@@ -94,7 +96,18 @@ namespace Sci.Production.Warehouse
             }
             if (!StartSPNo.Empty() && !EndSPNo.Empty())
             {
-                filte.Add("o.ID between @StartSPNo and @EndSPNo");
+                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
+                filte.Add("o.ID between @StartSPNo_Add10 and @EndSPNo_Add10");
+            }
+            else if (!StartSPNo.Empty())
+            {
+                //只有 sp1 輸入資料
+                filte.Add("o.ID like @StartSPNo");
+            }
+            else if (!EndSPNo.Empty())
+            {
+                //只有 sp2 輸入資料
+                filte.Add("o.ID like @EndSPNo");
             }
             if (!MDivision.Empty())
             {
