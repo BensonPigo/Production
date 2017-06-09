@@ -46,10 +46,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(422, 12);
+            this.toexcel.TabIndex = 4;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(422, 48);
+            this.close.TabIndex = 5;
             // 
             // labelDate
             // 
@@ -90,14 +92,14 @@
             this.textID.Location = new System.Drawing.Point(108, 41);
             this.textID.Name = "textID";
             this.textID.Size = new System.Drawing.Size(100, 23);
-            this.textID.TabIndex = 95;
+            this.textID.TabIndex = 1;
             // 
             // dateDate
             // 
             this.dateDate.Location = new System.Drawing.Point(108, 9);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(280, 23);
-            this.dateDate.TabIndex = 96;
+            this.dateDate.TabIndex = 0;
             // 
             // txtfactory1
             // 
@@ -107,7 +109,7 @@
             this.txtfactory1.Location = new System.Drawing.Point(109, 71);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 97;
+            this.txtfactory1.TabIndex = 2;
             // 
             // txtLocalSupp1
             // 
@@ -115,7 +117,7 @@
             this.txtLocalSupp1.Location = new System.Drawing.Point(108, 103);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
-            this.txtLocalSupp1.TabIndex = 98;
+            this.txtLocalSupp1.TabIndex = 3;
             this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // R51
