@@ -14,8 +14,13 @@ namespace Sci.Production.Class
 {
     public partial class txtfactory : Sci.Win.UI.TextBox
     {
-        public bool IssupportJunk = false;
+        public bool _IssupportJunk = false;
 
+        public bool IssupportJunk
+        {
+            get { return _IssupportJunk; }
+            set { _IssupportJunk = value;}
+        }
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
