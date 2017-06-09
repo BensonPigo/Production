@@ -3023,6 +3023,9 @@ Sci.Production.Subcon/R42.resx -text
 Sci.Production.Subcon/R43.Designer.cs -text
 Sci.Production.Subcon/R43.cs -text
 Sci.Production.Subcon/R43.resx -text
+Sci.Production.Subcon/R50.Designer.cs -text
+Sci.Production.Subcon/R50.cs -text
+Sci.Production.Subcon/R50.resx -text
 Sci.Production.Subcon/Sci.Production.Subcon.csproj -text
 Sci.Production.Thread/B01.Designer.cs -text
 Sci.Production.Thread/B01.cs -text
@@ -3846,6 +3849,7 @@ Sci.Production/XLT/Subcon_R37_List.xltx -text
 Sci.Production/XLT/Subcon_R41_Bundle[!!-~]tracking[!!-~]list[!!-~](RFID).xltx -text
 Sci.Production/XLT/Subcon_R42_Bundle[!!-~]Transaction[!!-~]detail[!!-~](RFID).xltx -text
 Sci.Production/XLT/Subcon_R43_Sub-process[!!-~]BCS[!!-~]report[!!-~](RFID).xltx -text
+Sci.Production/XLT/Subcon_R50_ProductionBundleTransfer.xltx -text
 Sci.Production/XLT/Thread_P02.xltx -text
 Sci.Production/XLT/Thread_R07.xltx -text
 Sci.Production/XLT/Thread_R07_Summary.xltx -text

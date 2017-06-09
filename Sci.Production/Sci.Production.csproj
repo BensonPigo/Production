@@ -929,6 +929,9 @@
     <None Include="XLT\Subcon_R43_Sub-process BCS report %28RFID%29.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Subcon_R50_ProductionBundleTransfer.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Thread_P02.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
