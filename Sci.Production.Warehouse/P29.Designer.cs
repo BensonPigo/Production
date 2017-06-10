@@ -32,7 +32,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.comboFabricType = new Sci.Win.UI.ComboBox();
@@ -101,6 +101,7 @@
             this.txtmfactory.Size = new System.Drawing.Size(117, 23);
             this.txtmfactory.TabIndex = 2;
             this.txtmfactory.Visible = false;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // comboCategory
             // 
@@ -414,7 +415,7 @@
         private Win.UI.DateRange dateCuttingInline;
         private Win.UI.TextBox txtProjectID;
         private Win.UI.TextBox txtIssueSP;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFabricType;
