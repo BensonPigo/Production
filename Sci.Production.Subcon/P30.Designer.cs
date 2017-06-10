@@ -54,7 +54,7 @@
             this.numVat = new Sci.Win.UI.NumericBox();
             this.numAmount = new Sci.Win.UI.NumericBox();
             this.numTotal = new Sci.Win.UI.NumericBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserApprove = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyCategory = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
@@ -516,6 +516,7 @@
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
             this.txtmfactory.TabStop = false;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserApprove
             // 
@@ -662,7 +663,7 @@
         private Win.UI.NumericBox numTotal;
         private Win.UI.NumericBox numAmount;
         private Win.UI.NumericBox numVat;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.Button btnBatchUpdateDellivery;
         private Win.UI.Label label1;
         private Win.UI.DateBox dateDeliveryDate;
