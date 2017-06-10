@@ -268,7 +268,7 @@
             this.btnCuttingCombo = new Sci.Win.UI.Button();
             this.checkIsMixMarker = new Sci.Win.UI.CheckBox();
             this.displayBuyMonth = new Sci.Win.UI.DisplayBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.txtpaytermar1 = new Sci.Production.Class.txtpaytermar();
             this.txtcurrency1 = new Sci.Production.Class.txtcurrency();
@@ -3103,6 +3103,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.Validated += new System.EventHandler(this.txtmfactory_Validated);
             // 
             // txtdropdownlistCategory
@@ -3469,7 +3470,7 @@
         private Win.UI.Button btnVASSHASInstruction;
         private Win.UI.DisplayBox displayBuyMonth;
         private Win.UI.Button btnBacktoPPICMasterList;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.Button btnEachCons;
     }
 }
