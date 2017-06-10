@@ -32,7 +32,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.dateBox1 = new Sci.Win.UI.DateBox();
             this.txtCell = new Sci.Win.UI.TextBox();
             this.txtSize = new Sci.Win.UI.TextBox();
@@ -117,7 +117,7 @@
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.Location = new System.Drawing.Point(642, 49);
-            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 98;
@@ -477,6 +477,6 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid grid1;
         private Win.UI.Label label1;
-        private Class.txtfactoryByM txtfactoryByM;
+        private Class.txtfactory txtfactoryByM;
     }
 }

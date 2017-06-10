@@ -25,7 +25,6 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             GridSetup();
             this.EditMode = true;
             this.comboSortBy.SelectedIndex = 0;
