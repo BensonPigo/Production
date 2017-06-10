@@ -296,12 +296,6 @@
     <Compile Include="txtmachinetype.designer.cs">
       <DependentUpon>txtmachinetype.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtmfactory.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="txtmfactory.Designer.cs">
-      <DependentUpon>txtmfactory.cs</DependentUpon>
-    </Compile>
     <Compile Include="txtToMdivision.cs">
       <SubType>Component</SubType>
     </Compile>
