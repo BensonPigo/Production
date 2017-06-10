@@ -233,7 +233,16 @@ namespace Sci.Production.Win
                 {
                     try
                     {
-                        DBProxy.Current.Execute("", script);
+                        SqlConnection connection;
+                        DBProxy.Current.OpenConnection("Production", out connection);
+                        strConnection = connection.ConnectionString.ToString();
+                        using (connection)
+                        {
+                            Server db = new Server(new ServerConnection(connection));
+                            strServer = db.Urn.ToString();
+                            db.ConnectionContext.ExecuteNonQuery(script);
+                        }
+
                         _transactionscope.Complete();
                         _transactionscope.Dispose();
                     }
