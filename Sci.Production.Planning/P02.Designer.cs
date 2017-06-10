@@ -58,7 +58,7 @@
             this.checkInLine = new Sci.Win.UI.CheckBox();
             this.gridSupplier = new Sci.Win.UI.Grid();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.labelOSPInHouse = new Sci.Win.UI.Label();
@@ -429,6 +429,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 7;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // labelFactory
             // 
@@ -603,6 +604,6 @@
         private Win.UI.ComboBox comboinhouseOsp2;
         private Class.txtsubcon txtsubconLocalSuppid;
         private Win.UI.Button btnCheckData;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
     }
 }
