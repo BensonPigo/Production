@@ -50,7 +50,7 @@
             this.dateDeliveryDate = new Sci.Win.UI.DateBox();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.dateApproveDate = new Sci.Win.UI.DateBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserApproveName = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
@@ -404,6 +404,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 4;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserApproveName
             // 
@@ -522,7 +523,7 @@
         private Win.UI.Label labelDeliveryDate;
         private Win.UI.DateBox dateDeliveryDate;
         private Win.UI.Button btnBatchCreate;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.DateBox dateApproveDate;
     }
 }
