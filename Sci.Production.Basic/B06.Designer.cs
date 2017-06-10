@@ -61,7 +61,7 @@
             this.numericBox13 = new Sci.Win.UI.NumericBox();
             this.numericBox14 = new Sci.Win.UI.NumericBox();
             this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -670,7 +670,7 @@
             this.txtfactoryByM.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.Location = new System.Drawing.Point(342, 25);
-            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 48;
@@ -733,6 +733,6 @@
         private Win.UI.NumericBox numericBox9;
         private Win.UI.NumericBox numericBox8;
         private Win.UI.Label lbFactory;
-        private Class.txtfactoryByM txtfactoryByM;
+        private Class.txtfactory txtfactoryByM;
     }
 }

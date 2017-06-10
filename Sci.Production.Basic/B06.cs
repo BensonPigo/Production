@@ -17,7 +17,6 @@ namespace Sci.Production.Basic
         {
             InitializeComponent();
             this.DefaultFilter = "MdivisionID = '" + Sci.Env.User.Keyword + "'";
-            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
