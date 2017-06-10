@@ -122,7 +122,10 @@ Where 1=1
                     }
                 }
             }
-            objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬
+            if (Cpage > 0)
+            {
+                objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
+            }
             objApp.Visible = true;
             if (objApp != null) Marshal.FinalReleaseComObject(objApp);          //釋放objApp 
 
