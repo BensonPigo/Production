@@ -124,7 +124,7 @@
             this.txtuserLocalMR = new Sci.Production.Class.txtuser();
             this.txttpeuserSMR = new Sci.Production.Class.txttpeuser();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.btnMaterialImport = new Sci.Win.UI.Button();
             this.btnProductionKits = new Sci.Win.UI.Button();
             this.btnPackingMethod = new Sci.Win.UI.Button();
@@ -1372,6 +1372,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 133;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // btnMaterialImport
             // 
@@ -1970,7 +1971,7 @@
         private Win.UI.EditBox editCuttingCombo;
         private Win.UI.Label labelCuttingCombo;
         private Win.UI.DisplayBox displayBuyMonth;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.DisplayBox displayRMTLETAMasterSP;
         private Win.UI.DateBox dateRMTLETAMasterSP;
         private Win.UI.Label labelRMTLETAMasterSP;
