@@ -121,7 +121,8 @@ from    orders aaa WITH (NOLOCK)
                     , c.id as  patterncode 
            from orders a WITH (NOLOCK) 
                 , artworktype  c WITH (NOLOCK) 
-           where c.id = '{0}'", dr["artworktypeid"]);
+           where c.id = '{0}'
+		   and a.Category !='M'", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
                 strSQLCmd +=" EXCEPT"+

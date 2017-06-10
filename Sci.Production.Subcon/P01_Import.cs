@@ -104,7 +104,9 @@ inner join order_qty q WITH (NOLOCK) on q.id = o.ID
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article=Q.Article AND OA.SizeCode=Q.SizeCode
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 outer apply ( select ISNULL(sum(PoQty),0) IssueQty from ArtworkPO_Detail AD, ArtworkPO A where AD.ID=A.ID and A.Status='Approved' and OrderID=o.ID and ad.PatternCode= oa.PatternCode) IssueQty
-where 1=1 ");
+where 1=1 
+and o.category != 'M'
+");
 
                 strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
                 if (poType == "O") { strSQLCmd += "     and ((o.Category = 'B' and ot.InhouseOSP='O' and ot.price > 0) or (o.category !='B'))"; }
