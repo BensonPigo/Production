@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateEstArrived = new Sci.Win.UI.DateRange();
@@ -41,12 +42,12 @@
             this.labelEstArrived = new Sci.Win.UI.Label();
             this.labelEstBooking = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
+            this.print.Enabled = false;
             this.print.TabIndex = 1;
             // 
             // toexcel
@@ -75,6 +76,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(497, 233);
             this.panel1.TabIndex = 0;
+            // 
+            // txtSPNoStart
+            // 
+            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
+            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNoStart.Location = new System.Drawing.Point(100, 23);
+            this.txtSPNoStart.Name = "txtSPNoStart";
+            this.txtSPNoStart.Size = new System.Drawing.Size(149, 23);
+            this.txtSPNoStart.TabIndex = 8;
             // 
             // comboMDivision
             // 
@@ -172,15 +182,6 @@
             this.labelSPNo.Size = new System.Drawing.Size(86, 23);
             this.labelSPNo.TabIndex = 0;
             this.labelSPNo.Text = "SP No";
-            // 
-            // txtSPNoStart
-            // 
-            this.txtSPNoStart.BackColor = System.Drawing.Color.White;
-            this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(100, 23);
-            this.txtSPNoStart.Name = "txtSPNoStart";
-            this.txtSPNoStart.Size = new System.Drawing.Size(149, 23);
-            this.txtSPNoStart.TabIndex = 8;
             // 
             // R20
             // 

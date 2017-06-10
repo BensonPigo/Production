@@ -65,7 +65,7 @@ namespace Sci.Production.Thread
             }
             if (!this.txtThreadItem.Text.Empty())
             {
-                sqlWheres.Add("ThreadStock.refno = @Thread");
+                sqlWheres.Add("(select LocalItem.ThreadTypeID from dbo.LocalItem WITH (NOLOCK) where refno= ThreadStock.Refno) = @Thread");
                 lis.Add(new SqlParameter("@Thread", Thread));
             }
             if (!this.txtLocationStart.Text.Empty() || !this.txtLocationEnd.Text.Empty())
@@ -270,10 +270,10 @@ namespace Sci.Production.Thread
         private void txtThreadItem_Validating(object sender, CancelEventArgs e)
         {
             if (txtThreadItem.Text.ToString() == "") return;
-            if (!MyUtility.Check.Seek(string.Format(@"select distinct l.Category 
+            if (!MyUtility.Check.Seek(string.Format(@"select distinct l.ThreadTypeID 
                                from dbo.ThreadStock ts WITH (NOLOCK) 
                                inner join dbo.LocalItem l WITH (NOLOCK) on l.refno = ts.Refno
-                               where l.category='{0}'", txtThreadItem.Text), null))
+                               where l.ThreadTypeID='{0}'", txtThreadItem.Text), null))
             {
                
                 e.Cancel = true;

@@ -51,9 +51,9 @@
             // 
             // print
             // 
+            this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(463, 12);
             this.print.TabIndex = 1;
-            this.print.Visible = false;
             // 
             // toexcel
             // 

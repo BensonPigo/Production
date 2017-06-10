@@ -40,7 +40,7 @@ namespace Sci.Production.Thread
         protected override bool ValidateInput()
         {
             bool sp_Empty1 = this.txtSPNoStart.Text.Empty(), sp_Empty2 = this.txtSPNoEnd.Text.Empty(), dateRange1_Empty = !this.dateEstBooking.HasValue, dateRange2_Empty = !this.dateEstArrived.HasValue;
-            if (sp_Empty1 || sp_Empty2 || dateRange1_Empty || dateRange2_Empty)
+            if (sp_Empty1 && sp_Empty2 && dateRange1_Empty && dateRange2_Empty)
             {
                 MyUtility.Msg.ErrorBox("You must enter the SP No,Est.booking,Est.Arrived");
 
