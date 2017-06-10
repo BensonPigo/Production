@@ -79,6 +79,7 @@ declare @FactoryID char(10) = @Factory;
 ----日期條件 (1. InLine & OffLine 都在區間內 2. InLine 在區間內 OffLine 在 End 後 3. InLine 在 Start 前 & OffLine 在 End 後)
 select	masterID = o.POID
 		, orderID = o.ID
+		, StyleID
 		, o.Finished
 		, o.FactoryID
 		, o.SewLine
@@ -86,11 +87,11 @@ into #tsp
 from orders o
 inner join Factory f on o.FactoryID = f.ID
 where	o.Junk != 1
-		{0}
+		
 		and not ((o.SewOffLine < @StartDate and o.SewInLine < @EndDate) or (o.SewInLine > @StartDate and o.SewInLine > @EndDate))
 		and (o.SewInLine is not null or o.SewInLine != '')
 		and (o.SewOffLine is not null or o.SewOffLine != '')		
-        {1}
+        and f.ID = @FactoryID
 --order by o.POID, o.ID, o.SewLine
 
 --取出的訂單，執行以下判斷流程 (#CutComb 儲存 整件衣服 應該裁剪的部位)
@@ -100,6 +101,7 @@ where	o.Junk != 1
 ----------須排除外裁項 (Order_EachCons.CuttingPiece == 0) 【0 代表非外裁項】
 select	#tsp.masterID
 		, #tsp.orderID
+		, #tsp.StyleID
 		, #cur_artwork.FabricCombo
 		, #cur_artwork.Article
 		, #cur_artwork.artwork 
@@ -175,7 +177,7 @@ outer apply(
 where	bio.SubProcessId = 'loading'
 		and ob.Kind not in ('0','3')
 	    and oec.CuttingPiece = 0	
-		{2}
+		
 group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricCombo, ArtWork.value
 
 ----Step4 已收的bundle資料中找出各article/size/部位/artwork/加總數量
@@ -183,6 +185,7 @@ group by b.orderid, bd.SizeCode, cDate.value, b.Article, wo.FabricCombo, ArtWork
 --------Step6 依條件日期區間，繞sewing 取得stdqty加總以及抓取備妥的成衣件數
 select	#cutcomb.FactoryID
 		, #cutcomb.orderid
+		, #cutcomb.StyleID
 		, #cur_bdltrack2.cdate2
 		, #cutcomb.SewLine
 		, #cutcomb.Article
@@ -204,6 +207,7 @@ where	#cur_bdltrack2.cdate2 between @StartDate and @EndDate
 ----準備好要印的資料
 select	FactoryID
 		, SP
+		, StyleID
 		, SewingDate
 		, Line
 		, AccuStd
@@ -213,6 +217,7 @@ into #print
 from (
 	select	FactoryID
 			, SP = orderID
+			, StyleID
 			, SewingDate = cdate2
 			, Line = SewLine
 			, AccuStd = isnull(std.value, 0)
@@ -221,12 +226,13 @@ from (
 	----依照【日期, SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
 		select	FactoryID
 				, orderID
+				, StyleID
 				, cdate2
 				, SewLine
 				, Article, SizeCode
 				, MinLoadingQty = min(AccuLoadingQty)
 		from #Min_cut 
-		group by FactoryID, orderID, cdate2, SewLine, Article, SizeCode		
+		group by FactoryID, orderID	,StyleID, cdate2, SewLine, Article, SizeCode
 	)x
 	outer apply(
 		select	value = isnull(( select sum(s.StdQ)
@@ -234,7 +240,7 @@ from (
 									where s.Date between @StartDate and @EndDate)
 								, 0)
 	) std
-	group by FactoryID, orderID, cdate2, SewLine, std.value
+	group by FactoryID, orderID, StyleID, cdate2, SewLine, std.value
 ) a
 
 
