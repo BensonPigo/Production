@@ -44,6 +44,8 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -60,7 +62,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(13, 12);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(75, 23);
@@ -69,8 +70,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(13, 48);
+            this.labelSPNo.Location = new System.Drawing.Point(13, 47);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
             this.labelSPNo.TabIndex = 95;
@@ -78,8 +78,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(13, 84);
+            this.labelBrand.Location = new System.Drawing.Point(13, 117);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(75, 23);
             this.labelBrand.TabIndex = 96;
@@ -87,8 +86,7 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
-            this.labelM.Location = new System.Drawing.Point(13, 120);
+            this.labelM.Location = new System.Drawing.Point(13, 152);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(75, 23);
             this.labelM.TabIndex = 97;
@@ -96,8 +94,7 @@
             // 
             // labelLocation
             // 
-            this.labelLocation.Lines = 0;
-            this.labelLocation.Location = new System.Drawing.Point(13, 156);
+            this.labelLocation.Location = new System.Drawing.Point(13, 187);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(75, 23);
             this.labelLocation.TabIndex = 98;
@@ -125,7 +122,7 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(92, 48);
+            this.txtSPNoStart.Location = new System.Drawing.Point(92, 47);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoStart.TabIndex = 101;
@@ -134,7 +131,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(250, 48);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(250, 47);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoEnd.TabIndex = 102;
@@ -143,7 +140,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(92, 84);
+            this.txtbrand.Location = new System.Drawing.Point(92, 117);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
             this.txtbrand.TabIndex = 103;
@@ -154,7 +151,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(92, 120);
+            this.comboM.Location = new System.Drawing.Point(92, 152);
             this.comboM.Name = "comboM";
             this.comboM.Size = new System.Drawing.Size(80, 24);
             this.comboM.TabIndex = 104;
@@ -164,7 +161,7 @@
             this.txtcloglocationLocationStart.BackColor = System.Drawing.Color.White;
             this.txtcloglocationLocationStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcloglocationLocationStart.IsSupportSytsemContextMenu = false;
-            this.txtcloglocationLocationStart.Location = new System.Drawing.Point(92, 156);
+            this.txtcloglocationLocationStart.Location = new System.Drawing.Point(92, 187);
             this.txtcloglocationLocationStart.MDivisionObjectName = this.comboM;
             this.txtcloglocationLocationStart.Name = "txtcloglocationLocationStart";
             this.txtcloglocationLocationStart.Size = new System.Drawing.Size(80, 23);
@@ -175,7 +172,7 @@
             this.txtcloglocationLocationEnd.BackColor = System.Drawing.Color.White;
             this.txtcloglocationLocationEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcloglocationLocationEnd.IsSupportSytsemContextMenu = false;
-            this.txtcloglocationLocationEnd.Location = new System.Drawing.Point(196, 156);
+            this.txtcloglocationLocationEnd.Location = new System.Drawing.Point(196, 187);
             this.txtcloglocationLocationEnd.MDivisionObjectName = this.comboM;
             this.txtcloglocationLocationEnd.Name = "txtcloglocationLocationEnd";
             this.txtcloglocationLocationEnd.Size = new System.Drawing.Size(80, 23);
@@ -184,7 +181,6 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Lines = 0;
             this.label6.Location = new System.Drawing.Point(226, 12);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(19, 23);
@@ -198,8 +194,7 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Lines = 0;
-            this.label7.Location = new System.Drawing.Point(226, 48);
+            this.label7.Location = new System.Drawing.Point(226, 47);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(19, 23);
             this.label7.TabIndex = 108;
@@ -212,8 +207,7 @@
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
-            this.label8.Lines = 0;
-            this.label8.Location = new System.Drawing.Point(173, 156);
+            this.label8.Location = new System.Drawing.Point(173, 187);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(19, 23);
             this.label8.TabIndex = 109;
@@ -223,9 +217,26 @@
             this.label8.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label8.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
+            // dateBuyerDelivery
+            // 
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(111, 82);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 111;
+            // 
+            // labelBuyerDelivery
+            // 
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(11, 82);
+            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(97, 23);
+            this.labelBuyerDelivery.TabIndex = 110;
+            this.labelBuyerDelivery.Text = "Buyer Delivery";
+            // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(516, 218);
+            this.ClientSize = new System.Drawing.Size(516, 250);
+            this.Controls.Add(this.dateBuyerDelivery);
+            this.Controls.Add(this.labelBuyerDelivery);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -264,6 +275,8 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,5 +300,7 @@
         private Win.UI.Label label6;
         private Win.UI.Label label7;
         private Win.UI.Label label8;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Win.UI.Label labelBuyerDelivery;
     }
 }

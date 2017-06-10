@@ -14,6 +14,7 @@ namespace Sci.Production.Logistic
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         string po1, po2, sp1, sp2, brand, mDivision, location1, location2;
+        DateTime bdate1, bdate2;
         DataTable printData;
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -36,6 +37,8 @@ namespace Sci.Production.Logistic
             mDivision = comboM.Text;
             location1 = txtcloglocationLocationStart.Text;
             location2 = txtcloglocationLocationEnd.Text;
+            bdate1 = Convert.ToDateTime(dateBuyerDelivery.Value1);
+            bdate2 = Convert.ToDateTime(dateBuyerDelivery.Value2);
 
             return base.ValidateInput();
         }
@@ -66,6 +69,11 @@ and (p.PulloutID = '' or po.Status = 'New')");
             if (!MyUtility.Check.Empty(sp1))
             {
                 sqlCmd.Append(string.Format(" and pd.OrderID >= '{0}'", sp1));
+            }
+
+            if (!MyUtility.Check.Empty(bdate1))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery between '{0}' and '{1}'", bdate1.ToString("d"), bdate2.ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(sp2))
