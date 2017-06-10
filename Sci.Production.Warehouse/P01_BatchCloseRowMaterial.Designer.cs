@@ -37,7 +37,7 @@
             this.btnToEexcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
@@ -170,6 +170,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 7;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // labelFactory
             // 
@@ -356,7 +357,7 @@
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSPNo;
         private Class.txtstyle txtstyle;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.Label labelFactory;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelBrand;
