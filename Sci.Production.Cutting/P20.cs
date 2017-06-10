@@ -27,7 +27,6 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", keyWord);
             DoSubForm = new P20_Detail();
-            txtfactoryByM1.mDivisionID = Sci.Env.User.Keyword;
             DataTable queryDT;
             string querySql = string.Format(@"
 select '' FTYGroup

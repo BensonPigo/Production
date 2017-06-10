@@ -47,7 +47,7 @@
             this.btnImportfromWorkOrder = new Sci.Win.UI.Button();
             this.btnImportfromRealtimeBundleTracking = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtfactoryByM1 = new Sci.Production.Class.txtfactoryByM();
+            this.txtfactoryByM1 = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -379,7 +379,7 @@
             this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
-            this.txtfactoryByM1.mDivisionID = null;
+            this.txtfactoryByM1.FilteMDivision = true;
             this.txtfactoryByM1.Name = "txtfactoryByM1";
             this.txtfactoryByM1.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM1.TabIndex = 43;
@@ -450,7 +450,7 @@
         private Win.UI.Label label9;
         private Win.UI.Button btnImportfromRealtimeBundleTracking;
         private Win.UI.Button btnImportfromWorkOrder;
-        private Class.txtfactoryByM txtfactoryByM1;
+        private Class.txtfactory txtfactoryByM1;
         private Win.UI.Label label1;
     }
 }
