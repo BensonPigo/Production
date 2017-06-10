@@ -344,12 +344,6 @@
     <Compile Include="txtAccountNo.Designer.cs">
       <DependentUpon>txtAccountNo.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtfactoryByM.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="txtfactoryByM.Designer.cs">
-      <DependentUpon>txtfactoryByM.cs</DependentUpon>
-    </Compile>
     <Compile Include="userData.cs">
       <SubType>Form</SubType>
     </Compile>
