@@ -55,7 +55,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.label16 = new Sci.Win.UI.Label();
             this.numWorkHours = new Sci.Win.UI.NumericBox();
             this.numEfficiency = new Sci.Win.UI.NumericBox();
@@ -397,6 +397,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 1;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // label16
             // 
@@ -823,6 +824,6 @@
         private Win.UI.PictureBox pictureBox4;
         private Win.UI.Label label16;
         private Win.UI.NumericBox numCheckedQty;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
     }
 }
