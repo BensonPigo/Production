@@ -42,7 +42,7 @@
             this.dateResigned = new Sci.Win.UI.DateBox();
             this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtsewingline = new Sci.Production.Class.txtsewingline();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -244,6 +244,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 16;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // txtsewingline
             // 
@@ -297,6 +298,6 @@
         private Class.txtsewingline txtsewingline;
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
     }
 }
