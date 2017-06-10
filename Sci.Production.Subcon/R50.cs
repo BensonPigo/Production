@@ -87,6 +87,11 @@ Where 1=1
             DataRow dr;
             MyUtility.Check.Seek(sql2.ToString(), out dr, null);
             int ct = MyUtility.Convert.GetInt(dr[0]);
+            if (ct == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found.");
+                return false;
+            }
             int num = 200000;
             int Cpage = ct / num ;
             for (int i = 0; i < Cpage; i++)
