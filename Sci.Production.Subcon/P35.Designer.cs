@@ -58,7 +58,7 @@
             this.displayVoucher = new Sci.Win.UI.DisplayBox();
             this.labelVoucher = new Sci.Win.UI.Label();
             this.dateApvDate = new Sci.Win.UI.DateBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
             this.txtuserAccountant = new Sci.Production.Class.txtuser();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
@@ -561,6 +561,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 6;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // txtpayterm_ftyTerms
             // 
@@ -693,7 +694,7 @@
         private Win.UI.Label labelInvoice;
         private Class.txtpayterm_fty txtpayterm_ftyTerms;
         private Win.UI.Label labelTerms;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
         private Win.UI.DateBox dateApvDate;
     }
 }
