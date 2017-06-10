@@ -27,7 +27,6 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
-            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
             setDetailGrid();
