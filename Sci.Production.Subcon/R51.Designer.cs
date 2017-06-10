@@ -89,13 +89,14 @@
             // 
             this.textID.BackColor = System.Drawing.Color.White;
             this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textID.Location = new System.Drawing.Point(108, 41);
+            this.textID.Location = new System.Drawing.Point(109, 41);
             this.textID.Name = "textID";
-            this.textID.Size = new System.Drawing.Size(100, 23);
+            this.textID.Size = new System.Drawing.Size(129, 23);
             this.textID.TabIndex = 1;
             // 
             // dateDate
             // 
+            this.dateDate.IsRequired = false;
             this.dateDate.Location = new System.Drawing.Point(108, 9);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(280, 23);
@@ -104,6 +105,7 @@
             // txtfactory1
             // 
             this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(109, 71);
@@ -134,7 +136,7 @@
             this.Controls.Add(this.labelID);
             this.Controls.Add(this.labelDate);
             this.Name = "R51";
-            this.Text = "R51 PrintingPOTransfer";
+            this.Text = "R51. PrintingPO Transfer";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
