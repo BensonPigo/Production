@@ -72,7 +72,7 @@
             this.gridCutRef = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelGroup = new Sci.Win.UI.Label();
-            this.txtfactoryByM = new Sci.Production.Class.txtfactoryByM();
+            this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
@@ -610,7 +610,7 @@
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactoryByM.Location = new System.Drawing.Point(430, 8);
-            this.txtfactoryByM.mDivisionID = null;
+            this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.Name = "txtfactoryByM";
             this.txtfactoryByM.Size = new System.Drawing.Size(66, 23);
             this.txtfactoryByM.TabIndex = 96;
@@ -753,7 +753,7 @@
         private System.Windows.Forms.ToolStripMenuItem insertIntoRecordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteRecordToolStripMenuItem;
         private Win.UI.Label labelGroup;
-        private Class.txtfactoryByM txtfactoryByM;
+        private Class.txtfactory txtfactoryByM;
         private Win.UI.Label label1;
     }
 }

@@ -39,7 +39,6 @@ namespace Sci.Production.Cutting
             string cmd_qty = "Select 0 as No,qty,'' as orderid,'' as cutref,'' as article, SizeCode, 0 as iden from Bundle_Detail_Qty WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_qty, out qtyTb);
             InitializeComponent();
-            txtfactoryByM.mDivisionID = Sci.Env.User.Keyword;
             gridSetup();
         }
         public void gridSetup()
