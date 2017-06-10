@@ -55,7 +55,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.labelArtworkType = new Sci.Win.UI.Label();
             this.comboArtworkType = new Sci.Win.UI.ComboBox();
             this.label16 = new Sci.Win.UI.Label();
@@ -397,6 +397,7 @@
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 1;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // labelArtworkType
             // 
@@ -824,6 +825,6 @@
         private Win.UI.NumericBox numCheckedQty;
         private Win.UI.Label labelArtworkType;
         private Win.UI.ComboBox comboArtworkType;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
     }
 }
