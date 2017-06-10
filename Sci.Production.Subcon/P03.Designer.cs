@@ -41,7 +41,7 @@
             this.dateDate = new Sci.Win.UI.DateBox();
             this.numTotalQty = new Sci.Win.UI.NumericBox();
             this.labelConfirmed = new Sci.Win.UI.Label();
-            this.txtmfactory = new Sci.Production.Class.txtmfactory();
+            this.txtmfactory = new Sci.Production.Class.txtfactory();
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -311,6 +311,7 @@
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 2;
             this.txtmfactory.TabStop = false;
+            this.txtmfactory.FilteMDivision = true;
             // 
             // txtuserHandle
             // 
@@ -388,6 +389,6 @@
         private Win.UI.DateBox dateDate;
         private Win.UI.NumericBox numTotalQty;
         private Win.UI.Label labelConfirmed;
-        private Class.txtmfactory txtmfactory;
+        private Class.txtfactory txtmfactory;
     }
 }
