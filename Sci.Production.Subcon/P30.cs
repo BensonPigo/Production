@@ -282,6 +282,15 @@ namespace Sci.Production.Subcon
             DataRow dr;
             ts4.CellValidating += (s, e) =>
             {
+                if (!this.EditMode) return;
+                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    CurrentDetailData["orderid"] = drr["orderid"].ToString();
+                    return; 
+                }
+                if (e.FormattedValue.ToString() == drr["orderid"].ToString()) return;
+
                 if (!this.EditMode && (CurrentMaintain["status"].ToString().ToUpper() == "Approved"))
                 {
                     if (MyUtility.Check.Seek(string.Format(@"
