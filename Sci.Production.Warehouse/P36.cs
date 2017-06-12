@@ -811,15 +811,10 @@ Where a.id = '{0}'", masterID);
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
+            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             DataTable dt;
             DualResult result = DBProxy.Current.Select("",
-            @"select b.name 
-            from dbo.Subtransfer a WITH (NOLOCK) 
-            inner join dbo.mdivision  b WITH (NOLOCK) 
-            on b.id = a.mdivisionid
-            where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt);
+            @"Select NameEN from Factory where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
 
             if (dt == null || dt.Rows.Count == 0)
@@ -828,15 +823,13 @@ Where a.id = '{0}'", masterID);
                 return false;
             }
 
-            string RptTitle = dt.Rows[0]["name"].ToString();
+            string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             #endregion
-
-
             #region  抓表身資料
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
