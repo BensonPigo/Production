@@ -75,10 +75,12 @@ WHERE 1= 1  ");
                 else  //factory有值
                     sqlcmd.Append(string.Format(" AND A1.FACTORYID IN (select ID from Factory where KPICode='{0}')", txtFactory.Text));
                 sqlcmd.Append(@" 
+
 SELECT a, 
        b, 
        c, 
-       IIf(c - d - e <> 0, d + ( c - d - e ), d) AS d, --if Order_Qty <> (Ontime_Qty+Delay_qty), 就將差額加回去去OntimeQty
+       Iif(c - d - e <> 0, d + ( c - d - e ), d) AS d, 
+       --註解: if Order_Qty <> (Ontime_Qty+Delay_qty), 就將差額加回去去OntimeQty 
        e, 
        f 
 FROM   (SELECT a, 
@@ -86,10 +88,16 @@ FROM   (SELECT a,
                c, 
                Sum(d + variance)d, 
                Sum(e)           e, 
-               F=Concat(Round(CONVERT(FLOAT, Sum(d + variance)) / 
-                              CONVERT(FLOAT, c) * 
-                              100, 2), 
-                   '%') 
+               F=Concat(Iif(c - Sum(d + variance) - Sum(e) <> 0, 
+                                 Round(CONVERT(FLOAT, Sum(d + variance) + ( 
+                                                      c - Sum(d + variance) 
+                                                      - Sum( 
+                                                      e) )) / 
+                                       CONVERT 
+                                             (FLOAT, c) * 100, 2), Round( 
+                                 CONVERT(FLOAT, Sum(d + variance 
+                                                )) / CONVERT(FLOAT, c) * 100, 2) 
+                        ), '%') 
         FROM   (SELECT DISTINCT a, 
                                 b, 
                                 c, 
@@ -203,7 +211,9 @@ SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.
         , Convert(varchar,cast( A1.FtyKPI as date))  AS G 
         ,(SELECT strData+',' FROM (SELECT Convert(varchar, Order_QtyShip.ShipmodeID) + '-' + Convert(varchar, Order_QtyShip.Qty) + '(' +  REPLACE(Convert(varchar, Order_QtyShip.BuyerDelivery),'-','/') + ')' as strData FROM Order_QtyShip WITH (NOLOCK) where id = A1.ID) t for xml path('')) AS H 
         , A1.QTY AS I 
-        , Sum(A4.ShipQty) AS J
+        , iif(a1.qty- isnull(Sum(A4.ShipQty),0)-ISNULL(Sum(A5.ShipQty),0)<>0,
+		isnull(Sum(A4.ShipQty),0)+(a1.qty-isnull(Sum(A4.ShipQty),0)-ISNULL(Sum(A5.ShipQty),0)),
+			isnull(Sum(A4.ShipQty),0)) AS J
         , ISNULL(Sum(A5.ShipQty),0) AS K
         , (select strData+',' from (Select REPLACE(convert(varchar,PulloutDate),'-','/') as strData from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID)t for xml path('')) AS L
         -- , (select strData+',' from (Select ShipmodeID  as strData from Order_QtyShip  WITH (NOLOCK) where id = A1.ID  Group by ShipModeID) t for xml path('')) AS M
@@ -221,7 +231,7 @@ SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.
 FROM ORDERS A1 WITH (NOLOCK) 
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
+LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI
 LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
 OUTER APPLY(
@@ -236,7 +246,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POSMR ) vs4
-WHERE 1= 1 ";
+WHERE 1= 1 and a1.Qty<>0 ";
                     if (dateFactoryKPIDate.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
@@ -279,7 +289,7 @@ ORDER BY A1.ID";
                                                 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
                                                 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
                                                 LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-                                                WHERE 1= 1 ";
+                                                WHERE 1= 1 and a1.qty <>0 and A4.ShipQty<>0  ";
                     if (dateFactoryKPIDate.Value1 != null)
                         strSQL += string.Format(" AND A1.FtyKPI >= '{0}' ", dateFactoryKPIDate.Value1.Value.ToString("yyyy-MM-dd"));
                     if (dateFactoryKPIDate.Value2 != null)
