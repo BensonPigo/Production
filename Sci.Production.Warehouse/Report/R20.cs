@@ -46,19 +46,7 @@ namespace Sci.Production.Warehouse
             EndRefno = textEndRefno.Text;
             boolCheckQty = checkQty.Checked;
             #endregion
-            #region 判斷必輸條件  < Buyer Delivery >, < DeadLine >, < ETA >擇一必輸
-            if ((!StartBuyerDelivery.Empty() && !EndBuyerDelivery.Empty()) ||
-                (!StartDeadLine.Empty() && !EndDeadLine.Empty()) ||
-                (!StartETA.Empty() && !EndETA.Empty()))
-            {
-                return true;
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Buyer Delivery, DeadLine, ETA can't all be empty.");
-                return false;
-            }
-            #endregion
+            return true;
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
