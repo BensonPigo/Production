@@ -571,9 +571,8 @@
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
           <Top>0.6cm</Top>
-          <Left>5.84316cm</Left>
           <Height>0.6cm</Height>
-          <Width>9.43208cm</Width>
+          <Width>20.828cm</Width>
           <Style>
             <Border>
               <Style>None</Style>
