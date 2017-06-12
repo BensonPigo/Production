@@ -78,28 +78,45 @@ WHERE 1= 1  ");
 SELECT a, 
        b, 
        c, 
-       Sum(d + variance)d, 
-       Sum(e)           e, 
-       F=Concat(Round(CONVERT(FLOAT, Sum(d + variance)) / CONVERT(FLOAT, c) * 
-                      100, 2), 
-           '%') 
-FROM   (SELECT distinct a, 
+       IIf(c - d - e <> 0, d + ( c - d - e ), d) AS d, --if Order_Qty <> (Ontime_Qty+Delay_qty), 就將差額加回去去OntimeQty
+       e, 
+       f 
+FROM   (SELECT a, 
                b, 
                c, 
-			   a1.id,			   
-               isnull(pass.qty,0)                                            AS d, 
-			   (ISNULL(f.OrderQty,0)- ISNULL(Variance.qty,0) )as Variance,
-               isnull(delay.qty,0)                                                  AS e 
-        FROM   #tmp A1 
-				LEFT JOIN pullout_detail F WITH (nolock) 
-            ON A1.id = F.orderid 	
-			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id) 	Variance
-			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id AND pulloutdate <= A1.ftykpi ) 	pass
-			outer apply(select sum(shipqty) qty from pullout_detail where OrderID=A1.id AND pulloutdate > A1.ftykpi ) delay
-						 ) aa 
-GROUP  BY a, 
-          b, 
-          c 
+               Sum(d + variance)d, 
+               Sum(e)           e, 
+               F=Concat(Round(CONVERT(FLOAT, Sum(d + variance)) / 
+                              CONVERT(FLOAT, c) * 
+                              100, 2), 
+                   '%') 
+        FROM   (SELECT DISTINCT a, 
+                                b, 
+                                c, 
+                                a1.id, 
+                                Isnull(pass.qty, 0)        AS d, 
+                                ( Isnull(Variance.qty, 0) )AS Variance, 
+                                Isnull(delay.qty, 0)       AS e 
+                FROM   #tmp A1 
+                       LEFT JOIN pullout_detail F WITH (nolock) 
+                              ON A1.id = F.orderid 
+                       OUTER apply(SELECT Sum(Isnull(orderqty, 0) - Isnull( 
+                                              shipqty, 0)) 
+                                          qty 
+                                   FROM   pullout_detail 
+                                   WHERE  orderid = A1.id 
+                                          AND ( status = 'S' )) Variance 
+                       OUTER apply(SELECT Sum(shipqty) qty 
+                                   FROM   pullout_detail 
+                                   WHERE  orderid = A1.id 
+                                          AND pulloutdate <= A1.ftykpi) pass 
+                       OUTER apply(SELECT Sum(shipqty) qty 
+                                   FROM   pullout_detail 
+                                   WHERE  orderid = A1.id 
+                                          AND pulloutdate > A1.ftykpi) delay) aa 
+        GROUP  BY a, 
+                  b, 
+                  c) aa 
 
 		  drop table #tmp");
                 result = DBProxy.Current.Select(null, sqlcmd.ToString(), null, out gdtDatas);
