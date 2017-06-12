@@ -2893,6 +2893,7 @@ Sci.Production.Subcon/P10_Print.rdlc -text
 Sci.Production.Subcon/P10_PrintData.cs -text
 Sci.Production.Subcon/P23.Designer.cs -text
 Sci.Production.Subcon/P23.cs -text
+Sci.Production.Subcon/P23.resx -text
 Sci.Production.Subcon/P23_ImportBarcode.Designer.cs -text
 Sci.Production.Subcon/P23_ImportBarcode.cs -text
 Sci.Production.Subcon/P23_ImportBarcode.resx -text
