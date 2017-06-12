@@ -12,7 +12,7 @@ using Sci.Data;
 using System.Linq;
 using Sci.Production.PublicPrg;
 using System.Transactions;
-
+using Excel = Microsoft.Office.Interop.Excel;
 namespace Sci.Production.Warehouse
 {
     public partial class P29 : Sci.Win.Tems.QueryForm
@@ -649,8 +649,38 @@ values ('{0}',{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}'
                 MyUtility.Msg.WarningBox("Did not finish Inventory To Bulk");
                 return;
             }
-            Sci.Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(Exceldt);
-            sdExcel.Save();
+            // 新增Excel物件
+            Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+            // 新增workbook
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.Application.Workbooks.Add(true);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.Worksheets[1];
+            // 固定視窗
+            worksheet.Application.ActiveWindow.SplitRow = 2;
+            worksheet.Application.ActiveWindow.FreezePanes = true;
+            // 合併儲存格
+            Excel.Range range = worksheet.get_Range((Excel.Range)worksheet.Cells[1, 1], (Excel.Range)worksheet.Cells[1, Exceldt.Columns.Count]);
+            range.Merge(false);
+
+            worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory where id = '{0}'", Sci.Env.User.Keyword));
+            ((Excel.Range)worksheet.Cells[1, 1]).HorizontalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+            for (int i = 0; i < Exceldt.Columns.Count; i++)
+            {
+                worksheet.Cells[2, i + 1] = Exceldt.Columns[i].ColumnName;
+            }
+
+            int index = 0;
+            foreach (DataRow dr in Exceldt.Rows)
+            {
+                for (int i = 0; i < dr.Table.Columns.Count; i++)
+                {
+                    worksheet.Cells[3 + index, i + 1] = dr[i];
+                }
+                index++;
+            }
+
+            worksheet.Columns.AutoFit();
+            excel.Visible = true;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
