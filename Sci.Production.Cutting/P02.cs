@@ -1966,6 +1966,10 @@ order by id,article,sizecode"
             #region 檢查每一筆 Total distributionQty是否大於TotalCutQty總和
             foreach (DataRow dr_d in Dg.Rows)
             {
+                if (dr_d.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
                 decimal ttlcutqty = 0, ttldisqty = 0;
                 DataRow[] sizedr = sizeratioTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
                 DataRow[] distdr = distqtyTb.Select(string.Format("newkey = '{0}' and workorderUkey= '{1}'", dr_d["newkey"].ToString(), dr_d["Ukey"].ToString()));
