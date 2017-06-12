@@ -981,19 +981,33 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
             string sqlcmd = @"
-select  [Poid] = IIF (( p.ID = lag(p.ID,1,'') over (order by p.ID,p.seq1,p.seq2) 
-			            AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-			            AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2) 
+			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2))
+			            AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2))) 
 			          , ''
                       , t.poid) 
-        , [Seq] = IIF (( p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
-				         AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
-				         AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
+        , [Seq] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2) 
+			             AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2))
+			             AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2))) 
 			            , ''
                         , t.seq1+ '-' +t.seq2)
         , [GroupPoid] = t.poid 
         , [GroupSeq] = t.seq1+ '-' +t.seq2 
-        , [desc] = dbo.getmtldesc(t.poid, t.seq1, t.seq2, 2, 0)
+        , [desc] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2) 
+			              AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2))
+			              AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2))) 
+				        , ''
+                        , ( SELECT   Concat(stock7X.value
+                                            , char(10)
+                                            , 'Ref#'
+                                            , fbr.Refno
+                                            , char(10)
+                                            , Description
+                                            , char(10)
+                                            , char(10)
+                                            , (Select concat(ID, '-', Name) from Color WITH (NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
+                                        )
+                            FROM fabric fbr WITH (NOLOCK) WHERE SCIRefno = p.SCIRefno))
         , t.Roll
         , t.Dyelot
         , t.Qty
@@ -1011,6 +1025,10 @@ left join FtyInventory b WITH (NOLOCK) on   b.poid = t.poid
                                             and b.Roll = t.Roll 
                                             and b.Dyelot = t.Dyelot 
                                             and b.StockType = t.StockType
+outer apply (
+    select value = iif (left (t.seq1, 1) != '7', ''
+                                               , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
+) as stock7X
 where t.id= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out bb);
             if (!result) { this.ShowErr(sqlcmd, result); }
