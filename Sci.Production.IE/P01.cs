@@ -803,11 +803,13 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             }
             #endregion
 
-            //#region 若STYLE非套裝(Style.ComboType='')，則不考慮location條件。
-            //bool isComboType = true;
-            //string sql = string.Format("select ComboType from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", txtBrand.Text, txtStyle.Text, txtseason.Text);
+            #region 若STYLE為套裝(Style.StyleUnit='SETS')，需考慮location條件。
+            bool isComboType = true;
+            string sql = string.Format("select StyleUnit from Style  WITH (NOLOCK) where BrandID = '{0}' and ID = '{1}' and SeasonID = '{2}'", txtBrand.Text, txtStyle.Text, txtseason.Text);
+            if (MyUtility.GetValue.Lookup(sql) == "SETS") isComboType = true;
+            else isComboType = false;
             //isComboType = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sql));
-            //#endregion
+            #endregion
 
             #region 設定sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -820,13 +822,18 @@ where ID = {0}", CurrentMaintain["ID"].ToString(), Sci.Env.User.UserID);
             sp2.Value = txtseason.Text;
             sp3.ParameterName = "@brandid";
             sp3.Value = txtBrand.Text;
-            sp4.ParameterName = "@location";
-            sp4.Value = comboStyle.Text;
-            //if (isComboType)
-            //{
-            //    sp4.ParameterName = "@location";
-            //    sp4.Value = comboStyle.Text;
-            //} 
+            //sp4.ParameterName = "@location";
+            //sp4.Value = comboStyle.Text;
+            if (isComboType)
+            {
+                sp4.ParameterName = "@location";
+                sp4.Value = comboStyle.Text;
+            }
+            else
+            {
+                sp4.ParameterName = "@location";
+                sp4.Value = " ";
+            }
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
