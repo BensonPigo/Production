@@ -258,17 +258,11 @@ Hi all,
 -------------------------------------------------------------------
 {2}
 -------------------------------------------------------------------
-connection
-{3}
--------------------------------------------------------------------
-db.Urn.ToString()
-{4}
--------------------------------------------------------------------
 Script
-{5}
-", Sci.Env.User.Factory, Sci.Env.User.UserName, ex.ToString()
- , strConnection
- , strServer
+{3}
+", Sci.Env.User.Factory
+ , Sci.Env.User.UserName
+ , ex.ToString()
  , script);
                         Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Sci.Env.Cfg.MailFrom, sql_update_receiver, "", subject, "", desc, true, true);
                         mail.ShowDialog();
