@@ -45,6 +45,7 @@ namespace Sci.Production.Subcon
         //從C:\temp\BUNDLEIN.TXT讀取資料
         private void btnImportfromscanner_Click(object sender, EventArgs e)
         {
+            #region 建立要讀檔的Table結構
             string selectCommand = @"Select BundleNo from Bundle_detail a WITH (NOLOCK) where 1=0";
             DataTable leftDT, rightDT, tmpDataTable;
             DualResult selectResult;
@@ -53,6 +54,8 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Connection faile.!");
                 return;
             }
+            #endregion
+
             #region 單純把檔案部讀進來(不論長度 已問過Arger)
             string tmpFile = "C:\\temp\\BUNDLEIN.TXT";
             try
@@ -126,7 +129,8 @@ WHERE (bda.SubprocessId IS NULL or bda.SubprocessId  = '{0}') and (bd.Patterncod
                 }
             }
             #endregion
-            //刪除檔案
+
+            #region 刪除檔案
             System.IO.FileInfo fi = new System.IO.FileInfo(tmpFile);
             try
             {
@@ -136,6 +140,7 @@ WHERE (bda.SubprocessId IS NULL or bda.SubprocessId  = '{0}') and (bd.Patterncod
             {
                 MyUtility.Msg.ErrorBox(ex.Message);
             }
+            #endregion
         }
         //刪除有ErrorMsg
         private void btnDeleteError_Click(object sender, EventArgs e)
