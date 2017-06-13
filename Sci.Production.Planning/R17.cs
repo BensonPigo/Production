@@ -121,7 +121,14 @@ FROM   (SELECT a,
                        OUTER apply(SELECT Sum(shipqty) qty 
                                    FROM   pullout_detail 
                                    WHERE  orderid = A1.id 
-                                          AND pulloutdate > A1.ftykpi) delay) aa 
+                                          AND pulloutdate > A1.ftykpi
+		                            UNION 
+								    SELECT  SUM(Qty) qty 
+								    FROM Orders WITH (NOLOCK) 
+								    WHERE A1.ID = ID AND KPIChangeReason=0005
+								    AND NOT EXISTS (SELECT 1 FROM Pullout_Detail WHERE OrderID=A1.ID)
+										
+) delay) aa 
         GROUP  BY a, 
                   b, 
                   c) aa 
@@ -146,20 +153,28 @@ SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.
         ,t.strData AS M
         , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O
-        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
-        , (Select TOP 1 A2.Name  from Order_History A1 WITH (NOLOCK) 
-                            LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
-                            Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery') AS Q
+        ,A1.KPIChangeReason AS P
+        , (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) AS Q
         , dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  AS R
         , dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  AS S
         , dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  AS T
         , dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  AS U
 FROM ORDERS A1 WITH (NOLOCK) 
+LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI AND A4.UKey=AP.UKey
 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+OUTER APPLY(
+SELECT  ShipQty FROM PullOut_Detail WITH (NOLOCK) 
+WHERE A1.ID = ORDERID AND PullOutDate > A1.FtyKPI
+AND UKey=AP.UKey
+UNION 
+SELECT  Qty AS ShipQty FROM Orders WITH (NOLOCK) 
+WHERE A1.ID = ID AND KPIChangeReason=0005
+AND NOT EXISTS(SELECT 1	FROM   pullout_detail 
+					WHERE  orderid = A1.id)
+) A5
 OUTER APPLY(
 	select strData =stuff((	
 		Select DISTINCT concat(',',ShipmodeID)
@@ -189,7 +204,7 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                     strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
 
                 strSQL += @" 
-GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
+GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID,A1.KPIChangeReason
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
                                                         , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
@@ -229,11 +244,21 @@ SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.
         , dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  AS T
         , dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  AS U
 FROM ORDERS A1 WITH (NOLOCK) 
+LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI
-LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI AND A4.UKey=AP.UKey
 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
+OUTER APPLY(
+SELECT  ShipQty FROM PullOut_Detail WITH (NOLOCK) 
+WHERE A1.ID = ORDERID AND PullOutDate > A1.FtyKPI
+AND UKey=AP.UKey
+UNION 
+SELECT  Qty AS ShipQty FROM Orders WITH (NOLOCK) 
+WHERE A1.ID = ID AND KPIChangeReason=0005
+	AND NOT EXISTS(SELECT 1	FROM   pullout_detail 
+					WHERE  orderid = A1.id)
+) A5
 OUTER APPLY(
 	select strData =stuff((	
 		Select DISTINCT concat(',',ShipmodeID)
@@ -365,19 +390,19 @@ SELECT  A2.CountryID AS A,  A2.KpiCode AS B, A1.FactoryID AS C , A1.ID AS D, A1.
         ,t.strData AS M
         , (Select Count(id) as CountPullOut from Pullout_Detail WITH (NOLOCK) where OrderID = A1.ID) AS N
         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END AS O       
-        , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
-                                                        , (Select TOP 1 A2.Name  from Order_History A1 WITH (NOLOCK) 
-                                                                          LEFT JOIN Reason A2 WITH (NOLOCK) ON A2.ID = A1.ReasonID 
-                                                                          Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery') AS Q
+       -- , (SELECT TOP 1 A1.ReasonID  from Order_History A1 WITH (NOLOCK) Where A1.OldValue =  A1.ID  And A1.HisType = 'Delivery' ) AS P
+,A1.KPIChangeReason AS P
+, (select TOP 1 Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = A1.KPIChangeReason ) AS Q
         , dbo.getTPEPass1(A1.MRHandle)+vs1.ExtNo  AS R
         , dbo.getTPEPass1(A1.SMR)+vs2.ExtNo  AS S
         , dbo.getTPEPass1(A6.POHandle)+vs3.ExtNo  AS T
         , dbo.getTPEPass1(A6.POSMR)+vs4.ExtNo  AS U
 FROM ORDERS A1 WITH (NOLOCK) 
+LEFT JOIN Pullout_Detail AP WITH (NOLOCK) ON A1.ID =AP.OrderID
 LEFT JOIN FACTORY A2 WITH (NOLOCK) ON A1.FACTORYID = A2.ID 
 LEFT JOIN COUNTRY A3 WITH (NOLOCK) ON A2.COUNTRYID = A3.ID 
-LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI 
-LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
+LEFT JOIN PullOut_Detail A4 WITH (NOLOCK) ON A1.ID = A4.ORDERID AND A4.PullOutDate <= A1.FtyKPI AND A4.UKey=AP.UKey
+--LEFT JOIN PullOut_Detail A5 WITH (NOLOCK) ON A1.ID = A5.ORDERID AND A5.PullOutDate > A1.FtyKPI 
 LEFT JOIN PO A6 WITH (NOLOCK) ON A1.POID = A6.ID
 OUTER APPLY(
 select strData =stuff((	
@@ -387,6 +412,16 @@ WITH (NOLOCK) where id = A1.ID  Group by ShipModeID
 for xml path('')
 ),1,1,'')
 ) t
+OUTER APPLY(
+SELECT  ShipQty FROM PullOut_Detail WITH (NOLOCK) 
+WHERE A1.ID = ORDERID AND PullOutDate > A1.FtyKPI
+AND UKey=AP.UKey
+UNION 
+SELECT  Qty AS ShipQty FROM Orders WITH (NOLOCK) 
+WHERE A1.ID = ID AND KPIChangeReason=0005
+AND NOT EXISTS(SELECT 1	FROM   pullout_detail 
+					WHERE  orderid = A1.id)
+) A5
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.MRHandle ) vs1
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A1.SMR ) vs2
 outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where a.ID= A6.POHandle ) vs3
@@ -406,8 +441,8 @@ outer apply (SELECT ' #'+ExtNo AS ExtNo from dbo.TPEPASS1 a WITH (NOLOCK) where 
                         strSQL += " AND A1.FACTORYID IN ( select ID from Factory where KPICode!='' and KPICode in (select distinct ID from Factory where KPICode!='') ) ";
                     else  //factory有值
                         strSQL += string.Format(" AND A1.FACTORYID IN ( select ID from Factory where KPICode='{0}' ) ", txtFactory.Text);
-                    
-                    strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID
+
+                    strSQL += @" GROUP BY A2.CountryID,  A2.KpiCode, A1.FactoryID , A1.ID, A1.BRANDID, A1.KPIChangeReason
                                                         , A1.BuyerDelivery, A1.FtyKPI, A1.QTY 
                                                         , CASE WHEN A1.GMTComplete   = 'C' OR A1.GMTComplete   = 'S' THEN 'Y' ELSE '' END
                                                         , A1.MRHandle, A1.SMR, A6.POHandle, A6.POSMR,t.strData,vs1.ExtNo ,vs2.ExtNo,vs3.ExtNo,vs4.ExtNo
