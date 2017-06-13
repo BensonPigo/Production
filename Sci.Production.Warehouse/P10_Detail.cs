@@ -57,7 +57,7 @@ namespace Sci.Production.Warehouse
             }
 
             this.displayID.Text = CurrentDetailData["id"].ToString();
-            this.displaySciRefno.Text = CurrentDetailData["scirefno"].ToString();
+            this.displayRefno.Text = CurrentDetailData["refno"].ToString();
             this.displaySPNo.Text = CurrentDetailData["poid"].ToString();
             this.displayColorID.Text = CurrentDetailData["colorid"].ToString();
             //this.dis_sizespec.Text = CurrentDetailData["sizespec"].ToString();

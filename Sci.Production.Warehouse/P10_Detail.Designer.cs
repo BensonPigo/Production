@@ -32,8 +32,8 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
             this.displaySPNo = new Sci.Win.UI.DisplayBox();
-            this.displaySciRefno = new Sci.Win.UI.DisplayBox();
-            this.labelSciRefno = new Sci.Win.UI.Label();
+            this.displayRefno = new Sci.Win.UI.DisplayBox();
+            this.labelRefno = new Sci.Win.UI.Label();
             this.displayColorID = new Sci.Win.UI.DisplayBox();
             this.labelColorID = new Sci.Win.UI.Label();
             this.displayDesc = new Sci.Win.UI.DisplayBox();
@@ -135,23 +135,23 @@
             this.displaySPNo.Size = new System.Drawing.Size(124, 23);
             this.displaySPNo.TabIndex = 102;
             // 
-            // displaySciRefno
+            // displayRefno
             // 
-            this.displaySciRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySciRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySciRefno.Location = new System.Drawing.Point(548, 29);
-            this.displaySciRefno.Name = "displaySciRefno";
-            this.displaySciRefno.Size = new System.Drawing.Size(124, 23);
-            this.displaySciRefno.TabIndex = 104;
+            this.displayRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRefno.Location = new System.Drawing.Point(548, 29);
+            this.displayRefno.Name = "displayRefno";
+            this.displayRefno.Size = new System.Drawing.Size(124, 23);
+            this.displayRefno.TabIndex = 104;
             // 
-            // labelSciRefno
+            // labelRefno
             // 
-            this.labelSciRefno.Lines = 0;
-            this.labelSciRefno.Location = new System.Drawing.Point(470, 29);
-            this.labelSciRefno.Name = "labelSciRefno";
-            this.labelSciRefno.Size = new System.Drawing.Size(75, 23);
-            this.labelSciRefno.TabIndex = 103;
-            this.labelSciRefno.Text = "SciRefno";
+            this.labelRefno.Lines = 0;
+            this.labelRefno.Location = new System.Drawing.Point(470, 29);
+            this.labelRefno.Name = "labelRefno";
+            this.labelRefno.Size = new System.Drawing.Size(75, 23);
+            this.labelRefno.TabIndex = 103;
+            this.labelRefno.Text = "Refno";
             // 
             // displayColorID
             // 
@@ -201,8 +201,8 @@
             this.groupBox1.Controls.Add(this.labelDesc);
             this.groupBox1.Controls.Add(this.displayID);
             this.groupBox1.Controls.Add(this.displaySPNo);
-            this.groupBox1.Controls.Add(this.labelSciRefno);
-            this.groupBox1.Controls.Add(this.displaySciRefno);
+            this.groupBox1.Controls.Add(this.labelRefno);
+            this.groupBox1.Controls.Add(this.displayRefno);
             this.groupBox1.Location = new System.Drawing.Point(12, 8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(984, 100);
@@ -444,8 +444,8 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.DisplayBox displayID;
         private Win.UI.DisplayBox displaySPNo;
-        private Win.UI.DisplayBox displaySciRefno;
-        private Win.UI.Label labelSciRefno;
+        private Win.UI.DisplayBox displayRefno;
+        private Win.UI.Label labelRefno;
         private Win.UI.DisplayBox displayColorID;
         private Win.UI.Label labelColorID;
         private Win.UI.DisplayBox displayDesc;
