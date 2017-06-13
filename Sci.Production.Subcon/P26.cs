@@ -47,14 +47,13 @@ namespace Sci.Production.Subcon
             base.OnDetailGridSetup();
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ReceiveName", header: "Recv. Name", width: Widths.AnsiChars(12))
-                .Text("ReceiceDate", header: "Recv. Date", width: Widths.AnsiChars(10));
+                .Date("ReceiveDate", header: "Recv. Date", width: Widths.AnsiChars(10));
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -69,9 +68,9 @@ select
 	,BD.Patterncode
 	,BD.PatternDesc
 	,BTD.ReceiveName
-	,BTD.ReceiveName
+	,BTD.ReceiveDate
 from BundleTrack_detail BTD 
-INNER JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
+LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
 OUTER APPLY(
 	SELECT SubprocessId = STUFF((
 		SELECT CONCAT(',',SubprocessId )
@@ -88,9 +87,6 @@ WHERE BTD.ID = '{0}'", masterID);
         {
             var frm = new Sci.Production.Subcon.P26_ImportBarcode();
             frm.ShowDialog(this);
-            //CurrentMaintain["IssueDate"] = DateTime.Now;
-            //CurrentMaintain["StarSite"] = Sci.Env.User.Factory;
-            //CurrentMaintain["EndSite"] = Sci.Env.User.Factory;
             this.ReloadDatas();
             return true;
         }

@@ -50,20 +50,20 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Controls.Add(this.txSubproc);
             this.masterpanel.Controls.Add(this.txtTransfer);
             this.masterpanel.Controls.Add(this.labelSubproc);
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelTransferID);
+            this.masterpanel.Controls.Add(this.dateIssueDate);
             this.masterpanel.Size = new System.Drawing.Size(892, 41);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTransferID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubproc, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTransfer, 0);
             this.masterpanel.Controls.SetChildIndex(this.txSubproc, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             // 
             // detailpanel
             // 
@@ -177,7 +177,6 @@
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportLocate = false;
-            this.IsSupportMove = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
             this.Name = "P26";

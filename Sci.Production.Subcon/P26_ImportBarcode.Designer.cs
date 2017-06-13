@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnImportfromscanner = new Sci.Win.UI.Button();
-            this.chkInHourse = new System.Windows.Forms.CheckBox();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
             this.labelSubprocess = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -40,17 +40,20 @@
             this.btnDeleteError = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid2 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnImportfromscanner);
-            this.panel1.Controls.Add(this.chkInHourse);
             this.panel1.Controls.Add(this.comboSubprocess);
             this.panel1.Controls.Add(this.labelSubprocess);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -63,23 +66,13 @@
             // 
             this.btnImportfromscanner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportfromscanner.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportfromscanner.Location = new System.Drawing.Point(761, 6);
+            this.btnImportfromscanner.Location = new System.Drawing.Point(696, 7);
             this.btnImportfromscanner.Name = "btnImportfromscanner";
             this.btnImportfromscanner.Size = new System.Drawing.Size(175, 30);
             this.btnImportfromscanner.TabIndex = 6;
             this.btnImportfromscanner.Text = "Import from scanner";
             this.btnImportfromscanner.UseVisualStyleBackColor = true;
             this.btnImportfromscanner.Click += new System.EventHandler(this.btnImportfromscanner_Click);
-            // 
-            // chkInHourse
-            // 
-            this.chkInHourse.AutoSize = true;
-            this.chkInHourse.Location = new System.Drawing.Point(225, 9);
-            this.chkInHourse.Name = "chkInHourse";
-            this.chkInHourse.Size = new System.Drawing.Size(88, 21);
-            this.chkInHourse.TabIndex = 5;
-            this.chkInHourse.Text = "In Hourse";
-            this.chkInHourse.UseVisualStyleBackColor = true;
             // 
             // comboSubprocess
             // 
@@ -146,14 +139,15 @@
             this.btnCreate.TabIndex = 8;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // btnDeleteError
             // 
             this.btnDeleteError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDeleteError.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDeleteError.Location = new System.Drawing.Point(670, 6);
+            this.btnDeleteError.Location = new System.Drawing.Point(649, 6);
             this.btnDeleteError.Name = "btnDeleteError";
-            this.btnDeleteError.Size = new System.Drawing.Size(148, 30);
+            this.btnDeleteError.Size = new System.Drawing.Size(169, 30);
             this.btnDeleteError.TabIndex = 7;
             this.btnDeleteError.Text = "Delete Error Bundle";
             this.btnDeleteError.UseVisualStyleBackColor = true;
@@ -178,6 +172,7 @@
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -188,7 +183,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(752, 438);
+            this.grid1.Size = new System.Drawing.Size(690, 438);
             this.grid1.TabIndex = 2;
             this.grid1.TabStop = false;
             // 
@@ -201,18 +196,19 @@
             this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.DataSource = this.listControlBindingSource2;
             this.grid2.Dock = System.Windows.Forms.DockStyle.Right;
             this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(761, 40);
+            this.grid2.Location = new System.Drawing.Point(696, 40);
             this.grid2.Name = "grid2";
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(222, 438);
+            this.grid2.Size = new System.Drawing.Size(287, 438);
             this.grid2.TabIndex = 3;
             this.grid2.TabStop = false;
             // 
@@ -225,11 +221,12 @@
             this.Controls.Add(this.panel1);
             this.Name = "P26_ImportBarcode";
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -243,12 +240,13 @@
         private Win.UI.Label labelSubprocess;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboSubprocess;
-        private System.Windows.Forms.CheckBox chkInHourse;
         private Win.UI.Button btnImportfromscanner;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnCreate;
         private Win.UI.Button btnDeleteError;
         private Win.UI.TextBox txtNumsofBundle;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
 
     }
 }
