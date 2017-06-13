@@ -43,93 +43,7 @@ namespace Sci.Production.Subcon
                 this.ReloadDatas();
             };
         }
-        protected override bool ClickNew()
-        {
-            var frm = new Sci.Production.Subcon.P23_ImportBarcode();
-            frm.ShowDialog(this);
-            this.ReloadDatas();
-            return true;
-        }
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            CurrentMaintain["IssueDate"] = DateTime.Now;
-            CurrentMaintain["StartSite"] = Sci.Env.User.Factory;
-        }
-        protected override bool ClickSaveBefore()
-        {
-            //DataTable newDt = ((DataTable)detailgridbs.DataSource).Clone();
-            //foreach (DataRow dtr in ((DataTable)detailgridbs.DataSource).Rows)
-            //{
-            //    string[] dtrLocation = dtr["location"].ToString().Split(',');
-            //    dtrLocation = dtrLocation.Distinct().ToArray();
 
-            //    if (dtrLocation.Length == 1)
-            //    {
-            //        DataRow newDr = newDt.NewRow();
-            //        newDr.ItemArray = dtr.ItemArray;
-            //        newDt.Rows.Add(newDr);
-            //    }
-            //    else
-            //    {
-            //        foreach (string location in dtrLocation)
-            //        {
-            //            DataRow newDr = newDt.NewRow();
-            //            newDr.ItemArray = dtr.ItemArray;
-            //            newDr["location"] = location;
-            //            newDt.Rows.Add(newDr);
-            //        }
-            //    }
-            //}
-            //設定ID編碼
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
-                if (MyUtility.Check.Empty(getID))
-                {
-                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
-                    return false;
-                }
-                CurrentMaintain["ID"] = getID;
-            }
-            //檢核BundleTrack_detail.BundleNo是否已存在
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo") == true)
-                {
-                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-                    return false;
-                }
-            }
-            return base.ClickSaveBefore();
-        }
-        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
-        {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"
-                Select 
-                 BundleTrack_detail.BundleNo
-                ,BundleTrack_detail.orderid
-                ,ss.SubprocessId
-                ,Bundle_Detail.Patterncode
-                ,Bundle_Detail.PatternDesc
-                FROM BundleTrack_detail 
-                INNER JOIN Bundle_Detail_Art ON BundleTrack_detail.BundleNo= Bundle_Detail_Art.Bundleno
-                INNER JOIN Bundle_Detail ON BundleTrack_detail.BundleNo = Bundle_Detail.BundleNo
-                OUTER APPLY(
-	                SELECT SubprocessId = STUFF((
-		                SELECT SubprocessId + '+' 
-                from Bundle_Detail_Art
-                where Bundleno=BundleTrack_detail.BundleNo
-                FOR XML PATH('')
-	                ),1,1,'')
-	                )ss
-                WHERE 1=1
-                  --AND BundleTrack_detail.Id LIKE 'TB%'
-                  AND BundleTrack_detail.ID = '{0}'
-                ", masterID);
-            return base.OnDetailSelectCommandPrepare(e);
-        }
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
@@ -137,28 +51,41 @@ namespace Sci.Production.Subcon
             //DataRow dr;
             ts1.CellValidating += (s, e) =>
             {
-
-                if (this.EditMode && e.FormattedValue.ToString() != "")
+                if (!this.EditMode) return;
+                DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (e.FormattedValue.ToString() == drr["orderid"].ToString()) return;
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from Bundle_Detail WITH (NOLOCK) where BundleNo = '{0}')", e.FormattedValue), null))
+                    CurrentDetailData["BundleNo"] = "";
+                    CurrentDetailData["OrderID"] = "";
+                    CurrentDetailData["SubprocessId"] = "";
+                    CurrentDetailData["Patterncode"] = "";
+                    CurrentDetailData["PatternDesc"] = "";
+                    return;
+                }
+
+                if (e.FormattedValue.ToString() != "")
+                {
+                    if (MyUtility.Check.Seek(string.Format(@"select 1 where exists(select * from Bundle_Detail WITH (NOLOCK) where BundleNo = '{0}')", e.FormattedValue), null))
                     {
                         DataTable getdata;
                         string sqlcmd = string.Format(@"
-                        select B.Orderid , Artwork.value , BD.Patterncode , BD.PatternDesc
-                        from Bundle_Detail BD WITH (NOLOCK)
-                        left join Bundle B on B.ID=BD.Id
-                        outer apply (
-	                        select value = stuff ((	select '+' + subprocessid
-							                        from (
-								                        select distinct subprocessid
-								                        from Bundle_Detail_Art bda WITH (NOLOCK)
-								                        where bd.BundleNo = bda.Bundleno
-							                        ) k
-							                        for xml path('')
-							                        ), 1, 1, '')
-                        ) ArtWork
-                        where BundleNo='{0}'
-                        ", e.FormattedValue);
+select B.Orderid, Artwork.value, BD.Patterncode, BD.PatternDesc
+from Bundle_Detail BD WITH (NOLOCK)
+left join Bundle B on B.ID=BD.Id
+outer apply (
+    select value = stuff ((	
+        select concat('+', subprocessid)
+	    from (
+		    select distinct subprocessid
+		    from Bundle_Detail_Art bda WITH (NOLOCK)
+		    where bd.BundleNo = bda.Bundleno
+	    ) k
+	    for xml path('')
+    ), 1, 1, '')
+) ArtWork
+where BundleNo='{0}'"
+                            , e.FormattedValue);
                         DBProxy.Current.Select(null, sqlcmd, out getdata);
 
                         CurrentDetailData["BundleNo"] = e.FormattedValue;
@@ -179,16 +106,71 @@ namespace Sci.Production.Subcon
                         MyUtility.Msg.WarningBox("Bundle# is not exist!!", "Data not found");
                         return;
                     }
-
                 }
             };
+
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(20), iseditingreadonly: true);
+        }
 
+        protected override DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            this.DetailSelectCommand = string.Format(@"
+select 
+	BTD.BundleNo
+	,BTD.orderid
+	,S.SubprocessId
+	,BD.Patterncode
+	,BD.PatternDesc
+from BundleTrack_detail BTD 
+LEFT JOIN Bundle_Detail BD ON BD.BundleNo = BTD.BundleNo
+OUTER APPLY(
+	SELECT SubprocessId = STUFF((
+		SELECT CONCAT(',',SubprocessId )
+		FROM Bundle_Detail_Art BDA
+		WHERE BDA.Bundleno = BTD.BundleNo
+		FOR XML PATH('')
+	),1,1,'')
+)S
+WHERE BTD.ID = '{0}'", masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        protected override bool ClickNew()
+        {
+            var frm = new Sci.Production.Subcon.P23_ImportBarcode();
+            frm.ShowDialog(this);
+            this.ReloadDatas();
+            return true;
+        }
+
+        protected override bool ClickSaveBefore()
+        {            
+            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+            {
+                string getID = MyUtility.GetValue.GetID("TB", "BundleTrack", DateTime.Today, 5, "ID", null);
+                if (MyUtility.Check.Empty(getID))
+                {
+                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
+                    return false;
+                }
+                CurrentMaintain["ID"] = getID;
+            }
+            //檢核BundleTrack_detail.BundleNo是否已存在
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo"))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
+                    return false;
+                }
+            }
+            return base.ClickSaveBefore();
         }
     }
 }

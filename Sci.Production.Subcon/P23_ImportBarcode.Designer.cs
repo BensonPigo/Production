@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.comboTo = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -40,9 +41,11 @@
             this.btnCreate = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -64,14 +67,14 @@
             this.comboTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTo.FormattingEnabled = true;
             this.comboTo.IsSupportUnselect = true;
-            this.comboTo.Location = new System.Drawing.Point(415, 9);
+            this.comboTo.Location = new System.Drawing.Point(306, 9);
             this.comboTo.Name = "comboTo";
             this.comboTo.Size = new System.Drawing.Size(121, 24);
             this.comboTo.TabIndex = 8;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(386, 9);
+            this.label2.Location = new System.Drawing.Point(277, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 23);
             this.label2.TabIndex = 7;
@@ -81,12 +84,13 @@
             // 
             this.btnImportfromscanner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportfromscanner.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportfromscanner.Location = new System.Drawing.Point(761, 6);
+            this.btnImportfromscanner.Location = new System.Drawing.Point(784, 5);
             this.btnImportfromscanner.Name = "btnImportfromscanner";
-            this.btnImportfromscanner.Size = new System.Drawing.Size(175, 30);
+            this.btnImportfromscanner.Size = new System.Drawing.Size(187, 30);
             this.btnImportfromscanner.TabIndex = 6;
             this.btnImportfromscanner.Text = "Import from scanner";
             this.btnImportfromscanner.UseVisualStyleBackColor = true;
+            this.btnImportfromscanner.Click += new System.EventHandler(this.btnImportfromscanner_Click);
             // 
             // comboSubprocess
             // 
@@ -152,6 +156,7 @@
             this.btnCreate.TabIndex = 8;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // label1
             // 
@@ -172,6 +177,7 @@
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -197,6 +203,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -215,6 +222,7 @@
         private Win.UI.TextBox txtNumsofBundle;
         private Win.UI.ComboBox comboTo;
         private Win.UI.Label label2;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
 
     }
 }
