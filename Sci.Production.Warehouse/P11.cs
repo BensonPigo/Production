@@ -1124,14 +1124,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataRow issue = this.CurrentMaintain;
             string id = issue["ID"].ToString();
             string request = issue["cutplanid"].ToString();
-            string issuedate = issue["issuedate"].ToString();
+            string issuedate = Convert.ToDateTime(issue["issuedate"]).ToString("yyyy-MM-dd");
             string remark = issue["remark"].ToString();
             string cutno = this.editCutNo.Text;
             string article = this.editArticle.Text;
+            string LineNo = this.displayLineNo.Text;
+            string OrderID = this.txtOrderID.Text;
+            string CellNo = this.displayCutCell.Text;
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-
-
+            #region Title
             DataTable dt;
             DBProxy.Current.Select("",
                 @"select    
@@ -1144,7 +1146,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string RptTitle = dt.Rows[0]["name"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("name", RptTitle));
-
+            #endregion
+            #region SP
             DataTable dtsp;
             string poID;
             DBProxy.Current.Select("",
@@ -1157,6 +1160,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 poID = dtsp.Rows[0]["POID"].ToString();
 
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("POID", poID));
+            #endregion
+            #region SizeCode
             DualResult result;
             DataTable dtSizecode;
             string sqlcmd1 = string.Format(@"select distinct sizecode
@@ -1165,7 +1170,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
 
-            if (dtSizecode == null ||dtSizecode.Rows.Count == 0)
+            if (dtSizecode == null || dtSizecode.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtSizecode");
                 return false;
@@ -1179,8 +1184,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             {
                 sizecodes = sizecodes.Substring(0, sizecodes.Length - 1);
             }
-
-
+            #endregion
+            #region SEQ
             DataTable dtseq;
 
             string sqlcmd = string.Format(@"
@@ -1230,8 +1235,8 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             //string tQty = dtseq.Rows[0]["tQTY"].ToString();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SEQ", SEQ));
             //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("tQTY", tQty));
-
-
+            #endregion
+            #region LineNo
             DataTable dtlineno;
             string cLineNo;
             result = DBProxy.Current.Select("",
@@ -1249,7 +1254,8 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 cLineNo = dtlineno.Rows[0]["sewline"].ToString();
 
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("sewline", cLineNo));
-
+            #endregion
+            #region CellNo
             DataTable dtcutcell;
             string cCellNo;
             result = DBProxy.Current.Select("",
@@ -1271,7 +1277,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 cCellNo = dtcutcell.Rows[0]["CutCellID"].ToString();
 
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CutCellID", cCellNo));
-
+            #endregion 
             string xlt = @"Warehouse_P11.xltx";
             SaveXltReportCls xl = new SaveXltReportCls(xlt);
             xl.boOpenFile = true;
@@ -1282,19 +1288,18 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             xl.dicDatas.Add("##issuedate", issuedate);
             xl.dicDatas.Add("##remark", remark);
             xl.dicDatas.Add("##cCutNo", cutno);
+            xl.dicDatas.Add("##cLineNo", LineNo);
+            xl.dicDatas.Add("##OrderID", OrderID);
+            xl.dicDatas.Add("##cCellNo", CellNo);
             SaveXltReportCls.xltRptTable xlTable = new SaveXltReportCls.xltRptTable(dtseq);
             int allColumns = dtseq.Columns.Count;
             int sizeColumns = dtSizecode.Rows.Count;
-            xlTable.lisTitleMerge.Add(new Dictionary<string, string> { 
-            { "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }}
-           );
+            xlTable.lisTitleMerge.Add(new Dictionary<string, string> {{ "SIZE", string.Format("{0},{1}", allColumns-sizeColumns+1, allColumns) }});
             xlTable.Borders.OnlyHeaderBorders = true;
             xlTable.Borders.AllCellsBorders = true;
             xl.dicDatas.Add("##SEQ", xlTable);
-
-
+            
             xl.Save();
-
             return true;
         }
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
