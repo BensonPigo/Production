@@ -159,15 +159,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(917, 511);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(911, 465);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(911, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -217,7 +217,6 @@
             // labelSEQ1
             // 
             this.labelSEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ1.Lines = 0;
             this.labelSEQ1.Location = new System.Drawing.Point(251, 137);
             this.labelSEQ1.Name = "labelSEQ1";
             this.labelSEQ1.Size = new System.Drawing.Size(45, 23);
@@ -334,7 +333,6 @@
             // labelSEQ2
             // 
             this.labelSEQ2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ2.Lines = 0;
             this.labelSEQ2.Location = new System.Drawing.Point(351, 136);
             this.labelSEQ2.Name = "labelSEQ2";
             this.labelSEQ2.Size = new System.Drawing.Size(45, 23);
@@ -344,7 +342,6 @@
             // labelLocateforWK
             // 
             this.labelLocateforWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLocateforWK.Lines = 0;
             this.labelLocateforWK.Location = new System.Drawing.Point(21, 137);
             this.labelLocateforWK.Name = "labelLocateforWK";
             this.labelLocateforWK.Size = new System.Drawing.Size(94, 23);
@@ -354,7 +351,6 @@
             // labelMTLCmlpt
             // 
             this.labelMTLCmlpt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelMTLCmlpt.Lines = 0;
             this.labelMTLCmlpt.Location = new System.Drawing.Point(432, 44);
             this.labelMTLCmlpt.Name = "labelMTLCmlpt";
             this.labelMTLCmlpt.Size = new System.Drawing.Size(95, 23);
@@ -364,7 +360,6 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(432, 73);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(95, 23);
@@ -374,7 +369,6 @@
             // labelCompletionDate
             // 
             this.labelCompletionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(195, 103);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(123, 23);
@@ -384,7 +378,6 @@
             // labelofInspection
             // 
             this.labelofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelofInspection.Lines = 0;
             this.labelofInspection.Location = new System.Drawing.Point(432, 16);
             this.labelofInspection.Name = "labelofInspection";
             this.labelofInspection.Size = new System.Drawing.Size(95, 23);
@@ -394,7 +387,6 @@
             // labelEarliestSCIDel
             // 
             this.labelEarliestSCIDel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(195, 44);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(123, 23);
@@ -404,7 +396,6 @@
             // labelTargetLeadTime
             // 
             this.labelTargetLeadTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTargetLeadTime.Lines = 0;
             this.labelTargetLeadTime.Location = new System.Drawing.Point(195, 73);
             this.labelTargetLeadTime.Name = "labelTargetLeadTime";
             this.labelTargetLeadTime.Size = new System.Drawing.Size(123, 23);
@@ -414,7 +405,6 @@
             // labelEarliestEstCutDate
             // 
             this.labelEarliestEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestEstCutDate.Lines = 0;
             this.labelEarliestEstCutDate.Location = new System.Drawing.Point(195, 16);
             this.labelEarliestEstCutDate.Name = "labelEarliestEstCutDate";
             this.labelEarliestEstCutDate.Size = new System.Drawing.Size(123, 23);
@@ -424,7 +414,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(21, 102);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(46, 23);
@@ -434,7 +423,6 @@
             // labelSeason
             // 
             this.labelSeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(21, 72);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(46, 23);
@@ -444,7 +432,6 @@
             // labelStyle
             // 
             this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(21, 44);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(46, 23);
@@ -454,7 +441,6 @@
             // labelSP
             // 
             this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(21, 16);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(46, 23);
@@ -463,7 +449,7 @@
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modifyCroclingtestToolStripMenuItem,
             this.modifyHeatTestToolStripMenuItem,
             this.modifyWashTestToolStripMenuItem});
@@ -534,6 +520,7 @@
             this.DefaultDetailOrder = "Seq,Wkno";
             this.DefaultOrder = "ID";
             this.GridAlias = "FIR";
+            this.GridPopUp = true;
             this.IsGridIcon2Visible = false;
             this.IsGridIconVisible = false;
             this.IsSupportCopy = false;
