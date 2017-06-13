@@ -229,7 +229,6 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
 
             #region -- 欄位設定 --
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts2)  //1
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //2
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)  //3
@@ -242,16 +241,13 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
             .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)  //7
             .Text("output", header: "Output", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: ts) //9
             .Numeric("balanceqty", header: "Balance", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //11
-                //.Text("ftyinventoryukey", header: "FtyInventoryUkey", width: Widths.AnsiChars(10), iseditingreadonly: true)  //12
-            ;     //
+            ; 
             #endregion 欄位設定
 
             #region 可編輯欄位變色
-
             detailgrid.Columns["Seq"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["output"].DefaultCellStyle.BackColor = Color.Pink;
-
             #endregion 可編輯欄位變色
         }
 
@@ -270,39 +266,49 @@ where poid = '{0}' and a.seq1 ='{1}' and a.seq2 = '{2}' and lock=0 and inqty-out
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? "" : e.Master["cutplanID"].ToString();
             Ismatrix_Reload = true;
-            this.DetailSelectCommand = string.Format(@"  select
-a.Id
-,isnull(a.FtyInventoryUkey,0) [FtyInventoryUkey]
-,a.Poid
-,a.seq1
-,a.seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
-,a.StockType
-,a.Qty
-,p.Colorid
-,p.SizeSpec
-,p.UsedQty
-,p.SizeUnit
-,p.StockUnit
-,dbo.Getlocation(fi.ukey) [location]
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
-,[accu_issue] = isnull(( select sum(Issue_Detail.qty) 
-                         from dbo.issue WITH (NOLOCK) 
-                         inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
-                         where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.Id 
-                                and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
-                                and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
-,isnull((select v.sizeqty+', ' from (select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty from dbo.Issue_Size WITH (NOLOCK) where Issue_Size.Issue_DetailUkey = a.ukey and Issue_Size.Qty != '0.00') v for xml path('')),'') [output]
-,a.Ukey
-,balanceqty = isnull((  select fi.inqty - fi.outqty + fi.adjustqty 
-                        from dbo.ftyinventory FI WITH (NOLOCK) 
-                        where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-                                and a.roll = fi.roll and a.stocktype = fi.stocktype)
-                    ,0.00)
+            this.DetailSelectCommand = string.Format(@"  
+select  a.Id
+        , isnull(a.FtyInventoryUkey,0) [FtyInventoryUkey]
+        , a.seq1
+        , a.seq2
+        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.seq2) as seq
+        , a.StockType
+        , a.Qty
+        , p.Colorid
+        , p.SizeSpec
+        , p.UsedQty
+        , p.SizeUnit
+        , p.StockUnit
+        , dbo.Getlocation(fi.ukey) [location]
+        , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0)[description]
+        , [accu_issue] = isnull(( select sum(Issue_Detail.qty) 
+                                  from dbo.issue WITH (NOLOCK) 
+                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
+                                  where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.Id 
+                                         and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
+                                         and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
+        , [output] = isnull ((select v.sizeqty+', ' 
+                              from (
+                                select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty 
+                                from dbo.Issue_Size WITH (NOLOCK) 
+                                where   Issue_Size.Issue_DetailUkey = a.ukey 
+                             ) v for xml path(''))
+                            ,'') 
+        , a.Ukey
+        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty 
+                                from dbo.ftyinventory FI WITH (NOLOCK) 
+                                where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+                                        and a.roll = fi.roll and a.stocktype = fi.stocktype)
+                             ,0.00)
 from dbo.Issue_Detail a WITH (NOLOCK) 
-left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid and p.seq1= a.seq1 and p.seq2 =a.seq2
-left join dbo.FtyInventory FI on a.Poid = Fi.Poid and a.Seq1 = fi.seq1 and a.seq2 = fi.seq2 
-    and a.roll = fi.roll and a.stocktype = fi.stocktype
+left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
+                                                and p.seq1= a.seq1 
+                                                and p.seq2 =a.seq2
+left join dbo.FtyInventory FI on    a.Poid = Fi.Poid 
+                                    and a.Seq1 = fi.seq1 
+                                    and a.seq2 = fi.seq2 
+                                    and a.roll = fi.roll 
+                                    and a.stocktype = fi.stocktype
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -735,6 +741,7 @@ where id = (select poid from dbo.orders WITH (NOLOCK) where id='{0}') order by s
 
             return Result.True;
         }
+
         private void getpoid()
         {
             CurrentMaintain["cutplanid"] = txtRequest.Text;
@@ -773,8 +780,14 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.getpoid();
-            this.SubDetailSelectCommand = string.Format(@"select a.SizeCode,b.Id,'{2}' AS Issue_DetailUkey,isnull(b.Qty,0) QTY,IIF(b.Qty IS NULL , 1 ,0) isvirtual
-from dbo.Order_SizeCode a WITH (NOLOCK) left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
+            this.SubDetailSelectCommand = string.Format(@"
+select  a.SizeCode
+        , b.Id
+        , '{2}' AS Issue_DetailUkey
+        , isnull(b.Qty,0) QTY
+        , IIF(b.Qty IS NULL , 1 ,0) isvirtual
+from dbo.Order_SizeCode a WITH (NOLOCK) 
+left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode and b.id = '{1}' and b.Issue_DetailUkey = {2}
 where a.id='{0}' order by Seq", this.poid, masterID, ukey);
             return base.OnSubDetailSelectCommandPrepare(e);
         }
@@ -1302,6 +1315,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             xl.Save();
             return true;
         }
+
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
         {
             result = null;
@@ -1393,6 +1407,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
                 conn.Close();
             }
         }
+
         private void txtOrderID_Validating(object sender, EventArgs e)
         {
             if (txtOrderID.Text == txtOrderID.OldValue) return;
@@ -1436,6 +1451,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1= fi.seq1 and a.seq2
             Ismatrix_Reload = true;
             matrix_Reload();
         }
+
         private DualResult Detail_Reload()
         {            
             foreach (DataRow dr in DetailDatas)
