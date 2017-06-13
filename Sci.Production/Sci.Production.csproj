@@ -827,6 +827,7 @@
     <None Include="XLT\Shipping_R42_QtyBDownByColorwaySize.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Subcon_P23.xltx" />
     <None Include="XLT\Subcon_P32.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
