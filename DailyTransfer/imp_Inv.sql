@@ -24,6 +24,7 @@ SET
      -- ,a.FactoryID	      =b.FactoryID
      -- ,a.UnitID	      =b.UnitID
      -- ,a.InventoryRefnoId	      =b.InventoryRefnoId
+	  ,a.SuppID = b.SuppID 
       ,a.Refno	      =b.Refno
       ,a.BrandGroup	      =b.BrandGroup
       ,a.BrandID	      =b.BrandID
