@@ -61,8 +61,7 @@ namespace Sci.Production.Subcon
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(@"
 select 
-	BTD.ID
-	,BTD.BundleNo
+	BTD.BundleNo
 	,BTD.orderid
 	,S.SubprocessId
 	,BD.Patterncode
@@ -91,29 +90,29 @@ WHERE BTD.ID = '{0}'", masterID);
             return true;
         }
 
-        protected override bool ClickSaveBefore()
-        {            
-            //設定ID編碼
-            if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
-            {
-                string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 5, "ID", null);
-                if (MyUtility.Check.Empty(getID))
-                {
-                    MyUtility.Msg.WarningBox("GetID fail, please try again!");
-                    return false;
-                }
-                CurrentMaintain["ID"] = getID;
-            }
-            //檢核BundleTrack_detail.BundleNo是否已存在
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo") == false)
-                {
-                    MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
-                    return false;
-                }
-            }
-            return base.ClickSaveBefore();
-        }
+        //protected override bool ClickSaveBefore()
+        //{            
+        //    //設定ID編碼
+        //    if (MyUtility.Check.Empty(CurrentMaintain["ID"]))
+        //    {
+        //        string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 5, "ID", null);
+        //        if (MyUtility.Check.Empty(getID))
+        //        {
+        //            MyUtility.Msg.WarningBox("GetID fail, please try again!");
+        //            return false;
+        //        }
+        //        CurrentMaintain["ID"] = getID;
+        //    }
+        //    //檢核BundleTrack_detail.BundleNo是否已存在
+        //    foreach (DataRow dr in DetailDatas)
+        //    {
+        //        if (MyUtility.Check.Seek(dr["BundleNo"].ToString(), "BundleTrack_detail", "BundleNo") == false)
+        //        {
+        //            MyUtility.Msg.WarningBox(string.Format("Data is Duplicate!!!\r\n {0}", dr["BundleNo"].ToString()));
+        //            return false;
+        //        }
+        //    }
+        //    return base.ClickSaveBefore();
+        //}
     }
 }
