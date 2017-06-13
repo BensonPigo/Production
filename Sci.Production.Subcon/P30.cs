@@ -286,7 +286,12 @@ namespace Sci.Production.Subcon
                 DataRow drr = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    CurrentDetailData["orderid"] = drr["orderid"].ToString();
+                    CurrentDetailData["orderid"] = "";
+                    CurrentDetailData["factoryid"] = "";
+                    CurrentDetailData["poid"] = "";
+                    CurrentDetailData["StyleID"] = "";
+                    CurrentDetailData["SciDelivery"] = DBNull.Value;
+                    CurrentDetailData["sewinline"] = DBNull.Value;
                     return; 
                 }
                 if (e.FormattedValue.ToString() == drr["orderid"].ToString()) return;
