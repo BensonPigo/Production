@@ -170,6 +170,11 @@ namespace Sci.Production.Subcon
                     MessageBox.Show("Delivery can not any empty.");
                     return false;
                 }
+                if (MyUtility.Check.Empty(Ddr["orderid"]))
+                {
+                    MyUtility.Msg.InfoBox("SP# can't be empty.");
+                    return false;
+                }
             }
 
             #endregion
