@@ -16,17 +16,11 @@ namespace Sci.Production.Subcon
     public partial class P23 : Sci.Win.Tems.Input6
     {
         public P23(ToolStripMenuItem menuitem)
-            :base(menuitem)
+            : base(menuitem)
         {
             InitializeComponent();
-            this.DefaultFilter = string.Format("Id LIKE 'TB%'");
-            lbl_queryfor.Text = "Sub Process";
-            this.WorkAlias = "BundleTrack";
-            this.GridAlias = "BundleTrack_detail";
-            this.GridUniqueKey = "ID,BundleNo";
-            this.DefaultOrder = "ID";
-            this.ExpressQuery = true;
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -143,12 +137,12 @@ namespace Sci.Production.Subcon
             //DataRow dr;
             ts1.CellValidating += (s, e) =>
             {
-               
+
                 if (this.EditMode && e.FormattedValue.ToString() != "")
                 {
                     if (MyUtility.Check.Seek(string.Format("select 1 where exists(select * from Bundle_Detail WITH (NOLOCK) where BundleNo = '{0}')", e.FormattedValue), null))
                     {
-                       DataTable getdata ;
+                        DataTable getdata;
                         string sqlcmd = string.Format(@"
                         select B.Orderid , Artwork.value , BD.Patterncode , BD.PatternDesc
                         from Bundle_Detail BD WITH (NOLOCK)
@@ -165,14 +159,14 @@ namespace Sci.Production.Subcon
                         ) ArtWork
                         where BundleNo='{0}'
                         ", e.FormattedValue);
-                         DBProxy.Current.Select(null, sqlcmd, out getdata);
+                        DBProxy.Current.Select(null, sqlcmd, out getdata);
 
-                         CurrentDetailData["BundleNo"] = e.FormattedValue;
-                         CurrentDetailData["OrderID"] = getdata.Rows[0]["Orderid"].ToString();
-                         CurrentDetailData["SubprocessId"] = getdata.Rows[0]["value"].ToString();
-                         CurrentDetailData["Patterncode"] = getdata.Rows[0]["Patterncode"].ToString();
-                         CurrentDetailData["PatternDesc"] = getdata.Rows[0]["PatternDesc"].ToString();
-                       
+                        CurrentDetailData["BundleNo"] = e.FormattedValue;
+                        CurrentDetailData["OrderID"] = getdata.Rows[0]["Orderid"].ToString();
+                        CurrentDetailData["SubprocessId"] = getdata.Rows[0]["value"].ToString();
+                        CurrentDetailData["Patterncode"] = getdata.Rows[0]["Patterncode"].ToString();
+                        CurrentDetailData["PatternDesc"] = getdata.Rows[0]["PatternDesc"].ToString();
+
                     }
                     else
                     {
@@ -189,7 +183,7 @@ namespace Sci.Production.Subcon
                 }
             };
             Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12),settings: ts1, iseditingreadonly: false)
+                .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(12), settings: ts1, iseditingreadonly: false)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13))
                 .Text("SubprocessId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Text("Patterncode", header: "PTN Code", width: Widths.AnsiChars(10), iseditingreadonly: true)

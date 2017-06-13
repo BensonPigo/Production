@@ -163,12 +163,24 @@
             // 
             // P23
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(900, 449);
+            this.DefaultControl = "txtTransfer";
+            this.DefaultControlForEdit = "txtTransfer";
+            this.DefaultFilter = "Id LIKE \'TB%\'";
+            this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
+            this.GridAlias = "BundleTrack_detail";
+            this.GridUniqueKey = "ID,BundleNo";
+            this.IsDeleteOnBrowse = false;
+            this.IsSupportClip = false;
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.KeyField1 = "ID";
             this.Name = "P23";
             this.Text = "P23.Farm Out(Barcode)";
+            this.UniqueExpress = "ID";
+            this.WorkAlias = "BundleTrack";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
