@@ -324,6 +324,11 @@ where ot.id = '{0}' and artworktypeid = '{1}' and o.Category != 'M'"
                 else
                 {
                     CurrentDetailData["orderid"] = "";
+                    CurrentDetailData["factoryid"] = "";
+                    CurrentDetailData["poid"] = "";
+                    CurrentDetailData["StyleID"] = "";
+                    CurrentDetailData["SciDelivery"] = DBNull.Value;
+                    CurrentDetailData["sewinline"] = DBNull.Value;
                     MyUtility.Msg.ErrorBox("< SP# :" + e.FormattedValue + " > not found!!!");
                     return;
                 }
