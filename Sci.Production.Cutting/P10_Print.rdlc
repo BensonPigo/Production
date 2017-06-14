@@ -410,7 +410,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Quantity..:</Value>
+                                      <Value>Qty:</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -421,7 +421,7 @@
                               <Top>6.93086cm</Top>
                               <Left>0.16301cm</Left>
                               <Height>0.57465cm</Height>
-                              <Width>1.80326cm</Width>
+                              <Width>0.74493cm</Width>
                               <ZIndex>10</ZIndex>
                               <Style>
                                 <Border>
@@ -695,7 +695,7 @@
                               <rd:DefaultName>Textbox19</rd:DefaultName>
                               <Top>6.33996cm</Top>
                               <Left>2.3cm</Left>
-                              <Height>0.55563cm</Height>
+                              <Height>1.16555cm</Height>
                               <Width>3.92335cm</Width>
                               <ZIndex>19</ZIndex>
                               <Style>
@@ -724,9 +724,9 @@
                               </Paragraphs>
                               <rd:DefaultName>Textbox21</rd:DefaultName>
                               <Top>6.93086cm</Top>
-                              <Left>1.96627cm</Left>
+                              <Left>0.94321cm</Left>
                               <Height>0.57466cm</Height>
-                              <Width>2.34125cm</Width>
+                              <Width>1.32151cm</Width>
                               <ZIndex>20</ZIndex>
                               <Style>
                                 <Border>
