@@ -72,7 +72,7 @@ from TimeStudyHistory_Detail td WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}
-group by isnull(ATD.ArtworkTypeID,'')", id);
+group by isnull(m.ArtworkTypeID,'')", id);
             result = DBProxy.Current.Select(null, sqlCmd, out artworkType);
             if (!result)
             {

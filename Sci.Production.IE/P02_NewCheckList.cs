@@ -68,7 +68,12 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
             DataTable ExcelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)gridbs.DataSource, "DayBe4Inline,BaseOnDesc,ChkListDesc,ScheduleDate,ActualDate,Remark", "select * from #tmp", out ExcelTable);
+                if (MyUtility.Check.Empty(((DataTable)gridbs.DataSource).Rows.Count))
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+                MyUtility.Tool.ProcessWithDatatable((DataTable)gridbs.DataSource, "DayBe4Inline,BaseOnDesc,ChkListDesc,ScheduleDate,ActualDate,Remark", "select * from #tmp", out ExcelTable);             
             }
             catch (Exception ex)
             {
