@@ -10,7 +10,7 @@
     [Cdate]        DATE          NULL,
     [Orderid]      VARCHAR (13)  CONSTRAINT [DF_Bundle_Orderid] DEFAULT ('') NOT NULL,
     [Sewinglineid] VARCHAR (2)   CONSTRAINT [DF_Bundle_Sewinglineid] DEFAULT ('') NOT NULL,
-    [Item]         VARCHAR (10)  CONSTRAINT [DF_Bundle_Item] DEFAULT ('') NULL,
+    [Item]         VARCHAR (20)  CONSTRAINT [DF_Bundle_Item] DEFAULT ('') NULL,
     [SewingCell]   VARCHAR (2)   CONSTRAINT [DF_Bundle_SewingCell] DEFAULT ('') NOT NULL,
     [Ratio]        VARCHAR (100) CONSTRAINT [DF_Bundle_Ratio] DEFAULT ('') NULL,
     [Startno]      NUMERIC (5)   CONSTRAINT [DF_Bundle_Startno] DEFAULT ((0)) NULL,
