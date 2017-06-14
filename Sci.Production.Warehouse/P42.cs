@@ -50,6 +50,10 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
             {
+                if (e.RowIndex < 0)
+                {
+                    return;
+                }
                 DataRow ddr = gridCuttingTapeQuickAdjust.GetDataRow<DataRow>(e.RowIndex);
                 DataTable dt = (DataTable)listControlBindingSource1.DataSource;
                 string colnm = this.gridCuttingTapeQuickAdjust.Columns[e.ColumnIndex].DataPropertyName;
