@@ -410,7 +410,7 @@
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>Qty</Value>
+                                      <Value>Qty:</Value>
                                       <Style />
                                     </TextRun>
                                   </TextRuns>
@@ -421,7 +421,7 @@
                               <Top>6.93086cm</Top>
                               <Left>0.16301cm</Left>
                               <Height>0.53937cm</Height>
-                              <Width>0.74492cm</Width>
+                              <Width>0.92131cm</Width>
                               <ZIndex>10</ZIndex>
                               <Style>
                                 <Border>
