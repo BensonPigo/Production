@@ -23,22 +23,23 @@ namespace Sci.Production.Quality
 
         int index;
         DataRow[] find_dr;
-        public P03(ToolStripMenuItem menuitem) : base(menuitem)
+        public P03(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             InitializeComponent();
             detailgridmenus.Items.Remove(appendmenu);
             detailgridmenus.Items.Remove(modifymenu);
             detailgridmenus.Items.Remove(deletemenu);
-            foreach (ToolStripItem m in contextMenuStrip1.Items) 
+            foreach (ToolStripItem m in contextMenuStrip1.Items)
             {
                 //detailgridmenus.Items.Add(m);
                 //m.Visible = false;
             }
             //detailgrid.ContextMenuStrip = contextMenuStrip1;
             //detailgridmenus =  contextMenuStrip1;
-            
+
             //contextMenuStrip1.VisibleChanged += contextMenuStrip1_VisibleChanged;
-            
+
         }
         override protected DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
         {
@@ -50,95 +51,95 @@ namespace Sci.Production.Quality
         {
             if (contextMenuStrip1.Visible && this.EditMode)
             {
-                foreach (ToolStripItem m in contextMenuStrip1.Items) 
+                foreach (ToolStripItem m in contextMenuStrip1.Items)
                 {
                     m.Visible = false;
                 }
             }
         }
-         protected override void OnDetailEntered()
-         {
-             base.OnDetailEntered();
-             this.detailgrid.AutoResizeColumns();          
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            this.detailgrid.AutoResizeColumns();
 
-             DataRow queryDr;
-             DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
-             if (!dResult)
-             {
-                 ShowErr(dResult);
-                 return;
-             }
-             DataTable sciTb;
-             string query_cmd = string.Format("select * from Getsci('{0}','{1}')",  CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? "" : queryDr["Category"]);
-             DBProxy.Current.Select(null, query_cmd, out sciTb);
-             if (!dResult)
-             {
-                 ShowErr(query_cmd, dResult);
-                 return;
-             }
-             //Get scidelivery_box.Text  value
-             if (sciTb.Rows.Count > 0)
-             {
-                 if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value)
-                 {
-                     dateEarliestSCIDel.Text = "";
-                 }
-                 else
-                 {
-                     dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
-                 }
-             }
-             else
-             {
-                 dateEarliestSCIDel.Text = "";
-             }
-             //找出Cutinline and MinSciDelivery 比較早的日期
-             DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
-             if (targT != null)
-             {
-                 dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
-             }
-             else
-             {
-                 dateTargetLeadTime.Text = "";
-             }
-             displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
-             displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
-             displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
-             if (MyUtility.Check.Empty(queryDr))
-             {
-                 dateEarliestEstCutDate.Value = null;
-             }
-             else
-             {
-                 if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
-                 else dateEarliestEstCutDate.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);                     
-             }
+            DataRow queryDr;
+            DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
+            if (!dResult)
+            {
+                ShowErr(dResult);
+                return;
+            }
+            DataTable sciTb;
+            string query_cmd = string.Format("select * from Getsci('{0}','{1}')", CurrentMaintain["ID"], MyUtility.Check.Empty(queryDr) ? "" : queryDr["Category"]);
+            DBProxy.Current.Select(null, query_cmd, out sciTb);
+            if (!dResult)
+            {
+                ShowErr(query_cmd, dResult);
+                return;
+            }
+            //Get scidelivery_box.Text  value
+            if (sciTb.Rows.Count > 0)
+            {
+                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value)
+                {
+                    dateEarliestSCIDel.Text = "";
+                }
+                else
+                {
+                    dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                }
+            }
+            else
+            {
+                dateEarliestSCIDel.Text = "";
+            }
+            //找出Cutinline and MinSciDelivery 比較早的日期
+            DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
+            if (targT != null)
+            {
+                dateTargetLeadTime.Text = ((DateTime)targT).ToShortDateString();
+            }
+            else
+            {
+                dateTargetLeadTime.Text = "";
+            }
+            displayStyle.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Styleid"].ToString();
+            displaySeason.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["Seasonid"].ToString();
+            displayBrand.Text = MyUtility.Check.Empty(queryDr) ? "" : queryDr["brandid"].ToString();
+            if (MyUtility.Check.Empty(queryDr))
+            {
+                dateEarliestEstCutDate.Value = null;
+            }
+            else
+            {
+                if (queryDr["cutinline"] == DBNull.Value) dateEarliestEstCutDate.Text = "";
+                else dateEarliestEstCutDate.Value = MyUtility.Convert.GetDate(queryDr["cutinline"]);
+            }
 
-             displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
-             decimal detailRowCount = DetailDatas.Count;
-             string inspnum = "0";
-             DataTable detailTb = (DataTable)detailgridbs.DataSource;
-             if (detailRowCount != 0)
-             {
-                 if (detailTb.Rows.Count != 0)
-                 {
-                     
-                     DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonCrocking and nonWash and nonHeat)");
+            displayMTLCmlpt.Text = CurrentMaintain["Complete"].ToString() == "True" ? "Y" : "N";
+            decimal detailRowCount = DetailDatas.Count;
+            string inspnum = "0";
+            DataTable detailTb = (DataTable)detailgridbs.DataSource;
+            if (detailRowCount != 0)
+            {
+                if (detailTb.Rows.Count != 0)
+                {
 
-                     if (inspectAry.Length > 0)
-                     {
-                         inspnum = Math.Round(((decimal)inspectAry.Length / detailRowCount) * 100, 2).ToString();
-                     }
-                 }
-             }
-             displayofInspection.Text = inspnum;
+                    DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonCrocking and nonWash and nonHeat)");
 
-             DateTime completedate;
-             if (inspnum == "100")
-             {
-                 DataTable dtMaxDate;
-                 string sqlDate = string.Format(@"select max(date) as MaxDate from (
+                    if (inspectAry.Length > 0)
+                    {
+                        inspnum = Math.Round(((decimal)inspectAry.Length / detailRowCount) * 100, 2).ToString();
+                    }
+                }
+            }
+            displayofInspection.Text = inspnum;
+
+            DateTime completedate;
+            if (inspnum == "100")
+            {
+                DataTable dtMaxDate;
+                string sqlDate = string.Format(@"select max(date) as MaxDate from (
 select  MAX(CrockingDate) AS date  from FIR_Laboratory WITH (NOLOCK) 
 where POID='{0}'
 union all
@@ -148,20 +149,20 @@ union all
 select  MAX(WashDate) AS date from FIR_Laboratory WITH (NOLOCK) 
 where POID='{0}'
 ) a", CurrentMaintain["ID"]);
-                 DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
-                 if (MyUtility.Check.Empty(dtMaxDate.Rows[0]["MaxDate"]))
-                 {
-                     dateCompletionDate.Text = "";              
-                 }
-                 else
-                 {
-                     completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
-                     dateCompletionDate.Text = completedate.ToString("yyyy/MM/dd");
-                 }
-             }
-             else this.dateCompletionDate.Text = "";
-         }
-       
+                DBProxy.Current.Select(null, sqlDate, out dtMaxDate);
+                if (MyUtility.Check.Empty(dtMaxDate.Rows[0]["MaxDate"]))
+                {
+                    dateCompletionDate.Text = "";
+                }
+                else
+                {
+                    completedate = ((DateTime)dtMaxDate.Rows[0]["MaxDate"]);
+                    dateCompletionDate.Text = completedate.ToString("yyyy/MM/dd");
+                }
+            }
+            else this.dateCompletionDate.Text = "";
+        }
+
         //表身額外的資料來源
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
@@ -211,6 +212,7 @@ order by a.seq1,a.seq2,a.Refno "
             #region mouseClick
             crocking.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 var frm = new Sci.Production.Quality.P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
@@ -221,6 +223,7 @@ order by a.seq1,a.seq2,a.Refno "
 
             crockingD.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 var frm = new Sci.Production.Quality.P03_Crocking(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
@@ -228,21 +231,23 @@ order by a.seq1,a.seq2,a.Refno "
                 frm.Dispose();
                 this.RenewData();
             };
-            
+
             wash.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(),null,null, dr);
+                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
             };
             washD.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(),null,null, dr);
+                var frm = new Sci.Production.Quality.P03_Wash(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -250,9 +255,10 @@ order by a.seq1,a.seq2,a.Refno "
 
             heat.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
-                var frm = new Sci.Production.Quality.P03_Heat(false, this.CurrentDetailData["ID"].ToString(),null,null, dr);
+                var frm = new Sci.Production.Quality.P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
                 frm.ShowDialog(this);
                 frm.Dispose();
                 this.RenewData();
@@ -260,6 +266,7 @@ order by a.seq1,a.seq2,a.Refno "
 
             heatD.CellMouseDoubleClick += (s, e) =>
             {
+                if (EditMode) return;
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 var frm = new Sci.Production.Quality.P03_Heat(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
@@ -272,15 +279,17 @@ order by a.seq1,a.seq2,a.Refno "
             #region Valid & Edit
 
             nonCrocking.CellValidating += (s, e) =>
-                {
-                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                    dr["nonCrocking"] = e.FormattedValue;
-                    dr.EndEdit();
-                    DataTable dt = (DataTable)detailgridbs.DataSource;
-                    FinalResult(dr);
-                };
+            {
+                if (EditMode) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                dr["nonCrocking"] = e.FormattedValue;
+                dr.EndEdit();
+                DataTable dt = (DataTable)detailgridbs.DataSource;
+                FinalResult(dr);
+            };
             nonWash.CellValidating += (s, e) =>
             {
+                if (EditMode) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["nonWash"] = e.FormattedValue;
                 dr.EndEdit();
@@ -289,6 +298,7 @@ order by a.seq1,a.seq2,a.Refno "
             };
             nonHeat.CellValidating += (s, e) =>
             {
+                if (EditMode) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 dr["nonHeat"] = e.FormattedValue;
                 dr.EndEdit();
@@ -307,7 +317,7 @@ order by a.seq1,a.seq2,a.Refno "
                 .Text("wkno", header: "WKNO", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)                
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
@@ -315,14 +325,14 @@ order by a.seq1,a.seq2,a.Refno "
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Result", header: "All Result", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .CheckBox("nonCrocking", header: "Crocking N/A", width: Widths.AnsiChars(1), iseditable: true, trueValue: 1, falseValue: 0, settings: nonCrocking)
-                .Text("Crocking", header: "Crocking Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:crocking)
-                .Date("CrockingDate", header: "Crocking Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true ,settings:crockingD)
-                .CheckBox("nonHeat", header: "HT N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0,settings:nonHeat)
-                .Text("Heat", header: "Heat Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:heat)
-                .Date("HeatDate", header: "Heat Last Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:heatD)
-                .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0,settings:nonWash)
-                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:wash)
-                .Date("WashDate", header: "Wash Last Test Date", width: Widths.AnsiChars(10),iseditingreadonly:true,settings:washD)
+                .Text("Crocking", header: "Crocking Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: crocking)
+                .Date("CrockingDate", header: "Crocking Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: crockingD)
+                .CheckBox("nonHeat", header: "HT N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0, settings: nonHeat)
+                .Text("Heat", header: "Heat Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: heat)
+                .Date("HeatDate", header: "Heat Last Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: heatD)
+                .CheckBox("nonWash", header: "Wash N/A", width: Widths.AnsiChars(1), trueValue: 1, falseValue: 0, settings: nonWash)
+                .Text("Wash", header: "Wash Result", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: wash)
+                .Date("WashDate", header: "Wash Last Test Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: washD)
                 .Text("ReceivingID", header: "Receiving ID", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
 
@@ -336,38 +346,38 @@ order by a.seq1,a.seq2,a.Refno "
             detailgrid.Columns["nonWash"].DefaultCellStyle.BackColor = Color.MistyRose;
             detailgrid.Columns["Wash"].DefaultCellStyle.BackColor = Color.LightBlue;
             detailgrid.Columns["WashDate"].DefaultCellStyle.BackColor = Color.LightBlue;
-            
+
             #endregion
 
 
         }
-       
+
         protected override DualResult ClickSave()
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
-           
-            
-            List<SqlParameter> spam_po = new List<SqlParameter>();                      
+
+
+            List<SqlParameter> spam_po = new List<SqlParameter>();
             string save_po_cmd = "update po set FirLaboratoryRemark = @remark where id = @id";
-            spam_po.Add(new SqlParameter("@remark",CurrentMaintain["FirLaboratoryRemark"]));
-            spam_po.Add(new SqlParameter("@id",CurrentMaintain["ID"]));
-            
+            spam_po.Add(new SqlParameter("@remark", CurrentMaintain["FirLaboratoryRemark"]));
+            spam_po.Add(new SqlParameter("@id", CurrentMaintain["ID"]));
+
             foreach (DataRow dr in DetailDatas)
             {
-                if (dr.RowState==DataRowState.Modified)
+                if (dr.RowState == DataRowState.Modified)
                 {
-                    List<SqlParameter> spam_non = new List<SqlParameter>();  
+                    List<SqlParameter> spam_non = new List<SqlParameter>();
                     int nonCk = dr["nonCrocking"].ToString() == "True" ? 1 : 0;
                     int nonWash = dr["nonWash"].ToString() == "True" ? 1 : 0;
                     int nonHeat = dr["nonHeat"].ToString() == "True" ? 1 : 0;
-                    string save_non_cmd = "Update FIR_Laboratory set nonCrocking=@nonCk, nonWash=@nonWash, nonHeat=@nonHeat, ReceiveSampleDate=@RSD where id=@id";                   
+                    string save_non_cmd = "Update FIR_Laboratory set nonCrocking=@nonCk, nonWash=@nonWash, nonHeat=@nonHeat, ReceiveSampleDate=@RSD where id=@id";
                     spam_non.Add(new SqlParameter("@nonCk", nonCk));
-                    spam_non.Add(new SqlParameter("@nonWash",nonWash));
+                    spam_non.Add(new SqlParameter("@nonWash", nonWash));
                     spam_non.Add(new SqlParameter("@nonHeat", nonHeat));
                     spam_non.Add(new SqlParameter("@RSD", dr["ReceiveSampleDate"]));
                     spam_non.Add(new SqlParameter("@id", dr["ID"]));
-                    DBProxy.Current.Execute(null, save_non_cmd, spam_non);                    
-                }               
+                    DBProxy.Current.Execute(null, save_non_cmd, spam_non);
+                }
             }
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -375,12 +385,12 @@ order by a.seq1,a.seq2,a.Refno "
             {
                 try
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd,spam_po)))
+                    if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd, spam_po)))
                     {
                         _transactionscope.Dispose();
                         return upResult;
                     }
-                  
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -397,7 +407,7 @@ order by a.seq1,a.seq2,a.Refno "
 
             foreach (DataRow dr in DetailDatas)
             {
-                if (dr.RowState==DataRowState.Modified)
+                if (dr.RowState == DataRowState.Modified)
                 {
                     string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Lab(dr["ID"]);
                     string cmdResult = @"update Fir_Laboratory set Result=@Result where id=@id ";
@@ -407,11 +417,11 @@ order by a.seq1,a.seq2,a.Refno "
                     DBProxy.Current.Execute(null, cmdResult, spam);
                 }
             }
-           
+
             #endregion
             _transactionscope.Dispose();
             _transactionscope = null;
-            
+
             return Result.True;
         }
 
@@ -473,11 +483,11 @@ order by a.seq1,a.seq2,a.Refno "
                     index++;
                     if (index >= find_dr.Length) index = 0;
                 }
-                
+
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
         }
-       
+
         public void FinalResult(DataRow dr)
         {
             if (this.EditMode)
@@ -486,16 +496,16 @@ order by a.seq1,a.seq2,a.Refno "
                 dr["Result"] = returnResult[0];
             }
         }
-      
+
         private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
             {
                 return;
-            } 
+            }
             string currentID = this.CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; 
-            var frm = new Sci.Production.Quality.P03_Crocking(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
+            var dr = this.CurrentDetailData;
+            var frm = new Sci.Production.Quality.P03_Crocking(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -520,10 +530,10 @@ order by a.seq1,a.seq2,a.Refno "
             if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
             {
                 return;
-            } 
+            }
             string currentID = this.CurrentDetailData["ID"].ToString();
-            var dr = this.CurrentDetailData; 
-            var frm = new Sci.Production.Quality.P03_Heat(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
+            var dr = this.CurrentDetailData;
+            var frm = new Sci.Production.Quality.P03_Heat(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -549,10 +559,10 @@ order by a.seq1,a.seq2,a.Refno "
             if (MyUtility.Check.Empty(detailgrid) || detailgrid.RowCount == 0)
             {
                 return;
-            } 
+            }
             string currentID = this.CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData;
-            var frm = new Sci.Production.Quality.P03_Wash(IsSupportEdit, CurrentDetailData["ID"].ToString(),null,null, dr);
+            var frm = new Sci.Production.Quality.P03_Wash(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
@@ -570,6 +580,6 @@ order by a.seq1,a.seq2,a.Refno "
                 }
             }
             detailgrid.SelectRowTo(rowindex);
-        }        
+        }
     }
 }
