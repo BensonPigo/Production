@@ -924,17 +924,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
+            pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("",
-            @"select  b.name 
-            from dbo.Issue a WITH (NOLOCK) 
-            inner join dbo.mdivision  b WITH (NOLOCK) 
-            on b.id = a.mdivisionid
-            where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt);
+            DualResult result = DBProxy.Current.Select("", @"
+select NameEN
+from Factory
+where id = @MDivision", pars, out dt);
             if (!result) { this.ShowErr(result); }
-            string RptTitle = dt.Rows[0]["name"].ToString();
+            string RptTitle = dt.Rows[0]["NameEn"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));

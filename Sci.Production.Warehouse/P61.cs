@@ -351,7 +351,12 @@ where LID.ID = @ID";
             }
             #endregion 
             ReportDefinition report = new ReportDefinition();
+            string MDivisonName = MyUtility.GetValue.Lookup(string.Format(@"
+select NameEN
+from factory
+where id = '{0}'", Sci.Env.User.Keyword));
             #region Set RDLC_Title Data
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", MDivisonName));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", CurrentMaintain["ID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", CurrentMaintain["FactoryID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", CurrentMaintain["IssueDate"])));
