@@ -611,7 +611,7 @@ select  t.*
                                         and pld.OrderShipmodeSeq = t.Seq)
                                , 0)
         , InvoiceAdjQty = dbo.getInvAdjQty (t.ID, t.Seq) 
-        , ct.FirstCutDate
+        , ct.LastCutDate
         , ArriveWHDate = (select Max(e.WhseArrival) 
                           from Export e WITH (NOLOCK) 
                           inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
@@ -788,7 +788,7 @@ select  t.*
                                    inner join InvAdjust_Qty iq WITH (NOLOCK) on i.ID = iq.ID
                                    where i.OrderID = t.ID)
                                  , 0)
-        , ct.FirstCutDate
+        , ct.LastCutDate
         , ArriveWHDate = (select Max(e.WhseArrival) 
                           from Export e WITH (NOLOCK) 
                           inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID 
@@ -859,31 +859,103 @@ order by t.ID");
                         classify = "'P'";
                     }
                     sqlCmd.Clear();
-                    sqlCmd.Append(string.Format(@"With SubProcess
-as (
-select *,(ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq)) as rno from (
-SELECT ID,Seq,ArtworkUnit,ProductionUnit,SystemType,Seq+'U1' as FakeID,RTRIM(ID)+' ('+ArtworkUnit+')' as ColumnN, '1' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
-WHERE ArtworkUnit <> '' and Classify in ({0}) and Junk = 0
-union all
-SELECT ID,Seq,ArtworkUnit,ProductionUnit,SystemType,Seq+'U2' as FakeID,RTRIM(ID)+' ('+IIF(ProductionUnit = 'QTY','Price',ProductionUnit)+')' as ColumnN, '2' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
-WHERE ProductionUnit <> '' and Classify in ({0}) and Junk = 0
-union all
-SELECT ID,Seq,ArtworkUnit,ProductionUnit,SystemType,Seq+'N' as FakeID,RTRIM(ID) as ColumnN, '3' as ColumnSeq FROM ArtworkType WITH (NOLOCK) 
-WHERE ArtworkUnit = '' and ProductionUnit = '' and Classify in ({0}) and Junk = 0
-{1}
-) a
-),
-TTL_Subprocess
-as (
-select 'TTL'+ID as ID,Seq,ArtworkUnit,ProductionUnit,SystemType,'T'+FakeID as FakeID,'TTL_'+ColumnN as ColumnN, ColumnSeq,(ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq))+1000 as rno from SubProcess where ID <> 'PrintSubCon'
+                    sqlCmd.Append(string.Format(@"
+With SubProcess  as (
+    select  *
+            , rno = (ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq)) 
+    from (
+        SELECT  ID
+                , Seq
+                , ArtworkUnit
+                , ProductionUnit
+                , FakeID = SystemType,Seq + 'U1'
+                , ColumnN = RTRIM(ID) + ' ('+ArtworkUnit+')'
+                , ColumnSeq = '1'
+        FROM ArtworkType WITH (NOLOCK) 
+        WHERE   ArtworkUnit <> '' 
+                and Classify in ({0}) 
+                and Junk = 0
+        
+        union all
+        SELECT  ID
+                , Seq
+                , ArtworkUnit
+                , ProductionUnit
+                , SystemType
+                , FakeID = Seq + 'U2'
+                , ColumnN = RTRIM(ID) + ' ('+IIF(ProductionUnit = 'QTY','Price',ProductionUnit)+')'
+                , ColumnSeq = '2' 
+        FROM ArtworkType WITH (NOLOCK) 
+        WHERE   ProductionUnit <> '' 
+                and Classify in ({0}) 
+                and Junk = 0
+        
+        union all
+        SELECT  ID
+                , Seq
+                , ArtworkUnit
+                , ProductionUnit
+                , SystemType
+                , FakeID = Seq + 'N'
+                , ColumnN = RTRIM(ID)
+                , ColumnSeq = '3'
+        FROM ArtworkType WITH (NOLOCK) 
+        WHERE   ArtworkUnit = '' 
+                and ProductionUnit = '' 
+                and Classify in ({0}) 
+                and Junk = 0
+        {1}
+    ) a
+), TTL_Subprocess as (
+    select  ID = 'TTL' + ID 
+            , Seq
+            , ArtworkUnit
+            , ProductionUnit
+            , SystemType
+            , FakeID = 'T' + FakeID
+            , ColumnN = 'TTL_' + ColumnN
+            , ColumnSeq
+            , rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
+            from SubProcess 
+            where ID <> 'PrintSubCon'
 )
-select ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,(ROW_NUMBER() OVER (ORDER BY a.rno))+{2} as rno from (
-select * from SubProcess
-union all
-SELECT 'TTLTMS' as ID,'' as Seq,'' as ArtworkUnit,'' as ProductionUnit, '' as SystemType,'TTLTMS' as FakeID,'TTL_TMS' as ColumnN,'' as ColumnSeq,'999' as rno
-union
-select * from TTL_Subprocess) a", classify, (!artwork ? "" : @"union all
-SELECT 'PrintSubCon' as ID,'' as Seq,'' as ArtworkUnit,'' as ProductionUnit, '' as SystemType,'9999ZZ' as FakeID,'SubCon' as ColumnN,'999' as ColumnSeq"),
+select  ID
+        , Seq
+        , ArtworkUnit
+        , ProductionUnit
+        , SystemType
+        , FakeID
+        , ColumnN
+        , ColumnSeq
+        , rno = (ROW_NUMBER() OVER (ORDER BY a.rno)) + {2}
+from (
+    select * 
+    from SubProcess
+
+    union all
+    SELECT  ID = 'TTLTMS'
+            , Seq = ''
+            , ArtworkUnit = '' 
+            , ProductionUnit = '' 
+            , SystemType = '' 
+            , FakeID = 'TTLTMS'
+            , FakeID = 'TTL_TMS'
+            , ColumnSeq = '' 
+            , rno = '999'
+    union
+    select * 
+    from TTL_Subprocess
+) a"
+                        , classify, (!artwork ? "" : @"
+    union all
+    SELECT  ID = 'PrintSubCon'
+            , Seq = ''
+            , ArtworkUnit = '' 
+            , ProductionUnit = '' 
+            , SystemType = ''
+            , FakeID = '9999ZZ'
+            , ColumnN = 'SubCon'
+            , ColumnSeq = '999'"),
                                                                                                                                                             "112"));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out subprocessColumnName);
@@ -898,14 +970,29 @@ SELECT 'PrintSubCon' as ID,'' as Seq,'' as ArtworkUnit,'' as ProductionUnit, '' 
                     {
                         MyUtility.Tool.ProcessWithDatatable(subprocessColumnName,
                             "ID,Seq,ArtworkUnit,ProductionUnit,SystemType,FakeID,ColumnN,ColumnSeq,rno",
-                            @"with ArtworkData 
-as (
-select * from #tmp
+                            @"
+with ArtworkData as (
+    select * 
+    from #tmp
 )
-select ot.ID,ot.ArtworkTypeID,ot.ArtworkUnit,at.ProductionUnit,ot.Qty,ot.TMS,ot.Price,
-IIF(ot.ArtworkTypeID = 'PRINTING',IIF(ot.InhouseOSP = 'O',(select Abb from LocalSupp WITH (NOLOCK) where ID = LocalSuppID),ot.LocalSuppID),'') as Supp,
-a.rno as AUnitRno, a1.rno as PUnitRno, a2.rno as NRno,
-a3.rno as TAUnitRno, a4.rno as TPUnitRno, a5.rno as TNRno  
+select  ot.ID
+        , ot.ArtworkTypeID
+        , ot.ArtworkUnit
+        , at.ProductionUnit
+        , ot.Qty
+        , ot.TMS
+        , ot.Price
+        , Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', (select Abb 
+                                                                              from LocalSupp WITH (NOLOCK) 
+                                                                              where ID = LocalSuppID)
+                                                                           , ot.LocalSuppID)
+                                                  , '')
+        , AUnitRno = a.rno 
+        , PUnitRno = a1.rno
+        , NRno = a2.rno
+        , TAUnitRno = a3.rno
+        , TPUnitRno = a4.rno 
+        , TNRno = a5.rno  
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID
 left join ArtworkData a on a.FakeID = ot.Seq+'U1' 
@@ -946,8 +1033,8 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             worksheet.Name = "PPIC_Master_List";
 
             //填Subprocess欄位名稱
-            int lastCol = 113;
-            int subConCol = 9999, ttlTMS = 113; //紀錄SubCon與TTL_TMS的欄位
+            int lastCol = 114;
+            int subConCol = 9999, ttlTMS = 114; //紀錄SubCon與TTL_TMS的欄位
             if (artwork || pap)
             {
                 foreach (DataRow dr in subprocessColumnName.Rows)
@@ -967,7 +1054,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
             }
             else
             {
-                worksheet.Cells[1, 113] = "TTL_TMS";
+                worksheet.Cells[1, 114] = "TTL_TMS";
             }
 
             //算出Excel的Column的英文位置
@@ -1055,48 +1142,49 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                 objArray[0, 71] = dr["CutInLine"];
                 objArray[0, 72] = dr["CutOffLine"];
                 objArray[0, 73] = dr["FirstCutDate"];
-                objArray[0, 74] = dr["PulloutDate"];
-                objArray[0, 75] = dr["ActPulloutDate"];
-                objArray[0, 76] = dr["PulloutQty"];
-                objArray[0, 77] = dr["ActPulloutTime"];
-                objArray[0, 78] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : "";
-                objArray[0, 79] = dr["FtyKPI"]; //cb
+                objArray[0, 74] = dr["LastCutDate"];
+                objArray[0, 75] = dr["PulloutDate"];
+                objArray[0, 76] = dr["ActPulloutDate"];
+                objArray[0, 77] = dr["PulloutQty"];
+                objArray[0, 78] = dr["ActPulloutTime"];
+                objArray[0, 79] = MyUtility.Convert.GetString(dr["PulloutComplete"]).ToUpper() == "TRUE" ? "OK" : "";
+                objArray[0, 80] = dr["FtyKPI"]; //cb
                 KPIChangeReasonName = dr["KPIChangeReason"].ToString().Trim() + "-" + dr["KPIChangeReasonName"].ToString().Trim();
-                objArray[0, 80] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? KPIChangeReasonName : ""; //cc
-                objArray[0, 81] = dr["PlanDate"];
-                objArray[0, 82] = dr["OrigBuyerDelivery"];
-                objArray[0, 83] = dr["SMR"];
-                objArray[0, 84] = dr["SMRName"];
-                objArray[0, 85] = dr["MRHandle"];
-                objArray[0, 86] = dr["MRHandleName"];
-                objArray[0, 87] = dr["POSMR"];
-                objArray[0, 88] = dr["POSMRName"];
-                objArray[0, 89] = dr["POHandle"];
-                objArray[0, 90] = dr["POHandleName"];
-                objArray[0, 91] = dr["MCHandle"];
-                objArray[0, 92] = dr["MCHandleName"];
-                objArray[0, 93] = dr["DoxType"];
-                objArray[0, 94] = dr["PackingCTN"];
-                objArray[0, 95] = dr["TotalCTN1"];
-                objArray[0, 96] = dr["FtyCtn1"];
-                objArray[0, 97] = dr["ClogCTN1"];
-                objArray[0, 98] = dr["ClogRcvDate"];
-                objArray[0, 99] = dr["InspDate"];
-                objArray[0, 100] = dr["InspResult"];//CW
-                objArray[0, 101] = dr["InspHandle"];//CX
-                objArray[0, 102] = dr["SewLine"];//CY
-                objArray[0, 103] = dr["ShipModeList"];//CZ
-                objArray[0, 104] = dr["Article"];//DA
-                objArray[0, 105] = dr["SpecialMarkName"];//DB
-                objArray[0, 106] = dr["FTYRemark"];//DC
-                objArray[0, 107] = dr["SampleReasonName"];//DD
-                objArray[0, 108] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : "";
-                objArray[0, 109] = dr["CuttingSP"];
-                objArray[0, 110] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : "";
-                objArray[0, 111] = MyUtility.Convert.GetDecimal(dr["CPU"])*stdTMS;
+                objArray[0, 81] = !MyUtility.Check.Empty(dr["KPIChangeReason"]) ? KPIChangeReasonName : ""; //cc
+                objArray[0, 82] = dr["PlanDate"];
+                objArray[0, 83] = dr["OrigBuyerDelivery"];
+                objArray[0, 84] = dr["SMR"];
+                objArray[0, 85] = dr["SMRName"];
+                objArray[0, 86] = dr["MRHandle"];
+                objArray[0, 87] = dr["MRHandleName"];
+                objArray[0, 88] = dr["POSMR"];
+                objArray[0, 89] = dr["POSMRName"];
+                objArray[0, 90] = dr["POHandle"];
+                objArray[0, 91] = dr["POHandleName"];
+                objArray[0, 92] = dr["MCHandle"];
+                objArray[0, 93] = dr["MCHandleName"];
+                objArray[0, 94] = dr["DoxType"];
+                objArray[0, 95] = dr["PackingCTN"];
+                objArray[0, 96] = dr["TotalCTN1"];
+                objArray[0, 97] = dr["FtyCtn1"];
+                objArray[0, 98] = dr["ClogCTN1"];
+                objArray[0, 99] = dr["ClogRcvDate"];
+                objArray[0, 100] = dr["InspDate"];
+                objArray[0, 101] = dr["InspResult"];//CW
+                objArray[0, 102] = dr["InspHandle"];//CX
+                objArray[0, 103] = dr["SewLine"];//CY
+                objArray[0, 104] = dr["ShipModeList"];//CZ
+                objArray[0, 105] = dr["Article"];//DA
+                objArray[0, 106] = dr["SpecialMarkName"];//DB
+                objArray[0, 107] = dr["FTYRemark"];//DC
+                objArray[0, 108] = dr["SampleReasonName"];//DD
+                objArray[0, 109] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : "";
+                objArray[0, 110] = dr["CuttingSP"];
+                objArray[0, 111] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : "";
+                objArray[0, 112] = MyUtility.Convert.GetDecimal(dr["CPU"])*stdTMS;
                 #endregion
                 //先清空Subprocess值
-                for (int i = 112; i < lastCol; i++)
+                for (int i = 113; i < lastCol; i++)
                 {
                     objArray[0, i] = 0;
                     if (subtrue == 1)
@@ -1173,7 +1261,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq", out orderArtworkData);
                     
                 else
                      {
-                         objArray[0, 112] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * stdTMS;
+                         objArray[0, 113] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * stdTMS;
                      }
 
                 worksheet.Range[String.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); //篩選
