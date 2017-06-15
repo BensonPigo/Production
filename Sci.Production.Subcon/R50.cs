@@ -80,6 +80,7 @@ Where 1=1
                 sql.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
                 sql2.Append(string.Format("And O.FtyGroup = '{0}'", Factory));
             }
+            sql.Append(" order by o.FactoryID,BD.BundleNo,bd.BundleGroup,o.StyleID,o.SeasonID,o.brandid");
 
             //預先開啟excel app
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
