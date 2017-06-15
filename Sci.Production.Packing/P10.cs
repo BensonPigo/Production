@@ -54,15 +54,42 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(@"
-Select Distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, convert(int,b.CTNStartNo) as OrderbyCTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
-from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
-where b.OrderId = c.Id 
-and a.Id = b.Id 
-and b.CTNStartNo != '' 
-and ((b.ReturnDate is null and TransferDate is null) or b.ReturnDate is not null) 
-and c.Dest = d.ID 
-and a.MDivisionID = '{0}' and (a.Type = 'B' or a.Type = 'L') and c.MDivisionID = '{0}'
-order by b.Id,b.OrderID, b.CTNStartNo", Sci.Env.User.Keyword));
+select	ID
+		, selected
+		, PackingListID
+		, OrderID
+		, CTNStartNo
+		, CustPONo
+		, StyleID
+		, SeasonID
+		, BrandID
+		, Customize1
+		, Alias
+		, BuyerDelivery 
+from (
+    Select  Distinct ID = ''
+            , selected = 1
+            , PackingListID = b.Id 
+            , b.OrderID
+            , b.CTNStartNo
+            , c.CustPONo
+            , c.StyleID
+            , c.SeasonID
+            , c.BrandID
+            , c.Customize1
+            , d.Alias
+            , c.BuyerDelivery 
+            , orderByCTNStartNo = TRY_CONVERT(int, CTNStartNo)
+    from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
+    where b.OrderId = c.Id 
+    and a.Id = b.Id 
+    and b.CTNStartNo != '' 
+    and ((b.ReturnDate is null and TransferDate is null) or b.ReturnDate is not null) 
+    and c.Dest = d.ID 
+    and a.MDivisionID = '{0}' 
+    and (a.Type = 'B' or a.Type = 'L') 
+    and c.MDivisionID = '{0}'
+", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 sqlCmd.Append(string.Format(" and b.OrderID = '{0}'", this.txtSP.Text.ToString().Trim()));
@@ -75,7 +102,9 @@ order by b.Id,b.OrderID, b.CTNStartNo", Sci.Env.User.Keyword));
             {
                 sqlCmd.Append(string.Format(" and a.ID = '{0}'", this.txtPackID.Text.ToString().Trim()));
             }
-            sqlCmd.Append(" ORDER BY b.Id,OrderID,convert(int ,b.CTNStartNo);");
+            sqlCmd.Append(@"
+) detail
+ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
 
             DataTable selectDataTable;
             DualResult selectResult;
