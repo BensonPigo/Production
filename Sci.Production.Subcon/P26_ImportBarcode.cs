@@ -200,7 +200,6 @@ WHERE (bda.SubprocessId IS NULL or bda.SubprocessId  = '{0}') and (bd.Patterncod
         private void btnClose_Click(object sender, EventArgs e)
         {
             listControlBindingSource1 = null;
-            listControlBindingSource2 = null;
 
             Close();
         }
