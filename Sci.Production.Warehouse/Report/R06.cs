@@ -187,7 +187,11 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R06.xltx"); //預先開啟excel app
             MyUtility.Excel.CopyToXls(printData, "", "Warehouse_R06.xltx", 4, showExcel: false, showSaveMsg: true, excelApp: objApp);      // 將datatable copy to excel
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            //objSheets.Cells[1, 1] = condition.ToString();   // 條件字串寫入excel
+            objSheets.Cells[1, 1] = MyUtility.GetValue.Lookup(string.Format(@"
+select  NameEN
+from factory
+where id = '{0}'", Sci.Env.User.Keyword));
+            objSheets.Cells[2, 1] = @"Fabric\Accessory Lacking & Replacement Report";
             //Lacking Date (3, 2)
             objSheets.Cells[3, 2] = string.Format(@"{0} ~ {1}" + "   "
                 , Convert.ToDateTime(issuedate1).ToString("d")
