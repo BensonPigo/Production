@@ -54,14 +54,38 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select s.LocalSuppID + ' - ' + isnull(l.Abb,'') as Supplier,s.ID,s.Type,s.CDate,
-s.Handle + ' - ' + isnull((select Name +' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = s.Handle),'') as Handle,
-s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amount,s.BLNo,s.InvNo,
-isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
+            sqlCmd.Append(string.Format(@"
+select  Supplier = s.LocalSuppID + ' - ' + isnull(l.Abb,'')
+        , s.ID
+        , s.Type
+        , s.CDate
+        , Handle = s.Handle + ' - ' + isnull((select Name +' #'+ExtNo from Pass1 WITH (NOLOCK) where ID = s.Handle),'')
+        , Brand = isnull (stuff ((select concat (',', BrandID)
+                                  from (
+                                      select distinct BrandID
+                                      from GMTBooking gb
+                                      inner join ShareExpense se on gb.id = se.InvNo
+                                      where se.ShippingAPID = s.ID
+                                  ) a for xml path(''))
+                                 , 1, 1, '')
+                          , '')
+        , s.MDivisionID
+        , s.CurrencyID
+        , Amount = s.Amount + s.VAT
+        , s.BLNo
+        , s.InvNo
+        , ExportInv = isnull (stuff ((select CONCAT ('/', InvNo) 
+                                     from (
+                                          select distinct InvNo 
+                                          from ShareExpense WITH (NOLOCK) 
+                                          where ShippingAPID = s.ID
+                                     ) a for xml path(''))
+                                    , 1, 1, '')
+                             , '')
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.ApvDate is null
-and 1=1"));
+      and 1=1"));
             if (!MyUtility.Check.Empty(date1))
             {
                 sqlCmd.Append(string.Format(" and s.CDate >= '{0}' ", Convert.ToDateTime(date1).ToString("d")));
@@ -119,7 +143,7 @@ and 1=1"));
 
             //填內容值
             int intRowsStart = 3;
-            object[,] objArray = new object[1, 11];
+            object[,] objArray = new object[1, printData.Rows.Count];
             foreach (DataRow dr in printData.Rows)
             {
                 objArray[0, 0] = dr["Supplier"];
@@ -127,13 +151,14 @@ and 1=1"));
                 objArray[0, 2] = dr["Type"];
                 objArray[0, 3] = dr["CDate"];
                 objArray[0, 4] = dr["Handle"];
-                objArray[0, 5] = dr["MDivisionID"];
-                objArray[0, 6] = dr["CurrencyID"];
-                objArray[0, 7] = dr["Amount"];
-                objArray[0, 8] = dr["BLNo"];
-                objArray[0, 9] = dr["InvNo"];
-                objArray[0, 10] = MyUtility.Check.Empty(dr["ExportInv"]) ? "" : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0,MyUtility.Convert.GetString(dr["ExportInv"]).Length-1);
-                worksheet.Range[String.Format("A{0}:K{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 5] = dr["Brand"];
+                objArray[0, 6] = dr["MDivisionID"];
+                objArray[0, 7] = dr["CurrencyID"];
+                objArray[0, 8] = dr["Amount"];
+                objArray[0, 9] = dr["BLNo"];
+                objArray[0, 10] = dr["InvNo"];
+                objArray[0, 11] = MyUtility.Check.Empty(dr["ExportInv"]) ? "" : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0,MyUtility.Convert.GetString(dr["ExportInv"]).Length-1);
+                worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
