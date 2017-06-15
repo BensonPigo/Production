@@ -427,12 +427,20 @@ namespace Sci.Production.PPIC
 
         private void ToExcel_Click(object sender, EventArgs e)
         {
-            string sqlcmd1 = string.Format(@"
+            DataTable ptb1, ptb2, ptb3, ptb4;
+            if (radioQty.Checked)
+            {
+                #region
+                string sqlcmd1 = string.Format(@"
 DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
-SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(oq.SizeCode),N',' + QUOTENAME(oq.SizeCode))
-FROM Order_Qty oq WITH (NOLOCK) 
-where oq.ID = @ID
+SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
+FROM (
+	select distinct oq.SizeCode
+	FROM Order_Qty oq WITH (NOLOCK) 
+	where oq.ID = @ID
+)a
+print @cols
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -462,12 +470,10 @@ order by Seq'
 
 EXEC sp_executesql @sql
 "
-                , orderID);
-            DataTable ptb1;
-            DBProxy.Current.Select(null, sqlcmd1, out ptb1);
-            int columns1 = ptb1.Columns.Count;
+                    , orderID);
+                DBProxy.Current.Select(null, sqlcmd1, out ptb1);
 
-            string sqlcmd2 = string.Format(@"
+                string sqlcmd2 = string.Format(@"
 DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
@@ -505,12 +511,10 @@ order by rnk,Seq'
 
 EXEC sp_executesql @sql
 "
-                , poID);
-            DataTable ptb2;
-            DBProxy.Current.Select(null, sqlcmd2, out ptb2);
-            int columns2 = ptb2.Columns.Count;
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd2, out ptb2);
 
-            string sqlcmd3 = string.Format(@"
+                string sqlcmd3 = string.Format(@"
 DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
@@ -548,12 +552,10 @@ order by Seq'
 
 EXEC sp_executesql @sql
 "
-                , poID);
-            DataTable ptb3;
-            DBProxy.Current.Select(null, sqlcmd3, out ptb3);
-            int columns3 = ptb3.Columns.Count;
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd3, out ptb3);
 
-            string sqlcmd4 = string.Format(@"
+                string sqlcmd4 = string.Format(@"
 DECLARE @ID nvarchar(20) = '{0}'
 DECLARE @cols NVARCHAR(MAX)= N''
 SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
@@ -594,12 +596,187 @@ order by rnk,Seq'
 
 EXEC sp_executesql @sql
 "
-                , poID);
-            DataTable ptb4;
-            DBProxy.Current.Select(null, sqlcmd4, out ptb4);
-            int columns4 = ptb4.Columns.Count;
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd4, out ptb4);
+                #endregion
+            }
+            else
+            {
+                #region
+                string sqlcmd1 = string.Format(@"
+DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @cols NVARCHAR(MAX)= N''
+SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
+FROM (
+	select distinct oq.SizeCode
+	FROM Order_Qty oq WITH (NOLOCK) 
+	where oq.ID = @ID
+)a
+print @cols
 
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = N'
+;with tmpData as (
+    select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
+    from Order_Qty oq WITH (NOLOCK) 
+    left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
+	where oq.ID = '''+@ID+'''
+),SubTotal as (
+    select ''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq
+    from tmpData
+    group by SizeCode
+),UnionData as (
+	select * from tmpData
+	union all
+	select * from SubTotal
+),pivotData	as (
+	select *
+    from UnionData
+    pivot( sum(OriQty)
+    for SizeCode in ('+@cols+')
+	) a
+)
+select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+from pivotData p
+order by Seq'
 
+EXEC sp_executesql @sql
+"
+                    , orderID);
+                DBProxy.Current.Select(null, sqlcmd1, out ptb1);
+
+                string sqlcmd2 = string.Format(@"
+DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @cols NVARCHAR(MAX)= N''
+SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
+FROM (
+	select distinct oq.SizeCode
+	from Orders o WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	where o.POID = @ID
+)s
+
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = N'
+;with tmpData as (
+	select o.ID,oq.Article,oq.SizeCode,oq.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY o.ID) as rnk
+	from Orders o WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
+	where o.POID = '''+@ID+'''
+),SubTotal as (
+	select '''' as ID,''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq,99999 as rnk
+	from tmpData
+	group by SizeCode
+),UnionData as (
+	select * from tmpData
+	union all
+	select * from SubTotal
+),pivotData as (
+	select *
+	from UnionData
+	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+)
+select (select sum(OriQty) from UnionData where ID = p.ID and Article = p.Article) as TotalQty,[Sp#] = ID,[Colorway] = p.Article,'+@cols+'
+from pivotData p
+order by rnk,Seq'
+
+EXEC sp_executesql @sql
+"
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd2, out ptb2);
+
+                string sqlcmd3 = string.Format(@"
+DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @cols NVARCHAR(MAX)= N''
+SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
+FROM (
+	select distinct oq.SizeCode
+	from Orders o WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	where o.POID = @ID
+)s
+
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = N'
+;with tmpData as (
+	select oq.Article,oq.SizeCode,oq.OriQty,oa.Seq
+	from Orders o WITH (NOLOCK) 
+	inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+	left join Order_Article oa WITH (NOLOCK) on oa.ID = oq.ID and oa.Article = oq.Article
+	where o.POID = '''+@ID+'''
+),SubTotal as (
+    select ''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq
+    from tmpData
+    group by SizeCode
+),UnionData as (
+	select * from tmpData
+	union all
+	select * from SubTotal
+),pivotData as (
+	select *
+	from UnionData
+	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+)
+select (select sum(OriQty) from UnionData where Article = p.Article) as TotalQty,[Colorway] = p.Article,'+@cols+'
+from pivotData p
+order by Seq'
+
+EXEC sp_executesql @sql
+"
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd3, out ptb3);
+
+                string sqlcmd4 = string.Format(@"
+DECLARE @ID nvarchar(20) = '{0}'
+DECLARE @cols NVARCHAR(MAX)= N''
+SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(SizeCode),N',' + QUOTENAME(SizeCode))
+FROM (
+	select distinct oqd.SizeCode
+	 from Orders o WITH (NOLOCK) 
+    inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+	where o.POID = @ID
+)s
+
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = N'
+;with tmpData as (
+	select oq.BuyerDelivery,oqd.Article,oqd.SizeCode,oqd.OriQty,oa.Seq,DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
+    from Orders o WITH (NOLOCK) 
+    inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
+    inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
+    left join Order_Article oa WITH (NOLOCK) on oa.ID = oqd.ID and oa.Article = oqd.Article
+	where o.POID = '''+@ID+'''
+),SubTotal as (
+    select null as BuyerDelivery,''TTL'' as Article,SizeCode,SUM(OriQty) as Qty, ''9999'' as Seq,99999 as rnk
+    from tmpData
+    group by SizeCode
+),UnionData as (
+	select * from tmpData
+	union all
+	select * from SubTotal
+),pivotData as (
+	select *
+	from UnionData
+	pivot( sum(OriQty)	for SizeCode in ('+@cols+')) a
+)
+select (select sum(isnull(OriQty,0)) from UnionData where rnk = p.rnk and Article = p.Article) as TotalQty
+,[Buyer Delivery] =P.BuyerDelivery,[Colorway] = p.Article,'+@cols+'
+from pivotData p
+order by rnk,Seq'
+
+EXEC sp_executesql @sql
+"
+                    , poID);
+                DBProxy.Current.Select(null, sqlcmd4, out ptb4);
+                #endregion
+            }
+            int columns1 = 0,columns2 = 0,columns3 = 0,columns4 = 0;
+            if (ptb1 != null) columns1 = ptb1.Columns.Count;
+            if (ptb2 != null) columns2 = ptb2.Columns.Count;
+            if (ptb3 != null) columns3 = ptb3.Columns.Count;
+            if (ptb4 != null) columns4 = ptb4.Columns.Count;
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); //預先開啟excel app
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
@@ -614,7 +791,6 @@ EXEC sp_executesql @sql
                 MyUtility.Excel.CopyToXls(ptb1, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + orderID + ")";
                 objSheets.get_Range("A1", r1 + "2").Interior.Color = Color.LightGreen;
-                objSheets.get_Range("A2", r1 + "2").AutoFilter(1, "<>");
             }
 
             if (ptb2.Rows.Count > 0)
@@ -622,14 +798,15 @@ EXEC sp_executesql @sql
                 objSheets = objApp.ActiveWorkbook.Worksheets[2];
                 for (int i = 0; i < columns2; i++)
                 {
-                    objSheets.Cells[2, i + 1] = ptb2.Columns[i].ColumnName;
+                    objSheets.Cells[3, i + 1] = ptb2.Columns[i].ColumnName;
                 }
                 string r2 = MyUtility.Excel.ConvertNumericToExcelColumn(columns2);
                 objSheets.get_Range("A1", r2 + "1").Merge(false);
-                MyUtility.Excel.CopyToXls(ptb2, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.get_Range("A2", r2 + "2").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb2, "", "PPIC_P01_Qtybreakdown.xltx", 3, false, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-                objSheets.get_Range("A1", r2 + "2").Interior.Color = Color.LightGreen;
-                objSheets.get_Range("A2", r2 + "2").AutoFilter(1, "<>");
+                objSheets.Cells[2, 1] = "PO Combination :" + displaySPPOCombination.Text;
+                objSheets.get_Range("A1", r2 + "3").Interior.Color = Color.LightGreen;
             }
 
             if (ptb3.Rows.Count > 0)
@@ -637,14 +814,15 @@ EXEC sp_executesql @sql
                 objSheets = objApp.ActiveWorkbook.Worksheets[3];
                 for (int i = 0; i < columns3; i++)
                 {
-                    objSheets.Cells[2, i + 1] = ptb3.Columns[i].ColumnName;
+                    objSheets.Cells[3, i + 1] = ptb3.Columns[i].ColumnName;
                 }
                 string r3 = MyUtility.Excel.ConvertNumericToExcelColumn(columns3);
                 objSheets.get_Range("A1", r3 + "1").Merge(false);
-                MyUtility.Excel.CopyToXls(ptb3, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.get_Range("A2", r3 + "2").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb3, "", "PPIC_P01_Qtybreakdown.xltx", 3, false, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-                objSheets.get_Range("A1", r3 + "2").Interior.Color = Color.LightGreen;
-                objSheets.get_Range("A2", r3 + "2").AutoFilter(1, "<>");
+                objSheets.Cells[2, 1] = "PO Combination :" + displayColorwayPOCombination.Text;
+                objSheets.get_Range("A1", r3 + "3").Interior.Color = Color.LightGreen;
             }
 
             if (ptb4.Rows.Count > 0)
@@ -652,18 +830,22 @@ EXEC sp_executesql @sql
                 objSheets = objApp.ActiveWorkbook.Worksheets[4];
                 for (int i = 0; i < columns4; i++)
                 {
-                    objSheets.Cells[2, i + 1] = ptb4.Columns[i].ColumnName;
+                    objSheets.Cells[3, i + 1] = ptb4.Columns[i].ColumnName;
                 }
                 string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
                 objSheets.get_Range("A1", r4 + "1").Merge(false);
-                MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 2, true, null, objApp, wSheet: objSheets);
+                objSheets.get_Range("A2", r4 + "2").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 3, true, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-                objSheets.get_Range("A1", r4 + "2").Interior.Color = Color.LightGreen;
-                objSheets.get_Range("A2", r4 + "2").AutoFilter(1, "<>");
+                objSheets.Cells[2, 1] = "PO Combination :" + displayDeliveryPOCombination.Text;
+                objSheets.get_Range("A1", r4 + "3").Interior.Color = Color.LightGreen;
             }
 
-            objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            objSheets.Columns.AutoFit();
+            for (int i = 1; i <= 4; i++)
+            {
+                objSheets = objApp.ActiveWorkbook.Worksheets[i];
+                objSheets.Columns.AutoFit();
+            }
         }        
     }
 }
