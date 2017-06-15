@@ -94,6 +94,13 @@ namespace Sci.Production.Cutting
                 this.IsSupportEdit = false;
                 this.DefaultFilter = string.Format("mDivisionid = '{0}' and WorkType is not null and WorkType != '' and Finished = 1", keyWord);
             }
+            detailgrid.Click += detailgrid_Click;
+        }
+
+        void detailgrid_Click(object sender, EventArgs e)
+        {
+            detailgrid.CurrentCell = detailgrid[detailgrid.CurrentCell.ColumnIndex, detailgrid.CurrentCell.RowIndex];
+            detailgrid.BeginEdit(true);
         }
 
         protected override void OnFormLoaded()
@@ -1448,8 +1455,6 @@ where w.ID = '{0}'", masterID);
             this.gridSizeRatio.AutoResizeColumns();            
             this.gridQtyBreakdown.AutoResizeColumns();
 
-            detailgrid.CurrentCell = detailgrid[1, detailgrid.CurrentCell.RowIndex];
-            detailgrid.BeginEdit(true);
         }
         //程式產生的BindingSource 必須自行Dispose, 以節省資源
         protected override void OnFormDispose()
