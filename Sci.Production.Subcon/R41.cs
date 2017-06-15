@@ -67,47 +67,49 @@ namespace Sci.Production.Subcon
         {
             #region sqlcmd
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"Select distinct
-            [Bundleno] = bd.BundleNo,
-            [Cut Ref#] = b.CutRef,
-            [SP#] = b.Orderid,
-            [Master SP#] = b.POID,
-            [Factory] = b.MDivisionid,
-            [Style] = o.StyleID,
-            [Season] = o.SeasonID,
-            [Brand] = o.BrandID,
-            [Comb] = b.PatternPanel,
-            [Article] = b.Article,
-            [Color] = b.ColorId,
-            [Line] = b.SewinglineId,
-            [Cell] = b.SewingCell,
-            [Pattern] = bd.PatternCode,
-            [PtnDesc] = bd.PatternDesc,
-            [Group] = bd.BundleGroup,
-            [Size] = bd.SizeCode,
-            [Artwork] = stuff(sub.sub,1,1,''),
-            [Qty] = bd.Qty,
-            [Sub-process] = s.Id,
-            [InComing] = bio.InComing,
-            [Out (Time)] = bio.OutGoing
+            sqlCmd.Append(@"
+Select distinct
+    [Bundleno] = bd.BundleNo,
+    [Cut Ref#] = b.CutRef,
+    [SP#] = b.Orderid,
+    [Master SP#] = b.POID,
+    [Factory] = b.MDivisionid,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Comb] = b.PatternPanel,
+	[Fab_Panel Code] = b.FabricPanelCode,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Line] = b.SewinglineId,
+    [Cell] = b.SewingCell,
+    [Pattern] = bd.PatternCode,
+    [PtnDesc] = bd.PatternDesc,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Artwork] = sub.sub,
+    [Qty] = bd.Qty,
+    [Sub-process] = s.Id,
+    [InComing] = bio.InComing,
+    [Out (Time)] = bio.OutGoing
 
-            from Bundle b WITH (NOLOCK) 
-            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-            inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-            inner join SubProcess s WITH (NOLOCK) on s.Id = bda.SubprocessId 
-            left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
-            outer apply(
-	             select sub= (
-		             Select distinct concat('+', bda.SubprocessId)
-		             from Bundle_Detail_Art bda WITH (NOLOCK) 
-		             where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-		             for xml path('')
-	             )
-            ) as sub
+    from Bundle b WITH (NOLOCK) 
+    inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
+    inner join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+    inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+    inner join SubProcess s WITH (NOLOCK) on s.Id = bda.SubprocessId 
+    left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = bda.SubprocessId
+    outer apply(
+	        select sub= stuff((
+		        Select distinct concat('+', bda.SubprocessId)
+		        from Bundle_Detail_Art bda WITH (NOLOCK) 
+		        where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+		        for xml path('')
+	        ),1,1,'')
+    ) as sub
 
-            where 1=1
-            and (s.IsRFIDDefault = '1' or s.Id = bda.SubprocessId) 
+    where 1=1
+    and (s.IsRFIDDefault = '1' or s.Id = bda.SubprocessId) 
             ");
             #endregion
             #region Append畫面上的條件
