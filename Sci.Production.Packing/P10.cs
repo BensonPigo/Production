@@ -112,13 +112,18 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
             {
                 if (selectDataTable.Rows.Count == 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MyUtility.Msg.InfoBox("Data not found!");
                     ControlButton4Text("Close");
                 }
                 else
                 {
                     ControlButton4Text("Cancel");
                 }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(selectResult.Description);
+                ControlButton4Text("Close");
             }
             listControlBindingSource1.DataSource = selectDataTable;
         }
