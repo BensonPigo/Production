@@ -603,53 +603,65 @@ EXEC sp_executesql @sql
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P01_Qtybreakdown.xltx"); //預先開啟excel app
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
-            for (int i = 0; i < columns1; i++)
+            if (ptb1.Rows.Count > 0)
             {
-                objSheets.Cells[2, i + 1] = ptb1.Columns[i].ColumnName;
+                for (int i = 0; i < columns1; i++)
+                {
+                    objSheets.Cells[2, i + 1] = ptb1.Columns[i].ColumnName;
+                }
+                string r1 = MyUtility.Excel.ConvertNumericToExcelColumn(columns1);
+                objSheets.get_Range("A1", r1 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb1, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + orderID + ")";
+                objSheets.get_Range("A1", r1 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r1 + "2").AutoFilter(1, "<>");
             }
-            string r1 = MyUtility.Excel.ConvertNumericToExcelColumn(columns1);
-            objSheets.get_Range("A1", r1 + "1").Merge(false);
-            MyUtility.Excel.CopyToXls(ptb1, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
-            objSheets.Cells[1, 1] = "Qty breakdown (" + orderID + ")";
-            objSheets.get_Range("A1", r1 + "2").Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A2", r1 + "2").AutoFilter(1, "<>");
 
-            objSheets = objApp.ActiveWorkbook.Worksheets[2];
-            for (int i = 0; i < columns2; i++)
+            if (ptb2.Rows.Count > 0)
             {
-                objSheets.Cells[2, i + 1] = ptb2.Columns[i].ColumnName;
+                objSheets = objApp.ActiveWorkbook.Worksheets[2];
+                for (int i = 0; i < columns2; i++)
+                {
+                    objSheets.Cells[2, i + 1] = ptb2.Columns[i].ColumnName;
+                }
+                string r2 = MyUtility.Excel.ConvertNumericToExcelColumn(columns2);
+                objSheets.get_Range("A1", r2 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb2, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
+                objSheets.get_Range("A1", r2 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r2 + "2").AutoFilter(1, "<>");
             }
-            string r2 = MyUtility.Excel.ConvertNumericToExcelColumn(columns2);
-            objSheets.get_Range("A1", r2 + "1").Merge(false);
-            MyUtility.Excel.CopyToXls(ptb2, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
-            objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-            objSheets.get_Range("A1", r2 + "2").Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A2", r2 + "2").AutoFilter(1, "<>");
 
-            objSheets = objApp.ActiveWorkbook.Worksheets[3];
-            for (int i = 0; i < columns3; i++)
+            if (ptb3.Rows.Count > 0)
             {
-                objSheets.Cells[2, i + 1] = ptb3.Columns[i].ColumnName;
+                objSheets = objApp.ActiveWorkbook.Worksheets[3];
+                for (int i = 0; i < columns3; i++)
+                {
+                    objSheets.Cells[2, i + 1] = ptb3.Columns[i].ColumnName;
+                }
+                string r3 = MyUtility.Excel.ConvertNumericToExcelColumn(columns3);
+                objSheets.get_Range("A1", r3 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb3, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
+                objSheets.get_Range("A1", r3 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r3 + "2").AutoFilter(1, "<>");
             }
-            string r3 = MyUtility.Excel.ConvertNumericToExcelColumn(columns3);
-            objSheets.get_Range("A1", r3 + "1").Merge(false);
-            MyUtility.Excel.CopyToXls(ptb3, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
-            objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-            objSheets.get_Range("A1", r3 + "2").Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A2", r3 + "2").AutoFilter(1, "<>");
 
-            objSheets = objApp.ActiveWorkbook.Worksheets[4];
-            for (int i = 0; i < columns4; i++)
+            if (ptb4.Rows.Count > 0)
             {
-                objSheets.Cells[2, i + 1] = ptb4.Columns[i].ColumnName;
+                objSheets = objApp.ActiveWorkbook.Worksheets[4];
+                for (int i = 0; i < columns4; i++)
+                {
+                    objSheets.Cells[2, i + 1] = ptb4.Columns[i].ColumnName;
+                }
+                string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
+                objSheets.get_Range("A1", r4 + "1").Merge(false);
+                MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 2, true, null, objApp, wSheet: objSheets);
+                objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
+                objSheets.get_Range("A1", r4 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r4 + "2").AutoFilter(1, "<>");
             }
-            string r4 = MyUtility.Excel.ConvertNumericToExcelColumn(columns4);
-            objSheets.get_Range("A1", r4 + "1").Merge(false);
-            MyUtility.Excel.CopyToXls(ptb4, "", "PPIC_P01_Qtybreakdown.xltx", 2, true, null, objApp, wSheet: objSheets);
-            objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
-            objSheets.get_Range("A1", r4 + "2").Interior.Color = Color.LightGreen;
-            objSheets.get_Range("A2", r4 + "2").AutoFilter(1, "<>");
-            
+
             objSheets = objApp.ActiveWorkbook.Worksheets[1];
             objSheets.Columns.AutoFit();
         }        
