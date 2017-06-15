@@ -82,7 +82,7 @@ Where 1=1
             }
 
             //預先開啟excel app
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50_ProductionBundleTransfer.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R50.xltx");
             
             DataRow dr;
             MyUtility.Check.Seek(sql2.ToString(), out dr, null);
@@ -118,7 +118,7 @@ Where 1=1
 
                         //do some jobs                       
                         Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[c];
-                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R50_ProductionBundleTransfer.xltx", 1, false, null, objApp, wSheet: objSheets);                        
+                        MyUtility.Excel.CopyToXls(ds.Tables[0], "", "Subcon_R50.xltx", 1, false, null, objApp, wSheet: objSheets);                        
                         c++;
 
                         //if (objSheets != null) Marshal.FinalReleaseComObject(objSheets);    //釋放sheet

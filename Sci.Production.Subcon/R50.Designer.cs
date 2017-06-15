@@ -131,7 +131,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.panel1);
             this.Name = "R50";
-            this.Text = "R50. Production Bundle Transfer";
+            this.Text = "R50. Transfer Bundle Data To Printing System";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

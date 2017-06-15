@@ -935,7 +935,7 @@
     <None Include="XLT\Subcon_R44_BySPNO.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Subcon_R50_ProductionBundleTransfer.xltx">
+    <None Include="XLT\Subcon_R50.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Subcon_R51.xltx">

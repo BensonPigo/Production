@@ -136,7 +136,7 @@
             this.Controls.Add(this.labelID);
             this.Controls.Add(this.labelDate);
             this.Name = "R51";
-            this.Text = "R51. PrintingPO Transfer";
+            this.Text = "R51. Transfer Subcon PO Data To Printing System";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
