@@ -286,6 +286,11 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtmfactory);
@@ -417,12 +422,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -568,10 +573,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -757,7 +762,6 @@
             // 
             // labelQtyCarton
             // 
-            this.labelQtyCarton.Lines = 0;
             this.labelQtyCarton.Location = new System.Drawing.Point(439, 480);
             this.labelQtyCarton.Name = "labelQtyCarton";
             this.labelQtyCarton.Size = new System.Drawing.Size(68, 21);
@@ -781,7 +785,6 @@
             // 
             // labelPackingMethod
             // 
-            this.labelPackingMethod.Lines = 0;
             this.labelPackingMethod.Location = new System.Drawing.Point(5, 480);
             this.labelPackingMethod.Name = "labelPackingMethod";
             this.labelPackingMethod.Size = new System.Drawing.Size(93, 21);
@@ -809,7 +812,6 @@
             // 
             // labelSampleReason
             // 
-            this.labelSampleReason.Lines = 0;
             this.labelSampleReason.Location = new System.Drawing.Point(439, 402);
             this.labelSampleReason.Name = "labelSampleReason";
             this.labelSampleReason.Size = new System.Drawing.Size(92, 21);
@@ -833,7 +835,6 @@
             // 
             // labelArtworkCost
             // 
-            this.labelArtworkCost.Lines = 0;
             this.labelArtworkCost.Location = new System.Drawing.Point(190, 402);
             this.labelArtworkCost.Name = "labelArtworkCost";
             this.labelArtworkCost.Size = new System.Drawing.Size(75, 21);
@@ -876,7 +877,6 @@
             // 
             // labelSizeRange
             // 
-            this.labelSizeRange.Lines = 0;
             this.labelSizeRange.Location = new System.Drawing.Point(5, 429);
             this.labelSizeRange.Name = "labelSizeRange";
             this.labelSizeRange.Size = new System.Drawing.Size(75, 21);
@@ -885,7 +885,6 @@
             // 
             // labelGarmentLT
             // 
-            this.labelGarmentLT.Lines = 0;
             this.labelGarmentLT.Location = new System.Drawing.Point(5, 402);
             this.labelGarmentLT.Name = "labelGarmentLT";
             this.labelGarmentLT.Size = new System.Drawing.Size(75, 21);
@@ -927,7 +926,6 @@
             // 
             // labelDoxType
             // 
-            this.labelDoxType.Lines = 0;
             this.labelDoxType.Location = new System.Drawing.Point(304, 371);
             this.labelDoxType.Name = "labelDoxType";
             this.labelDoxType.Size = new System.Drawing.Size(74, 21);
@@ -936,7 +934,6 @@
             // 
             // labelCommission
             // 
-            this.labelCommission.Lines = 0;
             this.labelCommission.Location = new System.Drawing.Point(304, 344);
             this.labelCommission.Name = "labelCommission";
             this.labelCommission.Size = new System.Drawing.Size(74, 21);
@@ -965,7 +962,6 @@
             // 
             // labelHSCode2
             // 
-            this.labelHSCode2.Lines = 0;
             this.labelHSCode2.Location = new System.Drawing.Point(5, 371);
             this.labelHSCode2.Name = "labelHSCode2";
             this.labelHSCode2.Size = new System.Drawing.Size(70, 21);
@@ -974,7 +970,6 @@
             // 
             // labelHSCode1
             // 
-            this.labelHSCode1.Lines = 0;
             this.labelHSCode1.Location = new System.Drawing.Point(5, 344);
             this.labelHSCode1.Name = "labelHSCode1";
             this.labelHSCode1.Size = new System.Drawing.Size(70, 21);
@@ -996,7 +991,6 @@
             // 
             // labelOutstandingRemark
             // 
-            this.labelOutstandingRemark.Lines = 0;
             this.labelOutstandingRemark.Location = new System.Drawing.Point(512, 259);
             this.labelOutstandingRemark.Name = "labelOutstandingRemark";
             this.labelOutstandingRemark.Size = new System.Drawing.Size(112, 21);
@@ -1033,7 +1027,6 @@
             // 
             // labelFinalUpdateReasonInCharge
             // 
-            this.labelFinalUpdateReasonInCharge.Lines = 0;
             this.labelFinalUpdateReasonInCharge.Location = new System.Drawing.Point(5, 313);
             this.labelFinalUpdateReasonInCharge.Name = "labelFinalUpdateReasonInCharge";
             this.labelFinalUpdateReasonInCharge.Size = new System.Drawing.Size(170, 21);
@@ -1042,7 +1035,6 @@
             // 
             // labelFinalUpdateOutstandingReasondate
             // 
-            this.labelFinalUpdateOutstandingReasondate.Lines = 0;
             this.labelFinalUpdateOutstandingReasondate.Location = new System.Drawing.Point(5, 286);
             this.labelFinalUpdateOutstandingReasondate.Name = "labelFinalUpdateOutstandingReasondate";
             this.labelFinalUpdateOutstandingReasondate.Size = new System.Drawing.Size(208, 21);
@@ -1051,7 +1043,6 @@
             // 
             // labelOutstandingReason
             // 
-            this.labelOutstandingReason.Lines = 0;
             this.labelOutstandingReason.Location = new System.Drawing.Point(5, 259);
             this.labelOutstandingReason.Name = "labelOutstandingReason";
             this.labelOutstandingReason.Size = new System.Drawing.Size(113, 21);
@@ -1070,7 +1061,6 @@
             // 
             // labelSMNoticeApv
             // 
-            this.labelSMNoticeApv.Lines = 0;
             this.labelSMNoticeApv.Location = new System.Drawing.Point(800, 228);
             this.labelSMNoticeApv.Name = "labelSMNoticeApv";
             this.labelSMNoticeApv.Size = new System.Drawing.Size(89, 21);
@@ -1089,7 +1079,6 @@
             // 
             // labelVASSHASApv
             // 
-            this.labelVASSHASApv.Lines = 0;
             this.labelVASSHASApv.Location = new System.Drawing.Point(589, 228);
             this.labelVASSHASApv.Name = "labelVASSHASApv";
             this.labelVASSHASApv.Size = new System.Drawing.Size(94, 21);
@@ -1108,7 +1097,6 @@
             // 
             // labelMNtoiceApv
             // 
-            this.labelMNtoiceApv.Lines = 0;
             this.labelMNtoiceApv.Location = new System.Drawing.Point(390, 228);
             this.labelMNtoiceApv.Name = "labelMNtoiceApv";
             this.labelMNtoiceApv.Size = new System.Drawing.Size(82, 21);
@@ -1127,7 +1115,6 @@
             // 
             // labelEachConsApv
             // 
-            this.labelEachConsApv.Lines = 0;
             this.labelEachConsApv.Location = new System.Drawing.Point(178, 228);
             this.labelEachConsApv.Name = "labelEachConsApv";
             this.labelEachConsApv.Size = new System.Drawing.Size(97, 21);
@@ -1145,7 +1132,6 @@
             // 
             // labelStyleApv
             // 
-            this.labelStyleApv.Lines = 0;
             this.labelStyleApv.Location = new System.Drawing.Point(5, 228);
             this.labelStyleApv.Name = "labelStyleApv";
             this.labelStyleApv.Size = new System.Drawing.Size(60, 21);
@@ -1204,7 +1190,6 @@
             // 
             // labelCFMShipmentdate
             // 
-            this.labelCFMShipmentdate.Lines = 0;
             this.labelCFMShipmentdate.Location = new System.Drawing.Point(772, 170);
             this.labelCFMShipmentdate.Name = "labelCFMShipmentdate";
             this.labelCFMShipmentdate.Size = new System.Drawing.Size(115, 21);
@@ -1213,7 +1198,6 @@
             // 
             // labelOrigBuyerDel
             // 
-            this.labelOrigBuyerDel.Lines = 0;
             this.labelOrigBuyerDel.Location = new System.Drawing.Point(772, 143);
             this.labelOrigBuyerDel.Name = "labelOrigBuyerDel";
             this.labelOrigBuyerDel.Size = new System.Drawing.Size(115, 21);
@@ -1222,7 +1206,6 @@
             // 
             // labelDetailsCRDdate
             // 
-            this.labelDetailsCRDdate.Lines = 0;
             this.labelDetailsCRDdate.Location = new System.Drawing.Point(772, 116);
             this.labelDetailsCRDdate.Name = "labelDetailsCRDdate";
             this.labelDetailsCRDdate.Size = new System.Drawing.Size(115, 21);
@@ -1231,7 +1214,6 @@
             // 
             // labelDetailsSCIDel
             // 
-            this.labelDetailsSCIDel.Lines = 0;
             this.labelDetailsSCIDel.Location = new System.Drawing.Point(772, 89);
             this.labelDetailsSCIDel.Name = "labelDetailsSCIDel";
             this.labelDetailsSCIDel.Size = new System.Drawing.Size(115, 21);
@@ -1240,7 +1222,6 @@
             // 
             // labelBuyerDel
             // 
-            this.labelBuyerDel.Lines = 0;
             this.labelBuyerDel.Location = new System.Drawing.Point(772, 62);
             this.labelBuyerDel.Name = "labelBuyerDel";
             this.labelBuyerDel.Size = new System.Drawing.Size(115, 21);
@@ -1298,7 +1279,6 @@
             // 
             // labelActPullout
             // 
-            this.labelActPullout.Lines = 0;
             this.labelActPullout.Location = new System.Drawing.Point(540, 143);
             this.labelActPullout.Name = "labelActPullout";
             this.labelActPullout.Size = new System.Drawing.Size(73, 21);
@@ -1307,7 +1287,6 @@
             // 
             // labelDetailsCutOffDate
             // 
-            this.labelDetailsCutOffDate.Lines = 0;
             this.labelDetailsCutOffDate.Location = new System.Drawing.Point(540, 116);
             this.labelDetailsCutOffDate.Name = "labelDetailsCutOffDate";
             this.labelDetailsCutOffDate.Size = new System.Drawing.Size(73, 21);
@@ -1316,7 +1295,6 @@
             // 
             // labelReadyDate
             // 
-            this.labelReadyDate.Lines = 0;
             this.labelReadyDate.Location = new System.Drawing.Point(540, 89);
             this.labelReadyDate.Name = "labelReadyDate";
             this.labelReadyDate.Size = new System.Drawing.Size(73, 21);
@@ -1325,7 +1303,6 @@
             // 
             // labelEstPullout
             // 
-            this.labelEstPullout.Lines = 0;
             this.labelEstPullout.Location = new System.Drawing.Point(540, 62);
             this.labelEstPullout.Name = "labelEstPullout";
             this.labelEstPullout.Size = new System.Drawing.Size(73, 21);
@@ -1406,7 +1383,6 @@
             // 
             // labelPlanDate
             // 
-            this.labelPlanDate.Lines = 0;
             this.labelPlanDate.Location = new System.Drawing.Point(304, 197);
             this.labelPlanDate.Name = "labelPlanDate";
             this.labelPlanDate.Size = new System.Drawing.Size(83, 21);
@@ -1415,7 +1391,6 @@
             // 
             // labelSewingLine
             // 
-            this.labelSewingLine.Lines = 0;
             this.labelSewingLine.Location = new System.Drawing.Point(304, 170);
             this.labelSewingLine.Name = "labelSewingLine";
             this.labelSewingLine.Size = new System.Drawing.Size(83, 21);
@@ -1424,7 +1399,6 @@
             // 
             // labelSewingOffline
             // 
-            this.labelSewingOffline.Lines = 0;
             this.labelSewingOffline.Location = new System.Drawing.Point(304, 143);
             this.labelSewingOffline.Name = "labelSewingOffline";
             this.labelSewingOffline.Size = new System.Drawing.Size(83, 21);
@@ -1433,7 +1407,6 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
             this.labelSewingInline.Location = new System.Drawing.Point(304, 116);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(83, 21);
@@ -1442,7 +1415,6 @@
             // 
             // label6CuttingOffline
             // 
-            this.label6CuttingOffline.Lines = 0;
             this.label6CuttingOffline.Location = new System.Drawing.Point(304, 89);
             this.label6CuttingOffline.Name = "label6CuttingOffline";
             this.label6CuttingOffline.Size = new System.Drawing.Size(83, 21);
@@ -1451,7 +1423,6 @@
             // 
             // labelCuttingInline
             // 
-            this.labelCuttingInline.Lines = 0;
             this.labelCuttingInline.Location = new System.Drawing.Point(304, 62);
             this.labelCuttingInline.Name = "labelCuttingInline";
             this.labelCuttingInline.Size = new System.Drawing.Size(83, 21);
@@ -1528,7 +1499,6 @@
             // 
             // labelMTLCmpltSP
             // 
-            this.labelMTLCmpltSP.Lines = 0;
             this.labelMTLCmpltSP.Location = new System.Drawing.Point(5, 197);
             this.labelMTLCmpltSP.Name = "labelMTLCmpltSP";
             this.labelMTLCmpltSP.Size = new System.Drawing.Size(142, 21);
@@ -1537,7 +1507,6 @@
             // 
             // labelRMTLETAMasterSP
             // 
-            this.labelRMTLETAMasterSP.Lines = 0;
             this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 170);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
             this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(142, 21);
@@ -1546,7 +1515,6 @@
             // 
             // labelPkgMTLETASP
             // 
-            this.labelPkgMTLETASP.Lines = 0;
             this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 143);
             this.labelPkgMTLETASP.Name = "labelPkgMTLETASP";
             this.labelPkgMTLETASP.Size = new System.Drawing.Size(142, 21);
@@ -1555,7 +1523,6 @@
             // 
             // labelSewMTLETASP
             // 
-            this.labelSewMTLETASP.Lines = 0;
             this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 116);
             this.labelSewMTLETASP.Name = "labelSewMTLETASP";
             this.labelSewMTLETASP.Size = new System.Drawing.Size(142, 21);
@@ -1564,7 +1531,6 @@
             // 
             // labelSCHDLETAMasterSP
             // 
-            this.labelSCHDLETAMasterSP.Lines = 0;
             this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 89);
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
             this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(142, 21);
@@ -1573,7 +1539,6 @@
             // 
             // labelKPILETA
             // 
-            this.labelKPILETA.Lines = 0;
             this.labelKPILETA.Location = new System.Drawing.Point(5, 62);
             this.labelKPILETA.Name = "labelKPILETA";
             this.labelKPILETA.Size = new System.Drawing.Size(142, 21);
@@ -1582,7 +1547,6 @@
             // 
             // labelDetailsPOHandle
             // 
-            this.labelDetailsPOHandle.Lines = 0;
             this.labelDetailsPOHandle.Location = new System.Drawing.Point(399, 31);
             this.labelDetailsPOHandle.Name = "labelDetailsPOHandle";
             this.labelDetailsPOHandle.Size = new System.Drawing.Size(65, 21);
@@ -1591,7 +1555,6 @@
             // 
             // labelDetailsPOSMR
             // 
-            this.labelDetailsPOSMR.Lines = 0;
             this.labelDetailsPOSMR.Location = new System.Drawing.Point(399, 4);
             this.labelDetailsPOSMR.Name = "labelDetailsPOSMR";
             this.labelDetailsPOSMR.Size = new System.Drawing.Size(65, 21);
@@ -1620,7 +1583,6 @@
             // 
             // labelDetailsStyleNo
             // 
-            this.labelDetailsStyleNo.Lines = 0;
             this.labelDetailsStyleNo.Location = new System.Drawing.Point(5, 31);
             this.labelDetailsStyleNo.Name = "labelDetailsStyleNo";
             this.labelDetailsStyleNo.Size = new System.Drawing.Size(39, 21);
@@ -1629,7 +1591,6 @@
             // 
             // labelDetailsSPNo
             // 
-            this.labelDetailsSPNo.Lines = 0;
             this.labelDetailsSPNo.Location = new System.Drawing.Point(5, 4);
             this.labelDetailsSPNo.Name = "labelDetailsSPNo";
             this.labelDetailsSPNo.Size = new System.Drawing.Size(39, 21);
@@ -1648,7 +1609,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1736,7 +1697,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(5, 4);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(51, 21);
@@ -1745,7 +1705,6 @@
             // 
             // labelBuyer
             // 
-            this.labelBuyer.Lines = 0;
             this.labelBuyer.Location = new System.Drawing.Point(5, 31);
             this.labelBuyer.Name = "labelBuyer";
             this.labelBuyer.Size = new System.Drawing.Size(51, 21);
@@ -1754,7 +1713,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(5, 58);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(51, 21);
@@ -1763,7 +1721,6 @@
             // 
             // labelProgram
             // 
-            this.labelProgram.Lines = 0;
             this.labelProgram.Location = new System.Drawing.Point(5, 85);
             this.labelProgram.Name = "labelProgram";
             this.labelProgram.Size = new System.Drawing.Size(51, 21);
@@ -1772,7 +1729,6 @@
             // 
             // labelPONo
             // 
-            this.labelPONo.Lines = 0;
             this.labelPONo.Location = new System.Drawing.Point(5, 112);
             this.labelPONo.Name = "labelPONo";
             this.labelPONo.Size = new System.Drawing.Size(51, 21);
@@ -1781,7 +1737,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(5, 139);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(51, 21);
@@ -1790,7 +1745,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(5, 166);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(51, 21);
@@ -1917,7 +1871,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(275, 85);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(67, 21);
@@ -1926,7 +1879,6 @@
             // 
             // labelProject
             // 
-            this.labelProject.Lines = 0;
             this.labelProject.Location = new System.Drawing.Point(275, 112);
             this.labelProject.Name = "labelProject";
             this.labelProject.Size = new System.Drawing.Size(67, 21);
@@ -1935,7 +1887,6 @@
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
             this.labelOrderType.Location = new System.Drawing.Point(275, 139);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(67, 21);
@@ -1944,7 +1895,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(275, 166);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(67, 21);
@@ -1982,7 +1932,6 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(575, 4);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(65, 21);
@@ -1991,7 +1940,6 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(575, 31);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(65, 21);
@@ -2000,7 +1948,6 @@
             // 
             // labelMCHandle
             // 
-            this.labelMCHandle.Lines = 0;
             this.labelMCHandle.Location = new System.Drawing.Point(575, 58);
             this.labelMCHandle.Name = "labelMCHandle";
             this.labelMCHandle.Size = new System.Drawing.Size(65, 21);
@@ -2009,7 +1956,6 @@
             // 
             // labelLocalMR
             // 
-            this.labelLocalMR.Lines = 0;
             this.labelLocalMR.Location = new System.Drawing.Point(575, 85);
             this.labelLocalMR.Name = "labelLocalMR";
             this.labelLocalMR.Size = new System.Drawing.Size(65, 21);
@@ -2018,7 +1964,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(575, 112);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(65, 21);
@@ -2027,7 +1972,6 @@
             // 
             // labelBuyMonth
             // 
-            this.labelBuyMonth.Lines = 0;
             this.labelBuyMonth.Location = new System.Drawing.Point(575, 139);
             this.labelBuyMonth.Name = "labelBuyMonth";
             this.labelBuyMonth.Size = new System.Drawing.Size(65, 21);
@@ -2036,7 +1980,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(61, 21);
@@ -2045,7 +1988,6 @@
             // 
             // labelFOCQty
             // 
-            this.labelFOCQty.Lines = 0;
             this.labelFOCQty.Location = new System.Drawing.Point(815, 139);
             this.labelFOCQty.Name = "labelFOCQty";
             this.labelFOCQty.Size = new System.Drawing.Size(61, 21);
@@ -2130,7 +2072,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2172,7 +2114,6 @@
             // 
             // labelBuyerDlv
             // 
-            this.labelBuyerDlv.Lines = 0;
             this.labelBuyerDlv.Location = new System.Drawing.Point(5, 197);
             this.labelBuyerDlv.Name = "labelBuyerDlv";
             this.labelBuyerDlv.Size = new System.Drawing.Size(91, 21);
@@ -2181,7 +2122,6 @@
             // 
             // labelOrigBuyerDlv
             // 
-            this.labelOrigBuyerDlv.Lines = 0;
             this.labelOrigBuyerDlv.Location = new System.Drawing.Point(5, 224);
             this.labelOrigBuyerDlv.Name = "labelOrigBuyerDlv";
             this.labelOrigBuyerDlv.Size = new System.Drawing.Size(91, 21);
@@ -2190,7 +2130,6 @@
             // 
             // labelSCIDlv
             // 
-            this.labelSCIDlv.Lines = 0;
             this.labelSCIDlv.Location = new System.Drawing.Point(5, 251);
             this.labelSCIDlv.Name = "labelSCIDlv";
             this.labelSCIDlv.Size = new System.Drawing.Size(91, 21);
@@ -2199,7 +2138,6 @@
             // 
             // labelCutOffDate
             // 
-            this.labelCutOffDate.Lines = 0;
             this.labelCutOffDate.Location = new System.Drawing.Point(5, 278);
             this.labelCutOffDate.Name = "labelCutOffDate";
             this.labelCutOffDate.Size = new System.Drawing.Size(91, 21);
@@ -2208,7 +2146,6 @@
             // 
             // labelUpdateDeliveryReason
             // 
-            this.labelUpdateDeliveryReason.Lines = 0;
             this.labelUpdateDeliveryReason.Location = new System.Drawing.Point(5, 305);
             this.labelUpdateDeliveryReason.Name = "labelUpdateDeliveryReason";
             this.labelUpdateDeliveryReason.Size = new System.Drawing.Size(138, 21);
@@ -2258,7 +2195,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(220, 197);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(55, 21);
@@ -2267,7 +2203,6 @@
             // 
             // labelFtyCode
             // 
-            this.labelFtyCode.Lines = 0;
             this.labelFtyCode.Location = new System.Drawing.Point(220, 224);
             this.labelFtyCode.Name = "labelFtyCode";
             this.labelFtyCode.Size = new System.Drawing.Size(55, 21);
@@ -2276,7 +2211,6 @@
             // 
             // labelModel
             // 
-            this.labelModel.Lines = 0;
             this.labelModel.Location = new System.Drawing.Point(220, 251);
             this.labelModel.Name = "labelModel";
             this.labelModel.Size = new System.Drawing.Size(55, 21);
@@ -2285,7 +2219,6 @@
             // 
             // labelKPIDel
             // 
-            this.labelKPIDel.Lines = 0;
             this.labelKPIDel.Location = new System.Drawing.Point(220, 278);
             this.labelKPIDel.Name = "labelKPIDel";
             this.labelKPIDel.Size = new System.Drawing.Size(55, 21);
@@ -2325,7 +2258,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(393, 197);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(65, 21);
@@ -2334,7 +2266,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(393, 224);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(65, 21);
@@ -2343,7 +2274,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(393, 251);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(65, 21);
@@ -2378,7 +2308,6 @@
             // 
             // labelSpecialId1
             // 
-            this.labelSpecialId1.Lines = 0;
             this.labelSpecialId1.Location = new System.Drawing.Point(709, 197);
             this.labelSpecialId1.Name = "labelSpecialId1";
             this.labelSpecialId1.Size = new System.Drawing.Size(80, 21);
@@ -2387,7 +2316,6 @@
             // 
             // labelSpecialId2
             // 
-            this.labelSpecialId2.Lines = 0;
             this.labelSpecialId2.Location = new System.Drawing.Point(709, 224);
             this.labelSpecialId2.Name = "labelSpecialId2";
             this.labelSpecialId2.Size = new System.Drawing.Size(80, 21);
@@ -2396,7 +2324,6 @@
             // 
             // labelSpecialId3
             // 
-            this.labelSpecialId3.Lines = 0;
             this.labelSpecialId3.Location = new System.Drawing.Point(709, 251);
             this.labelSpecialId3.Name = "labelSpecialId3";
             this.labelSpecialId3.Size = new System.Drawing.Size(80, 21);
@@ -2435,7 +2362,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(5, 336);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(58, 21);
@@ -2444,7 +2370,6 @@
             // 
             // labelUnitPrice
             // 
-            this.labelUnitPrice.Lines = 0;
             this.labelUnitPrice.Location = new System.Drawing.Point(5, 363);
             this.labelUnitPrice.Name = "labelUnitPrice";
             this.labelUnitPrice.Size = new System.Drawing.Size(58, 21);
@@ -2453,7 +2378,6 @@
             // 
             // labelUnitPriceWithSurcharge
             // 
-            this.labelUnitPriceWithSurcharge.Lines = 0;
             this.labelUnitPriceWithSurcharge.Location = new System.Drawing.Point(5, 390);
             this.labelUnitPriceWithSurcharge.Name = "labelUnitPriceWithSurcharge";
             this.labelUnitPriceWithSurcharge.Size = new System.Drawing.Size(144, 21);
@@ -2520,7 +2444,6 @@
             // 
             // labelCDCode
             // 
-            this.labelCDCode.Lines = 0;
             this.labelCDCode.Location = new System.Drawing.Point(275, 336);
             this.labelCDCode.Name = "labelCDCode";
             this.labelCDCode.Size = new System.Drawing.Size(57, 21);
@@ -2529,7 +2452,6 @@
             // 
             // labelCPU
             // 
-            this.labelCPU.Lines = 0;
             this.labelCPU.Location = new System.Drawing.Point(275, 363);
             this.labelCPU.Name = "labelCPU";
             this.labelCPU.Size = new System.Drawing.Size(57, 21);
@@ -2538,7 +2460,6 @@
             // 
             // labelCPUAmt
             // 
-            this.labelCPUAmt.Lines = 0;
             this.labelCPUAmt.Location = new System.Drawing.Point(275, 390);
             this.labelCPUAmt.Name = "labelCPUAmt";
             this.labelCPUAmt.Size = new System.Drawing.Size(57, 21);
@@ -2634,7 +2555,6 @@
             // 
             // labelCMPQPrice
             // 
-            this.labelCMPQPrice.Lines = 0;
             this.labelCMPQPrice.Location = new System.Drawing.Point(460, 336);
             this.labelCMPQPrice.Name = "labelCMPQPrice";
             this.labelCMPQPrice.Size = new System.Drawing.Size(75, 21);
@@ -2643,7 +2563,6 @@
             // 
             // labelCMPQAmt
             // 
-            this.labelCMPQAmt.Lines = 0;
             this.labelCMPQAmt.Location = new System.Drawing.Point(460, 363);
             this.labelCMPQAmt.Name = "labelCMPQAmt";
             this.labelCMPQAmt.Size = new System.Drawing.Size(75, 21);
@@ -2652,7 +2571,6 @@
             // 
             // labelCMPQCFM
             // 
-            this.labelCMPQCFM.Lines = 0;
             this.labelCMPQCFM.Location = new System.Drawing.Point(460, 390);
             this.labelCMPQCFM.Name = "labelCMPQCFM";
             this.labelCMPQCFM.Size = new System.Drawing.Size(75, 21);
@@ -2719,7 +2637,6 @@
             // label44
             // 
             this.label44.BackColor = System.Drawing.Color.Transparent;
-            this.label44.Lines = 0;
             this.label44.Location = new System.Drawing.Point(616, 336);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(61, 21);
@@ -2949,7 +2866,6 @@
             // 
             // labelShipmentTerm
             // 
-            this.labelShipmentTerm.Lines = 0;
             this.labelShipmentTerm.Location = new System.Drawing.Point(4, 421);
             this.labelShipmentTerm.Name = "labelShipmentTerm";
             this.labelShipmentTerm.Size = new System.Drawing.Size(90, 21);
@@ -2958,7 +2874,6 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Lines = 0;
             this.labelPaymentTerm.Location = new System.Drawing.Point(4, 448);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(90, 21);
@@ -2967,7 +2882,6 @@
             // 
             // labelSpecialMark
             // 
-            this.labelSpecialMark.Lines = 0;
             this.labelSpecialMark.Location = new System.Drawing.Point(4, 479);
             this.labelSpecialMark.Name = "labelSpecialMark";
             this.labelSpecialMark.Size = new System.Drawing.Size(75, 21);
@@ -2976,7 +2890,6 @@
             // 
             // labelPOCombo
             // 
-            this.labelPOCombo.Lines = 0;
             this.labelPOCombo.Location = new System.Drawing.Point(4, 506);
             this.labelPOCombo.Name = "labelPOCombo";
             this.labelPOCombo.Size = new System.Drawing.Size(75, 21);
@@ -3017,7 +2930,6 @@
             // 
             // labelFtyRemark
             // 
-            this.labelFtyRemark.Lines = 0;
             this.labelFtyRemark.Location = new System.Drawing.Point(551, 479);
             this.labelFtyRemark.Name = "labelFtyRemark";
             this.labelFtyRemark.Size = new System.Drawing.Size(86, 21);
@@ -3039,7 +2951,6 @@
             // 
             // labelCuttingCombo
             // 
-            this.labelCuttingCombo.Lines = 0;
             this.labelCuttingCombo.Location = new System.Drawing.Point(551, 522);
             this.labelCuttingCombo.Name = "labelCuttingCombo";
             this.labelCuttingCombo.Size = new System.Drawing.Size(86, 21);
@@ -3098,12 +3009,13 @@
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(278, 197);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
-            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.Validated += new System.EventHandler(this.txtmfactory_Validated);
             // 
             // txtdropdownlistCategory
