@@ -88,7 +88,7 @@ where a.cutref='{0}' and b.orderid='{1}'
 group by sizeCode"
                     , maindr["cutref"], maindr["Orderid"]);
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out sizeTb);
-                if (sizeTb.Rows.Count != 0) totalCutQty = Convert.ToInt16(sizeTb.Compute("Sum(Qty)", ""));
+                if (sizeTb.Rows.Count != 0) totalCutQty = Convert.ToInt32(sizeTb.Compute("Sum(Qty)", ""));
                 else
                 {
                     size_cmd = string.Format("Select distinct sizecode,0  as Qty from order_Qty WITH (NOLOCK) where id='{0}'", maindr["Orderid"]);
@@ -144,9 +144,9 @@ group by sizeCode"
                     DataRow ndr = allpartTb.NewRow();
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
-                    ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                    ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                     allpartTb.Rows.Add(ndr);
-                    npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                    npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                 }
                 else
                 {
@@ -165,7 +165,7 @@ group by sizeCode"
                         {
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
-                                int count = Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                                int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                                 for (int i = 0; i < count; i++)
                                 {
                                     DataRow ndr2 = patternTb.NewRow();
@@ -192,8 +192,8 @@ group by sizeCode"
                             ndr["PatternCode"] = dr["PatternCode"];
                             ndr["PatternDesc"] = dr["PatternDesc"];
                             ndr["Annotation"] = dr["Annotation"];
-                            ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
-                            npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                            ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                            npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                             allpartTb.Rows.Add(ndr);
                         }
 
@@ -204,8 +204,8 @@ group by sizeCode"
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["Annotation"] = dr["Annotation"];
-                        ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
-                        npart = npart + Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                        ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                        npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                         allpartTb.Rows.Add(ndr);
                     }
                     #endregion
@@ -280,7 +280,7 @@ group by sizeCode"
                         DataRow ndr = allpartTb.NewRow();
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
-                        ndr["parts"] = Convert.ToInt16(dr["alone"]) + Convert.ToInt16(dr["DV"]) * 2 + Convert.ToInt16(dr["Pair"]) * 2;
+                        ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                         allpartTb.Rows.Add(ndr);
                     }
                 }
@@ -457,7 +457,7 @@ group by sizeCode"
             Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, settings: NoCell)
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), integer_places: 5, settings: qtyCell);
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(7), integer_places: 5, settings: qtyCell);
             grid_qty.Columns["No"].DefaultCellStyle.BackColor = Color.Pink;
             grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -646,7 +646,7 @@ group by sizeCode"
 
         public void calsumQty()
         {
-            if (qtyTb.Rows.Count > 0) displayTotalQty.Value = Convert.ToInt16(qtyTb.Compute("sum(Qty)", ""));
+            if (qtyTb.Rows.Count > 0) displayTotalQty.Value = Convert.ToInt32(qtyTb.Compute("sum(Qty)", ""));
         }
 
         private void button_Qty_Click(object sender, EventArgs e)
@@ -780,7 +780,7 @@ group by sizeCode"
             if (allpartTb.AsEnumerable().Count(row => row.RowState != DataRowState.Deleted) > 0)
                 allpart = allpartTb.AsEnumerable()
                     .Where(row => row.RowState != DataRowState.Deleted)
-                    .Sum(row => Convert.ToInt16(row["Parts"]));
+                    .Sum(row => Convert.ToInt32(row["Parts"]));
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
             if (dr.Length > 0) dr[0]["Parts"] = allpart;
         }
@@ -831,7 +831,7 @@ group by sizeCode"
 
             DataTable bundle_detail_tmp;
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
-            int bundlegroup = Convert.ToInt16(maindatarow["startno"]);
+            int bundlegroup = Convert.ToInt32(maindatarow["startno"]);
             int ukey = 1;
             grid_qty.ValidateControl();
             foreach (DataRow dr in qtyTb.Rows)
@@ -840,7 +840,7 @@ group by sizeCode"
                 {
                     foreach (DataRow dr2 in patternTb.Rows)
                     {
-                        if (Convert.ToInt16(dr2["Parts"]) == 0) continue;  //若Parts=0，則不需產生資料至Bundle card明細
+                        if (Convert.ToInt32(dr2["Parts"]) == 0) continue;  //若Parts=0，則不需產生資料至Bundle card明細
                         DataRow nDetail = bundle_detail_tmp.NewRow();
                         nDetail["PatternCode"] = dr2["PatternCode"];
                         nDetail["PatternDesc"] = dr2["PatternDesc"];
