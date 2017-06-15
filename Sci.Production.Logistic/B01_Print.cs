@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Logistic
 {
@@ -50,12 +51,78 @@ namespace Sci.Production.Logistic
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
             {
+                MyUtility.Msg.WarningBox(result.Description);
                 return result;
-            }
-            
-            e.Report.ReportDataSource = printData;
-
+            }            
+            //e.Report.ReportDataSource = printData;
             return Result.True;
+        }
+
+        protected override bool ToPrint()
+        {
+            this.ValidateInput();
+            this.OnAsyncDataLoad(null);
+            if (printData == null || printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found.");
+                return false;
+            }
+            this.SetCount(printData.Rows.Count);
+            this.ShowWaitMessage("Data Loading ...");
+            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            winword.Visible = false;
+            Microsoft.Office.Interop.Word._Document document;
+            Word.Table tables = null;
+
+            Object printFile = Sci.Env.Cfg.XltPathDir + "\\Logistic_B01_Barcode.dotx";
+            document = winword.Documents.Add(ref printFile);
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = (printData.Rows.Count / 6) + ((printData.Rows.Count % 6 > 0) ? 1 : 0);
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                        winword.Selection.InsertNewPage();
+                    winword.Selection.Paste();
+                }
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < page; i++)
+                {
+                    tables = table[i + 1];
+                    for (int p = i * 6; p < i * 6 + 6; p++)
+                    {
+                        if (p >= printData.Rows.Count) break;
+                        tables.Cell(p % 6 + 1, 1).Range.Text = "*" + printData.Rows[p]["ID"].ToString().Trim() + "*";
+                    }
+
+                }
+                #endregion
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                winword.Visible = true;
+                winword = null;
+            }
+            catch (Exception ex)
+            {
+                if (null != winword)
+                    winword.Quit();
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            this.HideWaitMessage();
+            return true;
         }
     }
 }
