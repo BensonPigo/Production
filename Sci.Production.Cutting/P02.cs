@@ -23,6 +23,7 @@ namespace Sci.Production.Cutting
         private string keyWord = Sci.Env.User.Keyword;
 
         private DataTable sizeratioTb, layersTb, distqtyTb, qtybreakTb, sizeGroup, spTb, artTb, PatternPanelTb;
+        private DataTable chksize;
         private DataRow drTEMP;  //紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
 
         private Sci.Win.UI.BindingSource2 bindingSource2 = new Win.UI.BindingSource2();
@@ -318,6 +319,12 @@ order by id,article,sizecode"
                     dr2["balance"] = MyUtility.Convert.GetDecimal(dr2["qty"]) - MyUtility.Convert.GetDecimal(dr2["workorder_Distribute_Qty"]);
                 }
             }
+            //用來檢查size是否存在
+            string sqlsizechk = string.Format(@"
+select distinct w.SizeCode
+from Workorder_SizeRatio w
+where w.ID = '{0}'", masterID);
+            DBProxy.Current.Select(null, sqlsizechk, out chksize);
             #endregion
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -930,6 +937,13 @@ order by id,article,sizecode"
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
+
+                    string newvalue = sele.GetSelectedString();
+                    dr["SizeCode"] = newvalue;
+                    dr.EndEdit();
+                    cal_TotalCutQty(CurrentDetailData["Ukey"], CurrentDetailData["NewKey"]);
+                    updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), newvalue);
+                    totalDisQty();
                 }
             };
             col_sizeRatio_size.EditingControlShowing += (s, e) =>
@@ -949,6 +963,12 @@ order by id,article,sizecode"
                 string oldvalue = dr["SizeCode"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
+                DataRow[] chkrow = chksize.Select(string.Format("SizeCode = '{0}'", newvalue));
+                if (chkrow.Length == 0)
+                {
+                    dr["SizeCode"] = "";
+                    return;                 
+                }
                 dr["SizeCode"] = newvalue;
                 dr.EndEdit();
 
