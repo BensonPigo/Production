@@ -188,7 +188,7 @@
             this.Controls.Add(this.dateIssueDate);
             this.IsSupportToPrint = false;
             this.Name = "R06";
-            this.Text = "R06. Fabric\\Accessory Lacking & Replacement Report";
+            this.Text = @"R06. Fabric/Accessory Lacking & Replacement Report";
             this.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.print, 0);

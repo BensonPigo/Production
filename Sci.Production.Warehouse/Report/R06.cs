@@ -191,7 +191,7 @@ where (a.Status ='Received' or a.Status = 'Confirmed') "));
 select  NameEN
 from factory
 where id = '{0}'", Sci.Env.User.Keyword));
-            objSheets.Cells[2, 1] = @"Fabric\Accessory Lacking & Replacement Report";
+            objSheets.Cells[2, 1] = @"Fabric/Accessory Lacking & Replacement Report";
             //Lacking Date (3, 2)
             objSheets.Cells[3, 2] = string.Format(@"{0} ~ {1}" + "   "
                 , Convert.ToDateTime(issuedate1).ToString("d")
