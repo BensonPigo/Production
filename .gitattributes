@@ -2897,6 +2897,7 @@ Sci.Production.Subcon/P23.resx -text
 Sci.Production.Subcon/P23_ImportBarcode.Designer.cs -text
 Sci.Production.Subcon/P23_ImportBarcode.cs -text
 Sci.Production.Subcon/P23_ImportBarcode.resx -text
+Sci.Production.Subcon/P23_bhtprtd.cs -text
 Sci.Production.Subcon/P26.Designer.cs -text
 Sci.Production.Subcon/P26.cs -text
 Sci.Production.Subcon/P26.resx -text
@@ -3613,6 +3614,7 @@ Sci.Production.Warehouse/Report/R40.Designer.cs -text
 Sci.Production.Warehouse/Report/R40.cs -text
 Sci.Production.Warehouse/Report/R40.resx -text
 Sci.Production.Warehouse/Sci.Production.Warehouse.csproj -text
+Sci.Production/Bhtprtd.dll -text
 Sci.Production/IDX_CTRL.dll -text
 Sci.Production/PMS_icon.ico -text
 Sci.Production/Program.cs -text

@@ -169,6 +169,7 @@
     <Compile Include="P23.Designer.cs">
       <DependentUpon>P23.cs</DependentUpon>
     </Compile>
+    <Compile Include="P23_bhtprtd.cs" />
     <Compile Include="P23_ImportBarcode.cs">
       <SubType>Form</SubType>
     </Compile>
