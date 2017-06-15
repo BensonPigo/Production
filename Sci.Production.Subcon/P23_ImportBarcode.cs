@@ -145,15 +145,72 @@ WHERE bda.SubprocessId  = '{0}' and bd.Patterncode != 'ALLPARTS'"
             }
             #endregion
         }
+        //刪除有ErrorMsg
+        private void btnDeleteError_Click(object sender, EventArgs e)
+        {
+            if (listControlBindingSource1.DataSource == null) return;
+            for (int i = ((DataTable)listControlBindingSource1.DataSource).Rows.Count - 1; i >= 0; i--)
+            {
+                if (((DataTable)listControlBindingSource1.DataSource).Rows[i].RowState != DataRowState.Deleted)
+                {
+                    if (!MyUtility.Check.Empty(((DataTable)listControlBindingSource1.DataSource).Rows[i]["ErrorMsg"]))
+                    {
+                        ((DataTable)listControlBindingSource1.DataSource).Rows[i].Delete();
+                    }
+                }
+            }
+        }
         //Create
         private void btnCreate_Click(object sender, EventArgs e)
         {
+            if (grid1.Rows.Count == 0) return;
+            //判斷是否已經按了Delete把有Error的刪掉
+            foreach (DataRow dr in ((DataTable)listControlBindingSource1.DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted && dr["ErrorMsg"].ToString().ToUpper() == "Data already create".ToUpper())
+                {
+                    MyUtility.Msg.WarningBox(string.Format("Data already create {0}", dr["BundleNo"].ToString()));
+                    return;
+                }
+            }
 
+            //準備新增sqlcmd
+            string getID = MyUtility.GetValue.GetID("TC", "BundleTrack", DateTime.Today, 5, "ID", null);
+            if (MyUtility.Check.Empty(getID))
+            {
+                MyUtility.Msg.WarningBox("GetID fail, please try again!");
+                return;
+            }
+            string date = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+            //主Table BundleTrack一筆
+            string insertBundleTrack = string.Format(@"insert into BundleTrack (id,IssueDate,StartSite,EndSite) values('{0}','{1}','{2}','{3}')", getID, date, Sci.Env.User.Factory, Sci.Env.User.Factory);
+
+            //Detail BundleTrack_detail用ProcessWithDatatable方法整個table新增
+            string insertBundleTrackDteail = string.Format(@"insert into BundleTrack_detail select '{0}',t.BundleNo,t.Orderid,'{1}','{2}',0 from #tmp t", getID, date, Sci.Env.User.UserID);
+
+            //insert BundleTrack
+            DualResult Result;
+            Result = DBProxy.Current.Execute(null, insertBundleTrack);
+            if (!Result)
+            {
+                ShowErr(Result);
+                return;
+            }
+            //insert BundleTrack_detail
+            DataTable n;
+            Result = MyUtility.Tool.ProcessWithDatatable(((DataTable)listControlBindingSource1.DataSource), "BundleNo,Orderid", insertBundleTrackDteail, out n);
+            if (!Result)
+            {
+                ShowErr(Result);
+                return;
+            }
         }
         //Close
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
+
     }
 }
