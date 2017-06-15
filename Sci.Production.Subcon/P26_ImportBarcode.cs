@@ -38,16 +38,13 @@ namespace Sci.Production.Subcon
                 .Text("PatternDesc", header: "PTN Desc.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
-            Helper.Controls.Grid.Generator(this.grid2)
-                .Text("BundleNo", header: "Bundle#", width: Widths.AnsiChars(11), iseditingreadonly: true)
-                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(15), iseditingreadonly: true);
         }
         //從C:\temp\BUNDLEIN.TXT讀取資料
         private void btnImportfromscanner_Click(object sender, EventArgs e)
         {
             #region 建立要讀檔的Table結構
             string selectCommand = @"Select BundleNo from Bundle_detail a WITH (NOLOCK) where 1=0";
-            DataTable leftDT, rightDT, tmpDataTable;
+            DataTable leftDT, tmpDataTable;
             DualResult selectResult;
             if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out tmpDataTable)))
             {
@@ -117,16 +114,12 @@ outer apply(
 	),1,1,'')
 )a
 WHERE (bda.SubprocessId IS NULL or bda.SubprocessId  = '{0}') and (bd.Patterncode != 'ALLPARTS' or bd.Patterncode is null)", comboSubprocess.Text);
-            if (tmpDataTable.Rows.Count >0)
+            txtNumsofBundle.Text = "0";
+            if (tmpDataTable.Rows.Count > 0)
             {
                 MyUtility.Tool.ProcessWithDatatable(tmpDataTable, "", stmp, out leftDT);
                 listControlBindingSource1.DataSource = leftDT;
-                if (leftDT.Rows.Count >0)
-                {
-                    MyUtility.Tool.ProcessWithDatatable(leftDT, "BundleNo,ErrorMsg", "select * from #tmp", out rightDT);
-                    listControlBindingSource2.DataSource = rightDT;
-                    txtNumsofBundle.Text = rightDT.Rows.Count.ToString();//右邊grid的總數
-                }
+                txtNumsofBundle.Text = leftDT.Rows.Count.ToString();//grid的總數
             }
             #endregion
 

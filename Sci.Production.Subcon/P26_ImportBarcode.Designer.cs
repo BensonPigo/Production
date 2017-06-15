@@ -41,14 +41,10 @@
             this.label1 = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.grid2 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -166,13 +162,12 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -183,39 +178,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.Size = new System.Drawing.Size(690, 438);
+            this.grid1.Size = new System.Drawing.Size(983, 438);
             this.grid1.TabIndex = 2;
             this.grid1.TabStop = false;
-            // 
-            // grid2
-            // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            this.grid2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(696, 40);
-            this.grid2.Name = "grid2";
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.Size = new System.Drawing.Size(287, 438);
-            this.grid2.TabIndex = 3;
-            this.grid2.TabStop = false;
             // 
             // P26_ImportBarcode
             // 
             this.ClientSize = new System.Drawing.Size(983, 520);
-            this.Controls.Add(this.grid2);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -225,8 +194,6 @@
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -236,7 +203,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private Win.UI.Grid grid1;
-        private Win.UI.Grid grid2;
         private Win.UI.Label labelSubprocess;
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboSubprocess;
@@ -245,7 +211,6 @@
         private Win.UI.Button btnCreate;
         private Win.UI.Button btnDeleteError;
         private Win.UI.TextBox txtNumsofBundle;
-        private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
 
     }
