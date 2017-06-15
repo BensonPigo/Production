@@ -157,7 +157,7 @@ where s.ApvDate is null
                 objArray[0, 8] = dr["Amount"];
                 objArray[0, 9] = dr["BLNo"];
                 objArray[0, 10] = dr["InvNo"];
-                objArray[0, 11] = MyUtility.Check.Empty(dr["ExportInv"]) ? "" : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0,MyUtility.Convert.GetString(dr["ExportInv"]).Length-1);
+                objArray[0, 11] = dr["ExportInv"];
                 worksheet.Range[String.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
