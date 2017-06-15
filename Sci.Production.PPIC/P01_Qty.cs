@@ -791,6 +791,7 @@ EXEC sp_executesql @sql
                 MyUtility.Excel.CopyToXls(ptb1, "", "PPIC_P01_Qtybreakdown.xltx", 2, false, null, objApp, wSheet: objSheets);
                 objSheets.Cells[1, 1] = "Qty breakdown (" + orderID + ")";
                 objSheets.get_Range("A1", r1 + "2").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r1 + "2").AutoFilter(1);
             }
 
             if (ptb2.Rows.Count > 0)
@@ -807,6 +808,7 @@ EXEC sp_executesql @sql
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
                 objSheets.Cells[2, 1] = "PO Combination :" + displaySPPOCombination.Text;
                 objSheets.get_Range("A1", r2 + "3").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r2 + "2").AutoFilter(1);
             }
 
             if (ptb3.Rows.Count > 0)
@@ -823,6 +825,7 @@ EXEC sp_executesql @sql
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
                 objSheets.Cells[2, 1] = "PO Combination :" + displayColorwayPOCombination.Text;
                 objSheets.get_Range("A1", r3 + "3").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r3 + "2").AutoFilter(1);
             }
 
             if (ptb4.Rows.Count > 0)
@@ -839,6 +842,7 @@ EXEC sp_executesql @sql
                 objSheets.Cells[1, 1] = "Qty breakdown (" + poID + ")";
                 objSheets.Cells[2, 1] = "PO Combination :" + displayDeliveryPOCombination.Text;
                 objSheets.get_Range("A1", r4 + "3").Interior.Color = Color.LightGreen;
+                objSheets.get_Range("A2", r4 + "2").AutoFilter(1);
             }
 
             for (int i = 1; i <= 4; i++)
